@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd packages/backend-api
+PORT=8080 REDIRECT_OAUTH_TO="referrer" WORKER_RUN_IMMEDIATELY="true" DEBUG_PORT=5859 npm run watch &
+cd -
+
+sleep 5
+
+cd packages/frontend-web
+PORT=8000 API_URL="http://localhost:8080" npm run watch &
+cd -
+
+wait

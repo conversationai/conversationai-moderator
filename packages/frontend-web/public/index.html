@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/fixed-data-table-base.css">
+  <link rel="stylesheet" href="css/fonts/fonts.css">
+  <style>
+    html {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: sans-serif;
+      height: 100%;
+      overflow: hidden; /* prevent the scroll bounce */
+
+      /* AKA "DARK_COLOR" from app/styles/colors */
+      background: #255271;
+    }
+
+    #app {
+      height: 100%;
+    }
+
+  a {
+      text-decoration: none;
+    }
+
+    a:hover,
+    a:focus {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.API_URL = '{{API_URL}}';
+    window.APP_NAME = '{{APP_NAME}}';
+    window.REQUIRE_REASON_TO_REJECT = '{{REQUIRE_REASON_TO_REJECT}}';
+    window.RESTRICT_TO_SESSION = '{{RESTRICT_TO_SESSION}}';
+    window.MODERATOR_GUIDELINES_URL = '{{MODERATOR_GUIDELINES_URL}}';
+    window.SUBMIT_FEEDBACK_URL = '{{SUBMIT_FEEDBACK_URL}}';
+    window.COMMENTS_EDITABLE_FLAG = '{{COMMENTS_EDITABLE_FLAG}}';
+  </script>
+  <script src="js/moderator.js"></script>
+</body>
+</html>

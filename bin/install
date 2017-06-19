@@ -1,0 +1,7 @@
+#!/bin/bash
+
+NODE_ENV=development npm install
+NODE_ENV=development npm prune
+
+./bin/link-packages
+./node_modules/.bin/lerna run build

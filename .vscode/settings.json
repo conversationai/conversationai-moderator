@@ -1,0 +1,15 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "files.exclude": {
+        ".data/**": true
+    },
+    "search.exclude": {
+        "**/dist/**": true,
+        "**/dist-commonjs/**": true,
+        "**/build/**": true,
+        "**/.tmp/**": true,
+        "**/tmp/**": true,
+        "**/typings/**": true
+    },
+    "typescript.tsdk": "./node_modules/typescript/lib"
+}

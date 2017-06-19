@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./node_modules/.bin/lerna clean --yes --skip-git
+./node_modules/.bin/lerna bootstrap

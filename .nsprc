@@ -1,0 +1,22 @@
+{
+  "exceptions": [
+    // Sequelize CLI depends on gulp, which depends on minimatch,
+    // which has a regex DDoS. But can't be exploited because our CLI is not
+    // on the deployed boxes.
+    "https://nodesecurity.io/advisories/118",
+
+    // Uglify JS has a regex DDoS. But can't be exploited because we only use
+    // it during deploy so it won't be on our deployed boxes.
+    //
+    // Newer versions are fixed, but Kue depends on this old version for its
+    // web ui, which we don't use in production.
+    "https://nodesecurity.io/advisories/48",
+
+    // Uglify JS has a regex DDoS. But can't be exploited because we only use
+    // it during deploy so it won't be on our deployed boxes.
+    //
+    // Newer versions are fixed, but Kue depends on this old version for its
+    // web ui, which we don't use in production.
+    "https://nodesecurity.io/advisories/39"
+  ]
+}

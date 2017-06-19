@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to API Server",
+      "type": "node",
+      "request": "attach",
+      "port": 5858,
+      "address": "localhost",
+      "restart": true,
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}/packages/backend-api/dist",
+      "localRoot": "${workspaceRoot}/packages/backend-api"
+    },
+    {
+      "name": "Attach to Queue",
+      "type": "node",
+      "request": "attach",
+      "port": 5859,
+      "address": "localhost",
+      "restart": true,
+      "sourceMaps": true,
+      "outDir": "${workspaceRoot}/packages/backend-queue/dist",
+      "localRoot": "${workspaceRoot}/packages/backend-queue"
+    },
+    {
+      "name": "Attach to Process",
+      "type": "node",
+      "request": "attach",
+      "processId": "${command.PickProcess}",
+      "port": 5858,
+      "sourceMaps": false,
+      "outDir": null
+    }
+  ]
+}

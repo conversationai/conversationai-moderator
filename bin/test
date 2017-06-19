@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./node_modules/.bin/lerna run compile
+./node_modules/.bin/lerna run test

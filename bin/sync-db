@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# keyword arguments
+# 1st argument is .yaml file to pull env_variables from
+
+# This script clears the terminal, attempts to pull db dump from dev,
+# and apply it to your local db, overwriting it.
+
+parse_yaml() {
+   local prefix=$2
+   local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
+   sed -ne "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
+   awk -F$fs '{
+      indent = length($1)/2;
+      vname[indent] = $2;
+      for (i in vname) {if (i > indent) {delete vname[i]}}
+      if (length($3) > 0) {
+         vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);
+      }
+   }'
+}
+
+eval $(parse_yaml $1 "config_")
+
+echo "Dropping your local db instance"
+echo
+echo "Creating new os_moderator database on local"
+
+echo "This password is for your local db root user"
+mysql -uroot -e "DROP DATABASE IF EXISTS os_moderator; CREATE DATABASE os_moderator;"
+
+echo "Btw: This download will take a minute..."
+mysqldump -h $config_env_variables_DATABASE_HOST --user=$config_env_variables_DATABASE_USER --password=$config_env_variables_DATABASE_PASSWORD --set-gtid-purged=OFF os_moderator > os_moderator.sql
+echo "Finished downloading"
+echo
+echo "restoring db from .sql backup"
+echo
+mysql -uroot os_moderator -e "SOURCE os_moderator.sql"
+rm os_moderator.sql
+echo "mysqldump is complete"

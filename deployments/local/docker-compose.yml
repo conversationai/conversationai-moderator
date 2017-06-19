@@ -1,0 +1,43 @@
+version: '2'
+services:
+  database:
+    container_name: database
+    image: 'mysql:5.7.16'
+    volumes:
+      - './.data/db:/var/lib/mysql'
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DATABASE_PASSWORD}"
+      MYSQL_DATABASE: "${DATABASE_USER}"
+      MYSQL_USER: "${DATABASE_NAME}"
+      MYSQL_PASSWORD: "${DATABASE_PASSWORD}"
+    ports:
+      - '3306:3306'
+  redis:
+    container_name: redis
+    image: 'redis:3.2.1'
+    ports:
+      - '6379:6379'
+  app:
+    build:
+      context: .
+      dockerfile: "Dockerfile"
+    environment:
+      DATABASE_NAME: "${DATABASE_NAME}"
+      DATABASE_USER: "${DATABASE_USER}"
+      DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
+      DATABASE_HOST: database
+      HTTPS_LINKS_ONLY: 'true'
+      TOKEN_SECRET: "${TOKEN_SECRET}"
+      TOKEN_ISSUER: 'Open Source Moderator (Dev)'
+      REDIS_URL: 'redis://redis:6379'
+      API_URL: '/api'
+      FRONTEND_URL: 'http://localhost:8080'
+      APP_NAME: 'Moderator (Dev)'
+      PUBLISHER_NOTIFICATION_MODE: 'noop'
+      REDIRECT_OAUTH_TO: 'referrer'
+    ports:
+      - "8080:8080"
+    links:
+        - database
+        - redis

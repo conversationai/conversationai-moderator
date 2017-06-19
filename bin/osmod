@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Forward to ./packages/cli/bin/osmod.js
+
+C=''
+
+for i in "$@"; do
+    case "$i" in
+        *\'*)
+            i=`printf "%s" "$i" | sed "s/'/'\"'\"'/g"`
+            ;;
+        *) : ;;
+    esac
+    C="$C '$i'"
+done
+
+bash -c "./packages/cli/bin/osmod.js$C"

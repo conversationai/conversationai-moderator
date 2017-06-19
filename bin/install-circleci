@@ -1,0 +1,5 @@
+#!/bin/bash
+
+NODE_ENV=development npm install
+./node_modules/.bin/lerna bootstrap
+./node_modules/.bin/lerna run build

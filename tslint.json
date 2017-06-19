@@ -1,0 +1,126 @@
+{
+  "extends": ["tslint-react"],
+  "rules": {
+    "align": [true, "parameters", "statements"],
+    "arrow-parens": true,
+    "class-name": true,
+    "comment-format": [
+      true,
+      "check-space"
+    ],
+    "curly": true,
+    "eofline": true,
+    "indent": [
+      true,
+      "spaces"
+    ],
+    "interface-name": [true, "always-prefix"],
+    "jsdoc-format": true,
+    "max-line-length": [false],
+    "no-angle-bracket-type-assertion": true,
+    "no-arg": true,
+    "no-bitwise": true,
+    "no-conditional-assignment": true,
+    "no-consecutive-blank-lines": [true],
+    "no-construct": true,
+    "no-debugger": true,
+    "no-default-export": true,
+    "no-duplicate-variable": true,
+    "no-eval": true,
+    "no-inferrable-types": [true],
+    "no-internal-module": true,
+    "no-invalid-this": false,
+    "no-namespace": true,
+    "no-trailing-whitespace": true,
+    "no-shadowed-variable": true,
+    "no-var-keyword": true,
+    "object-literal-key-quotes": [true, "as-needed"],
+    "one-line": [
+      true,
+      "check-open-brace",
+      "check-whitespace"
+    ],
+    "one-variable-per-declaration": [true, "ignore-for-loop"],
+    "quotemark": [
+      true,
+      "single",
+      "jsx-double"
+    ],
+    "radix": true,
+    "semicolon": [
+      true,
+      "always"
+    ],
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "always"
+      }
+    ],
+    "triple-equals": [
+      true,
+      "allow-null-check"
+    ],
+    "typedef-whitespace": [
+      true,
+      {
+        "call-signature": "nospace",
+        "index-signature": "nospace",
+        "parameter": "nospace",
+        "property-declaration": "nospace",
+        "variable-declaration": "nospace"
+      }
+    ],
+    "variable-name": [
+      true,
+      "ban-keywords"
+    ],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-separator",
+      "check-type"
+    ],
+    "no-unsafe-finally": true,
+    "prefer-const": true,
+    "array-type": [true, "generic"],
+    "adjacent-overload-signatures": true,
+    "cyclomatic-complexity": [false],
+    "label-position": true,
+    "new-parens": true,
+    "no-empty": true,
+    "no-magic-numbers": false,
+    "object-literal-shorthand": true,
+    "only-arrow-functions": [true, "allow-declarations"],
+    "use-isnan": true,
+    "arrow-return-shorthand": [true],
+    "no-unnecessary-initializer": true,
+    "no-misused-new": true,
+    "prefer-method-signature": true,
+    "newline-before-return": true,
+    "no-import-side-effect": true,
+    "ban-types": {
+      "options": [
+        ["Object", "Avoid using the `Object` type. Did you mean `object`?"],
+        ["Boolean", "Avoid using the `Boolean` type. Did you mean `boolean`?"],
+        ["Number", "Avoid using the `Number` type. Did you mean `number`?"],
+        ["String", "Avoid using the `String` type. Did you mean `string`?"],
+        ["Symbol", "Avoid using the `Symbol` type. Did you mean `symbol`?"]
+      ]
+    },
+    "no-duplicate-super": true,
+    "jsx-no-lambda": true,
+    "jsx-no-string-ref": true,
+    "ordered-imports": [true],
+    "jsx-curly-spacing": [true, "never"],
+    "jsx-self-close": true,
+    "jsx-wrap-multiline": true,
+    "jsx-alignment": true,
+    "jsx-boolean-value": [true, "never"],
+
+    // Prefer to keep all render code in the same render body.
+    "jsx-no-multiline-js": false
+  }
+}

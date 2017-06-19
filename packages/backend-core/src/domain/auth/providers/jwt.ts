@@ -1,0 +1,81 @@
+/*
+Copyright 2017 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { User } from '../../../models';
+import { IUserInstance } from '../../../models/user';
+import { isValidToken } from '../tokens';
+import { isValidUser } from '../users';
+
+import { config } from '@conversationai/moderator-config';
+
+/**
+ * Verify JWT payload from JWT Passportstrategy
+ *
+ * @param {object}   jwtPayload Decoded JWT payload
+ * @param {function} done       Verification callback
+ */
+export async function verifyJWT(jwtPayload: any): Promise<IUserInstance> {
+  if (!isValidToken(jwtPayload)) {
+    throw new Error('Invalid token');
+  }
+
+  const user = await User.findById(jwtPayload.user);
+
+  if (user) {
+    if (isValidUser(user)) {
+      if (user.get('email')) {
+        if (user.get('email') === jwtPayload.email) {
+          return user;
+        } else {
+          throw new Error(`User email does not match token: ${user.get('email')} === ${jwtPayload.email}`);
+        }
+      } else {
+        return user;
+      }
+    }
+
+    throw new Error('User not valid');
+  } else {
+    throw new Error('User not found');
+  }
+}
+
+/**
+ * JWT Passport strategy configuration
+ */
+export const jwtStrategy = new Strategy(
+  {
+    secretOrKey: config.get('token_secret'),
+    issuer: config.get('token_issuer'),
+
+    jwtFromRequest: (ExtractJwt as any).fromExtractors([
+      // Pull JWT token out of request header formatted like so: "Authorization: JWT (token)"
+      ExtractJwt.fromAuthHeader(),
+
+      // Or, grab from `token` query string.
+      ExtractJwt.fromUrlQueryParameter('token'),
+    ]),
+  },
+  async (jwtPayload: any, callback: (err: any, user?: IUserInstance | false) => any) => {
+    try {
+      const user = await verifyJWT(jwtPayload);
+      callback(null, user);
+    } catch (e) {
+      callback(e);
+    }
+  },
+);

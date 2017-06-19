@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd packages/frontend-web
+npm run storybook &
+cd -
+
+wait

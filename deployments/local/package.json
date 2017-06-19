@@ -1,0 +1,19 @@
+{
+  "name": "osmod-gcp-dev",
+  "version": "1.0.0",
+  "description": "Dev",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google/cloud-debug": "0.9.3",
+    "@google/cloud-trace": "0.6.3",
+    "@conversationai/moderator-backend-core": "dev",
+    "@conversationai/moderator-backend-api": "dev",
+    "@conversationai/moderator-backend-queue": "dev",
+    "@conversationai/moderator-frontend-web": "dev",
+    "@conversationai/moderator-cli": "dev"
+  }
+}

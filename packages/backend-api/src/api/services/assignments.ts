@@ -1,0 +1,191 @@
+/*
+Copyright 2017 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+import {
+  Article,
+  IArticleInstance,
+  IModeratorAssignmentAttributes,
+  IUserCategoryAssignmentAttributes,
+  IUserCategoryAssignmentInstance,
+  ModeratorAssignment,
+  User,
+  UserCategoryAssignment,
+} from '@conversationai/moderator-backend-core';
+import * as JSONAPI from '@conversationai/moderator-jsonapi';
+import * as express from 'express';
+import { list } from '../util/SequelizeHandler';
+
+export function createAssignmentsService(): express.Router {
+  const router = express.Router({
+    caseSensitive: true,
+    mergeParams: true,
+  });
+
+  router.get('/users/:id', JSONAPI.handleGet(
+    async ({ params: { id } }, paging, include, filters, sort, fields) => {
+      const user = await User.findById(id);
+
+      return list(
+        'articles', {
+          page: paging,
+          include,
+          filters,
+          sort,
+          fields,
+        },
+
+        // Hack type for dynamically generated methods.
+        (user as any).getAssignedArticles.bind(user),
+        (user as any).countAssignedArticles.bind(user),
+      );
+    },
+    JSONAPI.renderListResults,
+    ({ params: { id } }) => `/services/assignments/users/${id}`,
+  ));
+
+  router.get('/users/:id/count', async (req, res, next) => {
+    const user = await User.findById(req.params.id);
+
+    const articles: Array<IArticleInstance> = await (user as any).getAssignedArticles();
+
+    const count = articles.reduce((sum, a) => sum + a.get('unmoderatedCount'), 0);
+
+    // So simple, not worth validating the schema.
+    res.json({ count });
+
+    next();
+  });
+
+  router.get('/articles/:id', JSONAPI.handleGet(
+    async ({ params: { id } }, paging, include, filters, sort, fields) => {
+      const article = await Article.findById(id);
+
+      return list(
+        'users',
+        {
+          page: paging,
+          include,
+          filters,
+          sort,
+          fields,
+        },
+
+        // Hack type for dynamically generated methods.
+        (article as any).getAssignedModerators.bind(article),
+        (article as any).countAssignedModerators.bind(article),
+      );
+    },
+    JSONAPI.renderListResults,
+    ({ params: { id } }) => `/services/assignments/articles/${id}`,
+  ));
+
+  async function removeArticleAssignment(userIds: Array<number>, articleIdsInCategory: Array<number>) {
+    // Remove all assignmentsForArticles that have articleId that exist in articlesInCategory AND userId === userId
+    await ModeratorAssignment.destroy({
+      where: {
+        userId: {
+          $in: userIds,
+        },
+        articleId: {
+          $in: articleIdsInCategory,
+        },
+      },
+    });
+  }
+
+  function getArticleAssignmentArray(userIds: Array<number>, articleIdsInCategory: Array<number>): Array<IModeratorAssignmentAttributes> {
+    return articleIdsInCategory.reduce((sum: Array<{articleId: number; userId: number; }>, articleId) => {
+      return sum.concat(userIds.map((userId) => {
+        return {
+          articleId,
+          userId,
+        };
+      }));
+    }, []);
+  }
+
+  function getUserCategoryAssignment(userIds: Array<number>, categoryId: number): Array<IUserCategoryAssignmentAttributes> {
+    return userIds.map((id) => {
+      return {
+        userId: id,
+        categoryId,
+      };
+    });
+  }
+
+  // POST to category/id who's body.data contains userId[]
+  router.post('/categories/:id', async (req, res, next) => {
+    const categoryId = parseInt(req.params.id, 10);
+    const userIds: Array<number> = req.body.data.map((s: any) => parseInt(s, 10));
+
+    const articlesInCategory: Array<IArticleInstance> = await Article.findAll({
+      where: {
+        categoryId,
+      },
+    });
+
+    const articleIdsInCategory = articlesInCategory.map((article) => article.get('id'));
+
+    // Get assignments for the category
+    const assignmentsForCategory = await UserCategoryAssignment.findAll({
+      where: {
+        categoryId,
+      },
+    });
+
+    const userIdsToBeRemoved = assignmentsForCategory.reduce((prev: Array<number>, current: IUserCategoryAssignmentInstance): Array<number> => {
+      const assignmentUserId: number = current.get('userId');
+      const isInAssignment = userIds.some((userId) => (userId === assignmentUserId));
+      if (isInAssignment) {
+        return prev;
+      } else {
+        return prev.concat(assignmentUserId);
+      }
+    }, []);
+
+    if (userIdsToBeRemoved.length > 0) {
+      await removeArticleAssignment(userIdsToBeRemoved, articleIdsInCategory);
+    }
+
+    const newUserIds = userIds.filter((userId) => {
+      return !assignmentsForCategory.some(
+        (assignment: any) => assignment.userId === userId && assignment.categoryId === categoryId,
+      );
+    });
+
+    // If a user is being assigned we need to clear and then add them to each article with categoryId of categoryId
+    await removeArticleAssignment(newUserIds, articleIdsInCategory);
+    await ModeratorAssignment.bulkCreate(getArticleAssignmentArray(newUserIds, articleIdsInCategory));
+
+    // Now remove/set UserCategoryAssignment
+    if (userIdsToBeRemoved.length > 0) {
+      await UserCategoryAssignment.destroy({
+        where: {
+          userId: {
+            $in: userIdsToBeRemoved,
+          },
+        },
+      });
+    }
+    await UserCategoryAssignment.bulkCreate(getUserCategoryAssignment(newUserIds, categoryId));
+
+    res.json({ status: 'success' });
+
+    next();
+  });
+
+  return router;
+}
