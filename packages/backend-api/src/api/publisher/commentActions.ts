@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
+import { logger } from '@conversationai/moderator-backend-core';
 import {
   enqueue,
   ICommentActionData,
@@ -53,7 +53,7 @@ export function queueMainAction(name: IKnownTasks): express.RequestHandler {
       res.json({ status: 'success' });
       next();
     } catch (e) {
-      console.log(e)
+      logger.error(e);
     }
   };
 }
