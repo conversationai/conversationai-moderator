@@ -13,41 +13,48 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
+import { logger } from '@conversationai/moderator-backend-core';
 import {
   enqueue,
   ICommentActionData,
   IKnownTasks,
 } from '@conversationai/moderator-backend-queue';
 import * as express from 'express';
-import * as Joi from 'joi';
+import { commentActionSchema } from '../services/commentActions';
 import { dataSchema, validateRequest } from '../util/validation';
 
 export const STATUS_ACCEPTED = 'accepted';
 export const STATUS_REJECTED = 'rejected';
 
-const validateNumberSchema = validateRequest(dataSchema(Joi.number()));
+const validateCommentActionRequest = validateRequest(dataSchema(commentActionSchema));
 
 /**
  * Queues an approval or rejected action. Accepts array of comment ids, or a single comment id.
  */
 export function queueMainAction(name: IKnownTasks): express.RequestHandler {
-  return async (req, res, next) => {
-    const dataArray = Array.isArray(req.body.data) ? req.body.data : [req.body.data];
+  return async ({ body }, res, next) => {
+    try {
+      const dataArray = Array.isArray(body.data) ? body.data : [body.data];
 
-    for (const commentId of dataArray) {
-      const parsedCommentId = parseInt(commentId, 10);
+      for (const data of dataArray) {
+        const { userId, commentId } = data;
 
-      await enqueue<ICommentActionData>(name, {
-        commentId: parsedCommentId,
-        userId: req.user ? req.user.get('id') : null,
-        isBatchAction: false,
-        autoConfirmDecision: true,
-      }, req.body.runImmediately || false);
+        const parsedUserId = parseInt(userId, 10);
+        const parsedCommentId = parseInt(commentId, 10);
+
+        const isBatchAction = (dataArray.length > 1) ? true : false;
+        await enqueue<ICommentActionData>(name, {
+          commentId: parsedCommentId,
+          userId: parsedUserId,
+          isBatchAction,
+        }, body.runImmediately || false);
+      }
+
+      res.json({ status: 'success' });
+      next();
+    } catch (e) {
+      logger.error(e);
     }
-
-    res.json({ status: 'success' });
-    next();
   };
 }
 
@@ -58,27 +65,27 @@ export function createPublisherCommentActionsService(): express.Router {
   });
 
   router.post('/reset',
-    validateNumberSchema,
+    validateCommentActionRequest,
     queueMainAction('resetComments'),
   );
 
   router.post('/approve',
-    validateNumberSchema,
+    validateCommentActionRequest,
     queueMainAction('acceptComments'),
   );
 
   router.post('/highlight',
-    validateNumberSchema,
+    validateCommentActionRequest,
     queueMainAction('highlightComments'),
   );
 
   router.post('/reject',
-    validateNumberSchema,
+    validateCommentActionRequest,
     queueMainAction('rejectComments'),
   );
 
   router.post('/defer',
-    validateNumberSchema,
+    validateCommentActionRequest,
     queueMainAction('deferComments'),
   );
 
