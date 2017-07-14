@@ -41,7 +41,7 @@ import {
 const TEST_ENVS = ['test', 'circle_ci'];
 
 function isTestEnv() {
-  return TEST_ENVS.indexOf(process.env.NODE_ENV) > -1;
+  return TEST_ENVS.indexOf(process.env.NODE_ENV || '') > -1;
 }
 
 logger.setTestMode(isTestEnv());
