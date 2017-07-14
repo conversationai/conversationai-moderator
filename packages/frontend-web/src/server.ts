@@ -39,13 +39,13 @@ export function mountWebFrontend(modifyOutput?: (output: string) => string): App
       name = process.env.APP_NAME;
     }
 
-    let reasonToReject = true;
+    let reasonToReject = 'true';
 
     if (process.env.REQUIRE_REASON_TO_REJECT) {
-      reasonToReject = process.env.REQUIRE_REASON_TO_REJECT;
+      reasonToReject = (process.env.REQUIRE_REASON_TO_REJECT);
     }
 
-    let restrictToSession = true;
+    let restrictToSession = 'true';
 
     if (process.env.RESTRICT_TO_SESSION) {
       restrictToSession = process.env.RESTRICT_TO_SESSION;
@@ -63,7 +63,7 @@ export function mountWebFrontend(modifyOutput?: (output: string) => string): App
       submitFeedbackUrl = process.env.SUBMIT_FEEDBACK_URL;
     }
 
-    let commentsEditableFlag = true;
+    let commentsEditableFlag = 'true';
     if (process.env.COMMENTS_EDITABLE_FLAG) {
       commentsEditableFlag = process.env.COMMENTS_EDITABLE_FLAG;
     }
