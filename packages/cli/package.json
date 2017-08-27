@@ -1,7 +1,7 @@
 {
   "name": "@conversationai/moderator-cli",
   "description": "Commands for OSMod",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "scripts": {
     "lint": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
@@ -17,7 +17,7 @@
     "node": "6.11.0"
   },
   "dependencies": {
-    "@conversationai/moderator-backend-core": "1.0.3",
+    "@conversationai/moderator-backend-core": "1.0.4",
     "@conversationai/moderator-config": "1.0.3",
     "@types/axios": "0.14.0",
     "@types/js-yaml": "3.5.29",
