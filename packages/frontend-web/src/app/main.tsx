@@ -96,7 +96,7 @@ export function startHistoryListener() {
               if (!key.endsWith('Id')) { return; }
               if (['all', 'deferred', 'assignments'].indexOf(params[key]) !== -1) { return; }
 
-              if (!params[key].match(/^\d+$/) || 'number' !== typeof parseInt(params[key], 10)) {
+              if (!params[key].match(/^[a-z0-9_\-]+$/) || 'number' !== typeof parseInt(params[key], 10)) {
                 throw new Error(`Found an unparse-able id in the URL (${key} = ${params[key]}). Might be an attempted exploit.`);
               }
             });
