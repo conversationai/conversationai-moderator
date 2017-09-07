@@ -74,11 +74,10 @@ function validateModelName(name: string): void {
   }
 }
 
-function validateID(id: any, valueName: string): void {
-  // We allow articleIds to be non-numeric so they can be the same as the publisher's
-  // upstream asset ids
+export function validateID(id: any, valueName: string): void {
+  // Article ids are can be non-numeric to allow for flexibility with matching upstream publisher article ids
   if (valueName == "articleId") {
-    // a legal id contains only alphanumeric characters, hyphens or dashes
+    // A legal id contains only alphanumeric characters, hyphens or dashes
     if (/^[a-z0-9_\-]+$/i.test(id) == false) {
       throw new Error(`Invalid ${valueName} ${id}. Only alphanumeric characters, dashes and underscores are allowed in ${valueName}. Might be an attempted exploit.`)
     }

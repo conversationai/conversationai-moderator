@@ -41,6 +41,7 @@ import { reducer as scenesReducer, scenes as makeRoutes } from './scenes';
 import { Login } from './scenes/Login';
 import { reducer as globalReducer } from './stores';
 import { clearReturnURL, getReturnURL } from './util';
+import { validateID } from './util/dataService';
 
 // Attach fastclick event handlers
 attachFastClick.attach(document.body);
@@ -96,7 +97,7 @@ export function startHistoryListener() {
               if (!key.endsWith('Id')) { return; }
               if (['all', 'deferred', 'assignments'].indexOf(params[key]) !== -1) { return; }
 
-              if (!params[key].match(/^[a-z0-9_\-]+$/) || 'number' !== typeof parseInt(params[key], 10)) {
+              if (validateID(params[key], 'articleId') || 'number' !== typeof parseInt(params[key], 10)) {
                 throw new Error(`Found an unparse-able id in the URL (${key} = ${params[key]}). Might be an attempted exploit.`);
               }
             });
