@@ -480,7 +480,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleAutomatedRuleChange(category: string, rule: IRuleModel, value: number) {
+  handleAutomatedRuleChange(category: string, rule: IRuleModel, value: number | string) {
     this.setState({
       rules: this.state.rules.update(
         this.state.rules.findIndex((r) => r.equals(rule)),
@@ -507,7 +507,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleTaggingSensitivityChange(category: string, ts: ITaggingSensitivityModel, value: number) {
+  handleTaggingSensitivityChange(category: string, ts: ITaggingSensitivityModel, value: number | string) {
     this.setState({
       taggingSensitivities: this.state.taggingSensitivities.update(
         this.state.taggingSensitivities.findIndex((r) => r.equals(ts)),
@@ -525,7 +525,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handlePreselectChange(category: string, preselect: IPreselectModel, value: number) {
+  handlePreselectChange(category: string, preselect: IPreselectModel, value: number | string) {
     this.setState({
       preselects: this.state.preselects.update(
         this.state.preselects.findIndex((r) => r.equals(preselect)),

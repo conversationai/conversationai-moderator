@@ -101,8 +101,8 @@ export interface IRuleRowProps {
   selectedCategory: string;
   selectedTag?: string;
   onDelete?(rule: IRuleModel | ITaggingSensitivityModel | IPreselectModel): any;
-  onCategoryChange?(value: number): any;
-  onTagChange?(value: number): any;
+  onCategoryChange?(value: string): any;
+  onTagChange?(value: string): any;
   onLowerThresholdChange?(value: number): any;
   onUpperThresholdChange?(value: number): any;
   rule: IRuleModel | ITaggingSensitivityModel | IPreselectModel;
@@ -117,9 +117,9 @@ export class RuleRow extends React.Component<IRuleRowProps, void> {
   }
 
   @autobind
-  onCategoryFieldChange(callback: ((value: number) => any), e: React.ChangeEvent<HTMLSelectElement>) {
+  onCategoryFieldChange(callback: ((value: string) => any), e: React.ChangeEvent<HTMLSelectElement>) {
     e.preventDefault();
-    callback(parseInt(e.target.value, 10));
+    callback(e.target.value);
   }
 
   render() {
