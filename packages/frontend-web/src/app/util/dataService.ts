@@ -74,8 +74,16 @@ function validateModelName(name: string): void {
   }
 }
 
-function validateID(id: any, valueName: string): void {
-  if (isNaN(parseInt(id, 10))) {
+export function validateID(id: any, valueName: string): void {
+  // Article ids are can be non-numeric to allow for flexibility with matching upstream publisher article ids
+  if (valueName == "articleId") {
+    // A legal id contains only alphanumeric characters, hyphens or dashes
+    if (/^[a-z0-9_\-]+$/i.test(id) == false) {
+      throw new Error(`Invalid ${valueName} ${id}. Only alphanumeric characters, dashes and underscores are allowed in ${valueName}. Might be an attempted exploit.`)
+    }
+
+  // All other ids must be integers
+  } else if (isNaN(parseInt(id, 10))) {
     throw new Error(`Invalid ${valueName} (${parseInt(id, 10)} typeof ${typeof id}) was not a number as expected. Might be an attempted exploit.`);
   }
 }
@@ -147,7 +155,8 @@ function listURL(type: IValidModelNames, params?: Partial<IParams>): string {
 function modelURL(type: IValidModelNames, id: string, params?: Partial<IParams>): string {
   validateModelName(type);
 
-  return `${listURL(type)}/${parseInt(id, 10)}${serializeParams(params)}`;
+  return `${listURL(type)}/${id}${serializeParams(params)}`;
+
 }
 
 /**
@@ -216,7 +225,8 @@ export async function listHistogramScoresByArticle(
   validateID(tagId, `tagId`);
 
   const response: any = await axios.get(
-    serviceURL('histogramScores', `/articles/${parseInt(articleId, 10)}/tags/${parseInt(tagId, 10)}`, { sort }),
+    serviceURL('histogramScores', `/articles/${articleId}/tags/${parseInt(tagId, 10)}`, { sort }),
+
   );
 
   return List(
@@ -231,7 +241,8 @@ export async function listMaxSummaryScoreByArticle(
   validateID(articleId, `articleId`);
 
   const response: any = await axios.get(
-    serviceURL('histogramScores', `/articles/${parseInt(articleId, 10)}/summaryScore`, { sort }),
+    serviceURL('histogramScores', `/articles/${articleId}/summaryScore`, { sort }),
+
   );
 
   return List(
@@ -246,7 +257,8 @@ export async function listHistogramScoresByArticleByDate(
   validateID(articleId, `articleId`);
 
   const response: any = await axios.get(
-    serviceURL('histogramScores', `/articles/${parseInt(articleId, 10)}/byDate`, { sort }),
+    serviceURL('histogramScores', `/articles/${articleId}/byDate`, { sort }),
+
   );
 
   return List(
@@ -570,7 +582,7 @@ export async function getModeratedCommentIdsForArticle(
   validateID(articleId, `articleId`);
 
   const { data }: any = await axios.get(
-    serviceURL('moderatedCounts', `/articles/${parseInt(articleId, 10)}`, { sort }),
+    serviceURL('moderatedCounts', `/articles/${articleId}`, { sort }),
   );
 
   return data.data;
