@@ -165,6 +165,11 @@ function modelURL(type: IValidModelNames, id: string, params?: Partial<IParams>)
 export function relationURL(type: IValidModelNames, id: string, relationship: string, params?: Partial<IParams>): string {
   validateModelName(type);
 
+  // We allow ids for articles to alphanumeric
+  if (type == 'articles') {
+    return `${API_URL}${REST_URL}/${type}/${id}/relationships/${relationship}${serializeParams(params)}`;
+  }
+
   return `${API_URL}${REST_URL}/${type}/${parseInt(id, 10)}/relationships/${relationship}${serializeParams(params)}`;
 }
 

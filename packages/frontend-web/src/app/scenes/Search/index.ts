@@ -186,7 +186,7 @@ export const Search = compose(
       query: { articleId },
     }) => {
       if (articleId) {
-        dispatch(loadArticle(parseInt(articleId, 10)));
+        dispatch(loadArticle(articleId));
       }
       await dispatch(loadTaggingSensitivities());
     },

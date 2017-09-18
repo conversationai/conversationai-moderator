@@ -29,9 +29,7 @@ const mapStateToProps = createStructuredSelector({
   tags: getTags,
 
   articleId: (_: any, { params: { articleId }}: any) => {
-    const parsedArticleId = parseInt(articleId, 10);
-
-    return parsedArticleId;
+    return articleId;
   },
 
   categoryId: (_: any, { params: { categoryId }}: any) => {
@@ -47,7 +45,6 @@ const mapStateToProps = createStructuredSelector({
   },
 
   getImagePath: (_: any, { params: { categoryId, articleId }}: any) => ({ tagId, width, height }: any) => {
-    const parsedArticleId = parseInt(articleId, 10);
 
     let parsedCategoryId: 'all' | number;
 
@@ -59,7 +56,7 @@ const mapStateToProps = createStructuredSelector({
 
     const dp = window.devicePixelRatio || 1;
     const startPath = !!articleId ?
-        `articles/${parsedArticleId}` :
+        `articles/${articleId}` :
         `categories/${parsedCategoryId}`;
 
     let tagSuffix;
