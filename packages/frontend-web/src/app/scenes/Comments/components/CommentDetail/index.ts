@@ -353,8 +353,7 @@ function mergeProps(
 const HookedCommentDetail = provideHooks<IRedialLocals>({
   fetch: ({ dispatch, params: { articleId, commentId } }) => {
     if (articleId) {
-      const parsedArticleId = parseInt(articleId, 10);
-      dispatch(loadArticle(parsedArticleId));
+      dispatch(loadArticle(articleId));
     }
 
     // const parsedCommentId = parseInt(commentId, 10);
