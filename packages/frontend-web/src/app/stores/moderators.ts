@@ -249,7 +249,7 @@ export function updateCategoryModerators(category: ICategoryModel, moderators: A
     const removedModeratorIds = getCategoryModeratorIds(getState())
         .toArray().filter((id) => !moderatorIds.some((modId) => modId === id));
 
-    if (typeof(category.id) === 'number') {
+    if (typeof(parseInt(category.id)) === 'number') {
       // post to service that adds/removes moderators to all articles for the category
       await updateCategoryAssignments(category.id, moderatorIds);
       // Go update state for the articles.
