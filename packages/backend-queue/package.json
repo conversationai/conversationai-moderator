@@ -1,6 +1,6 @@
 {
   "name": "@conversationai/moderator-backend-queue",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Task Queue for OSMod project",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,7 +19,7 @@
     "node": "6.11.0"
   },
   "dependencies": {
-    "@conversationai/moderator-backend-core": "1.0.5",
+    "@conversationai/moderator-backend-core": "1.0.6",
     "@conversationai/moderator-config": "1.0.3",
     "@types/express": "4.0.35",
     "@types/joi": "10.4.0",
