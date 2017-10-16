@@ -10,7 +10,6 @@ dist-commonjs/
 build/
 *.js.map
 *.css.map
-*.sql
 .awcache
 ansible_playbook.retry
 .data
