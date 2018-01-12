@@ -789,7 +789,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
             <p {...css(STYLES.commentsNotFoundMessaging)}>{commentsMessaging}</p>
           ) : (
             <CommentList
-              ownerHeight={window.innerHeight - this.listContainerRef && this.listContainerRef.getBoundingClientRect().top}
+              ownerHeight={window.innerHeight - (this.listContainerRef && this.listContainerRef.getBoundingClientRect().top)}
               heightOffset={HEADER_HEIGHT - ACTION_BAR_HEIGHT_FIXED + 5}
               textSizes={textSizes}
               commentIds={commentIds}
