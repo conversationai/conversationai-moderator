@@ -680,7 +680,7 @@ export class ModeratedComments
     const { commentIds } = this.props;
     const selectedIds = commentIds && commentIds.filter((id) => this.props.isItemChecked(id));
 
-    return selectedIds.toArray();
+    return selectedIds ? selectedIds.toArray() : [];
   }
 
   @autobind
