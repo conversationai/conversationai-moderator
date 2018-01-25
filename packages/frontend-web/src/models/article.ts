@@ -29,7 +29,7 @@ export interface IArticleAttributes {
   unprocessedCount: number;
   unmoderatedCount: number;
   moderatedCount: number;
-  deferedCount: number;
+  deferredCount: number;
   approvedCount: number;
   highlightedCount: number;
   rejectedCount: number;
@@ -56,7 +56,7 @@ const ArticleModelRecord = Record({
   highlightedCount: null,
   approvedCount: null,
   rejectedCount: null,
-  deferedCount: null,
+  deferredCount: null,
   flaggedCount: null,
   batchedCount: null,
   recommendedCount: null,

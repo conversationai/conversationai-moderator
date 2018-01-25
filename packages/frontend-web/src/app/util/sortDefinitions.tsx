@@ -63,8 +63,8 @@ export const articleSortDefinitions: {
   },
   deferred: {
     label: 'Deferred Count',
-    sortInfo: ['-deferedCount'],
-    sortName: 'deferedCount',
+    sortInfo: ['-deferredCount'],
+    sortName: 'deferredCount',
   },
   flagged: {
     label: 'Flagged Count',

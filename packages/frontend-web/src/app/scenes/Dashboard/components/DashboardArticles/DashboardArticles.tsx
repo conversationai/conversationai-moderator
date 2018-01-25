@@ -236,7 +236,7 @@ export class DashboardArticles
       case 'oldest':
         return formatDate(article.sourceCreatedAt, DATE_FORMAT_LONG);
       case 'deferred':
-        return article.deferedCount;
+        return article.deferredCount;
       case 'approved':
         return article.approvedCount;
       case 'highlighted':

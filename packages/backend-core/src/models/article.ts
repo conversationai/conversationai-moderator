@@ -33,7 +33,7 @@ export interface IArticleAttributes {
   highlightedCount?: number;
   approvedCount?: number;
   rejectedCount?: number;
-  deferedCount?: number;
+  deferredCount?: number;
   flaggedCount?: number;
   batchedCount?: number;
   recommendedCount?: number;
@@ -139,7 +139,7 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     defaultValue: 0,
   },
 
-  deferedCount: {
+  deferredCount: {
     type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,

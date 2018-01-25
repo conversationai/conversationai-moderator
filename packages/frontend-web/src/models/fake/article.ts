@@ -32,7 +32,7 @@ export function fakeArticleModel(overrides: Partial<IArticleAttributes> = {}): I
     highlightedCount: faker.random.number(),
     approvedCount: faker.random.number(),
     rejectedCount: faker.random.number(),
-    deferedCount: faker.random.number(),
+    deferredCount: faker.random.number(),
     flaggedCount: faker.random.number(),
     batchedCount: faker.random.number(),
     recommendedCount: faker.random.number(),
