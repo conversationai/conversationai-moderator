@@ -33,6 +33,7 @@
     "@types/joi": "10.0.1",
     "@types/lodash": "4.14.58",
     "@types/mysql": "0.0.31",
+    "@types/passport": "^0.4.3",
     "@types/qs": "6.2.31",
     "@types/redis": "0.12.36",
     "@types/request": "0.0.42",

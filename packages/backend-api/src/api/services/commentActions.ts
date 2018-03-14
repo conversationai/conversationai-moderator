@@ -150,7 +150,8 @@ export function queueScoreAction(name: IKnownTasks): express.RequestHandler {
       commentId: parseInt(params.commentid, 10),
       tagId: body.data ? parseInt(body.data.tagId, 10) : undefined,
       commentScoreId: params.commentscoreid ? params.commentscoreid : undefined,
-      userId: user.get('id'),
+      // TODO(ldixon): explore if user is actually always defined.
+      userId: user!.get('id'),
       annotationStart: body.data ? body.data.annotationStart : undefined,
       annotationEnd: body.data ? body.data.annotationEnd : undefined,
     }, body.runImmediately || false);
