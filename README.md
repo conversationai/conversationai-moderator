@@ -13,9 +13,11 @@ Install all dependencies
 Setup local MySQL:
 
 ```bash
-mysql -uroot os_moderator < packages/backend-core/seed/initial-database.sql 
+mysql -uroot os_moderator < packages/backend-core/seed/initial-database.sql
 ./bin/osmod migrate
 ```
+
+See [the SQL Data Model docs](docs/modeling.md) for more info.
 
 ### OSMOD commands
 
@@ -92,7 +94,6 @@ Uses Lerna to publish to the different npm packages
 
 optionally you can run lint-fix to attempt auto-fixing most lint errors
 
-
 ```bash
 ./bin/lint-fix
 ```
@@ -110,3 +111,32 @@ To update stories that need new snapshots, go to `packages/frontend-web` and run
 ```bash
 npm run storybook:test -- -u
 ```
+
+## Development
+
+The project uses [lerna](https://www.npmjs.com/package/lerna) to help manage
+development [the several npm packages](packages/README.md) that are in this
+repository. Lerna sym-links package dependencies within this repository. Lerna
+is also used to publish updates to all these packages at once.
+
+## What a running service looks like
+
+While there can be many ways to setup a service, in general a deployment will
+typically be a single VM instance running these services:
+
+A MySQL database that holds all of the applications state (See
+[the data model doc](docs/modelling.md)).
+
+*  Frontend-Webserver service hosting the static ReactJS site. This sends
+   messages to the Backend API service.
+*  Backend API service responsible for querying the SQL database and sending
+   data to the front-end service. This is also the endpoint that receives
+   requests from the commenting platform it is supporting moderation of; and
+   it sends requests back to the commenting platform with user actions (e.g. to
+   reject or approve comments).
+*  Backend Work Queue service responsible for managing concurrent queue of
+   asynchronous work. TODO(ldixon): add reddis stuff?
+*  Some number of assistant services responsible for automating tasks.
+   Typically this is just calling ML services like
+   [the Perspective API](https://perspectiveapi.com/)
+
