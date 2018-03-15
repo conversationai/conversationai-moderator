@@ -52,7 +52,7 @@ export function calculateTopScore(scores: Array<ICommentScoreInstance>): ICommen
 
   if (scoresWithRange.length <= 0) { return null; }
 
-  return maxBy(scoresWithRange, (s) => s.get('score'));
+  return maxBy(scoresWithRange, (s) => s.get('score')) || null;
 }
 
 /**

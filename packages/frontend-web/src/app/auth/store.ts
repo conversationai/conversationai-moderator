@@ -34,6 +34,7 @@ const failedAuthentication =
 type ICompletedAuthentificationPayload = IUserModel;
 const completedAuthentication =
   createAction<ICompletedAuthentificationPayload>('auth/COMPLETED_AUTHENTICATION');
+
 export const logout = createAction<void>('auth/LOGOUT');
 
 function setAxiosToken(token: string): void {
@@ -176,7 +177,9 @@ export const reducer = handleActions<
       .set('isAuthenticated', false)
   ),
 
-  [completedAuthentication.toString()]: (state, { payload }: { payload: ICompletedAuthentificationPayload }) => (
+  [completedAuthentication.toString()]:
+    (state,
+     { payload }: { payload: ICompletedAuthentificationPayload }) => (
     state
       .set('isAuthenticating', false)
       .set('isAuthenticated', true)

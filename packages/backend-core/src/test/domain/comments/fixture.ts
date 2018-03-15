@@ -118,7 +118,8 @@ export function getServiceUserData(data: Partial<IUserAttributes> = {}): IUserAt
     endpoint: 'http://www.google.com',
     isActive: true,
     ...data,
-  };
+  // TODO(ldixon): fix typehack.
+  } as any;
 }
 
 export async function createUser(data: Partial<IUserAttributes> = {}): Promise<IUserInstance> {
@@ -144,7 +145,8 @@ export function getCommentScoreData(data: Partial<ICommentScoreAttributes> = {})
     sourceType: sample(SCORE_SOURCE_TYPES),
     score: (random(0, 100) / 100),
     ...data,
-  };
+    // TODO(ldixon): fix typehack.
+  } as any;
 }
 
 export async function createCommentScore(data?: object): Promise<ICommentScoreInstance> {
@@ -172,13 +174,14 @@ export function getModerationRuleData(data: Partial<IModerationRuleAttributes> =
   const lowerThreshold = (random(0, 100) / 100);
   const upperThreshold = (random(lowerThreshold * 100, 100) / 100);
 
-  return  {
+  return {
     tagId: faker.random.number(),
     action: sample(MODERATION_RULE_ACTION_TYPES),
     lowerThreshold,
     upperThreshold,
     ...data,
-  };
+    // TODO(ldixon): fix typehack.
+  } as any;
 }
 
 export async function createModerationRule(data?: object): Promise<IModerationRuleInstance> {

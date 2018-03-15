@@ -24,7 +24,7 @@
     "@types/express": "4.0.35",
     "@types/joi": "10.4.0",
     "@types/kue": "0.11.1",
-    "@types/lodash": "4.14.65",
+    "@types/lodash": "4.14.104",
     "@types/mysql": "0.0.33",
     "@types/qs": "6.2.31",
     "@types/redis": "2.6.0",

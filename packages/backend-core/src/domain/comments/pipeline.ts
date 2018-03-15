@@ -408,8 +408,10 @@ export async function updateMaxSummaryScore(comment: ICommentInstance): Promise<
 
   const maxSummaryScores = maxBy(summaryScores, (score) => score.get('score'));
   await comment.update({
-    maxSummaryScore: maxSummaryScores.get('score'),
-    maxSummaryScoreTagId: maxSummaryScores.get('tagId'),
+    // TODO(ldixon): investigate typing to avoid `maxSummaryScores` being
+    // undefined and needing the type hack here.
+    maxSummaryScore: maxSummaryScores!.get('score'),
+    maxSummaryScoreTagId: maxSummaryScores!.get('tagId'),
   });
 }
 
@@ -472,7 +474,8 @@ export function compileSummaryScoresData(scoreData: ISummaryScores, comment: ICo
     .forEach((tagKey) => {
       data.push({
         commentId: comment.get('id'),
-        tagId: tagsByKey[tagKey][0].get('id'),
+        // TODO(ldixon): figure out why this typehack is needed and fix.
+        tagId: (tagsByKey[tagKey][0] as any).get('id'),
         score: scoreData[tagKey],
       });
     });
