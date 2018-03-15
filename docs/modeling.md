@@ -1,6 +1,51 @@
-# Modeling
+# The Data Model for Osmod
 
-## User
+## Connecting to remote SQL Google Cloud database
+
+From [a cloud shell in your project](https://cloud.google.com/shell/docs/), you can run:
+
+`gcloud beta sql connect <instance-name> --user=<username>`
+
+To connect to your SQL instance. You'll need to create the username from the
+[google cloud SQL config interface](https://pantheon.corp.google.com/sql/instances/osmod-development-branch/users).
+
+## The SQL Data Model
+
+[The SQL table construction file](https://github.com/conversationai/conversationai-moderator/blob/master/packages/backend-core/seed/initial-database.sql)
+
+Default database name: `os_moderator`
+
+The tables:
+
+  Tables_in_os_moderator    | Description
+  --------------------------|-------------
+  SequelizeMeta             |
+  articles                  |
+  categories                |
+  comment_flags             |
+  comment_recommendations   |
+  comment_score_requests    |
+  comment_scores            |
+  comment_sizes             |
+  comment_summary_scores    |
+  comment_top_scores        |
+  comments                  |
+  csrfs                     |
+  decisions                 |
+  moderation_rules          |
+  moderator_assignments     |
+  preselects                |
+  tagging_sensitivities     |
+  tags                      |
+  user_category_assignments |
+  user_social_auths         |
+  users                     |
+
+### User
+
+Users are users of Osmod. This is the moderation team, and people who admin the
+Osmod system using the UI.
+
 - id (int) (required)
 - group (enum: general, admin, service) (required)
 - email (string) (required for all but users in the "service" group)
@@ -10,23 +55,31 @@
 - avatarURL (string)
 - extra (json)
 
-### Indexes
+*Indexes*:
 - group
 - isActive
 - email (unique)
 
-## UserSocialAuth
+### UserSocialAuth
+
+This table holds information about the passport authentication configuration for
+users in the `Users` table. It is used to allow users to login with social
+networks, e.g. using their google account.
+
 - id (int) (required)
 - userId (foreign key: User) (required)
 - socialId (string) (required) (provider user id)
 - provider (string) (required) (name of auth provider, e.g. "google")
 - extra (json)
 
-### Indexes
+*Indexes*:
 - userId + provider (unique) (don't let the same user use the same provider multiple times)
 - socialId + provider (unique) (don't allow the same provider user to authenticate on multiple accounts)
 
-## Article
+### Article
+
+This table holds the articles that can be commented on.
+
 - id (bigint) (required)
 - sourceId (string) (required)
 - sourceCreatedAt (Created ISO 8601 timestamp from publisher)
@@ -50,20 +103,26 @@
 - modifiedAt (datetime)
 - extra (json)
 
-### Indexes
+*Indexes*:
 - sourceId (unique)
 - categoryId
 
-## ModeratorAssignment
+### ModeratorAssignment
+
+This tables holds which users are assigned to which articles.
+
 - id (int) (required)
 - user (foreign key: User) (required)
 - article (foreign key: Article) (required)
 
-### Indexes
+*Indexes*:
 - user + article (unique)
 - user
 
-## Comment
+### Comment
+
+This table holds the comments, and the state of the comments.
+
 - id (bigint) (required)
 - sourceId (string) (required) (Original id from publisher)
 - replyToSourceId (string) (optional foreign key: self.sourceId)
@@ -85,7 +144,7 @@
 - sentBackToPublisher (datetime)
 - extra (json)
 
-### Indexes
+*Indexes*
 - sourceId (unique)
 - isAccepted
 - isDeferred
@@ -94,26 +153,26 @@
 - isAutoResolved
 - sentForScoring
 
-## CommentSize
+### CommentSize
 - commentId (int) (required)
 - width (int) (required)
 - height (int) (required)
 
-### Indexes
+*Indexes*:
 - commentId, width
 
-## UserCategoryAssignment
+### UserCategoryAssignment
 - userId (int) (required)
 - categoryId (int) (required)
 
-### Indexes
+*Indexes*:
 - userId
 - categoryId
 
-### Notes
+#### Notes
 - Used for hasAndBelongsToMany for category assignments on users.
 
-### States
+#### States
 - unscored: sentForScoring == null
 - scored: sentForScoring != null && isScored == 1 (set as such when all related `CommentScoreRequest`s `doneAt` fields are set)
 - accepted: isAccepted == 1
@@ -121,14 +180,14 @@
 - deferred: isAccepted == null && isDeferred == 1
 - highlighted: isAccepted == 1 && isHighlighted == 1
 
-## CommentScoreRequest
+### CommentScoreRequest
 - id (bigint)
 - comment (foreign key: Comment) (required)
 - userId (foreign key: User) (required)
 - sentAt (datetime) (required)
 - doneAt (datetime)
 
-## CommentScore
+### CommentScore
 - id (bigint)
 - commentId (foreign key: Comment)
 - sourceType (enum: User, Moderator, Machine) (required)
@@ -144,28 +203,28 @@
 - updatedAt (datetime)
 - TagId (int) (foreign key: Tags)
 
-### Indexes
+*Indexes*:
 - comment
 
-## CommentTopScore
+### CommentTopScore
 - commentId (foreign key: Comment)
 - tagId (foreign key: Tag)
 - commentScoreId (foreign key: CommentScore)
 
-### Indexes
+*Indexes*:
 - commentId/tagId
 
-## CommentSummaryScore
+### CommentSummaryScore
 - commentId (foreign key: Comment)
 - tagId (foreign key: Tag)
 - score (float) (required)
 - confirmedUserId (int)
 - isConfirmed (bool)
 
-### Indexes
+*Indexes*:
 - commentId/tagId
 
-## CommentRecommendation
+### CommentRecommendation
 - id (bigint)
 - commentId (foreign key: Comment)
 - sourceId (string) (optional identifier so that scores can be retracted, like for publisher recommendations)
@@ -173,10 +232,10 @@
 - createdAt (datetime) (required)
 - updatedAt (datetime)
 
-### Indexes
+*Indexes*:
 - comment
 
-## CommentFlag
+### CommentFlag
 - id (bigint)
 - commentId (foreign key: Comment)
 - sourceId (string) (optional identifier so that scores can be retracted, like for publisher recommendations)
@@ -184,10 +243,10 @@
 - createdAt (datetime) (required)
 - updatedAt (datetime)
 
-### Indexes
+*Indexes*:
 - comment
 
-## Decision
+### Decision
 - id(int) (required)
 - commentId (foreign key: Comment) (require)
 - userId (foreign key: User) (optional, if source === User)
@@ -196,11 +255,11 @@
 - source (enum: User, Rule) (required)
 - sentBackToPublisher (datetime)
 
-### Notes
+#### Notes
 
 Represents a log of decisions made by OSMod.
 
-## ModerationRule
+### ModerationRule
 - id (int) (required)
 - tagId (foreign key: Tag) (required)
 - categoryId (foreign key: Category)
@@ -209,10 +268,10 @@ Represents a log of decisions made by OSMod.
 - action (enum: Approve, Reject, Defer, Highlight) (required)
 - createdBy (foreign key: User)
 
-### Indexes
+*Indexes*:
 - categoryId
 
-## Category
+### Category
 - id (int) (required)
 - label (string) (required)
 - isActive (tinyint) (required)
@@ -228,21 +287,21 @@ Represents a log of decisions made by OSMod.
 - recommendedCount (int) (Denormalize SUM of articles' recommendedCount)
 - extra (json)
 
-### Indexes
+*Indexes*:
 - isActive
 
-## CommentReply
+### CommentReply
 - commentId (int) (required)
 - replyId (int) (required)
 
-### Indexes
+*Indexes*:
 - commentId
 - replyId
 
-### Notes
+#### Notes
 - Used for hasAndBelongsToMany for replies on a comment.
 
-## Tag
+### Tag
 - id (int) (required)
 - key (string) (required) (raw key for tag, e.g. `ATTACK_ON_COMMENTER`)
 - label (string) (required) (display name, e.g. `Attack of Commenter`)
@@ -251,10 +310,10 @@ Represents a log of decisions made by OSMod.
 - isInBatchView (bool) (is the tag to be shown on the front-end)
 - isTaggable (bool) (tags that would show up in reason to reject or moderateor selected tags, but not the tag selector for batch view)
 
-### Indexes
+*Indexes*:
 - key (unique)
 
-## Preselect
+### Preselect
 - id (int) (required)
 - tagId (foreign key: Tag)
 - categoryId (foreign key: Category)
@@ -262,7 +321,7 @@ Represents a log of decisions made by OSMod.
 - upperThreshold (smallint) (required)
 - createdBy (foreign key: User)
 
-## TaggingSensitivity
+### TaggingSensitivity
 - id (int) (required)
 - tagId (foreign key: Tag)
 - categoryId (foreign key: Category)
