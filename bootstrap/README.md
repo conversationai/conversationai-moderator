@@ -12,7 +12,9 @@ comments to the Moderator database.
 To generate a JWT token for a service user:
 
 * Set the `TOKEN_SECRET` and `TOKEN_ISSUER` environment variables to the value
-they are set to in the instance of Moderator you are using.
+they are set to in the instance of Moderator you are using. They will either be
+set as environment variables in the deployment process, or set to the default values
+in the Moderator [config](../packages/config/index.js).
 * Run the following command from the `/packages/cli` directory.
 
 ```

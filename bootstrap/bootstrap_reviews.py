@@ -7,10 +7,7 @@ import datetime, json, os
 AUTH = os.getenv("MODERATOR_AUTH")
 
 # The URL of the Moderator API
-API_URL = os.getenv("MODERATOR_API", "127.0.0.1:8080")
-
-# The number of reviews per category to import into Moderator
-REVIEWS_PER_CATEGORY = 100
+API_URL = os.getenv("MODERATOR_API")
 
 class moderator_client(object):
 
@@ -31,7 +28,6 @@ class moderator_client(object):
             "data": [
                 {
                     "sourceId": sourceId,
-
                     "categoryId": category,
                     "title": title,
                     "createdAt": str(datetime.datetime.now()),
@@ -62,7 +58,7 @@ class moderator_client(object):
         except Exception as e:
             print("Error calling /publisher/articles:", e)
 
-    def create_comment(self, review_id, product_id, text, author_location, author_name):
+    def create_comment(self, comment_id, article_id, text, author_location, author_name):
         '''
         Create a comment in Moderator using the publisher API.
         '''
@@ -70,8 +66,8 @@ class moderator_client(object):
         data = {
             "data": [
                 {
-                    "articleId": product_id,
-                    "sourceId": review_id,
+                    "articleId": article_id,
+                    "sourceId": comment_id,
                     "authorSourceId": "4",
                     "text": text,
                     "author": {
@@ -88,7 +84,7 @@ class moderator_client(object):
         payload = json.dumps(data)
 
         try:
-            print("Adding comment {0} to product {1}".format(review_id, product_id))
+            print("Adding comment {0} to article {1}".format(comment_id, article_id))
 
             url = self.api_url + "/publisher/comments"
             response = requests.post(url, data=payload, headers=self.headers)
