@@ -39,7 +39,7 @@ export function builder(yargs: yargs.Argv) {
 
 function getYAMLEnvironment(path: string): object {
   const doc = yaml.safeLoad(fs.readFileSync(path, 'utf8'));
-  const env = (doc && doc['env_variables']) || {};
+  const env = (doc && (doc as any)['env_variables']) || {};
 
   const ignoreSocket = !fs.existsSync('/cloudsql');
 
