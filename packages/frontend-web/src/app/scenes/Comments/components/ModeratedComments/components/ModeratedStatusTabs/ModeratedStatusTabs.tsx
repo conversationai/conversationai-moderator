@@ -119,7 +119,7 @@ export interface IModeratedStatusTabsProps {
 }
 
 export class ModeratedStatusTabs
-    extends React.Component<IModeratedStatusTabsProps, void> {
+    extends React.Component<IModeratedStatusTabsProps> {
 
   render () {
     const {

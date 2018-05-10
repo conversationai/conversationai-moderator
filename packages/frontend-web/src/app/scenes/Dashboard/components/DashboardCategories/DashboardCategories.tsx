@@ -37,7 +37,7 @@ export interface IDashboardCategoriesProps {
   categoryCounts: Map<string, number>;
 }
 
-export class DashboardCategories extends React.Component<IDashboardCategoriesProps, void> {
+export class DashboardCategories extends React.Component<IDashboardCategoriesProps> {
   render() {
     const {
       categories,

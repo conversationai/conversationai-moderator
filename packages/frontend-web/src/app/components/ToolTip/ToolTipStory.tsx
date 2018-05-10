@@ -111,7 +111,7 @@ const INFO_TOOLTIP_STYLES = {
   },
 };
 
-class ToolTipWithTag extends React.PureComponent<IToolTipTagProps, void> {
+class ToolTipWithTag extends React.PureComponent<IToolTipTagProps> {
   render() {
     const { tag } = this.props;
 
@@ -141,7 +141,7 @@ class ToolTipWithTag extends React.PureComponent<IToolTipTagProps, void> {
   }
 }
 
-class ToolTipWithTags extends React.PureComponent<object, void> {
+class ToolTipWithTags extends React.PureComponent<object> {
   render() {
     return (
       <div {...css(MULTIPLE_TAG_STYLES.container)}>
@@ -206,7 +206,7 @@ class ToolTipWithTags extends React.PureComponent<object, void> {
   }
 }
 
-class InfoToolTip extends React.PureComponent<object, void> {
+class InfoToolTip extends React.PureComponent<object> {
   render() {
     return (
       <ul {...css(INFO_TOOLTIP_STYLES.container)}>
@@ -229,7 +229,7 @@ const TARGET_STYLE = {
   width: '6px',
 };
 
-class ToolTipTarget extends React.PureComponent<object, void> {
+class ToolTipTarget extends React.PureComponent<object> {
   render() {
     return (
       <div {...css(TARGET_STYLE)} />

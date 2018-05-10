@@ -148,7 +148,7 @@ export interface IDashboardArticleItemContext {
 }
 
 export class DashboardArticleItem
-    extends React.Component<IDashboardArticleItemProps, void> {
+    extends React.Component<IDashboardArticleItemProps> {
   static contextTypes = {
     ariaControlsArticle: React.PropTypes.string,
     ariaExpandedArticle: React.PropTypes.bool,

@@ -43,7 +43,7 @@ export interface IScrimProps extends React.HTMLProps<any> {
   wrapperStyles?: object;
 }
 
-export class Scrim extends React.PureComponent<IScrimProps, void> {
+export class Scrim extends React.PureComponent<IScrimProps> {
   render() {
     const {
       isVisible,

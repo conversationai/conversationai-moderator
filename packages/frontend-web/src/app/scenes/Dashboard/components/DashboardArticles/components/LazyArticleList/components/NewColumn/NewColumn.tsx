@@ -34,7 +34,7 @@ export interface INewColumnProps extends React.HTMLProps<any> {
   styles?: object;
 }
 
-export class NewColumn extends React.Component<INewColumnProps, void> {
+export class NewColumn extends React.Component<INewColumnProps> {
   render() {
     const {
       article,

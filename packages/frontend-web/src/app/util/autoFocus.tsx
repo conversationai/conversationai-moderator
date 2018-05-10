@@ -22,7 +22,7 @@ export const autoFocus = (
   propsValidator:
   (props: any) => boolean,
 ) => (WrappedComponent: any): React.ComponentClass<any> => {
-  return class extends React.Component<any, void> {
+  return class extends React.Component<any> {
     render() {
       return (
         <WrappedComponent {...this.props} />

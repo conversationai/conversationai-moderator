@@ -83,7 +83,7 @@ export interface ILabelSettingsProps {
   onTagChange(tag: ITagModel, key: string, value: boolean, e?: React.ChangeEvent<HTMLInputElement>): any;
 }
 
-export class LabelSettings extends React.Component<ILabelSettingsProps, void> {
+export class LabelSettings extends React.Component<ILabelSettingsProps> {
   @autobind
   onInputChange(
     callback: (tag: ITagModel, value?: string) => any,

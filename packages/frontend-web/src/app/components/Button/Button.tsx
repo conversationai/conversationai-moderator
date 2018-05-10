@@ -53,7 +53,7 @@ export interface IButtonProps {
   buttonStyles?: object;
 }
 
-export class Button extends React.PureComponent<IButtonProps, void> {
+export class Button extends React.PureComponent<IButtonProps> {
   render() {
     const {
       label,

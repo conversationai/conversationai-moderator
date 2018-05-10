@@ -150,7 +150,7 @@ export interface IDashboardCategoryItemContext {
 }
 
 export class DashboardCategoryItem
-    extends React.Component<IDashboardCategoryItemProps, void> {
+    extends React.Component<IDashboardCategoryItemProps> {
   static contextTypes = {
     ariaControlsCategory: React.PropTypes.string,
     ariaExpandedCategory: React.PropTypes.bool,

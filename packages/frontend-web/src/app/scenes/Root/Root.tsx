@@ -30,7 +30,7 @@ export interface IRootProps extends React.Props<any> {
   currentlyFocused: number;
 }
 
-export class Root extends React.Component<IRootProps, void> {
+export class Root extends React.Component<IRootProps> {
   render() {
     return (
       <div {...css(STYLE.base)}>

@@ -60,7 +60,7 @@ export interface IOverflowContainerProps {
   footer?: JSX.Element;
 }
 
-export class OverflowContainer extends React.PureComponent<IOverflowContainerProps, void> {
+export class OverflowContainer extends React.PureComponent<IOverflowContainerProps> {
   render() {
     const {
       header,

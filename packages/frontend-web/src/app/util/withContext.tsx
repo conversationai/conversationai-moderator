@@ -17,7 +17,7 @@ limitations under the License.
 import React from 'react';
 
 export const withContext = (WrappedComponent: any, contextTypes: React.ValidationMap<any>): React.ComponentClass<any> => {
-  return class extends React.Component<any, void> {
+  return class extends React.Component<any> {
     static childContextTypes = contextTypes;
 
     getChildContext() {

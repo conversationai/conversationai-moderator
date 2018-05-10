@@ -235,7 +235,7 @@ export interface ILazyArticleList {
   categoryModerators: List<IUserModel>;
 }
 
-export class LazyArticleList extends React.Component<ILazyArticleList, void> {
+export class LazyArticleList extends React.Component<ILazyArticleList> {
   @autobind
   getNewColumnCell(cellProps: any) {
     const {

@@ -114,7 +114,7 @@ export interface IScoresListProps {
   tags?: List<ITagModel>;
 }
 
-export class ScoresList extends React.PureComponent<IScoresListProps, void> {
+export class ScoresList extends React.PureComponent<IScoresListProps> {
 
   @autobind
   getTextByIndeces(annotationStart: number, annotationEnd: number): string {

@@ -61,7 +61,7 @@ export interface IToastMessageProps extends React.Props<any> {
   icon?: JSX.Element;
 }
 
-export class ToastMessage extends React.PureComponent<IToastMessageProps, void> {
+export class ToastMessage extends React.PureComponent<IToastMessageProps> {
   render() {
     const {
       buttonLabel,

@@ -18,7 +18,7 @@ import React from 'react';
 import { IconBase } from './IconBase';
 
 function makeIcon(contents: JSX.Element): React.ComponentClass<any> {
-  return class extends React.PureComponent<any, void> {
+  return class extends React.PureComponent<any> {
     render() {
       return (
         <IconBase {...this.props}>

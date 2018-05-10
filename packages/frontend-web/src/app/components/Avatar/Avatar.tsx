@@ -38,7 +38,7 @@ export interface IAvatarProps {
   size: number;
 }
 
-export class Avatar extends React.PureComponent<IAvatarProps, void> {
+export class Avatar extends React.PureComponent<IAvatarProps> {
   render() {
     const { target, size } = this.props;
 

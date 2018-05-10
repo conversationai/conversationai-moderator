@@ -28,7 +28,7 @@ export interface ISortColumnProps extends React.HTMLProps<any> {
   selectedTag?: ITagModel;
 }
 
-export class SortColumn extends React.PureComponent<ISortColumnProps, void> {
+export class SortColumn extends React.PureComponent<ISortColumnProps> {
   render() {
     const {
       style,

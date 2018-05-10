@@ -64,7 +64,7 @@ export interface ICheckboxColumnProps extends React.Props<any> {
   isItemChecked?(id: string): boolean;
 }
 
-export class CheckboxColumn extends React.PureComponent<ICheckboxColumnProps, void> {
+export class CheckboxColumn extends React.PureComponent<ICheckboxColumnProps> {
   render() {
     const {
       isSelected,

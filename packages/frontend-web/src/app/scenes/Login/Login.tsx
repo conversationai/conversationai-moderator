@@ -89,7 +89,7 @@ export interface ILoginProps {
   errorMessage?: boolean | string;
 }
 
-export class Login extends React.Component<ILoginProps, void> {
+export class Login extends React.Component<ILoginProps> {
   render() {
     const { errorMessage, csrf } = this.props;
     const redirectURI = window.location.origin + window.location.pathname;

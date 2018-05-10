@@ -107,7 +107,7 @@ export interface IShortcutProps {
   onClose?(e: React.MouseEvent<any>): any;
 }
 
-export class Shortcuts extends React.Component<IShortcutProps, void> {
+export class Shortcuts extends React.Component<IShortcutProps> {
   render() {
     const {
       onClose,

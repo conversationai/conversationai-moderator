@@ -84,7 +84,7 @@ export interface IRuleBarsProps {
   automatedRuleToast?(rule: IRuleModel): void;
 }
 
-export class RuleBars extends React.Component<IRuleBarsProps, void> {
+export class RuleBars extends React.Component<IRuleBarsProps> {
   render() {
     const {
       rules,

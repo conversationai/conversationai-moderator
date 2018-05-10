@@ -77,7 +77,7 @@ export interface IArrowProps {
   color?: any;
 }
 
-export class Arrow extends React.PureComponent<IArrowProps, void> {
+export class Arrow extends React.PureComponent<IArrowProps> {
 
   render() {
     const {

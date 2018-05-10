@@ -87,7 +87,7 @@ export interface IDashboardNavCategoryProps {
   hasNewItems?: boolean;
 }
 
-export class DashboardNavCategory extends React.Component<IDashboardNavCategoryProps, void> {
+export class DashboardNavCategory extends React.Component<IDashboardNavCategoryProps> {
   render() {
     const {
       label,
