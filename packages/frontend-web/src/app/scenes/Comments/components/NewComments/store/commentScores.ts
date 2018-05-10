@@ -38,7 +38,7 @@ const SCORES_HAS_DATA = [...DATA_PREFIX, 'commentScores', 'hasData'];
 const SCORES_DATA = [...DATA_PREFIX, 'commentScores', 'scores'];
 const SCORES_IS_LOADING = [...DATA_PREFIX, 'commentScores', 'isLoading'];
 
-const loadCommentScoresStart = createAction<void>(
+const loadCommentScoresStart = createAction(
   'article-detail-new/LOAD_COMMENTS_SCORES_START',
 );
 

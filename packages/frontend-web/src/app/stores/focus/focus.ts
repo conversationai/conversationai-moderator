@@ -19,9 +19,9 @@ import { createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import { IAppStateRecord } from '../../stores';
 export const focusedElement = createAction<string | null>('root/FOCUSED_ELEMENT');
-export const unfocusedElement = createAction<void>('root/UNFOCUSED_ELEMENT');
-export const saveFocus = createAction<void>('root/SAVE_FOCUS');
-export const restoreFocus = createAction<void>('root/RESTORE_FOCUS');
+export const unfocusedElement = createAction('root/UNFOCUSED_ELEMENT');
+export const saveFocus = createAction('root/SAVE_FOCUS');
+export const restoreFocus = createAction('root/RESTORE_FOCUS');
 
 const STATE_ROOT = ['global', 'focus'];
 const CURRENTLY_FOCUSED = [...STATE_ROOT, 'currentlyFocused'];

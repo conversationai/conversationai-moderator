@@ -31,7 +31,7 @@ const COMMENT_DATA = [...DATA_PREFIX, 'item'];
 const LOADING_STATUS = [...DATA_PREFIX, 'isFetching'];
 
 const loadCommentStart =
-  createAction<void>('threaded-comment-detail/LOAD_COMMENT_START');
+  createAction('threaded-comment-detail/LOAD_COMMENT_START');
 const loadCommentComplete =
   createAction<object>('threaded-comment-detail/LOAD_COMMENT_COMPLETE');
 

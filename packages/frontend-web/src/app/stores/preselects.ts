@@ -26,7 +26,7 @@ const PRESELECTS_DATA = [...STATE_ROOT, 'items'];
 const PRESELECTS_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
 const PRESELECTS_HAS_DATA = [...STATE_ROOT, 'hasData'];
 
-const loadPreselectsStart = createAction<void>(
+const loadPreselectsStart = createAction(
   'all-preselects/LOAD_PRESELECTS_START',
 );
 const loadPreselectsComplete = createAction<object>(

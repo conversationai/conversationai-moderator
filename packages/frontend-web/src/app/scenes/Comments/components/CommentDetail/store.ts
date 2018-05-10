@@ -53,15 +53,15 @@ const COMMENT_AUTHOR_COUNTS = ['scenes', 'commentsIndex', 'commentDetail', 'auth
 const COMMENT_AUTHOR_COUNTS_DATA = [...COMMENT_AUTHOR_COUNTS, 'authorCounts'];
 
 const loadCommentStart =
-  createAction<void>('comment-detail/LOAD_COMMENT_START');
+  createAction('comment-detail/LOAD_COMMENT_START');
 const loadCommentComplete =
   createAction<object>('comment-detail/LOAD_COMMENT_COMPLETE');
 const loadCommentScoresStart =
-  createAction<void>('comment-detail/LOAD_COMMENT_SCORE_START');
+  createAction('comment-detail/LOAD_COMMENT_SCORE_START');
 const loadCommentScoresComplete =
   createAction<object>('comment-detail/LOAD_COMMENT_SCORE_COMPLETE');
 export const clearCommentPagingOptions =
-  createAction<void>('comment-detail/CLEAR_COMMENT_PAGING_OPTIONS');
+  createAction('comment-detail/CLEAR_COMMENT_PAGING_OPTIONS');
 const internalStoreCommentPagingOptions =
   createAction<ICommentPagingState>('comment-detail/STORE_COMMENT_PAGING_OPTIONS');
 

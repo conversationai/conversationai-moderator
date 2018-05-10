@@ -56,7 +56,7 @@ const MODERATED_COMMENTS_FOR_ARTICLE_DATA = [...DATA_PREFIX, 'moderatedComments'
 const MODERATED_COMMENTS_FOR_CATEGORY_DATA = [...DATA_PREFIX, 'moderatedComments', 'categories'];
 const MODERATED_COMMENTS_IS_LOADING = [...MODERATED_COMMENTS_FOR_ARTICLE_DATA, 'isLoading'];
 
-const loadModeratedCommentsStart = createAction<void>(
+const loadModeratedCommentsStart = createAction(
   'article-detail-moderatored/LOAD_MODERATED_COMMENTS_START',
 );
 

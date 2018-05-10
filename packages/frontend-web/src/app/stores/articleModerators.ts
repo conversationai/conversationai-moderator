@@ -26,7 +26,7 @@ import {
 import { updateArticleModeratorsById, updateArticleModeratorsComplete } from './moderators';
 
 const loadArticleModeratorsStart =
-  createAction<void>('article-moderators/LOAD_ARTICLE_MODERATORS_START');
+  createAction('article-moderators/LOAD_ARTICLE_MODERATORS_START');
 
 const loadArticleModeratorsComplete =
   createAction<Array<object>>('article-moderators/LOAD_ARTICLE_MODERATORS_COMPLETE');

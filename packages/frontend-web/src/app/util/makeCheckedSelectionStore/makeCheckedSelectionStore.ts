@@ -52,7 +52,7 @@ export function makeCheckedSelectionStore(
   const areAllSelectedPath = [...statePath, 'areAllSelected'];
   const overridesPath = [...statePath, 'overrides'];
 
-  const toggleSelectAll = createAction<void>(
+  const toggleSelectAll = createAction(
     `checked-selection-${checkedSelectionStores}/TOGGLE_SELECT_ALL`,
   );
 

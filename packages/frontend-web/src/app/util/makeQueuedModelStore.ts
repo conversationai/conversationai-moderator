@@ -44,7 +44,7 @@ export function makeQueuedModelStore<S, T>(
   const byKeyData = [...dataPrefix, 'byKey'];
   const currentlyLoadingData = [...dataPrefix, 'queued'];
 
-  const clearQueue = createAction<void>(`global/CLEAR_QUEUED_MODEL_${queuedModelStores}`);
+  const clearQueue = createAction(`global/CLEAR_QUEUED_MODEL_${queuedModelStores}`);
 
   type ICancelItemsPayload = {
     keys: List<S>;

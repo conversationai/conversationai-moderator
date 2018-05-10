@@ -29,7 +29,7 @@ const USERS_DATA = [...STATE_ROOT, 'items'];
 const USERS_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
 const USERS_HAS_DATA = [...STATE_ROOT, 'hasData'];
 
-const loadUsersStart = createAction<void>(
+const loadUsersStart = createAction(
   'all-users/LOAD_USERS_START',
 );
 const loadUsersComplete = createAction<object>(

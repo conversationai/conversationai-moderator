@@ -36,7 +36,7 @@ export const PER_PAGE = 8;
 const DATA_PREFIX = ['scenes', 'dashboard', 'articles'];
 const ARTICLES_DATA = [...DATA_PREFIX, 'articles', 'pages'];
 
-const loadArticlesPageStart = createAction<void>('dashboard-articles/LOAD_ARTICLES_PAGE_START');
+const loadArticlesPageStart = createAction('dashboard-articles/LOAD_ARTICLES_PAGE_START');
 const loadArticlesPageComplete = createAction<object>('dashboard-articles/LOAD_ARTICLES_PAGE_COMPLETE');
 
 function sideLoadModerators(payload: any): IThunkAction<Promise<void>> {

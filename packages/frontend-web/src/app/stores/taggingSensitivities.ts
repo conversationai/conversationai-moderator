@@ -26,7 +26,7 @@ const TAGGING_SENSITIVITIES_DATA = [...STATE_ROOT, 'items'];
 const TAGGING_SENSITIVITIES_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
 const TAGGING_SENSITIVITIES_HAS_DATA = [...STATE_ROOT, 'hasData'];
 
-const loadTaggingSensitivitiesStart = createAction<void>(
+const loadTaggingSensitivitiesStart = createAction(
   'all-taggingSensitivities/LOAD_TAGGING_SENSITIVITIES_START',
 );
 const loadTaggingSensitivitiesComplete = createAction<object>(

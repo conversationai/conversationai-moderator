@@ -28,7 +28,7 @@ const TEXT_SIZES_HAS_DATA = [...DATA_PREFIX, 'hasData'];
 const TEXT_SIZES_DATA = [...DATA_PREFIX, 'textSizes'];
 const TEXT_SIZES_IS_LOADING = [...DATA_PREFIX, 'isLoading'];
 
-const loadTextSizesStart = createAction<void>(
+const loadTextSizesStart = createAction(
   'text-sizes/LOAD_TEXT_SIZES_START',
 );
 

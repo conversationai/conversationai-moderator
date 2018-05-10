@@ -26,7 +26,7 @@ export const loadAllCommentIdsComplete = createAction<ILoadAllCommentIdsComplete
   'search/LOAD_ALL_COMMENT_IDS_COMPLETE',
 );
 
-export const resetCommentIds = createAction<void>(
+export const resetCommentIds = createAction(
   'search/RESET_ALL_COMMENT_IDS',
 );
 

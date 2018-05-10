@@ -41,7 +41,7 @@ const ASSIGNMENTS_DATA = [...ASSIGNMENTS_PREFIX, 'items'];
 const DEFERRED_PREFIX = [...STATE_ROOT, 'deferred'];
 const DEFERRED_DATA = [...DEFERRED_PREFIX, 'items'];
 
-const loadCategoriesStart = createAction<void>('global/LOAD_CATEGORIES_START');
+const loadCategoriesStart = createAction('global/LOAD_CATEGORIES_START');
 const loadCategoriesComplete = createAction<object>('global/LOAD_CATEGORIES_COMPLETE');
 
 type ICountCompletePayload = {

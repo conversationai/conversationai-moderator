@@ -27,7 +27,7 @@ import { IAppStateRecord, IThunkAction } from './index';
 import { updateCategoryModeratorsComplete } from './moderators';
 
 const loadCategoryModeratorsStart =
-  createAction<void>('category-moderators/LOAD_CATEGORY_MODERATORS_START');
+  createAction('category-moderators/LOAD_CATEGORY_MODERATORS_START');
 
 const loadCategoryModeratorsComplete =
   createAction<Array<object>>('category-moderators/LOAD_CATEGORY_MODERATORS_COMPLETE');

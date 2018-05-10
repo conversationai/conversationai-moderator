@@ -49,7 +49,7 @@ type ISetDragHandleScopePayload = {
 };
 
 const setDragHandleScope = createAction<ISetDragHandleScopePayload>('drag-handle/SET_SCOPE');
-export const resetDragHandleScope = createAction<void>('drag-handle/RESET_SCOPE');
+export const resetDragHandleScope = createAction('drag-handle/RESET_SCOPE');
 
 export interface IDragHandleState {
   pos1: number | null;

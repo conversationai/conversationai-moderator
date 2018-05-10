@@ -26,7 +26,7 @@ const RULES_DATA = [...STATE_ROOT, 'items'];
 const RULES_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
 const RULES_HAS_DATA = [...STATE_ROOT, 'hasData'];
 
-const loadRulesStart = createAction<void>(
+const loadRulesStart = createAction(
   'all-rules/LOAD_RULES_START',
 );
 const loadRulesComplete = createAction<object>(

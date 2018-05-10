@@ -28,9 +28,9 @@ const LOCAL_STORAGE_TOKEN_KEY = 'moderator/auth_token';
 const storage = () => RESTRICT_TO_SESSION ? sessionStorage : localStorage;
 
 const startedAuthentication =
-  createAction<void>('auth/STARTED_AUTHENTICATION');
+  createAction('auth/STARTED_AUTHENTICATION');
 const failedAuthentication =
-  createAction<void>('auth/FAILED_AUTHENTICATION');
+  createAction('auth/FAILED_AUTHENTICATION');
 type ICompletedAuthentificationPayload = IUserModel;
 const completedAuthentication =
   createAction<ICompletedAuthentificationPayload>('auth/COMPLETED_AUTHENTICATION');

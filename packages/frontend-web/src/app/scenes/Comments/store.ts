@@ -46,7 +46,7 @@ function makeRootModelStore<T>(name: string, getter: any): any {
   const LOADING_STATUS = [...DATA_PREFIX, name, 'shouldWait'];
 
   const loadModelStart =
-    createAction<void>(`comments/ROOT_LOAD_${name.toUpperCase()}_START`);
+    createAction(`comments/ROOT_LOAD_${name.toUpperCase()}_START`);
 
   const loadModelComplete =
     createAction<object>(`comments/ROOT_LOAD_${name.toUpperCase()}_COMPLETE`);

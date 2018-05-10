@@ -41,8 +41,8 @@ export function makeLoadingReducer(prefix: Array<string>) {
   const isLoadingPrefix = [...prefix, 'isLoading'];
   const hasLoadedPrefix = [...prefix, 'hasLoaded'];
 
-  const startEvent = createAction<void>(`loading-store-${loadingReducer}/START`);
-  const endEvent = createAction<void>(`loading-store-${loadingReducer}/END`);
+  const startEvent = createAction(`loading-store-${loadingReducer}/START`);
+  const endEvent = createAction(`loading-store-${loadingReducer}/END`);
 
   const execute = (callback: () => IThunkAction<void>) => async (dispatch: any) => {
     dispatch(startEvent());
