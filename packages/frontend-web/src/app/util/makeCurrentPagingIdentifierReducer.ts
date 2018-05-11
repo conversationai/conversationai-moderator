@@ -30,19 +30,18 @@ const CurrentPagingIdentifierStateFactory = makeTypedFactory<ICurrentPagingIdent
   currentPagingIdentifier: null,
 });
 
+export type ICurrentPagingIdentifierPayload = { currentPagingIdentifier: string };
 // Return infered
 export function makeCurrentPagingIdentifierReducer(prefix: Array<string>) {
   currentPagingIdentifierReducer += 1;
 
   const identifierPath = [...prefix, 'currentPagingIdentifier'];
 
-  type IPayload = { currentPagingIdentifier: string };
-
-  const setCurrentPagingIdentifier = createAction<IPayload>(
+  const setCurrentPagingIdentifier = createAction<ICurrentPagingIdentifierPayload>(
     `new-comments-list/SET_CURRENT_PAGING_IDENTIFIER_${currentPagingIdentifierReducer}`,
   );
 
-  const reducer = handleAction<ICurrentPagingIdentifierStateRecord, IPayload>(
+  const reducer = handleAction<ICurrentPagingIdentifierStateRecord, ICurrentPagingIdentifierPayload>(
     setCurrentPagingIdentifier.toString(),
     (state, { payload: { currentPagingIdentifier } }) => (
       state.set('currentPagingIdentifier', currentPagingIdentifier)

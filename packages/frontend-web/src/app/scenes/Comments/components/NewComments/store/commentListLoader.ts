@@ -15,11 +15,12 @@ limitations under the License.
 */
 
 import { List, Map } from 'immutable';
+import { Reducer } from 'redux-actions';
 import { ITagModel } from '../../../../../../models';
-import { IThunkAction } from '../../../../../stores';
+import { IAppStateRecord, IThunkAction } from '../../../../../stores';
 import { fetchCurrentColumnSort } from '../../../../../stores/columnSorts';
 import { getTags } from '../../../../../stores/tags';
-import { makeLoadingReducer } from '../../../../../util';
+import { makeLoadingReducer, ILoadingStateRecord } from '../../../../../util';
 import { commentSortDefinitions } from '../../../../../util/sortDefinitions';
 
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
@@ -117,12 +118,11 @@ function loadCommentList(
   };
 }
 
-const {
-  reducer: commentListLoaderReducer,
-  execute,
-  getIsLoading: getCommentListIsLoading,
-  getHasLoaded: getCommentListHasLoaded,
-} = makeLoadingReducer(LOADING_DATA);
+const loadingReducer = makeLoadingReducer(LOADING_DATA);
+
+const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingReducer.reducer;
+const getCommentListIsLoading: (state:IAppStateRecord) => boolean = loadingReducer.getIsLoading;
+const getCommentListHasLoaded: (state:IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
 
 function executeCommentListLoader(
   isArticleDetail: boolean,
@@ -132,7 +132,7 @@ function executeCommentListLoader(
   pos1: number,
   pos2: number,
 ): IThunkAction<void> {
-  return execute(loadCommentList(
+  return loadingReducer.execute(loadCommentList(
     isArticleDetail,
     articleId,
     category,

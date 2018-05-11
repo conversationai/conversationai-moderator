@@ -14,16 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { makeCurrentPagingIdentifierReducer } from '../../../../../util';
+import { Action, Reducer } from 'redux-actions';
+import { IAppStateRecord } from '../../../../../stores';
+import { makeCurrentPagingIdentifierReducer, ICurrentPagingIdentifierStateRecord, ICurrentPagingIdentifierPayload } from '../../../../../util';
 import { DATA_PREFIX } from './reduxPrefix';
 
-const {
-  reducer: currentPagingIdentifierReducer,
-  setCurrentPagingIdentifier,
-  getCurrentPagingIdentifier,
-} = makeCurrentPagingIdentifierReducer(
+const currentPagingIdentifier = makeCurrentPagingIdentifierReducer(
   [...DATA_PREFIX, 'currentPagingIdentifier'],
 );
+
+const currentPagingIdentifierReducer:Reducer<ICurrentPagingIdentifierStateRecord, ICurrentPagingIdentifierPayload> = currentPagingIdentifier.reducer;
+const setCurrentPagingIdentifier: (payload: ICurrentPagingIdentifierPayload) => Action<ICurrentPagingIdentifierPayload> = currentPagingIdentifier.setCurrentPagingIdentifier;
+const getCurrentPagingIdentifier: (state: IAppStateRecord) => string = currentPagingIdentifier.getCurrentPagingIdentifier;
 
 export {
   currentPagingIdentifierReducer,

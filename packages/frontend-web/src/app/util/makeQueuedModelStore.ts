@@ -33,6 +33,11 @@ export interface IQueuedModelState<S, T> {
 
 export interface IQueuedModelStateRecord<S, T> extends TypedRecord<IQueuedModelStateRecord<S, T>>, IQueuedModelState<S, T> {}
 
+export type ILoadCompletePayload<S, T> = {
+  model: T;
+  key: S;
+};
+
 export function makeQueuedModelStore<S, T>(
   getModelsByKey: (keys: List<S>) => Promise<Map<S, T>>,
   queueFlushThrottleMs: number,
@@ -58,11 +63,7 @@ export function makeQueuedModelStore<S, T>(
   };
   const queueRequest = createAction<IQueueRequestPayload>(`global/LOAD_QUEUED_MODEL_START_${queuedModelStores}`);
 
-  type ILoadCompletePayload = {
-    model: T;
-    key: S;
-  };
-  const loadComplete = createAction<ILoadCompletePayload>(`global/LOAD_QUEUED_MODEL_COMPLETE_${queuedModelStores}`);
+  const loadComplete = createAction<ILoadCompletePayload<S, T>>(`global/LOAD_QUEUED_MODEL_COMPLETE_${queuedModelStores}`);
 
   const StateFactory = makeTypedFactory<IQueuedModelState<S, T>, IQueuedModelStateRecord<S, T>>({
     isFetching: false,
@@ -150,7 +151,7 @@ export function makeQueuedModelStore<S, T>(
     void                 | // clearQueue
     ICancelItemsPayload  | // cancelItems
     IQueueRequestPayload | // queueRequest
-    ILoadCompletePayload   // loadComplete
+    ILoadCompletePayload<S, T>   // loadComplete
   >({
     [clearQueue.toString()]: (state: IQueuedModelStateRecord<S, T>) => (
       state
@@ -173,7 +174,7 @@ export function makeQueuedModelStore<S, T>(
           .setIn(['queued', key], [promise, resolver])
     ),
 
-    [loadComplete.toString()]: (state, { payload: { model, key } }: { payload: ILoadCompletePayload }) => (
+    [loadComplete.toString()]: (state, { payload: { model, key } }: { payload: ILoadCompletePayload<S, T> }) => (
       state
           .removeIn(['queued', key])
           .setIn(['byKey', key], model)
