@@ -1,6 +1,5 @@
 declare module "redial" {
   import { ComponentClass, StatelessComponent } from "react";
-  import { InferableComponentDecorator } from 'react-redux';
 
   type ComponentConstructor<P> = ComponentClass<P> | StatelessComponent<P>;
 

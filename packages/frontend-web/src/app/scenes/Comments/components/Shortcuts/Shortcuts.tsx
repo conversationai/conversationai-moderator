@@ -117,7 +117,7 @@ export class Shortcuts extends React.Component<IShortcutProps> {
       <div {...css(STYLES.base)}>
         <div {...css(STYLES.header)}>
           <h2 {...css(STYLES.title)}>Keyboard Shortcuts</h2>
-          <button {...css(STYLES.closeButton)} label="close modal" onClick={onClose}>
+          <button {...css(STYLES.closeButton)} aria-label="close modal" onClick={onClose}>
             <RejectIcon {...css({ color: DARK_SECONDARY_TEXT_COLOR })} />
           </button>
         </div>

@@ -107,7 +107,6 @@ export class Arrow extends React.PureComponent<IArrowProps> {
               height: size || 64,
             },
           )}
-          disabled={isDisabled}
         >
           {direction === 'up' && <div {...css(STYLES.arrow, STYLES.upArrow, computedIconStyle)}>{icon}</div>}
           {direction === 'down' && <div {...css(STYLES.arrow, STYLES.downArrow, computedIconStyle)}>{icon}</div>}

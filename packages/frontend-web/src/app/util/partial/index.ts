@@ -188,7 +188,7 @@ export function memoize<T extends Function>(fn: T, useEqualityForMutableObjects 
   return memoized as any;
 }
 
-export const partial = memoize(lodashPartial);
+export const partial:typeof lodashPartial = memoize(lodashPartial);
 
 export function maybeCallback<T>(fn?: T | null) {
   return fn || identity;
