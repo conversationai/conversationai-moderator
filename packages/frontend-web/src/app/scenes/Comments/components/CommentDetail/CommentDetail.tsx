@@ -20,7 +20,7 @@ const FocusTrap = require('focus-trap-react');
 import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import {
   CommentScoreModel,
   IAuthorCountsModel,
