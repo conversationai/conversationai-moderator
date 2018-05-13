@@ -21,7 +21,7 @@ import { RESTRICT_TO_SESSION } from '../config';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
 import { checkAuthorization, clearCSRF, getCSRF, getModel } from '../util';
 
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { IUserModel } from '../../models';
 
 const LOCAL_STORAGE_TOKEN_KEY = 'moderator/auth_token';
@@ -35,7 +35,7 @@ type ICompletedAuthentificationPayload = IUserModel;
 const completedAuthentication =
   createAction<ICompletedAuthentificationPayload>('auth/COMPLETED_AUTHENTICATION');
 
-export const logout = createAction<void>('auth/LOGOUT');
+export const logout: () => Action<void> = createAction('auth/LOGOUT');
 
 function setAxiosToken(token: string): void {
   // Use query string for auth.

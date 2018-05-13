@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { fromJS, List, Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IArticleModel, IUserModel} from '../../models';
 import { IAppStateRecord, IThunkAction } from '../stores';
@@ -31,11 +31,11 @@ const loadArticleModeratorsStart =
 const loadArticleModeratorsComplete =
   createAction<Array<object>>('article-moderators/LOAD_ARTICLE_MODERATORS_COMPLETE');
 
-type ISaveArticlePayload = {
+export type ISaveArticlePayload = {
   article: IArticleModel;
   moderators: List<IUserModel>;
 };
-export const saveArticle =
+export const saveArticle: (payload: ISaveArticlePayload) => Action<ISaveArticlePayload> =
   createAction<ISaveArticlePayload>('article-moderators/SAVE_ARTICLE');
 
 const STATE_ROOT = ['global', 'articleModerators'];

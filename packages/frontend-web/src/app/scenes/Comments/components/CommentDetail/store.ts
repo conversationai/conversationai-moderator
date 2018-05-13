@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { fromJS, List, Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import {
@@ -60,7 +60,7 @@ const loadCommentScoresStart =
   createAction('comment-detail/LOAD_COMMENT_SCORE_START');
 const loadCommentScoresComplete =
   createAction<object>('comment-detail/LOAD_COMMENT_SCORE_COMPLETE');
-export const clearCommentPagingOptions =
+export const clearCommentPagingOptions: () => Action<void> =
   createAction('comment-detail/CLEAR_COMMENT_PAGING_OPTIONS');
 const internalStoreCommentPagingOptions =
   createAction<ICommentPagingState>('comment-detail/STORE_COMMENT_PAGING_OPTIONS');
@@ -105,7 +105,7 @@ const {
   loadCommentComplete.toString(),
 );
 
-export const updateComment = updateCommentRecord;
+export const updateComment: (payload: ICommentModel) => Action<ICommentModel> = updateCommentRecord;
 
 const {
   reducer: commentScoresReducer,
@@ -288,9 +288,9 @@ export const reducer: any = combineReducers({
 
 /* Set or delete items in the comment detail store created by makeRecordListReducer */
 
-export const addCommentScore = addRecord;
-export const updateCommentScore = updateCommentScoreRecord;
-export const removeCommentScore = removeRecord;
+export const addCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = addRecord;
+export const updateCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = updateCommentScoreRecord;
+export const removeCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = removeRecord;
 
 export function getComment(state: any): ICommentModel {
   return state.getIn(COMMENT_DATA);

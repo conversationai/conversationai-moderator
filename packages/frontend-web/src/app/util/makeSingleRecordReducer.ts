@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { fromJS, List, Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import {
@@ -132,7 +132,7 @@ export function makeSingleRecordReducer<T>(
 
   singleRecordStores += 1;
 
-  const updateRecordAction = createAction<T>(
+  const updateRecordAction: (payload: T) => Action<T> = createAction<T>(
     `single-record-store-${singleRecordStores}/UPDATE`,
   );
 

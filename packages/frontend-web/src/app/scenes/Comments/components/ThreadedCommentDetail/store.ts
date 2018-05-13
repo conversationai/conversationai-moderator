@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { createAction } from 'redux-actions';
+import { Action, createAction } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
 import {
   ICommentModel,
@@ -53,7 +53,7 @@ const {
   loadCommentComplete.toString(),
 );
 
-export const updateComment = updateCommentRecord;
+export const updateComment: (payload: ICommentModel) => Action<ICommentModel> = updateCommentRecord;
 
 export const reducer: any = combineReducers({
   comment: commentReducer,

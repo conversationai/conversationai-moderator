@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { List, Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { listCommentSummaryScoresById } from '../util';
 import { IAppStateRecord, IThunkAction } from './index';
@@ -49,15 +49,16 @@ const StateFactory = makeTypedFactory<ICommentSummaryScoresState, ICommentSummar
 const STATE_ROOT = ['global', 'commentSummaryScores'];
 const COMMENT_SUMMARY_SCORES_DATA = [...STATE_ROOT, 'items'];
 
-type ILoadCommentSummaryScoresStartPayload = number;
-export const loadCommentSummaryScoresStart = createAction<ILoadCommentSummaryScoresStartPayload>(
-  'comment-summary-scores/LOAD_COMMENT_SUMMARY_SCORES_START',
-);
+export type ILoadCommentSummaryScoresStartPayload = number;
+export const loadCommentSummaryScoresStart: () => Action<void> = createAction(
+    'comment-summary-scores/LOAD_COMMENT_SUMMARY_SCORES_START',
+  );
 
-type ILoadCommentSummaryScoresCompletePayload = number;
-export const loadCommentSummaryScoresComplete = createAction<ILoadCommentSummaryScoresCompletePayload>(
-  'comment-summary-scores/LOAD_COMMENT_SUMMARY_SCORES_COMPLETE',
-);
+export type ILoadCommentSummaryScoresCompletePayload = number;
+export const loadCommentSummaryScoresComplete: (payload: ILoadCommentSummaryScoresCompletePayload) => Action<ILoadCommentSummaryScoresCompletePayload> =
+  createAction<ILoadCommentSummaryScoresCompletePayload>(
+    'comment-summary-scores/LOAD_COMMENT_SUMMARY_SCORES_COMPLETE',
+  );
 
 export const reducer = handleActions<
   ICommentSummaryScoresStateRecord,

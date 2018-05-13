@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { List, Set } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IArticleModel, ICategoryModel, IUserModel } from '../../models';
 import { IAppStateRecord, IThunkAction } from './index';
@@ -29,42 +29,49 @@ const ARTICLE_MODERATOR_IDS_DATA = [...STATE_ROOT, 'articleModerators'];
 const CATEGORY_MODERATOR_IDS_DATA = [...STATE_ROOT, 'categoryModerators'];
 const ARTICLE_DATA = [...STATE_ROOT, 'article'];
 
-type ILoadArticleStartPayload = IArticleModel;
-export const loadArticleStart = createAction<ILoadArticleStartPayload>(
-  'assign-moderators/LOAD_ARTICLE_START',
-);
+export type ILoadArticleStartPayload = IArticleModel;
+export const loadArticleStart: (payload: ILoadArticleStartPayload) => Action<ILoadArticleStartPayload> =
+  createAction<ILoadArticleStartPayload>(
+    'assign-moderators/LOAD_ARTICLE_START',
+  );
 
-type ILoadCompletePayload = List<IUserModel>;
-export const loadArticleComplete = createAction<ILoadCompletePayload>(
-  'assign-moderators/LOAD_ARTICLE_COMPLETE',
-);
+export type ILoadCompletePayload = List<IUserModel>;
+export const loadArticleComplete: (payload: ILoadCompletePayload) => Action<ILoadCompletePayload> =
+  createAction<ILoadCompletePayload>(
+    'assign-moderators/LOAD_ARTICLE_COMPLETE',
+  );
 
-type IAddRemoveModeratorPayload = {
+export type IAddRemoveModeratorPayload = {
   userId: string;
 };
-export const addModeratorToArticle = createAction<IAddRemoveModeratorPayload>(
+export const addModeratorToArticle: (payload: IAddRemoveModeratorPayload) => Action<IAddRemoveModeratorPayload> = createAction<IAddRemoveModeratorPayload>(
   'assign-moderators/ADD_MODERATOR_TO_ARTICLE',
 );
-export const removeModeratorFromArticle = createAction<IAddRemoveModeratorPayload>(
-  'assign-moderators/REMOVE_MODERATOR_FROM_ARTICLE',
-);
+export const removeModeratorFromArticle: (payload: IAddRemoveModeratorPayload) => Action<IAddRemoveModeratorPayload> =
+  createAction<IAddRemoveModeratorPayload>(
+    'assign-moderators/REMOVE_MODERATOR_FROM_ARTICLE',
+  );
 
-type ILoadCategoryStartPayload = ICategoryModel;
-export const loadCategoryStart = createAction<ILoadCategoryStartPayload>(
-  'assign-moderators/LOAD_CATEGORY_START',
-);
+export type ILoadCategoryStartPayload = ICategoryModel;
+export const loadCategoryStart: (payload: ILoadCategoryStartPayload) => Action<ILoadCategoryStartPayload> =
+  createAction<ILoadCategoryStartPayload>(
+    'assign-moderators/LOAD_CATEGORY_START',
+  );
 
-export const loadCategoryComplete = createAction<ILoadCompletePayload>(
-  'assign-moderators/LOAD_CATEGORY_COMPLETE',
-);
+export const loadCategoryComplete: (payload: ILoadCompletePayload) => Action<ILoadCompletePayload> =
+  createAction<ILoadCompletePayload>(
+    'assign-moderators/LOAD_CATEGORY_COMPLETE',
+  );
 
-export const addModeratorToCategory = createAction<IAddRemoveModeratorPayload>(
-  'assign-moderators/ADD_MODERATOR_TO_CATEGORY',
-);
+export const addModeratorToCategory: (payload: IAddRemoveModeratorPayload) => Action<IAddRemoveModeratorPayload> =
+  createAction<IAddRemoveModeratorPayload>(
+    'assign-moderators/ADD_MODERATOR_TO_CATEGORY',
+  );
 
-export const removeModeratorFromCategory = createAction<IAddRemoveModeratorPayload>(
-  'assign-moderators/REMOVE_MODERATOR_FROM_CATEGORY',
-);
+export const removeModeratorFromCategory: (payload: IAddRemoveModeratorPayload) => Action<IAddRemoveModeratorPayload> =
+  createAction<IAddRemoveModeratorPayload>(
+    'assign-moderators/REMOVE_MODERATOR_FROM_CATEGORY',
+  );
 
 export function loadArticleModerators(articleId: string): IThunkAction<void> {
   return async (dispatch) => {
@@ -184,21 +191,24 @@ export function getArticle(state: IAppStateRecord): IArticleModel {
   return state.getIn(ARTICLE_DATA);
 }
 
-type IUpdateArticleModeratorsStartPayload = {
+export type IUpdateArticleModeratorsStartPayload = {
   article: IArticleModel;
 };
-export const updateArticleModeratorsStart = createAction<IUpdateArticleModeratorsStartPayload>('dashboard/UPDATE_ARTICLE_MODERATORS_START');
+export const updateArticleModeratorsStart: (payload: IUpdateArticleModeratorsStartPayload) => Action<IUpdateArticleModeratorsStartPayload> =
+  createAction<IUpdateArticleModeratorsStartPayload>('dashboard/UPDATE_ARTICLE_MODERATORS_START');
 
-type IUpdateArticleModeratorsCompletePayload = {
+export type IUpdateArticleModeratorsCompletePayload = {
   article: IArticleModel;
   moderators: List<IUserModel>;
 };
-export const updateArticleModeratorsComplete = createAction<IUpdateArticleModeratorsCompletePayload>('dashboard/UPDATE_ARTICLE_MODERATORS_COMPLETE');
+export const updateArticleModeratorsComplete: (payload: IUpdateArticleModeratorsCompletePayload) => Action<IUpdateArticleModeratorsCompletePayload> =
+  createAction<IUpdateArticleModeratorsCompletePayload>('dashboard/UPDATE_ARTICLE_MODERATORS_COMPLETE');
 
-type IUpdateArticleModeratorsByIdCompletePayload = {
+export type IUpdateArticleModeratorsByIdCompletePayload = {
   moderators: List<IUserModel>;
 };
-export const updateArticleModeratorsById = createAction<IUpdateArticleModeratorsByIdCompletePayload>('dashboard/UPDATE_ARTICLE_MODERATORS_BY_ID_COMPLETE');
+export const updateArticleModeratorsById: (payload: IUpdateArticleModeratorsByIdCompletePayload) => Action<IUpdateArticleModeratorsByIdCompletePayload> =
+  createAction<IUpdateArticleModeratorsByIdCompletePayload>('dashboard/UPDATE_ARTICLE_MODERATORS_BY_ID_COMPLETE');
 
 export function updateArticleModerators(article: IArticleModel, moderators: Array<IUserModel>): IThunkAction<Promise<void>> {
   return async (dispatch) => {
@@ -231,16 +241,18 @@ export function updateArticleModeratorsByIds(moderatorIds: Array<string>, remove
   };
 }
 
-type IUpdateCategoryModeratorsStartPayload = {
+export type IUpdateCategoryModeratorsStartPayload = {
   category: ICategoryModel;
 };
-export const updateCategoryModeratorsStart = createAction<IUpdateCategoryModeratorsStartPayload>('dashboard/UPDATE_CATEGORY_MODERATORS_START');
+export const updateCategoryModeratorsStart: (payload: IUpdateCategoryModeratorsStartPayload) => Action<IUpdateCategoryModeratorsStartPayload> =
+  createAction<IUpdateCategoryModeratorsStartPayload>('dashboard/UPDATE_CATEGORY_MODERATORS_START');
 
-type IUpdateCategoryModeratorsCompletePayload = {
+export type IUpdateCategoryModeratorsCompletePayload = {
   category: ICategoryModel;
   moderators: List<IUserModel>;
 };
-export const updateCategoryModeratorsComplete = createAction<IUpdateCategoryModeratorsCompletePayload>('dashboard/UPDATE_CATEGORY_MODERATORS_COMPLETE');
+export const updateCategoryModeratorsComplete: (payload: IUpdateCategoryModeratorsCompletePayload) => Action<IUpdateCategoryModeratorsCompletePayload> =
+  createAction<IUpdateCategoryModeratorsCompletePayload>('dashboard/UPDATE_CATEGORY_MODERATORS_COMPLETE');
 
 export function updateCategoryModerators(category: ICategoryModel, moderators: Array<IUserModel>): IThunkAction<Promise<void>> {
   return async (dispatch, getState) => {

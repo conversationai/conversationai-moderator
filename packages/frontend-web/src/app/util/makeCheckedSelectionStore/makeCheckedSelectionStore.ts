@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import { IAppStateRecord } from '../../stores';
 
@@ -52,11 +52,11 @@ export function makeCheckedSelectionStore(
   const areAllSelectedPath = [...statePath, 'areAllSelected'];
   const overridesPath = [...statePath, 'overrides'];
 
-  const toggleSelectAll = createAction(
+  const toggleSelectAll: () => Action<void> = createAction(
     `checked-selection-${checkedSelectionStores}/TOGGLE_SELECT_ALL`,
   );
 
-  const toggleSingleItem = createAction<{ id: string }>(
+  const toggleSingleItem: (payload: { id: string }) => Action<{ id: string }> = createAction<{ id: string }>(
     `checked-selection-${checkedSelectionStores}/TOGGLE_SINGLE_ITEM`,
   );
 

@@ -16,7 +16,7 @@ limitations under the License.
 
 import { fromJS, Map, Record } from 'immutable';
 import { mapValues } from 'lodash';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppStateRecord, IThunkAction } from './index';
 
@@ -31,20 +31,20 @@ function ColumnSortGroup(keyValuePairs?: IColumnSortGroupAttributes): IColumnSor
   return Record(keyValuePairs)(keyValuePairs) as any;
 }
 
-type IChangeColumnSortPayload = {
+export type IChangeColumnSortPayload = {
   group: string;
   section: string;
   key: string;
 };
-export const changeColumnSort = createAction<IChangeColumnSortPayload>('column-sorts/CHANGE_COLUMN_SORT');
+export const changeColumnSort: (payload: IChangeColumnSortPayload) => Action<IChangeColumnSortPayload> =
+  createAction<IChangeColumnSortPayload>('column-sorts/CHANGE_COLUMN_SORT');
 
-type IChangeColumnSortGroupDefaultPayload = {
+export type IChangeColumnSortGroupDefaultPayload = {
   group: string;
   key: string;
 };
-export const changeColumnSortGroupDefault = createAction<IChangeColumnSortGroupDefaultPayload>(
-  'column-sorts/CHANGE_COLUMN_SORT_GROUP_DEFAULT',
-);
+export const changeColumnSortGroupDefault: (payload: IChangeColumnSortGroupDefaultPayload) => Action<IChangeColumnSortGroupDefaultPayload> =
+  createAction<IChangeColumnSortGroupDefaultPayload>( 'column-sorts/CHANGE_COLUMN_SORT_GROUP_DEFAULT',);
 
 const LOCAL_STORAGE_DATA_KEY = 'moderator/column-sorts-data';
 const LOCAL_STORAGE_VERSION_KEY = 'moderator/column-sorts-version';

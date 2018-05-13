@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { List, Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { TypedRecord } from 'typed-immutable-record';
 import { IAppStateRecord, IThunkAction } from '../../../../../stores';
 import { getPreselects } from '../../../../../stores/preselects';
@@ -49,7 +49,7 @@ type ISetDragHandleScopePayload = {
 };
 
 const setDragHandleScope = createAction<ISetDragHandleScopePayload>('drag-handle/SET_SCOPE');
-export const resetDragHandleScope = createAction('drag-handle/RESET_SCOPE');
+export const resetDragHandleScope: () => Action<void> = createAction('drag-handle/RESET_SCOPE');
 
 export interface IDragHandleState {
   pos1: number | null;

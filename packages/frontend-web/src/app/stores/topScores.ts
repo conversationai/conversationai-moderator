@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import { List, Map } from 'immutable';
+import { Action } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IQueuedModelStateRecord, loadTopScoresForSummaryScores, loadTopScoresForTag, makeQueuedModelStore } from '../util';
 import { IAppStateRecord, IThunkAction } from './index';
@@ -57,13 +58,7 @@ const TopSummaryScoresKey = makeTypedFactory<ITopSummaryScoresKeyState, ITopSumm
   commentId: null,
 });
 
-const {
-  reducer: scoreReducer,
-  loadModel: loadTopScoreByKey,
-  getModels: getTopScores,
-  getModel: getTopScore,
-  setModel: setTopScore,
-} = makeQueuedModelStore<ITopScoresKeyState, ITopScoreStateRecord>(
+const queuedModelStore = makeQueuedModelStore<ITopScoresKeyState, ITopScoreStateRecord>(
   async (keys: List<ITopScoresKeyState>) => {
     const commentIds = keys.map((k) => k.commentId) as List<string>;
     const tagId = keys.first().tagId;
@@ -80,6 +75,15 @@ const {
   12,
   ['global', 'topScores'],
 );
+
+const {
+  reducer: scoreReducer,
+  loadModel: loadTopScoreByKey,
+  getModels: getTopScores,
+  getModel: getTopScore,
+} = queuedModelStore;
+
+const setTopScore: (payload: any) => Action<any> = queuedModelStore.setModel;
 
 export type IState = IQueuedModelStateRecord<ITopScoresKeyState, ITopScoreStateRecord>;
 

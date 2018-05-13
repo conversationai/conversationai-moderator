@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppStateRecord, IThunkAction } from '../../../../../stores';
 import { DATA_PREFIX } from './reduxPrefix';
@@ -49,7 +49,7 @@ const loadCommentScoresComplete = createAction<ILoadCommentScoresCompletePayload
   'article-detail-new/LOAD_COMMENTS_SCORES_COMPLETE',
 );
 
-const removeCommentScore = createAction<Array<string>>(
+const removeCommentScore: (payload: Array<string>) => Action<Array<string>> = createAction<Array<string>>(
   'article-detail-new/REMOVE_COMMENT_SCORES',
 );
 
