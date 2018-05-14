@@ -16,6 +16,7 @@ limitations under the License.
 
 import { List } from 'immutable';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { ICategoryModel, IUserModel } from '../../../../../../../models';
 import { Link } from '../../../../../../components';
 import {
@@ -152,8 +153,8 @@ export interface IDashboardCategoryItemContext {
 export class DashboardCategoryItem
     extends React.Component<IDashboardCategoryItemProps> {
   static contextTypes = {
-    ariaControlsCategory: React.PropTypes.string,
-    ariaExpandedCategory: React.PropTypes.bool,
+    ariaControlsCategory: PropTypes.string,
+    ariaExpandedCategory: PropTypes.bool,
   };
 
   context: IDashboardCategoryItemContext;

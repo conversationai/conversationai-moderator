@@ -17,6 +17,7 @@ limitations under the License.
 import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import { List } from 'immutable';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../../../../../models';
 import { CanvasTruncate, Link } from '../../../../../../components';
 import {
@@ -150,8 +151,8 @@ export interface IDashboardArticleItemContext {
 export class DashboardArticleItem
     extends React.Component<IDashboardArticleItemProps> {
   static contextTypes = {
-    ariaControlsArticle: React.PropTypes.string,
-    ariaExpandedArticle: React.PropTypes.bool,
+    ariaControlsArticle: PropTypes.string,
+    ariaExpandedArticle: PropTypes.bool,
   };
 
   context: IDashboardArticleItemContext;
