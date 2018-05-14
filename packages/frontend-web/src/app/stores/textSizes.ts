@@ -33,7 +33,7 @@ const loadTextSizesStart = createAction(
 );
 
 type ILoadTestSizesCompletePayload = {
-  textSizes: Map<number, number>;
+  textSizes: Map<string, number>;
 };
 const loadTextSizesComplete = createAction<ILoadTestSizesCompletePayload>(
   'text-sizes/LOAD_TEXT_SIZES_COMPLETE',

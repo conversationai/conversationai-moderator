@@ -19,7 +19,7 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { DashboardNavCategory as PureDashboardNavCategory, IDashboardNavCategoryProps } from './DashboardNavCategory';
 
-type IDashboardNavCategoryOwnProps = Pick<IDashboardNavCategoryProps, 'label' | 'count' | 'slug'>;
+export type IDashboardNavCategoryOwnProps = Pick<IDashboardNavCategoryProps, 'label' | 'count' | 'slug'>;
 type IDashboardNavCategoryStateProps = Pick<IDashboardNavCategoryProps, 'isActive' | 'hasNewItems'>;
 
 function mapStateToProps(_state: any, { slug, router }: any): IDashboardNavCategoryStateProps {
@@ -29,7 +29,7 @@ function mapStateToProps(_state: any, { slug, router }: any): IDashboardNavCateg
   };
 }
 
-export const DashboardNavCategory = compose(
+export const DashboardNavCategory: React.ComponentClass<IDashboardNavCategoryOwnProps> = compose(
   withRouter,
   connect<IDashboardNavCategoryStateProps, {}, IDashboardNavCategoryOwnProps>(mapStateToProps),
 )(PureDashboardNavCategory) as React.ComponentClass<IDashboardNavCategoryOwnProps>;

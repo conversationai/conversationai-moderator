@@ -199,13 +199,13 @@ export const updateArticleModeratorsStart: (payload: IUpdateArticleModeratorsSta
 
 export type IUpdateArticleModeratorsCompletePayload = {
   article: IArticleModel;
-  moderators: List<IUserModel>;
+  moderators: Array<IUserModel>;
 };
 export const updateArticleModeratorsComplete: (payload: IUpdateArticleModeratorsCompletePayload) => Action<IUpdateArticleModeratorsCompletePayload> =
   createAction<IUpdateArticleModeratorsCompletePayload>('dashboard/UPDATE_ARTICLE_MODERATORS_COMPLETE');
 
 export type IUpdateArticleModeratorsByIdCompletePayload = {
-  moderators: List<IUserModel>;
+  moderators: Array<IUserModel>;
 };
 export const updateArticleModeratorsById: (payload: IUpdateArticleModeratorsByIdCompletePayload) => Action<IUpdateArticleModeratorsByIdCompletePayload> =
   createAction<IUpdateArticleModeratorsByIdCompletePayload>('dashboard/UPDATE_ARTICLE_MODERATORS_BY_ID_COMPLETE');
@@ -235,7 +235,7 @@ export function updateArticleModeratorsByIds(moderatorIds: Array<string>, remove
       const existingModerators = (removedModeratorIds && article.assignedModerators) ?
           article.assignedModerators.filter((user) => !removedModeratorIds.some((id) => id === user.id)) :
           article.assignedModerators;
-      dispatch(updateArticleModeratorsComplete({ article, moderators: [...existingModerators, ...articleModerators] }));
+      dispatch(updateArticleModeratorsComplete({ article, moderators: [...existingModerators, ...articleModerators] as Array<IUserModel> }));
     });
     articles.forEach((article) => dispatch(loadArticleModerators(article.id)));
   };
@@ -249,7 +249,7 @@ export const updateCategoryModeratorsStart: (payload: IUpdateCategoryModeratorsS
 
 export type IUpdateCategoryModeratorsCompletePayload = {
   category: ICategoryModel;
-  moderators: List<IUserModel>;
+  moderators: Array<IUserModel>;
 };
 export const updateCategoryModeratorsComplete: (payload: IUpdateCategoryModeratorsCompletePayload) => Action<IUpdateCategoryModeratorsCompletePayload> =
   createAction<IUpdateCategoryModeratorsCompletePayload>('dashboard/UPDATE_CATEGORY_MODERATORS_COMPLETE');

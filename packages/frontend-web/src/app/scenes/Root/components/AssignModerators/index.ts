@@ -102,25 +102,25 @@ function mapDispatchToProps(dispatch: IAppDispatch, { article, category }: IAssi
   return {
     onAddModerator: (userId: string) => {
       if (article) {
-        dispatch(addModeratorToArticle({ userId, articleId: article.id }));
+        dispatch(addModeratorToArticle({ userId }));
       }
       if (category) {
-        dispatch(addModeratorToCategory({ userId, categoryId: category.id }));
+        dispatch(addModeratorToCategory({ userId }));
       }
     },
 
     onRemoveModerator: (userId: string) => {
       if (article) {
-        dispatch(removeModeratorFromArticle({ userId, articleId: article.id }));
+        dispatch(removeModeratorFromArticle({ userId }));
       }
       if (category) {
-        dispatch(removeModeratorFromCategory({ userId, categoryId: category.id }));
+        dispatch(removeModeratorFromCategory({ userId }));
       }
     },
   };
 }
 
-export const AssignModerators = connect(
+export const AssignModerators: React.ComponentClass = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(PureAssignModerators);

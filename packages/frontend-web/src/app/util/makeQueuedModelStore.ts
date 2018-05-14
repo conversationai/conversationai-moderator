@@ -96,7 +96,7 @@ export function makeQueuedModelStore<S, T>(
       const queuedModelKeys = allKeys
           .reverse().slice(0, maxItems) as List<S>;
 
-      const ignoredModelKeys = allKeys.filter((key) => !queuedModelKeys.includes(key));
+      const ignoredModelKeys = allKeys.filter((key) => !queuedModelKeys.includes(key)) as List<S>;
 
       ignoredModelKeys.forEach((key) => {
         const resolver = queued.get(key)[1];

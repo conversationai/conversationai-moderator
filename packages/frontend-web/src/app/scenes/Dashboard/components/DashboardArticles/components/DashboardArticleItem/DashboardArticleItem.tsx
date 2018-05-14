@@ -145,7 +145,7 @@ export interface IDashboardArticleItemProps {
 
 export interface IDashboardArticleItemContext {
   ariaControlsArticle: string;
-  ariaExpandedArticle: string;
+  ariaExpandedArticle: boolean;
 }
 
 export class DashboardArticleItem

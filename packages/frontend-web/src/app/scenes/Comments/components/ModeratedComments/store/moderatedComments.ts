@@ -26,6 +26,7 @@ import {
   resetComment,
 } from '../../../../../stores/comments';
 import {
+  IModeratedComments,
   getModeratedCommentIdsForArticle as fetchModeratedCommentIdsForArticle,
   getModeratedCommentIdsForCategory as fetchModeratedCommentIdsForCategory,
 } from '../../../../../util';
@@ -62,15 +63,15 @@ const loadModeratedCommentsStart = createAction(
 
 type ILoadModeratedCommentsForArticleCompletePayload = {
   articleId: string;
-  moderatedComments: Map<string, List<number>>;
+  moderatedComments: IModeratedComments;
 };
 const loadModeratedCommentsForArticleComplete = createAction<ILoadModeratedCommentsForArticleCompletePayload>(
   'article-detail-moderatored/LOAD_MODERATED_COMMENTS_FOR_ARTICLE_COMPLETE',
 );
 
 type ILoadModeratedCommentsForCategoriesCompletePayload = {
-  category: number | 'all';
-  moderatedComments: Map<string, List<number>>;
+  category: string | 'all';
+  moderatedComments: IModeratedComments;
 };
 const loadModeratedCommentsForCategoryComplete = createAction<ILoadModeratedCommentsForCategoriesCompletePayload>(
   'article-detail-moderatored/LOAD_MODERATED_COMMENTS_FOR_CATEGORY_COMPLETE',
@@ -78,7 +79,7 @@ const loadModeratedCommentsForCategoryComplete = createAction<ILoadModeratedComm
 
 type ISetCommentsModerationForArticlesPayload = {
   articleId: string;
-  commentIds: List<string>;
+  commentIds: Array<string>;
   moderationAction: string;
   currentModeration: string;
 };
@@ -88,7 +89,7 @@ const setCommentsModerationForArticlesAction = createAction<ISetCommentsModerati
 
 type ISetCommentsModerationForCategoriesPayload = {
   category: string | 'all';
-  commentIds: List<string>;
+  commentIds: Array<string>;
   moderationAction: string;
   currentModeration: string;
 };

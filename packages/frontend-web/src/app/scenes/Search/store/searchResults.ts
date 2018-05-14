@@ -21,7 +21,7 @@ import { IAppStateRecord } from '../../../stores';
 import { DATA_PREFIX } from './reduxPrefix';
 const ALL_COMMENT_IDS_DATA = [...DATA_PREFIX, 'allCommentIds'];
 
-export type ILoadAllCommentIdsCompletePayload = List<number>;
+export type ILoadAllCommentIdsCompletePayload = List<string>;
 export const loadAllCommentIdsComplete: (payload: ILoadAllCommentIdsCompletePayload) => Action<ILoadAllCommentIdsCompletePayload> =
   createAction<ILoadAllCommentIdsCompletePayload>(
     'search/LOAD_ALL_COMMENT_IDS_COMPLETE',

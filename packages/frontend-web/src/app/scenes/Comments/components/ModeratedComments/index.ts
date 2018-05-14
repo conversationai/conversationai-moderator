@@ -303,6 +303,6 @@ const ConnectedModeratedComments = connect<IModeratedCommentsStateProps, IModera
 )(HookedModeratedComments);
 
 // Add `router` prop.
-export const ModeratedComments = withRouter(ConnectedModeratedComments);
+export const ModeratedComments: React.ComponentClass = withRouter(ConnectedModeratedComments);
 
 export * from './store';

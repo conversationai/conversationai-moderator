@@ -39,7 +39,7 @@ export const autoFocus = (
     }
 
     attemptFocus() {
-      const node = ReactDOM.findDOMNode(this);
+      const node = ReactDOM.findDOMNode(this) as Element;
       const focusTarget =
         node.querySelector(`#${this.props.selector || focusTargetSelector}`) as HTMLElement;
 

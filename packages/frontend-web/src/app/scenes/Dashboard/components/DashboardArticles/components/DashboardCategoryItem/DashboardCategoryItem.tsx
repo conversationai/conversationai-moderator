@@ -147,7 +147,7 @@ export interface IDashboardCategoryItemProps {
 
 export interface IDashboardCategoryItemContext {
   ariaControlsCategory: string;
-  ariaExpandedCategory: string;
+  ariaExpandedCategory: boolean;
 }
 
 export class DashboardCategoryItem

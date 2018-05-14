@@ -34,7 +34,7 @@ const getDefaultSelectionState: (state: IAppStateRecord) => boolean = checkedSel
 const getOverrides: (state: IAppStateRecord) => IOverrides = checkedSelectionStore.getOverrides;
 const getIsItemChecked: (state: IAppStateRecord, id: string) => boolean = checkedSelectionStore.getIsItemChecked;
 const toggleSelectAll: () => Action<void> = checkedSelectionStore.toggleSelectAll;
-const toggleSingleItem: () => Action<void> = checkedSelectionStore.toggleSelectAll;
+const toggleSingleItem: (payload: { id: string }) => Action<{ id: string }> = checkedSelectionStore.toggleSingleItem;
 
 export function getSelectedCount(state: IAppStateRecord): number {
   return getOverrides(state).size;

@@ -53,7 +53,7 @@ export class Root extends React.Component<IRootProps> {
   }
 
   componentDidUpdate(prevProps: IRootProps) {
-    const node = ReactDOM.findDOMNode(this);
+    const node = ReactDOM.findDOMNode(this) as Element;
 
     if (this.props.currentlyFocused !== prevProps.currentlyFocused) {
       const focusId = this.props.currentlyFocused;

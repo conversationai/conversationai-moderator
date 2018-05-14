@@ -64,7 +64,7 @@ export class AspectRatio extends React.PureComponent<
 
   @autobind
   private onResize() {
-    const { width } = ReactDOM.findDOMNode(this).getBoundingClientRect();
+    const { width } = (ReactDOM.findDOMNode(this) as Element).getBoundingClientRect();
 
     this.setState({
       width,

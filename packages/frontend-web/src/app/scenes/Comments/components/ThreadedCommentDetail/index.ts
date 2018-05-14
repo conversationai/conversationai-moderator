@@ -189,7 +189,7 @@ const mergeProps = (
   };
 };
 
-export const ThreadedCommentDetail = compose(
+export const ThreadedCommentDetail: React.ComponentClass = compose(
   withRouter,
   connect(
     mapStateToProps,

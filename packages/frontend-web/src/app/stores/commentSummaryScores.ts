@@ -70,7 +70,7 @@ export const reducer = handleActions<
   [loadCommentSummaryScoresComplete.toString()]: (state, { payload }: Action<ILoadCommentSummaryScoresCompletePayload>) => (
     state
         .set('isReady', true)
-        .update('items', (s: Map<number, ICommentSummaryScoreStateRecord>) => s ? s.merge(payload) : payload)
+        .update('items', (s: Map<string, List<ICommentSummaryScoreStateRecord>>) => s ? s.merge(payload) : payload)
   ),
 }, StateFactory());
 
