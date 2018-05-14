@@ -15,10 +15,10 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { createAction } from 'redux-actions';
+import { Action, createAction } from 'redux-actions';
 import { TypedRecord } from 'typed-immutable-record';
 import { ITaggingSensitivityModel } from '../../models';
-import { listModels, makeAJAXAction, makeRecordListReducer } from '../util';
+import { listModels, makeAJAXAction, makeRecordListReducer, IRecordListStateRecord } from '../util';
 import { IAppStateRecord, IThunkAction } from './index';
 
 const STATE_ROOT = ['global', 'taggingSensitivities'];
@@ -58,9 +58,12 @@ export interface ITaggingSensitivityState {
 
 export interface ITaggingSensitivityStateRecord extends TypedRecord<ITaggingSensitivityStateRecord>, ITaggingSensitivityState {}
 
-const { reducer } = makeRecordListReducer<ITaggingSensitivityModel>(
+const recordListReducer = makeRecordListReducer<ITaggingSensitivityModel>(
   loadTaggingSensitivitiesStart.toString(),
   loadTaggingSensitivitiesComplete.toString(),
 );
+
+const reducer: (state: IRecordListStateRecord<ITaggingSensitivityModel>, action: Action<object|ITaggingSensitivityModel>) => IRecordListStateRecord<ITaggingSensitivityModel>
+  = recordListReducer.reducer;
 
 export { reducer };

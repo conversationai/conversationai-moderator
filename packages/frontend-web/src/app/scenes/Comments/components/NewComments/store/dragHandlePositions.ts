@@ -71,13 +71,13 @@ const dragHandlePositionsReducer = handleActions<
   ISetDragHandleScopePayload     | // setDragHandleScope
   void                             // resetDragHandleScope
 >({
-  [setDragHandlePositions.toString()]: (state, { payload: { pos1, pos2 } }: { payload: ISetDragHandlePositionsPayload }) => (
+  [setDragHandlePositions.toString()]: (state, { payload: { pos1, pos2 } }: Action<ISetDragHandlePositionsPayload>) => (
     state
         .set('pos1', pos1)
         .set('pos2', pos2)
   ),
 
-  [setDragHandleScope.toString()]: (state, { payload: { scope } }: { payload: ISetDragHandleScopePayload }) => state.set('scope', scope),
+  [setDragHandleScope.toString()]: (state, { payload: { scope } }: Action<ISetDragHandleScopePayload>) => state.set('scope', scope),
   [resetDragHandleScope.toString()]: () => initialDragHandleState,
 }, initialDragHandleState);
 

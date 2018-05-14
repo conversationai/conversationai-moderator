@@ -134,44 +134,44 @@ export const reducer = handleActions<
   ILoadCompletePayload       | // loadArticleComplete, loadCategoryComplete
   IAddRemoveModeratorPayload   // addModeratorToArticle, removeModeratorFromArticle, addModeratorToCategory, removeModeratorFromCategory
 >({
-  [loadArticleStart.toString()]: (state, { payload }: { payload: ILoadArticleStartPayload }) => (
+  [loadArticleStart.toString()]: (state, { payload }: Action<ILoadArticleStartPayload>) => (
     state
         .set('isReady', false)
         .set('article', payload)
   ),
 
-  [loadArticleComplete.toString()]: (state, { payload }: { payload: ILoadCompletePayload }) => (
+  [loadArticleComplete.toString()]: (state, { payload }: Action<ILoadCompletePayload>) => (
     state
         .set('isReady', true)
         .set('articleModerators', Set<ModelId>(payload.map((u) => u.id)))
   ),
 
-  [addModeratorToArticle.toString()]: (state, { payload: { userId } }: { payload: IAddRemoveModeratorPayload }) => (
-    state.update('articleModerators', (s: any) => s.add(userId))
+  [addModeratorToArticle.toString()]: (state, { payload }: Action<IAddRemoveModeratorPayload>) => (
+    state.update('articleModerators', (s: any) => s.add(payload.userId))
   ),
 
-  [removeModeratorFromArticle.toString()]: (state, { payload: { userId } }: { payload: IAddRemoveModeratorPayload }) => (
-    state.update('articleModerators', (s: any) => s.delete(userId))
+  [removeModeratorFromArticle.toString()]: (state, { payload }: Action<IAddRemoveModeratorPayload>) => (
+    state.update('articleModerators', (s: any) => s.delete(payload.userId))
   ),
 
-  [loadCategoryStart.toString()]: (state, { payload }: { payload: ILoadCategoryStartPayload }) => (
+  [loadCategoryStart.toString()]: (state, { payload }: Action<ILoadCategoryStartPayload>) => (
     state
         .set('isReady', false)
         .set('category', payload)
   ),
 
-  [loadCategoryComplete.toString()]: (state, { payload }: { payload: ILoadCompletePayload}) => (
+  [loadCategoryComplete.toString()]: (state, { payload }: Action<ILoadCompletePayload>) => (
     state
         .set('isReady', true)
         .set('categoryModerators', Set<ModelId>(payload.map((u) => u.id)))
   ),
 
-  [addModeratorToCategory.toString()]: (state, { payload: { userId } }: { payload: IAddRemoveModeratorPayload }) => (
-    state.update('categoryModerators', (s: any) => s.add(userId))
+  [addModeratorToCategory.toString()]: (state, { payload }: Action<IAddRemoveModeratorPayload>) => (
+    state.update('categoryModerators', (s: any) => s.add(payload.userId))
   ),
 
-  [removeModeratorFromCategory.toString()]: (state, { payload: { userId } }: { payload: IAddRemoveModeratorPayload }) => (
-    state.update('categoryModerators', (s: any) => s.delete(userId))
+  [removeModeratorFromCategory.toString()]: (state, { payload }: Action<IAddRemoveModeratorPayload>) => (
+    state.update('categoryModerators', (s: any) => s.delete(payload.userId))
   ),
 }, StateFactory());
 

@@ -117,7 +117,7 @@ export const commentScoresReducer = handleActions<
   ICommentScoresStateRecord,
   void                                       | // loadCommentScoresStart
   ILoadCommentScoresCompletePayload          | // loadCommentScoresComplete
-  Array<number>                                // removeCommentScore
+  Array<string>                                // removeCommentScore
 >({
   [loadCommentScoresStart.toString()]: (state) => (
     state
@@ -125,14 +125,15 @@ export const commentScoresReducer = handleActions<
         .set('hasData', false)
   ),
 
-  [loadCommentScoresComplete.toString()]: (state, { payload: { scores } }: { payload: ILoadCommentScoresCompletePayload }) => {
+  [loadCommentScoresComplete.toString()]: (state, { payload }: Action<ILoadCommentScoresCompletePayload>) => {
+    const { scores } = payload;
     return state
         .set('isLoading', false)
         .set('scores', scores)
         .set('hasData', true);
   },
 
-  [removeCommentScore.toString()]: (state, { payload }: { payload: Array<string> }) => (
+  [removeCommentScore.toString()]: (state, { payload }: Action<Array<string>>) => (
     state
         .updateIn(['scores'], (scores: List<ICommentScoredModel | ICommentDatedModel>) => {
           return scores.filter((score: ICommentScoredModel | ICommentDatedModel) => {

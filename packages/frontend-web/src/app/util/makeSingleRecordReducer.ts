@@ -143,7 +143,7 @@ export function makeSingleRecordReducer<T>(
         .set('shouldWait', true);
   }
 
-  function onEnd(state: ISingleRecordStateRecord<T>, { payload }: { payload: object }) {
+  function onEnd(state: ISingleRecordStateRecord<T>, { payload }: Action<object>) {
     return state
         .set('hasData', true)
         .set('isFetching', false)
@@ -151,7 +151,7 @@ export function makeSingleRecordReducer<T>(
         .set('item', convertFromJSONAPI<T>(fromJS(payload)));
   }
 
-  function updateRecord(state: ISingleRecordStateRecord<T>, { payload }: { payload: T }) {
+  function updateRecord(state: ISingleRecordStateRecord<T>, { payload }: Action<T>) {
     return state
         .set('item', payload);
   }

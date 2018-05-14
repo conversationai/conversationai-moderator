@@ -178,7 +178,7 @@ export const reducer = handleActions<
   IChangeColumnSortPayload             | // changeColumnSort
   IChangeColumnSortGroupDefaultPayload   // changeColumnSortGroupDefault
 >({
-  [changeColumnSort.toString()]: (state, { payload: { group, section, key } }: { payload: IChangeColumnSortPayload }) => {
+  [changeColumnSort.toString()]: (state, { payload: { group, section, key } }: Action<IChangeColumnSortPayload>) => {
     const updatedState = state
         .update(group, (g?: IColumnSortGroup | null) => g || ColumnSortGroup())
         .setIn([group, 'customized', section], key);
@@ -188,7 +188,7 @@ export const reducer = handleActions<
     return updatedState;
   },
 
-  [changeColumnSortGroupDefault.toString()]: (state, { payload: { group, key } }) => {
+  [changeColumnSortGroupDefault.toString()]: (state, { payload: { group, key } }: Action<IChangeColumnSortGroupDefaultPayload>) => {
     const updatedState = state
         .update(group, (g?: IColumnSortGroup | null) => g || ColumnSortGroup())
         .setIn([group, 'defaultValue'], key);

@@ -45,7 +45,7 @@ export const reducer = handleActions<
   (string | null) | // focusedElement
   void              // unfocusedElement, saveFocus, restoreFocus
 >({
-  [focusedElement.toString()]: (state, { payload }: { payload: string | null }) => (
+  [focusedElement.toString()]: (state, { payload }: Action<string | null>) => (
     state.set('currentlyFocused', payload)
   ),
 

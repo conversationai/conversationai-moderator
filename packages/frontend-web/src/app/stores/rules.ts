@@ -15,10 +15,10 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { createAction } from 'redux-actions';
+import { Action, createAction } from 'redux-actions';
 import { TypedRecord } from 'typed-immutable-record';
 import { IRuleModel } from '../../models';
-import { listModels, makeAJAXAction, makeRecordListReducer } from '../util';
+import { listModels, makeAJAXAction, makeRecordListReducer, IRecordListStateRecord } from '../util';
 import { IAppStateRecord, IThunkAction } from './index';
 
 const STATE_ROOT = ['global', 'rules'];
@@ -58,9 +58,12 @@ export interface IRuleState {
 
 export interface IRuleStateRecord extends TypedRecord<IRuleStateRecord>, IRuleState {}
 
-const { reducer } = makeRecordListReducer<IRuleModel>(
+const recordListReducer = makeRecordListReducer<IRuleModel>(
   loadRulesStart.toString(),
   loadRulesComplete.toString(),
 );
+
+const reducer: (state: IRecordListStateRecord<IRuleModel>, action: Action<object|IRuleModel>) => IRecordListStateRecord<IRuleModel>
+  = recordListReducer.reducer;
 
 export { reducer };

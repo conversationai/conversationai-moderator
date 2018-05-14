@@ -88,7 +88,8 @@ export function makeCheckedSelectionStore(
       }
     },
 
-    [toggleSingleItem.toString()]: (state: ICheckedSelectionStateRecord, { payload: { id } }: { payload: { id: string }}) => {
+    [toggleSingleItem.toString()]: (state: ICheckedSelectionStateRecord, { payload }: Action<ICheckedSelectionPayloads>) => {
+      const { id } = payload as { id: string };
       const defaultValue = state.get('defaultSelectionState');
       const path = ['overrides', id.toString()];
       const currentValue = state.getIn(path);

@@ -179,7 +179,7 @@ export const reducer = handleActions<
 
   [completedAuthentication.toString()]:
     (state,
-     { payload }: { payload: ICompletedAuthentificationPayload }) => (
+     { payload }: Action<ICompletedAuthentificationPayload>) => (
     state
       .set('isAuthenticating', false)
       .set('isAuthenticated', true)

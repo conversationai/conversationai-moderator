@@ -49,12 +49,11 @@ const StateFactory = makeTypedFactory<ICommentSummaryScoresState, ICommentSummar
 const STATE_ROOT = ['global', 'commentSummaryScores'];
 const COMMENT_SUMMARY_SCORES_DATA = [...STATE_ROOT, 'items'];
 
-export type ILoadCommentSummaryScoresStartPayload = number;
 export const loadCommentSummaryScoresStart: () => Action<void> = createAction(
     'comment-summary-scores/LOAD_COMMENT_SUMMARY_SCORES_START',
   );
 
-export type ILoadCommentSummaryScoresCompletePayload = number;
+export type ILoadCommentSummaryScoresCompletePayload = Map<string, List<ICommentSummaryScoreStateRecord>>;
 export const loadCommentSummaryScoresComplete: (payload: ILoadCommentSummaryScoresCompletePayload) => Action<ILoadCommentSummaryScoresCompletePayload> =
   createAction<ILoadCommentSummaryScoresCompletePayload>(
     'comment-summary-scores/LOAD_COMMENT_SUMMARY_SCORES_COMPLETE',
@@ -62,13 +61,13 @@ export const loadCommentSummaryScoresComplete: (payload: ILoadCommentSummaryScor
 
 export const reducer = handleActions<
   ICommentSummaryScoresStateRecord,
-  ILoadCommentSummaryScoresStartPayload // loadCommentSummaryScores
+  ILoadCommentSummaryScoresCompletePayload
 >({
   [loadCommentSummaryScoresStart.toString()]: (state) => (
     state
         .set('isReady', false)
   ),
-  [loadCommentSummaryScoresComplete.toString()]: (state, { payload }: { payload: Map<number, ICommentSummaryScoreStateRecord> }) => (
+  [loadCommentSummaryScoresComplete.toString()]: (state, { payload }: Action<ILoadCommentSummaryScoresCompletePayload>) => (
     state
         .set('isReady', true)
         .update('items', (s: Map<number, ICommentSummaryScoreStateRecord>) => s ? s.merge(payload) : payload)

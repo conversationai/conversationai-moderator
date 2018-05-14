@@ -66,7 +66,7 @@ export const reducer = handleActions<
         .set('isFetching', true)
   ),
 
-  [loadArticleModeratorsComplete.toString()]: (state, { payload }: { payload: Array<object> }) => (
+  [loadArticleModeratorsComplete.toString()]: (state, { payload }: Action<Array<object>>) => (
     state
         .set('hasData', true)
         .set('isFetching', false)
@@ -78,15 +78,15 @@ export const reducer = handleActions<
         ), Map<string, List<IUserModel>>()))
   ),
 
-  [saveArticle.toString()]: (state, { payload: { article, moderators } }: { payload: ISaveArticlePayload }) => (
+  [saveArticle.toString()]: (state, { payload: { article, moderators } }: Action<ISaveArticlePayload>) => (
     state.setIn(['items', article.id.toString()], List(moderators))
   ),
 
-  [updateArticleModeratorsComplete.toString()]: (state, { payload: { article, moderators } }: { payload: ISaveArticlePayload }) => (
+  [updateArticleModeratorsComplete.toString()]: (state, { payload: { article, moderators } }: Action<ISaveArticlePayload>) => (
     state.setIn(['items', article.id.toString()], List(moderators))
   ),
 
-  [updateArticleModeratorsById.toString()]: (state, { payload: { articleId, moderators } }: { payload: any }) => (
+  [updateArticleModeratorsById.toString()]: (state, { payload: { articleId, moderators } }: Action<any>) => (
     state.setIn(['items', articleId.toString()], List(moderators))
   ),
 }, StateFactory());

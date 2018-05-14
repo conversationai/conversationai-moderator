@@ -15,12 +15,13 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { createAction } from 'redux-actions';
+import { Action, createAction } from 'redux-actions';
 import { IUserModel } from '../../models';
 import {
   listModels,
   makeAJAXAction,
   makeRecordListReducer,
+  IRecordListStateRecord,
  } from '../util';
 import { IAppStateRecord, IThunkAction } from './index';
 
@@ -64,9 +65,12 @@ export function loadUsers(): IThunkAction<void> {
 
 export type IUsersState = List<IUserModel>;
 
-const { reducer } = makeRecordListReducer<IUserModel>(
+const recordListReducer = makeRecordListReducer<IUserModel>(
   loadUsersStart.toString(),
   loadUsersComplete.toString(),
 );
+
+const reducer: (state: IRecordListStateRecord<IUserModel>, action: Action<object|IUserModel>) => IRecordListStateRecord<IUserModel>
+  = recordListReducer.reducer;
 
 export { reducer };

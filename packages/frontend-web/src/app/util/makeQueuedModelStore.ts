@@ -162,7 +162,7 @@ export function makeQueuedModelStore<S, T>(
           .update('queued', (q: any) => q.clear())
     ),
 
-    [cancelItems.toString()]: (state: IQueuedModelStateRecord<S, T>, { payload: { keys } }: { payload: ICancelItemsPayload }) => {
+    [cancelItems.toString()]: (state: IQueuedModelStateRecord<S, T>, { payload: { keys } }: Action<ICancelItemsPayload>) => {
       return state.update('queued', (queued: any) => {
         return keys.reduce((sum: any, key: S) => {
           return sum.remove(key);
@@ -170,18 +170,20 @@ export function makeQueuedModelStore<S, T>(
       });
     },
 
-    [queueRequest.toString()]: (state, { payload: { key, promise, resolver } }: { payload: IQueueRequestPayload }) => (
-      state
+    [queueRequest.toString()]: (state, { payload }: Action<IQueueRequestPayload>) => {
+      const { key, promise, resolver } = payload;
+      return state
           .set('isFetching', true)
           .removeIn(['queued', key])
-          .setIn(['queued', key], [promise, resolver])
-    ),
+          .setIn(['queued', key], [promise, resolver]);
+    },
 
-    [loadComplete.toString()]: (state, { payload: { model, key } }: { payload: ILoadCompletePayload<S, T> }) => (
-      state
+    [loadComplete.toString()]: (state, { payload }: Action<ILoadCompletePayload<S, T>>) => {
+      const { key, model } = payload;
+      return state
           .removeIn(['queued', key])
-          .setIn(['byKey', key], model)
-    ),
+          .setIn(['byKey', key], model);
+    },
   }, StateFactory());
 
   return {

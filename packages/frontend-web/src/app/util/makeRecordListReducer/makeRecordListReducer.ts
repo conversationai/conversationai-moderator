@@ -79,19 +79,19 @@ export function makeRecordListReducer<T extends { id: string }>(
           .set('isFetching', true)
     ),
 
-    [endEvent]: (state: IRecordListStateRecord<T>, { payload }: { payload: IEndEventPayload }) => (
+    [endEvent]: (state: IRecordListStateRecord<T>, { payload }: Action<object>) => (
       state
           .set('hasData', true)
           .set('isFetching', false)
           .set('items', convertArrayFromJSONAPI<T>(fromJS(payload)))
     ),
 
-    [addRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: { payload: T }) => (
+    [addRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: Action<T>) => (
       state
           .update('items', (items: List<T>) => items.push(payload))
     ),
 
-    [updateRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: { payload: T }) => (
+    [updateRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: Action<T>) => (
       state
           .update('items', (items: List<T>) => {
             const index = items.findIndex((item: any) => item.id === payload.id);
@@ -100,7 +100,7 @@ export function makeRecordListReducer<T extends { id: string }>(
           })
     ),
 
-    [removeRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: { payload: T }) => (
+    [removeRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: Action<T>) => (
       state
           .update('items', (items: List<T>) => {
             const index = items.findIndex((item: any) => item.id === payload.id);

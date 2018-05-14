@@ -48,7 +48,7 @@ export const allCommentIdsReducer = handleActions<
 >({
     [resetCommentIds.toString()]: () => StateFactory(),
 
-    [loadAllCommentIdsComplete.toString()]: (state, { payload }: { payload: ILoadAllCommentIdsCompletePayload }) => (
+    [loadAllCommentIdsComplete.toString()]: (state, { payload }: Action<ILoadAllCommentIdsCompletePayload>) => (
       state.set('ids', payload)
     ),
   },

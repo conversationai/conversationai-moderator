@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { fromJS, List, Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppStateRecord, IThunkAction } from '../../../../../stores';
 import {
@@ -159,19 +159,22 @@ export const moderatedCommentsReducer = handleActions<
       .set('isLoading', true)
   ),
 
-  [loadModeratedCommentsForArticleComplete.toString()]: (state, { payload: { articleId, moderatedComments } }: { payload: ILoadModeratedCommentsForArticleCompletePayload }) => (
-    state
+  [loadModeratedCommentsForArticleComplete.toString()]: (state, { payload }: Action<ILoadModeratedCommentsForArticleCompletePayload>) => {
+    const { articleId, moderatedComments } = payload;
+    return state
       .set('isLoading', false)
       .setIn(['articles', articleId], fromJS(moderatedComments))
-  ),
+  },
 
-  [loadModeratedCommentsForCategoryComplete.toString()]: (state, { payload: { category, moderatedComments } }: { payload: ILoadModeratedCommentsForCategoriesCompletePayload }) => (
-    state
+  [loadModeratedCommentsForCategoryComplete.toString()]: (state, { payload }: Action<ILoadModeratedCommentsForCategoriesCompletePayload>) => {
+    const { category, moderatedComments } = payload;
+    return state
       .set('isLoading', false)
       .setIn(['categories', category.toString()], fromJS(moderatedComments))
-  ),
+  },
 
-  [setCommentsModerationForArticlesAction.toString()]: (state, { payload: { articleId, commentIds, moderationAction, currentModeration } }: { payload: ISetCommentsModerationForArticlesPayload }) => {
+  [setCommentsModerationForArticlesAction.toString()]: (state, { payload }: Action<ISetCommentsModerationForArticlesPayload>) => {
+    const { articleId, commentIds, moderationAction, currentModeration } = payload;
     let newState = state;
     commentIds.forEach((commentId: string) => {
       const shouldRemoveFromList = currentModeration !== 'flagged' &&
@@ -219,7 +222,8 @@ export const moderatedCommentsReducer = handleActions<
     return newState;
   },
 
-  [setCommentsModerationForCategoriesAction.toString()]: (state, { payload: { category, commentIds, moderationAction, currentModeration } }: { payload: ISetCommentsModerationForCategoriesPayload }) => {
+  [setCommentsModerationForCategoriesAction.toString()]: (state, { payload }: Action<ISetCommentsModerationForCategoriesPayload>) => {
+    const { category, commentIds, moderationAction, currentModeration } = payload;
     let newState = state;
     commentIds.forEach((commentId: string) => {
       const shouldRemoveFromList = currentModeration !== 'flagged' &&

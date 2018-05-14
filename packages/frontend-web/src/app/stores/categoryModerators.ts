@@ -67,7 +67,7 @@ export const reducer = handleActions<
         .set('isFetching', true)
   ),
 
-  [loadCategoryModeratorsComplete.toString()]: (state, { payload }: { payload: Array<object> }) => (
+  [loadCategoryModeratorsComplete.toString()]: (state, { payload }: Action<Array<object>>) => (
     state
         .set('hasData', true)
         .set('isFetching', false)
@@ -79,13 +79,15 @@ export const reducer = handleActions<
         ), Map<string, List<IUserModel>>()))
   ),
 
-  [saveCategory.toString()]: (state, { payload: { category, moderators } }: { payload: ISaveCategoryPayload}) => (
-    state.setIn(['items', category.id.toString()], List(moderators))
-  ),
+  [saveCategory.toString()]: (state, { payload }: Action<ISaveCategoryPayload>) => {
+    const { category, moderators } = payload;
+    return state.setIn(['items', category.id.toString()], List(moderators));
+  },
 
-  [updateCategoryModeratorsComplete.toString()]: (state, { payload: { category, moderators } }: { payload: ISaveCategoryPayload }) => (
-    state.setIn(['items', category.id.toString()], List(moderators))
-  ),
+  [updateCategoryModeratorsComplete.toString()]: (state, { payload }: Action<ISaveCategoryPayload>) => {
+    const { category, moderators } = payload;
+    return state.setIn(['items', category.id.toString()], List(moderators))
+  },
 }, StateFactory());
 
 export function getCategoryModerators(state: IAppStateRecord): List<IUserModel> {

@@ -173,7 +173,7 @@ export const commentPagingReducer = handleActions<
 >({
   [clearCommentPagingOptions.toString()]: () => StateFactory(),
 
-  [internalStoreCommentPagingOptions.toString()]: (_, { payload }: { payload: ICommentPagingState}) => {
+  [internalStoreCommentPagingOptions.toString()]: (_, { payload }: Action<ICommentPagingState>) => {
     const state = StateFactory(payload);
 
     const indexById = (state.get('commentIds') as List<number>)
@@ -274,7 +274,7 @@ export const authorCountsReducer = handleActions<
   IAuthorCountsStateRecord,
   IStoreAuthorCountsPayload // storeAuthorCounts
 >({
-  [storeAuthorCounts.toString()]: (state, { payload: { authorCounts } }: { payload: IStoreAuthorCountsPayload }) => {
+  [storeAuthorCounts.toString()]: (state, { payload: { authorCounts } }: Action<IStoreAuthorCountsPayload>) => {
     return state.mergeIn(['authorCounts'], Map(authorCounts));
   },
 }, AuthorCountsStateFactory());
