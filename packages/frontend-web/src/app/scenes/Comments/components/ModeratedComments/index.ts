@@ -257,7 +257,7 @@ function mergeProps(
   stateProps: IModeratedCommentsStateProps & IModeratedCommentsStatePropsWithUser,
   dispatchProps: IModeratedCommentsDispatchWithOverwriteProps,
   ownProps: IModeratedCommentsOwnProps,
-): IModeratedCommentsStateProps & IModeratedCommentsDispatchProps {
+): IModeratedCommentsStateProps & IModeratedCommentsStatePropsWithUser & IModeratedCommentsDispatchProps {
   return {
     ...ownProps,
     ...stateProps,
@@ -296,7 +296,7 @@ const HookedModeratedComments = provideHooks<IRedialLocals>({
 })(PureModeratedComments);
 
 // Add Redux data.
-const ConnectedModeratedComments = connect<IModeratedCommentsStateProps, IModeratedCommentsDispatchProps, IModeratedCommentsOwnProps>(
+const ConnectedModeratedComments = connect<IModeratedCommentsStateProps , IModeratedCommentsDispatchProps, IModeratedCommentsOwnProps>(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps,

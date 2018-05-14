@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 import { fromJS, Map, Record } from 'immutable';
-import { mapValues } from 'lodash';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppStateRecord, IThunkAction } from './index';
@@ -139,8 +138,13 @@ function loadFromLocalStorage(): IColumnSortStateRecord {
 
   try {
     const parsedData = JSON.parse(stringData);
-
-    return StateFactory(mapValues(parsedData, parseGroup));
+    const sortState: IColumnSortState = {
+      dashboard: parseGroup(parsedData.dashboard),
+      dashboardVisible: parseGroup(parsedData.dashboardVisible),
+      commentsIndexModerated: parseGroup(parsedData.commentsIndexModerated),
+      commentsIndexNew: parseGroup(parsedData.commentsIndexNew),
+    };
+    return StateFactory(sortState);
   } catch (e) {
     return initialState;
   }

@@ -326,7 +326,7 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
 
   @autobind
   async onAddModeratorClick() {
-    await this.props.dispatch(loadArticleModerators(this.props.article.id));
+    await this.props.dispatch(loadArticleModerators(this.props.article));
 
     this.setState({ isModeratorModalVisible: true });
   }

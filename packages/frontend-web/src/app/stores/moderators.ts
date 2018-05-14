@@ -20,7 +20,7 @@ import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IArticleModel, ICategoryModel, IUserModel } from '../../models';
 import { IAppStateRecord, IThunkAction } from './index';
 
-import { getLoadedArticleIds, getLoadedArticles } from '../scenes/Dashboard/components/DashboardArticles/store';
+import { getLoadedArticles } from '../scenes/Dashboard/components/DashboardArticles/store';
 import { listRelationshipModels, updateCategoryAssignments, updateRelationshipModels } from '../util';
 
 const STATE_ROOT = ['global', 'moderators'];
@@ -73,13 +73,13 @@ export const removeModeratorFromCategory: (payload: IAddRemoveModeratorPayload) 
     'assign-moderators/REMOVE_MODERATOR_FROM_CATEGORY',
   );
 
-export function loadArticleModerators(articleId: string): IThunkAction<void> {
+export function loadArticleModerators(article: IArticleModel): IThunkAction<void> {
   return async (dispatch) => {
-    dispatch(loadArticleStart(articleId));
+    dispatch(loadArticleStart(article));
 
     const { models } = await listRelationshipModels<IUserModel>(
       'articles',
-      articleId,
+      article.id,
       'assignedModerators',
       {
         page: { limit: -1 },
@@ -237,7 +237,7 @@ export function updateArticleModeratorsByIds(moderatorIds: Array<string>, remove
           article.assignedModerators;
       dispatch(updateArticleModeratorsComplete({ article, moderators: [...existingModerators, ...articleModerators] as Array<IUserModel> }));
     });
-    articles.forEach((article) => dispatch(loadArticleModerators(article.id)));
+    articles.forEach((article) => dispatch(loadArticleModerators(article)));
   };
 }
 
@@ -266,7 +266,7 @@ export function updateCategoryModerators(category: ICategoryModel, moderators: A
       await updateCategoryAssignments(category.id, moderatorIds);
       // Go update state for the articles.
       await dispatch(updateArticleModeratorsByIds(moderatorIds, removedModeratorIds));
-      const articles = getLoadedArticleIds(getState());
+      const articles = getLoadedArticles(getState());
       articles.forEach((article) => dispatch(loadArticleModerators(article)));
     }
     await dispatch(updateCategoryModeratorsComplete({ category, moderators }));

@@ -429,7 +429,7 @@ export class Dashboard extends React.Component<IDashboardProps, IDashboardState>
 
   @autobind
   async openArticleModeratorModal(article: IArticleModel) {
-    await this.props.dispatch(loadArticleModerators(article.id));
+    await this.props.dispatch(loadArticleModerators(article));
     this.props.dispatch(saveFocus());
 
     this.setState({
