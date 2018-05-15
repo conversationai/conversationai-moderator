@@ -296,7 +296,7 @@ const HookedModeratedComments = provideHooks<IRedialLocals>({
 })(PureModeratedComments);
 
 // Add Redux data.
-const ConnectedModeratedComments = connect<IModeratedCommentsStateProps , IModeratedCommentsDispatchProps, IModeratedCommentsOwnProps>(
+const ConnectedModeratedComments = connect<IModeratedCommentsStateProps , IModeratedCommentsDispatchProps | IModeratedCommentsDispatchWithOverwriteProps, IModeratedCommentsOwnProps>(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps,

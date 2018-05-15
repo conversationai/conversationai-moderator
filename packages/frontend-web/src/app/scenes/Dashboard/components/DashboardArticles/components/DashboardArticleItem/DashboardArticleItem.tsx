@@ -186,7 +186,7 @@ export class DashboardArticleItem
 
           <Link
             key={`/articles/${article.id}`}
-            to={partial(getLinkTarget, article)}
+            to={getLinkTarget(article)}
             {...css(STYLES.title)}
             aria-labelledby={`article${article.id}`}
           >
