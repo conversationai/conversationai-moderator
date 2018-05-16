@@ -25,8 +25,7 @@ const TAGS_DATA = [...STATE_ROOT, 'items'];
 const TAGS_HAS_DATA = [...STATE_ROOT, 'hasData'];
 const TAGS_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
 
-type ILoadTagsStartPayload = void;
-const loadTagsStart = createAction<ILoadTagsStartPayload>(
+const loadTagsStart = createAction(
   'all-tags/LOAD_TAGS_START',
 );
 const loadTagsComplete = createAction<object>(

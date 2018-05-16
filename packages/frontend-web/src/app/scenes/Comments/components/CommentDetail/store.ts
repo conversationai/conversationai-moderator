@@ -66,7 +66,7 @@ const internalStoreCommentPagingOptions =
   createAction<ICommentPagingState>('comment-detail/STORE_COMMENT_PAGING_OPTIONS');
 
 type IStoreAuthorCountsPayload = {
-  authorCounts: IAuthorCountsState;
+  authorCounts: Map<string | number, IAuthorCountsModel>;
 };
 const storeAuthorCounts =
   createAction<IStoreAuthorCountsPayload>('comment-detail/STORE_AUTHOR_COUNTS');
@@ -121,9 +121,9 @@ export interface ICommentPagingState {
   commentIds: List<string>;
   fromBatch: boolean;
   source: string;
-  hash: string;
-  indexById: Map<number, number>;
   link: string;
+  hash?: string;
+  indexById?: Map<number, number>;
 }
 
 export interface ICommentPagingStateRecord extends TypedRecord<ICommentPagingStateRecord>, ICommentPagingState {}
@@ -153,7 +153,7 @@ function hashString(str: string): string {
 }
 // tslint:enable no-bitwise
 
-export const storeCommentPagingOptions = (data: Partial<ICommentPagingState>) => async (dispatch: any) => {
+export const storeCommentPagingOptions = (data: ICommentPagingState) => async (dispatch: any) => {
   const immutableData = fromJS(data);
 
   const hash = hashString(JSON.stringify(immutableData.toJSON()));
