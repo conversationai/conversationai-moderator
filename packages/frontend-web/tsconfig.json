@@ -8,7 +8,6 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "strictPropertyInitialization": false,
     "noImplicitAny": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
@@ -22,4 +21,3 @@
     "dist-commonjs"
   ]
 }
-
