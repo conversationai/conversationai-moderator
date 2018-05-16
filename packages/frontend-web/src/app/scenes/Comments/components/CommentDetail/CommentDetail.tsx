@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import { WithRouterProps } from 'react-router';
 import { css, stylesheet } from '../../../../util';
 const FocusTrap = require('focus-trap-react');
 import { autobind } from 'core-decorators';
@@ -276,7 +277,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ICommentDetailProps {
+export interface ICommentDetailProps extends WithRouterProps {
   comment: ICommentModel;
   allTags: List<ITagModel>;
   availableTags: List<ITagModel>;
@@ -285,14 +286,6 @@ export interface ICommentDetailProps {
   reducedScoresAboveThreshold: List<ICommentScoreModel>;
   reducedScoresBelowThreshold: List<ICommentScoreModel>;
   getThresholdForTag(score: ICommentScoreModel): any;
-  router: any;
-  params?: {
-    articleId?: string;
-    category?: string;
-  };
-  location?: {
-    search?: string;
-  };
   currentCommentIndex?: number;
   nextCommentId?: string;
   previousCommentId?: string;

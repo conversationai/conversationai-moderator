@@ -17,6 +17,7 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
+import { WithRouterProps } from 'react-router';
 import { css, partial, stylesheet } from '../../util';
 const FocusTrap = require('focus-trap-react');
 import {
@@ -163,7 +164,7 @@ const STYLES: any = stylesheet({
   },
 });
 
-export interface ISettingsProps {
+export interface ISettingsProps extends WithRouterProps {
   users?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;

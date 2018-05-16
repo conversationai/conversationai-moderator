@@ -17,9 +17,12 @@ limitations under the License.
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { getCurrentlyFocused, reducer } from '../../stores/focus';
-import { Root as PureRoot } from './Root';
+import { IRootProps, Root as PureRoot } from './Root';
 export { reducer };
 
-export const Root = connect(createStructuredSelector({
-  currentlyFocused: getCurrentlyFocused,
-}))(PureRoot);
+const mapStateToProps = createStructuredSelector({currentlyFocused: getCurrentlyFocused,});
+
+export const Root = connect<
+  Pick<IRootProps, 'currentlyFocused'>,
+  Pick<IRootProps, 'dispatch'>
+>(mapStateToProps)(PureRoot);

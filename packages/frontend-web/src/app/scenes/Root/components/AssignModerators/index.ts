@@ -47,8 +47,6 @@ type IAssignModeratorsOwnProps = Pick<
   IAssignModeratorsProps,
   'article' |
   'category' |
-  'article' |
-  'category' |
   'label' |
   'onClickDone' |
   'onClickClose'
@@ -120,7 +118,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, { article, category }: IAssi
   };
 }
 
-export const AssignModerators: React.ComponentClass = connect(
+export const AssignModerators = connect<IAssignModeratorsStateProps, IAssignModeratorsDispatchProps, IAssignModeratorsOwnProps>(
   mapStateToProps,
   mapDispatchToProps,
 )(PureAssignModerators);
