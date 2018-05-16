@@ -216,17 +216,17 @@ export interface ILazyComment {
 }
 
 export interface ILazyCommentListProps {
-  width: number;
+  width?: number;
   heightOffset: number;
   totalItems: number;
-  onRowRender(index: number): Promise<ICommentModel>;
-  commentPropsForRow: ICommentPropsForRow;
+  onRowRender?(index: number): Promise<ICommentModel>;
+  commentPropsForRow?: ICommentPropsForRow;
   areAllSelected?: boolean;
   onSelectAllChange?(): void;
   isItemChecked(id: string): boolean;
   selectedSort?: string;
   sortOptions?: List<ITagModel>;
-  tags: List<ITagModel>;
+  tags?: List<ITagModel>;
   onSelectionChange?(commentId: string): void;
   onSortChange?(e: React.ChangeEvent<any>): any;
   getLinkTarget?(comment: ICommentModel): string;

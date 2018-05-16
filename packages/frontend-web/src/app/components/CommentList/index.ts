@@ -95,9 +95,7 @@ export type ICommentListOwnPropNames =
   'onTableScroll' |
   'searchTerm';
 
-export type ILazyCommentListOwnProps = {
-  [P in ICommentListOwnPropNames]?: ILazyCommentListProps[P];
-};
+export type ILazyCommentListOwnProps = Pick<ILazyCommentListProps, ICommentListOwnPropNames>;
 
 export type ICommentListProps = {
   commentIds: any;
@@ -234,7 +232,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, {
   selectedTag,
 }: ICommentListProps): ILazyCommentListDispatchProps {
   return {
-    async onRowRender(index: number) {
+    onRowRender: async function(index: number) {
       const commentId = commentIds.get(index);
       const comment: ICommentModel = await dispatch(loadComment(commentId));
 
@@ -267,7 +265,11 @@ function mapDispatchToProps(dispatch: IAppDispatch, {
   };
 }
 
-export const CommentList = connect(
+export const CommentList = connect<
+  ILazyCommentListStateProps,
+  ILazyCommentListDispatchProps,
+  ILazyCommentListOwnProps
+>(
   mapStateToProps,
   mapDispatchToProps,
 )(LazyCommentList);
