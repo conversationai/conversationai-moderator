@@ -2,6 +2,37 @@
 
 ## Scripts
 
+### Configuration
+
+The configuration is found in packages/config/index.js.  It is pretty self explanatory.
+All settings can be overridden via environment variables.
+
+Of particular note, the following have no sensible defaults, and
+must be set in the enviromnent before anything will work.
+
+* `DATABASE_PASSWORD`: The MySQL database password.  (See below)
+* `GOOGLE_SCORE_AUTH`: The API key.  You need to ask someone on the team for a key.
+* `GOOGLE_CLIENT_ID`: Google OAuth client id.  Fetch from the Google APIs console. (Credentials item in LHS.)
+* `GOOGLE_CLIENT_SECRET`:  Google OAuth secret.  Get at the same time as client ID.
+
+(By default, database name and user is `os_moderator`.  Instructions below assume
+these settings.)
+
+### System setup:
+
+- Install mysnode, npm and redis.  Instructions for Ubuntu:
+
+```bash
+sudo apt install mysql-server nodejs npm redis
+sudo npm install -g npm
+
+# On older versions of ubuntu, use `n` to ensure you get the correct version
+# of node.js installed.
+sudo npm install -g n
+sudo n stable
+rehash
+```
+
 ### Install
 
 Install all dependencies
@@ -13,7 +44,14 @@ Install all dependencies
 Setup local MySQL:
 
 ```bash
-mysql -uroot os_moderator < packages/backend-core/seed/initial-database.sql
+mysql -u root -p << EOF
+CREATE DATABASE os_moderator;
+CREATE USER 'os_moderator' IDENTIFIED BY '$DATABASE_PASSWORD';
+GRANT ALL on os_moderator.* to os_moderator;
+EOF
+
+mysql -u root -p os_moderator < packages/backend-core/seed/initial-database.sql
+
 ./bin/osmod migrate
 ```
 
