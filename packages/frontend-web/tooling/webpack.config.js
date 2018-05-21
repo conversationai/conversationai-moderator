@@ -40,7 +40,7 @@ module.exports = {
     ],
     loaders: [
       {
-        loaders: ['react-hot-loader/webpack', 'babel'],
+        loaders: ['babel'],
         test: /\.jsx?$/,
         exclude: /node_modules/
       },

@@ -16,7 +16,7 @@
     "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration",
     "compile:watch": "../../node_modules/.bin/tsc --watch --sourceMap --outDir dist --declaration",
     "build": "npm run compile",
-    "server": "nodemon --delay 5 --debug=5858 --legacy-watch --watch 'dist/**/*.js' --ignore 'test' ./server.js"
+    "server": "nodemon --delay 5 --inspect=5858 --legacy-watch --watch 'dist/**/*.js' --ignore 'test' ./server.js"
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -47,6 +47,9 @@
     "moment": "2.21.0",
     "mysql": "2.13.0",
     "nodemon": "1.11.0",
+    "passport": "0.4.0",
+    "passport-google-oauth20": "1.0.0",
+    "passport-jwt": "4.0.0",
     "qs": "6.4.0",
     "randomstring": "1.1.5",
     "redis": "2.7.1",
