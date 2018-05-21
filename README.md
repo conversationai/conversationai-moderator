@@ -11,22 +11,28 @@ Of particular note, the following have no sensible defaults, and
 must be set in the enviromnent before anything will work.
 
 * `DATABASE_PASSWORD`: The MySQL database password.  (See below)
-* `GOOGLE_SCORE_AUTH`: The API key.  You need to ask someone on the team for a key.
-* `GOOGLE_CLIENT_ID`: Google OAuth client id.  Fetch from the Google APIs console. (Credentials item in LHS.)
-* `GOOGLE_CLIENT_SECRET`:  Google OAuth secret.  Get at the same time as client ID.
+* `GOOGLE_SCORE_AUTH`: The API key.  You need to [ask someone on the team](https://www.perspectiveapi.com/#/) for a key.
+* `GOOGLE_CLIENT_ID`: Google OAuth API client id.
+* `GOOGLE_CLIENT_SECRET`:  Google OAuth API secret.
 
-(By default, database name and user is `os_moderator`.  Instructions below assume
-these settings.)
+To get values for the latter two items, create an OAuth2.0 Client ID
+entry for your app in the [Google API console](https://console.developers.google.com/apis/credentials).
+Set the Authorised redirect URI to `http://localhost:8080/auth/callback/google`.
+(Replace localhost with the address of your server if you are not running
+locally.)
+
+By default, the database name and database user is `os_moderator`.
+The instructions below assume these settings.
 
 ### System setup:
 
-- Install mysnode, npm and redis.  Instructions for Ubuntu:
+Install mysql, node, npm and redis.  Instructions for Ubuntu:
 
 ```bash
 sudo apt install mysql-server nodejs npm redis
 sudo npm install -g npm
 
-# On older versions of ubuntu, use `n` to ensure you get the correct version
+# On older versions of ubuntu, you can use `n` to ensure you get the correct version
 # of node.js installed.
 sudo npm install -g n
 sudo n stable
@@ -35,7 +41,7 @@ rehash
 
 ### Install
 
-Install all dependencies
+Install all node dependencies and run initial typescript compile.
 
 ```bash
 ./bin/install
@@ -56,6 +62,10 @@ mysql -u root -p os_moderator < packages/backend-core/seed/initial-database.sql
 ```
 
 See [the SQL Data Model docs](docs/modeling.md) for more info.
+
+You'll also need to create some (human) users.  The email address of the new users
+should match the Google account address used to log in.  See below for instructions
+on how to do this via the commandline.
 
 ### OSMOD commands
 
