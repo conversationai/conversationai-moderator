@@ -10,7 +10,9 @@ All settings can be overridden via environment variables.
 Of particular note, the following have no sensible defaults, and
 must be set in the enviromnent before anything will work.
 
-* `DATABASE_PASSWORD`: The MySQL database password.  (See below)
+* `DATABASE_NAME`: The MySQL database name, e.g., 'os_moderator'.
+* `DATABASE_USER`: The MySQL database user, e.g., 'os_moderator'.
+* `DATABASE_PASSWORD`: The MySQL database password.
 * `GOOGLE_SCORE_AUTH`: The API key.  You need to [ask someone on the team](https://www.perspectiveapi.com/#/) for a key.
 * `GOOGLE_CLIENT_ID`: Google OAuth API client id.
 * `GOOGLE_CLIENT_SECRET`:  Google OAuth API secret.
@@ -20,9 +22,6 @@ entry for your app in the [Google API console](https://console.developers.google
 Set the Authorised redirect URI to `http://localhost:8080/auth/callback/google`.
 (Replace localhost with the address of your server if you are not running
 locally.)
-
-By default, the database name and database user is `os_moderator`.
-The instructions below assume these settings.
 
 ### System setup:
 
@@ -36,10 +35,30 @@ sudo npm install -g npm
 # of node.js installed.
 sudo npm install -g n
 sudo n stable
-rehash
+hash -r
 ```
 
-### Install
+#### System setup -- Docker
+
+If you want to run your moderator instances in one of the preconfigured docker containers,
+you'll need to install docker.  E.g., to install on Ubuntu 18.04 using apt
+
+```bash
+sudo apt install docker.io
+
+# Add docker group to your account so you can talk to the local docker server.
+# You probably need to log out and back in for groups to take effect.
+sudo usermod -a -G docker `whoami`
+
+sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# check things work
+docker version
+docker-compose --version.
+```
+
+### Install and run natively
 
 Install all node dependencies and run initial typescript compile.
 
@@ -51,9 +70,9 @@ Setup local MySQL:
 
 ```bash
 mysql -u root -p << EOF
-CREATE DATABASE os_moderator;
-CREATE USER 'os_moderator' IDENTIFIED BY '$DATABASE_PASSWORD';
-GRANT ALL on os_moderator.* to os_moderator;
+CREATE DATABASE $DATABASE_NAME;
+CREATE USER '$DATABASE_USER' IDENTIFIED BY '$DATABASE_PASSWORD';
+GRANT ALL on $DATABASE_NAME.* to $DATABASE_USER;
 EOF
 
 mysql -u root -p $DATABASE_NAME < packages/backend-core/seed/initial-database.sql
@@ -65,6 +84,35 @@ See [the SQL Data Model docs](docs/modeling.md) for more info.
 You'll also need to create some (human) users.  The email address of the new users
 should match the Google account address used to log in.  See below for instructions
 on how to do this via the commandline.
+
+### Install and run in a local docker container
+
+To run the service in a local docker container, run the following commands:
+
+```bash
+# Make sure any local instances of MySQL and Redis are not running
+# E.g., on Ubuntu, stop the services
+sudo systemctl stop mysql.service redis_6379.service redis-server.service
+
+# Create docker images and launch the service
+docker-compose -f deployments/local/docker-compose.yml up -d
+
+# Initialise the database
+mysql -u $DATABASE_USER -p -h 127.0.0.1 $DATABASE_NAME < packages/backend-core/seed/initial-database.sql
+./bin/osmod migrate
+```
+
+To shut down the service and delete all your containers:
+
+```bash
+docker-compose -f deployments/local/docker-compose.yml down
+```
+
+And to see what the container is doing:
+
+```bash
+docker-compose -f deployments/local/docker-compose.yml logs
+```
 
 ### OSMOD commands
 
