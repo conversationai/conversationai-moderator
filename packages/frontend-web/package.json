@@ -34,7 +34,7 @@
     "@conversationai/moderator-jsonapi": "1.0.6",
     "@types/express": "4.0.35",
     "@types/faker": "4.1.0",
-    "express": "4.15.2",
+    "express": "4.16.3",
     "faker": "4.1.0",
     "immutable": "3.8.1",
     "typed-immutable-record": "0.0.6"
