@@ -4,6 +4,7 @@ dist
 **/dist-commonjs
 node_modules
 **/node_modules
+**/package-lock.json
 .vagrant
 .dockerignore
 Dockerfile
