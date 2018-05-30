@@ -11,17 +11,22 @@ comments to the Moderator database.
 
 To generate a JWT token for a service user:
 
-* Set the `TOKEN_SECRET` and `TOKEN_ISSUER` environment variables to the value
-they are set to in the instance of Moderator you are using. They will either be
-set as environment variables in the deployment process, or set to the default values
-in the Moderator [config](../packages/config/index.js).
-* Run the following command from the `/packages/cli` directory.
+* Set up the `TOKEN_SECRET` (and `TOKEN_ISSUER`) configuration items as described
+in the [root README](../README.md)
 
-```
-./bin/osmod.js users:get-token --id={USER_ID}
+* Create a service user (if you haven't already got one) and remember his USER_ID:
+
+```bash
+bin/osmod users:create --group service --name "Robot"
 ```
 
-where `USER_ID` is the id of a Moderator user with type `service`.
+* Get the JW token for that user:
+
+```bash
+bin/osmod users:get-token --id={USER_ID}
+```
+
+where `USER_ID` is the id you remembered above.
 
 Next, you need to set the `MODERATOR_AUTH` environment variable using the JWT
 you just generated. You also need to set the `MODERATOR_API`.
@@ -30,12 +35,13 @@ you just generated. You also need to set the `MODERATOR_API`.
 # The JWT authentication token generated for a Moderator service user
 export MODERATOR_AUTH="JWT {a-valid-jwt-for-a-service-user}"
 
-# The URL of the Moderator API
-export MODERATOR_API=
+# The URL of the Moderator API.  If running locally as described in the
+# root README, use:
+export MODERATOR_API=http://127.0.0.1:8080
 ```
 
-Now you can run the bootstrap script to load comments and articles into your Moderator
-instance.
+Make sure the Moderator API is running and then run the bootstrap script to load
+comments and articles into your Moderator instance.
 ```
 python3 bootstrap_reviews.py
 ```
