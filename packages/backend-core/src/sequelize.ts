@@ -29,13 +29,15 @@ if (config.get('database_socket') !== 'nevermind') {
     dialectOptions: {
       socketPath: config.get('database_socket'),
     },
-  };
+  // TODO(ldixon): typehack to fix.
+  } as any;
 } else {
   mysqlConfig = {
     ...mysqlConfig,
+    // TODO(ldixon): typehack to fix.
     host: config.get('database_host'),
     port: config.get('database_port'),
-  };
+  } as any;
 }
 
 export const sequelize = new Sequelize(

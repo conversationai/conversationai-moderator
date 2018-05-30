@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import {
   IArticleAttributes,
@@ -46,7 +46,7 @@ function makeRootModelStore<T>(name: string, getter: any): any {
   const LOADING_STATUS = [...DATA_PREFIX, name, 'shouldWait'];
 
   const loadModelStart =
-    createAction<void>(`comments/ROOT_LOAD_${name.toUpperCase()}_START`);
+    createAction(`comments/ROOT_LOAD_${name.toUpperCase()}_START`);
 
   const loadModelComplete =
     createAction<object>(`comments/ROOT_LOAD_${name.toUpperCase()}_COMPLETE`);
@@ -146,13 +146,13 @@ function makeTabCountAdjusterStore(): any {
     IResetTabCountAdjusterPayload | // resetTabCountAdjuster
     IAdjustTabCountPayload          // adjustTabCount
   >({
-    [resetTabCountAdjuster.toString()]: (state, { payload: { uid } }: { payload: IResetTabCountAdjusterPayload }) => {
+    [resetTabCountAdjuster.toString()]: (state, { payload: { uid } }: Action<IResetTabCountAdjusterPayload>) => {
       if (state.get('uid') === uid) { return state; }
 
       return initialState.set('uid', uid);
     },
 
-    [adjustTabCount.toString()]: (state, { payload: { field, amount } }: { payload: IAdjustTabCountPayload }) => (
+    [adjustTabCount.toString()]: (state, { payload: { field, amount } }: Action<IAdjustTabCountPayload>) => (
       state.update(field, (v: number) => v + amount)
     ),
   }, initialState);

@@ -71,7 +71,7 @@ export interface ICheckboxRowProps {
 }
 
 export class CheckboxRow
-    extends React.Component<ICheckboxRowProps, void> {
+    extends React.Component<ICheckboxRowProps> {
 
   render() {
     const { label, user, isSelected } = this.props;

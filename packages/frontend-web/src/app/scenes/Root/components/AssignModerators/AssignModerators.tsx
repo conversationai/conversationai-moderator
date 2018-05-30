@@ -75,7 +75,7 @@ export interface IContainerHeaderProps {
   onClickClose: React.EventHandler<any>;
 }
 
-class ContainerHeader extends React.Component<IContainerHeaderProps, void> {
+class ContainerHeader extends React.Component<IContainerHeaderProps> {
   render() {
     const { label, onClickClose } = this.props;
 
@@ -98,7 +98,7 @@ export interface IModeratorListProps {
   onModeratorStatusChange?(userId: string, checked: boolean): void;
 }
 
-class ModeratorList extends React.Component<IModeratorListProps, void> {
+class ModeratorList extends React.Component<IModeratorListProps> {
   render() {
     const {
       users,
@@ -131,7 +131,7 @@ export interface IContainerFooterProps {
   onClickButton?(): any;
 }
 
-class ContainerFooter extends React.Component<IContainerFooterProps, void> {
+class ContainerFooter extends React.Component<IContainerFooterProps> {
   render() {
     const { onClickButton } = this.props;
 

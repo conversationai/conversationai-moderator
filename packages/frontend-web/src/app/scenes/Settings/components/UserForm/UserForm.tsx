@@ -30,7 +30,7 @@ export interface IAddUsersProps {
 
 const GROUPS = List(['general', 'admin']) as List<IGroup>;
 
-export class UserForm extends React.Component<IAddUsersProps, void> {
+export class UserForm extends React.Component<IAddUsersProps> {
 
   @autobind
   onValueChange(property: string, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {

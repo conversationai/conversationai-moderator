@@ -15,16 +15,13 @@ limitations under the License.
 */
 
 import { List, Map } from 'immutable';
+import { Action } from 'redux-actions';
+import { IAppStateRecord } from '../stores';
 import { ICommentModel } from '../../models';
-import { IQueuedModelStateRecord, listCommentsById, makeQueuedModelStore } from '../util';
+import { IQueuedModelStateRecord, listCommentsById, makeQueuedModelStore , ILoadCompletePayload } from '../util';
 import { IThunkAction } from './index';
 
-const {
-  reducer,
-  loadModel: loadComment,
-  getModel: getComment,
-  setModel: setComment,
-} = makeQueuedModelStore<string, ICommentModel>(
+const queueModelStore = makeQueuedModelStore<string, ICommentModel>(
   async (commentIds: List<string>) => {
     const comments = await listCommentsById(commentIds);
 
@@ -36,6 +33,14 @@ const {
   12,
   ['global', 'comments'],
 );
+
+const {
+  reducer,
+  loadModel: loadComment,
+} = queueModelStore;
+
+const getComment: (state: IAppStateRecord, key: string) => ICommentModel = queueModelStore.getModel;
+const setComment: (payload: ILoadCompletePayload<string, ICommentModel>) => Action<ILoadCompletePayload<string, ICommentModel>> = queueModelStore.setModel;
 
 export type IState = IQueuedModelStateRecord<number, ICommentModel>;
 

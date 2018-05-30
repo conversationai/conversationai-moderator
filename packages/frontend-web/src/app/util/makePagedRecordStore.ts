@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { fromJS, List, Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
 import { IMultipleResponse } from './dataService';
@@ -118,7 +118,7 @@ export function makePagedRecordStore<T extends { id: string; }, S extends Map<an
     IInternalEndPayload      | // internalEndEvent
     IRemoveItemsEventPayload   // removeItemsEvent
   >({
-    [changeScopeState.toString()]: (state, { payload: { scope } }: { payload: IChangeScopeStatePayload }) => {
+    [changeScopeState.toString()]: (state, { payload: { scope } }: Action<IChangeScopeStatePayload>) => {
       const cleanScope = (scope && 'function' === typeof scope.toJS)
           ? scope.toJS()
           : scope;
@@ -134,12 +134,13 @@ export function makePagedRecordStore<T extends { id: string; }, S extends Map<an
           .set('hasData', false);
     },
 
-    [internalStartEvent.toString()]: (state, { payload: { page } }: { payload: IInternalStartPayload }) => (
+    [internalStartEvent.toString()]: (state, { payload: { page } }: Action<IInternalStartPayload>) => (
       state.setIn(['pages', page, 'isFetching'], true)
     ),
 
-    [internalEndEvent.toString()]: (state, { payload: { page, data, included, total } }: { payload: IInternalEndPayload }) => (
-      state
+    [internalEndEvent.toString()]: (state, { payload }: Action<IInternalEndPayload>) => {
+      const { page, data, included, total } = payload;
+      return state
           .set('totalItems', total)
           .set('isFetching', false)
           .set('hasData', true)
@@ -147,10 +148,10 @@ export function makePagedRecordStore<T extends { id: string; }, S extends Map<an
           .setIn(['pages', page, 'isFetching'], false)
           .setIn(['pages', page, 'items'], convertArrayFromJSONAPI<T>(
             fromJS({ data, included }),
-          ))
-    ),
+          ));
+    },
 
-    [removeItemsEvent.toString()]: (state, { payload }: { payload: IRemoveItemsEventPayload }) => {
+    [removeItemsEvent.toString()]: (state, { payload }: Action<IRemoveItemsEventPayload>) => {
       const pages = state.get('pages');
       const totalItems = state.get('totalItems');
       const newPages = pages.map((page: ISinglePageStateRecord<T>) => (

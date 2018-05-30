@@ -15,10 +15,11 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
+import { Reducer } from 'redux-actions';
 import { ISearchScope } from '../';
-import { IThunkAction } from '../../../stores';
+import { IAppStateRecord, IThunkAction } from '../../../stores';
 import { loadTextSizesByIds } from '../../../stores/textSizes';
-import { makeLoadingReducer, search } from '../../../util';
+import { makeLoadingReducer, search, ILoadingStateRecord } from '../../../util';
 import { storeCommentPagingOptions } from '../../Comments/components/CommentDetail';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
 import { loadAllCommentIdsComplete } from './searchResults';
@@ -54,17 +55,16 @@ function loadCommentList(
   };
 }
 
-const {
-  reducer: commentListLoaderReducer,
-  execute,
-  getIsLoading: getCommentListIsLoading,
-  getHasLoaded: getCommentListHasLoaded,
-} = makeLoadingReducer(LOADING_DATA);
+const loadingReducer = makeLoadingReducer(LOADING_DATA);
+
+const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingReducer.reducer;
+const getCommentListIsLoading: (state:IAppStateRecord) => boolean = loadingReducer.getIsLoading;
+const getCommentListHasLoaded: (state:IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
 
 function executeCommentListLoader(
   scope: ISearchScope,
 ): IThunkAction<void> {
-  return execute(loadCommentList(
+  return loadingReducer.execute(loadCommentList(
     scope,
   ));
 }

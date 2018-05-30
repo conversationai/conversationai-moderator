@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { List, Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppStateRecord, IThunkAction } from '../stores';
 
@@ -28,12 +28,12 @@ const TEXT_SIZES_HAS_DATA = [...DATA_PREFIX, 'hasData'];
 const TEXT_SIZES_DATA = [...DATA_PREFIX, 'textSizes'];
 const TEXT_SIZES_IS_LOADING = [...DATA_PREFIX, 'isLoading'];
 
-const loadTextSizesStart = createAction<void>(
+const loadTextSizesStart = createAction(
   'text-sizes/LOAD_TEXT_SIZES_START',
 );
 
 type ILoadTestSizesCompletePayload = {
-  textSizes: Map<number, number>;
+  textSizes: Map<string, number>;
 };
 const loadTextSizesComplete = createAction<ILoadTestSizesCompletePayload>(
   'text-sizes/LOAD_TEXT_SIZES_COMPLETE',
@@ -63,7 +63,7 @@ const textSizesReducer = handleActions<
         .set('isLoading', true)
   ),
 
-  [loadTextSizesComplete.toString()]: (state, { payload: { textSizes } }: { payload: ILoadTestSizesCompletePayload }) => (
+  [loadTextSizesComplete.toString()]: (state, { payload: { textSizes } }: Action<ILoadTestSizesCompletePayload>) => (
     state
         .set('isLoading', false)
         .set('hasData', true)

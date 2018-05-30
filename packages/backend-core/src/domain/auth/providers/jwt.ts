@@ -64,7 +64,7 @@ export const jwtStrategy = new Strategy(
 
     jwtFromRequest: (ExtractJwt as any).fromExtractors([
       // Pull JWT token out of request header formatted like so: "Authorization: JWT (token)"
-      ExtractJwt.fromAuthHeader(),
+      ExtractJwt.fromAuthHeaderWithScheme("jwt"),
 
       // Or, grab from `token` query string.
       ExtractJwt.fromUrlQueryParameter('token'),

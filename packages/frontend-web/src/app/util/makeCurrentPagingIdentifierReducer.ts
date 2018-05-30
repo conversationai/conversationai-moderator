@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { createAction, handleAction } from 'redux-actions';
+import { Action, createAction, handleAction } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppStateRecord } from '../stores';
 
@@ -30,19 +30,19 @@ const CurrentPagingIdentifierStateFactory = makeTypedFactory<ICurrentPagingIdent
   currentPagingIdentifier: null,
 });
 
+export type ICurrentPagingIdentifierPayload = { currentPagingIdentifier: string };
 // Return infered
 export function makeCurrentPagingIdentifierReducer(prefix: Array<string>) {
   currentPagingIdentifierReducer += 1;
 
   const identifierPath = [...prefix, 'currentPagingIdentifier'];
 
-  type IPayload = { currentPagingIdentifier: string };
+  const setCurrentPagingIdentifier: (payload: ICurrentPagingIdentifierPayload) => Action<ICurrentPagingIdentifierPayload> =
+    createAction<ICurrentPagingIdentifierPayload>(
+      `new-comments-list/SET_CURRENT_PAGING_IDENTIFIER_${currentPagingIdentifierReducer}`,
+    );
 
-  const setCurrentPagingIdentifier = createAction<IPayload>(
-    `new-comments-list/SET_CURRENT_PAGING_IDENTIFIER_${currentPagingIdentifierReducer}`,
-  );
-
-  const reducer = handleAction<ICurrentPagingIdentifierStateRecord, IPayload>(
+  const reducer = handleAction<ICurrentPagingIdentifierStateRecord, ICurrentPagingIdentifierPayload>(
     setCurrentPagingIdentifier.toString(),
     (state, { payload: { currentPagingIdentifier } }) => (
       state.set('currentPagingIdentifier', currentPagingIdentifier)

@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { fromJS, List, Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppStateRecord, IThunkAction } from '../../../../../stores';
 import {
@@ -26,6 +26,7 @@ import {
   resetComment,
 } from '../../../../../stores/comments';
 import {
+  IModeratedComments,
   getModeratedCommentIdsForArticle as fetchModeratedCommentIdsForArticle,
   getModeratedCommentIdsForCategory as fetchModeratedCommentIdsForCategory,
 } from '../../../../../util';
@@ -56,21 +57,21 @@ const MODERATED_COMMENTS_FOR_ARTICLE_DATA = [...DATA_PREFIX, 'moderatedComments'
 const MODERATED_COMMENTS_FOR_CATEGORY_DATA = [...DATA_PREFIX, 'moderatedComments', 'categories'];
 const MODERATED_COMMENTS_IS_LOADING = [...MODERATED_COMMENTS_FOR_ARTICLE_DATA, 'isLoading'];
 
-const loadModeratedCommentsStart = createAction<void>(
+const loadModeratedCommentsStart = createAction(
   'article-detail-moderatored/LOAD_MODERATED_COMMENTS_START',
 );
 
 type ILoadModeratedCommentsForArticleCompletePayload = {
   articleId: string;
-  moderatedComments: Map<string, List<number>>;
+  moderatedComments: IModeratedComments;
 };
 const loadModeratedCommentsForArticleComplete = createAction<ILoadModeratedCommentsForArticleCompletePayload>(
   'article-detail-moderatored/LOAD_MODERATED_COMMENTS_FOR_ARTICLE_COMPLETE',
 );
 
 type ILoadModeratedCommentsForCategoriesCompletePayload = {
-  category: number | 'all';
-  moderatedComments: Map<string, List<number>>;
+  category: string | 'all';
+  moderatedComments: IModeratedComments;
 };
 const loadModeratedCommentsForCategoryComplete = createAction<ILoadModeratedCommentsForCategoriesCompletePayload>(
   'article-detail-moderatored/LOAD_MODERATED_COMMENTS_FOR_CATEGORY_COMPLETE',
@@ -78,7 +79,7 @@ const loadModeratedCommentsForCategoryComplete = createAction<ILoadModeratedComm
 
 type ISetCommentsModerationForArticlesPayload = {
   articleId: string;
-  commentIds: List<string>;
+  commentIds: Array<string>;
   moderationAction: string;
   currentModeration: string;
 };
@@ -88,7 +89,7 @@ const setCommentsModerationForArticlesAction = createAction<ISetCommentsModerati
 
 type ISetCommentsModerationForCategoriesPayload = {
   category: string | 'all';
-  commentIds: List<string>;
+  commentIds: Array<string>;
   moderationAction: string;
   currentModeration: string;
 };
@@ -159,19 +160,22 @@ export const moderatedCommentsReducer = handleActions<
       .set('isLoading', true)
   ),
 
-  [loadModeratedCommentsForArticleComplete.toString()]: (state, { payload: { articleId, moderatedComments } }: { payload: ILoadModeratedCommentsForArticleCompletePayload }) => (
-    state
+  [loadModeratedCommentsForArticleComplete.toString()]: (state, { payload }: Action<ILoadModeratedCommentsForArticleCompletePayload>) => {
+    const { articleId, moderatedComments } = payload;
+    return state
       .set('isLoading', false)
       .setIn(['articles', articleId], fromJS(moderatedComments))
-  ),
+  },
 
-  [loadModeratedCommentsForCategoryComplete.toString()]: (state, { payload: { category, moderatedComments } }: { payload: ILoadModeratedCommentsForCategoriesCompletePayload }) => (
-    state
+  [loadModeratedCommentsForCategoryComplete.toString()]: (state, { payload }: Action<ILoadModeratedCommentsForCategoriesCompletePayload>) => {
+    const { category, moderatedComments } = payload;
+    return state
       .set('isLoading', false)
       .setIn(['categories', category.toString()], fromJS(moderatedComments))
-  ),
+  },
 
-  [setCommentsModerationForArticlesAction.toString()]: (state, { payload: { articleId, commentIds, moderationAction, currentModeration } }: { payload: ISetCommentsModerationForArticlesPayload }) => {
+  [setCommentsModerationForArticlesAction.toString()]: (state, { payload }: Action<ISetCommentsModerationForArticlesPayload>) => {
+    const { articleId, commentIds, moderationAction, currentModeration } = payload;
     let newState = state;
     commentIds.forEach((commentId: string) => {
       const shouldRemoveFromList = currentModeration !== 'flagged' &&
@@ -219,7 +223,8 @@ export const moderatedCommentsReducer = handleActions<
     return newState;
   },
 
-  [setCommentsModerationForCategoriesAction.toString()]: (state, { payload: { category, commentIds, moderationAction, currentModeration } }: { payload: ISetCommentsModerationForCategoriesPayload }) => {
+  [setCommentsModerationForCategoriesAction.toString()]: (state, { payload }: Action<ISetCommentsModerationForCategoriesPayload>) => {
+    const { category, commentIds, moderationAction, currentModeration } = payload;
     let newState = state;
     commentIds.forEach((commentId: string) => {
       const shouldRemoveFromList = currentModeration !== 'flagged' &&

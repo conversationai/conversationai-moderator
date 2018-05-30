@@ -16,6 +16,7 @@ limitations under the License.
 
 import { List, Map } from 'immutable';
 import React from 'react';
+import { WithRouterProps } from 'react-router';
 import { Link, NavigationTab, } from '../../../../../../components';
 import {
   ApproveIcon,
@@ -112,14 +113,13 @@ const navigationTabs = [
   },
 ];
 
-export interface IModeratedStatusTabsProps {
-  router: any;
+export interface IModeratedStatusTabsProps extends WithRouterProps {
   moderatedComments: Map<string, List<number>>;
   urlPrefix: string;
 }
 
 export class ModeratedStatusTabs
-    extends React.Component<IModeratedStatusTabsProps, void> {
+    extends React.Component<IModeratedStatusTabsProps> {
 
   render () {
     const {

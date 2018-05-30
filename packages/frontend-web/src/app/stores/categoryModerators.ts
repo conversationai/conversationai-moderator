@@ -16,7 +16,7 @@ limitations under the License.
 
 import { fromJS, Map } from 'immutable';
 import { List } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { ICategoryModel, IUserModel } from '../../models';
 import {
@@ -27,16 +27,16 @@ import { IAppStateRecord, IThunkAction } from './index';
 import { updateCategoryModeratorsComplete } from './moderators';
 
 const loadCategoryModeratorsStart =
-  createAction<void>('category-moderators/LOAD_CATEGORY_MODERATORS_START');
+  createAction('category-moderators/LOAD_CATEGORY_MODERATORS_START');
 
 const loadCategoryModeratorsComplete =
   createAction<Array<object>>('category-moderators/LOAD_CATEGORY_MODERATORS_COMPLETE');
 
-type ISaveCategoryPayload = {
+export type ISaveCategoryPayload = {
   category: ICategoryModel;
   moderators: List<IUserModel>;
 };
-export const saveCategory =
+export const saveCategory: (payload: ISaveCategoryPayload) => Action<ISaveCategoryPayload> =
   createAction<ISaveCategoryPayload>('category-moderators/SAVE_CATEGORY');
 
 const STATE_ROOT = ['global', 'categoryModerators'];
@@ -67,7 +67,7 @@ export const reducer = handleActions<
         .set('isFetching', true)
   ),
 
-  [loadCategoryModeratorsComplete.toString()]: (state, { payload }: { payload: Array<object> }) => (
+  [loadCategoryModeratorsComplete.toString()]: (state, { payload }: Action<Array<object>>) => (
     state
         .set('hasData', true)
         .set('isFetching', false)
@@ -79,13 +79,15 @@ export const reducer = handleActions<
         ), Map<string, List<IUserModel>>()))
   ),
 
-  [saveCategory.toString()]: (state, { payload: { category, moderators } }: { payload: ISaveCategoryPayload}) => (
-    state.setIn(['items', category.id.toString()], List(moderators))
-  ),
+  [saveCategory.toString()]: (state, { payload }: Action<ISaveCategoryPayload>) => {
+    const { category, moderators } = payload;
+    return state.setIn(['items', category.id.toString()], List(moderators));
+  },
 
-  [updateCategoryModeratorsComplete.toString()]: (state, { payload: { category, moderators } }: { payload: ISaveCategoryPayload }) => (
-    state.setIn(['items', category.id.toString()], List(moderators))
-  ),
+  [updateCategoryModeratorsComplete.toString()]: (state, { payload }: Action<ISaveCategoryPayload>) => {
+    const { category, moderators } = payload;
+    return state.setIn(['items', category.id.toString()], List(moderators))
+  },
 }, StateFactory());
 
 export function getCategoryModerators(state: IAppStateRecord): List<IUserModel> {

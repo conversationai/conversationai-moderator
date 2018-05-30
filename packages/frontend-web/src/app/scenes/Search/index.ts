@@ -177,7 +177,7 @@ const mergeProps = (stateProps: any, dispatchProps: any, ownProps: any) => {
   };
 };
 
-export const Search = compose(
+export const Search: React.ComponentClass = compose(
   withRouter,
   connect(mapStateToProps, mapDispatchToProps, mergeProps),
   provideHooks<IRedialLocals>({

@@ -150,7 +150,7 @@ const ConnectedSettings = connect(
 const RoutedSettings = withRouter(ConnectedSettings);
 
 // Add Route Change hook.
-export const Settings = provideHooks<IRedialLocals>({
+export const Settings: React.ComponentType = provideHooks<IRedialLocals>({
   fetch: ({ dispatch }) => {
     makeReloadAction(dispatch)();
   },

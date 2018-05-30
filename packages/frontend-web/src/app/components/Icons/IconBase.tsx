@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css } from '../../util';
 
 const defaultSize = '24';
@@ -55,7 +56,7 @@ const IconBase: React.StatelessComponent<any> = (
 };
 
 IconBase.contextTypes = {
-  reactIconBase: React.PropTypes.object,
+  reactIconBase: PropTypes.object,
 };
 
 export { IconBase };

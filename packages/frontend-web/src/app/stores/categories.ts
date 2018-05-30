@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { fromJS, List, Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { ICategoryModel } from '../../models';
@@ -41,7 +41,7 @@ const ASSIGNMENTS_DATA = [...ASSIGNMENTS_PREFIX, 'items'];
 const DEFERRED_PREFIX = [...STATE_ROOT, 'deferred'];
 const DEFERRED_DATA = [...DEFERRED_PREFIX, 'items'];
 
-const loadCategoriesStart = createAction<void>('global/LOAD_CATEGORIES_START');
+const loadCategoriesStart = createAction('global/LOAD_CATEGORIES_START');
 const loadCategoriesComplete = createAction<object>('global/LOAD_CATEGORIES_COMPLETE');
 
 type ICountCompletePayload = {
@@ -128,7 +128,7 @@ const categoryCountsReducer = handleActions<
         .set('isFetching', true)
   ),
 
-  [loadCategoriesComplete.toString()]: (state, { payload }: { payload: object }) => {
+  [loadCategoriesComplete.toString()]: (state, { payload }: Action<object>) => {
     const result = fromJS(payload);
 
     const counts = result.get('data').reduce((sum: any, category: ICategoryModel) => {
@@ -141,14 +141,14 @@ const categoryCountsReducer = handleActions<
         .update('items', (i: any) => i.merge(counts));
   },
 
-  [countAssignmentsComplete.toString()]: (state, { payload: { count } }: { payload: ICountCompletePayload }) => {
+  [countAssignmentsComplete.toString()]: (state, { payload: { count } }: Action<ICountCompletePayload>) => {
     return state.setIn(
       ['items', 'assignments'],
       count,
     );
   },
 
-  [countDeferredComplete.toString()]: (state, { payload: { count } }: { payload: ICountCompletePayload }) => {
+  [countDeferredComplete.toString()]: (state, { payload: { count } }: Action<ICountCompletePayload>) => {
     return state.setIn(
       ['items', 'deferred'],
       count,

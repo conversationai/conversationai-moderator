@@ -15,18 +15,19 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppStateRecord } from '../../../stores';
 import { DATA_PREFIX } from './reduxPrefix';
 const ALL_COMMENT_IDS_DATA = [...DATA_PREFIX, 'allCommentIds'];
 
-type ILoadAllCommentIdsCompletePayload = List<number>;
-export const loadAllCommentIdsComplete = createAction<ILoadAllCommentIdsCompletePayload>(
-  'search/LOAD_ALL_COMMENT_IDS_COMPLETE',
-);
+export type ILoadAllCommentIdsCompletePayload = List<string>;
+export const loadAllCommentIdsComplete: (payload: ILoadAllCommentIdsCompletePayload) => Action<ILoadAllCommentIdsCompletePayload> =
+  createAction<ILoadAllCommentIdsCompletePayload>(
+    'search/LOAD_ALL_COMMENT_IDS_COMPLETE',
+  );
 
-export const resetCommentIds = createAction<void>(
+export const resetCommentIds: () => Action<void> = createAction(
   'search/RESET_ALL_COMMENT_IDS',
 );
 
@@ -47,7 +48,7 @@ export const allCommentIdsReducer = handleActions<
 >({
     [resetCommentIds.toString()]: () => StateFactory(),
 
-    [loadAllCommentIdsComplete.toString()]: (state, { payload }: { payload: ILoadAllCommentIdsCompletePayload }) => (
+    [loadAllCommentIdsComplete.toString()]: (state, { payload }: Action<ILoadAllCommentIdsCompletePayload>) => (
       state.set('ids', payload)
     ),
   },

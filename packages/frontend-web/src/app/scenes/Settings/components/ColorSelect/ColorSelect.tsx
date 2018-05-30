@@ -57,7 +57,7 @@ export interface IColorSelectProps {
   onChange(color: string): any;
 }
 
-export class ColorSelect extends React.Component<IColorSelectProps, void> {
+export class ColorSelect extends React.Component<IColorSelectProps> {
   @autobind
   onChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();

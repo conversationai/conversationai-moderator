@@ -18,6 +18,7 @@ import { autobind } from 'core-decorators';
 import formatDate from 'date-fns/format';
 import { List, Map } from 'immutable';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { CategoryModel, IArticleModel, ICategoryModel, IUserModel } from '../../../../../models';
 import { DATE_FORMAT_LONG } from '../../../../config';
 import { IAppDispatch } from '../../../../stores';
@@ -137,8 +138,8 @@ export class DashboardArticles
   };
 
   static contextTypes = {
-    openArticleModeratorModal: React.PropTypes.func,
-    openCategoryModeratorModal: React.PropTypes.func,
+    openArticleModeratorModal: PropTypes.func,
+    openCategoryModeratorModal: PropTypes.func,
   };
 
   context: IDashboardArticlesContext;

@@ -50,7 +50,8 @@ export function compileScores(commentScores: Array<ICommentSummaryScoreInstance>
 
   return mapValues(grouped, (scores) => {
     // Pull out `score` field values and return their average
-    return max(scores.map((score) => score.get('score')));
+    // TODO(ldixon): typehack to be fixed.
+    return max(scores.map((score) => (score as any).get('score')));
   });
 }
 

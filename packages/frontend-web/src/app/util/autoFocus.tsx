@@ -22,7 +22,7 @@ export const autoFocus = (
   propsValidator:
   (props: any) => boolean,
 ) => (WrappedComponent: any): React.ComponentClass<any> => {
-  return class extends React.Component<any, void> {
+  return class extends React.Component<any> {
     render() {
       return (
         <WrappedComponent {...this.props} />
@@ -39,7 +39,7 @@ export const autoFocus = (
     }
 
     attemptFocus() {
-      const node = ReactDOM.findDOMNode(this);
+      const node = ReactDOM.findDOMNode(this) as Element;
       const focusTarget =
         node.querySelector(`#${this.props.selector || focusTargetSelector}`) as HTMLElement;
 

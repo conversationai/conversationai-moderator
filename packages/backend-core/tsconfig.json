@@ -5,7 +5,9 @@
     "noImplicitAny": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "baseUrl": "./",
+    "paths": { "*": [ "node_modules/@types/*", "*"] }
   },
   "exclude": [
     "node_modules",

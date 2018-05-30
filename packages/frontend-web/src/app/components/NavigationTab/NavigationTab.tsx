@@ -99,7 +99,7 @@ export interface INavigationTabProps {
 }
 
 export class NavigationTab
-    extends React.PureComponent<INavigationTabProps, void> {
+    extends React.PureComponent<INavigationTabProps> {
 
   render() {
     const { label, count, icon, darkText, style, isFocused } = this.props;

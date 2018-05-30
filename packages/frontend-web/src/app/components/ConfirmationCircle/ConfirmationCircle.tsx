@@ -51,7 +51,7 @@ export interface IConfirmationCircleProps {
   iconSize?: number;
 }
 
-export class ConfirmationCircle extends React.PureComponent<IConfirmationCircleProps, void> {
+export class ConfirmationCircle extends React.PureComponent<IConfirmationCircleProps> {
   render() {
     const {
       backgroundColor,

@@ -108,7 +108,7 @@ export interface IRuleRowProps {
   rule: IRuleModel | ITaggingSensitivityModel | IPreselectModel;
 }
 
-export class RuleRow extends React.Component<IRuleRowProps, void> {
+export class RuleRow extends React.Component<IRuleRowProps> {
 
   @autobind
   onNumberFieldChange(callback: ((value: number) => any), e: React.ChangeEvent<HTMLInputElement>) {

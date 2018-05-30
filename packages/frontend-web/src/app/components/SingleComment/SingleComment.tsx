@@ -796,7 +796,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
             {onUpdateCommentText && commentEditingEnabled &&
               (
                 <button
-                  label="Edit Comment Text"
                   aria-label="Edit Comment Text"
                   onMouseEnter={this.onEditMouseEnter}
                   onMouseLeave={this.onEditMouseLeave}

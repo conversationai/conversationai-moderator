@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Reducer } from 'redux-actions';
+import { Action, Reducer } from 'redux-actions';
 import { IAppStateRecord } from '../../../stores';
-import { ICheckedSelectionPayloads, ICheckedSelectionStateRecord, makeCheckedSelectionStore } from '../../../util';
+import { ICheckedSelectionPayloads, ICheckedSelectionStateRecord, makeCheckedSelectionStore, IOverrides } from '../../../util';
 import { DATA_PREFIX } from './reduxPrefix';
 
 const CHECKED_SELECTION_DATA = [...DATA_PREFIX, 'checkedSelection'];
@@ -28,15 +28,13 @@ const checkedSelectionStore = makeCheckedSelectionStore(
 
 const checkedSelectionReducer: Reducer<ICheckedSelectionStateRecord, ICheckedSelectionPayloads> = checkedSelectionStore.reducer;
 
-const {
-  getAreAllSelected,
-  getAreAnyCommentsSelected,
-  getDefaultSelectionState,
-  getOverrides,
-  getIsItemChecked,
-  toggleSelectAll,
-  toggleSingleItem,
-} = checkedSelectionStore;
+const getAreAllSelected: (state: IAppStateRecord) => boolean = checkedSelectionStore.getAreAllSelected;
+const getAreAnyCommentsSelected: (state: IAppStateRecord) => boolean = checkedSelectionStore.getAreAnyCommentsSelected;
+const getDefaultSelectionState: (state: IAppStateRecord) => boolean = checkedSelectionStore.getDefaultSelectionState;
+const getOverrides: (state: IAppStateRecord) => IOverrides = checkedSelectionStore.getOverrides;
+const getIsItemChecked: (state: IAppStateRecord, id: string) => boolean = checkedSelectionStore.getIsItemChecked;
+const toggleSelectAll: () => Action<void> = checkedSelectionStore.toggleSelectAll;
+const toggleSingleItem: (payload: { id: string }) => Action<{ id: string }> = checkedSelectionStore.toggleSingleItem;
 
 export function getSelectedCount(state: IAppStateRecord): number {
   return getOverrides(state).size;

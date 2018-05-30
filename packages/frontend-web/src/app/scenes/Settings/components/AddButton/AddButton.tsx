@@ -47,7 +47,7 @@ export interface IAddButtonProps {
   label?: string;
 }
 
-export class AddButton extends React.Component<IAddButtonProps, void> {
+export class AddButton extends React.Component<IAddButtonProps> {
 
   stringToId(str: string): string {
     return str.split(' ').join('_');

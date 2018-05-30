@@ -17,6 +17,7 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { DispatchProp } from 'react-redux';
 import { FOCUS_DATA_ATTR } from '../../config';
 import { focusedElement } from '../../stores/focus';
 import { css, stylesheet } from '../../util';
@@ -25,12 +26,11 @@ const STYLE = stylesheet({
   base: { height: '100%' },
 });
 
-export interface IRootProps extends React.Props<any> {
-  dispatch: Function;
+export interface IRootProps extends DispatchProp<any> {
   currentlyFocused: number;
 }
 
-export class Root extends React.Component<IRootProps, void> {
+export class Root extends React.Component<IRootProps> {
   render() {
     return (
       <div {...css(STYLE.base)}>
@@ -40,7 +40,7 @@ export class Root extends React.Component<IRootProps, void> {
   }
 
   componentDidMount () {
-    const node = ReactDOM.findDOMNode(this);
+    const node = ReactDOM.findDOMNode(this) as HTMLElement;
 
     if (node) {
       node.addEventListener('focusin', this.onFocusIn as any);
@@ -53,7 +53,7 @@ export class Root extends React.Component<IRootProps, void> {
   }
 
   componentDidUpdate(prevProps: IRootProps) {
-    const node = ReactDOM.findDOMNode(this);
+    const node = ReactDOM.findDOMNode(this) as Element;
 
     if (this.props.currentlyFocused !== prevProps.currentlyFocused) {
       const focusId = this.props.currentlyFocused;

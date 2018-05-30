@@ -125,7 +125,9 @@ export async function makeComment(obj = {}): Promise<ICommentInstance> {
     sourceCreatedAt: '2012-10-29T21:54:07.609Z',
     isScored: true,
     ...obj,
-  });
+  } as any);
+  // TODO(ldixon): the any above should not be needed. Investigate why there is
+  // otherwise a type error.
 }
 
 export async function makeCommentScore(obj = {}): Promise<ICommentScoreInstance> {

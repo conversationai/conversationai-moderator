@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { fromJS, List, Map } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import {
@@ -53,20 +53,20 @@ const COMMENT_AUTHOR_COUNTS = ['scenes', 'commentsIndex', 'commentDetail', 'auth
 const COMMENT_AUTHOR_COUNTS_DATA = [...COMMENT_AUTHOR_COUNTS, 'authorCounts'];
 
 const loadCommentStart =
-  createAction<void>('comment-detail/LOAD_COMMENT_START');
+  createAction('comment-detail/LOAD_COMMENT_START');
 const loadCommentComplete =
   createAction<object>('comment-detail/LOAD_COMMENT_COMPLETE');
 const loadCommentScoresStart =
-  createAction<void>('comment-detail/LOAD_COMMENT_SCORE_START');
+  createAction('comment-detail/LOAD_COMMENT_SCORE_START');
 const loadCommentScoresComplete =
   createAction<object>('comment-detail/LOAD_COMMENT_SCORE_COMPLETE');
-export const clearCommentPagingOptions =
-  createAction<void>('comment-detail/CLEAR_COMMENT_PAGING_OPTIONS');
+export const clearCommentPagingOptions: () => Action<void> =
+  createAction('comment-detail/CLEAR_COMMENT_PAGING_OPTIONS');
 const internalStoreCommentPagingOptions =
   createAction<ICommentPagingState>('comment-detail/STORE_COMMENT_PAGING_OPTIONS');
 
 type IStoreAuthorCountsPayload = {
-  authorCounts: IAuthorCountsState;
+  authorCounts: Map<string | number, IAuthorCountsModel>;
 };
 const storeAuthorCounts =
   createAction<IStoreAuthorCountsPayload>('comment-detail/STORE_AUTHOR_COUNTS');
@@ -105,7 +105,7 @@ const {
   loadCommentComplete.toString(),
 );
 
-export const updateComment = updateCommentRecord;
+export const updateComment: (payload: ICommentModel) => Action<ICommentModel> = updateCommentRecord;
 
 const {
   reducer: commentScoresReducer,
@@ -121,9 +121,9 @@ export interface ICommentPagingState {
   commentIds: List<string>;
   fromBatch: boolean;
   source: string;
-  hash: string;
-  indexById: Map<number, number>;
   link: string;
+  hash?: string;
+  indexById?: Map<number, number>;
 }
 
 export interface ICommentPagingStateRecord extends TypedRecord<ICommentPagingStateRecord>, ICommentPagingState {}
@@ -153,7 +153,7 @@ function hashString(str: string): string {
 }
 // tslint:enable no-bitwise
 
-export const storeCommentPagingOptions = (data: Partial<ICommentPagingState>) => async (dispatch: any) => {
+export const storeCommentPagingOptions = (data: ICommentPagingState) => async (dispatch: any) => {
   const immutableData = fromJS(data);
 
   const hash = hashString(JSON.stringify(immutableData.toJSON()));
@@ -173,7 +173,7 @@ export const commentPagingReducer = handleActions<
 >({
   [clearCommentPagingOptions.toString()]: () => StateFactory(),
 
-  [internalStoreCommentPagingOptions.toString()]: (_, { payload }: { payload: ICommentPagingState}) => {
+  [internalStoreCommentPagingOptions.toString()]: (_, { payload }: Action<ICommentPagingState>) => {
     const state = StateFactory(payload);
 
     const indexById = (state.get('commentIds') as List<number>)
@@ -274,7 +274,7 @@ export const authorCountsReducer = handleActions<
   IAuthorCountsStateRecord,
   IStoreAuthorCountsPayload // storeAuthorCounts
 >({
-  [storeAuthorCounts.toString()]: (state, { payload: { authorCounts } }: { payload: IStoreAuthorCountsPayload }) => {
+  [storeAuthorCounts.toString()]: (state, { payload: { authorCounts } }: Action<IStoreAuthorCountsPayload>) => {
     return state.mergeIn(['authorCounts'], Map(authorCounts));
   },
 }, AuthorCountsStateFactory());
@@ -288,9 +288,9 @@ export const reducer: any = combineReducers({
 
 /* Set or delete items in the comment detail store created by makeRecordListReducer */
 
-export const addCommentScore = addRecord;
-export const updateCommentScore = updateCommentScoreRecord;
-export const removeCommentScore = removeRecord;
+export const addCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = addRecord;
+export const updateCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = updateCommentScoreRecord;
+export const removeCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = removeRecord;
 
 export function getComment(state: any): ICommentModel {
   return state.getIn(COMMENT_DATA);

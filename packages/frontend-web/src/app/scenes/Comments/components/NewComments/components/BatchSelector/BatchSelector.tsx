@@ -155,8 +155,8 @@ export class BatchSelector
     return (
       <div {...css(STYLES.batchControls)}>
         <div {...css({position: 'relative'})}>
-          <AspectRatio ratio={5 / 1}>
-            {(width: number, height: number) => (
+          <AspectRatio ratio={5 / 1}
+                       contents={(width: number, height: number) => (
               <DotChart
                 height={height}
                 width={width}
@@ -167,8 +167,7 @@ export class BatchSelector
                   end: max,
                 }}
               />
-            )}
-          </AspectRatio>
+            )}/>
           {rules && rules.length > 0 && areAutomatedRulesApplied && (
             <RuleBars
               rules={rules}

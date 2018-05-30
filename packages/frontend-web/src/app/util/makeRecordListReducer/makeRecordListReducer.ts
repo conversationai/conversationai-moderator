@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { fromJS, List } from 'immutable';
-import { createAction, handleActions} from 'redux-actions';
+import { Action, createAction, handleActions} from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import { convertItemFromJSONAPI } from '../makeSingleRecordReducer';
 
@@ -56,15 +56,15 @@ export function makeRecordListReducer<T extends { id: string }>(
 
   // These local state actions are scoped to each recordListStores that is created
 
-  const addRecord = createAction<T>(
+  const addRecord: (payload: T) => Action<T>  = createAction<T>(
     `list-record-store-${recordListStores}/ADD`,
   );
 
-  const updateRecord = createAction<T>(
+  const updateRecord: (payload: T) => Action<T> = createAction<T>(
     `list-record-store-${recordListStores}/UPDATE`,
   );
 
-  const removeRecord = createAction<T>(
+  const removeRecord: (payload: T) => Action<T> = createAction<T>(
     `list-record-store-${recordListStores}/REMOVE`,
   );
 
@@ -79,19 +79,19 @@ export function makeRecordListReducer<T extends { id: string }>(
           .set('isFetching', true)
     ),
 
-    [endEvent]: (state: IRecordListStateRecord<T>, { payload }: { payload: IEndEventPayload }) => (
+    [endEvent]: (state: IRecordListStateRecord<T>, { payload }: Action<object>) => (
       state
           .set('hasData', true)
           .set('isFetching', false)
           .set('items', convertArrayFromJSONAPI<T>(fromJS(payload)))
     ),
 
-    [addRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: { payload: T }) => (
+    [addRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: Action<T>) => (
       state
           .update('items', (items: List<T>) => items.push(payload))
     ),
 
-    [updateRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: { payload: T }) => (
+    [updateRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: Action<T>) => (
       state
           .update('items', (items: List<T>) => {
             const index = items.findIndex((item: any) => item.id === payload.id);
@@ -100,7 +100,7 @@ export function makeRecordListReducer<T extends { id: string }>(
           })
     ),
 
-    [removeRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: { payload: T }) => (
+    [removeRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: Action<T>) => (
       state
           .update('items', (items: List<T>) => {
             const index = items.findIndex((item: any) => item.id === payload.id);

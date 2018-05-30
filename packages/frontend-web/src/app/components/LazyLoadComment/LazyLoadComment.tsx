@@ -407,7 +407,7 @@ export interface ILinkedBasicBodyProps extends IBasicBodyProps {
   };
 }
 
-export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps, void> {
+export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> {
 
   render() {
     const {

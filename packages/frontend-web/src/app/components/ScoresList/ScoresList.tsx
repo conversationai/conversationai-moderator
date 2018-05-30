@@ -114,7 +114,7 @@ export interface IScoresListProps {
   tags?: List<ITagModel>;
 }
 
-export class ScoresList extends React.PureComponent<IScoresListProps, void> {
+export class ScoresList extends React.PureComponent<IScoresListProps> {
 
   @autobind
   getTextByIndeces(annotationStart: number, annotationEnd: number): string {
@@ -142,7 +142,7 @@ export class ScoresList extends React.PureComponent<IScoresListProps, void> {
       <div>
         <div {...css(STYLES.header)}>
           <h3>{tag.label} score details</h3>
-          <button type="button" onClick={onClose} label="Close Scores Modal" {...css(STYLES.closeButton)}>
+          <button type="button" onClick={onClose} aria-label="Close Scores Modal" {...css(STYLES.closeButton)}>
             <RejectIcon {...css({ color: DARK_SECONDARY_TEXT_COLOR })} />
           </button>
         </div>

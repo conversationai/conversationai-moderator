@@ -103,7 +103,7 @@ export interface IDashAccountModelProps extends React.HTMLProps<any> {
   accountDropdownButtonRef?: React.Ref<HTMLButtonElement>;
 }
 
-export class DashboardAccountInfo extends React.Component<IDashAccountModelProps, void> {
+export class DashboardAccountInfo extends React.Component<IDashAccountModelProps> {
   render() {
     const {
       user,

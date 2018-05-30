@@ -95,7 +95,7 @@ export interface ITagSelectorProps {
   };
 }
 
-export class TagSelector extends React.Component<ITagSelectorProps, void> {
+export class TagSelector extends React.Component<ITagSelectorProps> {
   @autobind
   onCloseClick(e: React.MouseEvent<any>) {
     e.preventDefault();

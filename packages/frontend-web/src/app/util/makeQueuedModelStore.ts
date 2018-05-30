@@ -16,7 +16,7 @@ limitations under the License.
 
 import { List, Map, OrderedMap } from 'immutable';
 import { throttle } from 'lodash';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
 
@@ -33,6 +33,11 @@ export interface IQueuedModelState<S, T> {
 
 export interface IQueuedModelStateRecord<S, T> extends TypedRecord<IQueuedModelStateRecord<S, T>>, IQueuedModelState<S, T> {}
 
+export type ILoadCompletePayload<S, T> = {
+  model: T;
+  key: S;
+};
+
 export function makeQueuedModelStore<S, T>(
   getModelsByKey: (keys: List<S>) => Promise<Map<S, T>>,
   queueFlushThrottleMs: number,
@@ -44,25 +49,24 @@ export function makeQueuedModelStore<S, T>(
   const byKeyData = [...dataPrefix, 'byKey'];
   const currentlyLoadingData = [...dataPrefix, 'queued'];
 
-  const clearQueue = createAction<void>(`global/CLEAR_QUEUED_MODEL_${queuedModelStores}`);
+  const clearQueue: () => Action<void> = createAction(`global/CLEAR_QUEUED_MODEL_${queuedModelStores}`);
 
   type ICancelItemsPayload = {
     keys: List<S>;
   };
-  const cancelItems = createAction<ICancelItemsPayload>(`global/CANCEL_QUEUED_MODEL_${queuedModelStores}`);
+  const cancelItems: (payload: ICancelItemsPayload) => Action<ICancelItemsPayload> =
+    createAction<ICancelItemsPayload>(`global/CANCEL_QUEUED_MODEL_${queuedModelStores}`);
 
   type IQueueRequestPayload = {
     key: S;
     promise: Promise<T>;
     resolver: IQueuedResolver;
   };
-  const queueRequest = createAction<IQueueRequestPayload>(`global/LOAD_QUEUED_MODEL_START_${queuedModelStores}`);
+  const queueRequest: (payload: IQueueRequestPayload) => Action<IQueueRequestPayload> =
+    createAction<IQueueRequestPayload>(`global/LOAD_QUEUED_MODEL_START_${queuedModelStores}`);
 
-  type ILoadCompletePayload = {
-    model: T;
-    key: S;
-  };
-  const loadComplete = createAction<ILoadCompletePayload>(`global/LOAD_QUEUED_MODEL_COMPLETE_${queuedModelStores}`);
+  const loadComplete: (payload: ILoadCompletePayload<S, T>) => Action<ILoadCompletePayload<S, T>> =
+    createAction<ILoadCompletePayload<S, T>>(`global/LOAD_QUEUED_MODEL_COMPLETE_${queuedModelStores}`);
 
   const StateFactory = makeTypedFactory<IQueuedModelState<S, T>, IQueuedModelStateRecord<S, T>>({
     isFetching: false,
@@ -92,7 +96,7 @@ export function makeQueuedModelStore<S, T>(
       const queuedModelKeys = allKeys
           .reverse().slice(0, maxItems) as List<S>;
 
-      const ignoredModelKeys = allKeys.filter((key) => !queuedModelKeys.includes(key));
+      const ignoredModelKeys = allKeys.filter((key) => !queuedModelKeys.includes(key)) as List<S>;
 
       ignoredModelKeys.forEach((key) => {
         const resolver = queued.get(key)[1];
@@ -150,7 +154,7 @@ export function makeQueuedModelStore<S, T>(
     void                 | // clearQueue
     ICancelItemsPayload  | // cancelItems
     IQueueRequestPayload | // queueRequest
-    ILoadCompletePayload   // loadComplete
+    ILoadCompletePayload<S, T>   // loadComplete
   >({
     [clearQueue.toString()]: (state: IQueuedModelStateRecord<S, T>) => (
       state
@@ -158,7 +162,7 @@ export function makeQueuedModelStore<S, T>(
           .update('queued', (q: any) => q.clear())
     ),
 
-    [cancelItems.toString()]: (state: IQueuedModelStateRecord<S, T>, { payload: { keys } }: { payload: ICancelItemsPayload }) => {
+    [cancelItems.toString()]: (state: IQueuedModelStateRecord<S, T>, { payload: { keys } }: Action<ICancelItemsPayload>) => {
       return state.update('queued', (queued: any) => {
         return keys.reduce((sum: any, key: S) => {
           return sum.remove(key);
@@ -166,18 +170,20 @@ export function makeQueuedModelStore<S, T>(
       });
     },
 
-    [queueRequest.toString()]: (state, { payload: { key, promise, resolver } }: { payload: IQueueRequestPayload }) => (
-      state
+    [queueRequest.toString()]: (state, { payload }: Action<IQueueRequestPayload>) => {
+      const { key, promise, resolver } = payload;
+      return state
           .set('isFetching', true)
           .removeIn(['queued', key])
-          .setIn(['queued', key], [promise, resolver])
-    ),
+          .setIn(['queued', key], [promise, resolver]);
+    },
 
-    [loadComplete.toString()]: (state, { payload: { model, key } }: { payload: ILoadCompletePayload }) => (
-      state
+    [loadComplete.toString()]: (state, { payload }: Action<ILoadCompletePayload<S, T>>) => {
+      const { key, model } = payload;
+      return state
           .removeIn(['queued', key])
-          .setIn(['byKey', key], model)
-    ),
+          .setIn(['byKey', key], model);
+    },
   }, StateFactory());
 
   return {

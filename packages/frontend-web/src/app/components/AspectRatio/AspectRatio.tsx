@@ -18,11 +18,10 @@ import { autobind } from 'core-decorators';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { css } from '../../util';
-import { IDotChartProps, IDotChartState } from '../DotChart/DotChart';
 
 export interface IAspectRatioProps extends React.HTMLProps<any> {
   ratio: number;
-  children?(width: number, height: number): React.PureComponent<IDotChartProps, IDotChartState>;
+  contents: (width: number, height: number) => React.ReactNode;
 }
 
 export interface IAspectRatioState {
@@ -47,7 +46,7 @@ export class AspectRatio extends React.PureComponent<
 
     return (
       <div {...css(style)}>
-        {this.props.children(this.state.width, this.state.height)}
+        {this.props.contents(this.state.width, this.state.height)}
       </div>
     );
   }
@@ -64,7 +63,7 @@ export class AspectRatio extends React.PureComponent<
 
   @autobind
   private onResize() {
-    const { width } = ReactDOM.findDOMNode(this).getBoundingClientRect();
+    const { width } = (ReactDOM.findDOMNode(this) as Element).getBoundingClientRect();
 
     this.setState({
       width,

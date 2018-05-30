@@ -16,6 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import React from 'react';
+import PropTypes from 'prop-types';
 import { css, stylesheet } from '../../util';
 const FocusTrap = require('focus-trap-react');
 import keyboardJS from 'keyboardjs';
@@ -175,12 +176,12 @@ const AutoFocusFirstLinkScrim = autoFocusFirstLink(Scrim);
 const DashboardChildrenContext = withContext(
   ({ children }: any) => children,
   {
-    ariaControlsArticle: React.PropTypes.string,
-    ariaExpandedArticle: React.PropTypes.bool,
-    ariaControlsCategory: React.PropTypes.string,
-    ariaExpandedCategory: React.PropTypes.bool,
-    openArticleModeratorModal: React.PropTypes.func,
-    openCategoryModeratorModal: React.PropTypes.func,
+    ariaControlsArticle: PropTypes.string,
+    ariaExpandedArticle: PropTypes.bool,
+    ariaControlsCategory: PropTypes.string,
+    ariaExpandedCategory: PropTypes.bool,
+    openArticleModeratorModal: PropTypes.func,
+    openCategoryModeratorModal: PropTypes.func,
   },
 );
 
@@ -428,7 +429,7 @@ export class Dashboard extends React.Component<IDashboardProps, IDashboardState>
 
   @autobind
   async openArticleModeratorModal(article: IArticleModel) {
-    await this.props.dispatch(loadArticleModerators(article.id));
+    await this.props.dispatch(loadArticleModerators(article));
     this.props.dispatch(saveFocus());
 
     this.setState({

@@ -5,7 +5,11 @@
     "noImplicitAny": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "baseUrl": ".",
+    "paths": {
+      "passport": ["./node_modules/@types/passport/index"]
+    }
   },
   "exclude": [
     "node_modules",

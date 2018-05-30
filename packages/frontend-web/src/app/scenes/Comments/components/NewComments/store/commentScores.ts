@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppStateRecord, IThunkAction } from '../../../../../stores';
 import { DATA_PREFIX } from './reduxPrefix';
@@ -38,7 +38,7 @@ const SCORES_HAS_DATA = [...DATA_PREFIX, 'commentScores', 'hasData'];
 const SCORES_DATA = [...DATA_PREFIX, 'commentScores', 'scores'];
 const SCORES_IS_LOADING = [...DATA_PREFIX, 'commentScores', 'isLoading'];
 
-const loadCommentScoresStart = createAction<void>(
+const loadCommentScoresStart = createAction(
   'article-detail-new/LOAD_COMMENTS_SCORES_START',
 );
 
@@ -49,7 +49,7 @@ const loadCommentScoresComplete = createAction<ILoadCommentScoresCompletePayload
   'article-detail-new/LOAD_COMMENTS_SCORES_COMPLETE',
 );
 
-const removeCommentScore = createAction<Array<string>>(
+const removeCommentScore: (payload: Array<string>) => Action<Array<string>> = createAction<Array<string>>(
   'article-detail-new/REMOVE_COMMENT_SCORES',
 );
 
@@ -117,7 +117,7 @@ export const commentScoresReducer = handleActions<
   ICommentScoresStateRecord,
   void                                       | // loadCommentScoresStart
   ILoadCommentScoresCompletePayload          | // loadCommentScoresComplete
-  Array<number>                                // removeCommentScore
+  Array<string>                                // removeCommentScore
 >({
   [loadCommentScoresStart.toString()]: (state) => (
     state
@@ -125,14 +125,15 @@ export const commentScoresReducer = handleActions<
         .set('hasData', false)
   ),
 
-  [loadCommentScoresComplete.toString()]: (state, { payload: { scores } }: { payload: ILoadCommentScoresCompletePayload }) => {
+  [loadCommentScoresComplete.toString()]: (state, { payload }: Action<ILoadCommentScoresCompletePayload>) => {
+    const { scores } = payload;
     return state
         .set('isLoading', false)
         .set('scores', scores)
         .set('hasData', true);
   },
 
-  [removeCommentScore.toString()]: (state, { payload }: { payload: Array<string> }) => (
+  [removeCommentScore.toString()]: (state, { payload }: Action<Array<string>>) => (
     state
         .updateIn(['scores'], (scores: List<ICommentScoredModel | ICommentDatedModel>) => {
           return scores.filter((score: ICommentScoredModel | ICommentDatedModel) => {

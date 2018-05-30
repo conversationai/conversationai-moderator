@@ -130,7 +130,8 @@ export class Serializer {
         ...resource,
         // relationships: fields && fields[this.name] ? pick(rels, fields[this.name]) : rels,
         relationships: rels,
-      };
+        // TODO(ldixon): fix broken typing. It things relationships does not exist.
+      } as any;
     }
 
     return resource;

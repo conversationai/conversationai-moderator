@@ -296,7 +296,7 @@ export interface ISliderProps extends React.HTMLProps<any> {
   style?: any;
 }
 
-export class Slider extends React.PureComponent<ISliderProps, void> {
+export class Slider extends React.PureComponent<ISliderProps> {
   render() {
     const { children, style } = this.props;
 

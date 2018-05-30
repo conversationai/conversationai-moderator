@@ -54,7 +54,7 @@ export interface ISearchAttributeProps {
   onClose?(): any;
 }
 
-export class SearchAttribute extends React.PureComponent<ISearchAttributeProps, void> {
+export class SearchAttribute extends React.PureComponent<ISearchAttributeProps> {
   render() {
     const { title, onClose } = this.props;
 

@@ -96,7 +96,7 @@ export interface IModerateButtonsState {
 }
 
 export class ModerateButtons
-  extends React.PureComponent<IModerateButtonsProps, void> {
+  extends React.PureComponent<IModerateButtonsProps> {
 
   @autobind
   handleReject() {

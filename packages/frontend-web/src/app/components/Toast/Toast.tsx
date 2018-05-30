@@ -48,7 +48,7 @@ export interface IToastProps extends React.Props<any> {
   size?: number;
 }
 
-export class Toast extends React.PureComponent<IToastProps, void> {
+export class Toast extends React.PureComponent<IToastProps> {
   render() {
     const {
       backgroundColor,

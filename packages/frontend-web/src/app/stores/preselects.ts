@@ -15,10 +15,10 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { createAction } from 'redux-actions';
+import { Action, createAction } from 'redux-actions';
 import { TypedRecord } from 'typed-immutable-record';
 import { IPreselectModel } from '../../models';
-import { listModels, makeAJAXAction, makeRecordListReducer } from '../util';
+import { listModels, makeAJAXAction, makeRecordListReducer, IRecordListStateRecord } from '../util';
 import { IAppStateRecord, IThunkAction } from './index';
 
 const STATE_ROOT = ['global', 'preselects'];
@@ -26,7 +26,7 @@ const PRESELECTS_DATA = [...STATE_ROOT, 'items'];
 const PRESELECTS_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
 const PRESELECTS_HAS_DATA = [...STATE_ROOT, 'hasData'];
 
-const loadPreselectsStart = createAction<void>(
+const loadPreselectsStart = createAction(
   'all-preselects/LOAD_PRESELECTS_START',
 );
 const loadPreselectsComplete = createAction<object>(
@@ -58,9 +58,12 @@ export interface IPreselectState {
 
 export interface IPreselectStateRecord extends TypedRecord<IPreselectStateRecord>, IPreselectState {}
 
-const { reducer } = makeRecordListReducer<IPreselectModel>(
+const recordListReducer = makeRecordListReducer<IPreselectModel>(
   loadPreselectsStart.toString(),
   loadPreselectsComplete.toString(),
 );
+
+const reducer: (state: IRecordListStateRecord<IPreselectModel>, action: Action<object|IPreselectModel>) => IRecordListStateRecord<IPreselectModel>
+  = recordListReducer.reducer;
 
 export { reducer };

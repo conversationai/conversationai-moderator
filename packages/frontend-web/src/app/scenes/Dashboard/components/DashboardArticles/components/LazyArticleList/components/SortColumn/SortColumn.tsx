@@ -35,7 +35,7 @@ export interface ISortColumnProps extends React.HTMLProps<any> {
   styles?: object;
 }
 
-export class SortColumn extends React.Component<ISortColumnProps, void> {
+export class SortColumn extends React.Component<ISortColumnProps> {
   render() {
     const {
       article,

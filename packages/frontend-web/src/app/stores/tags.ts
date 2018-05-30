@@ -15,9 +15,9 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { createAction } from 'redux-actions';
+import { Action, createAction } from 'redux-actions';
 import { ITagModel } from '../../models';
-import { listModels, makeAJAXAction, makeRecordListReducer } from '../util';
+import { listModels, makeAJAXAction, makeRecordListReducer, IRecordListStateRecord } from '../util';
 import { IAppStateRecord, IThunkAction } from './index';
 
 const STATE_ROOT = ['global', 'tags'];
@@ -25,8 +25,7 @@ const TAGS_DATA = [...STATE_ROOT, 'items'];
 const TAGS_HAS_DATA = [...STATE_ROOT, 'hasData'];
 const TAGS_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
 
-type ILoadTagsStartPayload = void;
-const loadTagsStart = createAction<ILoadTagsStartPayload>(
+const loadTagsStart = createAction(
   'all-tags/LOAD_TAGS_START',
 );
 const loadTagsComplete = createAction<object>(
@@ -68,9 +67,12 @@ export function loadTags(forceUpdate?: boolean): IThunkAction<Promise<List<ITagM
 
 export type ITagsState = List<ITagModel>;
 
-const { reducer } = makeRecordListReducer<ITagModel>(
+const recordListReducer = makeRecordListReducer<ITagModel>(
   loadTagsStart.toString(),
   loadTagsComplete.toString(),
 );
+
+const reducer: (state: IRecordListStateRecord<ITagModel>, action: Action<object|ITagModel>) => IRecordListStateRecord<ITagModel>
+  = recordListReducer.reducer;
 
 export { reducer };
