@@ -1,0 +1,78 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: conversationai-moderator
+  labels:
+    app: conversationai-moderator
+spec:
+  template:
+    metadata:
+      labels:
+        app: conversationai-moderator
+    spec:
+      containers:
+        - name: moderator
+          # TODO Need to replace this with image created by deployment script
+          image: eu.gcr.io/conversationai-moderator-1/appengine/default.20180530t172431:latest
+          ports:
+            - containerPort: 8000
+              hostPort: 80
+            - containerPort: 8080
+              hostPort: 8080
+          env:
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: moderator-configuration
+                  key: DATABASE_NAME
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: moderator-configuration
+                  key: DATABASE_USER
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: moderator-configuration
+                  key: DATABASE_PASSWORD
+            - name: GOOGLE_SCORE_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: moderator-configuration
+                  key: GOOGLE_SCORE_AUTH
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: moderator-configuration
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: moderator-configuration
+                  key: GOOGLE_CLIENT_SECRET
+            - name: TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: moderator-configuration
+                  key: TOKEN_SECRET
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.11
+          command: ["/cloud_sql_proxy"]
+          args: ["-instances=$(SQL_CONNECTION)=tcp:3306",
+                 "-credential_file=/secrets/cloudsql/credentials.json"]
+          env:
+            - name: SQL_CONNECTION
+              valueFrom:
+                secretKeyRef:
+                  name: moderator-configuration
+                  key: SQL_CONNECTION
+          volumeMounts:
+            - name: cloudsql-instance-credentials
+              mountPath: /secrets/cloudsql
+              readOnly: true
+        - name: redis-server
+          image: launcher.gcr.io/google/redis3
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
