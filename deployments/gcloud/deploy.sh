@@ -49,7 +49,7 @@ gcloud sql users set-password root % --instance $SQL_INSTANCE_NAME --password $D
 gcloud sql users create $DATABASE_USER % --instance=$SQL_INSTANCE_NAME --password=$DATABASE_PASSWORD
 gcloud sql databases create $DATABASE_NAME --instance=$SQL_INSTANCE_NAME
 
-SQL_CONNECTION=`gcloud --project=$PROJECT sql instances describe $SQL_INSTANCE_NAME --format "value(connectionName)"`
+SQL_CONNECTION=`gcloud sql instances describe $SQL_INSTANCE_NAME --format "value(connectionName)"`
 
 # Set up SQL proxy on local machine so we can tunnel through the firewall and access the database
 sudo mkdir -p /cloudsql
@@ -94,7 +94,7 @@ gcloud docker -- push conversationai eu.gcr.io/$PROJECT/conversationai:latest
 # gcloud container images list --repository=eu.gcr.io/$PROJECT
 # ***** create the kubernetes cluster *****
 
-gcloud --project=$PROJECT container clusters create conversationai-moderator --num-nodes=1 --region=$REGION
+gcloud container clusters create conversationai-moderator --num-nodes=1 --region=$REGION
 kubectl create secret generic cloudsql-instance-credentials --from-file=credentials.json=/cloudsql/key.json
 kubectl create secret generic moderator-configuration \
   --from-literal=DATABASE_NAME=$DATABASE_NAME \
@@ -107,7 +107,7 @@ kubectl create secret generic moderator-configuration \
   --from-literal=SQL_CONNECTION=$SQL_CONNECTION
 
 # TODO: need to use image genrated above
-#    Image in this file is hardcoded....
+#    Image in kubernetes-deployment is hardcoded....
 kubectl apply -f deployments/gcloud/kubernetes-deployment.yaml
 kubectl apply -f deployments/gcloud/kubernetes-networking.yaml
 
@@ -116,6 +116,7 @@ kubectl describe deployments conversationai-moderator
 # Or view in the gcloud console
 
 # TODO:
+# - Work out why docker build is failing.
 # - Aquire a static IP address?
 #   e.g., https://cloud.google.com/kubernetes-engine/docs/tutorials/configuring-domain-name-static-ip
 # - Aquire a useful domain name?
@@ -123,7 +124,6 @@ kubectl describe deployments conversationai-moderator
 # - Fix parametrisation of kubernetes yaml files
 #   - docker image name (Or maybe roll out standardised docker images?)
 #   - Static IP address of cluster
-# - Work out why docker build is failing with my docker image.
 # - Separate frontend and api into separate containers?
 # - Work out how to automate configuration of GOOGLE_CLIENT_*
 # - Enable SSH in the load balancer

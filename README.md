@@ -23,6 +23,12 @@ Set the Authorised redirect URI to `http://localhost:8080/auth/callback/google`.
 (Replace localhost with the address of your server if you are not running
 locally.)
 
+In a production setting, you'll also have to set the following:
+
+* `API_URL`: URL for the API endpoint
+* `FRONTEND_URL`: URL for the Frontend endpoint
+* `TOKEN_SECRET`: A secret used to generate authentication tokens.
+
 ### System setup:
 
 Install mysql, node, npm and redis.  Instructions for Ubuntu:
