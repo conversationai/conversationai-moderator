@@ -36,20 +36,20 @@ gcloud alpha billing projects link $PROJECT --billing-account=$BILLING
 
 gcloud config set project $PROJECT
 gcloud config set compute/zone $REGION
-gcloud services enable sql-component.googleapis.com sqladmin.googleapis.com redis.googleapis.com
+gcloud services enable sql-component.googleapis.com sqladmin.googleapis.com
 
 # ***** Stop here and configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET ****
 # Instructions can be found in README
 
 # ***** Create and initialise MySQL  and Redis *****
-SQL_INSTANCE_NAME=conversationai-sql
+export SQL_INSTANCE_NAME=conversationai-sql
 
 gcloud sql instances create $SQL_INSTANCE_NAME --region=$REGION --tier=db-g1-small --database-version=MYSQL_5_7
 gcloud sql users set-password root % --instance $SQL_INSTANCE_NAME --password $DATABASE_PASSWORD
 gcloud sql users create $DATABASE_USER % --instance=$SQL_INSTANCE_NAME --password=$DATABASE_PASSWORD
 gcloud sql databases create $DATABASE_NAME --instance=$SQL_INSTANCE_NAME
 
-SQL_CONNECTION=`gcloud sql instances describe $SQL_INSTANCE_NAME --format "value(connectionName)"`
+export SQL_CONNECTION=`gcloud sql instances describe $SQL_INSTANCE_NAME --format "value(connectionName)"`
 
 # Set up SQL proxy on local machine so we can tunnel through the firewall and access the database
 sudo mkdir -p /cloudsql
@@ -57,7 +57,7 @@ sudo chmod 777 /cloudsql
 wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O /cloudsql/cloud_sql_proxy
 chmod +x /cloudsql/cloud_sql_proxy
 
-SQL_MANAGER=sql-manager
+export SQL_MANAGER=sql-manager
 gcloud iam service-accounts create $SQL_MANAGER --display-name "SQL Manager"
 gcloud projects add-iam-policy-binding $PROJECT --member serviceAccount:$SQL_MANAGER@$PROJECT.iam.gserviceaccount.com --role roles/cloudsql.client
 gcloud iam service-accounts keys create /cloudsql/key.json --iam-account $SQL_MANAGER@$PROJECT.iam.gserviceaccount.com
@@ -68,11 +68,10 @@ GRANT ALL on $DATABASE_NAME.* to $DATABASE_USER
 EOF
 mysql --socket=/cloudsql/$SQL_CONNECTION --user=$DATABASE_USER --password=$DATABASE_PASSWORD $DATABASE_NAME < packages/backend-core/seed/initial-database.sql
 
-
 # ***** Create the docker image for conversationai *****
-
-docker build -t conversationai -f deployments/gcloud/Docker eu.gcr.io/$PROJECT/conversationai .
-gcloud docker -- push conversationai eu.gcr.io/$PROJECT/conversationai:latest
+export MODERATOR_IMAGE_ID=eu.gcr.io/$PROJECT/conversationai-moderator
+docker build -f deployments/gcloud/Dockerfile -t $MODERATOR_IMAGE_ID .
+docker push $MODERATOR_IMAGE_ID
 
 # Can run docker instance locally using
 # docker run --publish 8080:8080 --publish 8000:8000 \
@@ -108,7 +107,7 @@ kubectl create secret generic moderator-configuration \
 
 # TODO: need to use image genrated above
 #    Image in kubernetes-deployment is hardcoded....
-kubectl apply -f deployments/gcloud/kubernetes-deployment.yaml
+envsubst < deployments/gcloud/kubernetes-deployment.yaml | kubectl apply -f -
 kubectl apply -f deployments/gcloud/kubernetes-networking.yaml
 
 # View containers with:
@@ -116,14 +115,10 @@ kubectl describe deployments conversationai-moderator
 # Or view in the gcloud console
 
 # TODO:
-# - Work out why docker build is failing.
 # - Aquire a static IP address?
 #   e.g., https://cloud.google.com/kubernetes-engine/docs/tutorials/configuring-domain-name-static-ip
 # - Aquire a useful domain name?
 # - Set FRONTEND_URL and API_URL using domain name?
-# - Fix parametrisation of kubernetes yaml files
-#   - docker image name (Or maybe roll out standardised docker images?)
-#   - Static IP address of cluster
 # - Separate frontend and api into separate containers?
 # - Work out how to automate configuration of GOOGLE_CLIENT_*
 # - Enable SSH in the load balancer
