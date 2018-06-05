@@ -9,7 +9,7 @@ Instructions for installing gcloud can be found [here](https://cloud.google.com/
 You'll find instructions for installing docker in the [root README](../../README.md)
 
 Once you've installed gcloud and docker, run the following commands to prepare
-the installation for installing moderator:
+the system for installing moderator:
 
 ```bash
 gcloud components install kubectl alpha

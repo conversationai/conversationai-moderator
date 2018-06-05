@@ -1,6 +1,8 @@
-# OSMod
+OSMod - The ConversationAI Moderator App
+========================================
 
-## Scripts
+Deploying an OSMod instance
+---------------------------
 
 ### Configuration
 
@@ -13,9 +15,9 @@ must be set in the enviromnent before anything will work.
 * `DATABASE_NAME`: The MySQL database name, e.g., 'os_moderator'.
 * `DATABASE_USER`: The MySQL database user, e.g., 'os_moderator'.
 * `DATABASE_PASSWORD`: The MySQL database password.
-* `GOOGLE_SCORE_AUTH`: The API key.  You need to [ask someone on the team](https://www.perspectiveapi.com/#/) for a key.
 * `GOOGLE_CLIENT_ID`: Google OAuth API client id.
 * `GOOGLE_CLIENT_SECRET`:  Google OAuth API secret.
+* `GOOGLE_SCORE_AUTH`: An authentication key for The Perspective API proxy (see below).
 
 To get values for the latter two items, create an OAuth2.0 Client ID
 entry for your app in the [Google API console](https://console.developers.google.com/apis/credentials).
@@ -64,7 +66,7 @@ docker version
 docker-compose --version.
 ```
 
-### Install and run natively
+### Install dependencies and run the server
 
 Install all node dependencies and run initial typescript compile.
 
@@ -91,7 +93,7 @@ You'll also need to create some (human) users.  The email address of the new use
 should match the Google account address used to log in.  See below for instructions
 on how to do this via the commandline.
 
-### Install and run in a local docker container
+#### Run in a docker container
 
 To run the service in a local docker container, run the following commands:
 
@@ -120,11 +122,73 @@ And to see what the container is doing:
 docker-compose -f deployments/local/docker-compose.yml logs
 ```
 
-### OSMOD commands
+#### Adding users
+
+To actually do anyting, you'll need to create some users.  You'll need at least
+
+* a human user so you can log in and view comments
+
+* a service user that knows how to talk to a PerpectiveAPI proxy server.
+
+Add human users with the following command:
 
 ```bash
-./bin/osmod ...
+./bin/osmod users:create --group general --name "Name" --email "email@gmail.com"
 ```
+
+Human users get authenticated using Google's OAuth server, so the email address must
+correspond to a google account.
+
+Add the proxy service user with the following command:
+
+```bash
+./bin/osmod users:create --group service --name "PerspectiveProxy" --endpoint=<proxy URL>
+```
+
+where `<proxy URL>` is the URL of [The Perspective API proxy] you plan on using.
+
+### The Perspective API proxy
+
+OSMod is designed to talk to the Perspective API via a proxy server: the
+[Perspective API proxy](https://github.com/conversationai/perspectiveapi-proxy).
+
+There is a preconfigured proxy server set up for general use.
+The URL of this proxy is [https://osmod-assistant.appspot.com/].  To access it,
+you'll need to get a suitable authentication token from
+[the Perspective API team](https://www.perspectiveapi.com/#/).  In this case you
+need to set your service user's proxy URL to
+`https://osmod-assistant.appspot.com/api/score-comment`.
+
+Alternatively, if you have been given direct access to the Perspecitve API, you
+can create a Perspective API key in a Google Cloud project and then run
+a local instance of the proxy as described in the
+[Perspective API proxy documentation](https://github.com/conversationai/perspectiveapi-proxy/blob/master/README.md).
+E.g.:
+
+```bash
+export GOOGLE_SCORE_AUTH=<your_secret>
+
+export GOOGLE_CLOUD_API_KEY=<API Key>
+export AUTH_WHITELIST=$GOOGLE_SCORE_AUTH
+
+cd $PERSPECTIVEAPI_PROXY_LOCATION
+yarn install
+PORT=8081 ATTRIBUTE_REQUESTS='{ "TOXICITY": {} }' yarn run watch
+```
+
+Then use `http://localhost:8081/api/score-comment` as the proxy URL when creating
+your service user.
+
+The `osmod` CLI
+---------------
+
+You can manage your OSMod system using the osmod commandline tool:
+
+```bash
+./bin/osmod <command> <options>
+```
+
+where `command` is one of
 
 * `migrate`                          Migrate the database up
 * `migrate:undo`                     Reverse a database migration
@@ -137,11 +201,7 @@ docker-compose -f deployments/local/docker-compose.yml logs
 * `comments:recalculate-top-scores`  Recalculate comment top scores.
 * `comments:rescore`                 Rescore comment.
 
-#### Users
-
-##### Create
-
-Create OS Moderator users via the command line.
+#### Managing Users
 
 Create a human user:
 
@@ -155,25 +215,27 @@ Create a service user:
 ./bin/osmod users:create --group service --name "Robot"
 ```
 
-##### Get Token
+Get a JWT token for an existing user:
 
-Get JWT tokens for existing users via the command line:
-
-By user id:
+* By user id:
 
 ```bash
 ./bin/osmod users:get-token --id 4
 ```
 
-By email:
+* By email:
 
 ```bash
 ./bin/osmod users:get-token --email "email@example.com"
 ```
 
-### Local Dev
 
-Runs local server on `:8080` and front-end on `:8000`
+OSMod Tools
+-----------
+
+### Management commands
+
+To run a local server on `:8080` and front-end on `:8000`
 
 ```bash
 ./bin/watch
