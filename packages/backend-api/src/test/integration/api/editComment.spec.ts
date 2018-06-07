@@ -20,18 +20,21 @@ import {
 } from '../../test_helper';
 
 import {
-  apiClient,
+  app,
 } from './test_helper';
 
 import {
   Comment,
 } from '@conversationai/moderator-backend-core';
+import * as chai from "chai";
 
 const URL = `/services/editComment`;
 
 describe(URL, () => {
     it('should return 404', async () => {
         try {
+            const apiClient = chai.request(app);
+
             const { status } = await apiClient.patch(URL).send({
                 data: {
                     commentId: '1',
@@ -50,6 +53,7 @@ describe(URL, () => {
 
     it('should return 422', async () => {
         try {
+            const apiClient = chai.request(app);
             const { status } = await apiClient.patch(URL).send({
                 data: {
                     commentId: 1,
@@ -68,6 +72,7 @@ describe(URL, () => {
 
     it('should return 200', async () => {
         try {
+            const apiClient = chai.request(app);
             const comment = await makeComment();
             const updatedText = 'I’m living everyday like a hustle, another drug to juggle. Another day, another struggle.';
             const updatedAuthorName = 'Biggie';

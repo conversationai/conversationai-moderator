@@ -111,9 +111,8 @@ Object.keys(models).forEach((modelName) => {
 chai.use(chaiHttp);
 
 const expect = chai.expect;
-const apiClient = chai.request(server);
 
-export { apiClient, expect, models };
+export { server, expect, models };
 
 export function hasJSONAPIDocumentForm(body: any) {
   expect(body['jsonapi']['version']).to.be.equal('1.0');
@@ -152,6 +151,14 @@ export function isIdentifier(resource: any) {
   expect(keys).to.be.lengthOf(2);
   expect(resource['id']).to.exist;
   expect(resource['type']).to.exist;
+}
+
+function getNormaliser(attr: string): (val:string) => any {
+  if (attr === 'sourceCreatedAt') {
+    return (val: string) => Date.parse(val);
+  }
+
+  return (val: string) => Number(val);
 }
 
 export function sharedTestHelper() {
@@ -246,7 +253,7 @@ export function sharedTestHelper() {
   function listTests(prefix: string, allModels: any, modelType: string) {
     describe('GET (basic)', () => {
       it(`List of ${modelType} objects`, async () => {
-        const res = await apiClient.get(`${prefix}`);
+        const res = await chai.request(server).get(`${prefix}`);
         basicModelList(res, modelType);
         expect(res.body['data'][0].id).to.be.equal(allModels[0].id);
         expect(res.body['meta']['page']['total'])
@@ -258,7 +265,7 @@ export function sharedTestHelper() {
     describe('GET (paging)', () => {
       it(`the first paged list of ${modelType} objects`, async () => {
         const PER_PAGE = 3;
-        const res = await apiClient.get(`${prefix}?page[limit]=${PER_PAGE}`);
+        const res = await chai.request(server).get(`${prefix}?page[limit]=${PER_PAGE}`);
 
         basicModelList(res, modelType);
         expect(res.body['included']).to.be.empty;
@@ -271,7 +278,7 @@ export function sharedTestHelper() {
 
       it(`the next page of ${modelType} objects`, async () => {
         const PER_PAGE = 1;
-        const res = await apiClient.get(
+        const res = await chai.request(server).get(
           `${prefix}?page[limit]=${PER_PAGE}&page[offset]=${PER_PAGE}`,
         );
 
@@ -287,7 +294,7 @@ export function sharedTestHelper() {
       it(`an empty page of ${modelType} objects`, async () => {
         const PER_PAGE = 5;
         const OFFSET = allModels.length;
-        const res = await apiClient.get(
+        const res = await chai.request(server).get(
           `${prefix}?page[limit]=${PER_PAGE}&page[offset]=${OFFSET}`,
         );
 
@@ -303,7 +310,7 @@ export function sharedTestHelper() {
       describe('GET (includes)', () => {
         const includeType = models[modelType].include[0];
         it(`included ${includeType} of ${modelType} objects`, async () => {
-          const res = await apiClient.get(
+          const res = await chai.request(server).get(
             `${prefix}?include=${includeType}`,
           );
 
@@ -320,7 +327,7 @@ export function sharedTestHelper() {
         const firstObj = models[modelType].spec;
         const firstAttr = Object.keys(omit(firstObj, ['id', 'type']))[0];
         const firstValue = firstObj[firstAttr];
-        const res = await apiClient.get(
+        const res = await chai.request(server).get(
           `${prefix}?filter[${firstAttr}]=${encodeURIComponent(firstValue)}`,
         );
 
@@ -338,7 +345,7 @@ export function sharedTestHelper() {
           const secondAttr = modelKeys[1];
           const secondValue = lastObj[secondAttr];
 
-          const res = await apiClient.get(
+          const res = await chai.request(server).get(
             `${prefix}?filter[${firstAttr}]=${encodeURIComponent(firstValue)}` +
             `&filter[${secondAttr}]=${encodeURIComponent(secondValue)}`,
           );
@@ -357,7 +364,7 @@ export function sharedTestHelper() {
           const firstObj = models[modelType].spec;
           const relationship = models[modelType].include[0];
           const relationshipID = firstObj[relationship].id;
-          const res = await apiClient.get(
+          const res = await chai.request(server).get(
             `${prefix}?filter[${relationship}]=${relationshipID}`,
           );
 
@@ -379,43 +386,48 @@ export function sharedTestHelper() {
       const secondAttr = allFields[1];
 
       it(`Sorted ${modelType} objects by a single attribute asc`, async () => {
-        const res = await apiClient.get(`${prefix}?sort=${firstAttr}`);
+        const res = await chai.request(server).get(`${prefix}?sort=${firstAttr}`);
         basicModelList(res, modelType);
 
-        expect(res.body.data[0].attributes[firstAttr])
-            .to.be.lte(res.body.data[1].attributes[firstAttr]);
+        // TODO: why is the normaliser necessary?
+        const n = getNormaliser(firstAttr);
+        expect(n(res.body.data[0].attributes[firstAttr]))
+            .to.be.lte(n(res.body.data[1].attributes[firstAttr]));
       });
 
       it(`Sorted ${modelType} objects by a single attribute desc`, async () => {
-        const res = await apiClient.get(`${prefix}?sort=-${firstAttr}`);
+        const res = await chai.request(server).get(`${prefix}?sort=-${firstAttr}`);
 
         basicModelList(res, modelType);
 
-        expect(res.body.data[0].attributes[firstAttr])
-            .to.be.gte(res.body.data[1].attributes[firstAttr]);
+        const n = getNormaliser(firstAttr);
+        expect(n(res.body.data[0].attributes[firstAttr]))
+             .to.be.gte(n(res.body.data[1].attributes[firstAttr]));
       });
 
       if (secondAttr) {
         it(`Sorted ${modelType} objects by two attribute asc`, async () => {
-          const res = await apiClient.get(
+          const res = await chai.request(server).get(
             `${prefix}?sort=${firstAttr},${secondAttr}`,
           );
 
           basicModelList(res, modelType);
 
-          expect(res.body.data[0].attributes[firstAttr])
-              .to.be.lte(res.body.data[1].attributes[firstAttr]);
+          const n = getNormaliser(firstAttr);
+          expect(n(res.body.data[0].attributes[firstAttr]))
+              .to.be.lte(n(res.body.data[1].attributes[firstAttr]));
         });
 
         it(`Sorted ${modelType} objects by two attribute desc`, async () => {
-          const res = await apiClient.get(
+          const res = await chai.request(server).get(
             `${prefix}?sort=-${firstAttr},-${secondAttr}`,
           );
 
           basicModelList(res, modelType);
 
-          expect(res.body.data[0].attributes[firstAttr])
-              .to.be.gte(res.body.data[1].attributes[firstAttr]);
+          const n = getNormaliser(firstAttr);
+          expect(n(res.body.data[0].attributes[firstAttr]))
+              .to.be.gte(n(res.body.data[1].attributes[firstAttr]));
         });
       }
     });
@@ -424,7 +436,7 @@ export function sharedTestHelper() {
   function singleTests(prefix: string, modelType: string) {
     describe('GET', () => {
       it(`a ${modelType} object`, async () => {
-        const res = await apiClient.get(`${prefix}`);
+        const res = await chai.request(server).get(`${prefix}`);
         basicSingleModel(res, modelType);
       });
     });
@@ -433,7 +445,7 @@ export function sharedTestHelper() {
       describe('GET (includes)', () => {
         const includeType = models[modelType].include[0];
         it(`included ${includeType} of ${modelType} objects`, async () => {
-          const res = await apiClient.get(
+          const res = await chai.request(server).get(
             `${prefix}?include=${includeType}`,
           );
 

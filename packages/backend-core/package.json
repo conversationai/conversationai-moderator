@@ -7,7 +7,7 @@
   "scripts": {
     "test": "npm run mocha",
     "test:watch": "npm run compile:watch | npm run mocha:watch",
-    "mocha": "../../node_modules/.bin/mocha 'dist/test/**/*.spec.js' --recursive --timeout 10000",
+    "mocha": "../../node_modules/.bin/mocha 'dist/test/**/*.spec.js' --recursive --timeout 200000",
     "mocha:watch": "../../node_modules/.bin/mocha --watch 'dist/test/**/*.spec.js' --recursive --timeout 10000",
     "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",

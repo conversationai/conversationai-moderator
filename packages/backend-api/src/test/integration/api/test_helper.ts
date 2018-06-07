@@ -23,5 +23,4 @@ chai.use(chaiHttp);
 
 const { app } = makeServer(true);
 app.use('/', mountAPI(true));
-const apiClient = chai.request(app);
-export { apiClient };
+export { app };

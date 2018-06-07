@@ -13,13 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
+import * as chai from 'chai';
 import { cloneDeep, isEqual } from 'lodash';
 import {
-  apiClient,
   expect,
   models,
   serializers,
+  server,
   sharedTestHelper,
 } from './test_helper';
 
@@ -39,12 +39,12 @@ Object.keys(models).forEach((modelName) => {
 
       describe('POST', () => {
         it(`create a ${modelName} object`, async () => {
-          const res = await apiClient.post(`/${modelName}`).send({ data: serializedModel });
+          const res = await chai.request(server).post(`/${modelName}`).send({ data: serializedModel });
 
           basicCreate(res, modelName);
-          expect(res.body['included']).to.be.empty;
+          expect(res.body['included']).to.be.undefined;
 
-          const res2 = await apiClient.get(res.body.data.links.self);
+          const res2 = await chai.request(server).get(res.body.data.links.self);
           basicSingleModel(res2, modelName);
 
           expect(isEqual(res.body.data, res2.body.data)).to.be.true;
@@ -70,15 +70,15 @@ Object.keys(models).forEach((modelName) => {
           const serializedModel = serializers[modelName].serialize(cloneDeep(models[modelName].spec));
           delete serializedModel.id;
 
-          const res = await apiClient.post(`/${modelName}`).send({ data: serializedModel });
+          const res = await chai.request(server).post(`/${modelName}`).send({ data: serializedModel });
 
-          const res2 = await apiClient.post(
+          const res2 = await chai.request(server).post(
             res.body.data.relationships[models[modelName].include[0]].links.self,
           ).send({ data: twoRelationships });
 
           expect(res2).to.have.status(204);
 
-          const res3 = await apiClient.get(res.body.data.links.self);
+          const res3 = await chai.request(server).get(res.body.data.links.self);
           const rels = res3.body.data.relationships;
           expect(rels[models[modelName].include[0]].data).to.be.lengthOf(
             originalCount + twoRelationships.length,

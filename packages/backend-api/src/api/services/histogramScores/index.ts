@@ -30,7 +30,7 @@ import {
   ICommentScored,
   renderScoresToPNG,
   sortComments,
-} from '../../../api/services/histogramScores/util';
+} from './util';
 
 export interface ICommentScoredOrDatedWithStringId {
   commentId: string;
@@ -131,7 +131,7 @@ export function createHistogramScoresService(): express.Router {
   });
 
   router.get('/categories/:id/byDate/chart', async (req, res, next) => {
-    scoresToChart('date', () => {
+    return scoresToChart('date', () => {
       const { params: { id }} = req;
 
       return getHistogramScoresForCategoryByDate(id);
@@ -172,7 +172,7 @@ export function createHistogramScoresService(): express.Router {
   });
 
   router.get('/categories/:id/tags/:tagId/chart', async (req, res, next) => {
-    scoresToChart('score', () => {
+    return scoresToChart('score', () => {
       const { params: { id, tagId }} = req;
 
       if (tagId === 'SUMMARY_SCORE') {
@@ -203,7 +203,7 @@ export function createHistogramScoresService(): express.Router {
   });
 
   router.get('/articles/:id/byDate/chart', async (req, res, next) => {
-    scoresToChart('date', () => {
+    return scoresToChart('date', () => {
       const { params: { id } } = req;
 
       return getHistogramScoresForArticleByDate(id);
@@ -229,7 +229,7 @@ export function createHistogramScoresService(): express.Router {
   });
 
   router.get('/articles/:id/tags/:tagId/chart', async (req, res, next) => {
-    scoresToChart('score', () => {
+    return scoresToChart('score', () => {
       const { params: { id, tagId } } = req;
       if (tagId === 'SUMMARY_SCORE') {
         return getMaxSummaryScoreForArticle(id);

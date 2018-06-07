@@ -57,12 +57,12 @@ describe('histogramScores Functions', () => {
       const results = await getHistogramScoresForAllCategories(tag.get('id'));
 
       expect(results).to.be.lengthOf(2);
-      expect(results).to.include({
+      expect(results).to.deep.include({
         commentId: result1.comment.get('id'),
         score: 1.0,
       });
 
-      expect(results).to.include({
+      expect(results).to.deep.include({
         commentId: result2.comment.get('id'),
         score: 0.5,
       });
@@ -105,12 +105,12 @@ describe('histogramScores Functions', () => {
       const results = await getHistogramScoresForCategory(category1.get('id'), tag.get('id'));
 
       expect(results).to.be.lengthOf(2);
-      expect(results).to.include({
+      expect(results).to.deep.include({
         commentId: result1.comment.get('id'),
         score: 1.0,
       });
 
-      expect(results).to.include({
+      expect(results).to.deep.include({
         commentId: result2.comment.get('id'),
         score: 0.5,
       });
@@ -167,12 +167,12 @@ describe('histogramScores Functions', () => {
       const results = await getHistogramScoresForArticle(article1.get('id'), tag.get('id'));
 
       expect(results).to.be.lengthOf(2);
-      expect(results).to.include({
+      expect(results).to.deep.include({
         commentId: result1.comment.get('id'),
         score: 1.0,
       });
 
-      expect(results).to.include({
+      expect(results).to.deep.include({
         commentId: result2.comment.get('id'),
         score: 0.5,
       });
