@@ -19,7 +19,7 @@ import formatDate from 'date-fns/format';
 import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
-import { css, partial, stylesheet } from '../../../util';
+import { always, css, partial, stylesheet } from '../../../util';
 const FocusTrap = require('focus-trap-react');
 import { ISearchScope } from '../';
 import { IArticleModel, ICommentModel, ITagModel, TagModel } from '../../../../models';
@@ -551,6 +551,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   render() {
     const {
       totalCommentCount,
+      textSizes,
       searchTerm,
       isItemChecked,
       areNoneSelected,
@@ -558,6 +559,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
       selectedCount,
       tags,
       searchReturned,
+      allCommentIds,
       getLinkTarget,
       isLoading,
     } = this.props;
@@ -567,6 +569,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
       isTaggingToolTipMetaVisible,
       taggingToolTipMetaPosition,
       taggingToolTipPosition,
+      commentSortType,
       isConfirmationModalVisible,
       isRuleInfoVisible,
       actionCount,
@@ -685,7 +688,10 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
           {searchReturned && !isLoading && searchTerm && totalCommentCount > 0 &&  (
             <CommentList
               heightOffset={HEADER_HEIGHT + RESULTS_HEADER_HEIGHT}
+              textSizes={textSizes}
+              commentIds={allCommentIds}
               areAllSelected={areAllSelected}
+              getCurrentSort={always(commentSortType)}
               getLinkTarget={getLinkTarget}
               isItemChecked={isItemChecked}
               onSelectAllChange={this.onSelectAllChange}
@@ -695,6 +701,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
               sortOptions={sortOptions}
               totalItems={totalCommentCount}
               updateCounter={updateCounter}
+              triggerActionToast={this.triggerActionToast}
               searchTerm={searchTerm}
               displayArticleTitle={!!searchTerm}
               dispatchConfirmedAction={this.dispatchConfirmedAction}

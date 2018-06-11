@@ -510,6 +510,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     const {
       isArticleDetail,
       commentScores,
+      textSizes,
       getLinkTarget,
       commentIds,
       areNoneSelected,
@@ -790,8 +791,12 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
             <CommentList
               ownerHeight={window.innerHeight - (this.listContainerRef && this.listContainerRef.getBoundingClientRect().top)}
               heightOffset={HEADER_HEIGHT - ACTION_BAR_HEIGHT_FIXED + 5}
+              textSizes={textSizes}
+              commentIds={commentIds}
               selectedTag={selectedTag}
+              commentScores={commentScores}
               areAllSelected={areAllSelected}
+              getCurrentSort={this.getCurrentSort}
               getLinkTarget={getLinkTarget}
               isItemChecked={isItemChecked}
               onSelectAllChange={this.onSelectAllChange}
@@ -810,6 +815,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               onCommentClick={this.saveCommentRow}
               scrollToRow={selectedRow}
               totalItems={commentIds.size}
+              triggerActionToast={this.triggerActionToast}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               displayArticleTitle={!!this.props.params.categoryId}
               onTableScroll={this.handleTableScroll}
