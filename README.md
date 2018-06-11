@@ -166,15 +166,35 @@ a local instance of the proxy as described in the
 E.g.:
 
 ```bash
-export GOOGLE_SCORE_AUTH=<your_secret>
-
 export GOOGLE_CLOUD_API_KEY=<API Key>
 export AUTH_WHITELIST=$GOOGLE_SCORE_AUTH
+export ATTRIBUTE_REQUESTS
+read -r -d '' ATTRIBUTE_REQUESTS << EOM
+{
+  "ATTACK_ON_AUTHOR": {},
+  "ATTACK_ON_COMMENTER": {},
+  "INCOHERENT": {},
+  "INFLAMMATORY": {},
+  "OBSCENE": {},
+  "OFF_TOPIC": {},
+  "SPAM": {} ,
+  "UNSUBSTANTIAL": {},
+  "LIKELY_TO_REJECT": {},
+  "TOXICITY": {},
+  "TOXICITY_FAST": {}
+}
+EOM
 
 cd $PERSPECTIVEAPI_PROXY_LOCATION
 yarn install
 PORT=8081 ATTRIBUTE_REQUESTS='{ "TOXICITY": {} }' yarn run watch
 ```
+
+TODO: Need fixes to proxy and osmod:
+ATTACK_ON_PUBLISHER is in proxy's default list and osmod UI, but doesn't work.
+SUMMARY_SCORE in osmod UI, but doesn't work.
+Fix osmod by removing entries from initial sql.  Need a better way of doing initial
+SQL too.
 
 Then use `http://localhost:8081/api/score-comment` as the proxy URL when creating
 your service user.
