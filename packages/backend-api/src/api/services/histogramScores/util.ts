@@ -96,7 +96,7 @@ export async function getHistogramScoresForAllCategoriesByDate(): Promise<Array<
   return sequelizeInstance.query(
     'SELECT comments.id as commentId, comments.sourceCreatedAt as date ' +
     'FROM comments ' +
-    'AND comments.isModerated = false ',
+    'WHERE comments.isModerated = false ',
     {
       type: sequelizeInstance.QueryTypes.SELECT,
     },
@@ -149,7 +149,7 @@ export async function getHistogramScoresForCategoryByDate(categoryId: number | '
 
   const category = await Category.findById(categoryId);
   if (!category) { throw new JSONAPI.NotFoundError(`Could not find category ${categoryId}`); }
-
+  console.log('xxxxxxxx', categoryId);
   return sequelizeInstance.query(
     'SELECT comments.id as commentId, comments.sourceCreatedAt as date ' +
     'FROM comments ' +
