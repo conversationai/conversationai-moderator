@@ -57,7 +57,7 @@
     "@types/redux-immutable": "3.0.38",
     "@types/slug": "0.9.0",
     "aphrodite": "1.2.0",
-    "axios": "0.15.3",
+    "axios": "0.18.0",
     "babel-core": "6.23.1",
     "babel-loader": "6.4.0",
     "babel-plugin-lodash": "3.2.11",
