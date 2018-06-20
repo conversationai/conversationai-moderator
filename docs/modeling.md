@@ -90,18 +90,44 @@ networks, e.g. using their google account.
 - userId + provider (unique) (don't let the same user use the same provider multiple times)
 - socialId + provider (unique) (don't allow the same provider user to authenticate on multiple accounts)
 
+### Category
+
+Represents a higher level collection of articles.  Categories correspond to e.g., site sections, YouTube channels, or Reddit subreddits.
+
+Moderation Rules are configured at the category level and apply to all articles in the category. Moderators can be assigned at this level.
+
+- id (number) (required)
+- sourceId (string) (optional) Original id from publisher
+- ownerId (foreign key: User) (optional) Service user that created this article.
+- label (string) (required)
+- isActive (boolean) (required, default true) Whether this category is being actively managed.
+- count (int) Number of comments in this category
+- unprocessedCount (int) Denormalize SUM of articles' unprocessedCount
+- unmoderatedCount (int) Denormalize SUM of articles' unmoderatedCount
+- moderatedCount (int) Denormalize SUM of articles' moderatedCount
+- highlightedCount (int) Denormalize SUM of articles' highlightedCount
+- approvedCount (int) Denormalize SUM of articles' approvedCount
+- rejectedCount (int) Denormalize SUM of articles' rejectedCount
+- deferredCount (int) Denormalize SUM of articles' deferredCount
+- flaggedCount (int) Denormalize SUM of articles' flaggedCount
+- batchedCount (int) Denormalize SUM of articles' batchedCount
+- recommendedCount (int) Denormalize SUM of articles' recommendedCount
+- extra (json)
+
 ### Article
 
 This table holds the articles that can be commented on.
 
 - id (bigint) (required)
 - sourceId (string) (required)
+- ownerId (foreign key: User) (optional) Service user that created this article.
 - sourceCreatedAt (Created ISO 8601 timestamp from publisher)
-- categoryId (foreign key: Category) (required)
+- categoryId (foreign key: Category) (optional)
 - title (string) (required)
 - text (string) (required)
 - url (string) (required)
 - isAutoModerated (tinyint) (required) (Indicates whether the article is subject to automated moderation rules)
+- count (int) Number of comments in this article
 - unprocessedCount (int) (Denormalized count of unprocessed comments (isScored = false))
 - unmoderatedCount (int) (Denormalized count of unmoderated comments (isScored = true AND isModerated = false))
 - moderatedCount (int) (Denormalized count of moderated comments (isScored = true AND isModerated = true))
@@ -139,8 +165,9 @@ This table holds the comments, and the state of the comments.
 
 - id (bigint) (required)
 - sourceId (string) (required) (Original id from publisher)
+- ownerId (foreign key: User) (optional) Service user that uploaded this comment.
 - replyToSourceId (string) (optional foreign key: self.sourceId)
-- replyId (number) (id of comment this is a reply to)
+- replyId (foreign key: Comment) (id of comment this is a reply to)
 - authorSourceId (string) (required) (publisher id of author)
 - article (foreign key: Article) (required)
 - author (json) (required)
@@ -290,31 +317,6 @@ Represents a log of decisions made by OSMod.
 *Indexes*:
 - categoryId
 
-### Category
-
-Represents a higher level collection of articles.  Moderation Rules are configured
-at the category level and apply to all articles in the category.
-Moderators can be assigned at this level.
-
-- id (int) (required)
-- sourceId (string) (optional) (Original id from publisher)
-- label (string) (required)
-- isActive (tinyint) (required)
-- unprocessedCount (int) (Denormalize SUM of articles' unprocessedCount)
-- unmoderatedCount (int) (Denormalize SUM of articles' unmoderatedCount)
-- moderatedCount (int) (Denormalize SUM of articles' moderatedCount)
-- highlightedCount (int) (Denormalize SUM of articles' highlightedCount)
-- approvedCount (int) (Denormalize SUM of articles' approvedCount)
-- rejectedCount (int) (Denormalize SUM of articles' rejectedCount)
-- deferredCount (int) (Denormalize SUM of articles' deferredCount)
-- flaggedCount (int) (Denormalize SUM of articles' flaggedCount)
-- batchedCount (int) (Denormalize SUM of articles' batchedCount)
-- recommendedCount (int) (Denormalize SUM of articles' recommendedCount)
-- extra (json)
-
-*Indexes*:
-- isActive
-
 ### CommentReply
 - commentId (int) (required)
 - replyId (int) (required)
@@ -353,3 +355,18 @@ Moderators can be assigned at this level.
 - lowerThreshold (smallint) (required)
 - upperThreshold (smallint) (required)
 - createdBy (foreign key: User)
+
+
+## Mappings
+
+### YouTube
+
+For YouTube we use the following map:
+
+* YouTube Channel -> OSMod Category
+* YouTube Video -> OSMod Article
+* YouTube Comment ->  OSMod Comment
+
+YouTube allows comments on the channel as well as the Video.  To accommodate this, there is a special article that corresponds to the channel itself.
+
+Each object in this heirarchy is marked with the
