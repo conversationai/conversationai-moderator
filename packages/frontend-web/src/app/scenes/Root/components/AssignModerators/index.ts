@@ -118,7 +118,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, { article, category }: IAssi
   };
 }
 
-export const AssignModerators = connect<IAssignModeratorsStateProps, IAssignModeratorsDispatchProps, IAssignModeratorsOwnProps>(
+export const AssignModerators: React.ComponentClass<IAssignModeratorsProps> = connect<IAssignModeratorsStateProps, IAssignModeratorsDispatchProps, IAssignModeratorsOwnProps>(
   mapStateToProps,
   mapDispatchToProps,
 )(PureAssignModerators);

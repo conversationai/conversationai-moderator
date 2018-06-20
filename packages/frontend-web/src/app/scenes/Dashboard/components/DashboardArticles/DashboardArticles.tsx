@@ -18,11 +18,14 @@ import { autobind } from 'core-decorators';
 import formatDate from 'date-fns/format';
 import { List, Map } from 'immutable';
 import React from 'react';
+import { Action } from 'redux-actions';
 import PropTypes from 'prop-types';
 import { CategoryModel, IArticleModel, ICategoryModel, IUserModel } from '../../../../../models';
 import { DATE_FORMAT_LONG } from '../../../../config';
 import { IAppDispatch } from '../../../../stores';
 import {
+  IChangeColumnSortPayload,
+  IChangeColumnSortGroupDefaultPayload,
   changeColumnSort,
   changeColumnSortGroupDefault,
 } from '../../../../stores/columnSorts';
@@ -306,7 +309,7 @@ export class DashboardArticles
     this.changeSort(newSort);
   }
 
-  changeScopeForCurrentCategory(group: string, key: string) {
+  changeScopeForCurrentCategory(group: string, key: string): Action<IChangeColumnSortPayload | IChangeColumnSortGroupDefaultPayload> {
     if (this.props.params.categoryId === 'deferred') {
       return changeColumnSort({
         group,

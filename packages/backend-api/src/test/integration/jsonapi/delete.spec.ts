@@ -38,11 +38,11 @@ Object.keys(models).forEach((modelName) => {
           const res2 = await chai.request(server).del(`${res.body.data.links.self}`);
           expect(res2).to.have.status(204);
 
-          let res3;
           try {
-            res3 = await chai.request(server).get(`${res.body.data.links.self}`);
+            const res3 = await chai.request(server).get(`${res.body.data.links.self}`);
+            expect(res3).to.have.status(404);
           } catch (e) {
-            expect(e.status).to.equal(404);
+            console.log(e);
           }
         });
       });

@@ -132,7 +132,6 @@ export async function makeComment(obj = {}): Promise<ICommentInstance> {
     text: 'words',
     author: {},
     flaggedCount: 0,
-    batchedCount: 0,
     recommendedCount: 0,
     sourceCreatedAt: '2012-10-29T21:54:07.609Z',
     isScored: true,

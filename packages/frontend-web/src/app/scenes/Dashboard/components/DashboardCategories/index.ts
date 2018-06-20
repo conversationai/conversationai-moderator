@@ -22,7 +22,7 @@ import { IAppStateRecord } from '../../../../stores';
 import { getCategoryCounts } from '../../../../stores/categories';
 import { DashboardCategories as PureDashboardCategories } from './DashboardCategories';
 
-export const DashboardCategories = connect(
+export const DashboardCategories: React.ComponentClass<any> = connect<any>(
   createStructuredSelector({
     categoryCounts: (state: IAppStateRecord) => {
       const categoryCounts = getCategoryCounts(state);
@@ -42,4 +42,4 @@ export const DashboardCategories = connect(
       });
     },
   }),
-)(PureDashboardCategories) as any;
+)(PureDashboardCategories);

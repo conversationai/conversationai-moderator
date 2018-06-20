@@ -105,4 +105,3 @@ export function mountAPI(testMode?: boolean): express.Express {
 }
 
 export { createArticleIfNonExistant } from './api/publisher/articles';
-export { createPublisherRouter } from './api/publisher';

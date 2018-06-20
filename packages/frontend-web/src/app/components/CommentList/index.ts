@@ -271,7 +271,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: ICommentListProps)
   };
 }
 
-export const CommentList = connect(
+export const CommentList: React.ComponentClass<ICommentListProps> = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(LazyCommentList as any);
+)(LazyCommentList);
