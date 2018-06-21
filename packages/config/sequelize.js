@@ -29,7 +29,6 @@ let mysqlConfig = {
   database: config.get('database_name'),
   username: config.get('database_user'),
   password: config.get('database_password'),
-  migrationStoragePath: path.resolve('../migrations')
 };
 
 if (config.get('database_socket') !== 'nevermind') {
