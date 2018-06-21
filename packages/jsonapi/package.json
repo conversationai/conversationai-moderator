@@ -3,7 +3,7 @@
   "description": "JSONAPI implementation for OSMod",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "scripts": {
     "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
