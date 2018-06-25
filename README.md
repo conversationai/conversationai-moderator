@@ -19,7 +19,7 @@ must be set in the enviromnent before anything will work.
 * `GOOGLE_CLIENT_SECRET`:  Google OAuth API secret.
 * `GOOGLE_SCORE_AUTH`: An authentication key for The Perspective API proxy (see below).
 
-To get values for the latter two items, create an OAuth2.0 Client ID
+To get values for the `GOOGLE_CLIENT_*` parameters, create an OAuth2.0 Client ID
 entry for your app in the [Google API console](https://console.developers.google.com/apis/credentials).
 Set the Authorised redirect URI to `http://localhost:8080/auth/callback/google`.
 (Replace localhost with the address of your server if you are not running
@@ -186,7 +186,7 @@ EOM
 
 cd $PERSPECTIVEAPI_PROXY_LOCATION
 yarn install
-PORT=8081 ATTRIBUTE_REQUESTS='{ "TOXICITY": {} }' yarn run watch
+PORT=8081 yarn run watch
 ```
 
 Then use `http://localhost:8081/api/score-comment` as the proxy URL when creating

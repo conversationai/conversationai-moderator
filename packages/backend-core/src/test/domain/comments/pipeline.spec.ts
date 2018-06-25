@@ -23,11 +23,13 @@ import {
   completeMachineScoring,
   findOrCreateTagsByKey,
   getCommentsToResendForScoring,
-  IScores,
-  ISummaryScores,
   processMachineScore,
   recordDecision,
 } from '../../../domain/comments/pipeline';
+import {
+  IScores,
+  ISummaryScores,
+} from '../../../domain/comments/shim';
 import {
   Article,
   Category,

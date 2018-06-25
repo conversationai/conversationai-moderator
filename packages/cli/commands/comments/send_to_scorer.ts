@@ -71,7 +71,7 @@ export async function handler(argv: any) {
 
     await Bluebird.mapSeries(comments, (c) => {
       logger.info('Comment id ', c.id);
-      sendToScorer(c, user, true);
+      sendToScorer(c, user);
     });
 
     logger.info('Processing Completed.');

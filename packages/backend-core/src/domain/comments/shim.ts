@@ -14,9 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './countDenormalization';
-export * from './pipeline';
-export * from './rules';
-export * from './shim';
-export * from './state';
-export * from './textSizes';
+export interface IScore {
+  score: number;
+  begin?: number;
+  end?: number;
+}
+
+export interface IScores {
+  [key: string]: Array<IScore>;
+}
+
+export interface ISummaryScores {
+  [key: string]: number;
+}
+
+export interface IScoreData {
+  scores: IScores;
+  summaryScores: ISummaryScores;
+}
+

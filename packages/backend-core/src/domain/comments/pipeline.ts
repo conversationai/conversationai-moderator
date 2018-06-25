@@ -14,11 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as Bluebird from 'bluebird';
 import { groupBy, maxBy } from 'lodash';
 import * as moment from 'moment';
-import * as requestRaw from 'request';
 import { FindOrInitializeOptions } from 'sequelize';
-import { humanize, rtrim, titleize, trim } from 'underscore.string';
+import { humanize, titleize, trim } from 'underscore.string';
+
+import { config } from '@conversationai/moderator-config';
+
 import { trigger } from '../../events';
 import { logger } from '../../logger';
 import {
@@ -41,105 +44,27 @@ import {
   User,
 } from '../../models';
 import { sequelize } from '../../sequelize';
-import { denormalizeCommentCountsForArticle } from '../articles/countDenormalization';
+import { denormalizeCommentCountsForArticle } from '../articles';
 import { cacheCommentTopScores } from '../commentScores';
 import { denormalizeCountsForComment } from './countDenormalization';
+import { createShim as createProxyShim } from './proxyShim';
 import { processRulesForComment } from './rules';
 import { getIsDoneScoring, IResolution } from './state';
 import { cacheTextSize } from './textSizes';
 
-import * as Bluebird from 'bluebird';
-const request = Bluebird.promisify(requestRaw) as any;
-Bluebird.promisifyAll(request);
+import  {IScoreData, IScores, ISummaryScores} from './shim';
 
-import * as striptags from 'striptags';
+const proxyShim = createProxyShim(processMachineScore);
 
-import { config } from '@conversationai/moderator-config';
-
-export interface IScore {
-  score: number;
-  begin?: number;
-  end?: number;
-}
-
-export interface IScores {
-  [key: string]: Array<IScore>;
-}
-
-export interface ISummaryScores {
-  [key: string]: number;
-}
-
-export interface IScoreData {
-  scores: IScores;
-  summaryScores: ISummaryScores;
-}
-
-interface IBotPostData {
-  sync?: boolean;
-
-  comment: {
-    commentId: number;
-    plainText: string;
-    htmlText: string;
-    links: {
-      self: string;
-    };
-  };
-
-  article: {
-    articleId: number;
-    plainText: string;
-    links: {
-      self: string;
-    };
-  };
-
-  includeSummaryScores: true;
-
-  inReplyToComment?: {
-    commentId: number;
-    plainText: string;
-    htmlText: string;
-    links: {
-      self: string;
-    };
-  };
-
-  links: {
-    callback: string;
-  };
-}
-
-/**
- * Send a single comment to a single scorer
- *
- * @param {object} comment        Comment model instance
- * @param {object} serviceUser    A "service" User model instance
- * @param {bool} sync           An extra flag to override API for test.
- * @return {object} Promise object
- */
-export async function sendToScorer(comment: ICommentInstance, serviceUser: IUserInstance, sync?: boolean) {
-  const apiURL = rtrim(config.get('api_url'), '/');
-
-  const article = await Article.findById(comment.get('articleId'));
-
-  // Ensure data is present, otherwise an error will throw.
-  if (!article) {
-    logger.error(`sendToScorer: Article ${comment.get('articleId')} not found for comment ${comment.id}.`);
-
-    return;
-  }
-
+export async function sendToScorer(comment: ICommentInstance, serviceUser: IUserInstance) {
   try {
-
     // Destroy existing comment score request for user.
     await CommentScoreRequest.destroy({
-        where: {
-          commentId: comment.id,
-          userId: serviceUser.id,
-        },
-      });
+      where: {
+        commentId: comment.id,
+        userId: serviceUser.id,
+      },
+    });
 
     // Create score request
     const insertedObj = await CommentScoreRequest.create({
@@ -148,84 +73,14 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
       sentAt: sequelize.fn('now'),
     });
 
-    const postData: IBotPostData = {
-      sync: sync ? sync : undefined,
-      includeSummaryScores: true,
+    await proxyShim.sendToScorer(comment, serviceUser, insertedObj.id);
+    const isDoneScoring = await getIsDoneScoring(comment);
 
-      comment: {
-        commentId: comment.id,
-        plainText: striptags(comment.get('text')),
-        htmlText: comment.get('text'),
-        links: {
-          self: apiURL + '/rest/comments/' + comment.id,
-        },
-      },
-
-      article: {
-        articleId: article.id,
-        plainText: striptags(article.get('text')),
-        links: {
-          self: apiURL + '/rest/articles/' + article.id,
-        },
-      },
-
-      links: {
-        callback: apiURL + '/assistant/scores/' + insertedObj.id,
-      },
-    };
-
-    // Check for a `replyTo`
-
-    if (comment.get('replyTo')) {
-      const replyTo = comment.get('replyTo');
-
-      postData.inReplyToComment = {
-        commentId: replyTo.get('id'),
-        plainText: striptags(replyTo.get('text')),
-        htmlText: replyTo.get('text'),
-        links: {
-          self: apiURL + '/rest/comments/' + replyTo.id,
-        },
-      };
+    if (isDoneScoring) {
+      await completeMachineScoring(comment.id);
     }
-
-    logger.info(
-      `Sending comment id ${comment.id} for scoring ` +
-      `by service user id ${serviceUser.id} ` +
-      `to endpoint: ${serviceUser.get('endpoint')}`,
-      postData,
-    );
-
-    const response = await request.postAsync({
-      url: serviceUser.get('endpoint'),
-      json: true,
-      body: postData,
-      headers: {
-        Authorization: config.get('google_score_auth'),
-      },
-    });
-
-    logger.info(`Assistant Endpoint Response :: ${response.statusCode}`);
-
-    if (response.statusCode !== 200) {
-      logger.error('Error posting comment id %d for scoring.', comment.id, +
-      ' Server responded with status ', response.statusCode, response.body );
-    } else {
-      if (sync) {
-        logger.info('Using scoring in sync mode.');
-
-        const isDoneScoring = await processMachineScore(
-          comment.id,
-          serviceUser.id,
-          response.body,
-        );
-
-        if (isDoneScoring) {
-          await completeMachineScoring(comment.id);
-        }
-      }
-    }
-  } catch (err) {
+  }
+  catch (err) {
     logger.error('Error posting comment id %d for scoring: ', comment.id, err);
   }
 }
@@ -233,9 +88,9 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
 /**
  * Send a comment to multiple scorers.
  */
-export async function sendToScorers(comment: ICommentInstance, serviceUsers: Array<IUserInstance>, sync?: boolean): Promise<void> {
+export async function sendToScorers(comment: ICommentInstance, serviceUsers: Array<IUserInstance>): Promise<void> {
   for (const scorer of serviceUsers) {
-    await sendToScorer(comment, scorer, sync);
+    await sendToScorer(comment, scorer);
   }
 
   // Mark timestamp for when comment was last sent for scoring
@@ -247,7 +102,7 @@ export async function sendToScorers(comment: ICommentInstance, serviceUsers: Arr
 /**
  * Send passed in comment for scoring against all active service Users.
  */
-export async function sendForScoring(comment: ICommentInstance, sync?: boolean): Promise<void> {
+export async function sendForScoring(comment: ICommentInstance): Promise<void> {
   const serviceUsers = await User.findAll({
     where: {
       group: 'service',
@@ -259,7 +114,7 @@ export async function sendForScoring(comment: ICommentInstance, sync?: boolean):
   } as any);
 
   if (serviceUsers.length) {
-    await sendToScorers(comment, serviceUsers, sync);
+    await sendToScorers(comment, serviceUsers);
   } else {
     logger.info('No active Comment Scorers found');
   }
@@ -299,9 +154,9 @@ export async function getCommentsToResendForScoring(
 /**
  * Resend a comment to be scored again.
  */
-export async function resendForScoring(comment: ICommentInstance, sync?: boolean): Promise<void> {
+export async function resendForScoring(comment: ICommentInstance): Promise<void> {
   logger.info('Re-sending comment id %s for scoring', comment.id);
-  await sendForScoring(comment, sync);
+  await sendForScoring(comment);
 }
 
 /**
@@ -312,7 +167,7 @@ export async function processMachineScore(
   commentId: number,
   serviceUserId: number,
   scoreData: IScoreData,
-): Promise<boolean> {
+): Promise<void> {
   logger.info('PROCESS MACHINE SCORE ::', commentId, serviceUserId, JSON.stringify(scoreData));
   const comment = (await Comment.findById(commentId))!;
 
@@ -375,17 +230,6 @@ export async function processMachineScore(
   await commentScoreRequest
     .set('doneAt', sequelize.fn('now'))
     .save();
-
-  // Check if all scoring is finished and update the comment accordingly
-  const isDoneScoring = await getIsDoneScoring(comment);
-
-  if (isDoneScoring === true) {
-    await comment.set('isScored', true).save();
-
-    return true;
-  } else {
-    return false;
-  }
 }
 
 export async function updateMaxSummaryScore(comment: ICommentInstance): Promise<void> {
