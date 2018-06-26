@@ -47,14 +47,23 @@ import { sequelize } from '../../sequelize';
 import { denormalizeCommentCountsForArticle } from '../articles';
 import { cacheCommentTopScores } from '../commentScores';
 import { denormalizeCountsForComment } from './countDenormalization';
-import { createShim as createProxyShim } from './proxyShim';
 import { processRulesForComment } from './rules';
 import { getIsDoneScoring, IResolution } from './state';
 import { cacheTextSize } from './textSizes';
 
-import  {IScoreData, IScores, ISummaryScores} from './shim';
+import {IScoreData, IScores, IShim, ISummaryScores} from './shim';
 
-const proxyShim = createProxyShim(processMachineScore);
+import { createShim as createApiShim } from './apiShim';
+import { createShim as createProxyShim } from './proxyShim';
+
+let apiShim: IShim|undefined;
+let proxyShim: IShim|undefined;
+
+export async function initialiseShims() {
+  apiShim = await createApiShim(processMachineScore);
+  proxyShim = await createProxyShim(processMachineScore);
+  proxyShim = proxyShim;
+}
 
 export async function sendToScorer(comment: ICommentInstance, serviceUser: IUserInstance) {
   try {
@@ -73,7 +82,11 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
       sentAt: sequelize.fn('now'),
     });
 
-    await proxyShim.sendToScorer(comment, serviceUser, insertedObj.id);
+    if (!apiShim) {
+      await initialiseShims();
+    }
+    await apiShim!.sendToScorer(comment, serviceUser, insertedObj.id);
+
     const isDoneScoring = await getIsDoneScoring(comment);
 
     if (isDoneScoring) {

@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import {ICommentInstance, IUserInstance} from '../../models';
+
 export interface IScore {
   score: number;
   begin?: number;
@@ -33,3 +35,6 @@ export interface IScoreData {
   summaryScores: ISummaryScores;
 }
 
+export interface IShim {
+  sendToScorer(comment: ICommentInstance, serviceUser: IUserInstance, correlator: string | number): Promise<void>;
+}

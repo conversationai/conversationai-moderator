@@ -173,13 +173,6 @@ const config = convict({
     default: 60 * 12, // 12 hours
   },
 
-  google_score_auth: {
-    doc: 'Auth token for Google score endpoint',
-    format: String,
-    default: undefined,
-    env: 'GOOGLE_SCORE_AUTH'
-  },
-
   publisher_notification_mode: {
     doc: 'Whether to post back to the publisher, or wait to be polled.',
     format: String,
@@ -228,6 +221,50 @@ const config = convict({
     default: '',
     env: 'SUBMIT_FEEDBACK_URL'
   },
+
+  // Config for talking to scorers
+  // For communication via proxy
+  google_score_auth: {
+    doc: 'Auth token for Google score endpoint',
+    format: String,
+    default: undefined,
+    env: 'GOOGLE_SCORE_AUTH'
+  },
+
+  // For direct communication
+  comment_analyzer_discovery_url: {
+    doc: 'The discovery document for the Comment Analyzer API',
+    format: String,
+    default: 'https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1',
+    env: 'COMMENT_ANALYZER_DISCOVERY_URL',
+  },
+
+  google_cloud_api_key: {
+    doc: 'A Google Cloud API key to use for accessing the Comment Analyzer API',
+    format: String,
+    default: '',
+    env: 'GOOGLE_CLOUD_API_KEY',
+  },
+
+  user_agent: {
+    doc: 'User-Agent header for requests to the Osmod backend',
+    format: String,
+    default: 'OsmodAssistantV0',
+    env: 'USER_AGENT',
+  },
+
+  attribute_requests: {
+    doc: 'The set of requests to make to the PerspectiveAPI.',
+    format: Object,
+    // NOTE: Convict appears to have surprising behavior when merging Object
+    // config values. When loading a config from a file, it seems like the
+    // object values are merged, and there doesn't seem to be a way to *remove*
+    // attributes when they're present in this default, so we leave it empty so
+    // config files can specify exactly what attributes to requested.
+    default: {},
+    env: 'ATTRIBUTE_REQUESTS',
+  },
+
 });
 
 // Try to load (env name).json config file (defaults to 'local.json')

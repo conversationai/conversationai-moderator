@@ -20,8 +20,8 @@ import * as striptags  from 'striptags';
 import {rtrim} from 'underscore.string';
 
 import { config } from '@conversationai/moderator-config';
-
 import { logger } from '../../logger';
+
 import {
   Article,
   ICommentInstance,
@@ -71,6 +71,7 @@ interface IBotPostData {
 export function createShim(
   processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>) {
   const apiURL = rtrim(config.get('api_url'), '/');
+  const googleScoreAuth = config.get('google_score_auth');
 
   return {
     /**
@@ -143,7 +144,7 @@ export function createShim(
         json: true,
         body: postData,
         headers: {
-          Authorization: config.get('google_score_auth'),
+          Authorization: googleScoreAuth,
         },
       });
 
