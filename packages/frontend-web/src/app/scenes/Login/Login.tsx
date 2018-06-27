@@ -110,13 +110,13 @@ export class Login extends React.Component<ILoginProps> {
 
         { errorMessage ? (
           <div>
-            <p {...css(STYLES.error)}>🤔</p>
-            <p {...css(STYLES.copy)}>{errorMessage}</p>
-            <p><a key="try-again" href={url} {...css(STYLES.button)}>Try Again</a></p>
+            <p key="icon" {...css(STYLES.error)}>🤔</p>
+            <p key="message" {...css(STYLES.copy)}>{errorMessage}</p>
+            <p key="try-again"><a key="try-again" href={url} {...css(STYLES.button)}>Try Again</a></p>
           </div>
         ) : (
           <div>
-            <p><a key="login" href={url} {...css(STYLES.button)}>Login</a></p>
+            <p><a href={url} {...css(STYLES.button)}>Login</a></p>
             <p>
               <a
                 href="https://github.com/Jigsaw-Code/moderator"

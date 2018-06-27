@@ -140,17 +140,17 @@ export class ScoresList extends React.PureComponent<IScoresListProps> {
 
     return (
       <div>
-        <div {...css(STYLES.header)}>
-          <h3>{tag.label} score details</h3>
+        <div key="Title" {...css(STYLES.header)}>
+          <h3>Score details for "{tag.label}" </h3>
           <button type="button" onClick={onClose} aria-label="Close Scores Modal" {...css(STYLES.closeButton)}>
             <RejectIcon {...css({ color: DARK_SECONDARY_TEXT_COLOR })} />
           </button>
         </div>
-        <div {...css(STYLES.tableHeader)}>
+        <div key="Header" {...css(STYLES.tableHeader)}>
           <h4 {...css(STYLES.scoreHeader)}>SCORE</h4>
           <h4>STRING</h4>
         </div>
-        <div {...css(STYLES.body)}>
+        <div key="Thresholds" {...css(STYLES.body)}>
           {scoresAboveThreshold && scoresAboveThreshold.map(( score ) => (
             <ScoreRow
               key={score.id}

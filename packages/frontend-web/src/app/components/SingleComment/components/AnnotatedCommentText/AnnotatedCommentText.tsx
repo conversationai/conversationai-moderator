@@ -244,41 +244,29 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
           confirmationStatus === 'confirmed' ? 'Tagged' : confirmationStatus;
 
       confirmationToolTipContent = (
-        <div>
-          <p {...css(STYLES.confirmTagWrapper)}>
+        <div key="confirmationTooltipConfirmed">
+          <p key="question" {...css(STYLES.confirmTagWrapper)}>
             <span {...css(STYLES.confirmTag)}>{confirmationTagType}</span>
           </p>
-          <p {...css(STYLES.confirmMeta)}>
+          <p key="text" {...css(STYLES.confirmMeta)}>
             <span>{actionString} by {confirmationAuthor}</span>
           </p>
-          <button
-            key="confirm-undo"
-            {...css(STYLES.confirmButton)}
-            onClick={this.undoTag}
-          >
+          <button key="confirm-undo" {...css(STYLES.confirmButton)} onClick={this.undoTag}>
             Undo
           </button>
         </div>
       );
     } else {
       confirmationToolTipContent = (
-        <div>
-          <p {...css(STYLES.confirmTagWrapper)}>
-            Is this <span {...css(STYLES.confirmTag)}>{confirmationTagType}</span>?
+        <div key="confirmationTooltip">
+          <p key="question" {...css(STYLES.confirmTagWrapper)}>
+            Is this "<span {...css(STYLES.confirmTag)}>{confirmationTagType}</span>"?
           </p>
-          <p {...css(STYLES.confirmMeta)}>{confirmationAuthor}</p>
-          <button
-            key="confirm-yes"
-            {...css(STYLES.confirmButton)}
-            onClick={this.confirmTag}
-          >
+          <p key="text" {...css(STYLES.confirmMeta)}>Flagged by {confirmationAuthor}</p>
+          <button key="confirm-yes" {...css(STYLES.confirmButton)} onClick={this.confirmTag}>
             Yes
           </button>
-          <button
-            key="confirm-no"
-            {...css(STYLES.confirmButton)}
-            onClick={this.removeTag}
-          >
+          <button key="confirm-no" {...css(STYLES.confirmButton)} onClick={this.removeTag}>
             No
           </button>
         </div>
@@ -295,6 +283,7 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
         </div>
         {isTaggingToolTipVisible && (
           <ToolTip
+            key="tagging"
             arrowPosition="topCenter"
             backgroundColor={WHITE_COLOR}
             hasDropShadow
@@ -326,6 +315,7 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
         )}
         {isConfirmationToolTipVisible && (
           <ToolTip
+            key="focus"
             arrowPosition="bottomCenter"
             backgroundColor={confirmationToolTipColor}
             isVisible={isConfirmationToolTipVisible}

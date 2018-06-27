@@ -81,7 +81,7 @@ class ContainerHeader extends React.Component<IContainerHeaderProps> {
 
     return (
       <div>
-        <h1 {...css(STYLES.h1)}>{label}</h1>
+        <h1 key="label" {...css(STYLES.h1)}>{label}</h1>
         <button key="close button" {...css(STYLES.closeButton)} aria-label="Close" onClick={onClickClose}>
           <RejectIcon style={{fill: DARK_COLOR}} />
         </button>

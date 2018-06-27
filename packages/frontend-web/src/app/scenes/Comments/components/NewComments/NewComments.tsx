@@ -678,11 +678,11 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
                 <span>Viewing </span>
                 <span>{totalScoresInView}</span>
                 { selectedCommentsCount !== commentScores.size && (
-                  <span {...css({ color: LIGHT_SECONDARY_TEXT_COLOR })}>
+                  <span key="commentScoresSize" {...css({ color: LIGHT_SECONDARY_TEXT_COLOR })}>
                     {`/${ commentScores.size }`}
                   </span>
                 )}
-                <span {...css({ paddingLeft: '4px' })}>{` ( ${selectedCommentsCount} selected )`}</span>
+                <span key="selectedCount" {...css({ paddingLeft: '4px' })}>{` ( ${selectedCommentsCount} selected )`}</span>
               </div>
             )}
           </div>
