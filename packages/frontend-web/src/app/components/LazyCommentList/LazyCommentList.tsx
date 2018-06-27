@@ -451,19 +451,21 @@ export class BaseLazyCommentList extends React.PureComponent<ILazyCommentListPro
         ? totalItems
         : clamp(getInitialRowCount() + 1, 0, totalItems);
 
+    const checkboxColumnHeader = () => (
+      <div {...css(HEADER_STYLES.iconCentering, {flexDirection: 'row-reverse'})}>
+        <div {...css(HEADER_STYLES.header)}>
+          <CheckboxColumn
+            isSelected={areAllSelected}
+            onCheck={onSelectAllChange}
+            inputId={SELECT_ALL_ID}
+          />
+        </div>
+      </div>
+    );
+
     const checkboxColumn = (
       <Column
-        header={(
-          <div {...css(HEADER_STYLES.iconCentering, {flexDirection: 'row-reverse'})}>
-            <div {...css(HEADER_STYLES.header)}>
-              <CheckboxColumn
-                isSelected={areAllSelected}
-                onCheck={onSelectAllChange}
-                inputId={SELECT_ALL_ID}
-              />
-            </div>
-          </div>
-        )}
+        header={checkboxColumnHeader}
         width={checkboxColumnWidth}
         minWidth={checkboxColumnWidth}
         flexGrow={1}
@@ -495,60 +497,64 @@ export class BaseLazyCommentList extends React.PureComponent<ILazyCommentListPro
       bodyContent = (<BasicBody topScore={null} comment={null} hideCommentAction={hideCommentAction} />);
     }
 
+    const bodyColumnHeader = () => (
+      <div {...css(HEADER_STYLES.header, {width: 700})}>
+        <label htmlFor={SELECT_ALL_ID} onClick={onSelectAllChange} {...css(HEADER_STYLES.label)}>
+          {areAllSelected ? 'Deselect All' : 'Select All'}
+        </label>
+      </div>
+    );
+
     const bodyColumn = (
       <Column
-        header={(
-          <div {...css(HEADER_STYLES.header, {width: 700})}>
-            <label htmlFor={SELECT_ALL_ID} onClick={onSelectAllChange} {...css(HEADER_STYLES.label)}>
-              {areAllSelected ? 'Deselect All' : 'Select All'}
-            </label>
-          </div>
-        )}
+        header={bodyColumnHeader}
         width={700}
         cell={partial(this.getBodyCell, bodyContent)}
       />
     );
 
-    const hasApprovalColumn = !!sortOptions;
+    let approvalColumn;
 
-    const approvalColumnHeader = hasApprovalColumn && (
-      <div {...css(HEADER_STYLES.header)}>
-        <label htmlFor="sorted-type" {...css(OFFSCREEN)}>
-          Sort comments by
-        </label>
+    if (sortOptions) {
+      const approvalColumnHeader = () => (
+        <div {...css(HEADER_STYLES.header)}>
+          <label htmlFor="sorted-type" {...css(OFFSCREEN)}>
+            Sort comments by
+          </label>
 
-        <div
-          {...css(
-            HEADER_STYLES.dropdown,
-            { marginLeft: `${smallerViewport ? 0 : GUTTER_DEFAULT_SPACING * 1.5}px` },
-          )}
-        >
-          <select
-            id="sorted-type"
-            onChange={onSortChange}
-            {...css(HEADER_STYLES.select)}
-            value={selectedSort}
+          <div
+            {...css(
+              HEADER_STYLES.dropdown,
+              {marginLeft: `${smallerViewport ? 0 : GUTTER_DEFAULT_SPACING * 1.5}px`},
+            )}
           >
-            {sortOptions.map((option) => (
-              <option key={option.key} value={option.key}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          <span aria-hidden="true" {...css(HEADER_STYLES.arrow)} />
+            <select
+              id="sorted-type"
+              onChange={onSortChange}
+              {...css(HEADER_STYLES.select)}
+              value={selectedSort}
+            >
+              {sortOptions.map((option) => (
+                <option key={option.key} value={option.key}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <span aria-hidden="true" {...css(HEADER_STYLES.arrow)} />
+          </div>
         </div>
-      </div>
-    );
+      );
 
-    const approvalColumn = hasApprovalColumn && (
-      <Column
-        header={approvalColumnHeader}
-        width={rightmostColumnWidth}
-        minWidth={rightmostColumnWidth}
-        flexGrow={1}
-        cell={this.getApprovalCell}
-      />
-    );
+      approvalColumn = (
+        <Column
+          header={approvalColumnHeader}
+          width={rightmostColumnWidth}
+          minWidth={rightmostColumnWidth}
+          flexGrow={1}
+          cell={this.getApprovalCell}
+        />
+      );
+    }
 
     return (
       <div className="comment-list">
