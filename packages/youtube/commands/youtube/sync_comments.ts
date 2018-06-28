@@ -17,10 +17,10 @@ limitations under the License.
 import {google} from 'googleapis';
 import * as yargs from 'yargs';
 
-import {Article, Category, logger} from '@conversationai/moderator-backend-core';
+import {logger} from '@conversationai/moderator-backend-core';
 
 import {authorize} from './authenticate';
-import {mapCommentThreadToComments} from './objectmap';
+import {foreachActiveChannel, mapCommentThreadToComments} from './objectmap';
 
 export const command = 'youtube:syncComments';
 export const describe = 'Sync youtube comment threads with OSMod comments.';
@@ -36,51 +36,29 @@ export async function handler() {
   authorize((auth) => {
     const service = google.youtube('v3');
 
-    Category.findAll({
-      where: {
-        sourceId: {ne: null},
-        isActive: true,
-      },
-    }).then((result) => {
-      for (const category of result) {
-        const categoryId = category.get('id');
-        const channelId = category.get('sourceId');
+    foreachActiveChannel((channelId: string, articleIdMap: Map<string, number>) => {
+      service.commentThreads.list({
+        auth: auth,
+        allThreadsRelatedToChannelId: channelId,
+        part: 'snippet,replies',
+        textFormat: 'plainText',
+        // TODO: need to also set maxResults and pageToken to only get new comments.
+        // TODO: Set moderationStatus: heldForReview to only get unmoderated comments?
+        //
+      }, (err: any, response: any) => {
+        if (err) {
+          logger.error('Google API returned an error: ' + err);
+          return;
+        }
+        if (response!.data.items.length === 0) {
+          logger.info('Couldn\'t find any threads for channel %s.', channelId);
+          return;
+        }
 
-        Article.findAll({
-          where: {
-            categoryId: categoryId,
-          },
-          attributes: ['id', 'sourceId'],
-        }).then((results) => {
-          const articleIdMap = new Map<string, number>();
-          for (const a of results) {
-            articleIdMap.set(a.get('sourceId'), a.id);
-          }
-
-          service.commentThreads.list({
-            auth: auth,
-            allThreadsRelatedToChannelId: channelId,
-            part: 'snippet,replies',
-            textFormat: 'plainText',
-            // TODO: need to also set maxResults and pageToken to only get new comments.
-            // TODO: Set moderationStatus: heldForReview to only get unmoderated comments?
-            //
-          }, (err: any, response: any) => {
-            if (err) {
-              logger.error('Google API returned an error: ' + err);
-              return;
-            }
-            if (response!.data.items.length === 0) {
-              logger.info('Couldn\'t find any threads for channel %s.', channelId);
-              return;
-            }
-
-            for (const t of response!.data.items) {
-              mapCommentThreadToComments(articleIdMap, t);
-            }
-          });
-        });
-      }
+        for (const t of response!.data.items) {
+          mapCommentThreadToComments(channelId, articleIdMap, t);
+        }
+      });
     });
   });
 }

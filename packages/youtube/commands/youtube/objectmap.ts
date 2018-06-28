@@ -18,14 +18,16 @@ import {Article, Category, Comment, logger} from '@conversationai/moderator-back
 import {postProcessComment, sendForScoring} from '@conversationai/moderator-backend-core';
 
 export async function mapChannelToCategory(channel: any) {
+  const channelId = channel.id!;
+
   try {
     const [category, created] = await Category.findOrCreate({
       where: {
-        sourceId: channel.id!,
+        sourceId: channelId,
       },
       defaults: {
         label: channel.snippet!.title!,
-        sourceId: channel.id!,
+        sourceId: channelId,
       },
     });
 
@@ -35,9 +37,61 @@ export async function mapChannelToCategory(channel: any) {
     else {
       logger.info('Category updated for channel %s (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
     }
+
+    // Create an article to store comments for the channel itself.
+    // sourceId of this article is the channel ID
+    const [article, acreated] = await Article.findOrCreate({
+      where: {
+        sourceId: channelId,
+      },
+
+      defaults: {
+        sourceId: channelId,
+        categoryId: category.id,
+        title: channel.snippet!.title!,
+        text: 'Comments associated with the channel itself.',
+        url: 'https://www.youtube.com/channel/' + channelId,
+        sourceCreatedAt: new Date(Date.parse(channel.snippet!.publishedAt!)),
+      },
+    });
+
+    if (acreated) {
+      logger.info('Article created for channel %s (local id: %s -> remote id: %s)', article.get('title'), article.id, channel.id);
+    }
+    else {
+      logger.info('Article updated for channel %s (local id: %s -> remote id: %s)', article.get('title'), article.id, channel.id);
+    }
   }
   catch (error) {
     logger.error('Failed update of channel%s: %s', channel.snippet!.title, error);
+  }
+}
+
+export async function foreachActiveChannel(callback: (channelId: string, articleIdMap: Map<string, number>) => void) {
+  const categories = await Category.findAll({
+    where: {
+      sourceId: {ne: null},
+      isActive: true,
+    },
+  });
+
+  for (const category of categories) {
+    const categoryId = category.get('id');
+    const channelId = category.get('sourceId');
+
+    const articles = await Article.findAll({
+      where: {
+        categoryId: categoryId,
+      },
+      attributes: ['id', 'sourceId'],
+    });
+
+    const articleIdMap = new Map<string, number>();
+    for (const a of articles) {
+      articleIdMap.set(a.get('sourceId'), a.id);
+    }
+
+    callback(channelId, articleIdMap);
   }
 }
 
@@ -113,15 +167,15 @@ async function mapCommentToComment(articleId: number, ytcomment: any, replyToSou
   }
 }
 
-export async function mapCommentThreadToComments(articleIds: Map<string, number>, thread: any) {
+export async function mapCommentThreadToComments(channelId: string, articleIds: Map<string, number>, thread: any) {
   let articleId = articleIds.get(thread.snippet.videoId);
   if (!articleId) {
-    articleId = 5; // TODO: Need to create the article for channel comments.
+    articleId = articleIds.get(channelId);
   }
-  await mapCommentToComment(articleId, thread.snippet.topLevelComment, undefined);
+  await mapCommentToComment(articleId!, thread.snippet.topLevelComment, undefined);
   if (thread.replies) {
     for (const c of thread.replies.comments) {
-      await mapCommentToComment(articleId, c, thread.snippet.topLevelComment.id);
+      await mapCommentToComment(articleId!, c, thread.snippet.topLevelComment.id);
     }
   }
 }
