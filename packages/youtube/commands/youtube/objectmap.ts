@@ -17,101 +17,111 @@ limitations under the License.
 import {Article, Category, Comment, logger} from '@conversationai/moderator-backend-core';
 import {postProcessComment, sendForScoring} from '@conversationai/moderator-backend-core';
 
-export function mapChannelToCategory(channel: any) {
-  Category.findOrCreate({
-    where: {
-      sourceId: channel.id!,
-    },
-    defaults: {
-      label: channel.snippet!.title!,
-      sourceId: channel.id!,
-    },
-  }).then(([result, created]) => {
+export async function mapChannelToCategory(channel: any) {
+  try {
+    const [category, created] = await Category.findOrCreate({
+      where: {
+        sourceId: channel.id!,
+      },
+      defaults: {
+        label: channel.snippet!.title!,
+        sourceId: channel.id!,
+      },
+    });
+
     if (created) {
-      logger.info('Category created for channel %s (local id: %s -> remote id: %s)', result.get('label'), result.id, channel.id);
+      logger.info('Category created for channel %s (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
     }
     else {
-      logger.info('Category updated for channel %s (local id: %s -> remote id: %s)', result.get('label'), result.id, channel.id);
+      logger.info('Category updated for channel %s (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
     }
-  }).catch((error) => {
+  }
+  catch (error) {
     logger.error('Failed update of channel%s: %s', channel.snippet!.title, error);
-  });
+  }
 }
 
-export function mapPlaylistItemToArticle(categoryId: number, item: any) {
+export async function mapPlaylistItemToArticle(categoryId: number, item: any) {
   const videoId = item.snippet.resourceId.videoId;
   logger.info('Got video %s (%s)', item.snippet.title, videoId);
-  Article.findOrCreate({
-    where: {
-      sourceId: videoId,
-    },
 
-    defaults: {
-      sourceId: videoId,
-      categoryId: categoryId,
-      title: item.snippet.title.substring(0, 255),
-      text: item.snippet.description,
-      url: 'https://www.youtube.com/watch?v=' + videoId,
-      sourceCreatedAt: new Date(Date.parse(item.snippet.publishedAt)),
-      extra: item,
-    },
-  }).then(([result, created]) => {
+  try {
+    const [article, created] = await Article.findOrCreate({
+      where: {
+        sourceId: videoId,
+      },
+
+      defaults: {
+        sourceId: videoId,
+        categoryId: categoryId,
+        title: item.snippet.title.substring(0, 255),
+        text: item.snippet.description,
+        url: 'https://www.youtube.com/watch?v=' + videoId,
+        sourceCreatedAt: new Date(Date.parse(item.snippet.publishedAt)),
+        extra: item,
+      },
+    });
+
     if (created) {
-      logger.info('Created article %s for video %s', result.id, result.get('sourceId'));
+      logger.info('Created article %s for video %s', article.id, article.get('sourceId'));
     }
     else {
-      logger.info('Updated article %s for video %s', result.id, result.get('sourceId'));
+      logger.info('Updated article %s for video %s', article.id, article.get('sourceId'));
     }
-  }).catch((error) => {
+  }
+  catch (error) {
     logger.error('Failed update of video %s: %s', videoId, error);
-  });
+  }
 }
 
-function mapCommentToComment(articleId: number, ytcomment: any, replyToSourceId: string | undefined) {
-  Comment.findOrCreate({
-    where: {
-      sourceId: ytcomment.id,
-    },
+async function mapCommentToComment(articleId: number, ytcomment: any, replyToSourceId: string | undefined) {
+  try {
+    const [comment, created] = await Comment.findOrCreate({
+      where: {
+        sourceId: ytcomment.id,
+      },
 
-    defaults: {
-      sourceId: ytcomment.id,
-      articleId: articleId,
-      authorSourceId: ytcomment.snippet.authorChannelId.value,
-      author: ytcomment.snippet.authorDisplayName,
-      text: ytcomment.snippet.textDisplay,
-      sourceCreatedAt: new Date(Date.parse(ytcomment.snippet.publishedAt)),
-      replyToSourceId: replyToSourceId,
-      extra: ytcomment,
-    },
-  }).then(([comment, created]) => {
+      defaults: {
+        sourceId: ytcomment.id,
+        articleId: articleId,
+        authorSourceId: ytcomment.snippet.authorChannelId.value,
+        author: ytcomment.snippet.authorDisplayName,
+        text: ytcomment.snippet.textDisplay,
+        sourceCreatedAt: new Date(Date.parse(ytcomment.snippet.publishedAt)),
+        replyToSourceId: replyToSourceId,
+        extra: ytcomment,
+      },
+    });
+
     if (created) {
       logger.info('Created comment %s (%s)', comment.id, comment.get('sourceId'));
     }
     else {
       logger.info('Updated comment %s (%s)', comment.id, comment.get('sourceId'));
     }
-    // TODO: Should be cleverer about doing update so we don't send for review when no change
-    postProcessComment(comment)
-      .then(() => {
-        sendForScoring(comment)
-          .catch((error) => {
-          logger.error('Failed sendForScoring of comment %s: %s', comment.id, error);
-        });
-      });
-  }).catch((error) => {
+
+    try {
+      await postProcessComment(comment);
+      await sendForScoring(comment);
+    }
+    catch (error) {
+      logger.error('Failed sendForScoring of comment %s: %s', comment.id, error);
+    }
+  }
+  catch (error) {
     logger.error('Failed update of comment %s: %s', ytcomment.id, error);
-  });
+  }
 }
 
-export function mapCommentThreadToComments(articleIds: Map<string, number>, thread: any) {
+export async function mapCommentThreadToComments(articleIds: Map<string, number>, thread: any) {
   let articleId = articleIds.get(thread.snippet.videoId);
   if (!articleId) {
     articleId = 5; // TODO: Need to create the article for channel comments.
   }
-  mapCommentToComment(articleId, thread.snippet.topLevelComment, undefined);
+  await mapCommentToComment(articleId, thread.snippet.topLevelComment, undefined);
   if (thread.replies) {
     for (const c of thread.replies.comments) {
-      mapCommentToComment(articleId, c, thread.snippet.topLevelComment.id);
+      await mapCommentToComment(articleId, c, thread.snippet.topLevelComment.id);
     }
   }
 }
