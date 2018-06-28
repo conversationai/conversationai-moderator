@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import {Article, Category, Comment, logger} from '@conversationai/moderator-backend-core';
+import {postProcessComment, sendForScoring} from '@conversationai/moderator-backend-core';
 
 export function mapChannelToCategory(channel: any) {
   Category.findOrCreate({
@@ -67,7 +68,6 @@ export function mapPlaylistItemToArticle(categoryId: number, item: any) {
 }
 
 function mapCommentToComment(articleId: number, ytcomment: any, replyToSourceId: string | undefined) {
-  console.log(ytcomment);
   Comment.findOrCreate({
     where: {
       sourceId: ytcomment.id,
@@ -83,17 +83,23 @@ function mapCommentToComment(articleId: number, ytcomment: any, replyToSourceId:
       replyToSourceId: replyToSourceId,
       extra: ytcomment,
     },
-  }).then(([result, created]) => {
-    // TODO: Should be cleverer about doing update so we don't send for review when no change
+  }).then(([comment, created]) => {
     if (created) {
-      logger.info('Created comment %s (%s)', result.id, result.get('sourceId'));
+      logger.info('Created comment %s (%s)', comment.id, comment.get('sourceId'));
     }
     else {
-      logger.info('Updated comment %s (%s)', result.id, result.get('sourceId'));
+      logger.info('Updated comment %s (%s)', comment.id, comment.get('sourceId'));
     }
-    // TODO: invoke postProcessComment, sendForScoring
+    // TODO: Should be cleverer about doing update so we don't send for review when no change
+    postProcessComment(comment)
+      .then(() => {
+        sendForScoring(comment)
+          .catch((error) => {
+          logger.error('Failed sendForScoring of comment %s: %s', comment.id, error);
+        });
+      });
   }).catch((error) => {
-    logger.error('Failed update of commnet %s: %s', ytcomment.id, error);
+    logger.error('Failed update of comment %s: %s', ytcomment.id, error);
   });
 }
 

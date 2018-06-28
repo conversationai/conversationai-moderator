@@ -6,8 +6,8 @@
     "lint": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
     "build": "npm run compile",
-    "compile": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration",
-    "watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --watch"
+    "compile": "../../node_modules/.bin/tsc --sourceMap --outDir dist --rootDir commands --declaration",
+    "watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --rootDir commands --declaration --watch"
   },
   "dependencies": {
     "@conversationai/moderator-backend-core": "1.1.0",
