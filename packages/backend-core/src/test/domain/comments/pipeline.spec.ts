@@ -23,9 +23,10 @@ import {
   completeMachineScoring,
   findOrCreateTagsByKey,
   getCommentsToResendForScoring,
+  getIsDoneScoring,
   processMachineScore,
   recordDecision,
-} from '../../../domain/comments/pipeline';
+} from '../../../domain/comments';
 import {
   IScores,
   ISummaryScores,
@@ -165,10 +166,10 @@ describe('Comments Domain Pipeline Tests', () => {
       });
 
       // Call processMachineScore and start making assertions
-      const result = await processMachineScore(comment.id, serviceUser.id, fakeScoreData);
+      await processMachineScore(comment.id, serviceUser.id, fakeScoreData);
 
       // This is the only score in the queue, so it should be complete (true).
-      assert.isTrue(result);
+      assert.isTrue(await getIsDoneScoring(comment));
 
       // Get scores and score requests from the database
       const [scores, request, summaryScores] = await Promise.all([
