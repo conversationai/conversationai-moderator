@@ -78,9 +78,19 @@ function StripAttributeVersion(attributeName: string): string {
   return attributeName.replace(/@.*/, '');
 }
 
+/**
+ * Create a scorer that sends comments to an endpoint for scoring
+ *
+ * @param {object} scorer  Service User that owns this scorer.
+ * @param {object} processMachineScore  Callback to invoke if score is determined synchronously.
+ */
 export async function createShim(
-  processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>) {
-  const discoveryURL = config.get('comment_analyzer_discovery_url');
+    scorer: IUserInstance,
+    processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>,
+    ) {
+  const serviceUserId = scorer.id;
+  const extra: any = JSON.parse(scorer.get('extra')); // TODO: Not sure why necessary.  Fixed in later Sequelize?
+  const discoveryURL = extra.endpoint;
   const apiKey = config.get('google_cloud_api_key');
   const attributes = config.get('attribute_requests');
   const userAgent = config.get('user_agent');
@@ -140,16 +150,15 @@ export async function createShim(
 
   const endpoint = await google.discoverAPI(discoveryURL);
   if (!(endpoint.comments && (endpoint.comments as any).analyze)) {
-    // Bizarrely, this doesn't cause a discovery error?
     throw Error('Unknown error loading API: client is b0rken');
   }
 
   return {
-    sendToScorer: async (comment: ICommentInstance, serviceUser: IUserInstance, reqId: string | number) => {
+    sendToScorer: async (comment: ICommentInstance, reqId: string | number) => {
       const papiRequest = await packPerspectiveApiRequest(comment, reqId);
       const papiResponse = await (endpoint.comments as any).analyze({key: apiKey, resource: papiRequest});
       const unpackedResponse = unpackPerspectiveApiResponse(comment, papiResponse.data);
-      processMachineScore(comment.id, serviceUser.id, unpackedResponse);
+      processMachineScore(comment.id, serviceUserId, unpackedResponse);
     },
   };
 }

@@ -20,11 +20,18 @@ import { sequelize } from '../sequelize';
 import { IArticleInstance } from './article';
 import { ICategoryInstance } from './category';
 
+export const USER_GROUP_SERVICE = 'service';
+
 export const USER_GROUPS = [
   'general',
   'admin',
-  'service',
+  USER_GROUP_SERVICE,
 ];
+
+// Configuration constants for serevice users
+export const SERVICE_TYPE_MODERATOR = 'moderator';
+export const ENDPOINT_TYPE_PROXY = 'perspective-proxy';
+export const ENDPOINT_TYPE_API = 'perspective-api';
 
 export interface IUserAttributes {
   id?: number;
@@ -70,8 +77,9 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
     allowNull: true,
   },
 
-  // Scoring endpoint for 'service' users to post comments to for scoring
-
+  // TODO: Create database migration to remove endpoint.
+  // Endpoint is now stored in the extra data.  But leaving this here to facilitate migrations
+  // Remove when everyone has settled on the new database structure.
   endpoint: {
     type: Sequelize.CHAR(255),
     allowNull: true,
@@ -115,7 +123,7 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
     requireEmailForHumans() {
       if (this.get('group') !== 'service') {
         const validEmail = Joi.validate(this.get('email'), Joi.string().email().required(), { convert: false });
-        if (validEmail.error !== null) {
+        if (validEmail.error) {
           throw new Error('Email address required for human users');
         }
       }
@@ -125,12 +133,21 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
      * If `endpoint` is set, make sure it's a valid URL
      */
     requireValidURLForEndpoint() {
-      if (this.get('endpoint')) {
-        const validURL = Joi.validate(this.get('endpoint'), Joi.string().uri({
-          scheme: ['http', 'https'],
-        }).required(), { convert: false });
-        if (validURL.error !== null) {
-          throw new Error('`endpoint` must be a valid URL');
+      if (this.get('extra')) {
+        const extra: any = this.get('extra');
+
+        if (extra && extra.serviceType === SERVICE_TYPE_MODERATOR) {
+          if (extra.endpointType === ENDPOINT_TYPE_PROXY || extra.endpointType === ENDPOINT_TYPE_API) {
+            const validURL = Joi.validate(extra.endpoint, Joi.string().uri({
+              scheme: ['http', 'https'],
+            }).required(), { convert: false });
+            if (validURL.error) {
+              throw new Error('Moderator user validation: `endpoint` must be a valid URL');
+            }
+          }
+          else {
+            throw new Error('Moderator user validation: Unknown modereator endpoint type ' + extra.endpointType);
+          }
         }
       }
     },

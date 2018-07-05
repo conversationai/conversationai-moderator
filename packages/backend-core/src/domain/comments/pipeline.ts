@@ -31,6 +31,8 @@ import {
   CommentScoreRequest,
   CommentSummaryScore,
   Decision,
+  ENDPOINT_TYPE_API,
+  ENDPOINT_TYPE_PROXY,
   ICommentInstance,
   ICommentScoreAttributes,
   ICommentSummaryScoreAttributes,
@@ -40,6 +42,7 @@ import {
   ITagInstance,
   IUserInstance,
   ModerationRule,
+  SERVICE_TYPE_MODERATOR,
   Tag,
   User,
 } from '../../models';
@@ -56,39 +59,45 @@ import {IScoreData, IScores, IShim, ISummaryScores} from './shim';
 import { createShim as createApiShim } from './apiShim';
 import { createShim as createProxyShim } from './proxyShim';
 
-let apiShim: IShim|undefined;
-let proxyShim: IShim|undefined;
+const shims = new Map<number, IShim>();
 
-export async function initialiseShims() {
-  apiShim = await createApiShim(processMachineScore);
-  proxyShim = await createProxyShim(processMachineScore);
-  proxyShim = proxyShim;
-}
-
-export async function sendToScorer(comment: ICommentInstance, serviceUser: IUserInstance) {
+export async function sendToScorer(comment: ICommentInstance, scorer: IUserInstance) {
   try {
     // Destroy existing comment score request for user.
     await CommentScoreRequest.destroy({
       where: {
         commentId: comment.id,
-        userId: serviceUser.id,
+        userId: scorer.id,
       },
     });
+
+    let shim = shims.get(scorer.id);
+    if (!shim) {
+      const extra: any = JSON.parse(scorer.get('extra')); // TODO: Not sure why necessary.  Fixed in later Sequelize?
+
+      if (extra.endpointType === ENDPOINT_TYPE_API) {
+        shim = await createApiShim(scorer, processMachineScore);
+      }
+      else if (extra.endpointType === ENDPOINT_TYPE_PROXY) {
+        shim = await createProxyShim(scorer, processMachineScore);
+      }
+      else {
+        logger.error(`Unknown moderator endpoint type: ${extra['endpoint']}`);
+        return;
+      }
+      shims.set(scorer.id, shim);
+    }
 
     // Create score request
     const insertedObj = await CommentScoreRequest.create({
       commentId: comment.id,
-      userId: serviceUser.id,
+      userId: scorer.id,
       sentAt: sequelize.fn('now'),
     });
 
-    if (!apiShim) {
-      await initialiseShims();
-    }
-    await apiShim!.sendToScorer(comment, serviceUser, insertedObj.id);
+    await shim.sendToScorer(comment, insertedObj.id);
 
     const isDoneScoring = await getIsDoneScoring(comment);
-
     if (isDoneScoring) {
       await completeMachineScoring(comment.id);
     }
@@ -98,18 +107,11 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
   }
 }
 
-/**
- * Send a comment to multiple scorers.
- */
-export async function sendToScorers(comment: ICommentInstance, serviceUsers: Array<IUserInstance>): Promise<void> {
-  for (const scorer of serviceUsers) {
-    await sendToScorer(comment, scorer);
-  }
-
+async function checkScoringDone(comment: ICommentInstance): Promise<void> {
   // Mark timestamp for when comment was last sent for scoring
   await comment
-      .set('sentForScoring', sequelize.fn('now'))
-      .save();
+    .set('sentForScoring', sequelize.fn('now'))
+    .save();
 }
 
 /**
@@ -120,15 +122,22 @@ export async function sendForScoring(comment: ICommentInstance): Promise<void> {
     where: {
       group: 'service',
       isActive: true,
-      endpoint: {
-        $ne: null, // Sequelize type doesn't accept `null`, even though that is correct.
-      },
     },
   } as any);
 
-  if (serviceUsers.length) {
-    await sendToScorers(comment, serviceUsers);
-  } else {
+  let foundServiceUser = false;
+  for (const scorer of serviceUsers) {
+    const extra: any = JSON.parse(scorer.get('extra')); // TODO: Not sure why necessary.  Fixed in later Sequelize?
+    if (extra && extra.serviceType === SERVICE_TYPE_MODERATOR) {
+      await sendToScorer(comment, scorer);
+      foundServiceUser = true;
+    }
+  }
+
+  if (foundServiceUser) {
+    await checkScoringDone(comment);
+  }
+  else {
     logger.info('No active Comment Scorers found');
   }
 }

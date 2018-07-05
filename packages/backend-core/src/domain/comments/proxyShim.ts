@@ -68,21 +68,24 @@ interface IBotPostData {
   };
 }
 
+/**
+ * Create a scorer that sends comments to an endpoint for scoring
+ *
+ * @param {object} scorer  Service User that owns this scorer.
+ * @param {object} processMachineScore  Callback to invoke if score is determined synchronously.
+ */
 export function createShim(
-  processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>) {
+    scorer: IUserInstance,
+    processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>,
+    ) {
+  const serviceUserId = scorer.id;
+  const extra: any = JSON.parse(scorer.get('extra')); // TODO: Not sure why necessary.  Fixed in later Sequelize?
+  const endpoint = extra.endpoint;
   const apiURL = rtrim(config.get('api_url'), '/');
   const googleScoreAuth = config.get('google_score_auth');
 
   return {
-    /**
-     * Score a single comment
-     *
-     * @param {object} comment  Comment to score
-     * @param {object} serviceUser  Service User owning this endpoint.
-     * @param {string} correlator  String used to correlate this request with any out-of-band responses.
-     * @return {object} Promise object indicating whether we've finished processing this request.
-     */
-    sendToScorer: async (comment: ICommentInstance, serviceUser: IUserInstance, correlator: string | number) => {
+    sendToScorer: async (comment: ICommentInstance, correlator: string | number) => {
       const article = await Article.findById(comment.get('articleId'));
 
       // Ensure data is present, otherwise an error will throw.
@@ -134,13 +137,13 @@ export function createShim(
 
       logger.info(
         `Sending comment id ${comment.id} for scoring ` +
-        `by service user id ${serviceUser.id} ` +
-        `to endpoint: ${serviceUser.get('endpoint')}`,
+        `by service user id ${serviceUserId} ` +
+        `to endpoint: ${endpoint}`,
         postData,
       );
 
       const response = await request.postAsync({
-        url: serviceUser.get('endpoint'),
+        url: endpoint,
         json: true,
         body: postData,
         headers: {
@@ -156,7 +159,7 @@ export function createShim(
         throw new Error(`Comment ${comment.id}: server failed to score.`);
       }
 
-      await processMachineScore(comment.id, serviceUser.id, response.body);
+      await processMachineScore(comment.id, serviceUserId, response.body);
     },
   };
 }

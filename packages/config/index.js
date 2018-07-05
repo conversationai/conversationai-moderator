@@ -232,13 +232,6 @@ const config = convict({
   },
 
   // For direct communication
-  comment_analyzer_discovery_url: {
-    doc: 'The discovery document for the Comment Analyzer API',
-    format: String,
-    default: 'https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1',
-    env: 'COMMENT_ANALYZER_DISCOVERY_URL',
-  },
-
   google_cloud_api_key: {
     doc: 'A Google Cloud API key to use for accessing the Comment Analyzer API',
     format: String,

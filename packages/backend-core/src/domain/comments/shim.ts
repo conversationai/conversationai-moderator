@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {ICommentInstance, IUserInstance} from '../../models';
+import {ICommentInstance} from '../../models';
 
 export interface IScore {
   score: number;
@@ -36,5 +36,12 @@ export interface IScoreData {
 }
 
 export interface IShim {
-  sendToScorer(comment: ICommentInstance, serviceUser: IUserInstance, correlator: string | number): Promise<void>;
+  /**
+   * Send a single comment for scoring
+   *
+   * @param {object} comment  Comment to score
+   * @param {string} correlator  String used to correlate this request with any out-of-band responses.
+   * @return {object} Promise object indicating whether we've finished processing this request.
+   */
+  sendToScorer(comment: ICommentInstance, correlator: string | number): Promise<void>;
 }

@@ -24,6 +24,7 @@ import {
   CommentScore,
   CommentScoreRequest,
   CommentSummaryScore,
+  ENDPOINT_TYPE_PROXY,
   IArticleAttributes,
   IArticleInstance,
   ICategoryAttributes,
@@ -45,6 +46,7 @@ import {
   MODERATION_RULE_ACTION_TYPES,
   ModerationRule,
   SCORE_SOURCE_TYPES,
+  SERVICE_TYPE_MODERATOR,
   Tag,
   User,
 } from '../../../models';
@@ -115,8 +117,12 @@ export function getServiceUserData(data: Partial<IUserAttributes> = {}): IUserAt
   return {
     group: 'service',
     name: faker.name.firstName(),
-    endpoint: 'http://www.google.com',
     isActive: true,
+    extra: {
+      serviceType: SERVICE_TYPE_MODERATOR,
+      endpointType: ENDPOINT_TYPE_PROXY,
+      endpoint: 'http://www.google.com',
+    },
     ...data,
   // TODO(ldixon): fix typehack.
   } as any;

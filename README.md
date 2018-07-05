@@ -17,7 +17,6 @@ must be set in the enviromnent before anything will work.
 * `DATABASE_PASSWORD`: The MySQL database password.
 * `GOOGLE_CLIENT_ID`: Google OAuth API client id.
 * `GOOGLE_CLIENT_SECRET`:  Google OAuth API secret.
-* `GOOGLE_SCORE_AUTH`: An authentication key for The Perspective API proxy (see below).
 
 To get values for the `GOOGLE_CLIENT_*` parameters, create an OAuth2.0 Client ID
 entry for your app in the [Google API console](https://console.developers.google.com/apis/credentials).
@@ -126,36 +125,41 @@ docker-compose -f deployments/local/docker-compose.yml logs
 
 To actually do anyting, you'll need to create some users.  You'll need at least
 
-* a human user so you can log in and view comments
+* an admin user so you can log in, view comments, and configure the moderator.
 
-* a service user that knows how to talk to a PerpectiveAPI proxy server.
+* a service user that knows how to talk to a moderator server: Either a proxy server or the Perspective API itself.
 
-Add human users with the following command:
-
-```bash
-./bin/osmod users:create --group general --name "Name" --email "email@gmail.com"
-```
-
-Human users get authenticated using Google's OAuth server, so the email address must
-correspond to a google account.
-
-Add the proxy service user with the following command:
+Add the admin user with the following command:
 
 ```bash
-./bin/osmod users:create --group service --name "PerspectiveProxy" --endpoint=<proxy URL>
+./bin/osmod users:create --group admin --name "Name" --email "email@gmail.com"
 ```
 
-where `<proxy URL>` is the URL of [The Perspective API proxy] you plan on using.
+The Admin user and other humans get authenticated using Google's OAuth server, so the email address must correspond to a google account.
+
+To add a service user for the Perspective API proxy, use the following command:
+
+```bash
+./bin/osmod users:create --group service --name "PerspectiveProxy" --moderator "perspective-proxy" --endpoint=<proxy URL>
+```
+
+where `<proxy URL>` is the URL of [The Perspective API proxy] you plan on using.  (See below.)
+
+Alternatively, add a service user that can talk direct to the Perspective API using the following command:
+
+```bash
+./bin/osmod users:create --group service --name "PerspectiveAPI" --moderator-type "perspective-api"
+```
 
 ### The Perspective API proxy
 
-OSMod is designed to talk to the Perspective API via a proxy server: the
+OSMod can communicate to the Perspective API via a proxy server: the
 [Perspective API proxy](https://github.com/conversationai/perspectiveapi-proxy).
 
 There is a preconfigured proxy server set up for general use.
 The URL of this proxy is [https://osmod-assistant.appspot.com/].  To access it,
 you'll need to get a suitable authentication token from
-[the Perspective API team](https://www.perspectiveapi.com/#/).  In this case you
+[the Perspective API team](https://www.perspectiveapi.com/#/).  If you In this case you
 need to set your service user's proxy URL to
 `https://osmod-assistant.appspot.com/api/score-comment`.
 
@@ -191,6 +195,8 @@ PORT=8081 yarn run watch
 
 Then use `http://localhost:8081/api/score-comment` as the proxy URL when creating
 your service user.
+
+TODO: Move GOOGLE_SCORE_AUTH and other configuration into the proxy service user's config and document here
 
 The `osmod` CLI
 ---------------
