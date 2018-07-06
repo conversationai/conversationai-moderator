@@ -179,7 +179,7 @@ describe('Publisher API', () => {
           expect(status).to.be.equal(200);
           was200 = true;
 
-          const updatedArticle = await Article.findOne({ where: { sourceId: article.get('sourceId') }});
+          const updatedArticle = (await Article.findOne({ where: { sourceId: article.get('sourceId') }}))!;
 
           expect(updatedArticle.get('title')).to.equal('Title Two');
         } finally {

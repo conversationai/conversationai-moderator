@@ -416,9 +416,9 @@ describe('Comments Domain Pipeline Tests', () => {
 
       await completeMachineScoring(comment.id);
 
-      const updatedCategory = await Category.findById(category.id);
-      const updatedArticle = await Article.findById(article.id);
-      const updatedComment = await Comment.findById(comment.id);
+      const updatedCategory = (await Category.findById(category.id))!;
+      const updatedArticle = (await Article.findById(article.id))!;
+      const updatedComment = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updatedComment.get('isAutoResolved'), 'comment isAutoResolved');
       assert.equal(updatedComment.get('recommendedCount'), 0, 'comment recommendedCount');
@@ -452,11 +452,11 @@ describe('Comments Domain Pipeline Tests', () => {
 
       await completeMachineScoring(comment.id);
 
-      const decision = await Decision.findOne({
+      const decision = (await Decision.findOne({
         where: {
           commentId: comment.id,
         },
-      });
+      }))!;
 
       assert.equal(decision.get('status'), 'Reject');
       assert.equal(decision.get('source'), 'Rule');
@@ -595,11 +595,11 @@ describe('Comments Domain Pipeline Tests', () => {
       assert.equal(tag.get('key'), keys[0]);
       assert.equal(tag.get('label'), 'Attack On Author');
 
-      const instance = await Tag.findOne({
+      const instance = (await Tag.findOne({
         where: {
           key: keys[0],
         },
-      });
+      }))!;
 
       assert.equal(tag.id, instance.id);
       assert.equal(tag.get('key'), instance.get('key'));

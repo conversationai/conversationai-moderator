@@ -313,7 +313,7 @@ export async function processMachineScore(
   scoreData: IScoreData,
 ): Promise<boolean> {
   logger.info('PROCESS MACHINE SCORE ::', commentId, serviceUserId, JSON.stringify(scoreData));
-  const comment = await Comment.findById(commentId);
+  const comment = (await Comment.findById(commentId))!;
 
   // Find matching comment score request
   const commentScoreRequest = await CommentScoreRequest.findOne({
@@ -419,9 +419,9 @@ export async function updateMaxSummaryScore(comment: ICommentInstance): Promise<
  * Once all scores are in, process rules, record the decision and denormalize.
  */
 export async function completeMachineScoring(commentId: number): Promise<void> {
-  const comment = await Comment.findById(commentId, {
+  const comment = (await Comment.findById(commentId, {
     include: [Article],
-  });
+  }))!;
 
   await cacheCommentTopScores(comment);
   await processRulesForComment(comment);

@@ -110,7 +110,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -144,7 +144,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -189,7 +189,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -231,7 +231,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -273,7 +273,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -302,7 +302,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isFalse(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -344,7 +344,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isFalse(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -373,7 +373,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -424,7 +424,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -479,7 +479,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -521,7 +521,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -569,7 +569,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'), 'isAccepted');
       assert.isTrue(updated.get('isAutoResolved'), 'isAutoResolved');
@@ -626,7 +626,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'), 'isAccepted');
       assert.isTrue(updated.get('isAutoResolved'), 'isAutoResolved');
@@ -668,7 +668,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'), 'isAccepted');
       assert.isFalse(updated.get('isAutoResolved'), 'isAutoResolved');
@@ -686,7 +686,7 @@ describe('Comment Domain Rules Tests', () => {
       const comment = await createComment({ articleId: article.id });
 
       await processRulesForComment(comment);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isFalse(updated.get('isAutoResolved'));
@@ -712,7 +712,7 @@ describe('Comment Domain Rules Tests', () => {
       ]);
 
       await processRulesForComment(comment);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isFalse(updated.get('isAutoResolved'));
@@ -763,7 +763,7 @@ describe('Comment Domain Rules Tests', () => {
       ]);
 
       await processRulesForComment(comment);
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -814,7 +814,7 @@ describe('Comment Domain Rules Tests', () => {
 
       await processRulesForComment(comment);
 
-      const updated = await Comment.findById(comment.id);
+      const updated = (await Comment.findById(comment.id))!;
       assert.isNull(updated.get('isAccepted'));
     });
   });

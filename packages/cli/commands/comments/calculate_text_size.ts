@@ -41,6 +41,11 @@ export async function handler(argv: any) {
       attributes: ['id', 'text'],
     });
 
+    if (!comment) {
+      logger.error(`No such comment: ${commentId}`);
+      return;
+    }
+
     const height = await calculateTextSize(comment, width);
     console.log(`Height in pixels`, height);
   } catch (err) {

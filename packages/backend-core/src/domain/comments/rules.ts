@@ -22,7 +22,6 @@ import {
 } from 'lodash';
 import {
   CommentSummaryScore,
-  IArticleInstance,
   ICommentInstance,
   ICommentSummaryScoreInstance,
   IModerationRuleInstance,
@@ -199,7 +198,7 @@ export async function resolveComment(
  * @param {object} comment Comment model instance to process rules on
  */
 export async function processRulesForComment(comment: ICommentInstance): Promise<IDecision | null> {
-  const article: IArticleInstance = await comment.getArticle();
+  const article = await comment.getArticle();
 
   if (article && article.get('disableRules')) {
     return null;

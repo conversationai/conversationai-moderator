@@ -36,16 +36,16 @@ export async function filterTopScoresByTaggingSensitivity(maxScores: ITopScores,
   const fetchComment = getComment || (async (commentId: string): Promise<ICommentInstance> => {
     const id = parseInt(commentId, 10);
 
-    return await Comment.findById(
+    return (await Comment.findById(
       parseInt(maxScores[id].commentId.toString(), 10),
       { include: [Article] },
-    );
+    ))!;
   });
 
-  const comments = await Bluebird.mapSeries(
+  const comments = (await Bluebird.mapSeries(
     Object.keys(maxScores),
     fetchComment,
-  );
+  ))!;
 
   return Object.keys(maxScores).reduce((sum, commentId) => {
     const id = parseInt(commentId, 10);

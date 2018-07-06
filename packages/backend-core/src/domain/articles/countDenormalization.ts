@@ -67,7 +67,7 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
   });
 
   if (article.get('categoryId')) {
-    const category = await Category.findById(article.get('categoryId'));
+    const category = (await Category.findById(article.get('categoryId')))!;
     await denormalizeCommentCountsForCategory(category);
   }
 }
