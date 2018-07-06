@@ -38,16 +38,16 @@ describe(BASE_URL, () => {
       const apiClient = chai.request(app);
 
       const article = await makeArticle();
-      const articleId = article.get('id');
+      const articleId = article.id;
 
       const tag = await makeTag({ key: 'SPAM', label: 'spam' });
-      const tagId = tag.get('id');
+      const tagId = tag.id;
 
       const comment1 = await makeComment({ articleId });
-      const commentSummaryScore1 = await makeCommentSummaryScore({ commentId: comment1.get('id'), tagId, score: 1.0 });
+      const commentSummaryScore1 = await makeCommentSummaryScore({ commentId: comment1.id, tagId, score: 1.0 });
 
       const comment2 = await makeComment({ articleId });
-      const commentSummaryScore2 = await makeCommentSummaryScore({ commentId: comment2.get('id'), tagId, score: 0.25 });
+      const commentSummaryScore2 = await makeCommentSummaryScore({ commentId: comment2.id, tagId, score: 0.25 });
 
       // Should ignore non scored
       await makeComment({ articleId, isScored: false });
@@ -59,12 +59,12 @@ describe(BASE_URL, () => {
       expect(body.data).to.be.lengthOf(2);
 
       expect(body.data).to.deep.include({
-        commentId: comment1.get('id').toString(),
+        commentId: comment1.id.toString(),
         score: commentSummaryScore1.get('score'),
       });
 
       expect(body.data).to.deep.include({
-        commentId: comment2.get('id').toString(),
+        commentId: comment2.id.toString(),
         score: commentSummaryScore2.get('score'),
       });
     });
@@ -87,7 +87,7 @@ describe(BASE_URL, () => {
     it('returns a 404 for missing tag', async () => {
       let was404 = false;
       const article = await makeArticle();
-      const articleId = article.get('id');
+      const articleId = article.id;
 
       try {
         const apiClient = chai.request(app);
@@ -106,26 +106,26 @@ describe(BASE_URL, () => {
 
     it('returns scores in the category and tag', async () => {
       const category1 = await makeCategory({ label: 'One' });
-      const categoryId1 = category1.get('id');
+      const categoryId1 = category1.id;
 
       const article1 = await makeArticle({ categoryId: categoryId1 });
-      const articleId1 = article1.get('id');
+      const articleId1 = article1.id;
 
       const category2 = await makeCategory({ label: 'Two' });
-      const categoryId2 = category2.get('id');
+      const categoryId2 = category2.id;
 
       const article2 = await makeArticle({ categoryId: categoryId2 });
-      const articleId2 = article2.get('id');
+      const articleId2 = article2.id;
 
       const tag = await makeTag({ key: 'SPAM', label: 'spam' });
-      const tagId = tag.get('id');
+      const tagId = tag.id;
 
       const comment1 = await makeComment({ articleId: articleId1 });
-      const commentSummaryScore1 = await makeCommentSummaryScore({ commentId: comment1.get('id'), tagId, score: 1.0 });
+      const commentSummaryScore1 = await makeCommentSummaryScore({ commentId: comment1.id, tagId, score: 1.0 });
       await cacheCommentTopScores(comment1);
 
       const comment2 = await makeComment({ articleId: articleId1 });
-      const commentSummaryScore2 = await makeCommentSummaryScore({ commentId: comment2.get('id'), tagId, score: 0.25 });
+      const commentSummaryScore2 = await makeCommentSummaryScore({ commentId: comment2.id, tagId, score: 0.25 });
       await cacheCommentTopScores(comment2);
 
       // Should ignore non scored
@@ -138,12 +138,12 @@ describe(BASE_URL, () => {
       expect(body.data).to.be.lengthOf(2);
 
       expect(body.data).to.deep.include({
-        commentId: comment1.get('id').toString(),
+        commentId: comment1.id.toString(),
         score: commentSummaryScore1.get('score'),
       });
 
       expect(body.data).to.deep.include({
-        commentId: comment2.get('id').toString(),
+        commentId: comment2.id.toString(),
         score: commentSummaryScore2.get('score'),
       });
     });
@@ -166,7 +166,7 @@ describe(BASE_URL, () => {
     it('returns a 404 for missing tag', async () => {
       let was404 = false;
       const category = await makeCategory({ label: 'One' });
-      const categoryId = category.get('id');
+      const categoryId = category.id;
 
       try {
         const apiClient = chai.request(app);

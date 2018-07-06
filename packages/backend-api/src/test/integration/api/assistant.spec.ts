@@ -40,8 +40,8 @@ describe(prefixed, () => {
       const user = await makeUser();
 
       this.request = await CommentScoreRequest.create({
-        commentId: comment.get('id'),
-        userId: user.get('id'),
+        commentId: comment.id,
+        userId: user.id,
         sentAt: sequelize.fn('now'),
       });
 
@@ -58,7 +58,7 @@ describe(prefixed, () => {
       try {
         const apiClient = chai.request(app);
 
-        const { status } = await apiClient.post(url.replace(':id', this.request.get('id'))).send({
+        const { status } = await apiClient.post(url.replace(':id', this.request.id)).send({
           scores: {
             SCORE_TAG: [this.score],
           },
@@ -80,7 +80,7 @@ describe(prefixed, () => {
       try {
         const apiClient = chai.request(app);
 
-        const { status } = await apiClient.post(url.replace(':id', this.request.get('id'))).send({
+        const { status } = await apiClient.post(url.replace(':id', this.request.id)).send({
           scores: {
             SCORE_TAG: this.score, // should be an array
           },
@@ -103,7 +103,7 @@ describe(prefixed, () => {
       try {
         const apiClient = chai.request(app);
 
-        const { status } = await apiClient.post(url.replace(':id', this.request.get('id'))).send({
+        const { status } = await apiClient.post(url.replace(':id', this.request.id)).send({
           scores: {
             SCORE_TAG: [this.score],
           },

@@ -62,7 +62,7 @@ export async function calculateTopScores(comments: Array<ICommentInstance>, tagI
   return await Bluebird.reduce(comments, async (sum, comment) => {
     const topScore = await CommentTopScore.findOne({
       where: {
-        commentId: comment.get('id'),
+        commentId: comment.id,
         tagId,
       },
     });
@@ -73,7 +73,7 @@ export async function calculateTopScores(comments: Array<ICommentInstance>, tagI
 
     if (!score) { return sum; }
 
-    sum[comment.get('id')] = {
+    sum[comment.id] = {
       commentId: score.get('commentId'),
       score: score.get('score'),
       start: score.get('annotationStart'),
@@ -87,8 +87,8 @@ export async function calculateTopScores(comments: Array<ICommentInstance>, tagI
 export async function cacheCommentTopScore(comment: ICommentInstance, tag: ITagInstance): Promise<ICommentScoreInstance | null> {
   const scores = await CommentScore.findAll({
     where: {
-      commentId: comment.get('id'),
-      tagId: tag.get('id'),
+      commentId: comment.id,
+      tagId: tag.id,
     },
   });
 
@@ -96,9 +96,9 @@ export async function cacheCommentTopScore(comment: ICommentInstance, tag: ITagI
 
   if (topScore) {
     await CommentTopScore.insertOrUpdate({
-      commentId: comment.get('id'),
-      tagId: tag.get('id'),
-      commentScoreId: topScore.get('id'),
+      commentId: comment.id,
+      tagId: tag.id,
+      commentScoreId: topScore.id,
     });
   }
 

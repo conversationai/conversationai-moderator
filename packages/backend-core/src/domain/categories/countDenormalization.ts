@@ -20,7 +20,7 @@ import {
 import { ICategoryInstance } from '../../models/category';
 
 export async function denormalizeCommentCountsForCategory(category: ICategoryInstance) {
-  const query = { where: { categoryId: category.get('id') } };
+  const query = { where: { categoryId: category.id } };
 
   const [
     unprocessedCount,

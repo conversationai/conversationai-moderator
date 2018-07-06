@@ -86,7 +86,7 @@ async function getModeratedCounts(model: any, sortQuery: string, getWhere: (mode
   const output = [];
 
   for (const r of results) {
-    const ids = r.map((c: any) => c.get('id'));
+    const ids = r.map((c: any) => c.id);
 
     if (sortQuery) {
       const sortedIds = await sort(

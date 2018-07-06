@@ -42,10 +42,10 @@ export async function handler() {
     });
 
     for (const c of comments) {
-      const comment = await Comment.findById(c.get('id'));
+      const comment = await Comment.findById(c.id);
       await resendForScoring(comment, true);
 
-      logger.info(`Rescored comment ${c.get('id')}`);
+      logger.info(`Rescored comment ${c.id}`);
     }
   } catch (err) {
     logger.error('Rescore comments error: ', err.name, err.message);

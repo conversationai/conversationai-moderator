@@ -80,14 +80,14 @@ describe(URL, () => {
 
             const { status } = await apiClient.patch(URL).send({
                 data: {
-                    commentId: comment.get('id').toString(),
+                    commentId: comment.id.toString(),
                     text: updatedText,
                     authorName: updatedAuthorName,
                     authorLocation: updatedAuthorLocation,
                 },
             });
 
-            const updatedComment = await Comment.findOne({ where: { id: comment.get('id') }});
+            const updatedComment = await Comment.findOne({ where: { id: comment.id }});
             const { name, location } = JSON.parse(updatedComment.get('author'));
 
             expect(status).to.be.equal(200);

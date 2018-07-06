@@ -76,7 +76,7 @@ export async function createArticleIfNonExistant(item: IArticleData): Promise<IA
 
     for (const assignment of subscribedUsers) {
       await ModeratorAssignment.create({
-        articleId: article.get('id'),
+        articleId: article.id,
         userId: assignment.get('userId'),
       });
     }
@@ -108,7 +108,7 @@ async function obtainCategoryIdByLabel(categoryLabel: string): Promise<number> {
     return createCategory(categoryLabel);
   }
 
-  return category.get('id');
+  return category.id;
 }
 
 async function createCategory(categoryLabel: string): Promise<number> {
@@ -133,5 +133,5 @@ async function createCategory(categoryLabel: string): Promise<number> {
     },
   });
 
-  return category.get('id');
+  return category.id;
 }

@@ -54,8 +54,8 @@ export async function handler(argv: any) {
     });
 
     if (user) {
-      const token = createToken(user.get('id'), user.get('email'));
-      logger.info('JWT token for "%s" (id: %d):\n\n\t%s', user.get('name'), user.get('id'), user.get('email'), token);
+      const token = createToken(user.id, user.get('email'));
+      logger.info('JWT token for "%s" (id: %d):\n\n\t%s', user.get('name'), user.id, user.get('email'), token);
       process.exit(0);
     } else {
       logger.error('User not found');

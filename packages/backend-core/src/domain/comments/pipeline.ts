@@ -135,15 +135,15 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
     // Destroy existing comment score request for user.
     await CommentScoreRequest.destroy({
         where: {
-          commentId: comment.get('id'),
-          userId: serviceUser.get('id'),
+          commentId: comment.id,
+          userId: serviceUser.id,
         },
       });
 
     // Create score request
     const insertedObj = await CommentScoreRequest.create({
-      commentId: comment.get('id'),
-      userId: serviceUser.get('id'),
+      commentId: comment.id,
+      userId: serviceUser.id,
       sentAt: sequelize.fn('now'),
     });
 
@@ -152,11 +152,11 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
       includeSummaryScores: true,
 
       comment: {
-        commentId: comment.get('id'),
+        commentId: comment.id,
         plainText: striptags(comment.get('text')),
         htmlText: comment.get('text'),
         links: {
-          self: apiURL + '/rest/comments/' + comment.get('id'),
+          self: apiURL + '/rest/comments/' + comment.id,
         },
       },
 
@@ -207,7 +207,7 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
     logger.info(`Assistant Endpoint Response :: ${response.statusCode}`);
 
     if (response.statusCode !== 200) {
-      logger.error('Error posting comment id %d for scoring.', comment.get('id'), +
+      logger.error('Error posting comment id %d for scoring.', comment.id, +
       ' Server responded with status ', response.statusCode, response.body );
     } else {
       if (sync) {
@@ -220,12 +220,12 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
         );
 
         if (isDoneScoring) {
-          await completeMachineScoring(comment.get('id'));
+          await completeMachineScoring(comment.id);
         }
       }
     }
   } catch (err) {
-    logger.error('Error posting comment id %d for scoring: ', comment.get('id'), err);
+    logger.error('Error posting comment id %d for scoring: ', comment.id, err);
   }
 }
 
@@ -299,7 +299,7 @@ export async function getCommentsToResendForScoring(
  * Resend a comment to be scored again.
  */
 export async function resendForScoring(comment: ICommentInstance, sync?: boolean): Promise<void> {
-  logger.info('Re-sending comment id %s for scoring', comment.get('id'));
+  logger.info('Re-sending comment id %s for scoring', comment.id);
   await sendForScoring(comment, sync);
 }
 
@@ -395,9 +395,9 @@ export async function updateMaxSummaryScore(comment: ICommentInstance): Promise<
   });
   const summaryScores = await CommentSummaryScore.findAll({
     where: {
-      commentId: comment.get('id'),
+      commentId: comment.id,
       tagId: {
-        $in: tagsInSummaryScore.map((tag) => tag.get('id')),
+        $in: tagsInSummaryScore.map((tag) => tag.id),
       },
     },
   });
@@ -445,11 +445,11 @@ export function compileScoresData(sourceType: string, userId: number, scoreData:
     .forEach((tagKey) => {
       scoreData[tagKey].forEach((score) => {
         data.push({
-          commentId: modelData.comment.get('id'),
-          commentScoreRequestId: modelData.commentScoreRequest.get('id'),
+          commentId: modelData.comment.id,
+          commentScoreRequestId: modelData.commentScoreRequest.id,
           sourceType,
           userId,
-          tagId: tagsByKey[tagKey][0].get('id'),
+          tagId: tagsByKey[tagKey][0].id,
           score: score.score,
           annotationStart: score.begin,
           annotationEnd: score.end,
@@ -473,9 +473,9 @@ export function compileSummaryScoresData(scoreData: ISummaryScores, comment: ICo
     .keys(scoreData)
     .forEach((tagKey) => {
       data.push({
-        commentId: comment.get('id'),
+        commentId: comment.id,
         // TODO(ldixon): figure out why this typehack is needed and fix.
-        tagId: (tagsByKey[tagKey][0] as any).get('id'),
+        tagId: (tagsByKey[tagKey][0] as any).id,
         score: scoreData[tagKey],
       });
     });
@@ -542,12 +542,12 @@ export async function recordDecision(
 
   // Add new decision, isCurrentDecision defaults to true.
   const decision = await Decision.create({
-    commentId: comment.get('id'),
+    commentId: comment.id,
     status,
 
     source: source ? (source instanceof User.Instance ? 'User' : 'Rule') : 'Rule',
-    userId: source ? (source instanceof User.Instance ? source.get('id') : undefined) : null,
-    moderationRuleId: source ? (source instanceof ModerationRule.Instance ? source.get('id') : undefined) : null,
+    userId: source ? (source instanceof User.Instance ? source.id : undefined) : undefined,
+    moderationRuleId: source ? (source instanceof ModerationRule.Instance ? source.id : undefined) : undefined,
 
     ...(autoConfirm ? {
       sentBackToPublisher: sequelize.fn('now'),
@@ -590,6 +590,6 @@ export async function postProcessComment(comment: ICommentInstance): Promise<voi
   if (!parent) { return; }
 
   await comment.update({
-    replyId: parent.get('id'),
+    replyId: parent.id,
   });
 }

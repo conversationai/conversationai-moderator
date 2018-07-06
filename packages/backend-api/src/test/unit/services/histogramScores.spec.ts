@@ -44,9 +44,9 @@ describe('histogramScores Functions', () => {
 
       async function createScore(categoryLabel: string, scoreValue: number) {
         const category = await makeCategory({ label: categoryLabel });
-        const article = await makeArticle({ categoryId: category.get('id') });
-        const comment = await makeComment({ articleId: article.get('id' )});
-        const score = await makeCommentSummaryScore({ commentId: comment.get('id'), tagId: tag.get('id'), score: scoreValue });
+        const article = await makeArticle({ categoryId: category.id });
+        const comment = await makeComment({ articleId: article.id});
+        const score = await makeCommentSummaryScore({ commentId: comment.id, tagId: tag.id, score: scoreValue });
 
         return { category, article, comment, score };
       }
@@ -54,16 +54,16 @@ describe('histogramScores Functions', () => {
       const result1 = await createScore('One', 1.0);
       const result2 = await createScore('Two', 0.5);
 
-      const results = await getHistogramScoresForAllCategories(tag.get('id'));
+      const results = await getHistogramScoresForAllCategories(tag.id);
 
       expect(results).to.be.lengthOf(2);
       expect(results).to.deep.include({
-        commentId: result1.comment.get('id'),
+        commentId: result1.comment.id,
         score: 1.0,
       });
 
       expect(results).to.deep.include({
-        commentId: result2.comment.get('id'),
+        commentId: result2.comment.id,
         score: 0.5,
       });
     });
@@ -89,9 +89,9 @@ describe('histogramScores Functions', () => {
       const category2 = await makeCategory({ label: 'Category 2' });
 
       async function createScore(scoreValue: number, category: ICategoryInstance) {
-        const article = await makeArticle({ categoryId: category.get('id') });
-        const comment = await makeComment({ articleId: article.get('id' )});
-        const score = await makeCommentSummaryScore({ commentId: comment.get('id'), tagId: tag.get('id'), score: scoreValue });
+        const article = await makeArticle({ categoryId: category.id });
+        const comment = await makeComment({ articleId: article.id});
+        const score = await makeCommentSummaryScore({ commentId: comment.id, tagId: tag.id, score: scoreValue });
 
         return { article, comment, score };
       }
@@ -102,16 +102,16 @@ describe('histogramScores Functions', () => {
       // Should not appear
       await createScore(0.25, category2);
 
-      const results = await getHistogramScoresForCategory(category1.get('id'), tag.get('id'));
+      const results = await getHistogramScoresForCategory(category1.id, tag.id);
 
       expect(results).to.be.lengthOf(2);
       expect(results).to.deep.include({
-        commentId: result1.comment.get('id'),
+        commentId: result1.comment.id,
         score: 1.0,
       });
 
       expect(results).to.deep.include({
-        commentId: result2.comment.get('id'),
+        commentId: result2.comment.id,
         score: 0.5,
       });
     });
@@ -121,7 +121,7 @@ describe('histogramScores Functions', () => {
       let wasThrown = false;
 
       try {
-        await getHistogramScoresForCategory(0, tag.get('id'));
+        await getHistogramScoresForCategory(0, tag.id);
       } catch (e) {
         wasThrown = true;
         expect(e).to.be.an.instanceOf(NotFoundError);
@@ -135,7 +135,7 @@ describe('histogramScores Functions', () => {
       let wasThrown = false;
 
       try {
-        await getHistogramScoresForCategory(category.get('id'), 0);
+        await getHistogramScoresForCategory(category.id, 0);
       } catch (e) {
         wasThrown = true;
         expect(e).to.be.an.instanceOf(NotFoundError);
@@ -152,8 +152,8 @@ describe('histogramScores Functions', () => {
       const article2 = await makeArticle();
 
       async function createScore(scoreValue: number, article: IArticleInstance) {
-        const comment = await makeComment({ articleId: article.get('id' )});
-        const score = await makeCommentSummaryScore({ commentId: comment.get('id'), tagId: tag.get('id'), score: scoreValue });
+        const comment = await makeComment({ articleId: article.id});
+        const score = await makeCommentSummaryScore({ commentId: comment.id, tagId: tag.id, score: scoreValue });
 
         return { article, comment, score };
       }
@@ -164,16 +164,16 @@ describe('histogramScores Functions', () => {
       // Should not appear
       await createScore(0.25, article2);
 
-      const results = await getHistogramScoresForArticle(article1.get('id'), tag.get('id'));
+      const results = await getHistogramScoresForArticle(article1.id, tag.id);
 
       expect(results).to.be.lengthOf(2);
       expect(results).to.deep.include({
-        commentId: result1.comment.get('id'),
+        commentId: result1.comment.id,
         score: 1.0,
       });
 
       expect(results).to.deep.include({
-        commentId: result2.comment.get('id'),
+        commentId: result2.comment.id,
         score: 0.5,
       });
     });
@@ -183,7 +183,7 @@ describe('histogramScores Functions', () => {
       let wasThrown = false;
 
       try {
-        await getHistogramScoresForArticle(0, tag.get('id'));
+        await getHistogramScoresForArticle(0, tag.id);
       } catch (e) {
         wasThrown = true;
         expect(e).to.be.an.instanceOf(NotFoundError);
@@ -197,7 +197,7 @@ describe('histogramScores Functions', () => {
       let wasThrown = false;
 
       try {
-        await getHistogramScoresForArticle(article.get('id'), 0);
+        await getHistogramScoresForArticle(article.id, 0);
       } catch (e) {
         wasThrown = true;
         expect(e).to.be.an.instanceOf(NotFoundError);

@@ -102,15 +102,15 @@ describe('Comments Domain Pipeline Tests', () => {
       ]);
 
       const comments = await getCommentsToResendForScoring();
-      const ids = comments.map((c) => c.get('id'));
+      const ids = comments.map((c) => c.id);
 
-      assert.notInclude(ids, comment.get('id'));
-      assert.notInclude(ids, notQuiteStaleComment.get('id'));
-      assert.include(ids, staleComment.get('id'));
-      assert.notInclude(ids, acceptedComment.get('id'));
-      assert.notInclude(ids, rejectedComment.get('id'));
-      assert.notInclude(ids, scoredComment.get('id'));
-      assert.notInclude(ids, scoredStaleComment.get('id'));
+      assert.notInclude(ids, comment.id);
+      assert.notInclude(ids, notQuiteStaleComment.id);
+      assert.include(ids, staleComment.id);
+      assert.notInclude(ids, acceptedComment.id);
+      assert.notInclude(ids, rejectedComment.id);
+      assert.notInclude(ids, scoredComment.id);
+      assert.notInclude(ids, scoredStaleComment.id);
     });
   });
 
@@ -158,12 +158,12 @@ describe('Comments Domain Pipeline Tests', () => {
       ]);
 
       const commentScoreRequest = await createCommentScoreRequest({
-        commentId: comment.get('id'),
-        userId: serviceUser.get('id'),
+        commentId: comment.id,
+        userId: serviceUser.id,
       });
 
       // Call processMachineScore and start making assertions
-      const result = await processMachineScore(comment.get('id'), serviceUser.get('id'), fakeScoreData);
+      const result = await processMachineScore(comment.id, serviceUser.id, fakeScoreData);
 
       // This is the only score in the queue, so it should be complete (true).
       assert.isTrue(result);
@@ -172,19 +172,19 @@ describe('Comments Domain Pipeline Tests', () => {
       const [scores, request, summaryScores] = await Promise.all([
         CommentScore.findAll({
           where: {
-            commentId: comment.get('id'),
+            commentId: comment.id,
           },
           include: [Tag],
         }),
         CommentScoreRequest.findOne({
           where: {
-            id: commentScoreRequest.get('id'),
+            id: commentScoreRequest.id,
           },
           include: [Comment],
         }),
         CommentSummaryScore.findAll({
           where: {
-            commentId: comment.get('id'),
+            commentId: comment.id,
           },
           include: [Tag],
         }),
@@ -200,7 +200,7 @@ describe('Comments Domain Pipeline Tests', () => {
 
       scores.forEach((score) => {
         assert.equal(score.get('sourceType'), 'Machine');
-        assert.equal(score.get('userId'), serviceUser.get('id'));
+        assert.equal(score.get('userId'), serviceUser.id);
 
         if (score.get('score') === 0.2) {
           assert.equal(score.get('annotationStart'), 0);
@@ -234,7 +234,7 @@ describe('Comments Domain Pipeline Tests', () => {
       // Request assertions
 
       assert.isOk(request.get('doneAt'));
-      assert.equal(request.get('commentId'), comment.get('id'));
+      assert.equal(request.get('commentId'), comment.id);
       assert.isTrue(request.get('comment').get('isScored'));
     });
 
@@ -306,7 +306,7 @@ describe('Comments Domain Pipeline Tests', () => {
       ]);
 
       try {
-        await processMachineScore(comment.get('id'), serviceUser.get('id'), fakeScoreData);
+        await processMachineScore(comment.id, serviceUser.id, fakeScoreData);
         throw new Error('`processMachineScore` unexpectedly resolved successfully');
       } catch (err) {
         assert.instanceOf(err, Error);
@@ -359,22 +359,22 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const [commentScoreRequest1] = await Promise.all([
         createCommentScoreRequest({
-          commentId: comment.get('id'),
-          userId: serviceUser1.get('id'),
+          commentId: comment.id,
+          userId: serviceUser1.id,
         }),
         createCommentScoreRequest({
-          commentId: comment.get('id'),
-          userId: serviceUser2.get('id'),
+          commentId: comment.id,
+          userId: serviceUser2.id,
         }),
       ]);
 
       // Receive a score for the first scorer
 
-      await processMachineScore(comment.get('id'), serviceUser1.get('id'), fakeScoreData);
+      await processMachineScore(comment.id, serviceUser1.id, fakeScoreData);
 
       const commentScoreRequests = await CommentScoreRequest.findAll({
         where: {
-          commentId: comment.get('id'),
+          commentId: comment.id,
         },
         include: [Comment],
         order: 'id ASC',
@@ -383,7 +383,7 @@ describe('Comments Domain Pipeline Tests', () => {
       assert.lengthOf(commentScoreRequests, 2);
 
       commentScoreRequests.forEach((request) => {
-        if (request.get('id') === commentScoreRequest1.get('id')) {
+        if (request.id === commentScoreRequest1.id) {
           assert.isOk(request.get('doneAt'));
         } else {
           assert.isNull(request.get('doneAt'));
@@ -397,28 +397,28 @@ describe('Comments Domain Pipeline Tests', () => {
   describe('completeMachineScoring', () => {
     it('should denormalize', async () => {
       const category = await createCategory();
-      const article = await createArticle({ categoryId: category.get('id') });
-      const comment = await createComment({ isScored: true, articleId: article.get('id') });
+      const article = await createArticle({ categoryId: category.id });
+      const comment = await createComment({ isScored: true, articleId: article.id });
       const tag = await createTag();
 
       await createCommentSummaryScore({
-        commentId: article.get('id'),
-        tagId: tag.get('id'),
+        commentId: article.id,
+        tagId: tag.id,
         score: 0.5,
       });
 
       await createModerationRule({
         action: 'Reject',
-        tagId: tag.get('id'),
+        tagId: tag.id,
         lowerThreshold: 0.0,
         upperThreshold: 1.0,
       });
 
-      await completeMachineScoring(comment.get('id'));
+      await completeMachineScoring(comment.id);
 
-      const updatedCategory = await Category.findById(category.get('id'));
-      const updatedArticle = await Article.findById(article.get('id'));
-      const updatedComment = await Comment.findById(comment.get('id'));
+      const updatedCategory = await Category.findById(category.id);
+      const updatedArticle = await Article.findById(article.id);
+      const updatedComment = await Comment.findById(comment.id);
 
       assert.isTrue(updatedComment.get('isAutoResolved'), 'comment isAutoResolved');
       assert.equal(updatedComment.get('recommendedCount'), 0, 'comment recommendedCount');
@@ -433,34 +433,34 @@ describe('Comments Domain Pipeline Tests', () => {
 
     it('should record the Reject decision from a rule', async () => {
       const category = await createCategory();
-      const article = await createArticle({ categoryId: category.get('id') });
-      const comment = await createComment({ articleId: article.get('id') });
+      const article = await createArticle({ categoryId: category.id });
+      const comment = await createComment({ articleId: article.id });
       const tag = await createTag();
 
       await createCommentSummaryScore({
-        commentId: article.get('id'),
-        tagId: tag.get('id'),
+        commentId: article.id,
+        tagId: tag.id,
         score: 0.5,
       });
 
       const rule = await createModerationRule({
         action: 'Reject',
-        tagId: tag.get('id'),
+        tagId: tag.id,
         lowerThreshold: 0.0,
         upperThreshold: 1.0,
       });
 
-      await completeMachineScoring(comment.get('id'));
+      await completeMachineScoring(comment.id);
 
       const decision = await Decision.findOne({
         where: {
-          commentId: comment.get('id'),
+          commentId: comment.id,
         },
       });
 
       assert.equal(decision.get('status'), 'Reject');
       assert.equal(decision.get('source'), 'Rule');
-      assert.equal(decision.get('moderationRuleId'), rule.get('id'));
+      assert.equal(decision.get('moderationRuleId'), rule.id);
     });
   });
 
@@ -500,8 +500,8 @@ describe('Comments Domain Pipeline Tests', () => {
       ]);
 
       const commentScoreRequest = await createCommentScoreRequest({
-        commentId: comment.get('id'),
-        userId: serviceUser.get('id'),
+        commentId: comment.id,
+        userId: serviceUser.id,
       });
 
       const sourceType = 'Machine';
@@ -509,37 +509,37 @@ describe('Comments Domain Pipeline Tests', () => {
       const expected = [
         {
           sourceType,
-          userId: serviceUser.get('id'),
-          commentId: comment.get('id'),
-          commentScoreRequestId: commentScoreRequest.get('id'),
-          tagId: tagsByKey.ATTACK_ON_COMMENTER[0].get('id'),
+          userId: serviceUser.id,
+          commentId: comment.id,
+          commentScoreRequestId: commentScoreRequest.id,
+          tagId: tagsByKey.ATTACK_ON_COMMENTER[0].id,
           score: 0.2,
           annotationStart: 0,
           annotationEnd: 62,
         },
         {
           sourceType,
-          userId: serviceUser.get('id'),
-          commentId: comment.get('id'),
-          commentScoreRequestId: commentScoreRequest.get('id'),
-          tagId: tagsByKey.INFLAMMATORY[0].get('id'),
+          userId: serviceUser.id,
+          commentId: comment.id,
+          commentScoreRequestId: commentScoreRequest.id,
+          tagId: tagsByKey.INFLAMMATORY[0].id,
           score: 0.4,
           annotationStart: 0,
           annotationEnd: 62,
         },
         {
           sourceType,
-          userId: serviceUser.get('id'),
-          commentId: comment.get('id'),
-          commentScoreRequestId: commentScoreRequest.get('id'),
-          tagId: tagsByKey.INFLAMMATORY[0].get('id'),
+          userId: serviceUser.id,
+          commentId: comment.id,
+          commentScoreRequestId: commentScoreRequest.id,
+          tagId: tagsByKey.INFLAMMATORY[0].id,
           score: 0.7,
           annotationStart: 63,
           annotationEnd: 66,
         },
       ];
 
-      const compiled = compileScoresData(sourceType, serviceUser.get('id'), scoreData, {
+      const compiled = compileScoresData(sourceType, serviceUser.id, scoreData, {
         comment,
         commentScoreRequest,
         tags,
@@ -566,13 +566,13 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const expected = [
         {
-          commentId: comment.get('id'),
-          tagId: tagsByKey.ATTACK_ON_COMMENTER[0].get('id'),
+          commentId: comment.id,
+          tagId: tagsByKey.ATTACK_ON_COMMENTER[0].id,
           score: 0.2,
         },
         {
-          commentId: comment.get('id'),
-          tagId: tagsByKey.INFLAMMATORY[0].get('id'),
+          commentId: comment.id,
+          tagId: tagsByKey.INFLAMMATORY[0].id,
           score: 0.55,
         },
       ];
@@ -601,7 +601,7 @@ describe('Comments Domain Pipeline Tests', () => {
         },
       });
 
-      assert.equal(tag.get('id'), instance.get('id'));
+      assert.equal(tag.id, instance.id);
       assert.equal(tag.get('key'), instance.get('key'));
       assert.equal(tag.get('label'), instance.get('label'));
     });
@@ -619,7 +619,7 @@ describe('Comments Domain Pipeline Tests', () => {
       assert.lengthOf(results, 1);
 
       const tag = results[0];
-      assert.equal(tag.get('id'), dbTag.get('id'));
+      assert.equal(tag.id, dbTag.id);
       assert.equal(tag.get('key'), key);
       assert.equal(tag.get('label'), 'Spam');
     });
@@ -638,9 +638,9 @@ describe('Comments Domain Pipeline Tests', () => {
 
       results.forEach((tag) => {
         if (tag.get('key') === 'INCOHERENT') {
-          assert.equal(tag.get('id'), dbTag.get('id'));
+          assert.equal(tag.id, dbTag.id);
         } else {
-          assert.isNumber(tag.get('id'));
+          assert.isNumber(tag.id);
           assert.equal(tag.get('key'), 'OFF_TOPIC');
           assert.equal(tag.get('label'), 'Off Topic');
         }
@@ -656,7 +656,7 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const foundDecisions = await Decision.findAll({
         where: {
-          commentId: comment.get('id'),
+          commentId: comment.id,
         },
       });
 
@@ -664,9 +664,9 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const firstDecision = foundDecisions[0];
 
-      assert.equal(firstDecision.get('commentId'), comment.get('id'));
+      assert.equal(firstDecision.get('commentId'), comment.id);
       assert.equal(firstDecision.get('source'), 'User');
-      assert.equal(firstDecision.get('userId'), user.get('id'));
+      assert.equal(firstDecision.get('userId'), user.id);
       assert.equal(firstDecision.get('status'), 'Accept');
       assert.isTrue(firstDecision.get('isCurrentDecision'));
     });
@@ -676,7 +676,7 @@ describe('Comments Domain Pipeline Tests', () => {
       const tag = await createTag();
       const rule = await createModerationRule({
         action: 'Reject',
-        tagId: tag.get('id'),
+        tagId: tag.id,
         lowerThreshold: 0.0,
         upperThreshold: 1.0,
       });
@@ -688,7 +688,7 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const foundDecisions = await Decision.findAll({
         where: {
-          commentId: comment.get('id'),
+          commentId: comment.id,
         },
       });
 
@@ -696,7 +696,7 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const currentDecisions = await Decision.findAll({
         where: {
-          commentId: comment.get('id'),
+          commentId: comment.id,
           isCurrentDecision: true,
         },
       });
@@ -705,9 +705,9 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const firstDecision = currentDecisions[0];
 
-      assert.equal(firstDecision.get('commentId'), comment.get('id'));
+      assert.equal(firstDecision.get('commentId'), comment.id);
       assert.equal(firstDecision.get('source'), 'Rule');
-      assert.equal(firstDecision.get('moderationRuleId'), rule.get('id'));
+      assert.equal(firstDecision.get('moderationRuleId'), rule.id);
       assert.equal(firstDecision.get('status'), 'Reject');
       assert.isTrue(firstDecision.get('isCurrentDecision'));
     });

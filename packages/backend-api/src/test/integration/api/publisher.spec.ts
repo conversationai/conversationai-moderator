@@ -37,7 +37,7 @@ async function makeArticleData(data: Partial<IArticleData> = {}): Promise<IArtic
 
   return {
     sourceId: 'publisher-id-1',
-    categoryId: category.get('id').toString(),
+    categoryId: category.id.toString(),
     title: 'I am an article',
     text: 'Plenty of article text',
     url: 'http://example.com',

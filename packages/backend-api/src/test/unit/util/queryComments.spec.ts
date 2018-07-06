@@ -38,34 +38,34 @@ describe('queryComments Functions', () => {
     beforeEach(async () => {
       this.category = await makeCategory({ label: 'Test' });
 
-      const article = await makeArticle({ categoryId: this.category.get('id') });
-      const articleId = article.get('id');
+      const article = await makeArticle({ categoryId: this.category.id });
+      const articleId = article.id;
 
       this.tag = await makeTag({ key: 'SPAM', label: 'spam' });
 
       this.comment1 = await makeComment({ articleId });
-      this.comment1['bottom'] = await makeCommentScore({ commentId: this.comment1.get('id'), tagId: this.tag.get('id'), score: 0, annotationStart: 0, annotationEnd: 1 });
-      this.comment1['middle'] = await makeCommentScore({ commentId: this.comment1.get('id'), tagId: this.tag.get('id'), score: 0.5, annotationStart: 0, annotationEnd: 1 });
-      this.comment1['top'] = await makeCommentScore({ commentId: this.comment1.get('id'), tagId: this.tag.get('id'), score: 1, annotationStart: 0, annotationEnd: 1 });
+      this.comment1['bottom'] = await makeCommentScore({ commentId: this.comment1.id, tagId: this.tag.id, score: 0, annotationStart: 0, annotationEnd: 1 });
+      this.comment1['middle'] = await makeCommentScore({ commentId: this.comment1.id, tagId: this.tag.id, score: 0.5, annotationStart: 0, annotationEnd: 1 });
+      this.comment1['top'] = await makeCommentScore({ commentId: this.comment1.id, tagId: this.tag.id, score: 1, annotationStart: 0, annotationEnd: 1 });
       await cacheCommentTopScores(this.comment1);
 
       this.comment2 = await makeComment({ articleId });
-      this.comment2['bottom'] = await makeCommentScore({ commentId: this.comment2.get('id'), tagId: this.tag.get('id'), score: 0, annotationStart: 0, annotationEnd: 1 });
-      this.comment2['middle'] = await makeCommentScore({ commentId: this.comment2.get('id'), tagId: this.tag.get('id'), score: 0.25, annotationStart: 0, annotationEnd: 1 });
-      this.comment2['top'] = await makeCommentScore({ commentId: this.comment2.get('id'), tagId: this.tag.get('id'), score: 0.5, annotationStart: 0, annotationEnd: 1 });
+      this.comment2['bottom'] = await makeCommentScore({ commentId: this.comment2.id, tagId: this.tag.id, score: 0, annotationStart: 0, annotationEnd: 1 });
+      this.comment2['middle'] = await makeCommentScore({ commentId: this.comment2.id, tagId: this.tag.id, score: 0.25, annotationStart: 0, annotationEnd: 1 });
+      this.comment2['top'] = await makeCommentScore({ commentId: this.comment2.id, tagId: this.tag.id, score: 0.5, annotationStart: 0, annotationEnd: 1 });
       await cacheCommentTopScores(this.comment2);
 
       this.comments = [this.comment1, this.comment2];
-      this.topScores = await calculateTopScores(this.comments, this.tag.get('id'));
+      this.topScores = await calculateTopScores(this.comments, this.tag.id);
     });
 
     it('returns all scores if no tagging sensitivity is set', async () => {
-      const results = await filterTopScoresByTaggingSensitivity(this.topScores, this.tag.get('id'));
+      const results = await filterTopScoresByTaggingSensitivity(this.topScores, this.tag.id);
 
       expect(Object.keys(results)).to.be.lengthOf(2);
 
       this.comments.forEach((c: any) => {
-        expect(results[c.get('id')]).to.deep.equal({
+        expect(results[c.id]).to.deep.equal({
           commentId: c['top'].get('commentId'),
           score: c['top'].get('score'),
           start: c['top'].get('annotationStart'),
@@ -76,11 +76,11 @@ describe('queryComments Functions', () => {
 
     it('uses global sensitivity', async () => {
       await makeTaggingSensitivity({ lowerThreshold: 0.25, upperThreshold: 0.75 });
-      const results = await filterTopScoresByTaggingSensitivity(this.topScores, this.tag.get('id'));
+      const results = await filterTopScoresByTaggingSensitivity(this.topScores, this.tag.id);
 
       expect(Object.keys(results)).to.be.lengthOf(1);
 
-      expect(results[this.comment2.get('id')]).to.deep.equal({
+      expect(results[this.comment2.id]).to.deep.equal({
         commentId: this.comment2['top'].get('commentId'),
         score: this.comment2['top'].get('score'),
         start: this.comment2['top'].get('annotationStart'),
@@ -93,13 +93,13 @@ describe('queryComments Functions', () => {
       await makeTaggingSensitivity({ lowerThreshold: 0.25, upperThreshold: 0.75 });
 
       // Category
-      await makeTaggingSensitivity({ categoryId: this.category.get('id'), lowerThreshold: 0.75, upperThreshold: 1.0 });
+      await makeTaggingSensitivity({ categoryId: this.category.id, lowerThreshold: 0.75, upperThreshold: 1.0 });
 
-      const results = await filterTopScoresByTaggingSensitivity(this.topScores, this.tag.get('id'));
+      const results = await filterTopScoresByTaggingSensitivity(this.topScores, this.tag.id);
 
       expect(Object.keys(results)).to.be.lengthOf(1);
 
-      expect(results[this.comment1.get('id')]).to.deep.equal({
+      expect(results[this.comment1.id]).to.deep.equal({
         commentId: this.comment1['top'].get('commentId'),
         score: this.comment1['top'].get('score'),
         start: this.comment1['top'].get('annotationStart'),
@@ -112,13 +112,13 @@ describe('queryComments Functions', () => {
       await makeTaggingSensitivity({ lowerThreshold: 0.25, upperThreshold: 0.75 });
 
       // Tag
-      await makeTaggingSensitivity({ tagId: this.tag.get('id'), lowerThreshold: 0.75, upperThreshold: 1.0 });
+      await makeTaggingSensitivity({ tagId: this.tag.id, lowerThreshold: 0.75, upperThreshold: 1.0 });
 
-      const results = await filterTopScoresByTaggingSensitivity(this.topScores, this.tag.get('id'));
+      const results = await filterTopScoresByTaggingSensitivity(this.topScores, this.tag.id);
 
       expect(Object.keys(results)).to.be.lengthOf(1);
 
-      expect(results[this.comment1.get('id')]).to.deep.equal({
+      expect(results[this.comment1.id]).to.deep.equal({
         commentId: this.comment1['top'].get('commentId'),
         score: this.comment1['top'].get('score'),
         start: this.comment1['top'].get('annotationStart'),
@@ -131,19 +131,19 @@ describe('queryComments Functions', () => {
       await makeTaggingSensitivity({ lowerThreshold: 0.25, upperThreshold: 0.75 });
 
       // Category
-      await makeTaggingSensitivity({ categoryId: this.category.get('id'), lowerThreshold: 0, upperThreshold: 0.5 });
+      await makeTaggingSensitivity({ categoryId: this.category.id, lowerThreshold: 0, upperThreshold: 0.5 });
 
       // Tag
-      await makeTaggingSensitivity({ tagId: this.tag.get('id'), lowerThreshold: 0, upperThreshold: 0.6 });
+      await makeTaggingSensitivity({ tagId: this.tag.id, lowerThreshold: 0, upperThreshold: 0.6 });
 
       // Both
-      await makeTaggingSensitivity({ tagId: this.tag.get('id'), categoryId: this.category.get('id'), lowerThreshold: 0.75, upperThreshold: 1.0 });
+      await makeTaggingSensitivity({ tagId: this.tag.id, categoryId: this.category.id, lowerThreshold: 0.75, upperThreshold: 1.0 });
 
-      const results = await filterTopScoresByTaggingSensitivity(this.topScores, this.tag.get('id'));
+      const results = await filterTopScoresByTaggingSensitivity(this.topScores, this.tag.id);
 
       expect(Object.keys(results)).to.be.lengthOf(1);
 
-      expect(results[this.comment1.get('id')]).to.deep.equal({
+      expect(results[this.comment1.id]).to.deep.equal({
         commentId: this.comment1['top'].get('commentId'),
         score: this.comment1['top'].get('score'),
         start: this.comment1['top'].get('annotationStart'),

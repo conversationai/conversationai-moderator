@@ -137,7 +137,7 @@ export function createAssignmentsService(): express.Router {
       },
     });
 
-    const articleIdsInCategory = articlesInCategory.map((article) => article.get('id'));
+    const articleIdsInCategory = articlesInCategory.map((article) => article.id);
 
     // Get assignments for the category
     const assignmentsForCategory = await UserCategoryAssignment.findAll({

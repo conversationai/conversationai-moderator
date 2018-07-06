@@ -40,7 +40,7 @@ export async function handler(argv: any) {
     const comments = await Comment.findAll();
 
     await Bluebird.mapSeries(comments, (c: ICommentInstance) => {
-      logger.info('Denormalizing comment ' + c.get('id'));
+      logger.info('Denormalizing comment ' + c.id);
 
       return denormalizeFlaggedAndRecommendedCountsForComment(c);
     });
@@ -49,7 +49,7 @@ export async function handler(argv: any) {
   const articles = await Article.findAll();
 
   await Bluebird.mapSeries(articles, (a: IArticleInstance) => {
-    logger.info('Denormalizing article ' + a.get('id'));
+    logger.info('Denormalizing article ' + a.id);
 
     return denormalizeCommentCountsForArticle(a);
   });

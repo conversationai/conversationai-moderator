@@ -101,11 +101,11 @@ export async function cacheTextSize(comment: ICommentInstance, width: number): P
 
   await CommentSize.findOrCreate({
     where: {
-      commentId: comment.get('id'),
+      commentId: comment.id,
       width,
     },
     defaults: {
-      commentId: comment.get('id'),
+      commentId: comment.id,
       width,
       height,
     },

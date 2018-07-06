@@ -77,11 +77,11 @@ export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = ha
 
     await model.findOrCreate({
       where: {
-        commentId: comment.get('id'),
+        commentId: comment.id,
         sourceId: sourceUserId,
       },
       defaults: {
-        commentId: comment.get('id'),
+        commentId: comment.id,
         sourceId: sourceUserId,
         extra: extra || null,
       },
@@ -127,7 +127,7 @@ export const processTagRevocationTask = handler<IProcessTagRevocationData>(async
 
     await model.destroy({
       where: {
-        commentId: comment.get('id'),
+        commentId: comment.id,
         sourceId: sourceUserId,
       },
     });

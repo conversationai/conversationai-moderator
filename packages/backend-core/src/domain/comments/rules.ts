@@ -82,8 +82,8 @@ export async function resolveComment(
 
   if (summaryScoreTag) {
     const tempSummaryScore = CommentSummaryScore.build({
-      commentId: comment.get('id'),
-      tagId: summaryScoreTag.get('id'),
+      commentId: comment.id,
+      tagId: summaryScoreTag.id,
       score: comment.get('maxSummaryScore'),
     });
 
@@ -208,7 +208,7 @@ export async function processRulesForComment(comment: ICommentInstance): Promise
   // Otherwise, fetch all scores and play ball
   const commentSummaryScores = await CommentSummaryScore.findAll({
     where: {
-      commentId: comment.get('id'),
+      commentId: comment.id,
     },
     include: [Tag],
   });

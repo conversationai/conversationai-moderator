@@ -43,7 +43,7 @@ export async function findOrCreateUserSocialAuth(
 ): Promise<[IUserSocialAuthInstance, boolean]> {
   const socialAuthData = {
     ...data,
-    userId: user.get('id'),
+    userId: user.id,
   };
 
   const [userSocialAuth, created] = await UserSocialAuth.findOrCreate({

@@ -159,7 +159,7 @@ export function createAuthRouter(): express.Router {
           await csrf.destroy();
         }
 
-        const token = createToken(user.get('id'), user.get('email'));
+        const token = createToken(user.id, user.get('email'));
 
         return redirectToFrontend(
           res,

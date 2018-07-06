@@ -25,8 +25,8 @@ export async function denormalizeFlaggedAndRecommendedCountsForComment(comment: 
     flaggedCount,
     recommendedCount,
   ] = await Promise.all([
-    CommentFlag.count({ where: { commentId: comment.get('id') } }),
-    CommentRecommendation.count({ where: { commentId: comment.get('id') } }),
+    CommentFlag.count({ where: { commentId: comment.id } }),
+    CommentRecommendation.count({ where: { commentId: comment.id } }),
   ]);
 
   const updatedComment = await comment.update({

@@ -71,7 +71,7 @@ export async function sort(
     include: includesForModel(model, [], relationshipFilters),
   });
 
-  return items.map((item: any) => item.get('id'));
+  return items.map((item: any) => item.id);
 }
 
 export async function list<T extends any>(
@@ -592,7 +592,7 @@ function nameOfModel(modelClass: any) {
 
 function toIdentifier(modelInstance: any) {
   return {
-    id: modelInstance.get('id'),
+    id: modelInstance.id,
     type: nameOfModel(modelInstance.Model),
   };
 }
