@@ -55,6 +55,13 @@ import {
 } from './fixture';
 
 describe('Comments Domain Pipeline Tests', () => {
+  beforeEach(async () => {
+    await Tag.destroy({where: {}});
+    await Comment.destroy({where: {}});
+    await Article.destroy({where: {}});
+    await Category.destroy({where: {}});
+  });
+
   describe('getCommentsToResendForScoring', () => {
     it('should fetch comments that need to be resent for scoring', async () => {
       const [
@@ -119,7 +126,6 @@ describe('Comments Domain Pipeline Tests', () => {
 
   describe('processMachineScore', () => {
     it('should process the passed in score data, updating the request record and adding score records', async () => {
-
       // Create test data
 
       const fakeScoreData: any = {
@@ -202,7 +208,7 @@ describe('Comments Domain Pipeline Tests', () => {
 
       // Assertions against test data
 
-      scores.forEach((score) => {
+      for (const score of scores) {
         assert.equal(score.get('sourceType'), 'Machine');
         assert.equal(score.get('userId'), serviceUser.id);
 
@@ -223,9 +229,9 @@ describe('Comments Domain Pipeline Tests', () => {
           assert.equal(score.get('annotationEnd'), 66);
           assert.equal(score.get('tag').get('key'), 'INFLAMMATORY');
         }
-      });
+      }
 
-      summaryScores.forEach((score) => {
+      for (const score of summaryScores) {
         if (score.get('score') === 0.2) {
           assert.equal(score.get('tag').get('key'), 'ATTACK_ON_COMMENTER');
         }
@@ -233,7 +239,7 @@ describe('Comments Domain Pipeline Tests', () => {
         if (score.get('score') === 0.55) {
           assert.equal(score.get('tag').get('key'), 'INFLAMMATORY');
         }
-      });
+      }
 
       // Request assertions
 
@@ -406,7 +412,7 @@ describe('Comments Domain Pipeline Tests', () => {
       const tag = await createTag();
 
       await createCommentSummaryScore({
-        commentId: article.id,
+        commentId: comment.id,
         tagId: tag.id,
         score: 0.5,
       });
@@ -442,7 +448,7 @@ describe('Comments Domain Pipeline Tests', () => {
       const tag = await createTag();
 
       await createCommentSummaryScore({
-        commentId: article.id,
+        commentId: comment.id,
         tagId: tag.id,
         score: 0.5,
       });
@@ -716,5 +722,4 @@ describe('Comments Domain Pipeline Tests', () => {
       assert.isTrue(firstDecision.get('isCurrentDecision'));
     });
   });
-
 });
