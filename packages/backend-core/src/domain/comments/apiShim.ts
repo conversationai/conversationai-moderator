@@ -158,7 +158,7 @@ export async function createShim(
       const papiRequest = await packPerspectiveApiRequest(comment, reqId);
       const papiResponse = await (endpoint.comments as any).analyze({key: apiKey, resource: papiRequest});
       const unpackedResponse = unpackPerspectiveApiResponse(comment, papiResponse.data);
-      processMachineScore(comment.id, serviceUserId, unpackedResponse);
+      await processMachineScore(comment.id, serviceUserId, unpackedResponse);
     },
   };
 }

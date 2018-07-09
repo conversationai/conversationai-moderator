@@ -90,18 +90,13 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
     }
 
     // Create score request
-    const insertedObj = await CommentScoreRequest.create({
+    const csr = await CommentScoreRequest.create({
       commentId: comment.id,
       userId: scorer.id,
       sentAt: sequelize.fn('now'),
     });
 
-    await shim.sendToScorer(comment, insertedObj.id.toString());
-
-    const isDoneScoring = await getIsDoneScoring(comment);
-    if (isDoneScoring) {
-      await completeMachineScoring(comment.id);
-    }
+    await shim.sendToScorer(comment, csr.id);
   }
   catch (err) {
     logger.error('Error posting comment id %d for scoring: ', comment.id, err);
@@ -113,6 +108,11 @@ async function checkScoringDone(comment: ICommentInstance): Promise<void> {
   await comment
     .set('sentForScoring', sequelize.fn('now'))
     .save();
+
+  const isDoneScoring = await getIsDoneScoring(comment);
+  if (isDoneScoring) {
+    await completeMachineScoring(comment.id);
+  }
 }
 
 /**
