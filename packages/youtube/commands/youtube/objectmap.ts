@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Article, Category, Comment, IAuthorAttributes, logger} from '@conversationai/moderator-backend-core';
+import {Article, Category, Comment, Decision} from '@conversationai/moderator-backend-core';
+import {IAuthorAttributes, ICommentInstance, IDecisionInstance} from '@conversationai/moderator-backend-core';
+import {logger, sequelize} from '@conversationai/moderator-backend-core';
 import {postProcessComment, sendForScoring} from '@conversationai/moderator-backend-core';
 
 export async function mapChannelToCategory(channel: any) {
@@ -184,4 +186,24 @@ export async function mapCommentThreadToComments(channelId: string, articleIds: 
       await mapCommentToComment(articleId!, c, thread.snippet.topLevelComment.id);
     }
   }
+}
+
+export async function foreachPendingDecision(callback: (decision: IDecisionInstance, comment: ICommentInstance) => void) {
+  const decisions = await Decision.findAll({
+    where: {
+      sentBackToPublisher: null,
+      isCurrentDecision: true,
+    } as any,
+    include: [Comment],
+  });
+
+  for (const d of decisions) {
+    callback(d, await d.getComment());
+  }
+}
+
+export async function markDecisionExecuted(decision: IDecisionInstance) {
+  decision.set('sentBackToPublisher', sequelize.fn('now')).save();
+  const comment = await decision.getComment();
+  comment.set('sentBackToPublisher', sequelize.fn('now')).save();
 }

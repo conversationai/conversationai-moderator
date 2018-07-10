@@ -22,14 +22,14 @@ import {logger} from '@conversationai/moderator-backend-core';
 import {authorize} from './authenticate';
 import {foreachActiveChannel, mapCommentThreadToComments} from './objectmap';
 
-export const command = 'youtube:syncComments';
+export const command = 'youtube:comments:sync';
 export const describe = 'Sync youtube comment threads with OSMod comments.';
 
 export function builder(yargs: yargs.Argv) {
   return yargs
     .usage('Usage:\n\n' +
       'Sync youtube comment threads:\n' +
-      'node $0 youtube:syncComments');
+      'node $0 youtube:comments:sync');
 }
 
 export async function handler() {

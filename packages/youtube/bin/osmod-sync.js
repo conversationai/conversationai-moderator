@@ -26,6 +26,7 @@ yargs
     .command(require(path.join(__dirname, '..', 'dist', 'youtube', 'sync_channels')))
     .command(require(path.join(__dirname, '..', 'dist', 'youtube', 'sync_videos')))
     .command(require(path.join(__dirname, '..', 'dist', 'youtube', 'sync_comments')))
+    .command(require(path.join(__dirname, '..', 'dist', 'youtube', 'backsync_comments')))
     .demand(1)
     .usage('Usage: $0')
     .help()

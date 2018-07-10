@@ -22,14 +22,14 @@ import {Category, logger} from '@conversationai/moderator-backend-core';
 import {authorize} from './authenticate';
 import {mapPlaylistItemToArticle} from './objectmap';
 
-export const command = 'youtube:syncVideos';
+export const command = 'youtube:videos:sync';
 export const describe = 'Sync youtube videos with OSMod articles for each active channel/category.';
 
 export function builder(yargs: yargs.Argv) {
   return yargs
     .usage('Usage:\n\n' +
       'Sync videos with YouTube:\n' +
-      'node $0 youtube:syncVideos');
+      'node $0 youtube:videos:sync');
 }
 
 export async function handler() {

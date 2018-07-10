@@ -22,14 +22,14 @@ import {logger} from '@conversationai/moderator-backend-core';
 import {authorize} from './authenticate';
 import {mapChannelToCategory} from './objectmap';
 
-export const command = 'youtube:syncChannels';
+export const command = 'youtube:channels:sync';
 export const describe = 'Sync youtube channels with OSMod categories.';
 
 export function builder(yargs: yargs.Argv) {
   return yargs
     .usage('Usage:\n\n' +
       'Sync channels with YouTube:\n' +
-      'node $0 youtube:syncChannels');
+      'node $0 youtube:channels:sync');
 }
 
 export async function handler() {
