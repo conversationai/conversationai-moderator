@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Article, Category, Comment, logger} from '@conversationai/moderator-backend-core';
+import {Article, Category, Comment, IAuthorAttributes, logger} from '@conversationai/moderator-backend-core';
 import {postProcessComment, sendForScoring} from '@conversationai/moderator-backend-core';
 
 export async function mapChannelToCategory(channel: any) {
@@ -130,6 +130,12 @@ export async function mapPlaylistItemToArticle(categoryId: number, item: any) {
 
 async function mapCommentToComment(articleId: number, ytcomment: any, replyToSourceId: string | undefined) {
   try {
+
+    const author: IAuthorAttributes = {
+      name: ytcomment.snippet.authorDisplayName,
+      avatar: ytcomment.snippet.authorProfileImageUrl,
+    };
+
     const [comment, created] = await Comment.findOrCreate({
       where: {
         sourceId: ytcomment.id,
@@ -139,7 +145,7 @@ async function mapCommentToComment(articleId: number, ytcomment: any, replyToSou
         sourceId: ytcomment.id,
         articleId: articleId,
         authorSourceId: ytcomment.snippet.authorChannelId.value,
-        author: ytcomment.snippet.authorDisplayName,
+        author: author,
         text: ytcomment.snippet.textDisplay,
         sourceCreatedAt: new Date(Date.parse(ytcomment.snippet.publishedAt)),
         replyToSourceId: replyToSourceId,

@@ -20,6 +20,13 @@ import { IArticleInstance } from './article';
 import { ICommentSummaryScoreInstance } from './comment_summary_score';
 import { IDecisionInstance } from './decision';
 
+export interface IAuthorAttributes {
+  name: string;
+  email?: string;
+  location?: string;
+  avatar?: string;
+}
+
 export interface ICommentAttributes {
   sourceId: string;
   articleId: number | null;
@@ -27,7 +34,7 @@ export interface ICommentAttributes {
   replyId?: number | null;
   authorSourceId: string;
   text: string;
-  author: any;
+  author: any; // Actually, should be an IAuthorAttributes, or client will not be happy.
   isModerated?: boolean;
   isScored?: boolean;
   isAccepted?: boolean | null;
