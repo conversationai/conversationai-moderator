@@ -1,7 +1,7 @@
 {
   "name": "@conversationai/moderator-cli",
   "description": "Commands for OSMod",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "scripts": {
     "lint": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
@@ -17,23 +17,22 @@
     "node": "6.11.0"
   },
   "dependencies": {
-    "@conversationai/moderator-backend-core": "1.0.6",
-    "@conversationai/moderator-config": "1.0.3",
-    "@types/axios": "0.14.0",
-    "@types/js-yaml": "^3.10.1",
-    "@types/lodash": "4.14.104",
-    "@types/mysql": "0.0.31",
-    "@types/request": "^2.47.0",
+    "@conversationai/moderator-backend-core": "1.1.0",
+    "@conversationai/moderator-config": "1.1.0",
+    "@types/js-yaml": "3.11.1",
+    "@types/lodash": "4.14.109",
+    "@types/mysql": "2.15.5",
+    "@types/request": "2.47.0",
     "@types/sequelize": "3.4.43",
-    "@types/yargs": "6.6.0",
-    "axios": "0.15.3",
+    "@types/yargs": "11.0.0",
+    "axios": "0.18.0",
     "find-up": "2.1.0",
-    "js-yaml": "3.8.2",
-    "lodash": "4.17.4",
-    "mysql": "2.13.0",
-    "request": "2.81.0",
+    "js-yaml": "3.12.0",
+    "lodash": "4.17.10",
+    "mysql": "2.15.0",
+    "request": "2.87.0",
     "sequelize": "3.30.4",
     "sequelize-cli": "2.7.0",
-    "yargs": "7.0.2"
+    "yargs": "11.1.0"
   }
 }

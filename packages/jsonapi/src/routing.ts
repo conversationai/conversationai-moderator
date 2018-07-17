@@ -308,7 +308,7 @@ export function createModelRouter(type: string, handler: IModelHandler, prefix: 
 
   // Get Single
   router.get(
-    '/:id',
+    '/:id(\\d+)',
     handleGet(
       ({ params: { id } }, _, include, __, ___, fields) => (
         handler.get(type, id, {
@@ -323,7 +323,7 @@ export function createModelRouter(type: string, handler: IModelHandler, prefix: 
 
   // Get Related List
   router.get(
-    '/:id/:relationship',
+    '/:id(\\d+)/:relationship',
     handleGet(
       (
         {
@@ -352,7 +352,7 @@ export function createModelRouter(type: string, handler: IModelHandler, prefix: 
 
   // Get Relationships List
   router.get(
-    '/:id/relationships/:relationship',
+    '/:id(\\d+)/relationships/:relationship',
     handleGet(
       (
         {
@@ -385,27 +385,27 @@ export function createModelRouter(type: string, handler: IModelHandler, prefix: 
   ), 201, renderItemResult));
 
   // Create Relationships
-  router.post('/:id/relationships/:relationship', handlePost(({ body: { data }, params: { id, relationship } }) => (
+  router.post('/:id(\\d+)/relationships/:relationship', handlePost(({ body: { data }, params: { id, relationship } }) => (
     handler.addRelationships(type, id, relationship, data)
   ), 204));
 
   // Update
-  router.patch('/:id', handlePatch(({ body: { data }, params: { id } }) => (
+  router.patch('/:id(\\d+)', handlePatch(({ body: { data }, params: { id } }) => (
     handler.update(type, id, data)
   ), 200, renderItemResult));
 
   // Update Relationships
-  router.patch('/:id/relationships/:relationship', handlePatch(({ body: { data }, params: { id, relationship } }) => (
+  router.patch('/:id(\\d+)/relationships/:relationship', handlePatch(({ body: { data }, params: { id, relationship } }) => (
     handler.updateRelationships(type, id, relationship, data)
   ), 204));
 
   // Delete
-  router.delete('/:id', handleDelete(({ params: { id } }) => (
+  router.delete('/:id(\\d+)', handleDelete(({ params: { id } }) => (
     handler.destroy(type, id)
   ), 204));
 
   // Delete Relationships
-  router.delete('/:id/relationships/:relationship', handleDelete(({ body: { data }, params: { id, relationship } }) => (
+  router.delete('/:id(\\d+)/relationships/:relationship', handleDelete(({ body: { data }, params: { id, relationship } }) => (
     handler.destroyRelationships(type, id, relationship, data)
   ), 204));
 

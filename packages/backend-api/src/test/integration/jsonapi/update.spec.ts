@@ -13,13 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
+import * as chai from 'chai';
 import { cloneDeep, isArray, isEqual } from 'lodash';
 import {
-  apiClient,
   expect,
   models,
   serializers,
+  server,
   sharedTestHelper,
 } from './test_helper';
 
@@ -39,7 +39,7 @@ Object.keys(models).forEach((modelName) => {
       delete serializedModel.id;
       describe('PATCH', () => {
         it(`update a ${modelName} object's attributes`, async () => {
-          const res = await apiClient.post(`/${modelName}`).send({ data: serializedModel });
+          const res = await chai.request(server).post(`/${modelName}`).send({ data: serializedModel });
 
           // Figure out what to change.
           const clonedModel = cloneDeep(res.body.data);
@@ -62,10 +62,10 @@ Object.keys(models).forEach((modelName) => {
 
           clonedModel.attributes = updatedAttrs;
 
-          const res2 = await apiClient.patch(res.body.data.links.self).send({ data: clonedModel });
+          const res2 = await chai.request(server).patch(res.body.data.links.self).send({ data: clonedModel });
 
           basicSingleModel(res2, modelName);
-          expect(res2.body['included']).to.be.empty;
+          expect(res2.body['included']).to.be.undefined;
 
           for (const key in res.body.data.attributes) {
             if (res.body.data.attributes.hasOwnProperty(key)) {
@@ -77,7 +77,7 @@ Object.keys(models).forEach((modelName) => {
             }
           }
 
-          const res3 = await apiClient.get(res2.body.data.links.self);
+          const res3 = await chai.request(server).get(res2.body.data.links.self);
 
           basicSingleModel(res3, modelName);
           expect(isEqual(res2.body.data, res3.body.data)).to.be.true;
@@ -85,7 +85,7 @@ Object.keys(models).forEach((modelName) => {
 
         if (models[modelName].include) {
           it(`update a ${modelName} object's relationships`, async () => {
-            const res = await apiClient.post(`/${modelName}`).send({ data: serializedModel });
+            const res = await chai.request(server).post(`/${modelName}`).send({ data: serializedModel });
 
             // Figure out what to change.
             const clonedModel = cloneDeep(res.body.data);
@@ -109,9 +109,9 @@ Object.keys(models).forEach((modelName) => {
 
             clonedModel.relationships = updatedRels;
 
-            const res2 = await apiClient.patch(res.body.data.links.self).send({ data: clonedModel });
+            const res2 = await chai.request(server).patch(res.body.data.links.self).send({ data: clonedModel });
             basicSingleModel(res2, modelName);
-            expect(res2.body['included']).to.be.empty;
+            expect(res2.body['included']).to.be.undefined;
 
             for (const key in res.body.data.attributes) {
               if (res.body.data.attributes.hasOwnProperty(key)) {
@@ -123,7 +123,7 @@ Object.keys(models).forEach((modelName) => {
               }
             }
 
-            const res3 = await apiClient.get(res2.body.data.links.self);
+            const res3 = await chai.request(server).get(res2.body.data.links.self);
             basicSingleModel(res3, modelName);
 
             expect(isEqual(res2.body.data, res3.body.data)).to.be.true;
@@ -147,17 +147,17 @@ Object.keys(models).forEach((modelName) => {
           };
 
           it(`change a ${models[modelName].include[0]} relation on ${modelName}`, async () => {
-            const res = await apiClient.post(
+            const res = await chai.request(server).post(
               `/${modelName}`,
             ).send({ data: serializedModel });
 
-            const res2 = await apiClient.patch(
+            const res2 = await chai.request(server).patch(
               res.body.data.relationships[models[modelName].include[0]].links.self,
             ).send({ data: newValue });
 
             expect(res2).to.have.status(204);
 
-            const res3 = await apiClient.get(res.body.data.links.self);
+            const res3 = await chai.request(server).get(res.body.data.links.self);
             const rels = res3.body.data.relationships;
             expect(isEqual(
               rels[models[modelName].include[0]].data,
@@ -166,33 +166,33 @@ Object.keys(models).forEach((modelName) => {
           });
 
           it(`clear a ${models[modelName].include[0]} relation on ${modelName}`, async () => {
-            const res = await apiClient.post(`/${modelName}`).send({ data: serializedModel });
+            const res = await chai.request(server).post(`/${modelName}`).send({ data: serializedModel });
 
-            const res2 = await apiClient.patch(
+            const res2 = await chai.request(server).patch(
               res.body.data.relationships[models[modelName].include[0]].links.self,
             ).send({ data: null });
 
             expect(res2).to.have.status(204);
 
-            const res3 = await apiClient.get(res.body.data.links.self);
+            const res3 = await chai.request(server).get(res.body.data.links.self);
             expect(res3.body.data.relationships[models[modelName].include[0]].data).to.be.undefined;
           });
         } else {
           const newValue = { id: `${models[modelName].include[0]}-a-rel-1`, type: models[modelName].include[1] };
 
           it(`change a ${models[modelName].include[0]} relation on ${modelName}`, async () => {
-            const res = await apiClient.post(`/${modelName}`).send({ data: serializedModel });
+            const res = await chai.request(server).post(`/${modelName}`).send({ data: serializedModel });
 
             const newData = res.body.data.relationships[models[modelName].include[0]].data;
             newData.push(newValue);
 
-            const res2 = await apiClient.patch(
+            const res2 = await chai.request(server).patch(
               res.body.data.relationships[models[modelName].include[0]].links.self,
             ).send({ data: newData });
 
             expect(res2).to.have.status(204);
 
-            const res3 = await apiClient.get(res.body.data.links.self);
+            const res3 = await chai.request(server).get(res.body.data.links.self);
             const rels = res3.body.data.relationships;
             expect(isEqual(
               rels[models[modelName].include[0]].data,
@@ -201,14 +201,14 @@ Object.keys(models).forEach((modelName) => {
           });
 
           it(`empties a ${models[modelName].include[0]} relation on ${modelName}`, async () => {
-            const res = await apiClient.post(`/${modelName}`).send({ data: serializedModel });
-            const res2 = await apiClient.patch(
+            const res = await chai.request(server).post(`/${modelName}`).send({ data: serializedModel });
+            const res2 = await chai.request(server).patch(
               res.body.data.relationships[models[modelName].include[0]].links.self,
             ).send({ data: [] });
 
             expect(res2).to.have.status(204);
 
-            const res3 = await apiClient.get(res.body.data.links.self);
+            const res3 = await chai.request(server).get(res.body.data.links.self);
             expect(res3.body.data.relationships[models[modelName].include[0]].data).to.be.empty;
           });
         }

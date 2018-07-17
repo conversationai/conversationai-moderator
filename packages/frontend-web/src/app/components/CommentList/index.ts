@@ -95,13 +95,15 @@ export type ICommentListOwnPropNames =
   'onTableScroll' |
   'searchTerm';
 
-export type ILazyCommentListOwnProps = Pick<ILazyCommentListProps, ICommentListOwnPropNames>;
+export type ILazyCommentListOwnProps = {
+  [P in ICommentListOwnPropNames]?: ILazyCommentListProps[P];
+};
 
 export type ICommentListProps = {
   commentIds: any;
   commentScores?: any;
   textSizes: any;
-  getCurrentSort: any;
+  getCurrentSort(): string;
   selectedTag?: any;
   triggerActionToast: any;
 } & ILazyCommentListOwnProps;
@@ -117,17 +119,19 @@ export type ILazyCommentListStateProps = Pick<
   'getInitialRowCount'
 >;
 
-function mapStateToProps(state: any, {
-  commentIds,
-  commentScores,
-  textSizes,
-  getCurrentSort,
-  selectedTag,
-  displayArticleTitle,
-  heightOffset,
-  width,
-  scrollToRow,
-}: ICommentListProps): ILazyCommentListStateProps {
+function mapStateToProps(state: any, ownProps: any): any {
+  const {
+    commentIds,
+    commentScores,
+    textSizes,
+    getCurrentSort,
+    selectedTag,
+    displayArticleTitle,
+    heightOffset,
+    width,
+    scrollToRow,
+  } = ownProps;
+
   return {
     selectedSort: getCurrentSort(),
 
@@ -225,14 +229,16 @@ export type ILazyCommentListDispatchProps = Pick<
   'dispatchConfirmedAction'
 >;
 
-function mapDispatchToProps(dispatch: IAppDispatch, {
-  commentIds,
-  triggerActionToast,
-  dispatchConfirmedAction,
-  selectedTag,
-}: ICommentListProps): ILazyCommentListDispatchProps {
+function mapDispatchToProps(dispatch: IAppDispatch, ownProps: ICommentListProps): ILazyCommentListDispatchProps {
+  const {
+    commentIds,
+    triggerActionToast,
+    dispatchConfirmedAction,
+    selectedTag,
+  } = ownProps;
+
   return {
-    onRowRender: async function(index: number) {
+    onRowRender: async (index: number) => {
       const commentId = commentIds.get(index);
       const comment: ICommentModel = await dispatch(loadComment(commentId));
 
@@ -265,11 +271,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, {
   };
 }
 
-export const CommentList = connect<
-  ILazyCommentListStateProps,
-  ILazyCommentListDispatchProps,
-  ILazyCommentListOwnProps
->(
+export const CommentList: React.ComponentClass<ICommentListProps> = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(LazyCommentList);

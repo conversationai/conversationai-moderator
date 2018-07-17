@@ -51,15 +51,19 @@ function cleanDatabase(done: any) {
     throw new Error('Refusing to destroy database if NODE_ENV is not `test`.');
   }
 
-  sequelize.query('SET GLOBAL FOREIGN_KEY_CHECKS = 0', { raw: true })
-      .then(() => sequelize.sync({ force: true }))
-      .then(() => Comment.addFullTextIndex())
-      .then(() => sequelize.query('SET GLOBAL FOREIGN_KEY_CHECKS = 1', { raw: true }))
-      .then(() => done(), (e) => done(e));
+  sequelize.sync({ force: true }).then(() => done(), (e) => done(e));
 }
 
-beforeEach('Clean database before each test run', cleanDatabase);
-after(cleanDatabase);
+function dropDatabase(done: any) {
+  if (!isTestEnv()) {
+    throw new Error('Refusing to destroy database if NODE_ENV is not `test`.');
+  }
+  sequelize.drop().then(done(), (e) => done(e));
+}
+
+before(cleanDatabase);
+beforeEach(cleanDatabase);
+after(dropDatabase);
 
 const expect = chai.expect;
 export { expect };
@@ -120,14 +124,11 @@ export async function makeComment(obj = {}): Promise<ICommentInstance> {
     text: 'words',
     author: {},
     flaggedCount: 0,
-    batchedCount: 0,
     recommendedCount: 0,
     sourceCreatedAt: '2012-10-29T21:54:07.609Z',
     isScored: true,
     ...obj,
-  } as any);
-  // TODO(ldixon): the any above should not be needed. Investigate why there is
-  // otherwise a type error.
+  });
 }
 
 export async function makeCommentScore(obj = {}): Promise<ICommentScoreInstance> {

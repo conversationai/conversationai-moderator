@@ -24,8 +24,9 @@ import {
   makeUser,
 } from '../../test_helper';
 import {
-  apiClient,
+  app,
 } from './test_helper';
+import * as chai from "chai";
 
 const BASE_URL = `/assistant`;
 const prefixed = `${BASE_URL}/`;
@@ -55,6 +56,8 @@ describe(prefixed, () => {
       let was200 = false;
 
       try {
+        const apiClient = chai.request(app);
+
         const { status } = await apiClient.post(url.replace(':id', this.request.get('id'))).send({
           scores: {
             SCORE_TAG: [this.score],
@@ -75,7 +78,9 @@ describe(prefixed, () => {
       let was422 = false;
 
       try {
-        await apiClient.post(url.replace(':id', this.request.get('id'))).send({
+        const apiClient = chai.request(app);
+
+        const { status } = await apiClient.post(url.replace(':id', this.request.get('id'))).send({
           scores: {
             SCORE_TAG: this.score, // should be an array
           },
@@ -83,10 +88,10 @@ describe(prefixed, () => {
             SCORE_TAG: this.score.score,
           },
         });
-
-      } catch (e) {
+        expect(status).to.be.equal(422);
         was422 = true;
-        expect(e.response.status).to.be.equal(422);
+      } catch (e) {
+        console.log(e);
       } finally {
         expect(was422).to.be.true;
       }
@@ -96,7 +101,9 @@ describe(prefixed, () => {
       let was422 = false;
 
       try {
-        await apiClient.post(url.replace(':id', this.request.get('id'))).send({
+        const apiClient = chai.request(app);
+
+        const { status } = await apiClient.post(url.replace(':id', this.request.get('id'))).send({
           scores: {
             SCORE_TAG: [this.score],
           },
@@ -105,9 +112,10 @@ describe(prefixed, () => {
           //   SCORE_TAG: this.score.score,
           // },
         });
-      } catch (e) {
+        expect(status).to.be.equal(422);
         was422 = true;
-        expect(e.response.status).to.be.equal(422);
+      } catch (e) {
+        console.log(e);
       } finally {
         expect(was422).to.be.true;
       }
@@ -117,7 +125,9 @@ describe(prefixed, () => {
       let was400 = false;
 
       try {
-        await apiClient.post(url.replace(':id', 'fake')).send({
+        const apiClient = chai.request(app);
+
+        const { status } = await apiClient.post(url.replace(':id', 'fake')).send({
           scores: {
             SCORE_TAG: [this.score],
           },
@@ -125,9 +135,10 @@ describe(prefixed, () => {
             SCORE_TAG: this.score.score,
           },
         });
-      } catch (e) {
+        expect(status).to.be.equal(400);
         was400 = true;
-        expect(e.response.status).to.be.equal(400);
+      } catch (e) {
+        console.log(e);
       } finally {
         expect(was400).to.be.true;
       }

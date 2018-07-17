@@ -325,11 +325,12 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
   };
 }
 
+// TODO (Issue#27): Fix type
 function mergeProps(
   stateProps: ICommentDetailStateProps,
   dispatchProps: ICommentDetailDispatchProps,
   ownProps: ICommentDetailOwnProps,
-): ICommentDetailStateProps & ICommentDetailDispatchProps {
+): any {
   return {
       ...ownProps,
       ...stateProps,
@@ -376,4 +377,4 @@ const ConnectedCommentDetail = connect(
 )(HookedCommentDetail);
 
 // Add `router` prop.
-export const CommentDetail = withRouter(ConnectedCommentDetail);
+export const CommentDetail: React.ComponentClass = withRouter(ConnectedCommentDetail);

@@ -56,8 +56,7 @@ CREATE USER 'os_moderator' IDENTIFIED BY '$DATABASE_PASSWORD';
 GRANT ALL on os_moderator.* to os_moderator;
 EOF
 
-mysql -u root -p os_moderator < packages/backend-core/seed/initial-database.sql
-
+mysql -u root -p $DATABASE_NAME < packages/backend-core/seed/initial-database.sql
 ./bin/osmod migrate
 ```
 
@@ -166,6 +165,33 @@ The project uses [lerna](https://www.npmjs.com/package/lerna) to help manage
 development [the several npm packages](packages/README.md) that are in this
 repository. Lerna sym-links package dependencies within this repository. Lerna
 is also used to publish updates to all these packages at once.
+
+## Running tests
+
+To run the tests, you'll need to tweak your enviornment:
+
+```bash
+# Some tests need admin privileges to clean out the database
+export DATABASE_NAME=os_moderator_test
+export DATABASE_USER=root
+
+# Run all the tests
+NODE_ENV=test bin/test
+
+# or you can run individual tests:
+cd packages/backend-core
+NODE_ENV=test npm run test
+NODE_ENV=test ../../node_modules/.bin/mocha 'dist/test/domain/comments/*.spec.js' --recursive --timeout 10000
+```
+
+The `bin/test` script uses lerna to first compile all the typescript to javascript,
+then runs all the tests.
+
+Deleting and recreating the database schema can take a very long time, hence the long timeout above.
+You may need to increase this even further if your system is particularly slow.
+
+If you want to run a test in the debugger, add the --inspect-brk flag to the mocha invocation,
+then connect using the chrome inspector (URL: `chrome://inspect`).
 
 ## What a running service looks like
 

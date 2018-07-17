@@ -25,8 +25,9 @@ import {
   makeComment,
 } from '../../test_helper';
 import {
-  apiClient,
+  app,
 } from './test_helper';
+import * as chai from "chai";
 
 const BASE_URL = `/publisher`;
 
@@ -74,6 +75,7 @@ describe('Publisher API', () => {
         let was200 = false;
 
         try {
+          const apiClient = chai.request(app);
           const { status, body } = await apiClient.post(url).send({
             data: validArticleData1,
           });
@@ -96,6 +98,7 @@ describe('Publisher API', () => {
         let was200 = false;
 
         try {
+          const apiClient = chai.request(app);
           const { status, body } = await apiClient.post(url).send({
             data: [validArticleData1, validArticleData2],
           });
@@ -121,6 +124,7 @@ describe('Publisher API', () => {
         let was200 = false;
 
         try {
+          const apiClient = chai.request(app);
           const { status, body } = await apiClient.post(url).send({
             data: [validArticleData1, validArticleData2],
           });
@@ -141,12 +145,14 @@ describe('Publisher API', () => {
         let was422 = false;
 
         try {
-          await apiClient.post(url).send({
+          const apiClient = chai.request(app);
+          const { status } = await apiClient.post(url).send({
             fakeData: {},
           });
-        } catch (e) {
+          expect(status).to.be.equal(422);
           was422 = true;
-          expect(e.response.status).to.be.equal(422);
+        } catch (e) {
+          console.log(e);
         } finally {
           expect(was422).to.be.true;
         }
@@ -161,6 +167,7 @@ describe('Publisher API', () => {
         let was200 = false;
 
         try {
+          const apiClient = chai.request(app);
           const { status } = await apiClient.patch(url).send({
             data: {
               attributes: {
@@ -184,14 +191,16 @@ describe('Publisher API', () => {
         let was400 = false;
 
         try {
-          await apiClient.patch(prefixed(`articles/fake-id`)).send({
+          const apiClient = chai.request(app);
+          const { status } = await apiClient.patch(prefixed(`articles/fake-id`)).send({
             data: {
               attributes: { },
             },
           });
-        } catch (e) {
+          expect(status).to.be.equal(400);
           was400 = true;
-          expect(e.response.status).to.be.equal(400);
+        } catch (e) {
+          console.log(e);
         } finally {
           expect(was400).to.be.true;
         }
@@ -201,14 +210,16 @@ describe('Publisher API', () => {
         let was422 = false;
 
         try {
-          await apiClient.patch(prefixed(`articles/fake-id`)).send({
+          const apiClient = chai.request(app);
+          const { status } = await apiClient.patch(prefixed(`articles/fake-id`)).send({
             data: {
               fakeAttributes: { },
             },
           });
-        } catch (e) {
+          expect(status).to.be.equal(422);
           was422 = true;
-          expect(e.response.status).to.be.equal(422);
+        } catch (e) {
+          console.log(e);
         } finally {
           expect(was422).to.be.true;
         }
@@ -228,6 +239,7 @@ describe('Publisher API', () => {
         });
 
         try {
+          const apiClient = chai.request(app);
           const { body, status } = await apiClient.post(url).send({
             data: commentData,
           });
@@ -257,6 +269,7 @@ describe('Publisher API', () => {
         });
 
         try {
+          const apiClient = chai.request(app);
           const { body, status } = await apiClient.post(url).send({
             data: [commentData1, commentData2],
           });
@@ -277,14 +290,16 @@ describe('Publisher API', () => {
         let was422 = false;
 
         try {
-          await apiClient.post(url).send({
+          const apiClient = chai.request(app);
+          const { status } =  await apiClient.post(url).send({
             data: {
               fakeData: { },
             },
           });
-        } catch (e) {
+          expect(status).to.be.equal(422);
           was422 = true;
-          expect(e.response.status).to.be.equal(422);
+        } catch (e) {
+          console.log(e);
         } finally {
           expect(was422).to.be.true;
         }
@@ -301,6 +316,7 @@ describe('Publisher API', () => {
         let was200 = false;
 
         try {
+          const apiClient = chai.request(app);
           const { status } = await apiClient.post(url).send({
             data: {
               type: 'recommendation',
@@ -325,6 +341,7 @@ describe('Publisher API', () => {
         let was200 = false;
 
         try {
+          const apiClient = chai.request(app);
           const { status } = await apiClient.post(url).send({
             data: {
               type: 'flag',
@@ -349,6 +366,7 @@ describe('Publisher API', () => {
         let was200 = false;
 
         try {
+          const apiClient = chai.request(app);
           const { status } = await apiClient.post(url).send({
             data: [
               {
@@ -377,14 +395,16 @@ describe('Publisher API', () => {
         let was422 = false;
 
         try {
-          await apiClient.post(url).send({
+          const apiClient = chai.request(app);
+          const { status } = await apiClient.post(url).send({
             data: {
               type: 'flagtypo',
             },
           });
-        } catch (e) {
+          expect(status).to.be.equal(422);
           was422 = true;
-          expect(e.response.status).to.be.equal(422);
+        } catch (e) {
+          console.log(e);
         } finally {
           expect(was422).to.be.true;
         }
@@ -401,6 +421,7 @@ describe('Publisher API', () => {
         let was200 = false;
 
         try {
+          const apiClient = chai.request(app);
           const { status } = await apiClient.post(url).send({
             data: {
               type: 'recommendation',
@@ -425,6 +446,7 @@ describe('Publisher API', () => {
         let was200 = false;
 
         try {
+          const apiClient = chai.request(app);
           const { status } = await apiClient.post(url).send({
             data: {
               type: 'flag',
@@ -449,6 +471,7 @@ describe('Publisher API', () => {
         let was200 = false;
 
         try {
+          const apiClient = chai.request(app);
           const { status } = await apiClient.post(url).send({
             data: [
               {
@@ -477,14 +500,16 @@ describe('Publisher API', () => {
         let was422 = false;
 
         try {
-          await apiClient.post(url).send({
+          const apiClient = chai.request(app);
+          const { status } = await apiClient.post(url).send({
             data: {
               type: 'flagtypo',
             },
           });
-        } catch (e) {
+          expect(status).to.be.equal(422);
           was422 = true;
-          expect(e.response.status).to.be.equal(422);
+        } catch (e) {
+          console.log(e);
         } finally {
           expect(was422).to.be.true;
         }

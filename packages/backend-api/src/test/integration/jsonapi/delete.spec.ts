@@ -14,12 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as chai from 'chai';
 import { cloneDeep } from 'lodash';
 import {
-  apiClient,
   expect,
   models,
   serializers,
+  server,
 } from './test_helper';
 
 Object.keys(models).forEach((modelName) => {
@@ -32,17 +33,13 @@ Object.keys(models).forEach((modelName) => {
       delete serializedModel.id;
       describe('DELETE', () => {
         it(`delete a ${modelName} object`, async () => {
-          const res = await apiClient.post(`/${modelName}`).send({ data: serializedModel });
+          const res = await chai.request(server).post(`/${modelName}`).send({ data: serializedModel });
 
-          const res2 = await apiClient.del(`${res.body.data.links.self}`);
+          const res2 = await chai.request(server).del(`${res.body.data.links.self}`);
           expect(res2).to.have.status(204);
 
-          let res3;
-          try {
-            res3 = await apiClient.get(`${res.body.data.links.self}`);
-          } catch (e) {
-            expect(e.status).to.equal(404);
-          }
+          const res3 = await chai.request(server).get(`${res.body.data.links.self}`);
+          expect(res3).to.have.status(404);
         });
       });
     });
@@ -67,9 +64,9 @@ Object.keys(models).forEach((modelName) => {
 
           serializedModel.relationships[models[modelName].include[0]].data = rels;
           delete serializedModel.id;
-          const res = await apiClient.post(`/${modelName}`).send({ data: serializedModel });
+          const res = await chai.request(server).post(`/${modelName}`).send({ data: serializedModel });
 
-          const res2 = await apiClient.del(
+          const res2 = await chai.request(server).del(
             res.body.data.relationships[models[modelName].include[0]].links.self,
           ).send({
             data: [
@@ -80,7 +77,7 @@ Object.keys(models).forEach((modelName) => {
 
           expect(res2).to.have.status(204);
 
-          const res3 = await apiClient.get(res.body.data.links.self);
+          const res3 = await chai.request(server).get(res.body.data.links.self);
           expect(res3.body.data.relationships[models[modelName].include[0]].data).to.be.lengthOf(2);
         });
       });

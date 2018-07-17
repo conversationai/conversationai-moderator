@@ -47,7 +47,10 @@ import {
   updateUsers,
 } from './store';
 
-export type ISettingsOwnProps = {};
+export type ISettingsOwnProps = Pick<
+  ISettingsProps,
+  'submitForm'
+>;
 
 export type ISettingsStateProps = Pick<
   ISettingsProps,
@@ -110,7 +113,7 @@ function mergeProps(
   stateProps: ISettingsStateProps,
   dispatchProps: ISettingsDispatchProps,
   ownProps: ISettingsOwnProps,
-): ISettingsStateProps & ISettingsDispatchProps {
+): ISettingsStateProps & ISettingsDispatchProps & ISettingsOwnProps {
   return {
     ...ownProps,
     ...stateProps,

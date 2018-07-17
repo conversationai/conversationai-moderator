@@ -19,8 +19,9 @@ import {
   makeComment,
 } from '../../test_helper';
 import {
-  apiClient,
+  app
 } from './test_helper';
+import * as chai from "chai";
 
 const BASE_URL = `/services/authorCounts`;
 
@@ -43,6 +44,8 @@ describe(BASE_URL, () => {
   describe('/authorCounts', () => {
 
     it('should return a lookup when asked for a single authorId', async () => {
+      const apiClient = chai.request(app);
+
       const authorSourceId = '$2a$10$pMz0P4a/kq1h4pZwt7Ji8unFGQquqqStriJVFAN0Si.Eh49XUyUty';
       const approvedCount = 2;
       const rejectedCount = 7;
@@ -64,6 +67,7 @@ describe(BASE_URL, () => {
     });
 
     it('should return a zeros when an author does not exist', async () => {
+      const apiClient = chai.request(app);
       const authorSourceId = 'fake';
 
       const { body } = await apiClient.post(`${BASE_URL}`).send({
@@ -81,6 +85,7 @@ describe(BASE_URL, () => {
     });
 
     it('should return a lookup when asked for mulitple authorIds', async () => {
+      const apiClient = chai.request(app);
       const authorSourceId1 = '$2a$10$pMz0P4a/kq1h4pZwt7Ji8unFGQquqqStriJVFAN0Si.Eh49XUyUty';
       const approvedCount1 = 2;
       const rejectedCount1 = 7;

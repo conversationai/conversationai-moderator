@@ -365,6 +365,7 @@ export class ModeratedComments
       moderatedComments,
       urlPrefix,
       getLinkTarget,
+      textSizes,
       commentIds,
       allModeratedCommentIds,
       getTagIdsAboveThresholdByCommentId,
@@ -529,7 +530,10 @@ export class ModeratedComments
         ) : (
           <CommentList
             heightOffset={listHeightOffset}
+            textSizes={textSizes}
+            commentIds={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds : commentIds}
             areAllSelected={areAllSelected}
+            getCurrentSort={this.getCurrentSort}
             getLinkTarget={getLinkTarget}
             isItemChecked={isItemChecked}
             onSelectAllChange={this.onSelectAllChange}
@@ -538,6 +542,7 @@ export class ModeratedComments
             showAllComments
             sortOptions={this.getSortOptions()}
             totalItems={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds.size : commentIds.size}
+            triggerActionToast={this.triggerActionToast}
             tagRejectionModalVisible={{
               id: taggingCommentId,
               isVisible: taggingTooltipVisible,

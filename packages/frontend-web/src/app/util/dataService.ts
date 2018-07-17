@@ -752,7 +752,7 @@ export async function destroyRelationshipModels(
 
   await axios.delete(relationURL(type, id, relationship), {
     data: relatedIds.map((relatedId) => ({ id: relatedId })),
-  } as Partial<IParams>);
+  });
 }
 
 /**

@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import { cacheCommentTopScores } from '@conversationai/moderator-backend-core';
+import * as chai from 'chai';
 import {
   expect,
   makeArticle,
@@ -24,7 +25,7 @@ import {
   makeTag,
 } from '../../test_helper';
 import {
-  apiClient,
+  app,
 } from './test_helper';
 
 const BASE_URL = `/services/histogramScores`;
@@ -34,6 +35,8 @@ describe(BASE_URL, () => {
   describe('/articles/:articleId/tags/:tagId', () => {
 
     it('returns scores in the article and tag', async () => {
+      const apiClient = chai.request(app);
+
       const article = await makeArticle();
       const articleId = article.get('id');
 
@@ -55,12 +58,12 @@ describe(BASE_URL, () => {
 
       expect(body.data).to.be.lengthOf(2);
 
-      expect(body.data).to.include({
+      expect(body.data).to.deep.include({
         commentId: comment1.get('id').toString(),
         score: commentSummaryScore1.get('score'),
       });
 
-      expect(body.data).to.include({
+      expect(body.data).to.deep.include({
         commentId: comment2.get('id').toString(),
         score: commentSummaryScore2.get('score'),
       });
@@ -70,10 +73,12 @@ describe(BASE_URL, () => {
       let was404 = false;
 
       try {
-        await apiClient.get(`${BASE_URL}/articles/0/tags/0`);
-      } catch (e) {
+        const apiClient = chai.request(app);
+        const { status } = await apiClient.get(`${BASE_URL}/articles/0/tags/0`);
+        expect(status).to.be.equal(404);
         was404 = true;
-        expect(e.response.status).to.be.equal(404);
+      } catch (e) {
+        console.log(e);
       } finally {
         expect(was404).to.be.true;
       }
@@ -85,10 +90,12 @@ describe(BASE_URL, () => {
       const articleId = article.get('id');
 
       try {
-        await apiClient.get(`${BASE_URL}/articles/${articleId}/tags/0`);
-      } catch (e) {
+        const apiClient = chai.request(app);
+        const { status } = await apiClient.get(`${BASE_URL}/articles/${articleId}/tags/0`);
+        expect(status).to.be.equal(404);
         was404 = true;
-        expect(e.response.status).to.be.equal(404);
+      } catch (e) {
+        console.log(e);
       } finally {
         expect(was404).to.be.true;
       }
@@ -125,16 +132,17 @@ describe(BASE_URL, () => {
       await makeComment({ articleId: articleId2, isScored: true });
       await makeComment({ articleId: articleId2, isScored: false });
 
+      const apiClient = chai.request(app);
       const { body } = await apiClient.get(`${BASE_URL}/categories/${categoryId1}/tags/${tagId}`);
 
       expect(body.data).to.be.lengthOf(2);
 
-      expect(body.data).to.include({
+      expect(body.data).to.deep.include({
         commentId: comment1.get('id').toString(),
         score: commentSummaryScore1.get('score'),
       });
 
-      expect(body.data).to.include({
+      expect(body.data).to.deep.include({
         commentId: comment2.get('id').toString(),
         score: commentSummaryScore2.get('score'),
       });
@@ -144,10 +152,12 @@ describe(BASE_URL, () => {
       let was404 = false;
 
       try {
-        await apiClient.get(`${BASE_URL}/categories/0/tags/0`);
-      } catch (e) {
+        const apiClient = chai.request(app);
+        const { status } = await apiClient.get(`${BASE_URL}/categories/0/tags/0`);
+        expect(status).to.be.equal(404);
         was404 = true;
-        expect(e.response.status).to.be.equal(404);
+      } catch (e) {
+        console.log(e);
       } finally {
         expect(was404).to.be.true;
       }
@@ -159,10 +169,12 @@ describe(BASE_URL, () => {
       const categoryId = category.get('id');
 
       try {
-        await apiClient.get(`${BASE_URL}/categories/${categoryId}/tags/0`);
-      } catch (e) {
+        const apiClient = chai.request(app);
+        const { status } = await apiClient.get(`${BASE_URL}/categories/${categoryId}/tags/0`);
+        expect(status).to.be.equal(404);
         was404 = true;
-        expect(e.response.status).to.be.equal(404);
+      } catch (e) {
+        console.log(e);
       } finally {
         expect(was404).to.be.true;
       }

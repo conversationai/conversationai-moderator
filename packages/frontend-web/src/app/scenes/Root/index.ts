@@ -22,7 +22,7 @@ export { reducer };
 
 const mapStateToProps = createStructuredSelector({currentlyFocused: getCurrentlyFocused,});
 
-export const Root = connect<
+export const Root: React.ComponentClass = connect<
   Pick<IRootProps, 'currentlyFocused'>,
   Pick<IRootProps, 'dispatch'>
 >(mapStateToProps)(PureRoot);

@@ -17,9 +17,9 @@ limitations under the License.
 import { withRouter } from 'react-router';
 import { IModeratedStatusTabsProps, ModeratedStatusTabs as PureModeratedStatusTabs } from './ModeratedStatusTabs';
 
-type IModeratedStatusTabsOwnProps = Pick<
+export type IModeratedStatusTabsOwnProps = Pick<
   IModeratedStatusTabsProps,
   'moderatedComments' | 'urlPrefix'
 >;
 
-export const ModeratedStatusTabs = withRouter<IModeratedStatusTabsOwnProps>(PureModeratedStatusTabs);
+export const ModeratedStatusTabs:React.ComponentClass<IModeratedStatusTabsOwnProps> = withRouter<IModeratedStatusTabsOwnProps>(PureModeratedStatusTabs);

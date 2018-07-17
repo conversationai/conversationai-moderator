@@ -13,11 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
+import * as chai from 'chai';
 import {
-  apiClient,
   expect,
   models,
+  server,
   sharedTestHelper,
 } from './test_helper';
 
@@ -37,11 +37,8 @@ Object.keys(models).forEach((modelName) => {
       describe('GET (bad record)', () => {
         it(`returns a 404`, async () => {
           let res;
-          try {
-            res = await apiClient.get(`/${modelName}/fake`);
-          } catch (e) {
-            expect(e.status).to.equal(404);
-          }
+          res = await chai.request(server).get(`/${modelName}/fake`);
+          expect(res.status).to.equal(404);
         });
       });
     });
@@ -66,11 +63,8 @@ Object.keys(models).forEach((modelName) => {
           it(`returns a 404`, async () => {
             let res;
 
-            try {
-              res = await apiClient.get(`/${modelName}/fake/relationships/${models[modelName].include[0]}`);
-            } catch (e) {
-              expect(e.status).to.equal(404);
-            }
+            res = await chai.request(server).get(`/${modelName}/fake/relationships/${models[modelName].include[0]}`);
+            expect(res.status).to.equal(404);
           });
         });
 
@@ -78,11 +72,8 @@ Object.keys(models).forEach((modelName) => {
           it(`returns a 404`, async () => {
             let res;
 
-            try {
-              res = apiClient.get(`${relationshipPrefix}/fake`);
-            } catch (e) {
-              expect(e.status).to.equal(404);
-            }
+            res = await chai.request(server).get(`${relationshipPrefix}/fake`);
+            expect(res.status).to.equal(404);
           });
         });
 
@@ -107,11 +98,8 @@ Object.keys(models).forEach((modelName) => {
           it(`returns a 404`, async () => {
             let res;
 
-            try {
-              res = await apiClient.get(`/${modelName}/fake/${models[modelName].include[0]}`);
-            } catch (e) {
-              expect(e.status).to.equal(404);
-            }
+            res = await chai.request(server).get(`/${modelName}/fake/${models[modelName].include[0]}`);
+            expect(res.status).to.equal(404);
           });
         });
 
@@ -119,12 +107,9 @@ Object.keys(models).forEach((modelName) => {
           it(`returns a 404`, async () => {
             let res;
 
-            try {
-              res = apiClient.get(`${relatedPrefix}/fake`);
-            } catch (e) {
-              expect(e.status).to.equal(404);
-            }
-          });
+            res = await chai.request(server).get(`${relatedPrefix}/fake`);
+            expect(res.status).to.equal(404);
+        });
         });
 
         const relationshipItems = models[modelName].spec[models[modelName].include[0]];
