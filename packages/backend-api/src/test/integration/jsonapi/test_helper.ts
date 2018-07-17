@@ -15,7 +15,10 @@ limitations under the License.
 */
 
 import * as chai from 'chai';
+import * as express from 'express';
+
 const chaiHttp = require('chai-http');
+
 import { makeServer } from '@conversationai/moderator-backend-core';
 import { omit } from 'lodash';
 import {
@@ -32,7 +35,8 @@ import {
 
 import { fakeArticleModel, fakeCommentModel, fakeUserModel } from '@conversationai/moderator-frontend-web';
 
-const { app: server } = makeServer(true);
+const serverStuff = makeServer(true);
+const server: express.Application = serverStuff.app;
 
 const fakeUsers = [];
 
