@@ -54,14 +54,6 @@ function cleanDatabase(done: any) {
   sequelize.sync({ force: true }).then(() => done(), (e) => done(e));
 }
 
-// function truncateDatabase(done: any) {
-//   if (!isTestEnv()) {
-//     throw new Error('Refusing to destroy database if NODE_ENV is not `test`.');
-//   }
-//
-//   sequelize.truncate({ cascade: true }).then(() => done(), (e) => done(e));
-// }
-
 function dropDatabase(done: any) {
   if (!isTestEnv()) {
     throw new Error('Refusing to destroy database if NODE_ENV is not `test`.');

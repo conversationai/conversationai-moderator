@@ -14,19 +14,26 @@ To generate a JWT token for a service user:
 * Set up the `TOKEN_SECRET` (and `TOKEN_ISSUER`) configuration items as described
 in the [root README](../README.md)
 
-* Create a service user (if you haven't already got one) and remember his USER_ID:
+* Create a service user:
 
 ```bash
 bin/osmod users:create --group service --name "Robot"
 ```
 
-* Get the JW token for that user:
+This produces the following output:
 
-```bash
-bin/osmod users:get-token --id={USER_ID}
+```
+info: User successfully created
+info:  id=17, group=service, name=Robot, email=undefined, [snip]
 ```
 
-where `USER_ID` is the id you remembered above.
+Remember this user's ID (`17` in this case).
+
+* Get the JSON web token for that user:
+
+```bash
+bin/osmod users:get-token --id={ID_REMEMBERED_FROM_PREVIOUS_STEP}
+```
 
 Next, you need to set the `MODERATOR_AUTH` environment variable using the JWT
 you just generated. You also need to set the `MODERATOR_API`.

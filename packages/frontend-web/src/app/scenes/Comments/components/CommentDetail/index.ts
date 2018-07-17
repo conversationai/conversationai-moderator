@@ -325,6 +325,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
   };
 }
 
+// TODO (Issue#27): Fix type
 function mergeProps(
   stateProps: ICommentDetailStateProps,
   dispatchProps: ICommentDetailDispatchProps,

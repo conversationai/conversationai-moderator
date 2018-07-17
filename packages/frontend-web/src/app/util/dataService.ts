@@ -750,8 +750,6 @@ export async function destroyRelationshipModels(
 ): Promise<void> {
   validateModelName(type);
 
-  // TODO: Test this.  Delete might not like that arguments are passed in the body
-  // of the request.  May need to pass data to relationURL rather than axios...
   await axios.delete(relationURL(type, id, relationship), {
     data: relatedIds.map((relatedId) => ({ id: relatedId })),
   });

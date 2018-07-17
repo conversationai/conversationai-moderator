@@ -22,6 +22,7 @@ import { IAppStateRecord } from '../../../../stores';
 import { getCategoryCounts } from '../../../../stores/categories';
 import { DashboardCategories as PureDashboardCategories } from './DashboardCategories';
 
+// TODO (Issue#27): Fix type
 export const DashboardCategories: React.ComponentClass<any> = connect<any>(
   createStructuredSelector({
     categoryCounts: (state: IAppStateRecord) => {
