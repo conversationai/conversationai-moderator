@@ -16,12 +16,14 @@ limitations under the License.
 
 const jwtDecode = require('jwt-decode');
 import axios from 'axios';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
 import { RESTRICT_TO_SESSION } from '../config';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
+import { initialiseClientModel} from '../stores';
 import { checkAuthorization, clearCSRF, getCSRF, getModel } from '../util';
 
-import { Action, createAction, handleActions } from 'redux-actions';
 import { IUserModel } from '../../models';
 
 const LOCAL_STORAGE_TOKEN_KEY = 'moderator/auth_token';
@@ -87,6 +89,7 @@ async function completeAuthentication(token: string, dispatch: IAppDispatch): Pr
   const data = decodeToken(token);
   const user = await loadUser(data['user']);
   await dispatch(completedAuthentication(user));
+  await initialiseClientModel(dispatch);
 }
 
 export function handleToken(token: string, csrf: string): IThunkAction<void> {
