@@ -26,18 +26,18 @@
     "@types/kue": "0.11.1",
     "@types/lodash": "4.14.109",
     "@types/mysql": "2.15.5",
-    "@types/qs": "6.2.31",
+    "@types/qs": "6.5.1",
     "@types/redis": "2.6.0",
     "express": "4.16.3",
     "joi": "10.5.2",
     "kue": "0.11.6",
     "lodash": "4.17.10",
     "mysql": "2.15.0",
-    "qs": "6.4.0",
+    "qs": "6.5.2",
     "redis": "2.7.1",
     "request": "2.87.0"
   },
   "devDependencies": {
-    "nodemon": "1.11.0"
+    "nodemon": "1.18.3"
   }
 }
