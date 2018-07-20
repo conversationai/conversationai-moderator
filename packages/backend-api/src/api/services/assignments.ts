@@ -58,10 +58,7 @@ export function createAssignmentsService(): express.Router {
 
   router.get('/users/:id/count', async (req, res, next) => {
     const user = await User.findById(req.params.id);
-
-    const articles: Array<IArticleInstance> = await (user as any).getAssignedArticles();
-
-    const count = articles.reduce((sum, a) => sum + a.get('unmoderatedCount'), 0);
+    const count = await user.countAssignments();
 
     // So simple, not worth validating the schema.
     res.json({ count });

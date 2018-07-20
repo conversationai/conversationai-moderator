@@ -43,6 +43,7 @@ export interface IUserInstance extends Sequelize.Instance<IUserAttributes> {
 
   getAssignedArticles: Sequelize.BelongsToManyGetAssociationsMixin<IArticleInstance>;
   countAssignedArticles: Sequelize.BelongsToManyCountAssociationsMixin;
+  countAssignments(): number;
 
   getAssignedCategories: Sequelize.BelongsToManyGetAssociationsMixin<ICategoryInstance>;
   countAssignedCategories: Sequelize.BelongsToManyCountAssociationsMixin;
@@ -170,4 +171,10 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
     },
   },
 
+  instanceMethods: {
+    async countAssignments() {
+      const articles: Array<IArticleInstance> = await this.getAssignedArticles();
+      return articles.reduce((sum, a) => sum + a.get('unmoderatedCount'), 0);
+    },
+  },
 });
