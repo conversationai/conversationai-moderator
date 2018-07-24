@@ -38,7 +38,7 @@ export function createAssignmentsService(): express.Router {
     async ({ params: { id } }, paging, include, filters, sort, fields) => {
       const user = await User.findById(id);
 
-      return list(
+      return await list(
         'articles', {
           page: paging,
           include,
@@ -73,7 +73,7 @@ export function createAssignmentsService(): express.Router {
     async ({ params: { id } }, paging, include, filters, sort, fields) => {
       const article = await Article.findById(id);
 
-      return list(
+      return await list(
         'users',
         {
           page: paging,

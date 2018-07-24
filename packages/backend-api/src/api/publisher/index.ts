@@ -190,7 +190,7 @@ export function createPublisherService(): express.Router {
           include.push('comment');
         }
 
-        return list(
+        return await list(
           'decisions',
           {
             page,
