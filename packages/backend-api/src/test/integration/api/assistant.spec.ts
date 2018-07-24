@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as chai from 'chai';
+
 import {
   CommentScoreRequest,
   sequelize,
@@ -26,7 +28,6 @@ import {
 import {
   app,
 } from './test_helper';
-import * as chai from "chai";
 
 const BASE_URL = `/assistant`;
 const prefixed = `${BASE_URL}/`;

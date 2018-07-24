@@ -14,14 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-  INewResource,
-  IParams,
-} from '@conversationai/moderator-jsonapi/src/types';
 import axios from 'axios';
 import { fromJS, List, Map } from 'immutable';
 import { isNaN, pick } from 'lodash';
 import qs from 'qs';
+
+import {
+  INewResource,
+  IParams,
+} from '@conversationai/moderator-jsonapi/src/types';
 import {
   CommentDatedModel,
   CommentScoredModel,
@@ -76,10 +77,10 @@ function validateModelName(name: string): void {
 
 export function validateID(id: any, valueName: string): void {
   // Article ids are can be non-numeric to allow for flexibility with matching upstream publisher article ids
-  if (valueName == "articleId") {
+  if (valueName === 'articleId') {
     // A legal id contains only alphanumeric characters, hyphens or dashes
-    if (/^[a-z0-9_\-]+$/i.test(id) == false) {
-      throw new Error(`Invalid ${valueName} ${id}. Only alphanumeric characters, dashes and underscores are allowed in ${valueName}. Might be an attempted exploit.`)
+    if (/^[a-z0-9_\-]+$/i.test(id) === false) {
+      throw new Error(`Invalid ${valueName} ${id}. Only alphanumeric characters, dashes and underscores are allowed in ${valueName}. Might be an attempted exploit.`);
     }
 
   // All other ids must be integers
@@ -166,9 +167,9 @@ export function relationURL(type: IValidModelNames, id: string, relationship: st
   validateModelName(type);
 
   // We allow articleIds to be alphanumeric
-  const parsedArticleId = type == 'articles' ? id : parseInt(id, 10);
+  const parsedArticleId = type === 'articles' ? id : parseInt(id, 10);
 
-  return `${API_URL}${REST_URL}/${type}/${parsedArticleId}/relationships/${relationship}${serializeParams(params)}`
+  return `${API_URL}${REST_URL}/${type}/${parsedArticleId}/relationships/${relationship}${serializeParams(params)}`;
 }
 
 /**
