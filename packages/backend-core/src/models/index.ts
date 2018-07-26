@@ -103,6 +103,7 @@ export * from './comment_size';
 export * from './comment_top_score';
 export * from './csrf';
 export * from './decision';
+export * from './last_update';
 export * from './moderation_rule';
 export * from './moderator_assignment';
 export * from './preselect';

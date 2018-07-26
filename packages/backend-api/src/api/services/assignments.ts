@@ -21,6 +21,7 @@ import {
   IUserCategoryAssignmentAttributes,
   IUserCategoryAssignmentInstance,
   ModeratorAssignment,
+  updateHappened,
   User,
   UserCategoryAssignment,
 } from '@conversationai/moderator-backend-core';
@@ -91,6 +92,8 @@ export function createAssignmentsService(): express.Router {
 
   async function removeArticleAssignment(userIds: Array<number>, articleIdsInCategory: Array<number>) {
     // Remove all assignmentsForArticles that have articleId that exist in articlesInCategory AND userId === userId
+    // TODO: This looks wrong.  What happens if user1 assigned to article 1 and 2 and user 2 assigned to article 1 and 2
+    //       And we want to remove user 1 article 2 and user 2 article 1.  This will remove them all....
     await ModeratorAssignment.destroy({
       where: {
         userId: {
@@ -178,6 +181,7 @@ export function createAssignmentsService(): express.Router {
       });
     }
     await UserCategoryAssignment.bulkCreate(getUserCategoryAssignment(newUserIds, categoryId));
+    updateHappened();
 
     res.json({ status: 'success' });
 

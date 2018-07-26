@@ -16,6 +16,7 @@ limitations under the License.
 
 import {
   Article,
+  updateHappened,
 } from '../../models';
 import { ICategoryInstance } from '../../models/category';
 
@@ -46,7 +47,7 @@ export async function denormalizeCommentCountsForCategory(category: ICategoryIns
     Article.sum('recommendedCount', query),
   ]);
 
-  return category.update({
+  const c =  category.update({
     unprocessedCount,
     unmoderatedCount,
     moderatedCount,
@@ -58,4 +59,7 @@ export async function denormalizeCommentCountsForCategory(category: ICategoryIns
     batchedCount,
     recommendedCount,
   });
+
+  updateHappened();
+  return c;
 }
