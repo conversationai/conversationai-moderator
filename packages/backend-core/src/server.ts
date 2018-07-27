@@ -15,6 +15,8 @@ limitations under the License.
 */
 
 import * as express from 'express';
+import * as expressWs from 'express-ws';
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const compression = require('compression');
@@ -26,6 +28,7 @@ export function makeServer(testMode?: boolean): {
   start(port: number): void;
 } {
   const app = express();
+  expressWs(app);
 
   if (!testMode) {
     // Turn on GZip.

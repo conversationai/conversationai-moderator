@@ -14,10 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as express from 'express';
+import * as expressWs from 'express-ws';
+import * as passport from 'passport';
+
 import { googleStrategy, jwtStrategy } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
-import * as express from 'express';
-import * as passport from 'passport';
+
 import { createAssistantRouter } from './api/assistant';
 import { createPublisherRouter } from './api/publisher';
 import { createRESTRouter } from './api/rest';
@@ -26,6 +29,7 @@ import { createAuthRouter } from './auth/router';
 
 export function mountAPI(testMode?: boolean): express.Express {
   const app = express();
+  expressWs(app);
 
   app.use((req, _res, next) => {
     (req as any).testMode = testMode;
