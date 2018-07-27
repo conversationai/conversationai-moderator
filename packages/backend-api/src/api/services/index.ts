@@ -25,6 +25,7 @@ import { createModeratedCountsService } from './moderatedCounts';
 import { createSearchService } from './search';
 import { createTextSizesService } from './textSizes';
 import { createTopScoresService } from './topScores';
+import { createUpdateNotificationService } from './updateNotifications';
 
 export function createServicesRouter(): express.Router {
   const router = express.Router({
@@ -42,6 +43,7 @@ export function createServicesRouter(): express.Router {
   router.use('/commentsById', createCommentsByIdService());
   router.use('/topScores', createTopScoresService());
   router.use('/editComment', createEditCommentTextService());
+  router.use('/updates', createUpdateNotificationService());
 
   return router;
 }

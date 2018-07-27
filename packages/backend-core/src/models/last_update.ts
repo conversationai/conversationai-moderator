@@ -87,4 +87,7 @@ export async function maybeNotifyInterested() {
 
 export async function clearInterested() {
   interested = [];
+  if (intervalHandle) {
+    clearInterval(intervalHandle);
+  }
 }

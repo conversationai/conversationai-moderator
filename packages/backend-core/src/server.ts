@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as express from 'express';
 import * as expressWs from 'express-ws';
+import { Server } from 'http';
 
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -25,7 +26,7 @@ import { logger } from './logger';
 
 export function makeServer(testMode?: boolean): {
   app: express.Application;
-  start(port: number): void;
+  start(port: number): Server;
 } {
   const app = express();
   expressWs(app);
@@ -74,7 +75,7 @@ export function makeServer(testMode?: boolean): {
         });
       }
 
-      app.listen(port, () => {
+      return app.listen(port, () => {
         console.log('OSMod listening on port', port);
       });
     },
