@@ -35,8 +35,10 @@ import {
 } from '../../models';
 import { ITopScore } from '../../types';
 import { API_URL } from '../config';
+import { IAppDispatch } from '../stores';
 import { convertArrayFromJSONAPI } from './makeRecordListReducer';
 import { convertFromJSONAPI } from './makeSingleRecordReducer';
+import {getToken} from '../auth/store';
 
 export type IValidModelNames =
     'articles' |
@@ -899,4 +901,24 @@ export async function listAuthorCounts(
   );
 
   return Map<string | number, IAuthorCountsModel>(response.data.data);
+}
+
+let ws: WebSocket = null;
+
+export function connectNotifier(dispatch: IAppDispatch) {
+  if (!ws) {
+    const token = getToken();
+    const baseurl = serviceURL(`updates/summary/?token=${token}`);
+    const url = 'ws:' + baseurl.substr(baseurl.indexOf(':') + 1);
+    ws = new WebSocket(url);
+    ws.onmessage = (data) => {
+      dispatch = dispatch;
+      console.log('Recieved update', data);
+    };
+
+    ws.onclose = (event) => {
+      console.log('closing', event);
+      ws = null;
+    };
+  }
 }
