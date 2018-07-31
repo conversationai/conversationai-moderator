@@ -21,104 +21,106 @@ import {
   sharedTestHelper,
 } from './test_helper';
 
-Object.keys(models).forEach((modelName) => {
-  const {
-    listTests,
-    singleTests,
-  } = sharedTestHelper();
+describe(`JSON API read tests`, () => {
+  Object.keys(models).forEach((modelName) => {
+    const {
+      listTests,
+      singleTests,
+    } = sharedTestHelper();
 
-  describe(`${modelName} API`, () => {
-    /**
-     * List Tests (/modelName)
-     */
-    describe(`/${modelName}`, () => {
-      listTests(`/${modelName}`, models[modelName].all, modelName);
+    describe(`${modelName} API`, () => {
+      /**
+       * List Tests (/modelName)
+       */
+      describe(`/${modelName}`, () => {
+        listTests(`/${modelName}`, models[modelName].all, modelName);
 
-      describe('GET (bad record)', () => {
-        it(`returns a 404`, async () => {
-          let res;
-          res = await chai.request(server).get(`/${modelName}/fake`);
-          expect(res.status).to.equal(404);
+        describe('GET (bad record)', () => {
+          it(`returns a 404`, async () => {
+            let res;
+            res = await chai.request(server).get(`/${modelName}/fake`);
+            expect(res.status).to.equal(404);
+          });
         });
       });
+
+      /**
+       * Get Tests (/modelName/:id)
+       */
+      describe(`/${modelName}/:id`, () => {
+        singleTests(`/${modelName}/${models[modelName].spec.id}`, modelName);
+      });
+
+      /**
+       * Relationship Tests (/modelName/:id/relationships/:relationship)
+       */
+      if (models[modelName].include) {
+        const relationshipPrefix = `/${modelName}/${models[modelName].spec.id}` +
+            `/relationships/${models[modelName].include[0]}`;
+
+        describe(`/${modelName}/:id/relationships/${models[modelName].include[0]}`, () => {
+
+          describe('GET (bad record)', () => {
+            it(`returns a 404`, async () => {
+              let res;
+
+              res = await chai.request(server).get(`/${modelName}/fake/relationships/${models[modelName].include[0]}`);
+              expect(res.status).to.equal(404);
+            });
+          });
+
+          describe('GET (bad relationship)', () => {
+            it(`returns a 404`, async () => {
+              let res;
+
+              res = await chai.request(server).get(`${relationshipPrefix}/fake`);
+              expect(res.status).to.equal(404);
+            });
+          });
+
+          const relationshipItems = models[modelName].spec[models[modelName].include[0]];
+
+          if (Array.isArray(relationshipItems)) {
+            listTests(relationshipPrefix, relationshipItems, models[modelName].include[0]);
+          } else {
+            singleTests(relationshipPrefix, models[modelName].include[1]);
+          }
+        });
+      }
     });
 
-    /**
-     * Get Tests (/modelName/:id)
-     */
-    describe(`/${modelName}/:id`, () => {
-      singleTests(`/${modelName}/${models[modelName].spec.id}`, modelName);
-    });
-
-    /**
-     * Relationship Tests (/modelName/:id/relationships/:relationship)
-     */
     if (models[modelName].include) {
-      const relationshipPrefix = `/${modelName}/${models[modelName].spec.id}` +
-          `/relationships/${models[modelName].include[0]}`;
+        const relatedPrefix = `/${modelName}/${models[modelName].spec.id}` +
+            `/${models[modelName].include[0]}`;
 
-      describe(`/${modelName}/:id/relationships/${models[modelName].include[0]}`, () => {
+        describe(`/${modelName}/:id/${models[modelName].include[0]}`, () => {
 
-        describe('GET (bad record)', () => {
-          it(`returns a 404`, async () => {
-            let res;
+          describe('GET (bad record)', () => {
+            it(`returns a 404`, async () => {
+              let res;
 
-            res = await chai.request(server).get(`/${modelName}/fake/relationships/${models[modelName].include[0]}`);
-            expect(res.status).to.equal(404);
+              res = await chai.request(server).get(`/${modelName}/fake/${models[modelName].include[0]}`);
+              expect(res.status).to.equal(404);
+            });
           });
-        });
 
-        describe('GET (bad relationship)', () => {
-          it(`returns a 404`, async () => {
-            let res;
+          describe('GET (bad related)', () => {
+            it(`returns a 404`, async () => {
+              let res;
 
-            res = await chai.request(server).get(`${relationshipPrefix}/fake`);
-            expect(res.status).to.equal(404);
+              res = await chai.request(server).get(`${relatedPrefix}/fake`);
+              expect(res.status).to.equal(404);
           });
+          });
+
+          const relationshipItems = models[modelName].spec[models[modelName].include[0]];
+
+          if (Array.isArray(relationshipItems)) {
+            listTests(relatedPrefix, relationshipItems, models[modelName].include[0]);
+          } else {
+            singleTests(relatedPrefix, models[modelName].include[1]);
+          }
         });
-
-        const relationshipItems = models[modelName].spec[models[modelName].include[0]];
-
-        if (Array.isArray(relationshipItems)) {
-          listTests(relationshipPrefix, relationshipItems, models[modelName].include[0]);
-        } else {
-          singleTests(relationshipPrefix, models[modelName].include[1]);
-        }
-      });
-    }
+      }
   });
-
-  if (models[modelName].include) {
-      const relatedPrefix = `/${modelName}/${models[modelName].spec.id}` +
-          `/${models[modelName].include[0]}`;
-
-      describe(`/${modelName}/:id/${models[modelName].include[0]}`, () => {
-
-        describe('GET (bad record)', () => {
-          it(`returns a 404`, async () => {
-            let res;
-
-            res = await chai.request(server).get(`/${modelName}/fake/${models[modelName].include[0]}`);
-            expect(res.status).to.equal(404);
-          });
-        });
-
-        describe('GET (bad related)', () => {
-          it(`returns a 404`, async () => {
-            let res;
-
-            res = await chai.request(server).get(`${relatedPrefix}/fake`);
-            expect(res.status).to.equal(404);
-        });
-        });
-
-        const relationshipItems = models[modelName].spec[models[modelName].include[0]];
-
-        if (Array.isArray(relationshipItems)) {
-          listTests(relatedPrefix, relationshipItems, models[modelName].include[0]);
-        } else {
-          singleTests(relatedPrefix, models[modelName].include[1]);
-        }
-      });
-    }
 });

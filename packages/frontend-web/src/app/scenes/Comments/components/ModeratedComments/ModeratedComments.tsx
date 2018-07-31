@@ -573,12 +573,12 @@ export class ModeratedComments
           >
             <div>
               { this.state.showCount && (
-                <span {...css(STYLES.actionToastCount)}>
+                <span key="toastCount" {...css(STYLES.actionToastCount)}>
                   {this.state.toastIcon}
                   {this.state.actionCount}
                 </span>
               )}
-              <p>{this.state.actionText}</p>
+              <p key="actionText">{this.state.actionText}</p>
             </div>
           </ToastMessage>
         </FocusTrap>

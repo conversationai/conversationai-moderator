@@ -583,11 +583,11 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
     return (
       <div>
         { !searchReturned && (
-          <div {...css(STYLES.placeholderBgContainer)}>
+          <div key="searchIcon" {...css(STYLES.placeholderBgContainer)}>
             <SearchIcon {...css(STYLES.placeholderBg)}/>
           </div>
         )}
-        <div {...css({backgroundColor: 'white'}, searchReturned ? {display: 'block'} : {display: 'none'})}>
+        <div key="content" {...css({backgroundColor: 'white'}, searchReturned ? {display: 'block'} : {display: 'none'})}>
           <div {...css(STYLES.resultsHeader, !areNoneSelected && STYLES.resultsActionHeader)}>
             {searchTerm && (
               <p {...css(STYLES.resultsHeadline, !areNoneSelected && STYLES.resultsActionHeadline)}>

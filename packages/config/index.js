@@ -87,6 +87,7 @@ const config = convict({
   database_password: {
     doc: 'Database password',
     format: String,
+    default: undefined,
     env: 'DATABASE_PASSWORD'
   },
 
@@ -175,6 +176,7 @@ const config = convict({
   google_score_auth: {
     doc: 'Auth token for Google score endpoint',
     format: String,
+    default: undefined,
     env: 'GOOGLE_SCORE_AUTH'
   },
 
@@ -188,12 +190,14 @@ const config = convict({
   google_client_id: {
     doc: 'The Google OAuth web client id, found at https://console.developers.google.com',
     format: String,
+    default: undefined,
     env: 'GOOGLE_CLIENT_ID'
   },
 
   google_client_secret: {
     doc: 'The Google OAuth web client secret, found at https://console.developers.google.com',
     format: String,
+    default: undefined,
     env: 'GOOGLE_CLIENT_SECRET'
   },
 

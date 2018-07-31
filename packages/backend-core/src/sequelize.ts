@@ -18,31 +18,24 @@ import { config } from '@conversationai/moderator-config';
 
 import * as Sequelize from 'sequelize';
 
-let mysqlConfig = {
+const mysqlConfig: any = {
   dialect: 'mysql',
   logging: false,
+  host: undefined,
+  port: undefined,
+  dialectOptions: undefined,
 };
 
 if (config.get('database_socket') !== 'nevermind') {
-  mysqlConfig = {
-    ...mysqlConfig,
-    dialectOptions: {
-      socketPath: config.get('database_socket'),
-    },
-  // TODO(ldixon): typehack to fix.
-  } as any;
-} else {
-  mysqlConfig = {
-    ...mysqlConfig,
-    // TODO(ldixon): typehack to fix.
-    host: config.get('database_host'),
-    port: config.get('database_port'),
-  } as any;
+  mysqlConfig.dialectOptions = { socketPath: config.get('database_socket') };
+}
+else {
+  mysqlConfig.host = config.get('database_host');
+  mysqlConfig.port = config.get('database_port');
 }
 
 export const sequelize = new Sequelize(
   config.get('database_name'),
   config.get('database_user'),
   config.get('database_password'),
-  mysqlConfig,
-);
+  mysqlConfig);

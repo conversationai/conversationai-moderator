@@ -6,8 +6,8 @@
     "lint": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
     "build": "npm run compile",
-    "compile": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration",
-    "watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --watch"
+    "compile": "../../node_modules/.bin/tsc --sourceMap --rootdir commands --outDir dist --declaration",
+    "watch": "../../node_modules/.bin/tsc --sourceMap --rootdir commands --outDir dist --declaration --watch"
   },
   "bin": {
     "osmod": "./bin/osmod.js"

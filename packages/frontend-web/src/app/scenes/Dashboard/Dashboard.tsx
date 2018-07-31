@@ -301,7 +301,7 @@ export class Dashboard extends React.Component<IDashboardProps, IDashboardState>
 
               <nav>
                 <DashboardCategories categories={workload} key="workload" />
-                <hr {...css(STYLES.hr)} />
+                <hr key="junk" {...css(STYLES.hr)}/>
                 <DashboardCategories categories={categories} key="categories" />
               </nav>
             </div>

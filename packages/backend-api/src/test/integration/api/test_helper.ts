@@ -15,12 +15,16 @@ limitations under the License.
 */
 
 import * as chai from 'chai';
+import * as express from 'express';
+
 const chaiHttp = require('chai-http');
+
 import { makeServer } from '@conversationai/moderator-backend-core';
 import { mountAPI } from '../../../index';
 
 chai.use(chaiHttp);
 
-const { app } = makeServer(true);
+const serverStuff = makeServer(true);
+const app: express.Application = serverStuff.app;
 app.use('/', mountAPI(true));
 export { app };

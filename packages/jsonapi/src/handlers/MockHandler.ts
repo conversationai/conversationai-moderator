@@ -176,7 +176,7 @@ export class MockHandler implements IModelHandler {
 
   create(type: string, data: INewResource): Promise<IItemDetails> {
     const serializedResource = cloneDeep(data) as IResourceComplete;
-    serializedResource.id = `created-${Math.floor(Math.random() * 1000)}`;
+    serializedResource.id = `${Math.floor(Math.random() * 1000) + 1000}`;
 
     const r = this.serializers[type].deserialize(serializedResource);
 

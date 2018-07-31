@@ -334,112 +334,107 @@ export class LazyArticleList extends React.Component<ILazyArticleList> {
     const rightmostColumnWidth = 235;
     const hasSortColumn = !!sortOptions;
 
+    const bodyColumnHeader = () => {
+      return (
+        <div {...css(HEADER_STYLES.header, HEADER_STYLES.centerContentLeft, )}>
+          <div {...css(HEADER_STYLES.headerRow)}>
+            <h1 {...css(HEADER_STYLES.title, { paddingLeft: GUTTER_DEFAULT_SPACING }, )}>
+              Articles
+            </h1>
+          </div>
+          <div {...css(HEADER_STYLES.categoryRow, HEADER_STYLES.centerContentLeft, {paddingLeft: GUTTER_DEFAULT_SPACING}, )} >
+            <DashboardCategoryItem
+              category={category}
+              categoryModerators={categoryModerators}
+              onAddCategoryModeratorClick={onAddCategoryModeratorClick}
+            />
+          </div>
+        </div>
+      );
+    };
+
     const bodyColumn = (
       <Column
-        header={(
-          <div
-            {...css(
-              HEADER_STYLES.header,
-              HEADER_STYLES.centerContentLeft,
-            )}
-          >
-            <div {...css(HEADER_STYLES.headerRow)}>
-              <h1
-                {...css(
-                  HEADER_STYLES.title,
-                  { paddingLeft: GUTTER_DEFAULT_SPACING },
-                )}
-              >
-                Articles
-              </h1>
-            </div>
-            <div
-              {...css(
-                HEADER_STYLES.categoryRow,
-                HEADER_STYLES.centerContentLeft,
-                {paddingLeft: GUTTER_DEFAULT_SPACING},
-              )}
-            >
-              <DashboardCategoryItem
-                category={category}
-                categoryModerators={categoryModerators}
-                onAddCategoryModeratorClick={onAddCategoryModeratorClick}
-              />
-            </div>
-          </div>
-        )}
+        header={bodyColumnHeader}
         flexGrow={1}
         width={200}
         cell={this.getBodyColumnCell}
       />
     );
 
+    const newColumnHeader = () => {
+      return (
+        <div {...css(HEADER_STYLES.header, HEADER_STYLES.centerContentLeft, )} >
+          <div {...css(ROW_STYLES.alignButton, HEADER_STYLES.headerRow)}>
+            <button key="newButton" onClick={onNewClick} {...css(HEADER_STYLES.newButton, BUTTON_RESET, {cursor: 'pointer'})}>
+              <div {...css(HEADER_STYLES.header, HEADER_STYLES.centerContentLeft)}>New</div>
+            </button>
+          </div>
+          <div {...css(HEADER_STYLES.categoryRow, HEADER_STYLES.centerContentLeft)}>
+            {categoryId !== 'assignments' && (
+              <Link
+                key={`${categoryId}`}
+                to={categoryId === 'deferred' ? '/categories/all/moderated/deferred' : `/categories/${categoryId}`}
+                {...css(HEADER_STYLES.count)}
+              >
+                <p>{categoryCounts.get(categoryId && categoryId.toString())}</p>
+              </Link>
+            )}
+          </div>
+        </div>
+      );
+    };
+
     const newColumn = (
       <Column
-        header={(
-          <div
-            {...css(
-              HEADER_STYLES.header,
-              HEADER_STYLES.centerContentLeft,
-            )}
-          >
-            <div {...css(ROW_STYLES.alignButton, HEADER_STYLES.headerRow)}>
-              <button key="newButton" onClick={onNewClick} {...css(HEADER_STYLES.newButton, BUTTON_RESET, { cursor: 'pointer' })}>
-                <div {...css(HEADER_STYLES.header, HEADER_STYLES.centerContentLeft)}>New</div>
-              </button>
-            </div>
-            <div {...css(HEADER_STYLES.categoryRow, HEADER_STYLES.centerContentLeft)}>
-              { categoryId !== 'assignments' && (
-                <Link
-                  key={`${categoryId}`}
-                  to={categoryId === 'deferred' ? '/categories/all/moderated/deferred' : `/categories/${categoryId}`}
-                  {...css(HEADER_STYLES.count)}
-                >
-                  <p>{categoryCounts.get(categoryId && categoryId.toString())}</p>
-                </Link>
-              )}
-            </div>
-          </div>
-        )}
+        header={newColumnHeader}
         width={newColumnWidth}
         cell={this.getNewColumnCell}
       />
     );
 
-    const sortColumnHeader = hasSortColumn && (
-      <div {...css(HEADER_STYLES.header, HEADER_STYLES.centerContentLeft)}>
-        <label htmlFor="sorted-type" {...css(OFFSCREEN)}>
-          Sort articles by
-        </label>
-        <div {...css(HEADER_STYLES.headerRow)}>
-          <div {...css(HEADER_STYLES.dropdown)}>
-            <select
-              key={`sort options header`}
-              id="sorted-type"
-              onChange={onSortChange}
-              {...css(HEADER_STYLES.select)}
-              value={selectedSort}
-            >
-              {sortOptions.map((option) => (
-                <option {...css(HEADER_STYLES.option)} key={option.key} value={option.key}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <span aria-hidden="true" {...css(HEADER_STYLES.arrow)} />
+    let sortColumn;
+    if (hasSortColumn) {
+      const sortColumnHeader = () => {
+        return (
+          <div {...css(HEADER_STYLES.header, HEADER_STYLES.centerContentLeft)}>
+            <label htmlFor="sorted-type" {...css(OFFSCREEN)}>
+              Sort articles by
+            </label>
+            <div {...css(HEADER_STYLES.headerRow)}>
+              <div {...css(HEADER_STYLES.dropdown)}>
+                <select
+                  key={`sort options header`}
+                  id="sorted-type"
+                  onChange={onSortChange}
+                  {...css(HEADER_STYLES.select)}
+                  value={selectedSort}
+                >
+                  {sortOptions.map((option) => (
+                    <option {...css(HEADER_STYLES.option)} key={option.key} value={option.key}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <span aria-hidden="true" {...css(HEADER_STYLES.arrow)} />
+              </div>
+            </div>
+            <div {...css(HEADER_STYLES.categoryRow, HEADER_STYLES.centerContentLeft)} />
           </div>
-        </div>
-        <div {...css(HEADER_STYLES.categoryRow, HEADER_STYLES.centerContentLeft)} />
-      </div>
-    );
+        );
+      };
 
-    const sortColumn = hasSortColumn && (
-      <Column
-        header={sortColumnHeader}
-        width={rightmostColumnWidth}
-        cell={this.getSortColumnCell}
-      />
-    );
+      sortColumn = (
+        <Column
+          header={sortColumnHeader}
+          width={rightmostColumnWidth}
+          cell={this.getSortColumnCell}
+        />
+      );
+    }
+    else {
+      sortColumn = '';
+    }
 
     return (
       <Table
