@@ -140,7 +140,7 @@ The Admin user and other humans get authenticated using Google's OAuth server, s
 To add a service user for the Perspective API proxy, use the following command:
 
 ```bash
-./bin/osmod users:create --group service --name "PerspectiveProxy" --moderator "perspective-proxy" --endpoint=<proxy URL>
+./bin/osmod users:create --group service --name "PerspectiveProxy" --moderator-type "perspective-proxy" --endpoint=<proxy URL>
 ```
 
 where `<proxy URL>` is the URL of [The Perspective API proxy] you plan on using.  (See below.)
