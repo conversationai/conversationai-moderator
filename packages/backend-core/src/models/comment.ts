@@ -34,7 +34,10 @@ export interface ICommentAttributes {
   replyId?: number | null;
   authorSourceId: string;
   text: string;
-  author: any; // Actually, should be an IAuthorAttributes, or client will not be happy.
+  author: string | IAuthorAttributes;
+               // TODO:  Actually, this must be an IAuthorAttributes, or client will not be happy.
+               //        But current version of Sequelize fetches JSON data as strings that we have to decode
+               //        May be able to fix this in a later version of Sequelize
   isModerated?: boolean;
   isScored?: boolean;
   isAccepted?: boolean | null;
