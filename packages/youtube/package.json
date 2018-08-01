@@ -1,0 +1,22 @@
+{
+  "name": "conversationai-moderator-youtube",
+  "version": "1.1.0",
+  "description": "Interface with a YouTube comment stream",
+  "scripts": {
+    "lint": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
+    "lint:fix": "find commands -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
+    "build": "npm run compile",
+    "compile": "../../node_modules/.bin/tsc --sourceMap --outDir dist --rootDir commands --declaration",
+    "watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --rootDir commands --declaration --watch"
+  },
+  "dependencies": {
+    "@conversationai/moderator-backend-core": "1.1.0",
+    "@conversationai/moderator-config": "1.1.0",
+    "@types/request": "2.47.0",
+    "@types/yargs": "11.0.0",
+    "google-auth-library": "1.6.1",
+    "googleapis": "32.0.0",
+    "request": "2.87.0",
+    "yargs": "11.1.0"
+  }
+}

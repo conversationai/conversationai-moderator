@@ -272,7 +272,13 @@ Represents a log of decisions made by OSMod.
 - categoryId
 
 ### Category
+
+Represents a higher level collection of articles.  Moderation Rules are configured
+at the category level and apply to all articles in the category.
+Moderators can be assigned at this level.
+
 - id (int) (required)
+- sourceId (string) (optional) (Original id from publisher)
 - label (string) (required)
 - isActive (tinyint) (required)
 - unprocessedCount (int) (Denormalize SUM of articles' unprocessedCount)

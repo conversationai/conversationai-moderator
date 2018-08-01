@@ -122,7 +122,9 @@ export async function makeComment(obj = {}): Promise<ICommentInstance> {
     sourceId: `something ${commentCounter++}`,
     authorSourceId: 'something',
     text: 'words',
-    author: {},
+    author: {
+      name: 'Joe Bloggs',
+    },
     flaggedCount: 0,
     recommendedCount: 0,
     sourceCreatedAt: '2012-10-29T21:54:07.609Z',

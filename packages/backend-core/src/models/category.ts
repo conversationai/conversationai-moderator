@@ -20,6 +20,7 @@ import { IUserInstance } from './user';
 
 export interface ICategoryAttributes {
   label: string;
+  sourceId?: string;
   isActive?: boolean;
   extra?: any;
   unprocessedCount?: number;
@@ -52,6 +53,11 @@ export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>
     type: Sequelize.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
+  },
+
+  sourceId: {
+    type: Sequelize.CHAR(255),
+    allowNull: true,
   },
 
   label: {

@@ -20,6 +20,13 @@ import { IArticleInstance } from './article';
 import { ICommentSummaryScoreInstance } from './comment_summary_score';
 import { IDecisionInstance } from './decision';
 
+export interface IAuthorAttributes {
+  name: string;
+  email?: string;
+  location?: string;
+  avatar?: string;
+}
+
 export interface ICommentAttributes {
   sourceId: string;
   articleId: number | null;
@@ -27,7 +34,10 @@ export interface ICommentAttributes {
   replyId?: number | null;
   authorSourceId: string;
   text: string;
-  author: any;
+  author: string | IAuthorAttributes;
+               // TODO:  Actually, this must be an IAuthorAttributes, or client will not be happy.
+               //        But current version of Sequelize fetches JSON data as strings that we have to decode
+               //        May be able to fix this in a later version of Sequelize
   isModerated?: boolean;
   isScored?: boolean;
   isAccepted?: boolean | null;
