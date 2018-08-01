@@ -110,6 +110,7 @@ export function createUpdateNotificationService(): express.Router {
     let si = socketItems.get(userId);
     if (!si) {
       si = {userId, ws, lastUserSummary: null};
+      socketItems.set(userId, si);
     }
 
     if (lastGlobalSummaryMessage === null) {
@@ -127,4 +128,13 @@ export function createUpdateNotificationService(): express.Router {
   });
 
   return router;
+}
+
+// Used in testing
+export function destroyUpdateNotificationService() {
+  lastGlobalSummaryMessage = null;
+  for (const si of socketItems.values()) {
+    si.ws.close();
+  }
+  socketItems.clear();
 }

@@ -18,12 +18,19 @@ import * as chai from 'chai';
 
 import {
   denormalizeCommentCountsForArticle,
+} from '@conversationai/moderator-backend-core';
+
+import {
+  Article,
+  Category,
   ModeratorAssignment,
+  UserCategoryAssignment,
 } from '@conversationai/moderator-backend-core';
 
 import {
   expect,
   makeArticle,
+  makeCategory,
   makeComment,
   makeUser,
 } from '../../test_helper';
@@ -34,15 +41,22 @@ import {
 const BASE_URL = `/services/assignments`;
 
 describe(BASE_URL, () => {
+  beforeEach(async () => {
+    this.category = await makeCategory();
+    this.article = await makeArticle({categoryId: this.category.id});
+    await makeComment({articleId: this.article.id});
+    denormalizeCommentCountsForArticle(this.article);
+    this.user = await makeUser();
+  });
+
+  afterEach (async () => {
+    await ModeratorAssignment.destroy({where: {}});
+    await Article.destroy({where: {}});
+    await Category.destroy({where: {}});
+  });
+
   describe('/users/:id/count', () => {
     const url = `${BASE_URL}/users/:id/count`;
-
-    beforeEach(async () => {
-      this.article = await makeArticle();
-      await makeComment({articleId: this.article.id});
-      denormalizeCommentCountsForArticle(this.article);
-      this.user = await makeUser();
-    });
 
     it('Fetch counts of assigned comments', async () => {
       {
@@ -62,6 +76,40 @@ describe(BASE_URL, () => {
         const {status, body} = await apiClient.get(url.replace(':id', this.user.id));
         expect(status).to.be.equal(200);
         expect(body.count).to.be.equal(1);
+      }
+    });
+  });
+
+  describe('/categories/:id', () => {
+    const url = `${BASE_URL}/categories/:id`;
+    it('Assign a moderator to a category', async () => {
+      const bca = await UserCategoryAssignment.findAndCountAll({where: {}});
+      expect(bca.count).to.be.equal(0);
+      const baa = await ModeratorAssignment.findAndCountAll({where: {}});
+      expect(baa.count).to.be.equal(0);
+
+      {
+        const apiClient = chai.request(app);
+        const {status, body} = await apiClient.post(url.replace(':id', this.category.id)).send({data: [this.user.id]});
+        expect(status).to.be.equal(200);
+        expect(body.status).to.be.equal('success');
+
+        const aca = await UserCategoryAssignment.findAndCountAll({where: {}});
+        expect(aca.count).to.be.equal(1);
+        const aaa = await ModeratorAssignment.findAndCountAll({where: {}});
+        expect(aaa.count).to.be.equal(1);
+      }
+
+      {
+        const apiClient = chai.request(app);
+        const {status, body} = await apiClient.post(url.replace(':id', this.category.id)).send({data: []});
+        expect(status).to.be.equal(200);
+        expect(body.status).to.be.equal('success');
+
+        const aca = await UserCategoryAssignment.findAndCountAll({where: {}});
+        expect(aca.count).to.be.equal(0);
+        const aaa = await ModeratorAssignment.findAndCountAll({where: {}});
+        expect(aaa.count).to.be.equal(0);
       }
     });
   });

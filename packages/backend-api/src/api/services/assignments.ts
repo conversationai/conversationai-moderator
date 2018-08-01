@@ -21,7 +21,6 @@ import {
   IUserCategoryAssignmentAttributes,
   IUserCategoryAssignmentInstance,
   ModeratorAssignment,
-  updateHappened,
   User,
   UserCategoryAssignment,
 } from '@conversationai/moderator-backend-core';
@@ -181,7 +180,6 @@ export function createAssignmentsService(): express.Router {
       });
     }
     await UserCategoryAssignment.bulkCreate(getUserCategoryAssignment(newUserIds, categoryId));
-    updateHappened();
 
     res.json({ status: 'success' });
 

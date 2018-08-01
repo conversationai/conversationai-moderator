@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { updateHappened } from './last_update';
 
 export interface IModeratorAssignmentAttributes {
   id?: number;
@@ -68,5 +69,10 @@ export const ModeratorAssignment = sequelize.define<
         onDelete: 'CASCADE',
       });
     },
+  },
+
+  hooks: {
+    afterBulkCreate: updateHappened,
+    afterBulkDestroy: updateHappened,
   },
 });
