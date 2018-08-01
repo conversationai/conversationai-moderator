@@ -1,9 +1,7 @@
 .data
 dist
-**/dist
-**/dist-commonjs
+dist-commonjs
 node_modules
-**/node_modules
 .vagrant
 .dockerignore
 Dockerfile

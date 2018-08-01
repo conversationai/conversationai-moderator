@@ -1,21 +1,14 @@
-# Local Application
+# Run application locally in a docker collection
 
-## Requirements
-1. [Docker](https://www.docker.com/)
-2. [Docker-Compose](https://docs.docker.com/compose/)
+The scripts and configuration files contained in this directory create 3 containers:
 
-## Starting the application
-1. Run
-```sh
-./bin/start.sh --email "your@email.com" --name "Your Name"
-```
+- A MySQL database container
+- A Redis datastore container
+- A container for everything else
 
-`start.sh` starts a docker-composed database, redis and single application (with frontend, worker and api). It then runs migrations and creates a user.
+The contents of the latter container are taken from the local filesystem.
 
-## Stopping the application
-1. Run
-```sh
-./bin/stop.sh
-```
+You'll find details on how to create and use these containers in the
+root [README.md](../../README.md)
 
-`stop.sh` removes the database files and kills the running docker-compose instance.
+

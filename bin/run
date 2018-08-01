@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd packages/backend-api
+PORT=8080 node ./server.js &
+cd -
+
+cd packages/frontend-web
+PORT=8000 API_URL="http://localhost:8080" node tooling/server.js
