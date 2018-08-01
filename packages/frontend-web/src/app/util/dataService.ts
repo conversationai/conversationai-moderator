@@ -34,11 +34,10 @@ import {
   ICommentSummaryScoreModel,
 } from '../../models';
 import { ITopScore } from '../../types';
+import { getToken } from '../auth/store';
 import { API_URL } from '../config';
-import { IAppDispatch } from '../stores';
 import { convertArrayFromJSONAPI } from './makeRecordListReducer';
 import { convertFromJSONAPI } from './makeSingleRecordReducer';
-import {getToken} from '../auth/store';
 
 export type IValidModelNames =
     'articles' |
@@ -539,21 +538,6 @@ export async function listDeferredArticles(
 }
 
 /**
- * Count the number of unmoderated comments currently assigned to a user.
- */
-export async function countAssignedArticleComments(
-  userId: string,
-): Promise<number> {
-  validateID(userId, `userId`);
-
-  const { data }: any = await axios.get(
-    serviceURL('assignments', `/users/${parseInt(userId, 10)}/count`),
-  );
-
-  return data.count;
-}
-
-/**
  * Count the number of deferred comments currently assigned to a user.
  */
 export async function countDeferredArticleComments(): Promise<number> {
@@ -905,15 +889,21 @@ export async function listAuthorCounts(
 
 let ws: WebSocket = null;
 
-export function connectNotifier(dispatch: IAppDispatch) {
+export interface IUserSummary {
+  assignments: number;
+}
+
+export function connectNotifier(userNotificationHandler: (data: IUserSummary) => void) {
   if (!ws) {
     const token = getToken();
     const baseurl = serviceURL(`updates/summary/?token=${token}`);
     const url = 'ws:' + baseurl.substr(baseurl.indexOf(':') + 1);
     ws = new WebSocket(url);
-    ws.onmessage = (data) => {
-      dispatch = dispatch;
-      console.log('Recieved update', data);
+    ws.onmessage = (message) => {
+      const body: any = JSON.parse(message.data);
+      if (body.type === 'user') {
+        userNotificationHandler(body.data as IUserSummary);
+      }
     };
 
     ws.onclose = (event) => {

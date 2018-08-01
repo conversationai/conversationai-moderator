@@ -28,7 +28,6 @@ import { IAppStateRecord } from '../../stores';
 import {
   getCategories,
   getCategoriesIsLoading,
-  loadAssignmentCounts,
   loadCategories,
   loadDeferredCounts,
 } from '../../stores/categories';
@@ -83,7 +82,6 @@ export const Dashboard = compose(
   provideHooks<IRedialLocals>({
     fetch: ({ dispatch }) => Promise.all([
       dispatch(loadCategories()),
-      dispatch(loadAssignmentCounts()),
       dispatch(loadDeferredCounts()),
       dispatch(loadUsers()),
     ]),
