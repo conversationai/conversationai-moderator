@@ -21,11 +21,12 @@ import { IArticleInstance } from './article';
 import { ICategoryInstance } from './category';
 import { updateHappened } from './last_update';
 
+export const USER_GROUP_ADMIN = 'admin';
 export const USER_GROUP_SERVICE = 'service';
 
 export const USER_GROUPS = [
   'general',
-  'admin',
+  USER_GROUP_ADMIN,
   USER_GROUP_SERVICE,
 ];
 
@@ -123,7 +124,7 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
      * Require an email address for non-service users
      */
     requireEmailForHumans() {
-      if (this.get('group') !== 'service') {
+      if (this.get('group') !== USER_GROUP_SERVICE) {
         const validEmail = Joi.validate(this.get('email'), Joi.string().email().required(), { convert: false });
         if (validEmail.error) {
           throw new Error('Email address required for human users');
@@ -188,6 +189,7 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
       });
     },
   },
+
   hooks: {
     afterCreate: updateHappened,
     afterDelete: updateHappened,

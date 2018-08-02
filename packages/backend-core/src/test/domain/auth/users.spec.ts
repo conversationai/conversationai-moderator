@@ -16,7 +16,9 @@ limitations under the License.
 
 import * as chai from 'chai';
 import {
+  ensureFirstUser,
   findOrCreateUserSocialAuth,
+  isFirstUserInitialised,
   isValidUser,
 } from '../../../domain/auth';
 import {
@@ -24,6 +26,7 @@ import {
   UserSocialAuth,
 } from '../../../models';
 import { sequelize } from '../../../sequelize';
+import {createUser} from '../comments/fixture';
 
 const assert = chai.assert;
 
@@ -166,6 +169,116 @@ describe('Auth Domain Users Tests', function() {
       } catch (err) {
         assert.instanceOf(err, sequelize.UniqueConstraintError);
       }
+    });
+  });
+
+  describe('Ensure availability of first admin user', () => {
+    const user1Data = {
+      group: 'admin',
+      name: 'Enabled Admin',
+      email: 'sansa@stark.com',
+      isActive: true
+    };
+
+    const user2Data = {
+      group: 'admin',
+      name: 'Disabled Admin',
+      email: 'theon@stark.com',
+      isActive: false
+    };
+
+    const user3Data = {
+      group: 'general',
+      name: 'Enabled ordinary usere',
+      email: 'arya@stark.com',
+      isActive: true
+    };
+
+    const createdUser = {
+      group: 'admin',
+      name: 'Administrator',
+      email: 'test@example.com',
+      isActive: true
+    };
+
+    async function assertUser(user: any) {
+      const dbu = await User.findOne({where: {email: user.email}});
+      assert.equal(dbu.get('name'), user.name);
+      assert.equal(dbu.get('group'), user.group);
+      assert.equal(dbu.get('isActive'), user.isActive);
+    }
+
+    it('Make sure nothing happens if we already have a first user', async () => {
+      for (const u of [user1Data, user2Data, user3Data]) {
+        await createUser(u);
+      }
+
+      assert.equal(await User.count({where: {}}), 3, 'users created');
+      assert.equal(await User.count({where: {isActive: true}}), 2, 'users active');
+      assert.equal(await User.count({where: {group: 'admin'}}), 2, 'users admin');
+      assert.equal(await User.count({where: {group: 'admin', isActive: true}}), 1, 'users active admin');
+
+      assert.isTrue(await isFirstUserInitialised());
+      await ensureFirstUser(createdUser);
+
+      const count = await User.count({where: {}});
+      assert.equal(count, 3, 'same number of users');
+      for (const u of [user1Data, user2Data, user3Data]) {
+        await assertUser(u);
+      }
+    });
+
+    it('Make sure we create a new user when currently no admin', async () => {
+      for (const u of [user2Data, user3Data]) {
+        await createUser(u);
+      }
+
+      assert.isFalse(await isFirstUserInitialised());
+      await ensureFirstUser(createdUser);
+
+      const count = await User.count({where: {}});
+      assert.equal(count, 3);
+      for (const u of [createdUser, user2Data, user3Data]) {
+        await assertUser(u);
+      }
+    });
+
+    it('Make sure we enable disabled admin user', async () => {
+      for (const u of [user2Data, user3Data]) {
+        await createUser(u);
+      }
+
+      assert.isFalse(await isFirstUserInitialised());
+      await ensureFirstUser(user2Data);
+
+      const count = await User.count({where: {}});
+      assert.equal(count, 2);
+      await assertUser(user3Data);
+      await assertUser({
+        group: 'admin',
+        name: user2Data.name,
+        email: user2Data.email,
+        isActive: true
+      });
+    });
+
+    it('Make sure we upgrade a general user to admin user', async () => {
+      for (const u of [user2Data, user3Data]) {
+        await createUser(u);
+      }
+
+      assert.isFalse(await isFirstUserInitialised());
+      await ensureFirstUser(user3Data);
+
+      const count = await User.count({where: {}});
+      assert.equal(count, 2);
+      await assertUser(user2Data);
+      await assertUser({
+        group: 'admin',
+        name: user3Data.name,
+        email: user3Data.email,
+        isActive: true
+      });
     });
   });
 });

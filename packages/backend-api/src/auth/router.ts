@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { createToken, CSRF, IUserInstance } from '@conversationai/moderator-backend-core';
+import { createToken, CSRF, isFirstUserInitialised, IUserInstance} from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 import * as express from 'express';
 import * as moment from 'moment';
@@ -32,6 +32,17 @@ export function createAuthRouter(): express.Router {
   // a vaid JWT Authorization header:
   //
   // Authorization: JWT (token string)
+
+  router.get(
+    '/auth/healthcheck',
+    async (_1, res, _2) => {
+      if (await isFirstUserInitialised()) {
+        res.send('ok');
+        return;
+      }
+      res.status(218).send('Still initialising');
+    },
+  );
 
   router.get(
     '/auth/test',

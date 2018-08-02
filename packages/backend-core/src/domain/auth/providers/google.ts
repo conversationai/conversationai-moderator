@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { config } from '@conversationai/moderator-config';
-import { findOrCreateUserSocialAuth } from '../users';
+import { ensureFirstUser, findOrCreateUserSocialAuth, isFirstUserInitialised } from '../users';
 const Strategy = require('passport-google-oauth20').Strategy;
 
 import { IUserInstance, User } from '../../../models';
@@ -47,7 +47,6 @@ export function mapAuthDataToUser(profile: IGoogleProfile) {
   const email = profile.emails[0].value;
 
   return {
-    group: 'general',
     email,
     name: profile.displayName,
   };
@@ -76,15 +75,16 @@ export function mapAuthDataToUserSocialAuth(accessToken: string, refreshToken: s
  */
 export async function verifyGoogleToken(accessToken: string, refreshToken: string, profile: IGoogleProfile): Promise<IUserInstance> {
 
-  // Map user's data for a User model instance
-
   const userData = mapAuthDataToUser(profile);
 
   if (!userData) {
     throw new Error('Error extracting user auth data');
   }
 
-  // Run the pipeline: find the user, find or create the social auth
+  if (!await isFirstUserInitialised()) {
+    await ensureFirstUser(userData);
+  }
+
   const user = await User.findOne({
     where: {
       email: userData.email,
