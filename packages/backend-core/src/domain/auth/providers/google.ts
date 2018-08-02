@@ -95,6 +95,10 @@ export async function verifyGoogleToken(accessToken: string, refreshToken: strin
     throw new AuthError(`User with email ${userData.email} tried to log in, but they were not in the database`);
   }
 
+  if (!user.get('isActive')) {
+    throw new AuthError(`User with email ${userData.email} has been deactivated.`);
+  }
+
   const userSocialAuthData = mapAuthDataToUserSocialAuth(accessToken, refreshToken, profile);
   await findOrCreateUserSocialAuth(user, userSocialAuthData);
 
