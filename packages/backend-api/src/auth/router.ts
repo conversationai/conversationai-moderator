@@ -14,13 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { createToken, CSRF, isFirstUserInitialised, IUserInstance} from '@conversationai/moderator-backend-core';
-import { config } from '@conversationai/moderator-config';
 import * as express from 'express';
 import * as moment from 'moment';
 import * as passport from 'passport';
 import * as qs from 'qs';
-const { generate } = require('randomstring');
+import { generate } from 'randomstring';
+
+import { createToken, CSRF, isFirstUserInitialised, IUserInstance} from '@conversationai/moderator-backend-core';
+import { config } from '@conversationai/moderator-config';
 
 export function createAuthRouter(): express.Router {
   const router = express.Router({

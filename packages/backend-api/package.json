@@ -35,6 +35,8 @@
     "@types/passport-google-oauth2": "0.1.2",
     "@types/passport-jwt": "3.0.1",
     "@types/qs": "6.5.1",
+    "@types/randomstring": "1.1.6",
+    "@types/redis": "0.12.36",
     "@types/request": "2.47.0",
     "@types/sequelize": "3.4.43",
     "@types/underscore.string": "0.0.30",

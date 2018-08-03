@@ -14,13 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { withRouter } from 'react-router';
-const { generate } = require('randomstring');
 import { pick } from 'lodash';
 import qs from 'qs';
+import { generate } from 'randomstring';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+
 import { IReturnURL, setCSRF, setReturnURL } from '../../util';
 import { Login as PureLogin } from './Login';
 
