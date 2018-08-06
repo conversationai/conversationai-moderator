@@ -16,10 +16,11 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
+import { generate } from 'randomstring';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
-import { css, partial, stylesheet } from '../../util';
 const FocusTrap = require('focus-trap-react');
+
 import {
   CategoryModel,
   ICategoryModel, IPreselectModel,
@@ -30,6 +31,7 @@ import {
   TaggingSensitivityModel, TagModel,
 } from '../../../models';
 import { IConfirmationAction } from '../../../types';
+import { getToken } from '../../auth/store';
 import {
   Button,
   Header,
@@ -37,7 +39,9 @@ import {
   Link,
   Scrim,
 } from '../../components';
+import { API_URL } from '../../config';
 import { IAppDispatch } from '../../stores';
+import {css, partial, setCSRF, stylesheet} from '../../util';
 import { AddButton } from './components/AddButton';
 import { AddUsers } from './components/AddUsers';
 import { EditUsers } from './components/EditUsers';
@@ -656,6 +660,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       }),
     ]).concat(categories) as List<ICategoryModel>;
 
+    const csrf = generate();
+    setCSRF(csrf);
+    const token = getToken();
+    const youtubeUrl = `${API_URL}/youtube/connect?&csrf=${csrf}&token=${token}`;
+
     return (
       <div {...css(STYLES.base)}>
         <div {...css(STYLES.header)}>
@@ -848,6 +857,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </h2>
             </div>
             <div key="pluginsContent" {...css(STYLES.section)}>
+              <h3>YouTube</h3>
+              <p>Click the link below, and select a user and one of that user's YouTube accounts.</p>
+              <p>We'll then start syncing comments with the channels and videos in that account.</p>
+              <p><a href={youtubeUrl} {...css(STYLES.pluginLink)}>Connect Your YouTube Account</a></p>
+
               <h3>Wordpress</h3>
               <p>Install the Wordpress plugin to use Moderator with your Wordpress blog.</p>
               <p>
