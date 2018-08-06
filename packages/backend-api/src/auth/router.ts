@@ -15,13 +15,13 @@ limitations under the License.
 */
 
 import * as express from 'express';
-import * as moment from 'moment';
 import * as passport from 'passport';
 import * as qs from 'qs';
-import { generate } from 'randomstring';
 
-import { createToken, CSRF, isFirstUserInitialised, IUserInstance} from '@conversationai/moderator-backend-core';
+import { createToken, isFirstUserInitialised, IUserInstance} from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
+
+import {generateServerCSRF, getClientCSRF} from './utils';
 
 export function createAuthRouter(): express.Router {
   const router = express.Router({
@@ -58,24 +58,11 @@ export function createAuthRouter(): express.Router {
   router.get(
     '/auth/login/google',
     async (req, res, next) => {
-      const clientCSRF = req.query.csrf;
+      const serverCSRF = await generateServerCSRF(req, res, next);
 
-      if (!clientCSRF) {
-        res.status(403).send('No CSRF included in login request.');
-        next();
-
+      if (res.headersSent) {
         return;
       }
-
-      const serverCSRF = generate();
-
-      const referrer = req.query.referrer;
-
-      await CSRF.create({
-        serverCSRF,
-        clientCSRF,
-        referrer,
-      });
 
       passport.authenticate('google', {
         session: false,
@@ -101,12 +88,16 @@ export function createAuthRouter(): express.Router {
       passport.authenticate('google', {
         session: false,
       }, async (err: any, user: IUserInstance | false, info: any) => {
-        if (err) {
-          console.log('Auth error', err);
 
+        const {clientCSRF, referrer, errorMessage} = await getClientCSRF(req);
+
+        if (err) {
           return redirectToFrontend(
             res,
             false,
+            {
+              errorMessage: `Authentication error: ${err.toString()}`,
+            },
           );
         }
 
@@ -120,67 +111,26 @@ export function createAuthRouter(): express.Router {
           );
         }
 
-        const { query } = req;
-        const serverCSRF = query.state;
-
-        if (!serverCSRF) {
-          console.error('No CSRF (state) included in login redirect.');
-
+        if (errorMessage) {
           return redirectToFrontend(
             res,
             false,
             {
-              errorMessage: 'CSRF missing.',
-            },
-          );
-        }
-
-        const csrf = await CSRF.findOne({
-          where: { serverCSRF },
-        });
-
-        if (!csrf) {
-          console.error('CSRF did not match database.');
-
-          return redirectToFrontend(
-            res,
-            false,
-            {
-              errorMessage: 'CSRF not valid.',
-            },
-          );
-        }
-
-        const maxAge = moment().subtract(5, 'minutes').toDate();
-
-        if (csrf.get('createdAt') < maxAge) {
-          const referrer = csrf.get('referrer');
-          await csrf.destroy();
-
-          console.error('CSRF from server is older than 5 minutes.');
-
-          return redirectToFrontend(
-            res,
-            false,
-            {
-              errorMessage: 'CSRF from server is older than 5 minutes.',
+              errorMessage: errorMessage,
             },
             referrer,
           );
-        } else {
-          await csrf.destroy();
         }
 
         const token = createToken(user.id, user.get('email'));
-
         return redirectToFrontend(
           res,
           true,
           {
             token,
-            csrf: csrf.get('clientCSRF'),
+            csrf: clientCSRF,
           },
-          csrf.get('referrer'),
+          referrer,
         );
       })(req, res, next);
     },
