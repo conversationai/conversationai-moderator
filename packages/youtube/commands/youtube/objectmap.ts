@@ -188,7 +188,7 @@ export async function mapCommentThreadToComments(channelId: string, articleIds: 
   }
 }
 
-export async function foreachPendingDecision(callback: (decision: IDecisionInstance, comment: ICommentInstance) => void) {
+export async function foreachPendingDecision(callback: (decision: IDecisionInstance, comment: ICommentInstance) => Promise<void>) {
   const decisions = await Decision.findAll({
     where: {
       sentBackToPublisher: null,
@@ -198,7 +198,7 @@ export async function foreachPendingDecision(callback: (decision: IDecisionInsta
   });
 
   for (const d of decisions) {
-    callback(d, (await d.getComment())!);
+    await callback(d, await d.getComment());
   }
 }
 

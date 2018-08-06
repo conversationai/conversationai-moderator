@@ -33,15 +33,15 @@ export function builder(yargs: yargs.Argv) {
 }
 
 export async function handler() {
-  authorize((auth) => {
-    const service = google.youtube('v3');
+  const service = google.youtube('v3');
+  authorize(async (auth) => {
 
-    foreachPendingDecision((decision, comment) => {
+    await foreachPendingDecision(async (decision, comment) => {
       const sourceId = comment.get('sourceId') as string;
       const status = decision.get('status');
 
       if (status === 'Defer') {
-        logger.info('Not syyncing comment %s:%s - in deferred state', comment.id, sourceId);
+        logger.info('Not syncing comment %s:%s - in deferred state', comment.id, sourceId);
         markDecisionExecuted(decision);
         return;
       }

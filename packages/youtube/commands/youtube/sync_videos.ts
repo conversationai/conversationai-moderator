@@ -33,59 +33,60 @@ export function builder(yargs: yargs.Argv) {
 }
 
 export async function handler() {
-  authorize((auth) => {
-    const service = google.youtube('v3');
+  const service = google.youtube('v3');
 
-    Category.findAll({
+  authorize(async (auth) => {
+
+    const categories = await Category.findAll({
       where: {
         sourceId: {ne: null},
         isActive: true,
       },
-    }).then((result) => {
-      for (const category of result) {
-        const categoryId = category.get('id');
-        const channelId = category.get('sourceId');
+    });
 
-        service.channels.list({
+    for (const category of categories) {
+      const categoryId = category.get('id');
+      const channelId = category.get('sourceId');
+
+      service.channels.list({
+        auth: auth,
+        id: channelId,
+        part: 'snippet,contentDetails',
+      }, (err: any, response: any) => {
+        if (err) {
+          logger.error('Google API returned an error: ' + err);
+          return;
+        }
+        if (response!.data.items.length === 0) {
+          logger.warn('Couldn\'t find channel %s.', channelId);
+          return;
+        }
+
+        const playlist = response!.data.items[0].contentDetails.relatedPlaylists.uploads;
+
+        logger.info('Syncing channel %s (%s/%s)', category.get('label'), channelId, playlist);
+
+        service.playlistItems.list({
           auth: auth,
-          id: channelId,
-          part: 'snippet,contentDetails',
+          playlistId: playlist,
+          part: 'snippet',
+          // TODO: need to also set maxResults and pageToken to only get new videos.
         }, (err: any, response: any) => {
           if (err) {
             logger.error('Google API returned an error: ' + err);
             return;
           }
+
           if (response!.data.items.length === 0) {
-            logger.warn('Couldn\'t find channel %s.', channelId);
+            logger.info('Couldn\'t find any more videos in playlist %s.', playlist);
             return;
           }
 
-          const playlist = response!.data.items[0].contentDetails.relatedPlaylists.uploads;
-
-          logger.info('Syncing channel %s (%s/%s)', category.get('label'), channelId, playlist);
-
-          service.playlistItems.list({
-            auth: auth,
-            playlistId: playlist,
-            part: 'snippet',
-            // TODO: need to also set maxResults and pageToken to only get new videos.
-          }, (err: any, response: any) => {
-            if (err) {
-              logger.error('Google API returned an error: ' + err);
-              return;
-            }
-
-            if (response!.data.items.length === 0) {
-              logger.info('Couldn\'t find any more videos in playlist %s.', playlist);
-              return;
-            }
-
-            for (const item of response.data.items) {
-              mapPlaylistItemToArticle(categoryId, item);
-            }
-          });
+          for (const item of response.data.items) {
+            mapPlaylistItemToArticle(categoryId, item);
+          }
         });
-      }
-    });
+      });
+    }
   });
 }

@@ -33,8 +33,9 @@ export function builder(yargs: yargs.Argv) {
 }
 
 export async function handler() {
-  authorize((auth) => {
-    const service = google.youtube('v3');
+  const service = google.youtube('v3');
+
+  authorize(async (auth) => {
     service.channels.list({
       auth: auth,
       part: 'snippet',

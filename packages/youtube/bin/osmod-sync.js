@@ -22,7 +22,6 @@ const path = require('path');
 const yargs = require('yargs');
 
 yargs
-    .command(require(path.join(__dirname, '..', 'dist', 'youtube', 'refresh_token')))
     .command(require(path.join(__dirname, '..', 'dist', 'youtube', 'sync_channels')))
     .command(require(path.join(__dirname, '..', 'dist', 'youtube', 'sync_videos')))
     .command(require(path.join(__dirname, '..', 'dist', 'youtube', 'sync_comments')))
