@@ -45,6 +45,7 @@ import {
   SERVICE_TYPE_MODERATOR,
   Tag,
   User,
+  USER_GROUP_SERVICE,
 } from '../../models';
 import { sequelize } from '../../sequelize';
 import { denormalizeCommentCountsForArticle } from '../articles';
@@ -95,7 +96,7 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
       sentAt: sequelize.fn('now'),
     });
 
-    await shim.sendToScorer(comment, insertedObj.id);
+    await shim.sendToScorer(comment, insertedObj.id.toString());
 
     const isDoneScoring = await getIsDoneScoring(comment);
     if (isDoneScoring) {
@@ -120,7 +121,7 @@ async function checkScoringDone(comment: ICommentInstance): Promise<void> {
 export async function sendForScoring(comment: ICommentInstance): Promise<void> {
   const serviceUsers = await User.findAll({
     where: {
-      group: 'service',
+      group: USER_GROUP_SERVICE,
       isActive: true,
     },
   } as any);

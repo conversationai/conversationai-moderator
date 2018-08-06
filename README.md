@@ -159,7 +159,7 @@ OSMod can communicate to the Perspective API via a proxy server: the
 There is a preconfigured proxy server set up for general use.
 The URL of this proxy is [https://osmod-assistant.appspot.com/].  To access it,
 you'll need to get a suitable authentication token from
-[the Perspective API team](https://www.perspectiveapi.com/#/).  If you In this case you
+[the Perspective API team](https://www.perspectiveapi.com/#/).  In this case you
 need to set your service user's proxy URL to
 `https://osmod-assistant.appspot.com/api/score-comment`.
 

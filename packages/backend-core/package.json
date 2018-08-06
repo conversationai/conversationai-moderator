@@ -11,8 +11,9 @@
     "mocha:watch": "../../node_modules/.bin/mocha --watch 'dist/test/**/*.spec.js' --recursive --timeout 10000",
     "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
-    "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration && cp -R src/migrations dist/",
-    "compile:watch": "cp -R src/migrations dist/ && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --watch",
+    "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration && npm run compile:migrations",
+    "compile:watch": "npm run compile:migrations && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --watch",
+    "compile:migrations": "cp -R src/migrations dist/",
     "build": "npm run compile"
   },
   "license": "Apache-2.0",
