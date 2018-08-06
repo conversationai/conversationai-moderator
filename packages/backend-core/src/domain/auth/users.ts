@@ -18,6 +18,7 @@ import {
   IUserInstance,
   User,
   USER_GROUP_ADMIN,
+  USER_GROUP_YOUTUBE,
   UserSocialAuth,
 } from '../../models';
 import { IUserSocialAuthAttributes, IUserSocialAuthInstance } from '../../models/';
@@ -90,4 +91,24 @@ export async function ensureFirstUser({name, email}: {name: string, email: strin
   }
 
   return user;
+}
+
+export async function saveYouTubeUserToken({name, email}: {name: string, email: string}, token: any) {
+  const [user, created] = await User.findOrCreate({
+    where: {email: email, group: USER_GROUP_YOUTUBE},
+    defaults: {
+      name: name,
+      group: USER_GROUP_YOUTUBE,
+      isActive: true,
+    },
+  });
+
+
+  if (!created) {
+    if (!await user.get('isActive')) {
+      await user.set('isActive', true).save();
+    }
+  }
+
+  await user.set('extra', token).save();
 }

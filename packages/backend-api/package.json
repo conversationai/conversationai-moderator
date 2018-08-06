@@ -45,6 +45,7 @@
     "canvas-prebuilt": "1.6.11",
     "express": "4.16.3",
     "express-ws": "4.0.0",
+    "googleapis": "32.0.0",
     "joi": "10.5.2",
     "lodash": "4.17.10",
     "moment": "2.21.0",

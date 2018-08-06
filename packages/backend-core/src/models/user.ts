@@ -21,13 +21,16 @@ import { IArticleInstance } from './article';
 import { ICategoryInstance } from './category';
 import { updateHappened } from './last_update';
 
+export const USER_GROUP_GENERAL = 'general';
 export const USER_GROUP_ADMIN = 'admin';
 export const USER_GROUP_SERVICE = 'service';
+export const USER_GROUP_YOUTUBE = 'youtube';
 
 export const USER_GROUPS = [
-  'general',
+  USER_GROUP_GENERAL,
   USER_GROUP_ADMIN,
   USER_GROUP_SERVICE,
+  USER_GROUP_YOUTUBE,
 ];
 
 // Configuration constants for serevice users
@@ -114,7 +117,7 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
       fields: ['isActive'],
     },
     {
-      fields: ['email'],
+      fields: ['email', 'group'],
       unique: true,
     },
   ],
