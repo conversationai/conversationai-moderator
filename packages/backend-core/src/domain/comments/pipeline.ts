@@ -125,7 +125,7 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
 
   // Ensure data is present, otherwise an error will throw.
   if (!article) {
-    logger.error(`sendToScorer: Article ${comment.get('articleId')} not found for comment ${comment.get('id')}.`);
+    logger.error(`sendToScorer: Article ${comment.get('articleId')} not found for comment ${comment.id}.`);
 
     return;
   }
@@ -161,15 +161,15 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
       },
 
       article: {
-        articleId: article.get('id'),
+        articleId: article.id,
         plainText: striptags(article.get('text')),
         links: {
-          self: apiURL + '/rest/articles/' + article.get('id'),
+          self: apiURL + '/rest/articles/' + article.id,
         },
       },
 
       links: {
-        callback: apiURL + '/assistant/scores/' + insertedObj.get('id'),
+        callback: apiURL + '/assistant/scores/' + insertedObj.id,
       },
     };
 
@@ -183,14 +183,14 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
         plainText: striptags(replyTo.get('text')),
         htmlText: replyTo.get('text'),
         links: {
-          self: apiURL + '/rest/comments/' + replyTo.get('id'),
+          self: apiURL + '/rest/comments/' + replyTo.id,
         },
       };
     }
 
     logger.info(
-      `Sending comment id ${comment.get('id')} for scoring ` +
-      `by service user id ${serviceUser.get('id')} ` +
+      `Sending comment id ${comment.id} for scoring ` +
+      `by service user id ${serviceUser.id} ` +
       `to endpoint: ${serviceUser.get('endpoint')}`,
       postData,
     );
@@ -214,8 +214,8 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
         logger.info('Using scoring in sync mode.');
 
         const isDoneScoring = await processMachineScore(
-          comment.get('id'),
-          serviceUser.get('id'),
+          comment.id,
+          serviceUser.id,
           response.body,
         );
 
