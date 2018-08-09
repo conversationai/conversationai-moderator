@@ -295,7 +295,7 @@ describe('Comments Domain States Tests', () => {
   });
 
   describe('defer', () => {
-    it('should set the passed in comment to a "defered" state and save it', async () => {
+    it('should set the passed in comment to a "deferred" state and save it', async () => {
       const user = await createUser();
       const updated = await defer(comment, user, false);
 
