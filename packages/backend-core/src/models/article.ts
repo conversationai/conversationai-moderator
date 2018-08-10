@@ -19,6 +19,7 @@ import { sequelize } from '../sequelize';
 import { IUserInstance } from './user';
 
 export interface IArticleAttributes {
+  id?: number;
   sourceId: string;
   categoryId?: number;
   title: string;

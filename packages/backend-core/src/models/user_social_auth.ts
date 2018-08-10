@@ -18,6 +18,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 
 export interface IUserSocialAuthAttributes {
+  id?: number;
   userId?: number;
   socialId: string;
   provider: string;

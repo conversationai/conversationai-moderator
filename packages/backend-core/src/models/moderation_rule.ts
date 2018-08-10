@@ -25,6 +25,7 @@ export const MODERATION_RULE_ACTION_TYPES = [
 ];
 
 export interface IModerationRuleAttributes {
+  id?: number;
   tagId: number;
   categoryId?: number;
   createdBy?: number;

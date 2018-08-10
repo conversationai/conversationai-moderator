@@ -18,6 +18,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 
 export interface ICommentSizeAttributes {
+  id?: number;
   commentId: number;
   width: number;
   height: number;

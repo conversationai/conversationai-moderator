@@ -19,6 +19,7 @@ import { sequelize } from '../sequelize';
 import { IUserInstance } from './user';
 
 export interface ICategoryAttributes {
+  id?: number;
   label: string;
   sourceId?: string;
   isActive?: boolean;

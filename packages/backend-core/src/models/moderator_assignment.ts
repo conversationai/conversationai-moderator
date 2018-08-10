@@ -18,6 +18,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 
 export interface IModeratorAssignmentAttributes {
+  id?: number;
   userId: number;
   articleId: number;
 }

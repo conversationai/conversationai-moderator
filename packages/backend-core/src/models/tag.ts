@@ -18,6 +18,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 
 export interface ITagAttributes {
+  id?: number;
   key: string;
   label: string;
   color?: string;

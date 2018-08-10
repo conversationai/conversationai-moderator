@@ -18,6 +18,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 
 export interface ICommentRecommendationAttributes {
+  id?: number;
   commentId: number;
   sourceId?: string;
   extra?: any;

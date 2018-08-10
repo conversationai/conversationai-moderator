@@ -19,6 +19,7 @@ import { sequelize } from '../sequelize';
 import { ICommentInstance } from './comment';
 
 export interface IDecisionAttributes {
+  id?: number;
   commentId?: number;
   userId?: number;
   moderationRuleId?: number;

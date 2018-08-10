@@ -24,6 +24,7 @@ export const SCORE_SOURCE_TYPES = [
 ];
 
 export interface ICommentScoreAttributes {
+  id?: number;
   commentId: number | null;
   confirmedUserId?: number;
   commentScoreRequestId?: number;
