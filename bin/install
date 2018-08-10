@@ -1,7 +1,9 @@
 #!/bin/bash
 
+# Get packages for the root of the system, in particular lerna
 NODE_ENV=development npm install
 NODE_ENV=development npm prune
 
+# Use lerna to link together sub-modules, then build
 ./bin/link-packages
-./node_modules/.bin/lerna run build
+./bin/build
