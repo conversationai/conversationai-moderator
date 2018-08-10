@@ -43,7 +43,7 @@ import {
 import { sequelize } from '../../sequelize';
 import { denormalizeCommentCountsForArticle } from '../articles/countDenormalization';
 import { cacheCommentTopScores } from '../commentScores';
-import { denormalizeFlaggedAndRecommendedCountsForComment } from './countDenormalization';
+import { denormalizeCountsForComment } from './countDenormalization';
 import { processRulesForComment } from './rules';
 import { getIsDoneScoring, IResolution } from './state';
 import { cacheTextSize } from './textSizes';
@@ -425,7 +425,7 @@ export async function completeMachineScoring(commentId: number): Promise<void> {
 
   await cacheCommentTopScores(comment);
   await processRulesForComment(comment);
-  await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+  await denormalizeCountsForComment(comment);
   await denormalizeCommentCountsForArticle(comment.get('article'));
 }
 

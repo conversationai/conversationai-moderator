@@ -18,7 +18,7 @@ import {
   Article,
   Comment,
   denormalizeCommentCountsForArticle,
-  denormalizeFlaggedAndRecommendedCountsForComment,
+  denormalizeCountsForComment,
   IArticleInstance,
   ICommentInstance,
   logger,
@@ -42,7 +42,7 @@ export async function handler(argv: any) {
     await Bluebird.mapSeries(comments, (c: ICommentInstance) => {
       logger.info('Denormalizing comment ' + c.id);
 
-      return denormalizeFlaggedAndRecommendedCountsForComment(c);
+      return denormalizeCountsForComment(c);
     });
   }
 

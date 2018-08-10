@@ -20,14 +20,14 @@ import {
   CommentFlag,
   CommentRecommendation,
   denormalizeCommentCountsForArticle,
-  denormalizeFlaggedAndRecommendedCountsForComment,
+  denormalizeCountsForComment,
 } from '@conversationai/moderator-backend-core';
 import { handler, IQueueHandler } from '../util';
 
 export interface ICoreTagData {
   type: 'recommendation' | 'flag';
   sourceUserId: string;
-  sourceCommentId: number | string;
+  sourceCommentId: string;
 }
 
 export interface IProcessTagAdditionData extends ICoreTagData {
@@ -37,7 +37,7 @@ export interface IProcessTagAdditionData extends ICoreTagData {
 export interface IProcessTagRevocationData extends ICoreTagData {
 }
 
-function lookUpCommentBySourceId(sid: string | number) {
+function lookUpCommentBySourceId(sid: string ) {
   return Comment.findOne({
     where: { sourceId: sid },
     include: [Article],
@@ -66,8 +66,6 @@ export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = ha
 
   logger.info('Process Tag Addition', JSON.stringify(data));
 
-  const model = type === 'recommendation' ? CommentRecommendation : CommentFlag;
-
   try {
     const comment = await lookUpCommentBySourceId(sourceCommentId);
 
@@ -75,7 +73,7 @@ export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = ha
       throw new Error(`Comment not found: sourceId = ${sourceCommentId}`);
     }
 
-    await model.findOrCreate({
+    const options = {
       where: {
         commentId: comment.id,
         sourceId: sourceUserId,
@@ -85,9 +83,16 @@ export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = ha
         sourceId: sourceUserId,
         extra: extra || null,
       },
-    });
+    };
 
-    await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+    const [instance, created] =  (type === 'recommendation') ? await CommentRecommendation.findOrCreate(options) :
+                                                               await CommentFlag.findOrCreate(options);
+
+    if (!created) {
+      instance.set('extra', extra).save();
+    }
+
+    await denormalizeCountsForComment(comment);
     await denormalizeCommentCountsForArticle(comment.get('article'));
   } catch (err) { // Catching just for logging purposes
     logger.error('Catch Tag Addition', err);
@@ -132,7 +137,7 @@ export const processTagRevocationTask = handler<IProcessTagRevocationData>(async
       },
     });
 
-    await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+    await denormalizeCountsForComment(comment);
     await denormalizeCommentCountsForArticle(comment.get('article'));
   } catch (err) { // Catching just for logging purposes
     logger.error('Catch Tag Revocation', err);

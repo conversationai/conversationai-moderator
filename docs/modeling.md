@@ -22,7 +22,6 @@ The tables:
   SequelizeMeta             |
   articles                  |
   categories                |
-  comment_flags             |
   comment_recommendations   |
   comment_score_requests    |
   comment_scores            |
@@ -233,9 +232,14 @@ This table holds the comments, and the state of the comments.
 - updatedAt (datetime)
 
 *Indexes*:
-- comment
+- commentId
 
 ### CommentFlag
+
+An attribute of the comment indicating the comment has been flagged for some reason on the target platform.
+Currently, there is no means of setting this flag in OSMod, though we display counts of flagged comments.
+TODO: Documnt how a flagged comment appears in the UI.
+
 - id (bigint)
 - commentId (foreign key: Comment)
 - sourceId (string) (optional identifier so that scores can be retracted, like for publisher recommendations)
@@ -244,7 +248,7 @@ This table holds the comments, and the state of the comments.
 - updatedAt (datetime)
 
 *Indexes*:
-- comment
+- commentId
 
 ### Decision
 - id(int) (required)

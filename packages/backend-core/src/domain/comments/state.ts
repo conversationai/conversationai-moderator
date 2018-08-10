@@ -33,7 +33,7 @@ import {
   denormalizeCommentCountsForArticle,
 } from '../articles/countDenormalization';
 import {
-  denormalizeFlaggedAndRecommendedCountsForComment,
+  denormalizeCountsForComment,
 } from '../comments/countDenormalization';
 import { recordDecision } from './pipeline';
 
@@ -182,7 +182,7 @@ export async function setCommentState(comment: ICommentInstance, state: Partial<
     ...(data ? omit(data, Object.keys(state)) : {}),
   });
 
-  await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+  await denormalizeCountsForComment(comment);
 
   // denormalize the comment counts
   const article = await comment.getArticle();
@@ -294,7 +294,7 @@ export async function addScore(comment: ICommentInstance, tag: ITagInstance, use
     score: 1,
   });
 
-  await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+  await denormalizeCountsForComment(comment);
 
   // denormalize the comment counts
   const article = await comment.getArticle();

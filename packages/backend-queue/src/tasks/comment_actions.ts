@@ -22,7 +22,7 @@ import {
   CommentSummaryScore,
   defer,
   denormalizeCommentCountsForArticle,
-  denormalizeFlaggedAndRecommendedCountsForComment,
+  denormalizeCountsForComment,
   highlight,
   ICommentInstance,
   IResolution,
@@ -690,7 +690,7 @@ export const addTagTask = handler<IAddTagData>(async (data) => {
   const comment = await (cs as any)['getComment']();
   const article = await (comment as any)['getArticle']();
 
-  await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+  await denormalizeCountsForComment(comment);
   await denormalizeCommentCountsForArticle(article);
 
   return cs;
@@ -729,7 +729,7 @@ export const removeTagTask = handler<IRemoveTagData>(async (data, logger) => {
     },
   });
 
-  await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+  await denormalizeCountsForComment(comment);
   await denormalizeCommentCountsForArticle(article);
 
   logger.info(`Remove comment score ${commentScoreId}`);

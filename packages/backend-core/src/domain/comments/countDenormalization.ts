@@ -20,7 +20,7 @@ import {
   ICommentInstance,
 } from '../../models';
 
-export async function denormalizeFlaggedAndRecommendedCountsForComment(comment: ICommentInstance) {
+export async function denormalizeCountsForComment(comment: ICommentInstance) {
   const [
     flaggedCount,
     recommendedCount,
