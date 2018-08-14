@@ -33,7 +33,6 @@
     "@types/redis": "0.12.36",
     "@types/request": "2.47.0",
     "@types/sequelize": "3.4.43",
-    "@types/striptags": "0.0.5",
     "@types/underscore.string": "0.0.30",
     "@types/winston": "2.3.0",
     "bluebird": "3.5.0",
@@ -43,6 +42,7 @@
     "cors": "2.8.1",
     "express": "4.16.3",
     "express-winston": "2.5.1",
+    "googleapis": "32.0.0",
     "helmet": "3.5.0",
     "joi": "10.3.1",
     "jsonwebtoken": "7.3.0",
@@ -57,7 +57,7 @@
     "request": "2.87.0",
     "sequelize": "3.30.4",
     "sequelize-cli": "2.7.0",
-    "striptags": "3.0.1",
+    "striptags": "3.1.1",
     "underscore.string": "3.3.4",
     "winston": "2.3.1"
   }

@@ -52,7 +52,8 @@ import * as Bluebird from 'bluebird';
 const request = Bluebird.promisify(requestRaw) as any;
 Bluebird.promisifyAll(request);
 
-const striptags = require('striptags');
+import * as striptags from 'striptags';
+
 import { config } from '@conversationai/moderator-config';
 
 export interface IScore {
