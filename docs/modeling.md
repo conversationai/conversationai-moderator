@@ -238,7 +238,7 @@ This table holds the comments, and the state of the comments.
 
 An attribute of the comment indicating the comment has been flagged for some reason on the target platform.
 Currently, there is no means of setting this flag in OSMod, though we display counts of flagged comments.
-TODO: Documnt how a flagged comment appears in the UI.
+TODO: Document how a flagged comment appears in the UI.
 
 - id (bigint)
 - commentId (foreign key: Comment)
