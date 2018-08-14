@@ -28,6 +28,7 @@ export interface IAuthorAttributes {
 }
 
 export interface ICommentAttributes {
+  id?: number;
   sourceId: string;
   articleId: number | null;
   replyToSourceId?: string | null;

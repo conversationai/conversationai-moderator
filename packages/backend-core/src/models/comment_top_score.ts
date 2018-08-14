@@ -18,6 +18,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 
 export interface ICommentTopScoreAttributes {
+  id?: number;
   commentId: number;
   tagId: number;
   commentScoreId: number;

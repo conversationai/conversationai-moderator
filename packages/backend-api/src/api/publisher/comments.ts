@@ -50,7 +50,7 @@ async function createCommentIfNew(commentData: any): Promise<ICommentInstance> {
   }
 
   // Force convert publisher data to conform to DB model
-  commentData.articleId = article.get('id');
+  commentData.articleId = article.id;
   commentData.sourceId = commentData.sourceId;
   commentData.replyToSourceId = commentData.replyToSourceId;
   commentData.authorSourceId = commentData.authorSourceId;
@@ -67,9 +67,9 @@ async function createCommentIfNew(commentData: any): Promise<ICommentInstance> {
   });
 
   if (created) {
-    logger.info(`Created comment ${instance.get('id')}`);
+    logger.info(`Created comment ${instance.id}`);
   } else {
-    logger.info(`Found comment ${instance.get('id')}, not creating new record`);
+    logger.info(`Found comment ${instance.id}, not creating new record`);
 
     return instance;
   }
@@ -94,7 +94,7 @@ export function createComments(items: Array<any>): Bluebird<Array<ICommentInstan
 export async function sendCommentsToScoringQueue(comments: Array<ICommentInstance>, runImmediately = false): Promise<void> {
   for (const c of comments) {
     await enqueue<ISendCommentForScoringTaskData>('sendCommentForScoring', {
-      commentId: c.get('id'),
+      commentId: c.id,
     }, runImmediately);
   }
 }

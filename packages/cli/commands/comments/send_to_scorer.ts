@@ -62,10 +62,15 @@ export async function handler(argv: any) {
 
   try {
     const user = await User.findById(argv.userId);
+    if (!user) {
+      logger.error(`No such user: ${argv.userId}`);
+      return;
+    }
+
     const comments = await Comment.findAll(conditions);
 
     await Bluebird.mapSeries(comments, (c) => {
-      logger.info('Comment id ', c.get('id'));
+      logger.info('Comment id ', c.id);
       sendToScorer(c, user, true);
     });
 

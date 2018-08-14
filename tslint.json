@@ -92,14 +92,14 @@
     "new-parens": true,
     "no-empty": true,
     "no-magic-numbers": false,
-    "object-literal-shorthand": true,
+    "object-literal-shorthand": false,
     "only-arrow-functions": [true, "allow-declarations"],
     "use-isnan": true,
     "arrow-return-shorthand": [true],
     "no-unnecessary-initializer": true,
     "no-misused-new": true,
     "prefer-method-signature": true,
-    "newline-before-return": true,
+    "newline-before-return": false,
     "no-import-side-effect": true,
     "ban-types": {
       "options": [

@@ -47,7 +47,7 @@ const assert = chai.assert;
 async function shouldRecordDecision(comment: ICommentInstance, status: string, source: string, userId: number) {
   const foundDecisions = await Decision.findAll({
     where: {
-      commentId: comment.get('id'),
+      commentId: comment.id,
     },
   });
 
@@ -55,7 +55,7 @@ async function shouldRecordDecision(comment: ICommentInstance, status: string, s
 
   const firstDecision = foundDecisions[0];
 
-  assert.equal(firstDecision.get('commentId'), comment.get('id'));
+  assert.equal(firstDecision.get('commentId'), comment.id);
   assert.equal(firstDecision.get('userId'), userId);
   assert.equal(firstDecision.get('source'), source);
   assert.equal(firstDecision.get('status'), status);
@@ -68,7 +68,7 @@ describe('Comments Domain States Tests', () => {
 
   beforeEach(async () => {
     article = await createArticle();
-    comment = await createComment({ articleId: article.get('id') });
+    comment = await createComment({ articleId: article.id });
   });
 
   describe('scoresComplete', () => {
@@ -166,13 +166,13 @@ describe('Comments Domain States Tests', () => {
 
       await Promise.all([
         createCommentScoreRequest({
-          commentId: comment.get('id'),
-          userId: scorer1.get('id'),
+          commentId: comment.id,
+          userId: scorer1.id,
           doneAt: moment().toDate(),
         }),
         createCommentScoreRequest({
-          commentId: comment.get('id'),
-          userId: scorer2.get('id'),
+          commentId: comment.id,
+          userId: scorer2.id,
           doneAt: moment().toDate(),
         }),
       ]);
@@ -190,13 +190,13 @@ describe('Comments Domain States Tests', () => {
 
       await Promise.all([
         createCommentScoreRequest({
-          commentId: comment.get('id'),
-          userId: scorer1.get('id'),
+          commentId: comment.id,
+          userId: scorer1.id,
           doneAt: moment().toDate(),
         }),
         createCommentScoreRequest({
-          commentId: comment.get('id'),
-          userId: scorer2.get('id'),
+          commentId: comment.id,
+          userId: scorer2.id,
         }),
       ]);
 
@@ -215,17 +215,17 @@ describe('Comments Domain States Tests', () => {
 
         await Promise.all([
           createCommentScoreRequest({
-            commentId: comment.get('id'),
-            userId: scorer1.get('id'),
+            commentId: comment.id,
+            userId: scorer1.id,
           }),
           createCommentScoreRequest({
-            commentId: comment.get('id'),
-            userId: scorer1.get('id'),
+            commentId: comment.id,
+            userId: scorer1.id,
             doneAt: moment().toDate(),
           }),
           createCommentScoreRequest({
-            commentId: comment.get('id'),
-            userId: scorer2.get('id'),
+            commentId: comment.id,
+            userId: scorer2.id,
             doneAt: moment().toDate(),
           }),
         ]);
@@ -240,7 +240,7 @@ describe('Comments Domain States Tests', () => {
     it('should set the passed in state on the comment', async () => {
       const updated = await setCommentState(comment, { isAccepted: true });
 
-      assert.equal(comment.get('id'), updated.get('id'));
+      assert.equal(comment.id, updated.id);
       assert.isTrue(updated.get('isAccepted'));
     });
 
@@ -251,7 +251,7 @@ describe('Comments Domain States Tests', () => {
         { isHighlighted: false, isBatchResolved: true },
       );
 
-      assert.equal(comment.get('id'), updated.get('id'));
+      assert.equal(comment.id, updated.id);
       assert.isTrue(updated.get('isHighlighted'));
       assert.isTrue(updated.get('isBatchResolved'));
     });
@@ -262,22 +262,22 @@ describe('Comments Domain States Tests', () => {
       const user = await createUser();
       const updated = await approve(comment, user, false);
 
-      assert.equal(comment.get('id'), updated.get('id'));
+      assert.equal(comment.id, updated.id);
       assert.isTrue(updated.get('isAccepted'));
       assert.isFalse(updated.get('isDeferred'));
 
-      await shouldRecordDecision(updated, 'Accept', 'User', user.get('id'));
+      await shouldRecordDecision(updated, 'Accept', 'User', user.id);
     });
 
     it('should optionally accept additional data', async () => {
       const user = await createUser();
       const updated = await approve(comment, user, false);
 
-      assert.equal(comment.get('id'), updated.get('id'));
+      assert.equal(comment.id, updated.id);
       assert.isTrue(updated.get('isAccepted'));
       assert.isFalse(updated.get('isDeferred'));
 
-      await shouldRecordDecision(updated, 'Accept', 'User', user.get('id'));
+      await shouldRecordDecision(updated, 'Accept', 'User', user.id);
     });
   });
 
@@ -286,24 +286,24 @@ describe('Comments Domain States Tests', () => {
       const user = await createUser();
       const updated = await reject(comment, user, false);
 
-      assert.equal(comment.get('id'), updated.get('id'));
+      assert.equal(comment.id, updated.id);
       assert.isFalse(updated.get('isAccepted'));
       assert.isFalse(updated.get('isDeferred'));
 
-      await shouldRecordDecision(updated, 'Reject', 'User', user.get('id'));
+      await shouldRecordDecision(updated, 'Reject', 'User', user.id);
     });
   });
 
   describe('defer', () => {
-    it('should set the passed in comment to a "defered" state and save it', async () => {
+    it('should set the passed in comment to a "deferred" state and save it', async () => {
       const user = await createUser();
       const updated = await defer(comment, user, false);
 
-      assert.equal(comment.get('id'), updated.get('id'));
+      assert.equal(comment.id, updated.id);
       assert.isNull(updated.get('isAccepted'));
       assert.isTrue(updated.get('isDeferred'));
 
-      await shouldRecordDecision(updated, 'Defer', 'User', user.get('id'));
+      await shouldRecordDecision(updated, 'Defer', 'User', user.id);
     });
   });
 
@@ -312,7 +312,7 @@ describe('Comments Domain States Tests', () => {
       const user = await createUser();
       const updated = await highlight(comment, user);
 
-      assert.equal(comment.get('id'), updated.get('id'));
+      assert.equal(comment.id, updated.id);
       assert.isTrue(updated.get('isHighlighted'));
     });
   });

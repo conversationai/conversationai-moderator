@@ -18,6 +18,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 
 export interface IPreselectAttributes {
+  id?: number;
   tagId?: number;
   categoryId?: number;
   createdBy?: number;

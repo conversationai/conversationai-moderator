@@ -41,7 +41,7 @@ export async function handler() {
       const status = decision.get('status');
 
       if (status === 'Defer') {
-        logger.info('Not syyncing comment %s:%s - in defered state', comment.id, sourceId);
+        logger.info('Not syyncing comment %s:%s - in deferred state', comment.id, sourceId);
         markDecisionExecuted(decision);
         return;
       }

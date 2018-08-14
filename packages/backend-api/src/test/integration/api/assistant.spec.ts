@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as chai from 'chai';
+
 import {
   CommentScoreRequest,
   sequelize,
@@ -26,7 +28,6 @@ import {
 import {
   app,
 } from './test_helper';
-import * as chai from "chai";
 
 const BASE_URL = `/assistant`;
 const prefixed = `${BASE_URL}/`;
@@ -40,8 +41,8 @@ describe(prefixed, () => {
       const user = await makeUser();
 
       this.request = await CommentScoreRequest.create({
-        commentId: comment.get('id'),
-        userId: user.get('id'),
+        commentId: comment.id,
+        userId: user.id,
         sentAt: sequelize.fn('now'),
       });
 
@@ -58,7 +59,7 @@ describe(prefixed, () => {
       try {
         const apiClient = chai.request(app);
 
-        const { status } = await apiClient.post(url.replace(':id', this.request.get('id'))).send({
+        const { status } = await apiClient.post(url.replace(':id', this.request.id)).send({
           scores: {
             SCORE_TAG: [this.score],
           },
@@ -80,7 +81,7 @@ describe(prefixed, () => {
       try {
         const apiClient = chai.request(app);
 
-        const { status } = await apiClient.post(url.replace(':id', this.request.get('id'))).send({
+        const { status } = await apiClient.post(url.replace(':id', this.request.id)).send({
           scores: {
             SCORE_TAG: this.score, // should be an array
           },
@@ -103,7 +104,7 @@ describe(prefixed, () => {
       try {
         const apiClient = chai.request(app);
 
-        const { status } = await apiClient.post(url.replace(':id', this.request.get('id'))).send({
+        const { status } = await apiClient.post(url.replace(':id', this.request.id)).send({
           scores: {
             SCORE_TAG: [this.score],
           },

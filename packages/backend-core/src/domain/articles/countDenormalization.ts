@@ -35,22 +35,22 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     highlightedCount,
     approvedCount,
     rejectedCount,
-    deferedCount,
+    deferredCount,
     flaggedCount,
     batchedCount,
     recommendedCount,
   ] = await Promise.all([
-    Comment.count({ where: { articleId: article.get('id'), isScored: false } }),
-    Comment.count({ where: { articleId: article.get('id'), isScored: true, isModerated: false, isDeferred: false } }),
-    Comment.count({ where: { articleId: article.get('id'), isScored: true,
+    Comment.count({ where: { articleId: article.id, isScored: false } }),
+    Comment.count({ where: { articleId: article.id, isScored: true, isModerated: false, isDeferred: false } }),
+    Comment.count({ where: { articleId: article.id, isScored: true,
                              $or: { isModerated: true, isDeferred: true } } }),
-    Comment.count({ where: { articleId: article.get('id'), isHighlighted: true } }),
-    Comment.count({ where: { articleId: article.get('id'), isAccepted: true } }),
-    Comment.count({ where: { articleId: article.get('id'), isAccepted: false, isHighlighted: false } }),
-    Comment.count({ where: { articleId: article.get('id'), isDeferred: true } }),
-    Comment.count({ where: { articleId: article.get('id'), flaggedCount: { $gt: 0 } } }),
-    Comment.count({ where: { articleId: article.get('id'), isModerated: true, isBatchResolved: true } }),
-    Comment.count({ where: { articleId: article.get('id'), recommendedCount: { $gt: 0 } } }),
+    Comment.count({ where: { articleId: article.id, isHighlighted: true } }),
+    Comment.count({ where: { articleId: article.id, isAccepted: true } }),
+    Comment.count({ where: { articleId: article.id, isAccepted: false, isHighlighted: false } }),
+    Comment.count({ where: { articleId: article.id, isDeferred: true } }),
+    Comment.count({ where: { articleId: article.id, flaggedCount: { $gt: 0 } } }),
+    Comment.count({ where: { articleId: article.id, isModerated: true, isBatchResolved: true } }),
+    Comment.count({ where: { articleId: article.id, recommendedCount: { $gt: 0 } } }),
   ]);
 
   await article.update({
@@ -60,14 +60,14 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     highlightedCount,
     approvedCount,
     rejectedCount,
-    deferedCount,
+    deferredCount,
     flaggedCount,
     batchedCount,
     recommendedCount,
   });
 
   if (article.get('categoryId')) {
-    const category = await Category.findById(article.get('categoryId'));
+    const category = (await Category.findById(article.get('categoryId')))!;
     await denormalizeCommentCountsForCategory(category);
   }
 }

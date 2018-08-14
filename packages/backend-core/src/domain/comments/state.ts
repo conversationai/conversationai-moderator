@@ -33,7 +33,7 @@ import {
   denormalizeCommentCountsForArticle,
 } from '../articles/countDenormalization';
 import {
-  denormalizeFlaggedAndRecommendedCountsForComment,
+  denormalizeCountsForComment,
 } from '../comments/countDenormalization';
 import { recordDecision } from './pipeline';
 
@@ -89,7 +89,7 @@ export async function getIsDoneScoring(comment: ICommentInstance) {
   // Find and count all comment score requests
   const commentScoreRequests = await CommentScoreRequest.findAll({
     where: {
-      commentId: comment.get('id'),
+      commentId: comment.id,
     },
     order: 'sentAt DESC',
   });
@@ -182,7 +182,7 @@ export async function setCommentState(comment: ICommentInstance, state: Partial<
     ...(data ? omit(data, Object.keys(state)) : {}),
   });
 
-  await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+  await denormalizeCountsForComment(comment);
 
   // denormalize the comment counts
   const article = await comment.getArticle();
@@ -287,14 +287,14 @@ export function reset(comment: ICommentInstance, _source?: IUserInstance | IMode
  */
 export async function addScore(comment: ICommentInstance, tag: ITagInstance, user?: IUserInstance | null): Promise<ICommentScoreInstance> {
   const score = await CommentScore.create({
-    tagId: tag.get('id'),
-    commentId: comment.get('id'),
-    userId: user ? user.get('id') : null,
+    tagId: tag.id,
+    commentId: comment.id,
+    userId: user ? user.id : undefined,
     sourceType: 'Moderator',
     score: 1,
   });
 
-  await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+  await denormalizeCountsForComment(comment);
 
   // denormalize the comment counts
   const article = await comment.getArticle();

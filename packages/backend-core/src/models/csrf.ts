@@ -18,6 +18,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 
 export interface ICSRFAttributes {
+  id?: number;
   clientCSRF: string;
   serverCSRF: string;
   referrer: string | null;

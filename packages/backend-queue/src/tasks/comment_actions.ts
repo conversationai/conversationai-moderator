@@ -22,7 +22,7 @@ import {
   CommentSummaryScore,
   defer,
   denormalizeCommentCountsForArticle,
-  denormalizeFlaggedAndRecommendedCountsForComment,
+  denormalizeCountsForComment,
   highlight,
   ICommentInstance,
   IResolution,
@@ -308,7 +308,7 @@ export const tagCommentSummaryScoresTask = handler<ITagCommentsData>(async (data
   }
 
   await CommentSummaryScore.insertOrUpdate({
-    commentId: comment.get('id'),
+    commentId: comment.id,
     tagId,
     score: 1,
     isConfirmed: true,
@@ -580,7 +580,7 @@ export const resetTagTask = handler<IResetTagData>(async (data, logger) => {
 
   if (!cs) { return; }
 
-  logger.info(`Reset tag for comment_score id: ${cs.get('id')}`);
+  logger.info(`Reset tag for comment_score id: ${cs.id}`);
 
   return cs.update({
     isConfirmed: null,
@@ -610,7 +610,7 @@ export const confirmTagTask = handler<IConfirmTagData>(async (data, logger) => {
 
   if (!cs) { return; }
 
-  logger.info(`Confirm tag for comment_score id: ${cs.get('id')}`);
+  logger.info(`Confirm tag for comment_score id: ${cs.id}`);
 
   return cs.update({
     isConfirmed: true,
@@ -640,7 +640,7 @@ export const rejectTagTask = handler<IRejectTagData>(async (data, logger) => {
 
   if (!cs) { return; }
 
-  logger.info(`Reject tag for comment_score id: ${cs.get('id')}`);
+  logger.info(`Reject tag for comment_score id: ${cs.id}`);
 
   return cs.update({
     isConfirmed: false,
@@ -690,7 +690,7 @@ export const addTagTask = handler<IAddTagData>(async (data) => {
   const comment = await (cs as any)['getComment']();
   const article = await (comment as any)['getArticle']();
 
-  await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+  await denormalizeCountsForComment(comment);
   await denormalizeCommentCountsForArticle(article);
 
   return cs;
@@ -729,7 +729,7 @@ export const removeTagTask = handler<IRemoveTagData>(async (data, logger) => {
     },
   });
 
-  await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+  await denormalizeCountsForComment(comment);
   await denormalizeCommentCountsForArticle(article);
 
   logger.info(`Remove comment score ${commentScoreId}`);

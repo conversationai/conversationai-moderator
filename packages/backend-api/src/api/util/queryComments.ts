@@ -36,21 +36,21 @@ export async function filterTopScoresByTaggingSensitivity(maxScores: ITopScores,
   const fetchComment = getComment || (async (commentId: string): Promise<ICommentInstance> => {
     const id = parseInt(commentId, 10);
 
-    return await Comment.findById(
+    return (await Comment.findById(
       parseInt(maxScores[id].commentId.toString(), 10),
       { include: [Article] },
-    );
+    ))!;
   });
 
-  const comments = await Bluebird.mapSeries(
+  const comments = (await Bluebird.mapSeries(
     Object.keys(maxScores),
     fetchComment,
-  );
+  ))!;
 
   return Object.keys(maxScores).reduce((sum, commentId) => {
     const id = parseInt(commentId, 10);
     const scoreDetails = maxScores[id];
-    const comment = comments.find((c) => c.get('id') === id) as ICommentInstance;
+    const comment = comments.find((c) => c.id === id) as ICommentInstance;
     const tagIdToFilter = tagId || comment.get('maxSummaryScoreTagId');
 
     const categoryTaggingSensitivity = allTaggingSensitivities.find((ts) => {
@@ -124,7 +124,7 @@ export async function handleQueryComments(
 
       if (!sort) {
         comments = comments.sort((a, b) => {
-          return commentIds.indexOf(a.get('id')) - commentIds.indexOf(b.get('id'));
+          return commentIds.indexOf(a.id) - commentIds.indexOf(b.id);
         });
       }
 

@@ -37,7 +37,7 @@ async function makeArticleData(data: Partial<IArticleData> = {}): Promise<IArtic
 
   return {
     sourceId: 'publisher-id-1',
-    categoryId: category.get('id').toString(),
+    categoryId: category.id.toString(),
     title: 'I am an article',
     text: 'Plenty of article text',
     url: 'http://example.com',
@@ -179,7 +179,7 @@ describe('Publisher API', () => {
           expect(status).to.be.equal(200);
           was200 = true;
 
-          const updatedArticle = await Article.findOne({ where: { sourceId: article.get('sourceId') }});
+          const updatedArticle = (await Article.findOne({ where: { sourceId: article.get('sourceId') }}))!;
 
           expect(updatedArticle.get('title')).to.equal('Title Two');
         } finally {

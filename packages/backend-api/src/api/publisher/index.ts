@@ -74,7 +74,7 @@ export function createPublisherService(): express.Router {
       const results = await mapArticles(items);
 
       const data = results.reduce((sum, { article }) => {
-        sum[article.get('sourceId')] = article.get('id').toString();
+        sum[article.get('sourceId')] = article.id.toString();
 
         return sum;
       }, {} as IIDMap);
@@ -126,7 +126,7 @@ export function createPublisherService(): express.Router {
         await sendCommentsToScoringQueue(newComments);
 
         const data = results.reduce((sum, c) => {
-          sum[c.get('sourceId')] = c.get('id').toString();
+          sum[c.get('sourceId')] = c.id.toString();
 
           return sum;
         }, {} as IIDMap);
@@ -190,7 +190,7 @@ export function createPublisherService(): express.Router {
           include.push('comment');
         }
 
-        return list(
+        return await list(
           'decisions',
           {
             page,

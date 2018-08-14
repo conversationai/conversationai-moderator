@@ -84,9 +84,9 @@ describe('Comment Domain Rules Tests', () => {
 
     beforeEach(async () => {
       const category = await createCategory();
-      const article = await createArticle({ categoryId: category.get('id') });
+      const article = await createArticle({ categoryId: category.id });
       comment = await createComment({
-        articleId: article.get('id'),
+        articleId: article.id,
         maxSummaryScore:  0.8,
       });
     });
@@ -94,7 +94,7 @@ describe('Comment Domain Rules Tests', () => {
     it('should accept a comment when a single "accept" action is ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 1,
           score: 0.5,
         }),
@@ -110,7 +110,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -128,15 +128,15 @@ describe('Comment Domain Rules Tests', () => {
 
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
-          tagId: summaryTag.get('id'),
+          commentId: comment.id,
+          tagId: summaryTag.id,
           score: comment.get('maxSummaryScore'),
         }),
       ];
 
       const rules = [
         ModerationRule.build({
-          tagId: summaryTag.get('id'),
+          tagId: summaryTag.id,
           lowerThreshold: 0,
           upperThreshold: 1,
           action: 'Accept',
@@ -144,7 +144,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -157,7 +157,7 @@ describe('Comment Domain Rules Tests', () => {
     it('should accept a comment when unanimous "accept" actions are ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 3,
           score: 0.8,
         }),
@@ -189,7 +189,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -202,13 +202,13 @@ describe('Comment Domain Rules Tests', () => {
     it('should accept and highlight a comment when both "accept" and "highlight" actions are ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 1,
           score: 0.95,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 3,
           score: 0.8,
         }),
@@ -231,7 +231,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -244,13 +244,13 @@ describe('Comment Domain Rules Tests', () => {
     it('should defer a comment when both "accept" and "reject" actions are ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 1,
           score: 0.9,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 2,
           score: 0.8,
         }),
@@ -273,7 +273,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -286,7 +286,7 @@ describe('Comment Domain Rules Tests', () => {
     it('should reject when a "reject" action is ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 29,
           score: 0.64,
         }),
@@ -302,7 +302,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isFalse(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -315,13 +315,13 @@ describe('Comment Domain Rules Tests', () => {
     it('should reject when multiple "reject" actions are ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 46,
           score: 0.98,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 83,
           score: 0.87,
         }),
@@ -344,7 +344,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isFalse(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -357,7 +357,7 @@ describe('Comment Domain Rules Tests', () => {
     it('should defer when a "defer" action is ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 15,
           score: 0.64,
         }),
@@ -373,7 +373,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -386,13 +386,13 @@ describe('Comment Domain Rules Tests', () => {
     it('should defer when both "accept" and "defer" actions are ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 217,
           score: 0.45,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 415,
           score: 0.67,
         }),
@@ -424,7 +424,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -437,19 +437,19 @@ describe('Comment Domain Rules Tests', () => {
     it('should defer when "accept", "reject", and "defer" actions are ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 91,
           score: 0.31,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 294,
           score: 0.64,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 19,
           score: 0.85,
         }),
@@ -479,7 +479,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -492,13 +492,13 @@ describe('Comment Domain Rules Tests', () => {
     it('should highlight a comment if both "accept" and "highlight" actions are ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 81,
           score: 0.31,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 901,
           score: 0.64,
         }),
@@ -521,7 +521,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -534,19 +534,19 @@ describe('Comment Domain Rules Tests', () => {
     it('should defer and not highlight a comment if both "reject" and "highlight" actions are ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 2,
           score: 0.87,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 4,
           score: 0.43,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 6,
           score: 0.91,
         }),
@@ -569,7 +569,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'), 'isAccepted');
       assert.isTrue(updated.get('isAutoResolved'), 'isAutoResolved');
@@ -582,19 +582,19 @@ describe('Comment Domain Rules Tests', () => {
     it('should defer and not highlight a comment if both "defer" and "highlight" actions are ruled', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 5,
           score: 0.16,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 10,
           score: 0.92,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 15,
           score: 0.27,
         }),
@@ -626,7 +626,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'), 'isAccepted');
       assert.isTrue(updated.get('isAutoResolved'), 'isAutoResolved');
@@ -639,13 +639,13 @@ describe('Comment Domain Rules Tests', () => {
     it('should do nothing to the comment if no rules match', async () => {
       const scores = [
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 4,
           score: 0.16,
         }),
 
         CommentSummaryScore.build({
-          commentId: comment.get('id'),
+          commentId: comment.id,
           tagId: 12,
           score: 0.92,
         }),
@@ -668,7 +668,7 @@ describe('Comment Domain Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'), 'isAccepted');
       assert.isFalse(updated.get('isAutoResolved'), 'isAutoResolved');
@@ -682,11 +682,11 @@ describe('Comment Domain Rules Tests', () => {
   describe('processRulesForComment', () => {
     it('should do nothing if no matching rules are found', async () => {
       const category = await createCategory();
-      const article = await createArticle({ categoryId: category.get('id') });
-      const comment = await createComment({ articleId: article.get('id') });
+      const article = await createArticle({ categoryId: category.id });
+      const comment = await createComment({ articleId: article.id });
 
       await processRulesForComment(comment);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isFalse(updated.get('isAutoResolved'));
@@ -698,8 +698,8 @@ describe('Comment Domain Rules Tests', () => {
 
     it('should do nothing if no comment scores are found', async () => {
       const category = await createCategory();
-      const article = await createArticle({ categoryId: category.get('id') });
-      const comment = await createComment({ articleId: article.get('id') });
+      const article = await createArticle({ categoryId: category.id });
+      const comment = await createComment({ articleId: article.id });
 
       const [tag1, tag2] = await Promise.all([
         createTag(),
@@ -707,12 +707,12 @@ describe('Comment Domain Rules Tests', () => {
       ]);
 
       await Promise.all([
-        createModerationRule({ tagId: tag1.get('id') }),
-        createModerationRule({ tagId: tag2.get('id') }),
+        createModerationRule({ tagId: tag1.id }),
+        createModerationRule({ tagId: tag2.id }),
       ]);
 
       await processRulesForComment(comment);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isNull(updated.get('isAccepted'));
       assert.isFalse(updated.get('isAutoResolved'));
@@ -724,8 +724,8 @@ describe('Comment Domain Rules Tests', () => {
 
     it('should mark a comment accepted for matching rules', async () => {
       const category = await createCategory();
-      const article = await createArticle({ categoryId: category.get('id') });
-      const comment = await createComment({ articleId: article.get('id') });
+      const article = await createArticle({ categoryId: category.id });
+      const comment = await createComment({ articleId: article.id });
 
       const [tag1, tag2] = await Promise.all([
         createTag(),
@@ -734,14 +734,14 @@ describe('Comment Domain Rules Tests', () => {
 
       await Promise.all([
         createModerationRule({
-          tagId: tag1.get('id'),
+          tagId: tag1.id,
           lowerThreshold: 0.5,
           upperThreshold: 1,
           action: 'Accept',
         }),
 
         createModerationRule({
-          tagId: tag2.get('id'),
+          tagId: tag2.id,
           lowerThreshold: 0.25,
           upperThreshold: 0.75,
           action: 'Accept',
@@ -750,20 +750,20 @@ describe('Comment Domain Rules Tests', () => {
 
       await Promise.all([
         createCommentSummaryScore({
-          commentId: comment.get('id'),
-          tagId: tag1.get('id'),
+          commentId: comment.id,
+          tagId: tag1.id,
           score: 0.75,
         }),
 
         createCommentSummaryScore({
-          commentId: comment.get('id'),
-          tagId: tag2.get('id'),
+          commentId: comment.id,
+          tagId: tag2.id,
           score: 0.5,
         }),
       ]);
 
       await processRulesForComment(comment);
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updated.get('isAccepted'));
       assert.isTrue(updated.get('isAutoResolved'));
@@ -775,8 +775,8 @@ describe('Comment Domain Rules Tests', () => {
 
     it('should do nothing if article has disabled rule processing', async () => {
       const category = await createCategory();
-      const article = await createArticle({ categoryId: category.get('id'), disableRules: true });
-      const comment = await createComment({ articleId: article.get('id') });
+      const article = await createArticle({ categoryId: category.id, disableRules: true });
+      const comment = await createComment({ articleId: article.id });
 
       const [tag1, tag2] = await Promise.all([
         createTag(),
@@ -785,13 +785,13 @@ describe('Comment Domain Rules Tests', () => {
 
       await Promise.all([
         createModerationRule({
-          tagId: tag1.get('id'),
+          tagId: tag1.id,
           lowerThreshold: 0.5,
           upperThreshold: 1,
           action: 'Accept',
         }),
         createModerationRule({
-          tagId: tag2.get('id'),
+          tagId: tag2.id,
           lowerThreshold: 0.25,
           upperThreshold: 0.75,
           action: 'Accept',
@@ -800,21 +800,21 @@ describe('Comment Domain Rules Tests', () => {
 
       await Promise.all([
         createCommentSummaryScore({
-          commentId: comment.get('id'),
-          tagId: tag1.get('id'),
+          commentId: comment.id,
+          tagId: tag1.id,
           score: 0.75,
         }),
 
         createCommentSummaryScore({
-          commentId: comment.get('id'),
-          tagId: tag2.get('id'),
+          commentId: comment.id,
+          tagId: tag2.id,
           score: 0.5,
         }),
       ]);
 
       await processRulesForComment(comment);
 
-      const updated = await Comment.findById(comment.get('id'));
+      const updated = (await Comment.findById(comment.id))!;
       assert.isNull(updated.get('isAccepted'));
     });
   });

@@ -27,9 +27,11 @@ export const USER_GROUPS = [
 ];
 
 export interface IUserAttributes {
+  id?: number;
   group: string;
   email?: string;
   name: string;
+  endpoint?: string;
   isActive?: boolean;
   extra?: any;
 }

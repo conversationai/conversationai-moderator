@@ -43,7 +43,7 @@ import {
 import { sequelize } from '../../sequelize';
 import { denormalizeCommentCountsForArticle } from '../articles/countDenormalization';
 import { cacheCommentTopScores } from '../commentScores';
-import { denormalizeFlaggedAndRecommendedCountsForComment } from './countDenormalization';
+import { denormalizeCountsForComment } from './countDenormalization';
 import { processRulesForComment } from './rules';
 import { getIsDoneScoring, IResolution } from './state';
 import { cacheTextSize } from './textSizes';
@@ -125,7 +125,7 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
 
   // Ensure data is present, otherwise an error will throw.
   if (!article) {
-    logger.error(`sendToScorer: Article ${comment.get('articleId')} not found for comment ${comment.get('id')}.`);
+    logger.error(`sendToScorer: Article ${comment.get('articleId')} not found for comment ${comment.id}.`);
 
     return;
   }
@@ -135,15 +135,15 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
     // Destroy existing comment score request for user.
     await CommentScoreRequest.destroy({
         where: {
-          commentId: comment.get('id'),
-          userId: serviceUser.get('id'),
+          commentId: comment.id,
+          userId: serviceUser.id,
         },
       });
 
     // Create score request
     const insertedObj = await CommentScoreRequest.create({
-      commentId: comment.get('id'),
-      userId: serviceUser.get('id'),
+      commentId: comment.id,
+      userId: serviceUser.id,
       sentAt: sequelize.fn('now'),
     });
 
@@ -152,24 +152,24 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
       includeSummaryScores: true,
 
       comment: {
-        commentId: comment.get('id'),
+        commentId: comment.id,
         plainText: striptags(comment.get('text')),
         htmlText: comment.get('text'),
         links: {
-          self: apiURL + '/rest/comments/' + comment.get('id'),
+          self: apiURL + '/rest/comments/' + comment.id,
         },
       },
 
       article: {
-        articleId: article.get('id'),
+        articleId: article.id,
         plainText: striptags(article.get('text')),
         links: {
-          self: apiURL + '/rest/articles/' + article.get('id'),
+          self: apiURL + '/rest/articles/' + article.id,
         },
       },
 
       links: {
-        callback: apiURL + '/assistant/scores/' + insertedObj.get('id'),
+        callback: apiURL + '/assistant/scores/' + insertedObj.id,
       },
     };
 
@@ -183,14 +183,14 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
         plainText: striptags(replyTo.get('text')),
         htmlText: replyTo.get('text'),
         links: {
-          self: apiURL + '/rest/comments/' + replyTo.get('id'),
+          self: apiURL + '/rest/comments/' + replyTo.id,
         },
       };
     }
 
     logger.info(
-      `Sending comment id ${comment.get('id')} for scoring ` +
-      `by service user id ${serviceUser.get('id')} ` +
+      `Sending comment id ${comment.id} for scoring ` +
+      `by service user id ${serviceUser.id} ` +
       `to endpoint: ${serviceUser.get('endpoint')}`,
       postData,
     );
@@ -207,25 +207,25 @@ export async function sendToScorer(comment: ICommentInstance, serviceUser: IUser
     logger.info(`Assistant Endpoint Response :: ${response.statusCode}`);
 
     if (response.statusCode !== 200) {
-      logger.error('Error posting comment id %d for scoring.', comment.get('id'), +
+      logger.error('Error posting comment id %d for scoring.', comment.id, +
       ' Server responded with status ', response.statusCode, response.body );
     } else {
       if (sync) {
         logger.info('Using scoring in sync mode.');
 
         const isDoneScoring = await processMachineScore(
-          comment.get('id'),
-          serviceUser.get('id'),
+          comment.id,
+          serviceUser.id,
           response.body,
         );
 
         if (isDoneScoring) {
-          await completeMachineScoring(comment.get('id'));
+          await completeMachineScoring(comment.id);
         }
       }
     }
   } catch (err) {
-    logger.error('Error posting comment id %d for scoring: ', comment.get('id'), err);
+    logger.error('Error posting comment id %d for scoring: ', comment.id, err);
   }
 }
 
@@ -299,7 +299,7 @@ export async function getCommentsToResendForScoring(
  * Resend a comment to be scored again.
  */
 export async function resendForScoring(comment: ICommentInstance, sync?: boolean): Promise<void> {
-  logger.info('Re-sending comment id %s for scoring', comment.get('id'));
+  logger.info('Re-sending comment id %s for scoring', comment.id);
   await sendForScoring(comment, sync);
 }
 
@@ -313,7 +313,7 @@ export async function processMachineScore(
   scoreData: IScoreData,
 ): Promise<boolean> {
   logger.info('PROCESS MACHINE SCORE ::', commentId, serviceUserId, JSON.stringify(scoreData));
-  const comment = await Comment.findById(commentId);
+  const comment = (await Comment.findById(commentId))!;
 
   // Find matching comment score request
   const commentScoreRequest = await CommentScoreRequest.findOne({
@@ -395,9 +395,9 @@ export async function updateMaxSummaryScore(comment: ICommentInstance): Promise<
   });
   const summaryScores = await CommentSummaryScore.findAll({
     where: {
-      commentId: comment.get('id'),
+      commentId: comment.id,
       tagId: {
-        $in: tagsInSummaryScore.map((tag) => tag.get('id')),
+        $in: tagsInSummaryScore.map((tag) => tag.id),
       },
     },
   });
@@ -419,13 +419,13 @@ export async function updateMaxSummaryScore(comment: ICommentInstance): Promise<
  * Once all scores are in, process rules, record the decision and denormalize.
  */
 export async function completeMachineScoring(commentId: number): Promise<void> {
-  const comment = await Comment.findById(commentId, {
+  const comment = (await Comment.findById(commentId, {
     include: [Article],
-  });
+  }))!;
 
   await cacheCommentTopScores(comment);
   await processRulesForComment(comment);
-  await denormalizeFlaggedAndRecommendedCountsForComment(comment);
+  await denormalizeCountsForComment(comment);
   await denormalizeCommentCountsForArticle(comment.get('article'));
 }
 
@@ -445,11 +445,11 @@ export function compileScoresData(sourceType: string, userId: number, scoreData:
     .forEach((tagKey) => {
       scoreData[tagKey].forEach((score) => {
         data.push({
-          commentId: modelData.comment.get('id'),
-          commentScoreRequestId: modelData.commentScoreRequest.get('id'),
+          commentId: modelData.comment.id,
+          commentScoreRequestId: modelData.commentScoreRequest.id,
           sourceType,
           userId,
-          tagId: tagsByKey[tagKey][0].get('id'),
+          tagId: tagsByKey[tagKey][0].id,
           score: score.score,
           annotationStart: score.begin,
           annotationEnd: score.end,
@@ -473,9 +473,9 @@ export function compileSummaryScoresData(scoreData: ISummaryScores, comment: ICo
     .keys(scoreData)
     .forEach((tagKey) => {
       data.push({
-        commentId: comment.get('id'),
+        commentId: comment.id,
         // TODO(ldixon): figure out why this typehack is needed and fix.
-        tagId: (tagsByKey[tagKey][0] as any).get('id'),
+        tagId: (tagsByKey[tagKey][0] as any).id,
         score: scoreData[tagKey],
       });
     });
@@ -542,12 +542,12 @@ export async function recordDecision(
 
   // Add new decision, isCurrentDecision defaults to true.
   const decision = await Decision.create({
-    commentId: comment.get('id'),
+    commentId: comment.id,
     status,
 
     source: source ? (source instanceof User.Instance ? 'User' : 'Rule') : 'Rule',
-    userId: source ? (source instanceof User.Instance ? source.get('id') : undefined) : null,
-    moderationRuleId: source ? (source instanceof ModerationRule.Instance ? source.get('id') : undefined) : null,
+    userId: source ? (source instanceof User.Instance ? source.id : undefined) : undefined,
+    moderationRuleId: source ? (source instanceof ModerationRule.Instance ? source.id : undefined) : undefined,
 
     ...(autoConfirm ? {
       sentBackToPublisher: sequelize.fn('now'),
@@ -590,6 +590,6 @@ export async function postProcessComment(comment: ICommentInstance): Promise<voi
   if (!parent) { return; }
 
   await comment.update({
-    replyId: parent.get('id'),
+    replyId: parent.id,
   });
 }

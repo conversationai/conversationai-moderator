@@ -17,4 +17,3 @@ lerna-debug.log
 source-context.json
 source-contexts.json
 *.rdb
-package-lock.json

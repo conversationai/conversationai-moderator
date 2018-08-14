@@ -75,7 +75,7 @@ describe('Auth Domain Users Tests', function() {
       const [userSocialAuth, created] = await findOrCreateUserSocialAuth(createdUser, userSocialAuthData);
 
       assert.isTrue(created);
-      assert.equal(userSocialAuth.get('userId'), createdUser.get('id'));
+      assert.equal(userSocialAuth.get('userId'), createdUser.id);
       assert.equal(userSocialAuth.get('provider'), userSocialAuthData.provider);
       assert.equal(userSocialAuth.get('socialId'), userSocialAuthData.socialId);
       assert.deepEqual(userSocialAuth.get('extra'), userSocialAuthData.extra);
@@ -101,7 +101,7 @@ describe('Auth Domain Users Tests', function() {
 
       const socialAuthData = {
         ...userSocialAuthData,
-        userId: createdUser.get('id'),
+        userId: createdUser.id,
       };
 
       const createdSocialAuth = await UserSocialAuth.create(socialAuthData);
@@ -109,8 +109,8 @@ describe('Auth Domain Users Tests', function() {
       const [userSocialAuth, created] = await findOrCreateUserSocialAuth(createdUser, userSocialAuthData);
 
       assert.isFalse(created);
-      assert.equal(userSocialAuth.get('id'), createdSocialAuth.get('id'));
-      assert.equal(userSocialAuth.get('userId'), createdUser.get('id'));
+      assert.equal(userSocialAuth.id, createdSocialAuth.id);
+      assert.equal(userSocialAuth.get('userId'), createdUser.id);
       assert.equal(userSocialAuth.get('provider'), userSocialAuthData.provider);
       assert.equal(userSocialAuth.get('socialId'), userSocialAuthData.socialId);
       assert.deepEqual(JSON.parse(userSocialAuth.get('extra')), userSocialAuthData.extra);
@@ -153,7 +153,7 @@ describe('Auth Domain Users Tests', function() {
       const [createdSocialAuth1, created] = await findOrCreateUserSocialAuth(createdUser1, userSocialAuthData1);
 
       assert.isTrue(created);
-      assert.equal(createdUser1.get('id'), createdSocialAuth1.get('userId'));
+      assert.equal(createdUser1.id, createdSocialAuth1.get('userId'));
 
       try {
         await findOrCreateUserSocialAuth(createdUser2, userSocialAuthData2)

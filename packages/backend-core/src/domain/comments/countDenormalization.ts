@@ -20,13 +20,13 @@ import {
   ICommentInstance,
 } from '../../models';
 
-export async function denormalizeFlaggedAndRecommendedCountsForComment(comment: ICommentInstance) {
+export async function denormalizeCountsForComment(comment: ICommentInstance) {
   const [
     flaggedCount,
     recommendedCount,
   ] = await Promise.all([
-    CommentFlag.count({ where: { commentId: comment.get('id') } }),
-    CommentRecommendation.count({ where: { commentId: comment.get('id') } }),
+    CommentFlag.count({ where: { commentId: comment.id } }),
+    CommentRecommendation.count({ where: { commentId: comment.id } }),
   ]);
 
   const updatedComment = await comment.update({

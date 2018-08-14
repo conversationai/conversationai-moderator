@@ -38,7 +38,7 @@ export function createAssignmentsService(): express.Router {
     async ({ params: { id } }, paging, include, filters, sort, fields) => {
       const user = await User.findById(id);
 
-      return list(
+      return await list(
         'articles', {
           page: paging,
           include,
@@ -73,7 +73,7 @@ export function createAssignmentsService(): express.Router {
     async ({ params: { id } }, paging, include, filters, sort, fields) => {
       const article = await Article.findById(id);
 
-      return list(
+      return await list(
         'users',
         {
           page: paging,
@@ -137,7 +137,7 @@ export function createAssignmentsService(): express.Router {
       },
     });
 
-    const articleIdsInCategory = articlesInCategory.map((article) => article.get('id'));
+    const articleIdsInCategory = articlesInCategory.map((article) => article.id);
 
     // Get assignments for the category
     const assignmentsForCategory = await UserCategoryAssignment.findAll({

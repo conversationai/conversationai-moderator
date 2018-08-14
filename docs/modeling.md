@@ -22,7 +22,6 @@ The tables:
   SequelizeMeta             |
   articles                  |
   categories                |
-  comment_flags             |
   comment_recommendations   |
   comment_score_requests    |
   comment_scores            |
@@ -94,7 +93,7 @@ This table holds the articles that can be commented on.
 - highlightedCount (int) (Denormalize COUNT of comments with highlightedCount > 0)
 - approvedCount (int) (Denormalize COUNT of comments with approvedCount > 0)
 - rejectedCount (int) (Denormalize COUNT of comments with rejectedCount > 0)
-- deferedCount (int) (Denormalize COUNT of comments with deferedCount > 0)
+- deferredCount (int) (Denormalize COUNT of comments with deferredCount > 0)
 - flaggedCount (int) (Denormalize COUNT of comments with flaggedCount > 0)
 - batchedCount (int) (Denormalize COUNT of comments with batchedCount > 0)
 - recommendedCount (int) (Denormalize COUNT of comments with recommendedCount > 0)
@@ -233,9 +232,14 @@ This table holds the comments, and the state of the comments.
 - updatedAt (datetime)
 
 *Indexes*:
-- comment
+- commentId
 
 ### CommentFlag
+
+An attribute of the comment indicating the comment has been flagged for some reason on the target platform.
+Currently, there is no means of setting this flag in OSMod, though we display counts of flagged comments.
+TODO: Document how a flagged comment appears in the UI.
+
 - id (bigint)
 - commentId (foreign key: Comment)
 - sourceId (string) (optional identifier so that scores can be retracted, like for publisher recommendations)
@@ -244,7 +248,7 @@ This table holds the comments, and the state of the comments.
 - updatedAt (datetime)
 
 *Indexes*:
-- comment
+- commentId
 
 ### Decision
 - id(int) (required)
@@ -287,7 +291,7 @@ Moderators can be assigned at this level.
 - highlightedCount (int) (Denormalize SUM of articles' highlightedCount)
 - approvedCount (int) (Denormalize SUM of articles' approvedCount)
 - rejectedCount (int) (Denormalize SUM of articles' rejectedCount)
-- deferedCount (int) (Denormalize SUM of articles' deferedCount)
+- deferredCount (int) (Denormalize SUM of articles' deferredCount)
 - flaggedCount (int) (Denormalize SUM of articles' flaggedCount)
 - batchedCount (int) (Denormalize SUM of articles' batchedCount)
 - recommendedCount (int) (Denormalize SUM of articles' recommendedCount)

@@ -22,7 +22,6 @@ import {
 } from 'lodash';
 import {
   CommentSummaryScore,
-  IArticleInstance,
   ICommentInstance,
   ICommentSummaryScoreInstance,
   IModerationRuleInstance,
@@ -82,8 +81,8 @@ export async function resolveComment(
 
   if (summaryScoreTag) {
     const tempSummaryScore = CommentSummaryScore.build({
-      commentId: comment.get('id'),
-      tagId: summaryScoreTag.get('id'),
+      commentId: comment.id,
+      tagId: summaryScoreTag.id,
       score: comment.get('maxSummaryScore'),
     });
 
@@ -199,7 +198,7 @@ export async function resolveComment(
  * @param {object} comment Comment model instance to process rules on
  */
 export async function processRulesForComment(comment: ICommentInstance): Promise<IDecision | null> {
-  const article: IArticleInstance = await comment.getArticle();
+  const article = await comment.getArticle();
 
   if (article && article.get('disableRules')) {
     return null;
@@ -208,7 +207,7 @@ export async function processRulesForComment(comment: ICommentInstance): Promise
   // Otherwise, fetch all scores and play ball
   const commentSummaryScores = await CommentSummaryScore.findAll({
     where: {
-      commentId: comment.get('id'),
+      commentId: comment.id,
     },
     include: [Tag],
   });

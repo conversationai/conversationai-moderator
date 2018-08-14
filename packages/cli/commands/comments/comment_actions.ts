@@ -58,7 +58,7 @@ export async function handler(argv: any) {
   const user = await User.findById(argv.userId);
 
   if (user) {
-    const token = createToken(user.get('id'));
+    const token = createToken(user.id);
     let data = argv.commentId;
     let postData = {
       data : [argv.commentId],

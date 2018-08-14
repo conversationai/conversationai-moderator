@@ -69,7 +69,7 @@ export function createEditCommentTextService(): express.Router {
 
         // update comment scores
         await enqueue<ISendCommentForScoringTaskData>('sendCommentForScoring', {
-          commentId: comment.get('id'),
+          commentId: comment.id,
         }, false);
 
         // send edit event to publisher
