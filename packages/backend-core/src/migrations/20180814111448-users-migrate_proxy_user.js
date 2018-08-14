@@ -14,9 +14,8 @@ module.exports = {
         endpointType: 'perspective-proxy'
       };
 
-      const res = await queryInterface.sequelize.query('update users set extra = \''+JSON.stringify(extra)+'\' where id = "'+u.id+'";',
+      await queryInterface.sequelize.query('update users set extra = \''+JSON.stringify(extra)+'\' where id = "'+u.id+'";',
                                                        { type: Sequelize.QueryTypes.UPDATE });
-      console.log(res);
     }
   },
 
@@ -26,9 +25,8 @@ module.exports = {
     for (const u of users) {
       const extra = JSON.parse(u.extra);
       if (extra.serviceType === 'moderator' && extra.endpointType === 'perspective-proxy') {
-        const res = await queryInterface.sequelize.query('update users set endpoint = \'' + extra.endpoint + '\', extra = NULL where id = "' + u.id + '";',
+        await queryInterface.sequelize.query('update users set endpoint = \'' + extra.endpoint + '\', extra = NULL where id = "' + u.id + '";',
           {type: Sequelize.QueryTypes.UPDATE});
-        console.log(res);
       }
     }
   }
