@@ -18,9 +18,14 @@ module.exports = {
         allowNull: true,
         unique: false,
       });
-      await queryInterface.sequelize.query( // TODO: Old versions of sequelize can't remove constraints.  Remove this if/when we upgrade
-        'ALTER TABLE users DROP INDEX email;'
+      // TODO: Old versions of sequelize can't remove constraints.  Remove this if/when we upgrade
+      await queryInterface.sequelize.query(
+        'ALTER TABLE users DROP INDEX users_email;'
       );
+      await queryInterface.sequelize.query(
+        'CREATE INDEX users_email ON users (email);'
+      );
+
     })();
   },
 
