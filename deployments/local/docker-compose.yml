@@ -8,8 +8,8 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: "${DATABASE_PASSWORD}"
-      MYSQL_DATABASE: "${DATABASE_USER}"
-      MYSQL_USER: "${DATABASE_NAME}"
+      MYSQL_DATABASE: "${DATABASE_NAME}"
+      MYSQL_USER: "${DATABASE_USER}"
       MYSQL_PASSWORD: "${DATABASE_PASSWORD}"
     ports:
       - '3306:3306'
@@ -23,20 +23,23 @@ services:
       context: ../..
       dockerfile: "deployments/local/Dockerfile"
     environment:
-      IMAGE_FLAVOR: backend
+      IMAGE_FLAVOR: 'backend'
+      MODERATOR_FLAVOR: "${MODERATOR_FLAVOR}"
       DATABASE_HOST: database
       DATABASE_NAME: "${DATABASE_NAME}"
       DATABASE_USER: "${DATABASE_USER}"
       DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
+      REDIS_URL: 'redis://redis:6379'
       GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
       GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
       HTTPS_LINKS_ONLY: 'false'
       TOKEN_SECRET: "${TOKEN_SECRET}"
-      TOKEN_ISSUER: 'Open Source Moderator (Dev)'
-      REDIS_URL: 'redis://redis:6379'
+      TOKEN_ISSUER: 'Open Source Moderator'
       FRONTEND_URL: '${URL_BASE}:8000'
-      APP_NAME: 'Moderator (Dev)'
+      APP_NAME: 'Moderator'
       REDIRECT_OAUTH_TO: 'referrer'
+      GOOGLE_CLOUD_API_KEY: "${GOOGLE_CLOUD_API_KEY}"
+      ATTRIBUTE_REQUESTS: "${ATTRIBUTE_REQUESTS}"
       PORT: 8080
     ports:
       - "8080:8080"
@@ -48,25 +51,31 @@ services:
       context: ../..
       dockerfile: "deployments/local/Dockerfile"
     environment:
-      IMAGE_FLAVOR: frontend
+      IMAGE_FLAVOR: 'frontend'
+      MODERATOR_FLAVOR: "${MODERATOR_FLAVOR}"
+      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
+      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
       API_URL: '${URL_BASE}:8080'
-      APP_NAME: 'Moderator (Dev)'
+      APP_NAME: 'Moderator'
       PORT: 8000
     ports:
       - "8000:8000"
-#  processing:
-#    build:
-#      context: ../..
-#      dockerfile: "deployments/local/Dockerfile"
-#    environment:
-#      IMAGE_FLAVOR: "sync-${MODERATOR_FLAVOR$}
-#      DATABASE_HOST: database
-#      DATABASE_NAME: "${DATABASE_NAME}"
-#      DATABASE_USER: "${DATABASE_USER}"
-#      DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
-#      REDIS_URL: 'redis://redis:6379'
-#    ports:
-#      - "8000:8000"
-#    links:
-#        - database
-#        - redis
+  processing:
+    build:
+      context: ../..
+      dockerfile: "deployments/local/Dockerfile"
+    environment:
+      IMAGE_FLAVOR: 'processing'
+      MODERATOR_FLAVOR: "${MODERATOR_FLAVOR}"
+      DATABASE_HOST: database
+      DATABASE_NAME: "${DATABASE_NAME}"
+      DATABASE_USER: "${DATABASE_USER}"
+      DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
+      REDIS_URL: 'redis://redis:6379'
+      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
+      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
+      GOOGLE_CLOUD_API_KEY: "${GOOGLE_CLOUD_API_KEY}"
+      ATTRIBUTE_REQUESTS: "${ATTRIBUTE_REQUESTS}"
+    links:
+        - database
+        - redis
