@@ -1,8 +1,18 @@
 #!/bin/bash
 
-cd packages/backend-api
-PORT=8080 node ./server.js &
-cd -
+basename=`dirname $0`
 
-cd packages/frontend-web
-PORT=8000 API_URL="http://localhost:8080" node tooling/server.js
+if [ "${IMAGE_FLAVOR}" == 'backend' ] ; then
+
+  ${basename}/initdb
+  cd packages/backend-api
+  exec node ./server.js
+fi
+
+if [ "${IMAGE_FLAVOR}" == 'frontend' ] ; then
+  cd packages/frontend-web
+  exec node tooling/server.js
+fi
+
+echo "Unknown image flavor ${IMAGE_FLAVOR}"
+exit 1
