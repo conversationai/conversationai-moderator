@@ -17,6 +17,7 @@ limitations under the License.
 import { assert } from 'chai';
 import { groupBy } from 'lodash';
 import * as moment from 'moment';
+
 import {
   compileScoresData,
   compileSummaryScoresData,
@@ -183,26 +184,24 @@ describe('Comments Domain Pipeline Tests', () => {
       await completeMachineScoring(comment.id);
 
       // Get scores and score requests from the database
-      const [scores, request, summaryScores] = await Promise.all([
-        CommentScore.findAll({
+      const scores = await CommentScore.findAll({
           where: {
             commentId: comment.id,
           },
           include: [Tag],
-        }),
-        CommentScoreRequest.findOne({
+        });
+      const request = await CommentScoreRequest.findOne({
           where: {
             id: commentScoreRequest.id,
           },
           include: [Comment],
-        }),
-        CommentSummaryScore.findAll({
+        });
+      const summaryScores = await CommentSummaryScore.findAll({
           where: {
             commentId: comment.id,
           },
           include: [Tag],
-        }),
-      ]);
+        });
 
       // Scores assertions
       assert.lengthOf(scores, 3);
@@ -219,37 +218,37 @@ describe('Comments Domain Pipeline Tests', () => {
         if (score.get('score') === 0.2) {
           assert.equal(score.get('annotationStart'), 0);
           assert.equal(score.get('annotationEnd'), 62);
-          assert.equal(score.get('tag').get('key'), 'ATTACK_ON_COMMENTER');
+          assert.equal((await score.getTag())!.get('key'), 'ATTACK_ON_COMMENTER');
         }
 
         if (score.get('score') === 0.4) {
           assert.equal(score.get('annotationStart'), 0);
           assert.equal(score.get('annotationEnd'), 62);
-          assert.equal(score.get('tag').get('key'), 'INFLAMMATORY');
+          assert.equal((await score.getTag())!.get('key'), 'INFLAMMATORY');
         }
 
         if (score.get('score') === 0.7) {
           assert.equal(score.get('annotationStart'), 63);
           assert.equal(score.get('annotationEnd'), 66);
-          assert.equal(score.get('tag').get('key'), 'INFLAMMATORY');
+          assert.equal((await score.getTag())!.get('key'), 'INFLAMMATORY');
         }
       }
 
       for (const score of summaryScores) {
         if (score.get('score') === 0.2) {
-          assert.equal(score.get('tag').get('key'), 'ATTACK_ON_COMMENTER');
+          assert.equal((await score.getTag())!.get('key'), 'ATTACK_ON_COMMENTER');
         }
 
         if (score.get('score') === 0.55) {
-          assert.equal(score.get('tag').get('key'), 'INFLAMMATORY');
+          assert.equal((await score.getTag())!.get('key'), 'INFLAMMATORY');
         }
       }
 
       // Request assertions
-
-      assert.isOk(request.get('doneAt'));
-      assert.equal(request.get('commentId'), comment.id);
-      assert.isTrue(request.get('comment').get('isScored'));
+      assert.isNotNull(request);
+      assert.isOk(request!.get('doneAt'));
+      assert.equal(request!.get('commentId'), comment.id);
+      assert.isTrue((await request!.getComment())!.get('isScored'));
     });
 
     it('should short-circuit if error key is present and not falsy in the scoreData', async () => {
@@ -404,7 +403,7 @@ describe('Comments Domain Pipeline Tests', () => {
         }
       });
 
-      assert.isFalse(commentScoreRequests[0].get('comment').get('isScored'));
+      assert.isFalse((await commentScoreRequests[0].getComment())!.get('isScored'));
     });
   });
 

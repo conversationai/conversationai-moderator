@@ -43,15 +43,8 @@ export interface IAuthorCounts {
 }
 
 export async function getAuthorCounts(authorSourceId: string): Promise<IAuthorCounts> {
-  const [approvedCount, rejectedCount] = await Promise.all([
-
-    // approved
-    Comment.count({ where: { authorSourceId, isAccepted: true } }),
-
-    // rejected
-    Comment.count({ where: { authorSourceId, isAccepted: false } }),
-
-  ]);
+  const approvedCount = await Comment.count({ where: { authorSourceId, isAccepted: true } });
+  const rejectedCount = await Comment.count({ where: { authorSourceId, isAccepted: false } });
 
   return {
     approvedCount,

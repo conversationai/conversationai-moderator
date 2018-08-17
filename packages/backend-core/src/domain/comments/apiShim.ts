@@ -22,7 +22,6 @@ const striptags = require('striptags');
 import { logger } from '../../logger';
 
 import {
-  Article,
   ICommentInstance,
   IUserInstance,
 } from '../../models';
@@ -104,10 +103,12 @@ export async function createShim(
       spanAnnotations: true,
     };
 
-    const article = await Article.findById(comment.get('articleId'));
-    req.context.entries.push({text: striptags(article.get('text'))});
+    const article = await comment.getArticle();
+    if (article) {
+      req.context.entries.push({text: striptags(article.get('text'))});
+    }
 
-    const replyTo = comment.get('replyTo');
+    const replyTo = await comment.getReplyTo();
     if (replyTo) {
       req.context.entries.push({text: striptags(replyTo.get('text'))});
     }

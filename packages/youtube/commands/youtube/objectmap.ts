@@ -198,12 +198,12 @@ export async function foreachPendingDecision(callback: (decision: IDecisionInsta
   });
 
   for (const d of decisions) {
-    callback(d, await d.getComment());
+    callback(d, (await d.getComment())!);
   }
 }
 
 export async function markDecisionExecuted(decision: IDecisionInstance) {
   decision.set('sentBackToPublisher', sequelize.fn('now')).save();
-  const comment = await decision.getComment();
+  const comment = (await decision.getComment())!;
   comment.set('sentBackToPublisher', sequelize.fn('now')).save();
 }
