@@ -53,15 +53,11 @@ const commentsRoutes = (path: string) => (
     <IndexRedirect to="new" />
     <Route path="new">
       <IndexRedirect to="SUMMARY_SCORE" />
-      <Route path=":tag">
-        <IndexRoute component={NewComments} />
-      </Route>
+      <Route path=":tag" component={NewComments}/>
     </Route>
     <Route path="moderated">
       <IndexRedirect to="approved" />
-      <Route path=":tag">
-        <IndexRoute component={ModeratedComments} />
-      </Route>
+      <Route path=":tag" component={ModeratedComments}/>
     </Route>
     <Route path="tagselector" component={TagSelector} />
     <Route path="comments/:commentId" component={CommentDetail} />
