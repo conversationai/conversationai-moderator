@@ -291,6 +291,8 @@ export async function completeMachineScoring(commentId: number): Promise<void> {
     include: [Article],
   }))!;
 
+  await comment.set('isScored', true).save();
+
   await cacheCommentTopScores(comment);
   await processRulesForComment(comment);
   await denormalizeCountsForComment(comment);

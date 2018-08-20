@@ -170,6 +170,7 @@ describe('Comments Domain Pipeline Tests', () => {
 
       // This is the only score in the queue, so it should be complete (true).
       assert.isTrue(await getIsDoneScoring(comment));
+      await completeMachineScoring(comment.id);
 
       // Get scores and score requests from the database
       const [scores, request, summaryScores] = await Promise.all([
