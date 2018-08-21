@@ -35,7 +35,7 @@ interface IMessage {
 }
 
 async function getGlobalSummary() {
-  const deferred = await Comment.findAndCountAll({where: { isDeferred: true }});
+  const deferred = await Comment.findAndCountAll({where: { isDeferred: true }, limit: 0});
 
   return {
     type: 'global',
@@ -83,7 +83,7 @@ async function maybeSendUpdateToUser(si: ISocketItem, sendGlobal: boolean) {
 async function maybeSendUpdates() {
   const globalSummaryMessage = await getGlobalSummary();
 
-  const sendGlobal = isEqual(globalSummaryMessage.data, lastGlobalSummaryMessage!.data);
+  const sendGlobal = !isEqual(globalSummaryMessage.data, lastGlobalSummaryMessage!.data);
   if (sendGlobal) {
     lastGlobalSummaryMessage = globalSummaryMessage;
   }

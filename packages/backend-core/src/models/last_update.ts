@@ -63,6 +63,7 @@ export async function updateHappened() {
   const instance = await getInstance();
   lastUpdateLocal = instance.get('lastUpdate') + 1;
   instance.set('lastUpdate', lastUpdateLocal);
+  await instance.save();
   notifyInterested();
 }
 
