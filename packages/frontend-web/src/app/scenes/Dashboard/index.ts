@@ -29,7 +29,6 @@ import {
   getCategories,
   getCategoriesIsLoading,
   loadCategories,
-  loadDeferredCounts,
 } from '../../stores/categories';
 import { getUsersIsLoading, loadUsers } from '../../stores/users';
 import { reducer as articlesReducer } from './components/DashboardArticles';
@@ -82,7 +81,6 @@ export const Dashboard = compose(
   provideHooks<IRedialLocals>({
     fetch: ({ dispatch }) => Promise.all([
       dispatch(loadCategories()),
-      dispatch(loadDeferredCounts()),
       dispatch(loadUsers()),
     ]),
   }),

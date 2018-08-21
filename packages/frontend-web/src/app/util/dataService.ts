@@ -537,23 +537,6 @@ export async function listDeferredArticles(
   return listModels<IArticleModel>('articles', requestParams);
 }
 
-/**
- * Count the number of deferred comments currently assigned to a user.
- */
-export async function countDeferredArticleComments(): Promise<number> {
-  const { data }: any = await axios.get(
-    listURL(
-      'comments',
-      {
-        filters: { isDeferred: true },
-        page: { limit: 0, offset: 0 },
-      },
-    ),
-  );
-
-  return data.meta.page.total;
-}
-
 export interface IModeratedComments {
   approved: Array<number>;
   highlighted: Array<number>;
@@ -889,11 +872,16 @@ export async function listAuthorCounts(
 
 let ws: WebSocket = null;
 
+export interface IGlobalSummary {
+  deferred: number;
+}
+
 export interface IUserSummary {
   assignments: number;
 }
 
-export function connectNotifier(userNotificationHandler: (data: IUserSummary) => void) {
+export function connectNotifier(globalNotificationHandler: (data: IGlobalSummary) => void,
+                                userNotificationHandler: (data: IUserSummary) => void) {
   if (!ws) {
     const token = getToken();
     const baseurl = serviceURL(`updates/summary/?token=${token}`);
@@ -903,6 +891,9 @@ export function connectNotifier(userNotificationHandler: (data: IUserSummary) =>
       const body: any = JSON.parse(message.data);
       if (body.type === 'user') {
         userNotificationHandler(body.data as IUserSummary);
+      }
+      else {
+        globalNotificationHandler(body.data as IGlobalSummary);
       }
     };
 

@@ -20,7 +20,6 @@ import { combineReducers } from 'redux-immutable';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { ICategoryModel } from '../../models';
 import {
-  countDeferredArticleComments,
   IRecordListStateRecord,
   listModels,
   makeAJAXAction,
@@ -46,7 +45,7 @@ type ICountCompletePayload = {
   count: number;
 };
 export const countAssignmentsComplete = createAction<ICountCompletePayload>('global/COUNT_ASSIGNMENTS_COMPLETE');
-const countDeferredComplete = createAction<ICountCompletePayload>('global/COUNT_DEFERRED_COMPLETE');
+export const countDeferredComplete = createAction<ICountCompletePayload>('global/COUNT_DEFERRED_COMPLETE');
 
 export function getCategories(state: IAppStateRecord): List<ICategoryModel> {
   return state.getIn(CATEGORIES_DATA);
@@ -75,14 +74,6 @@ const {
   loadCategoriesStart.toString(),
   loadCategoriesComplete.toString(),
 );
-
-export function loadDeferredCounts(): IThunkAction<void> {
-  return async (dispatch) => {
-    const count = await countDeferredArticleComments();
-
-    return await dispatch(countDeferredComplete({ count }));
-  };
-}
 
 export function getAssignments(state: IAppStateRecord): any {
   return state.getIn(ASSIGNMENTS_DATA);

@@ -22,10 +22,10 @@ import { connectNotifier } from '../util';
 import { IArticleModeratorsStateRecord, reducer as articleModeratorsReducer } from './articleModerators';
 import {
   countAssignmentsComplete,
+  countDeferredComplete,
   IState as ICategoriesState,
   loadCategories,
-  loadDeferredCounts,
-  reducer as categoriesReducer
+  reducer as categoriesReducer,
 } from './categories';
 import { ICategoryModeratorsStateRecord , reducer as categoryModeratorsReducer} from './categoryModerators';
 import { IColumnSortStateRecord, reducer as columnSortsReducer } from './columnSorts';
@@ -97,13 +97,17 @@ export const reducer: any = combineReducers<IAppStateRecord>({
 });
 
 export async function initialiseClientModel(dispatch: IAppDispatch) {
-  connectNotifier((data) => {
-    dispatch(countAssignmentsComplete({ count: data.assignments}));
-  });
+  connectNotifier(
+    (data) => {
+      dispatch(countDeferredComplete({ count: data.deferred}));
+    },
+    (data) => {
+      dispatch(countAssignmentsComplete({ count: data.assignments}));
+    }
+  );
 
   return Promise.all([
     dispatch(loadCategories()),
-    dispatch(loadDeferredCounts()),
     dispatch(loadUsers()),
   ]);
 }
