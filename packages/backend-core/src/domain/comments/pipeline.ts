@@ -128,7 +128,7 @@ export async function sendForScoring(comment: ICommentInstance): Promise<void> {
 
   let foundServiceUser = false;
   for (const scorer of serviceUsers) {
-    const extra: any = JSON.parse(scorer.get('extra')); // TODO: Not sure why necessary.  Fixed in later Sequelize?
+    const extra: any = JSON.parse(scorer.get('extra'));
     if (extra && extra.serviceType === SERVICE_TYPE_MODERATOR) {
       await sendToScorer(comment, scorer);
       foundServiceUser = true;
