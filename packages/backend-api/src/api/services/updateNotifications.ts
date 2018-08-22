@@ -36,11 +36,14 @@ interface IMessage {
 
 async function getGlobalSummary() {
   const deferred = await Comment.findAndCountAll({where: { isDeferred: true }, limit: 0});
+  const users = await User.findAll({where: {group: ['admin', 'general']}});
+  const userdata = users.map((u) => u.toJSON());
 
   return {
     type: 'global',
     data: {
       deferred: deferred['count'],
+      users: userdata,
     },
   } as IMessage;
 }

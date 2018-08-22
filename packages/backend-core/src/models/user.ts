@@ -19,6 +19,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 import { IArticleInstance } from './article';
 import { ICategoryInstance } from './category';
+import { updateHappened } from './last_update';
 
 export const USER_GROUPS = [
   'general',
@@ -169,6 +170,14 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
         as: 'assignedCategories',
       });
     },
+  },
+  hooks: {
+    afterCreate: updateHappened,
+    afterDelete: updateHappened,
+    afterUpdate: updateHappened,
+    afterBulkCreate: updateHappened,
+    afterBulkUpdate: updateHappened,
+    afterBulkDestroy: updateHappened,
   },
 
   instanceMethods: {
