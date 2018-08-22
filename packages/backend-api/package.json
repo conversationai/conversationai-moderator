@@ -12,7 +12,7 @@
     "start": "node ./server.js",
     "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
-    "watch": "npm run compile && npm run compile:watch | npm run server",
+    "watch": "npm run compile && npm run compile:watch | PORT=8080 DEBUG_PORT=5859 npm run server",
     "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration",
     "compile:watch": "../../node_modules/.bin/tsc --watch --sourceMap --outDir dist --declaration",
     "build": "npm run compile",

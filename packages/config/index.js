@@ -116,7 +116,7 @@ const config = convict({
     run_immediately: {
       doc: 'If true, we skip redis and run all tasks synchronously',
       format: Boolean,
-      default: false,
+      default: true,
       env: 'WORKER_RUN_IMMEDIATELY',
     },
     run_scheduled_tasks: {
@@ -149,7 +149,7 @@ const config = convict({
   redirect_oauth_to: {
     doc: 'Where to redirect successful OAUTH',
     format: String,
-    default: 'frontend_url',
+    default: 'referrer',
     env: 'REDIRECT_OAUTH_TO'
   },
 
