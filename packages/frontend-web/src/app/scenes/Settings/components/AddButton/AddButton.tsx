@@ -58,8 +58,8 @@ export class AddButton extends React.Component<IAddButtonProps> {
 
     return (
       <div>
-        <label htmlFor={this.stringToId(label)} {...css(OFFSCREEN)}>{label}</label>
-        <button id={this.stringToId(label)} type="button" {...css(STYLES.button, { width })} onClick={onClick} >
+        <label key="label" htmlFor={this.stringToId(label)} {...css(OFFSCREEN)}>{label}</label>
+        <button key="button" id={this.stringToId(label)} type="button" {...css(STYLES.button, { width })} onClick={onClick} >
           <AddIcon size={20} fill={DARK_PRIMARY_TEXT_COLOR} />
         </button>
       </div>

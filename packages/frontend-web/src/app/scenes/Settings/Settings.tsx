@@ -677,11 +677,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         <div {...css(STYLES.body)}>
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
           <form onSubmit={this.handleFormSubmit} {...css(STYLES.formContainer)}>
-            <div>
-              <div {...css(STYLES.heading)}>
+            <div key="editUsersSection">
+              <div key="heading" {...css(STYLES.heading)}>
                 <h2 {...css(STYLES.headingText)}>Edit Users</h2>
               </div>
-              <div {...css(STYLES.section)}>
+              <div key="body" {...css(STYLES.section)}>
                 <div {...css(SETTINGS_STYLES.row, SETTINGS_STYLES.selectContainer)}>
                   <label {...css(SETTINGS_STYLES.label)} htmlFor="owners">
                     Owners:
@@ -727,11 +727,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </div>
             </div>
 
-            <div>
-              <div {...css(STYLES.heading)}>
+            <div key="editTagsSection">
+              <div key="heading" {...css(STYLES.heading)}>
                 <h2 {...css(STYLES.headingText)}>Tags</h2>
               </div>
-              <div {...css(STYLES.section)}>
+              <div key="body" {...css(STYLES.section)}>
                 <div {...css(SETTINGS_STYLES.row, {padding: 0})}>
                   <p {...css(STYLES.labelTitle, SMALLER_SCREEN && {width: '184px', marginRight: '20px'})}>Label</p>
                   <p {...css(STYLES.descriptionTitle)}>Description</p>
@@ -755,11 +755,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </div>
             </div>
 
-            <div>
-              <div {...css(STYLES.heading)}>
+            <div key="editRulesSection">
+              <div key="heading" {...css(STYLES.heading)}>
                 <h2 {...css(STYLES.headingText)}>Automated Rules</h2>
               </div>
-              <div {...css(STYLES.section)}>
+              <div key="body" {...css(STYLES.section)}>
                 {rules && rules.map((rule, i) => (
                   <RuleRow
                     key={i}
@@ -784,11 +784,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </div>
             </div>
 
-            <div>
-              <div {...css(STYLES.heading)}>
+            <div key="editSensitivitiesSection">
+              <div key="heading" {...css(STYLES.heading)}>
                 <h2 {...css(STYLES.headingText)}>Tagging Sensitivity (determines at what score range a tag will appear in the UI)</h2>
               </div>
-              <div {...css(STYLES.section)}>
+              <div key="body" {...css(STYLES.section)}>
                 {taggingSensitivities && taggingSensitivities.map((ts, i) => ts.tagId !== summaryScoreTagId &&  (
                   <RuleRow
                     key={i}
@@ -810,13 +810,13 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </div>
             </div>
 
-            <div>
-              <div {...css(STYLES.heading)}>
+            <div key="editRangesSection">
+              <div key="heading" {...css(STYLES.heading)}>
                 <h2 {...css(STYLES.headingText)}>
                   Preselected Batch Ranges (sets the default score range on a per category basis for tags in the batch selection view)
                 </h2>
               </div>
-              <div {...css(STYLES.section)}>
+              <div key="body" {...css(STYLES.section)}>
                 {preselects && preselects.map((preselect, i) => (
                   <RuleRow
                     key={i}
@@ -838,18 +838,18 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </div>
             </div>
 
-            <div {...css(STYLES.buttonGroup)}>
+            <div key="submitSection" {...css(STYLES.buttonGroup)}>
               <Button key="cancel" buttonStyles={STYLES.cancel} label="Cancel" onClick={this.onCancelPress}/>
               <Button key="save" buttonStyles={STYLES.save} label="Save" onClick={this.onSavePress}/>
             </div>
           </form>
           <div>
-            <div {...css(STYLES.heading)}>
+            <div key="pluginsHeader" {...css(STYLES.heading)}>
               <h2 {...css(STYLES.headingText)}>
                 Plugins
               </h2>
             </div>
-            <div {...css(STYLES.section)}>
+            <div key="pluginsContent" {...css(STYLES.section)}>
               <h3>Wordpress</h3>
               <p>Install the Wordpress plugin to use Moderator with your Wordpress blog.</p>
               <p>
