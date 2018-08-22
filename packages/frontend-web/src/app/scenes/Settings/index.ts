@@ -36,7 +36,7 @@ import { getPreselects, loadPreselects } from '../../stores/preselects';
 import { getRules, loadRules } from '../../stores/rules';
 import { getTaggingSensitivities, loadTaggingSensitivities } from '../../stores/taggingSensitivities';
 import { getTags, loadTags } from '../../stores/tags';
-import { getUsers, loadUsers } from '../../stores/users';
+import { getUsers } from '../../stores/users';
 import { ISettingsProps, Settings as PureSettings } from './Settings';
 
 import {
@@ -89,7 +89,6 @@ function makeReloadAction(dispatch: IAppDispatch) {
   return async () => (
     await Promise.all([
       dispatch(loadCategories()),
-      dispatch(loadUsers()),
       dispatch(loadTags(true)),
       dispatch(loadRules(true)),
       dispatch(loadPreselects(true)),

@@ -30,7 +30,7 @@ import {
   getCategoriesIsLoading,
   loadCategories,
 } from '../../stores/categories';
-import { getUsersIsLoading, loadUsers } from '../../stores/users';
+import { getUsersIsLoading } from '../../stores/users';
 import { reducer as articlesReducer } from './components/DashboardArticles';
 import { Dashboard as PureDashboard } from './Dashboard';
 
@@ -81,7 +81,6 @@ export const Dashboard = compose(
   provideHooks<IRedialLocals>({
     fetch: ({ dispatch }) => Promise.all([
       dispatch(loadCategories()),
-      dispatch(loadUsers()),
     ]),
   }),
 )(PureDashboard) as any;

@@ -14,26 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
-import { Action, createAction } from 'redux-actions';
+import {List} from 'immutable';
+import {makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
+import { Action, createAction, handleActions } from 'redux-actions';
 import { IUserModel } from '../../models';
-import {
-  listModels,
-  makeAJAXAction,
-  makeRecordListReducer,
-  IRecordListStateRecord,
- } from '../util';
-import { IAppStateRecord, IThunkAction } from './index';
+import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'users'];
 const USERS_DATA = [...STATE_ROOT, 'items'];
 const USERS_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
-const USERS_HAS_DATA = [...STATE_ROOT, 'hasData'];
 
-const loadUsersStart = createAction(
-  'all-users/LOAD_USERS_START',
-);
-const loadUsersComplete = createAction<object>(
+export const loadUsersComplete = createAction<List<IUserModel>>(
   'all-users/LOAD_USERS_COMPLETE',
 );
 
@@ -49,28 +41,31 @@ export function getUsersIsLoading(state: IAppStateRecord): boolean {
   return state.getIn(USERS_LOADING_STATUS);
 }
 
-export function loadUsers(): IThunkAction<void> {
-  return makeAJAXAction(
-    () => listModels('users', {
-      page: { limit: -1 },
-      filters: {
-        group: ['admin', 'general'],
-      },
-    }),
-    loadUsersStart,
-    loadUsersComplete,
-    (state: IAppStateRecord) => state.getIn(USERS_HAS_DATA) && getUsers(state),
-  );
+export interface IUsersState {
+  isFetching: boolean;
+  items: List<IUserModel>;
 }
 
-export type IUsersState = List<IUserModel>;
+export interface IUsersStateRecord extends TypedRecord<IUsersStateRecord>, IUsersState {}
 
-const recordListReducer = makeRecordListReducer<IUserModel>(
-  loadUsersStart.toString(),
-  loadUsersComplete.toString(),
-);
+const StateFactory = makeTypedFactory<IUsersState, IUsersStateRecord>({
+  isFetching: true,
+  items: List<IUserModel>(),
+});
 
-const reducer: (state: IRecordListStateRecord<IUserModel>, action: Action<object|IUserModel>) => IRecordListStateRecord<IUserModel>
-  = recordListReducer.reducer;
+const initialState = StateFactory();
+
+const reducer =  handleActions<IUsersStateRecord,
+  void             | // startEvent
+  List<IUserModel>   // endEvent
+  >( {
+  [loadUsersComplete.toString()]: (state: IUsersStateRecord, { payload }: Action<List<IUserModel>>) => {
+    return (
+      state
+        .set('isFetching', false)
+        .set('items', payload)
+    );
+  },
+}, initialState);
 
 export { reducer };

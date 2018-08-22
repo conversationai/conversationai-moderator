@@ -71,14 +71,14 @@ const mapStateToProps = createStructuredSelector({
     const allUsers = getUsers(state);
 
     const assignedUsers = allUsers
-        .filter((user) => getIsModeratedUser(state, user.id) && !user.equals(currentUser));
+        .filter((user) => getIsModeratedUser(state, user.id) && user.id !== currentUser.id);
 
     const assignedUsersSorted = assignedUsers
         .sort((a, b) => a.name.localeCompare(b.name))
         .toArray();
 
     const unassignedUsers = allUsers
-        .filter((user) => !getIsModeratedUser(state, user.id) && !user.equals(currentUser));
+        .filter((user) => !getIsModeratedUser(state, user.id) && user.id !== currentUser.id);
 
     const unassignedUsersSorted = unassignedUsers
         .sort((a, b) => a.name.localeCompare(b.name))

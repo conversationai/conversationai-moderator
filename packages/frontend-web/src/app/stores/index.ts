@@ -16,7 +16,7 @@ limitations under the License.
 
 import { Action, Dispatch as ReduxDispatch } from 'redux';
 import { combineReducers } from 'redux-immutable';
-import { TypedRecord} from 'typed-immutable-record';
+import { TypedRecord } from 'typed-immutable-record';
 
 import { connectNotifier } from '../util';
 import { IArticleModeratorsStateRecord, reducer as articleModeratorsReducer } from './articleModerators';
@@ -39,7 +39,7 @@ import { ITaggingSensitivityStateRecord, reducer as taggingSensitivitiesReducer 
 import { ITagsState, reducer as tagsReducer } from './tags';
 import { ITextSizesStateRecord, reducer as textSizesReducer } from './textSizes';
 import { IState as ITopScoresState, ISummaryState as ITopSummaryScoresState, scoreReducer as topScoresReducer, summaryScoreReducer as topSummaryScoresReducer } from './topScores';
-import { IUsersState, loadUsers, reducer as usersReducer } from './users';
+import { IUsersState, loadUsersComplete, reducer as usersReducer } from './users';
 
 export interface IAppState {
   categories: ICategoriesState;
@@ -99,15 +99,15 @@ export const reducer: any = combineReducers<IAppStateRecord>({
 export async function initialiseClientModel(dispatch: IAppDispatch) {
   connectNotifier(
     (data) => {
-      dispatch(countDeferredComplete({ count: data.deferred}));
+      dispatch(countDeferredComplete({ count: data.deferred }));
+      dispatch(loadUsersComplete(data.users));
     },
     (data) => {
-      dispatch(countAssignmentsComplete({ count: data.assignments}));
-    }
+      dispatch(countAssignmentsComplete({ count: data.assignments }));
+    },
   );
 
   return Promise.all([
     dispatch(loadCategories()),
-    dispatch(loadUsers()),
   ]);
 }

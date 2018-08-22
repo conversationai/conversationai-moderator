@@ -207,6 +207,9 @@ export function getIsAuthenticated(state: IAppStateRecord): boolean {
   return state.getIn(['auth', 'isAuthenticated']);
 }
 
+// TODO: We really should be getting the user from the users list in the store
+//       Stored separately like this, we won't update it when the user's details change
+//       Also, it adds an extra round trip to the server on login.
 export function getCurrentUser(state: IAppStateRecord): IUserModel {
   return state.getIn(['auth', 'user']);
 }

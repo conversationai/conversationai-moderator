@@ -32,6 +32,8 @@ import {
   ICommentModel,
   ICommentScoredModel,
   ICommentSummaryScoreModel,
+  IUserModel,
+  UserModel,
 } from '../../models';
 import { ITopScore } from '../../types';
 import { getToken } from '../auth/store';
@@ -874,6 +876,7 @@ let ws: WebSocket = null;
 
 export interface IGlobalSummary {
   deferred: number;
+  users: List<IUserModel>;
 }
 
 export interface IUserSummary {
@@ -886,6 +889,7 @@ export function connectNotifier(globalNotificationHandler: (data: IGlobalSummary
     const token = getToken();
     const baseurl = serviceURL(`updates/summary/?token=${token}`);
     const url = 'ws:' + baseurl.substr(baseurl.indexOf(':') + 1);
+
     ws = new WebSocket(url);
     ws.onmessage = (message) => {
       const body: any = JSON.parse(message.data);
@@ -893,10 +897,17 @@ export function connectNotifier(globalNotificationHandler: (data: IGlobalSummary
         userNotificationHandler(body.data as IUserSummary);
       }
       else {
-        globalNotificationHandler(body.data as IGlobalSummary);
+        // TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
+        //       Convert for now.  But at some point need to refactor to use numbers.
+        const data = {
+          deferred: body.data.deferred,
+          users: List<IUserModel>(body.data.users.map((u: any) => { u.id = u.id.toString(); return UserModel(u); } )),
+        };
+        globalNotificationHandler(data);
       }
     };
 
+    // TODO: Need to reopen the websocket if it goes away
     ws.onclose = (event) => {
       console.log('closing', event);
       ws = null;
