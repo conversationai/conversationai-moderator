@@ -18,7 +18,7 @@ import { Map } from 'immutable';
 import { createAction } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
 import { IArticleModel } from '../../../../../models';
-import { getUser } from '../../../../auth';
+import { getCurrentUser } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../../../../stores';
 import {
   convertArrayFromJSONAPI,
@@ -92,7 +92,7 @@ const {
   (scope, page, getState) => {
     let getter;
     if (scope.get('mode') === 'assignments') {
-      getter = listAssignedArticles.bind(null, getUser(getState()).id);
+      getter = listAssignedArticles.bind(null, getCurrentUser(getState()).id);
     } else if (scope.get('mode') === 'deferred') {
       getter = listDeferredArticles.bind(null);
     } else {

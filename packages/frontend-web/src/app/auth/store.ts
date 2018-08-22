@@ -207,7 +207,7 @@ export function getIsAuthenticated(state: IAppStateRecord): boolean {
   return state.getIn(['auth', 'isAuthenticated']);
 }
 
-export function getUser(state: IAppStateRecord): IUserModel {
+export function getCurrentUser(state: IAppStateRecord): IUserModel {
   return state.getIn(['auth', 'user']);
 }
 
@@ -216,5 +216,5 @@ export function isAdmin(user: IUserModel): boolean {
 }
 
 export function getIsAdmin(state: IAppStateRecord): boolean {
-  return isAdmin(getUser(state));
+  return isAdmin(getCurrentUser(state));
 }

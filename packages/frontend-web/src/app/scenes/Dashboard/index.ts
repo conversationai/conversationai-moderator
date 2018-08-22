@@ -23,7 +23,7 @@ import { combineReducers } from 'redux-immutable';
 import { createStructuredSelector } from 'reselect';
 import { CategoryModel } from '../../../models';
 import { IRedialLocals } from '../../../types';
-import { getIsAdmin, getUser as getCurrentUser } from '../../auth';
+import { getCurrentUser, getIsAdmin } from '../../auth';
 import { IAppStateRecord } from '../../stores';
 import {
   getCategories,

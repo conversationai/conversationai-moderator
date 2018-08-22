@@ -27,7 +27,7 @@ import { withLoader } from '../../../../util';
 import { getComment, getIsLoading, loadComment, updateComment } from './store';
 import { IThreadedCommentDetailProps, ThreadedCommentDetail as PureThreadedCommentDetail } from './ThreadedCommentDetail';
 export { reducer } from './store';
-import { getUser } from '../../../../auth/store';
+import { getCurrentUser } from '../../../../auth';
 import {
   approveComments,
   deferComments,
@@ -122,7 +122,7 @@ const mapStateToProps = createStructuredSelector({
 
   originatingCommentId: (_: any, { params }: any) => params.originatingCommentId,
 
-  userId: (state: IAppStateRecord) => getUser(state).id,
+  userId: (state: IAppStateRecord) => getCurrentUser(state).id,
 
   tags: (state: IAppStateRecord) => getTaggableTags(state),
 

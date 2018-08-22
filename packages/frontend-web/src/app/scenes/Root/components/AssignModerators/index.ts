@@ -17,7 +17,7 @@ limitations under the License.
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { IUserModel } from '../../../../../models';
-import { getUser } from '../../../../auth/store';
+import { getCurrentUser } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import {
   addModeratorToArticle,
@@ -67,7 +67,7 @@ type IAssignModeratorsDispatchProps = Pick<
 
 const mapStateToProps = createStructuredSelector({
   users: (state: IAppStateRecord): Array<IUserModel> => {
-    const currentUser = getUser(state);
+    const currentUser = getCurrentUser(state);
     const allUsers = getUsers(state);
 
     const assignedUsers = allUsers
