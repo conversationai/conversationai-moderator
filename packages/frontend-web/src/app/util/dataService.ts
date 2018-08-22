@@ -873,6 +873,7 @@ export async function listAuthorCounts(
 }
 
 let ws: WebSocket = null;
+let intervalTimer: NodeJS.Timer;
 
 export interface IGlobalSummary {
   deferred: number;
@@ -883,34 +884,52 @@ export interface IUserSummary {
   assignments: number;
 }
 
+
+
 export function connectNotifier(globalNotificationHandler: (data: IGlobalSummary) => void,
                                 userNotificationHandler: (data: IUserSummary) => void) {
-  if (!ws) {
-    const token = getToken();
-    const baseurl = serviceURL(`updates/summary/?token=${token}`);
-    const url = 'ws:' + baseurl.substr(baseurl.indexOf(':') + 1);
+  function checkSocketAlive() {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      const token = getToken();
+      const baseurl = serviceURL(`updates/summary/?token=${token}`);
+      const url = 'ws:' + baseurl.substr(baseurl.indexOf(':') + 1);
 
-    ws = new WebSocket(url);
-    ws.onmessage = (message) => {
-      const body: any = JSON.parse(message.data);
-      if (body.type === 'user') {
-        userNotificationHandler(body.data as IUserSummary);
-      }
-      else {
-        // TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
-        //       Convert for now.  But at some point need to refactor to use numbers.
-        const data = {
-          deferred: body.data.deferred,
-          users: List<IUserModel>(body.data.users.map((u: any) => { u.id = u.id.toString(); return UserModel(u); } )),
+      ws = new WebSocket(url);
+      ws.onopen = () => {
+        console.log('opened websocket');
+
+        ws.onclose = () => {
+          console.log('websocket closed');
+          ws = null;
         };
-        globalNotificationHandler(data);
-      }
-    };
+      };
 
-    // TODO: Need to reopen the websocket if it goes away
-    ws.onclose = (event) => {
-      console.log('closing', event);
-      ws = null;
-    };
+      ws.onmessage = (message) => {
+        const body: any = JSON.parse(message.data);
+        if (body.type === 'user') {
+          userNotificationHandler(body.data as IUserSummary);
+        }
+        else {
+          // TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
+          //       Convert for now.  But at some point need to refactor to use numbers.
+          const data = {
+            deferred: body.data.deferred,
+            users: List<IUserModel>(body.data.users.map((u: any) => {
+              u.id = u.id.toString();
+              return UserModel(u);
+            })),
+          };
+          globalNotificationHandler(data);
+        }
+      };
+    }
   }
+
+  checkSocketAlive();
+  intervalTimer = setInterval(checkSocketAlive, 10000);
+}
+
+export function disconnectNotifier() {
+  clearInterval(intervalTimer);
+  ws.close();
 }
