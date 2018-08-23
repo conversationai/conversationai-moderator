@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { updateHappened } from './last_update';
 import { IUserInstance } from './user';
 
 export interface ICategoryAttributes {
@@ -24,6 +25,7 @@ export interface ICategoryAttributes {
   sourceId?: string;
   isActive?: boolean;
   extra?: any;
+  count?: number;
   unprocessedCount?: number;
   unmoderatedCount?: number;
   moderatedCount?: number;
@@ -70,6 +72,12 @@ export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>
     type: Sequelize.BOOLEAN,
     allowNull: true,
     defaultValue: true,
+  },
+
+  count: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
   },
 
   unprocessedCount: {
@@ -167,5 +175,10 @@ export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>
         as: 'assignedModerators',
       });
     },
+  },
+
+  hooks: {
+    afterCreate: updateHappened,
+    afterBulkCreate: updateHappened,
   },
 });

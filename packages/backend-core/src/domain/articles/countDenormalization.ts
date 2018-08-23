@@ -30,6 +30,7 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
   }
 
   const [
+    count,
     unprocessedCount,
     unmoderatedCount,
     moderatedCount,
@@ -41,6 +42,7 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     batchedCount,
     recommendedCount,
   ] = await Promise.all([
+    Comment.count({ where: { articleId: article.id } }),
     Comment.count({ where: { articleId: article.id, isScored: false } }),
     Comment.count({ where: { articleId: article.id, isScored: true, isModerated: false, isDeferred: false } }),
     Comment.count({ where: { articleId: article.id, isScored: true,
@@ -55,6 +57,7 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
   ]);
 
   await article.update({
+    count,
     unprocessedCount,
     unmoderatedCount,
     moderatedCount,

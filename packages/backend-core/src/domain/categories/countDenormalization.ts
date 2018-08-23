@@ -24,6 +24,7 @@ export async function denormalizeCommentCountsForCategory(category: ICategoryIns
   const query = { where: { categoryId: category.id } };
 
   const [
+    count,
     unprocessedCount,
     unmoderatedCount,
     moderatedCount,
@@ -35,6 +36,7 @@ export async function denormalizeCommentCountsForCategory(category: ICategoryIns
     batchedCount,
     recommendedCount,
   ] = await Promise.all([
+    Article.sum('count', query),
     Article.sum('unprocessedCount', query),
     Article.sum('unmoderatedCount', query),
     Article.sum('moderatedCount', query),
@@ -48,6 +50,7 @@ export async function denormalizeCommentCountsForCategory(category: ICategoryIns
   ]);
 
   const c =  category.update({
+    count,
     unprocessedCount,
     unmoderatedCount,
     moderatedCount,

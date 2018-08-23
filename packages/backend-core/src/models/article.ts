@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { updateHappened } from './last_update';
 import { IUserInstance } from './user';
 
 export interface IArticleAttributes {
@@ -28,6 +29,7 @@ export interface IArticleAttributes {
   sourceCreatedAt: Date | string | null;
   isAutoModerated?: boolean | null;
   extra?: any | null;
+  count?: number;
   unprocessedCount?: number;
   unmoderatedCount?: number;
   moderatedCount?: number;
@@ -102,6 +104,12 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     type: Sequelize.BOOLEAN,
     allowNull: true,
     defaultValue: true,
+  },
+
+  count: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: false,
+    defaultValue: 0,
   },
 
   unprocessedCount: {
@@ -196,5 +204,9 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
       });
     },
 
+  },
+  hooks: {
+    afterCreate: updateHappened,
+    afterBulkCreate: updateHappened,
   },
 });

@@ -15,14 +15,24 @@ limitations under the License.
 */
 
 import * as express from 'express';
-import {isEqual} from 'lodash';
+import {isEqual, pick} from 'lodash';
 import * as WebSocket from 'ws';
 
-import {Comment, User} from '@conversationai/moderator-backend-core';
+import {Article, Category, Comment, User} from '@conversationai/moderator-backend-core';
+import {IArticleInstance, ICategoryInstance, IUserInstance} from '@conversationai/moderator-backend-core';
 import {logger, registerInterest} from '@conversationai/moderator-backend-core';
+
+const userfields = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
+
+const articlefields = ['id', 'label', 'updatedAt', 'count', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
+  'approvedCount', 'highlightedCount', 'approvedCount', 'rejectedCount', 'deferredCount', 'flaggedCount',
+  'batchedCount', 'recommendedCount', 'assignedModerators'];
 
 interface IGlobalSummary {
   deferred: number;
+  users: any;
+  categories: any;
+  articles: any;
 }
 
 interface IUserSummary {
@@ -36,14 +46,40 @@ interface IMessage {
 
 async function getGlobalSummary() {
   const deferred = await Comment.findAndCountAll({where: { isDeferred: true }, limit: 0});
+
   const users = await User.findAll({where: {group: ['admin', 'general']}});
-  const userdata = users.map((u) => u.toJSON());
+  const userdata = users.map((u: IUserInstance) => {
+    const o = u.toJSON();
+    return pick(o, userfields);
+  });
+
+  const categories = await Category.findAll({
+    where: {isActive: true},
+    include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
+  });
+  const categoryIds: Array<number> = [];
+  const categorydata = categories.map((c: ICategoryInstance) => {
+    categoryIds.push(c.id);
+    const o = c.toJSON();
+    return pick(o, articlefields);
+  });
+
+  const articles = await Article.findAll({
+    where: {$or: [{categoryId: null}, {categoryId: categoryIds}]},
+    include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
+  });
+  const articledata = articles.map((a: IArticleInstance) => {
+    const o = a.toJSON();
+    return pick(o, articlefields);
+  });
 
   return {
     type: 'global',
     data: {
       deferred: deferred['count'],
       users: userdata,
+      categories: categorydata,
+      articles: articledata,
     },
   } as IMessage;
 }
