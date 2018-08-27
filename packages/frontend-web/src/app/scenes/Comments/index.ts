@@ -26,7 +26,7 @@ import { IRedialLocals } from '../../../types';
 import { getCurrentUser, getIsAdmin } from'../../auth';
 import { IAppState, IAppStateRecord } from '../../stores';
 import { getArticleModerators, loadArticleModerators } from '../../stores/articleModerators';
-import { getCategories, getCategoriesIsLoading, loadCategories } from '../../stores/categories';
+import { getCategories, getCategoriesIsLoading } from '../../stores/categories';
 import { withLoader } from '../../util';
 import { Comments as PureComments } from './Comments';
 
@@ -159,10 +159,6 @@ export const Comments = compose(
 
         isArticleDetail
             ? dispatch(loadArticleModerators(articleId))
-            : Promise.resolve(),
-
-        !isArticleDetail
-            ? dispatch(loadCategories())
             : Promise.resolve(),
       ]);
     },

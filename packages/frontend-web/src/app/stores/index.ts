@@ -24,7 +24,7 @@ import {
   countAssignmentsComplete,
   countDeferredComplete,
   IState as ICategoriesState,
-  loadCategories,
+  loadCategoriesComplete,
   reducer as categoriesReducer,
 } from './categories';
 import { ICategoryModeratorsStateRecord , reducer as categoryModeratorsReducer} from './categoryModerators';
@@ -101,13 +101,10 @@ export async function initialiseClientModel(dispatch: IAppDispatch) {
     (data) => {
       dispatch(countDeferredComplete({ count: data.deferred }));
       dispatch(loadUsersComplete(data.users));
+      dispatch(loadCategoriesComplete(data.categories));
     },
     (data) => {
       dispatch(countAssignmentsComplete({ count: data.assignments }));
     },
   );
-
-  return Promise.all([
-    dispatch(loadCategories()),
-  ]);
 }

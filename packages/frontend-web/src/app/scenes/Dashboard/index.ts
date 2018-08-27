@@ -17,18 +17,15 @@ limitations under the License.
 import { List } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { provideHooks } from 'redial';
 import { compose } from 'redux';
 import { combineReducers } from 'redux-immutable';
 import { createStructuredSelector } from 'reselect';
 import { CategoryModel } from '../../../models';
-import { IRedialLocals } from '../../../types';
 import { getCurrentUser, getIsAdmin } from '../../auth';
 import { IAppStateRecord } from '../../stores';
 import {
   getCategories,
   getCategoriesIsLoading,
-  loadCategories,
 } from '../../stores/categories';
 import { getUsersIsLoading } from '../../stores/users';
 import { reducer as articlesReducer } from './components/DashboardArticles';
@@ -77,10 +74,5 @@ export const Dashboard = compose(
       'articles',
       'items',
     ]),
-  })) as any,
-  provideHooks<IRedialLocals>({
-    fetch: ({ dispatch }) => Promise.all([
-      dispatch(loadCategories()),
-    ]),
-  }),
+  })),
 )(PureDashboard) as any;

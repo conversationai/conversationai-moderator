@@ -21,7 +21,7 @@ import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import { RESTRICT_TO_SESSION } from '../config';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
-import { initialiseClientModel} from '../stores';
+import { initialiseClientModel } from '../stores';
 import {checkAuthorization, clearCSRF, disconnectNotifier, getCSRF, getModel} from '../util';
 
 import { IUserModel } from '../../models';

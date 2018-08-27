@@ -30,7 +30,6 @@ import { IRedialLocals } from '../../../types';
 import { IAppDispatch, IAppState } from '../../stores';
 import {
   getCategories,
-  loadCategories,
 } from '../../stores/categories';
 import { getPreselects, loadPreselects } from '../../stores/preselects';
 import { getRules, loadRules } from '../../stores/rules';
@@ -88,7 +87,6 @@ const mapStateToProps = createStructuredSelector({
 function makeReloadAction(dispatch: IAppDispatch) {
   return async () => (
     await Promise.all([
-      dispatch(loadCategories()),
       dispatch(loadTags(true)),
       dispatch(loadRules(true)),
       dispatch(loadPreselects(true)),

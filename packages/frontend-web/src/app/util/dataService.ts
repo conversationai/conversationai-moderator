@@ -24,10 +24,13 @@ import {
   IParams,
 } from '@conversationai/moderator-jsonapi/src/types';
 import {
+  ArticleModel,
+  CategoryModel,
   CommentDatedModel,
   CommentScoredModel,
   IArticleModel,
   IAuthorCountsModel,
+  ICategoryModel,
   ICommentDatedModel,
   ICommentModel,
   ICommentScoredModel,
@@ -878,13 +881,13 @@ let intervalTimer: NodeJS.Timer;
 export interface IGlobalSummary {
   deferred: number;
   users: List<IUserModel>;
+  categories: List<ICategoryModel>;
+  articles: List<IArticleModel>;
 }
 
 export interface IUserSummary {
   assignments: number;
 }
-
-
 
 export function connectNotifier(globalNotificationHandler: (data: IGlobalSummary) => void,
                                 userNotificationHandler: (data: IUserSummary) => void) {
@@ -917,6 +920,14 @@ export function connectNotifier(globalNotificationHandler: (data: IGlobalSummary
             users: List<IUserModel>(body.data.users.map((u: any) => {
               u.id = u.id.toString();
               return UserModel(u);
+            })),
+            categories: List<ICategoryModel>(body.data.categories.map((c: any) => {
+              c.id = c.id.toString();
+              return CategoryModel(c);
+            })),
+            articles: List<IArticleModel>(body.data.articles.map((a: any) => {
+              a.id = a.id.toString();
+              return ArticleModel(a);
             })),
           };
           globalNotificationHandler(data);

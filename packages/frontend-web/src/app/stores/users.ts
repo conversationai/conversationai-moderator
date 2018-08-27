@@ -53,12 +53,7 @@ const StateFactory = makeTypedFactory<IUsersState, IUsersStateRecord>({
   items: List<IUserModel>(),
 });
 
-const initialState = StateFactory();
-
-const reducer =  handleActions<IUsersStateRecord,
-  void             | // startEvent
-  List<IUserModel>   // endEvent
-  >( {
+const reducer = handleActions<IUsersStateRecord, List<IUserModel>>( {
   [loadUsersComplete.toString()]: (state: IUsersStateRecord, { payload }: Action<List<IUserModel>>) => {
     return (
       state
@@ -66,6 +61,6 @@ const reducer =  handleActions<IUsersStateRecord,
         .set('items', payload)
     );
   },
-}, initialState);
+}, StateFactory());
 
 export { reducer };

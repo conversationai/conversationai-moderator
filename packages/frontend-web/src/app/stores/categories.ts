@@ -14,22 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { fromJS, List, Map } from 'immutable';
+import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import { ICategoryModel } from '../../models';
 import {
   IRecordListStateRecord,
-  listModels,
-  makeAJAXAction,
-  makeRecordListReducer,
 } from '../util';
-import { IAppStateRecord, IThunkAction } from './index';
+import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'categories'];
 const CATEGORIES_PREFIX = [...STATE_ROOT, 'categories'];
-const CATEGORIES_HAS_DATA = [...CATEGORIES_PREFIX, 'hasData'];
 const CATEGORIES_IS_LOADING = [...CATEGORIES_PREFIX, 'isFetching'];
 const CATEGORIES_DATA = [...CATEGORIES_PREFIX, 'items'];
 const CATEGORY_COUNTS_DATA = [...STATE_ROOT, 'categoryCounts', 'items'];
@@ -38,8 +34,7 @@ const ASSIGNMENTS_DATA = [...ASSIGNMENTS_PREFIX, 'items'];
 const DEFERRED_PREFIX = [...STATE_ROOT, 'deferred'];
 const DEFERRED_DATA = [...DEFERRED_PREFIX, 'items'];
 
-const loadCategoriesStart = createAction('global/LOAD_CATEGORIES_START');
-const loadCategoriesComplete = createAction<object>('global/LOAD_CATEGORIES_COMPLETE');
+export const loadCategoriesComplete = createAction<List<ICategoryModel>>('global/LOAD_CATEGORIES_COMPLETE');
 
 type ICountCompletePayload = {
   count: number;
@@ -55,25 +50,31 @@ export function getCategoryCounts(state: IAppStateRecord): Map<string, number> {
   return state.getIn(CATEGORY_COUNTS_DATA);
 }
 
-export function loadCategories(): IThunkAction<void> {
-  return makeAJAXAction(
-    () => listModels<ICategoryModel>('categories', { page: { limit: - 1 } }),
-    loadCategoriesStart,
-    loadCategoriesComplete,
-    (state: IAppStateRecord) => state.getIn(CATEGORIES_HAS_DATA) && getCategories(state),
-  );
-}
-
 export function getCategoriesIsLoading(state: IAppStateRecord): boolean {
   return state.getIn(CATEGORIES_IS_LOADING);
 }
 
-const {
-  reducer: categoriesReducer,
-} = makeRecordListReducer<ICategoryModel & { id: string }>(
-  loadCategoriesStart.toString(),
-  loadCategoriesComplete.toString(),
-);
+export interface ICategoriesState {
+  isFetching: boolean;
+  items: List<ICategoryModel>;
+}
+
+export interface ICategoriesStateRecord extends TypedRecord<ICategoriesStateRecord>, ICategoriesState {}
+
+const CategoriesStateFactory = makeTypedFactory<ICategoriesState, ICategoriesStateRecord>({
+  isFetching: true,
+  items: List<ICategoryModel>(),
+});
+
+const categoriesReducer = handleActions<ICategoriesStateRecord, List<ICategoryModel>>( {
+  [loadCategoriesComplete.toString()]: (state: ICategoriesStateRecord, { payload }: Action<List<ICategoryModel>>) => {
+    return (
+      state
+        .set('isFetching', false)
+        .set('items', payload)
+    );
+  },
+}, CategoriesStateFactory());
 
 export function getAssignments(state: IAppStateRecord): any {
   return state.getIn(ASSIGNMENTS_DATA);
@@ -99,20 +100,12 @@ const StateFactory = makeTypedFactory<ICategoryCountsState, ICategoryCountsState
 
 const categoryCountsReducer = handleActions<
   ICategoryCountsStateRecord,
-  void                  | // loadCategoriesStart
-  object                | // loadCategoriesComplete
+  List<ICategoryModel>  | // loadCategoriesComplete
   ICountCompletePayload   // countAssignmentsComplete, countDeferredComplete
 >({
-  [loadCategoriesStart.toString()]: (state) => (
-    state
-        .set('isFetching', true)
-  ),
-
-  [loadCategoriesComplete.toString()]: (state, { payload }: Action<object>) => {
-    const result = fromJS(payload);
-
-    const counts = result.get('data').reduce((sum: any, category: ICategoryModel) => {
-      return sum.set(category.get('id').toString(), category.getIn(['attributes', 'unmoderatedCount']));
+  [loadCategoriesComplete.toString()]: (state, { payload }: Action<List<ICategoryModel>>) => {
+    const counts = payload.reduce((sum, category) => {
+      return sum.set(category.id.toString(), category.unmoderatedCount);
     }, Map<string, number>());
 
     return state
