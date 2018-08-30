@@ -8,8 +8,8 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: "${DATABASE_PASSWORD}"
-      MYSQL_DATABASE: "${DATABASE_NAME}"
-      MYSQL_USER: "${DATABASE_USER}"
+      MYSQL_DATABASE: 'os_moderator'
+      MYSQL_USER: 'os_moderator'
       MYSQL_PASSWORD: "${DATABASE_PASSWORD}"
     ports:
       - '3306:3306'
@@ -26,8 +26,8 @@ services:
       IMAGE_FLAVOR: 'backend'
       MODERATOR_FLAVOR: "${MODERATOR_FLAVOR}"
       DATABASE_HOST: database
-      DATABASE_NAME: "${DATABASE_NAME}"
-      DATABASE_USER: "${DATABASE_USER}"
+      DATABASE_NAME: 'os_moderator'
+      DATABASE_USER: 'os_moderator'
       DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
       REDIS_URL: 'redis://redis:6379'
       GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
@@ -35,9 +35,10 @@ services:
       HTTPS_LINKS_ONLY: 'false'
       TOKEN_SECRET: "${TOKEN_SECRET}"
       TOKEN_ISSUER: 'Open Source Moderator'
+      API_URL: '${URL_BASE}:8080'
       FRONTEND_URL: '${URL_BASE}:8000'
       APP_NAME: 'Moderator'
-      REDIRECT_OAUTH_TO: 'referrer'
+      REDIRECT_OAUTH_TO: 'frontend_url'
       GOOGLE_CLOUD_API_KEY: "${GOOGLE_CLOUD_API_KEY}"
       ATTRIBUTE_REQUESTS: "${ATTRIBUTE_REQUESTS}"
       PORT: 8080
@@ -68,8 +69,8 @@ services:
       IMAGE_FLAVOR: 'processing'
       MODERATOR_FLAVOR: "${MODERATOR_FLAVOR}"
       DATABASE_HOST: database
-      DATABASE_NAME: "${DATABASE_NAME}"
-      DATABASE_USER: "${DATABASE_USER}"
+      DATABASE_NAME: 'os_moderator'
+      DATABASE_USER: 'os_moderator'
       DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
       REDIS_URL: 'redis://redis:6379'
       GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"

@@ -40,8 +40,6 @@ In a production setting, you'll also have to set the following:
 * `FRONTEND_URL`: URL for the Frontend endpoint
 * `TOKEN_SECRET`: A secret used to generate authentication tokens.
 
-TODO: Need to document URL_BASE for running in docker
-
 ### System setup:
 
 Install mysql, node (v8 or better), npm (v6 or better) and redis.  Instructions for Ubuntu:

@@ -20,7 +20,7 @@ if [ "${IMAGE_FLAVOR}" == 'processing' ] ; then
 
   if [ -f "${basename}/${MODERATOR_FLAVOR}.ctab" ]; then
     crontab ${basename}/${MODERATOR_FLAVOR}.ctab
-    set | egrep -v '(BASHOPTS|BASH_VERSINFO|EUID|PPID|UID|SHELLOPTS)' > environ
+    set | egrep -v '(BASHOPTS|BASH_VERSINFO|EUID|PPID|UID|SHELLOPTS|basename|BASH.*)' > environ
     exec cron -f
   fi
 
