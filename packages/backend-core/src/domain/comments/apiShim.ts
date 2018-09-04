@@ -19,7 +19,6 @@ import {google} from 'googleapis';
 import * as requestRaw from 'request';
 const striptags = require('striptags');
 
-import { config } from '@conversationai/moderator-config';
 import { logger } from '../../logger';
 
 import {
@@ -89,11 +88,11 @@ export async function createShim(
     processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>,
     ) {
   const serviceUserId = scorer.id;
-  const extra: any = JSON.parse(scorer.get('extra')); // TODO: Not sure why necessary.  Fixed in later Sequelize?
+  const extra: any = JSON.parse(scorer.get('extra'));
   const discoveryURL = extra.endpoint;
-  const apiKey = config.get('google_cloud_api_key');
-  const attributes = config.get('attribute_requests');
-  const userAgent = config.get('user_agent');
+  const apiKey = extra.apiKey;
+  const attributes = extra.attributes;
+  const userAgent = extra.userAgent;
 
   async function packPerspectiveApiRequest(comment: ICommentInstance, reqId: string | number) {
     const req: IAnalyzeCommentRequest = {

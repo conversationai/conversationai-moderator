@@ -35,18 +35,26 @@ export function builder(yargs: yargs.Argv) {
            '                                  --email name@example.com\n' +
            '       node $0 create --group service --name "Service Name"\n' +
            '       node $0 create --group service --name "Service Name" \\\n' +
-           '                                  --moderator-type <type> [ --endpoint <url> ]\n')
+           '                                  --moderator-type <type> --api-key <key> \\\n' +
+           '                                  [--endpoint <url>] [--user-agent <agent>] [--attributes <attributes>]\n')
     .demand('group')
     .choices('group', USER_GROUPS)
-    .describe('group', 'The user type/group')
+    .describe('group', 'The user type/group: one of \'general\', \'admin\' or \'service\'')
     .demand('name')
     .describe('name', 'The user\'s name')
     .string('email')
-    .describe('email', 'Email address required for all users not in the "service" group')
+    .describe('email', 'The user\'s email address.  Mandatory for all users not in the "service" group.')
     .string('moderator-type')
-    .describe('moderator-type', `If this is a moderator service user, the endpoint type: one of ${ENDPOINT_TYPE_API} or ${ENDPOINT_TYPE_PROXY}.`)
+    .describe('moderator-type', `Create a moderator service user.  The endpoint type should be one of ${ENDPOINT_TYPE_API} or ${ENDPOINT_TYPE_PROXY}.`)
+    .string('api-key')
+    .describe('api-key', `For moderator service users: the API key used to access the moderation service.`)
     .string('endpoint')
-    .describe('endpoint', 'If this is a moderator service user, Endpoint URL for moderator users to post comments to for scoring.');
+    .describe('endpoint', 'For moderator service users: Endpoint URL for moderator users to post comments for scoring.')
+    .string('user-agent')
+    .describe('user-agent', 'For ${ENDPOINT_TYPE_API} moderator service users: User agent to use.  Defaults sensibly if not set.')
+    .string('attributes')
+    .describe('attributes', 'For ${ENDPOINT_TYPE_API} moderator service users: Comma-separated list of attributes to score on.  Defaluts sensibly if not set.');
+
 }
 
 export async function handler(argv: any) {
@@ -62,12 +70,21 @@ export async function handler(argv: any) {
     const extra: any = {};
     if (argv.moderatorType) {
       extra.serviceType = SERVICE_TYPE_MODERATOR;
+
       extra.endpointType = argv.moderatorType;
+
       if (extra.endpointType !== ENDPOINT_TYPE_API && extra.endpointType !== ENDPOINT_TYPE_PROXY) {
         console.log(`User creation error: unknown moderator-type: ${extra.endpointType}\n`);
         yargs.showHelp();
         return;
       }
+
+      extra.apiKey = argv.apiKey;
+      if (!extra.apiKey) {
+        console.log(`User creation error: moderators require an API key.\n`);
+        yargs.showHelp();
+      }
+
       if (argv.endpoint) {
         extra.endpoint = argv.endpoint;
       }
@@ -78,6 +95,31 @@ export async function handler(argv: any) {
 
         logger.info(`API endpoint: Defaulting URL to ${extra.endpoint}`);
       }
+
+      if (extra.endpointType === ENDPOINT_TYPE_API) {
+        extra.userAgent = argv.userAgent || 'OsmodAssistantV0';
+        if (argv.attributes) {
+          extra.attributes = {};
+          for (const i of argv.attributes.split(',')) {
+            extra.attributes[i] = {};
+          }
+        }
+        else {
+          extra.attributes = {
+            ATTACK_ON_AUTHOR: {},
+            ATTACK_ON_COMMENTER: {},
+            INCOHERENT: {},
+            INFLAMMATORY: {},
+            OBSCENE: {},
+            OFF_TOPIC: {},
+            SPAM: {} ,
+            UNSUBSTANTIAL: {},
+            LIKELY_TO_REJECT: {},
+            TOXICITY: {},
+          };
+        }
+      }
+
       data.extra = extra;
     }
   }

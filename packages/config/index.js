@@ -202,7 +202,7 @@ const config = convict({
   },
 
   restrict_to_session: {
-    doc: 'Flag to restric auth to the user session',
+    doc: 'Flag to restrict auth to the user session',
     format: Boolean,
     default: true,
     env: 'RESTRICT_TO_SESSION'
@@ -221,43 +221,6 @@ const config = convict({
     default: '',
     env: 'SUBMIT_FEEDBACK_URL'
   },
-
-  // Config for talking to scorers
-  // For communication via proxy
-  google_score_auth: {
-    doc: 'Auth token for Google score endpoint',
-    format: String,
-    default: undefined,
-    env: 'GOOGLE_SCORE_AUTH'
-  },
-
-  // For direct communication
-  google_cloud_api_key: {
-    doc: 'A Google Cloud API key to use for accessing the Comment Analyzer API',
-    format: String,
-    default: '',
-    env: 'GOOGLE_CLOUD_API_KEY',
-  },
-
-  user_agent: {
-    doc: 'User-Agent header for requests to the Osmod backend',
-    format: String,
-    default: 'OsmodAssistantV0',
-    env: 'USER_AGENT',
-  },
-
-  attribute_requests: {
-    doc: 'The set of requests to make to the PerspectiveAPI.',
-    format: Object,
-    // NOTE: Convict appears to have surprising behavior when merging Object
-    // config values. When loading a config from a file, it seems like the
-    // object values are merged, and there doesn't seem to be a way to *remove*
-    // attributes when they're present in this default, so we leave it empty so
-    // config files can specify exactly what attributes to requested.
-    default: {},
-    env: 'ATTRIBUTE_REQUESTS',
-  },
-
 });
 
 // Try to load (env name).json config file (defaults to 'local.json')

@@ -79,10 +79,10 @@ export function createShim(
     processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>,
     ) {
   const serviceUserId = scorer.id;
-  const extra: any = JSON.parse(scorer.get('extra')); // TODO: Not sure why necessary.  Fixed in later Sequelize?
+  const extra: any = JSON.parse(scorer.get('extra'));
   const endpoint = extra.endpoint;
   const apiURL = rtrim(config.get('api_url'), '/');
-  const googleScoreAuth = config.get('google_score_auth');
+  const apiKey = extra.apiKey;
 
   return {
     sendToScorer: async (comment: ICommentInstance, correlator: string | number) => {
@@ -147,7 +147,7 @@ export function createShim(
         json: true,
         body: postData,
         headers: {
-          Authorization: googleScoreAuth,
+          Authorization: apiKey,
         },
       });
 
