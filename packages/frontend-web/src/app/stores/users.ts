@@ -15,18 +15,17 @@ limitations under the License.
 */
 
 import {List} from 'immutable';
+import { Action, createAction, handleActions } from 'redux-actions';
 import {makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
-import { Action, createAction, handleActions } from 'redux-actions';
 import { IUserModel } from '../../models';
 import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'users'];
 const USERS_DATA = [...STATE_ROOT, 'items'];
-const USERS_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
 
-export const loadUsersComplete = createAction<List<IUserModel>>(
-  'all-users/LOAD_USERS_COMPLETE',
+export const usersUpdated = createAction<List<IUserModel>>(
+  'all-users/USERS_UPDATED',
 );
 
 export function getUsers(state: IAppStateRecord): List<IUserModel> {
@@ -37,27 +36,20 @@ export function getUserById(state: IAppStateRecord, userId: string): IUserModel 
   return state.getIn(USERS_DATA).find((user: IUserModel) => user.id === userId);
 }
 
-export function getUsersIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(USERS_LOADING_STATUS);
-}
-
 export interface IUsersState {
-  isFetching: boolean;
   items: List<IUserModel>;
 }
 
 export interface IUsersStateRecord extends TypedRecord<IUsersStateRecord>, IUsersState {}
 
 const StateFactory = makeTypedFactory<IUsersState, IUsersStateRecord>({
-  isFetching: true,
   items: List<IUserModel>(),
 });
 
 const reducer = handleActions<IUsersStateRecord, List<IUserModel>>( {
-  [loadUsersComplete.toString()]: (state: IUsersStateRecord, { payload }: Action<List<IUserModel>>) => {
+  [usersUpdated.toString()]: (state: IUsersStateRecord, { payload }: Action<List<IUserModel>>) => {
     return (
       state
-        .set('isFetching', false)
         .set('items', payload)
     );
   },

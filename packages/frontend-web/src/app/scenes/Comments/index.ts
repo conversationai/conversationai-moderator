@@ -24,9 +24,9 @@ import { createStructuredSelector } from 'reselect';
 import { ICategoryModel, IUserModel } from '../../../models';
 import { IRedialLocals } from '../../../types';
 import { getCurrentUser, getIsAdmin } from'../../auth';
-import { IAppState, IAppStateRecord } from '../../stores';
+import { getWebsocketState, IAppState, IAppStateRecord } from '../../stores';
 import { getArticleModerators, loadArticleModerators } from '../../stores/articleModerators';
-import { getCategories, getCategoriesIsLoading } from '../../stores/categories';
+import { getCategories } from '../../stores/categories';
 import { withLoader } from '../../util';
 import { Comments as PureComments } from './Comments';
 
@@ -126,7 +126,7 @@ export const Comments = compose(
 
       return count + adjustment;
     },
-    isLoading: (state: IAppStateRecord, { params }: any) => !!params.articleId ? getArticleIsLoading(state) : getCategoriesIsLoading(state),
+    isLoading: (state: IAppStateRecord, { params }: any) => !!params.articleId ? getArticleIsLoading(state) : !getWebsocketState(state),
     moderators: (state: IAppStateRecord, { params }: any) => {
       if (!params.articleId) { return List<IUserModel>(); }
 

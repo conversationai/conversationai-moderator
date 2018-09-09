@@ -22,12 +22,10 @@ import { combineReducers } from 'redux-immutable';
 import { createStructuredSelector } from 'reselect';
 import { CategoryModel } from '../../../models';
 import { getCurrentUser, getIsAdmin } from '../../auth';
-import { IAppStateRecord } from '../../stores';
+import { getWebsocketState, IAppStateRecord } from '../../stores';
 import {
   getCategories,
-  getCategoriesIsLoading,
 } from '../../stores/categories';
-import { getUsersIsLoading } from '../../stores/users';
 import { reducer as articlesReducer } from './components/DashboardArticles';
 import { Dashboard as PureDashboard } from './Dashboard';
 
@@ -58,7 +56,7 @@ export const Dashboard = compose(
         moderatedCount: 0,
       }),
     ])),
-    isLoading: (state: IAppStateRecord) => getCategoriesIsLoading(state) || getUsersIsLoading(state),
+    isLoading: (state: IAppStateRecord) => !getWebsocketState(state),
     categories: (state: IAppStateRecord) => (List([
       CategoryModel({
         id: 'all',

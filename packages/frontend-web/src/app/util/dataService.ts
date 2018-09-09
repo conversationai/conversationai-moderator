@@ -889,8 +889,10 @@ export interface IUserSummary {
   assignments: number;
 }
 
-export function connectNotifier(globalNotificationHandler: (data: IGlobalSummary) => void,
-                                userNotificationHandler: (data: IUserSummary) => void) {
+export function connectNotifier(
+  websocketStateHandler: (isActive: boolean) => void,
+  globalNotificationHandler: (data: IGlobalSummary) => void,
+  userNotificationHandler: (data: IUserSummary) => void) {
   function checkSocketAlive() {
     if (!ws || ws.readyState !== WebSocket.OPEN) {
       const token = getToken();
@@ -903,6 +905,7 @@ export function connectNotifier(globalNotificationHandler: (data: IGlobalSummary
 
         ws.onclose = () => {
           console.log('websocket closed');
+          websocketStateHandler(false);
           ws = null;
         };
       };
@@ -932,6 +935,8 @@ export function connectNotifier(globalNotificationHandler: (data: IGlobalSummary
           };
           globalNotificationHandler(data);
         }
+
+        websocketStateHandler(true);
       };
     }
   }

@@ -14,17 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Action, Dispatch as ReduxDispatch } from 'redux';
+import { Action as RootAction, Dispatch as ReduxDispatch } from 'redux';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
-import { TypedRecord } from 'typed-immutable-record';
+import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { connectNotifier } from '../util';
 import { IArticleModeratorsStateRecord, reducer as articleModeratorsReducer } from './articleModerators';
 import {
-  countAssignmentsComplete,
-  countDeferredComplete,
-  IState as ICategoriesState,
-  loadCategoriesComplete,
+  assignmentCountUpdated,
+  categoriesUpdated,
+  deferredCountUpdated,
+  ICategoriesState,
   reducer as categoriesReducer,
 } from './categories';
 import { ICategoryModeratorsStateRecord , reducer as categoryModeratorsReducer} from './categoryModerators';
@@ -39,9 +40,16 @@ import { ITaggingSensitivityStateRecord, reducer as taggingSensitivitiesReducer 
 import { ITagsState, reducer as tagsReducer } from './tags';
 import { ITextSizesStateRecord, reducer as textSizesReducer } from './textSizes';
 import { IState as ITopScoresState, ISummaryState as ITopSummaryScoresState, scoreReducer as topScoresReducer, summaryScoreReducer as topSummaryScoresReducer } from './topScores';
-import { IUsersState, loadUsersComplete, reducer as usersReducer } from './users';
+import { IUsersState, usersUpdated, reducer as usersReducer } from './users';
+
+export interface IWebsocketState {
+  isActive: boolean;
+}
+
+interface IWebsocketStateRecord extends TypedRecord<IWebsocketStateRecord>, IWebsocketState {}
 
 export interface IAppState {
+  websocketState: IWebsocketState;
   categories: ICategoriesState;
   comments: ICommentsState;
   commentSummaryScores: ICommentSummaryScoresStateRecord;
@@ -63,7 +71,7 @@ export interface IAppState {
 export interface IAppStateRecord extends TypedRecord<IAppStateRecord>, IAppState {}
 
 export type IThunkAction<R> = (dispatch: ReduxDispatch<IAppStateRecord>, getState: () => IAppStateRecord) => R;
-export type IAction<T> = IThunkAction<T> | Action;
+export type IAction<T> = IThunkAction<T> | RootAction;
 
 export interface IAppDispatch {
   <R>(action: IAction<R>): R;
@@ -77,7 +85,23 @@ declare module 'redux' {
 }
 // tslint:enable interface-name
 
+const WebsocketStateFactory = makeTypedFactory<IWebsocketState, IWebsocketStateRecord>({
+  isActive: false,
+});
+
+const websocketStateUpdated = createAction<boolean>('global/WEBSOCKET_STATE_CHANGE');
+
+const websocketStateReducer = handleActions<IWebsocketState, boolean>( {
+  [websocketStateUpdated.toString()]: (state: IWebsocketStateRecord, { payload }: Action<boolean>) => {
+    return (
+      state
+        .set('isActive', payload)
+    );
+  },
+}, WebsocketStateFactory());
+
 export const reducer: any = combineReducers<IAppStateRecord>({
+  websocketState: websocketStateReducer,
   categories: categoriesReducer,
   comments: commentsReducer,
   commentSummaryScores: commentSummaryScoresReducer,
@@ -98,13 +122,20 @@ export const reducer: any = combineReducers<IAppStateRecord>({
 
 export async function initialiseClientModel(dispatch: IAppDispatch) {
   connectNotifier(
-    (data) => {
-      dispatch(countDeferredComplete({ count: data.deferred }));
-      dispatch(loadUsersComplete(data.users));
-      dispatch(loadCategoriesComplete(data.categories));
+    (isActive: boolean) => {
+      dispatch(websocketStateUpdated(isActive));
     },
     (data) => {
-      dispatch(countAssignmentsComplete({ count: data.assignments }));
+      dispatch(deferredCountUpdated(data.deferred));
+      dispatch(usersUpdated(data.users));
+      dispatch(categoriesUpdated(data.categories));
+    },
+    (data) => {
+      dispatch(assignmentCountUpdated(data.assignments));
     },
   );
+}
+
+export function getWebsocketState(state: IAppStateRecord): boolean {
+  return state.getIn(['global', 'websocketState', 'isActive']);
 }
