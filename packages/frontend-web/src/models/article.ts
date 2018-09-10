@@ -17,7 +17,7 @@ limitations under the License.
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 import { CategoryModel, ICategoryModel } from './category';
-import { IUserModel } from './user';
+import { IUserModel, UserModel } from './user';
 
 export interface IArticleAttributes {
   id: string;
@@ -72,7 +72,7 @@ export function ArticleModel(keyValuePairs?: IArticleAttributes): IArticleModel 
   }
 
   if (article.assignedModerators) {
-    article = article.update('assignedModerators', (m) => m.map(CategoryModel));
+    article = article.update('assignedModerators', (m) => m.map(UserModel));
   }
 
   // Sanitize URLs for security.

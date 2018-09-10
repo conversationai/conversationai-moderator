@@ -21,13 +21,9 @@ import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { connectNotifier } from '../util';
 import { IArticleModeratorsStateRecord, reducer as articleModeratorsReducer } from './articleModerators';
-import {
-  assignmentCountUpdated,
-  categoriesUpdated,
-  deferredCountUpdated,
-  ICategoriesState,
-  reducer as categoriesReducer,
-} from './categories';
+import { articlesUpdated, IArticlesState, reducer as articleReducer } from './articles';
+import { categoriesUpdated, ICategoriesState, reducer as categoriesReducer } from './categories';
+import { assignmentCountUpdated, deferredCountUpdated } from './categories';
 import { ICategoryModeratorsStateRecord , reducer as categoryModeratorsReducer} from './categoryModerators';
 import { IColumnSortStateRecord, reducer as columnSortsReducer } from './columnSorts';
 import { IState as ICommentsState, reducer as commentsReducer } from './comments';
@@ -51,6 +47,7 @@ interface IWebsocketStateRecord extends TypedRecord<IWebsocketStateRecord>, IWeb
 export interface IAppState {
   websocketState: IWebsocketState;
   categories: ICategoriesState;
+  articles: IArticlesState;
   comments: ICommentsState;
   commentSummaryScores: ICommentSummaryScoresStateRecord;
   users: IUsersState;
@@ -103,6 +100,7 @@ const websocketStateReducer = handleActions<IWebsocketState, boolean>( {
 export const reducer: any = combineReducers<IAppStateRecord>({
   websocketState: websocketStateReducer,
   categories: categoriesReducer,
+  articles: articleReducer,
   comments: commentsReducer,
   commentSummaryScores: commentSummaryScoresReducer,
   users: usersReducer,
@@ -129,6 +127,7 @@ export async function initialiseClientModel(dispatch: IAppDispatch) {
       dispatch(deferredCountUpdated(data.deferred));
       dispatch(usersUpdated(data.users));
       dispatch(categoriesUpdated(data.categories));
+      dispatch(articlesUpdated(data.articles));
     },
     (data) => {
       dispatch(assignmentCountUpdated(data.assignments));

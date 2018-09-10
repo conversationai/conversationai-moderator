@@ -22,11 +22,13 @@ import {Article, Category, Comment, User} from '@conversationai/moderator-backen
 import {IArticleInstance, ICategoryInstance, IUserInstance} from '@conversationai/moderator-backend-core';
 import {logger, registerInterest} from '@conversationai/moderator-backend-core';
 
-const userfields = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
+const userFields = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
 
-const articlefields = ['id', 'label', 'updatedAt', 'count', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
-  'approvedCount', 'highlightedCount', 'approvedCount', 'rejectedCount', 'deferredCount', 'flaggedCount',
-  'batchedCount', 'recommendedCount', 'assignedModerators'];
+const commonFields = ['id', 'updatedAt', 'count', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
+  'approvedCount', 'highlightedCount', 'rejectedCount', 'deferredCount', 'flaggedCount',
+  'batchedCount', 'recommendedCount', 'assignedModerators', ];
+const categoryFields = [...commonFields, 'label'];
+const articleFields = [...commonFields, 'title', 'url', 'categoryId'];
 
 interface IGlobalSummary {
   deferred: number;
@@ -50,7 +52,7 @@ async function getGlobalSummary() {
   const users = await User.findAll({where: {group: ['admin', 'general']}});
   const userdata = users.map((u: IUserInstance) => {
     const o = u.toJSON();
-    return pick(o, userfields);
+    return pick(o, userFields);
   });
 
   const categories = await Category.findAll({
@@ -61,7 +63,7 @@ async function getGlobalSummary() {
   const categorydata = categories.map((c: ICategoryInstance) => {
     categoryIds.push(c.id);
     const o = c.toJSON();
-    return pick(o, articlefields);
+    return pick(o, categoryFields);
   });
 
   const articles = await Article.findAll({
@@ -70,7 +72,7 @@ async function getGlobalSummary() {
   });
   const articledata = articles.map((a: IArticleInstance) => {
     const o = a.toJSON();
-    return pick(o, articlefields);
+    return pick(o, articleFields);
   });
 
   return {

@@ -916,20 +916,40 @@ export function connectNotifier(
           userNotificationHandler(body.data as IUserSummary);
         }
         else {
+          const userMap: {[key: number]: IUserModel} = {};
+          const catMap: {[key: number]: ICategoryModel} = {};
+
+          function convertAssignedModerators(am: Array<any>): Array<IUserModel> {
+            return am.map((i) => userMap[i.moderator_assignment.userId]);
+          }
+
           // TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
           //       Convert for now.  But at some point need to refactor to use numbers.
           const data = {
             deferred: body.data.deferred,
+
             users: List<IUserModel>(body.data.users.map((u: any) => {
+              const id = u.id;
               u.id = u.id.toString();
+              userMap[id] = u;
               return UserModel(u);
             })),
+
             categories: List<ICategoryModel>(body.data.categories.map((c: any) => {
+              const id = c.id;
               c.id = c.id.toString();
-              return CategoryModel(c);
+              c.assignedModerators = convertAssignedModerators(c.assignedModerators);
+              const model = CategoryModel(c);
+              catMap[id] = model;
+              return model;
             })),
+
             articles: List<IArticleModel>(body.data.articles.map((a: any) => {
               a.id = a.id.toString();
+              if (a.categoryId) {
+                a.category = catMap[a.categoryId];
+              }
+              a.assignedModerators = convertAssignedModerators(a.assignedModerators);
               return ArticleModel(a);
             })),
           };
