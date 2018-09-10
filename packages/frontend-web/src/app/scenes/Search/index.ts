@@ -21,8 +21,8 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { ICommentModel } from '../../../models';
 import { IRedialLocals } from '../../../types';
-import { getCurrentUser } from '../../auth';
-import { IAppDispatch } from '../../stores';
+import { getMyUserId } from '../../auth';
+import { IAppDispatch, IAppStateRecord } from '../../stores';
 import { getTextSizes } from '../../stores/textSizes';
 import {
   executeCommentListLoader,
@@ -121,7 +121,7 @@ const mapStateToProps = createStructuredSelector({
       return url;
     };
   },
-  userId: (state: any) => getCurrentUser(state).id,
+  userId: (state: IAppStateRecord) => getMyUserId(state),
   searchByAuthor: (_: any, { location }: any) => {
     return location.query.searchByAuthor === 'true';
   },

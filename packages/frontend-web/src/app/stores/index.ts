@@ -40,7 +40,7 @@ import { ITaggingSensitivityStateRecord, reducer as taggingSensitivitiesReducer 
 import { ITagsState, reducer as tagsReducer } from './tags';
 import { ITextSizesStateRecord, reducer as textSizesReducer } from './textSizes';
 import { IState as ITopScoresState, ISummaryState as ITopSummaryScoresState, scoreReducer as topScoresReducer, summaryScoreReducer as topSummaryScoresReducer } from './topScores';
-import { IUsersState, usersUpdated, reducer as usersReducer } from './users';
+import { IUsersState, reducer as usersReducer, usersUpdated } from './users';
 
 export interface IWebsocketState {
   isActive: boolean;

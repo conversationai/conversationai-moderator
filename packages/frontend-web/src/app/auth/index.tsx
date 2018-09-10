@@ -28,6 +28,7 @@ export {
   startAuthentication,
   handleToken,
   getCurrentUser,
+  getMyUserId,
   isAdmin,
   getIsAdmin,
   logout,

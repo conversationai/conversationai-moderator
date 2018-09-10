@@ -17,7 +17,7 @@ limitations under the License.
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { IUserModel } from '../../../../../models';
-import { getCurrentUser } from '../../../../auth';
+import { getMyUserId } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import {
   addModeratorToArticle,
@@ -67,24 +67,28 @@ type IAssignModeratorsDispatchProps = Pick<
 
 const mapStateToProps = createStructuredSelector({
   users: (state: IAppStateRecord): Array<IUserModel> => {
-    const currentUser = getCurrentUser(state);
+    const userId = getMyUserId(state);
     const allUsers = getUsers(state);
+    const currentUser = [];
+    const assignedUsers = [];
+    const unassignedUsers = [];
 
-    const assignedUsers = allUsers
-        .filter((user) => getIsModeratedUser(state, user.id) && user.id !== currentUser.id);
+    for (const u of allUsers.toArray()) {
+      if (u.id === userId) {
+        currentUser.push(u);
+      }
+      else if (getIsModeratedUser(state, u.id)) {
+        assignedUsers.push(u);
+      }
+      else {
+        unassignedUsers.push(u);
+      }
+    }
 
-    const assignedUsersSorted = assignedUsers
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .toArray();
+    const assignedUsersSorted = assignedUsers.sort((a, b) => a.name.localeCompare(b.name));
+    const unassignedUsersSorted = unassignedUsers.sort((a, b) => a.name.localeCompare(b.name));
 
-    const unassignedUsers = allUsers
-        .filter((user) => !getIsModeratedUser(state, user.id) && user.id !== currentUser.id);
-
-    const unassignedUsersSorted = unassignedUsers
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .toArray();
-
-    return [currentUser, ...assignedUsersSorted, ...unassignedUsersSorted];
+    return [...currentUser, ...assignedUsersSorted, ...unassignedUsersSorted];
   },
 
   moderatorIds: (state: IAppStateRecord, { article }: any) => (

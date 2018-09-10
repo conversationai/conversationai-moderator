@@ -33,9 +33,10 @@ const startedAuthentication =
   createAction('auth/STARTED_AUTHENTICATION');
 const failedAuthentication =
   createAction('auth/FAILED_AUTHENTICATION');
-type ICompletedAuthentificationPayload = IUserModel;
+const updateUserId =
+  createAction<number>('auth/UPDATE_USER_ID');
 const completedAuthentication =
-  createAction<ICompletedAuthentificationPayload>('auth/COMPLETED_AUTHENTICATION');
+  createAction<IUserModel>('auth/COMPLETED_AUTHENTICATION');
 
 export const logout: () => Action<void> = createAction('auth/LOGOUT');
 
@@ -87,6 +88,7 @@ async function completeAuthentication(token: string, dispatch: IAppDispatch): Pr
   setAxiosToken(token);
 
   const data = decodeToken(token);
+  await dispatch(updateUserId(data['user'] as number));
   const user = await loadUser(data['user']);
   await dispatch(completedAuthentication(user));
   await initialiseClientModel(dispatch);
@@ -151,6 +153,7 @@ export function startAuthentication(): IThunkAction<void> {
 export interface IAuthenticationState {
   isAuthenticating: boolean;
   isAuthenticated: boolean;
+  userId: number| null;
   user: IUserModel | null;
 }
 
@@ -159,6 +162,7 @@ export interface IAuthenticationStateRecord extends TypedRecord<IAuthenticationS
 const StateFactory = makeTypedFactory<IAuthenticationState, IAuthenticationStateRecord>({
   isAuthenticating: false,
   isAuthenticated: false,
+  userId: null,
   user: null,
 });
 
@@ -166,8 +170,9 @@ const initialState = StateFactory();
 
 export const reducer = handleActions<
   IAuthenticationStateRecord,
-  void                              | // startedAuthentication, failedAuthentication, logout
-  ICompletedAuthentificationPayload   // completedAuthentication
+  void       | // startedAuthentication, failedAuthentication, logout
+  number     | // updateUserId
+  IUserModel   // completedAuthentication
 >({
   [startedAuthentication.toString()]: (state) => (
     state
@@ -180,9 +185,12 @@ export const reducer = handleActions<
       .set('isAuthenticated', false)
   ),
 
-  [completedAuthentication.toString()]:
-    (state,
-     { payload }: Action<ICompletedAuthentificationPayload>) => (
+  [updateUserId.toString()]: (state, { payload }: Action<number>) => (
+    state
+      .set('userId', payload)
+  ),
+
+  [completedAuthentication.toString()]: (state, { payload }: Action<IUserModel>) => (
     state
       .set('isAuthenticating', false)
       .set('isAuthenticated', true)
@@ -211,8 +219,13 @@ export function getIsAuthenticated(state: IAppStateRecord): boolean {
 // TODO: We really should be getting the user from the users list in the store
 //       Stored separately like this, we won't update it when the user's details change
 //       Also, it adds an extra round trip to the server on login.
+//       Start using getMyUserId instead.
 export function getCurrentUser(state: IAppStateRecord): IUserModel {
   return state.getIn(['auth', 'user']);
+}
+
+export function getMyUserId(state: IAppStateRecord): string {
+  return state.getIn(['auth', 'userId']).toString();
 }
 
 export function isAdmin(user: IUserModel): boolean {
