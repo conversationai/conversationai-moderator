@@ -36,6 +36,7 @@ import { reducer as rootReducer } from './Root';
 import { Search, SearchResults } from './Search';
 import { reducer as searchReducer } from './Search';
 import { Settings } from './Settings';
+import { ArticleTable, TableFrame } from './Tables';
 
 export const reducer: any = combineReducers({
   dashboard: dashboardReducer,
@@ -68,6 +69,10 @@ export const scenes = (history: any) => (
       <Route path="dashboard" component={Dashboard}>
         <IndexRedirect to="all" />
         <Route path=":categoryId" component={DashboardArticles} />
+      </Route>
+      <Route path="tables" component={TableFrame}>
+        <Route path="articles" component={ArticleTable}/>
+        <Route path="articles/:filter/:sort" component={ArticleTable}/>
       </Route>
       <Route path="search" component={Search}>
         <IndexRoute component={SearchResults} />
