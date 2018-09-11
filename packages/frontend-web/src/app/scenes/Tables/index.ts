@@ -24,13 +24,12 @@ import { getMyUserId } from '../../auth';
 import { getWebsocketState, IAppStateRecord } from '../../stores';
 import { getArticles } from '../../stores/articles';
 import { getCategories } from '../../stores/categories';
-import { getUsers } from '../../stores/users';
+import { getCurrentUserIsAdmin, getUsers } from '../../stores/users';
 import { withLoader } from '../../util';
 import { ArticleTable as PureArticleTable } from './ArticleTable';
 import { TableFrame as PureTableFrame } from './TableFrame';
 
 const baseSelector = createStructuredSelector({
-  isLoading: (state: IAppStateRecord) => !getWebsocketState(state),
   myUserId: getMyUserId,
   categories: getCategories,
   articles: getArticles,
@@ -40,9 +39,14 @@ const baseSelector = createStructuredSelector({
 export const ArticleTable: React.ComponentClass<{}> = compose(
   withRouter,
   connect(baseSelector),
-  (c: any) => withLoader(c, 'isLoading'),
 )(PureArticleTable);
 
 export const TableFrame: React.ComponentClass<{}> = compose(
   withRouter,
+  connect(createStructuredSelector({
+    isLoading: (state: IAppStateRecord) => !getWebsocketState(state),
+    isAdmin: getCurrentUserIsAdmin,
+    categories: getCategories,
+  })),
+  (c:  any) => withLoader(c, 'isLoading'),
 )(PureTableFrame);
