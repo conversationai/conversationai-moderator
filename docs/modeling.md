@@ -59,7 +59,7 @@ Osmod system using the UI.
 - email (unique)
 
 Service users serve 2 purposes:
-- They are used to authenticate non-humans that want to access to the system.  Use getToken to create a suitable JWT token for this purpose.
+- They are used to authenticate non-humans that want to access to the system.  Use the [get-token](../README.md#the-osmod-cli) CLI command to create a suitable JWT token for this purpose.
 - They are used to store the configuration for a moderator endpoint.
 
 For the latter, the required configuration is stored in the extra field in a JSON blob that looks like

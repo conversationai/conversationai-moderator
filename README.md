@@ -123,7 +123,7 @@ docker-compose -f deployments/local/docker-compose.yml logs
 
 #### Adding users
 
-To actually do anyting, you'll need to create some users.  You'll need at least
+To actually do anything, you'll need to create some users.  You'll need at least
 
 * an admin user so you can log in, view comments, and configure the moderator.
 
@@ -132,7 +132,7 @@ To actually do anyting, you'll need to create some users.  You'll need at least
 Add the admin user with the following command:
 
 ```bash
-./bin/osmod users:create --group admin --name "Name" --email "email@gmail.com"
+./bin/osmod users:create --group admin --name "Name" --email "$EMAIL_OF_USER"
 ```
 
 The Admin user and other humans get authenticated using Google's OAuth server, so the email address must correspond to a google account.
@@ -146,7 +146,9 @@ To add a service user for the Perspective API proxy, use the following command:
 
 where `<proxy URL>` is the URL of [The Perspective API proxy] you plan on using.  (See below.)
 
-Alternatively, add a service user that can talk direct to the Perspective API using the following command:
+Alternatively, if you have been granted direct access to the Perspective API, and if this API
+has been enabled in your Google Cloud project, you can add a service user that can talk
+direct to the Perspective API using the following command:
 
 ```bash
 ./bin/osmod users:create --group service --name "PerspectiveAPI" --moderator-type "perspective-api" \
@@ -227,7 +229,7 @@ where `command` is one of
 Create a human user:
 
 ```bash
-./bin/osmod users:create --group general --name "Name" --email "email@example.com"
+./bin/osmod users:create --group general --name "Name" --email "$EMAIL_OF_USER"
 ```
 
 Create a service user:
