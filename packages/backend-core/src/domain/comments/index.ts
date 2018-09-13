@@ -17,5 +17,6 @@ limitations under the License.
 export * from './countDenormalization';
 export * from './pipeline';
 export * from './rules';
+export * from './shim';
 export * from './state';
 export * from './textSizes';

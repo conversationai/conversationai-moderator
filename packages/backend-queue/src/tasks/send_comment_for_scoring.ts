@@ -41,7 +41,7 @@ export interface ISendCommentForScoringTaskData {
  *
  */
 export const sendCommentForScoringTask: IQueueHandler<ISendCommentForScoringTaskData> = handler<ISendCommentForScoringTaskData>(
-  async (data, logger, runImmediately) => {
+  async (data, logger) => {
     const { commentId } = data;
 
     logger.info(`sendCommentForScoringTask: Looking for ${commentId}`);
@@ -62,6 +62,6 @@ export const sendCommentForScoringTask: IQueueHandler<ISendCommentForScoringTask
       throw new Error(`sendCommentForScoringTask: Comment not found, id: ${commentId}`);
     }
 
-    return sendForScoring(comment, runImmediately);
+    return sendForScoring(comment);
   },
 );

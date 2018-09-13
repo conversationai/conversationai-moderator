@@ -21,7 +21,6 @@ import {
   sendToScorer,
   User,
 } from '@conversationai/moderator-backend-core';
-import * as Bluebird from 'bluebird';
 import * as yargs from 'yargs';
 
 export const command = 'comments:send-to-scorer';
@@ -29,24 +28,22 @@ export const describe = 'Send comments to Endpoint of user object to get scored.
 
 export function builder(yargs: yargs.Argv) {
   return yargs
-      .usage('Usage:\n\n' +
-        'Send comment for scoring by id:\n' +
-        'node $0 comments:send-to-scorer --comment-id=4\n\n' +
-        'Send comment for scoring with user id:\n' +
-        'node $0 comments:send-to-scorer --user-id=1' +
-        'Complete command requires both comment id and user id.\n' +
-        'node $0 comments:send-to-scorer --comment-id=4 --user-id=1')
-        .string('comment-id')
-        .describe('comment-id', 'comment id. To run all, use \'all\'.')
-        .number('user-id')
-        .describe('user-id', 'user id (must be service user)')
-        .check((argv) => {
-          if (!argv.commentId && !argv.userId) {
-            throw new Error('You must enter a comment id and user id to have scored.');
-          }
+    .usage('Usage:\n\n' +
+      'Send a comment for scoring:\n' +
+      'node $0 comments:send-to-scorer --comment-id=4 --user-id=1')
+    .number('comment-id')
+    .demand('comment-id')
+    .describe('comment-id', 'comment id. To run all, use \'all\'.')
+    .number('user-id')
+    .demand('user-id')
+    .describe('user-id', 'user id (must be service user)')
+    .check((argv) => {
+      if (!argv.commentId && !argv.userId) {
+        throw new Error('You must enter a comment id and user id to have scored.');
+      }
 
-          return true;
-        });
+      return true;
+    });
 }
 
 export async function handler(argv: any) {
@@ -69,10 +66,10 @@ export async function handler(argv: any) {
 
     const comments = await Comment.findAll(conditions);
 
-    await Bluebird.mapSeries(comments, (c) => {
+    for (const c of comments) {
       logger.info('Comment id ', c.id);
-      sendToScorer(c, user, true);
-    });
+      await sendToScorer(c, user);
+    }
 
     logger.info('Processing Completed.');
     process.exit(0);

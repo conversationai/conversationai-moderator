@@ -49,7 +49,6 @@ Osmod system using the UI.
 - group (enum: general, admin, service) (required)
 - email (string) (required for all but users in the "service" group)
 - name (string) (required)
-- endpoint (string) (required for "service" users)
 - isActive (tinyint) (required)
 - avatarURL (string)
 - extra (json)
@@ -58,6 +57,22 @@ Osmod system using the UI.
 - group
 - isActive
 - email (unique)
+
+Service users serve 2 purposes:
+- They are used to authenticate non-humans that want to access to the system.  Use the [get-token](../README.md#the-osmod-cli) CLI command to create a suitable JWT token for this purpose.
+- They are used to store the configuration for a moderator endpoint.
+
+For the latter, the required configuration is stored in the extra field in a JSON blob that looks like
+
+```json
+{
+  serviceType: 'moderator',
+  endpointType: 'perspective-proxy' || 'perspective-api',
+  endpoint: <URL of endpoint>,
+  extra: <Any extra configuration required by this endpoint.>
+}
+```
+
 
 ### UserSocialAuth
 
