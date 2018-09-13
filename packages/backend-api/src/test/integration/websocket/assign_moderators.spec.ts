@@ -32,6 +32,9 @@ import {
 const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
+// TODO: Eliminate use of sleeps throughout this code.
+//       We should be able to replace them with promises.
+
 describe('websocket tests: assign moderators', () => {
   let app: any;
   let server: any;

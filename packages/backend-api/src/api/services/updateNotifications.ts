@@ -51,8 +51,7 @@ async function getGlobalSummary() {
 
   const users = await User.findAll({where: {group: ['admin', 'general']}});
   const userdata = users.map((u: IUserInstance) => {
-    const o = u.toJSON();
-    return pick(o, userFields);
+    return pick(u.toJSON(), userFields);
   });
 
   const categories = await Category.findAll({
@@ -62,8 +61,7 @@ async function getGlobalSummary() {
   const categoryIds: Array<number> = [];
   const categorydata = categories.map((c: ICategoryInstance) => {
     categoryIds.push(c.id);
-    const o = c.toJSON();
-    return pick(o, categoryFields);
+    return pick(c.toJSON(), categoryFields);
   });
 
   const articles = await Article.findAll({
@@ -71,8 +69,7 @@ async function getGlobalSummary() {
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
   const articledata = articles.map((a: IArticleInstance) => {
-    const o = a.toJSON();
-    return pick(o, articleFields);
+    return pick(a.toJSON(), articleFields);
   });
 
   return {
