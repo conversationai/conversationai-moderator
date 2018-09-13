@@ -17,9 +17,8 @@ must be set in the enviromnent before anything will work.
 * `DATABASE_PASSWORD`: The MySQL database password.
 * `GOOGLE_CLIENT_ID`: Google OAuth API client id.
 * `GOOGLE_CLIENT_SECRET`:  Google OAuth API secret.
-* `GOOGLE_SCORE_AUTH`: An authentication key for The Perspective API proxy (see below).
 
-To get values for the latter two items, create an OAuth2.0 Client ID
+To get values for the `GOOGLE_CLIENT_*` parameters, create an OAuth2.0 Client ID
 entry for your app in the [Google API console](https://console.developers.google.com/apis/credentials).
 Set the Authorised redirect URI to `http://localhost:8080/auth/callback/google`.
 (Replace localhost with the address of your server if you are not running
@@ -124,32 +123,41 @@ docker-compose -f deployments/local/docker-compose.yml logs
 
 #### Adding users
 
-To actually do anyting, you'll need to create some users.  You'll need at least
+To actually do anything, you'll need to create some users.  You'll need at least
 
-* a human user so you can log in and view comments
+* an admin user so you can log in, view comments, and configure the moderator.
 
-* a service user that knows how to talk to a PerpectiveAPI proxy server.
+* a service user that knows how to talk to a moderator server: Either a proxy server or the Perspective API itself.
 
-Add human users with the following command:
-
-```bash
-./bin/osmod users:create --group general --name "Name" --email "email@gmail.com"
-```
-
-Human users get authenticated using Google's OAuth server, so the email address must
-correspond to a google account.
-
-Add the proxy service user with the following command:
+Add the admin user with the following command:
 
 ```bash
-./bin/osmod users:create --group service --name "PerspectiveProxy" --endpoint=<proxy URL>
+./bin/osmod users:create --group admin --name "Name" --email "$EMAIL_OF_USER"
 ```
 
-where `<proxy URL>` is the URL of [The Perspective API proxy] you plan on using.
+The Admin user and other humans get authenticated using Google's OAuth server, so the email address must correspond to a google account.
+
+To add a service user for the Perspective API proxy, use the following command:
+
+```bash
+./bin/osmod users:create --group service --name "PerspectiveProxy" --moderator-type "perspective-proxy" \
+                         --endpoint=<proxy URL> --api-key=<API Key>
+```
+
+where `<proxy URL>` is the URL of [The Perspective API proxy] you plan on using.  (See below.)
+
+Alternatively, if you have been granted direct access to the Perspective API, and if this API
+has been enabled in your Google Cloud project, you can add a service user that can talk
+direct to the Perspective API using the following command:
+
+```bash
+./bin/osmod users:create --group service --name "PerspectiveAPI" --moderator-type "perspective-api" \
+                         --api-key=<API Key>
+```
 
 ### The Perspective API proxy
 
-OSMod is designed to talk to the Perspective API via a proxy server: the
+OSMod can communicate to the Perspective API via a proxy server: the
 [Perspective API proxy](https://github.com/conversationai/perspectiveapi-proxy).
 
 There is a preconfigured proxy server set up for general use.
@@ -166,8 +174,8 @@ a local instance of the proxy as described in the
 E.g.:
 
 ```bash
-export GOOGLE_CLOUD_API_KEY=<API Key>
-export AUTH_WHITELIST=$GOOGLE_SCORE_AUTH
+export GOOGLE_CLOUD_API_KEY=<API Key for PerspectiveAPI>
+export AUTH_WHITELIST=<API Key to use to access this service>
 export ATTRIBUTE_REQUESTS
 read -r -d '' ATTRIBUTE_REQUESTS << EOM
 {
@@ -186,11 +194,13 @@ EOM
 
 cd $PERSPECTIVEAPI_PROXY_LOCATION
 yarn install
-PORT=8081 ATTRIBUTE_REQUESTS='{ "TOXICITY": {} }' yarn run watch
+PORT=8081 yarn run watch
 ```
 
 Then use `http://localhost:8081/api/score-comment` as the proxy URL when creating
 your service user.
+
+TODO: Move GOOGLE_SCORE_AUTH and other configuration into the proxy service user's config and document here
 
 The `osmod` CLI
 ---------------
@@ -219,7 +229,7 @@ where `command` is one of
 Create a human user:
 
 ```bash
-./bin/osmod users:create --group general --name "Name" --email "email@example.com"
+./bin/osmod users:create --group general --name "Name" --email "$EMAIL_OF_USER"
 ```
 
 Create a service user:

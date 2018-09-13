@@ -11,8 +11,9 @@
     "mocha:watch": "../../node_modules/.bin/mocha --watch 'dist/test/**/*.spec.js' --recursive --timeout 10000",
     "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
-    "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration && cp -R src/migrations dist/",
-    "compile:watch": "cp -R src/migrations dist/ && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --watch",
+    "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration && npm run compile:migrations",
+    "compile:watch": "npm run compile:migrations && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --watch",
+    "compile:migrations": "cp -R src/migrations dist/",
     "build": "npm run compile"
   },
   "license": "Apache-2.0",
@@ -34,7 +35,6 @@
     "@types/redis": "0.12.36",
     "@types/request": "2.47.0",
     "@types/sequelize": "3.4.43",
-    "@types/striptags": "0.0.5",
     "@types/underscore.string": "0.0.30",
     "@types/winston": "2.3.0",
     "bluebird": "3.5.0",
@@ -45,6 +45,7 @@
     "express": "4.16.3",
     "express-winston": "2.5.1",
     "express-ws": "4.0.0",
+    "googleapis": "32.0.0",
     "helmet": "3.5.0",
     "joi": "10.3.1",
     "jsonwebtoken": "7.3.0",
@@ -59,7 +60,7 @@
     "request": "2.87.0",
     "sequelize": "3.30.4",
     "sequelize-cli": "2.7.0",
-    "striptags": "3.0.1",
+    "striptags": "3.1.1",
     "underscore.string": "3.3.4",
     "winston": "2.3.1"
   }

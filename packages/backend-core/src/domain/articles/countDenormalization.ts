@@ -19,10 +19,10 @@ import {
   Comment,
   updateHappened,
 } from '../../models';
-import { IArticleInstance } from '../../models/article';
+import { IArticleInstance } from '../../models';
 import {
   denormalizeCommentCountsForCategory,
-} from '../categories/countDenormalization';
+} from '../categories';
 
 export async function denormalizeCommentCountsForArticle(article: IArticleInstance | null): Promise<void> {
   if (!article) {

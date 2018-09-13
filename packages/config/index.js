@@ -173,13 +173,6 @@ const config = convict({
     default: 60 * 12, // 12 hours
   },
 
-  google_score_auth: {
-    doc: 'Auth token for Google score endpoint',
-    format: String,
-    default: undefined,
-    env: 'GOOGLE_SCORE_AUTH'
-  },
-
   publisher_notification_mode: {
     doc: 'Whether to post back to the publisher, or wait to be polled.',
     format: String,
@@ -209,7 +202,7 @@ const config = convict({
   },
 
   restrict_to_session: {
-    doc: 'Flag to restric auth to the user session',
+    doc: 'Flag to restrict auth to the user session',
     format: Boolean,
     default: true,
     env: 'RESTRICT_TO_SESSION'

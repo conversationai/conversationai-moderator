@@ -14,7 +14,7 @@ This document describes the path of a comment through the OSMOD system.
 
 6. Once all assistants have either called back, or timed out, a task is created to run automated `ModerationRule`s.
 
-7. The rule task is handled but running all `ModerationRule`s against a single comment. If the rule results in a resolution (approve or reject), a task is created to notify the publisher and the comment lifecyle is complete.
+7. The rule task is handled by running all `ModerationRule`s against a single comment. If the rule results in a resolution (approve or reject), a task is created to notify the publisher and the comment lifecyle is complete.
 
 8. If a rule did not resolve a comment, it is made available to the OSMOD frontend.
 
