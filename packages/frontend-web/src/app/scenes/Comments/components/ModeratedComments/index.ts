@@ -22,7 +22,7 @@ import { createStructuredSelector } from 'reselect';
 import { ICommentModel } from '../../../../../models';
 import { IRedialLocals } from '../../../../../types';
 import { ICommentAction } from '../../../../../types';
-import { getUser } from '../../../../auth/store';
+import { getMyUserId } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import {
   changeColumnSortGroupDefault,
@@ -203,7 +203,7 @@ const mapStateToProps = createStructuredSelector({
 
   textSizes: getTextSizes,
 
-  userId: (state: IAppStateRecord) => getUser(state).id,
+  userId: (state: IAppStateRecord) => getMyUserId(state),
 }) as (state: IAppStateRecord, ownProps: IModeratedCommentsOwnProps) => IModeratedCommentsStateProps & IModeratedCommentsStatePropsWithUser;
 
 function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedCommentsOwnProps & IModeratedCommentsRouterProps): IModeratedCommentsDispatchWithOverwriteProps {

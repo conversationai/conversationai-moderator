@@ -168,3 +168,7 @@ export async function makeCategory(obj = {}): Promise<ICategoryInstance> {
     ...obj,
   });
 }
+
+export async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

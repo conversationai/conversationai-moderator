@@ -22,8 +22,8 @@ import { createStructuredSelector } from 'reselect';
 import { CategoryModel } from '../../../../../models';
 import { IRedialLocals } from '../../../../../types';
 import { IAppStateRecord } from '../../../../stores';
-import { getCategories, getCategoryCounts, loadCategories } from '../../../../stores/categories';
-import { articleSortDefinitions } from '../../../../util/sortDefinitions';
+import { getCategories, getCategoryCounts } from '../../../../stores/categories';
+import { articleSortDefinitions } from '../../../../util';
 import {
   DashboardArticles as PureDashboardArticles,
 } from './DashboardArticles';
@@ -115,7 +115,6 @@ export const DashboardArticles = compose(
       }
 
       return Promise.all([
-        dispatch(loadCategories()),
         dispatch(loadArticlePage(0)),
       ]);
     },

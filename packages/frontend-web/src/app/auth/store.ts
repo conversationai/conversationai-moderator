@@ -16,12 +16,14 @@ limitations under the License.
 
 const jwtDecode = require('jwt-decode');
 import axios from 'axios';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
 import { RESTRICT_TO_SESSION } from '../config';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
-import { checkAuthorization, clearCSRF, getCSRF, getModel } from '../util';
+import { initialiseClientModel } from '../stores';
+import {checkAuthorization, clearCSRF, disconnectNotifier, getCSRF, getModel} from '../util';
 
-import { Action, createAction, handleActions } from 'redux-actions';
 import { IUserModel } from '../../models';
 
 const LOCAL_STORAGE_TOKEN_KEY = 'moderator/auth_token';
@@ -31,9 +33,10 @@ const startedAuthentication =
   createAction('auth/STARTED_AUTHENTICATION');
 const failedAuthentication =
   createAction('auth/FAILED_AUTHENTICATION');
-type ICompletedAuthentificationPayload = IUserModel;
+const updateUserId =
+  createAction<number>('auth/UPDATE_USER_ID');
 const completedAuthentication =
-  createAction<ICompletedAuthentificationPayload>('auth/COMPLETED_AUTHENTICATION');
+  createAction<IUserModel>('auth/COMPLETED_AUTHENTICATION');
 
 export const logout: () => Action<void> = createAction('auth/LOGOUT');
 
@@ -85,8 +88,10 @@ async function completeAuthentication(token: string, dispatch: IAppDispatch): Pr
   setAxiosToken(token);
 
   const data = decodeToken(token);
+  await dispatch(updateUserId(data['user'] as number));
   const user = await loadUser(data['user']);
   await dispatch(completedAuthentication(user));
+  await initialiseClientModel(dispatch);
 }
 
 export function handleToken(token: string, csrf: string): IThunkAction<void> {
@@ -148,6 +153,7 @@ export function startAuthentication(): IThunkAction<void> {
 export interface IAuthenticationState {
   isAuthenticating: boolean;
   isAuthenticated: boolean;
+  userId: number| null;
   user: IUserModel | null;
 }
 
@@ -156,6 +162,7 @@ export interface IAuthenticationStateRecord extends TypedRecord<IAuthenticationS
 const StateFactory = makeTypedFactory<IAuthenticationState, IAuthenticationStateRecord>({
   isAuthenticating: false,
   isAuthenticated: false,
+  userId: null,
   user: null,
 });
 
@@ -163,8 +170,9 @@ const initialState = StateFactory();
 
 export const reducer = handleActions<
   IAuthenticationStateRecord,
-  void                              | // startedAuthentication, failedAuthentication, logout
-  ICompletedAuthentificationPayload   // completedAuthentication
+  void       | // startedAuthentication, failedAuthentication, logout
+  number     | // updateUserId
+  IUserModel   // completedAuthentication
 >({
   [startedAuthentication.toString()]: (state) => (
     state
@@ -177,9 +185,12 @@ export const reducer = handleActions<
       .set('isAuthenticated', false)
   ),
 
-  [completedAuthentication.toString()]:
-    (state,
-     { payload }: Action<ICompletedAuthentificationPayload>) => (
+  [updateUserId.toString()]: (state, { payload }: Action<number>) => (
+    state
+      .set('userId', payload)
+  ),
+
+  [completedAuthentication.toString()]: (state, { payload }: Action<IUserModel>) => (
     state
       .set('isAuthenticating', false)
       .set('isAuthenticated', true)
@@ -188,6 +199,7 @@ export const reducer = handleActions<
 
   [logout.toString()]: (state) => {
     saveToken(null);
+    disconnectNotifier();
 
     return state
       .set('isAuthenticating', false)
@@ -204,8 +216,16 @@ export function getIsAuthenticated(state: IAppStateRecord): boolean {
   return state.getIn(['auth', 'isAuthenticated']);
 }
 
-export function getUser(state: IAppStateRecord): IUserModel {
+// TODO: We really should be getting the user from the users list in the store
+//       Stored separately like this, we won't update it when the user's details change
+//       Also, it adds an extra round trip to the server on login.
+//       Start using getMyUserId instead.
+export function getCurrentUser(state: IAppStateRecord): IUserModel {
   return state.getIn(['auth', 'user']);
+}
+
+export function getMyUserId(state: IAppStateRecord): string {
+  return state.getIn(['auth', 'userId']).toString();
 }
 
 export function isAdmin(user: IUserModel): boolean {
@@ -213,5 +233,5 @@ export function isAdmin(user: IUserModel): boolean {
 }
 
 export function getIsAdmin(state: IAppStateRecord): boolean {
-  return isAdmin(getUser(state));
+  return isAdmin(getCurrentUser(state));
 }

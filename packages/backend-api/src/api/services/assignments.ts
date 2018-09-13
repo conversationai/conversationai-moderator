@@ -58,10 +58,7 @@ export function createAssignmentsService(): express.Router {
 
   router.get('/users/:id/count', async (req, res, next) => {
     const user = await User.findById(req.params.id);
-
-    const articles: Array<IArticleInstance> = await (user as any).getAssignedArticles();
-
-    const count = articles.reduce((sum, a) => sum + a.get('unmoderatedCount'), 0);
+    const count = await user.countAssignments();
 
     // So simple, not worth validating the schema.
     res.json({ count });
@@ -94,6 +91,8 @@ export function createAssignmentsService(): express.Router {
 
   async function removeArticleAssignment(userIds: Array<number>, articleIdsInCategory: Array<number>) {
     // Remove all assignmentsForArticles that have articleId that exist in articlesInCategory AND userId === userId
+    // TODO: This looks wrong.  What happens if user1 assigned to article 1 and 2 and user 2 assigned to article 1 and 2
+    //       And we want to remove user 1 article 2 and user 2 article 1.  This will remove them all....
     await ModeratorAssignment.destroy({
       where: {
         userId: {

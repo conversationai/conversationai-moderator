@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { updateHappened } from './last_update';
 
 export interface IModeratorAssignmentAttributes {
   id?: number;
@@ -38,35 +39,44 @@ export interface IModeratorAssignmentInstance
 export const ModeratorAssignment = sequelize.define<
   IModeratorAssignmentInstance,
   IModeratorAssignmentAttributes
->('moderator_assignment', {
-  id: {
-    type: Sequelize.INTEGER.UNSIGNED,
-    primaryKey: true,
-    autoIncrement: true,
-    allowNull: false,
-  },
-}, {
-  indexes: [
-    {
-      name: 'unique_assignment_index',
-      fields: ['userId', 'articleId'],
-      unique: true,
-    },
-    {
-      name: 'userId_index',
-      fields: ['userId'],
-    },
-  ],
-
-  classMethods: {
-    associate(models: any) {
-      ModeratorAssignment.belongsTo(models.User, {
-        onDelete: 'CASCADE',
-      });
-
-      ModeratorAssignment.belongsTo(models.Article, {
-        onDelete: 'CASCADE',
-      });
+>(
+  'moderator_assignment',
+  {
+    id: {
+      type: Sequelize.INTEGER.UNSIGNED,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
     },
   },
-});
+  {
+    indexes: [
+      {
+        name: 'unique_assignment_index',
+        fields: ['userId', 'articleId'],
+        unique: true,
+      },
+      {
+        name: 'userId_index',
+        fields: ['userId'],
+      },
+    ],
+
+    classMethods: {
+      associate(models: any) {
+        ModeratorAssignment.belongsTo(models.User, {
+          onDelete: 'CASCADE',
+        });
+
+        ModeratorAssignment.belongsTo(models.Article, {
+          onDelete: 'CASCADE',
+        });
+      },
+    },
+
+    hooks: {
+      afterBulkCreate: updateHappened,
+      afterBulkDestroy: updateHappened,
+    },
+  },
+);

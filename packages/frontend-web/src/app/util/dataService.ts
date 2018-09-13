@@ -24,16 +24,22 @@ import {
   IParams,
 } from '@conversationai/moderator-jsonapi/src/types';
 import {
+  ArticleModel,
+  CategoryModel,
   CommentDatedModel,
   CommentScoredModel,
   IArticleModel,
   IAuthorCountsModel,
+  ICategoryModel,
   ICommentDatedModel,
   ICommentModel,
   ICommentScoredModel,
   ICommentSummaryScoreModel,
+  IUserModel,
+  UserModel,
 } from '../../models';
 import { ITopScore } from '../../types';
+import { getToken } from '../auth/store';
 import { API_URL } from '../config';
 import { convertArrayFromJSONAPI } from './makeRecordListReducer';
 import { convertFromJSONAPI } from './makeSingleRecordReducer';
@@ -536,38 +542,6 @@ export async function listDeferredArticles(
   return listModels<IArticleModel>('articles', requestParams);
 }
 
-/**
- * Count the number of unmoderated comments currently assigned to a user.
- */
-export async function countAssignedArticleComments(
-  userId: string,
-): Promise<number> {
-  validateID(userId, `userId`);
-
-  const { data }: any = await axios.get(
-    serviceURL('assignments', `/users/${parseInt(userId, 10)}/count`),
-  );
-
-  return data.count;
-}
-
-/**
- * Count the number of deferred comments currently assigned to a user.
- */
-export async function countDeferredArticleComments(): Promise<number> {
-  const { data }: any = await axios.get(
-    listURL(
-      'comments',
-      {
-        filters: { isDeferred: true },
-        page: { limit: 0, offset: 0 },
-      },
-    ),
-  );
-
-  return data.meta.page.total;
-}
-
 export interface IModeratedComments {
   approved: Array<number>;
   highlighted: Array<number>;
@@ -899,4 +873,99 @@ export async function listAuthorCounts(
   );
 
   return Map<string | number, IAuthorCountsModel>(response.data.data);
+}
+
+let ws: WebSocket = null;
+let intervalTimer: NodeJS.Timer;
+
+export interface IGlobalSummary {
+  deferred: number;
+  users: List<IUserModel>;
+  categories: List<ICategoryModel>;
+  articles: List<IArticleModel>;
+}
+
+export interface IUserSummary {
+  assignments: number;
+}
+
+export function connectNotifier(
+  websocketStateHandler: (isActive: boolean) => void,
+  globalNotificationHandler: (data: IGlobalSummary) => void,
+  userNotificationHandler: (data: IUserSummary) => void) {
+  function checkSocketAlive() {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      const token = getToken();
+      const baseurl = serviceURL(`updates/summary/?token=${token}`);
+      const url = 'ws:' + baseurl.substr(baseurl.indexOf(':') + 1);
+
+      ws = new WebSocket(url);
+      ws.onopen = () => {
+        console.log('opened websocket');
+
+        ws.onclose = () => {
+          console.log('websocket closed');
+          websocketStateHandler(false);
+          ws = null;
+        };
+      };
+
+      ws.onmessage = (message) => {
+        const body: any = JSON.parse(message.data);
+        if (body.type === 'user') {
+          userNotificationHandler(body.data as IUserSummary);
+        }
+        else {
+          const userMap: {[key: number]: IUserModel} = {};
+          const catMap: {[key: number]: ICategoryModel} = {};
+
+          function convertAssignedModerators(am: Array<any>): Array<IUserModel> {
+            return am.map((i) => userMap[i.moderator_assignment.userId]);
+          }
+
+          // TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
+          //       Convert for now.  But at some point need to refactor to use numbers.
+          const data = {
+            deferred: body.data.deferred,
+
+            users: List<IUserModel>(body.data.users.map((u: any) => {
+              const id = u.id;
+              u.id = u.id.toString();
+              userMap[id] = u;
+              return UserModel(u);
+            })),
+
+            categories: List<ICategoryModel>(body.data.categories.map((c: any) => {
+              const id = c.id;
+              c.id = c.id.toString();
+              c.assignedModerators = convertAssignedModerators(c.assignedModerators);
+              const model = CategoryModel(c);
+              catMap[id] = model;
+              return model;
+            })),
+
+            articles: List<IArticleModel>(body.data.articles.map((a: any) => {
+              a.id = a.id.toString();
+              if (a.categoryId) {
+                a.category = catMap[a.categoryId];
+              }
+              a.assignedModerators = convertAssignedModerators(a.assignedModerators);
+              return ArticleModel(a);
+            })),
+          };
+          globalNotificationHandler(data);
+        }
+
+        websocketStateHandler(true);
+      };
+    }
+  }
+
+  checkSocketAlive();
+  intervalTimer = setInterval(checkSocketAlive, 10000);
+}
+
+export function disconnectNotifier() {
+  clearInterval(intervalTimer);
+  ws.close();
 }

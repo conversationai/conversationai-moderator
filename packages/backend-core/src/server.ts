@@ -15,6 +15,9 @@ limitations under the License.
 */
 
 import * as express from 'express';
+import * as expressWs from 'express-ws';
+import { Server } from 'http';
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const compression = require('compression');
@@ -23,9 +26,10 @@ import { logger } from './logger';
 
 export function makeServer(testMode?: boolean): {
   app: express.Application;
-  start(port: number): void;
+  start(port: number): Server;
 } {
   const app = express();
+  expressWs(app);
 
   if (!testMode) {
     // Turn on GZip.
@@ -71,7 +75,7 @@ export function makeServer(testMode?: boolean): {
         });
       }
 
-      app.listen(port, () => {
+      return app.listen(port, () => {
         console.log('OSMod listening on port', port);
       });
     },

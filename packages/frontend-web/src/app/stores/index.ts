@@ -14,11 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Action, Dispatch as ReduxDispatch } from 'redux';
+import { Action as RootAction, Dispatch as ReduxDispatch } from 'redux';
+import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
-import { TypedRecord} from 'typed-immutable-record';
+import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
+
+import { connectNotifier } from '../util';
 import { IArticleModeratorsStateRecord, reducer as articleModeratorsReducer } from './articleModerators';
-import { IState as ICategoriesState, reducer as categoriesReducer } from './categories';
+import { articlesUpdated, IArticlesState, reducer as articleReducer } from './articles';
+import { categoriesUpdated, ICategoriesState, reducer as categoriesReducer } from './categories';
+import { assignmentCountUpdated, deferredCountUpdated } from './categories';
 import { ICategoryModeratorsStateRecord , reducer as categoryModeratorsReducer} from './categoryModerators';
 import { IColumnSortStateRecord, reducer as columnSortsReducer } from './columnSorts';
 import { IState as ICommentsState, reducer as commentsReducer } from './comments';
@@ -31,10 +36,18 @@ import { ITaggingSensitivityStateRecord, reducer as taggingSensitivitiesReducer 
 import { ITagsState, reducer as tagsReducer } from './tags';
 import { ITextSizesStateRecord, reducer as textSizesReducer } from './textSizes';
 import { IState as ITopScoresState, ISummaryState as ITopSummaryScoresState, scoreReducer as topScoresReducer, summaryScoreReducer as topSummaryScoresReducer } from './topScores';
-import { IUsersState, reducer as usersReducer } from './users';
+import { IUsersState, reducer as usersReducer, usersUpdated } from './users';
+
+export interface IWebsocketState {
+  isActive: boolean;
+}
+
+interface IWebsocketStateRecord extends TypedRecord<IWebsocketStateRecord>, IWebsocketState {}
 
 export interface IAppState {
+  websocketState: IWebsocketState;
   categories: ICategoriesState;
+  articles: IArticlesState;
   comments: ICommentsState;
   commentSummaryScores: ICommentSummaryScoresStateRecord;
   users: IUsersState;
@@ -55,7 +68,7 @@ export interface IAppState {
 export interface IAppStateRecord extends TypedRecord<IAppStateRecord>, IAppState {}
 
 export type IThunkAction<R> = (dispatch: ReduxDispatch<IAppStateRecord>, getState: () => IAppStateRecord) => R;
-export type IAction<T> = IThunkAction<T> | Action;
+export type IAction<T> = IThunkAction<T> | RootAction;
 
 export interface IAppDispatch {
   <R>(action: IAction<R>): R;
@@ -69,8 +82,25 @@ declare module 'redux' {
 }
 // tslint:enable interface-name
 
+const WebsocketStateFactory = makeTypedFactory<IWebsocketState, IWebsocketStateRecord>({
+  isActive: false,
+});
+
+const websocketStateUpdated = createAction<boolean>('global/WEBSOCKET_STATE_CHANGE');
+
+const websocketStateReducer = handleActions<IWebsocketState, boolean>( {
+  [websocketStateUpdated.toString()]: (state: IWebsocketStateRecord, { payload }: Action<boolean>) => {
+    return (
+      state
+        .set('isActive', payload)
+    );
+  },
+}, WebsocketStateFactory());
+
 export const reducer: any = combineReducers<IAppStateRecord>({
+  websocketState: websocketStateReducer,
   categories: categoriesReducer,
+  articles: articleReducer,
   comments: commentsReducer,
   commentSummaryScores: commentSummaryScoresReducer,
   users: usersReducer,
@@ -87,3 +117,24 @@ export const reducer: any = combineReducers<IAppStateRecord>({
   topScores: topScoresReducer,
   topSummaryScores: topSummaryScoresReducer,
 });
+
+export async function initialiseClientModel(dispatch: IAppDispatch) {
+  connectNotifier(
+    (isActive: boolean) => {
+      dispatch(websocketStateUpdated(isActive));
+    },
+    (data) => {
+      dispatch(deferredCountUpdated(data.deferred));
+      dispatch(usersUpdated(data.users));
+      dispatch(categoriesUpdated(data.categories));
+      dispatch(articlesUpdated(data.articles));
+    },
+    (data) => {
+      dispatch(assignmentCountUpdated(data.assignments));
+    },
+  );
+}
+
+export function getWebsocketState(state: IAppStateRecord): boolean {
+  return state.getIn(['global', 'websocketState', 'isActive']);
+}

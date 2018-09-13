@@ -24,7 +24,7 @@ import {
   ICommentScoreModel,
 } from '../../../../../models';
 import { IConfirmationAction, IRedialLocals } from '../../../../../types';
-import { getUser } from '../../../../auth/store';
+import { getCurrentUser } from '../../../../auth';
 import { IAppDispatch, IAppState, IAppStateRecord } from '../../../../stores';
 import {
   approveComments,
@@ -244,7 +244,7 @@ const mapStateToProps = createStructuredSelector({
 
   getUserById: (state: IAppStateRecord) => (userId: string) => getUserById(state, userId),
 
-  currentUser: getUser,
+  currentUser: getCurrentUser,
 }) as (state: IAppState, ownProps: ICommentDetailOwnProps) => ICommentDetailStateProps;
 
 function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps {

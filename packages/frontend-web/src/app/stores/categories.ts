@@ -14,26 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { fromJS, List, Map } from 'immutable';
+import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import { ICategoryModel } from '../../models';
-import { getUser as getCurrentUser } from '../auth';
 import {
-  countAssignedArticleComments,
-  countDeferredArticleComments,
   IRecordListStateRecord,
-  listModels,
-  makeAJAXAction,
-  makeRecordListReducer,
 } from '../util';
-import { IAppStateRecord, IThunkAction } from './index';
+import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'categories'];
 const CATEGORIES_PREFIX = [...STATE_ROOT, 'categories'];
-const CATEGORIES_HAS_DATA = [...CATEGORIES_PREFIX, 'hasData'];
-const CATEGORIES_IS_LOADING = [...CATEGORIES_PREFIX, 'isFetching'];
 const CATEGORIES_DATA = [...CATEGORIES_PREFIX, 'items'];
 const CATEGORY_COUNTS_DATA = [...STATE_ROOT, 'categoryCounts', 'items'];
 const ASSIGNMENTS_PREFIX = [...STATE_ROOT, 'assignments'];
@@ -41,14 +33,9 @@ const ASSIGNMENTS_DATA = [...ASSIGNMENTS_PREFIX, 'items'];
 const DEFERRED_PREFIX = [...STATE_ROOT, 'deferred'];
 const DEFERRED_DATA = [...DEFERRED_PREFIX, 'items'];
 
-const loadCategoriesStart = createAction('global/LOAD_CATEGORIES_START');
-const loadCategoriesComplete = createAction<object>('global/LOAD_CATEGORIES_COMPLETE');
-
-type ICountCompletePayload = {
-  count: number;
-};
-const countAssignmentsComplete = createAction<ICountCompletePayload>('global/COUNT_ASSIGNMENTS_COMPLETE');
-const countDeferredComplete = createAction<ICountCompletePayload>('global/COUNT_DEFERRED_COMPLETE');
+export const categoriesUpdated = createAction<List<ICategoryModel>>('global/CATEGORIES_UPDATED');
+export const assignmentCountUpdated = createAction<number>('global/ASSIGNMENT_COUNT_UPDATED');
+export const deferredCountUpdated = createAction<number>('global/DEFERRED_COUNT_UPDATED');
 
 export function getCategories(state: IAppStateRecord): List<ICategoryModel> {
   return state.getIn(CATEGORIES_DATA);
@@ -58,42 +45,24 @@ export function getCategoryCounts(state: IAppStateRecord): Map<string, number> {
   return state.getIn(CATEGORY_COUNTS_DATA);
 }
 
-export function loadCategories(): IThunkAction<void> {
-  return makeAJAXAction(
-    () => listModels<ICategoryModel>('categories', { page: { limit: - 1 } }),
-    loadCategoriesStart,
-    loadCategoriesComplete,
-    (state: IAppStateRecord) => state.getIn(CATEGORIES_HAS_DATA) && getCategories(state),
-  );
+export interface ICategoriesState {
+  items: List<ICategoryModel>;
 }
 
-export function getCategoriesIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(CATEGORIES_IS_LOADING);
-}
+export interface ICategoriesStateRecord extends TypedRecord<ICategoriesStateRecord>, ICategoriesState {}
 
-const {
-  reducer: categoriesReducer,
-} = makeRecordListReducer<ICategoryModel & { id: string }>(
-  loadCategoriesStart.toString(),
-  loadCategoriesComplete.toString(),
-);
+const CategoriesStateFactory = makeTypedFactory<ICategoriesState, ICategoriesStateRecord>({
+  items: List<ICategoryModel>(),
+});
 
-export function loadAssignmentCounts(): IThunkAction<void> {
-  return async (dispatch, getState) => {
-    const user = getCurrentUser(getState());
-    const count = await countAssignedArticleComments(user.get('id'));
-
-    return await dispatch(countAssignmentsComplete({ count }));
-  };
-}
-
-export function loadDeferredCounts(): IThunkAction<void> {
-  return async (dispatch) => {
-    const count = await countDeferredArticleComments();
-
-    return await dispatch(countDeferredComplete({ count }));
-  };
-}
+const categoriesReducer = handleActions<ICategoriesStateRecord, List<ICategoryModel>>( {
+  [categoriesUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<List<ICategoryModel>>) => {
+    return (
+      state
+        .set('items', payload)
+    );
+  },
+}, CategoriesStateFactory());
 
 export function getAssignments(state: IAppStateRecord): any {
   return state.getIn(ASSIGNMENTS_DATA);
@@ -119,20 +88,11 @@ const StateFactory = makeTypedFactory<ICategoryCountsState, ICategoryCountsState
 
 const categoryCountsReducer = handleActions<
   ICategoryCountsStateRecord,
-  void                  | // loadCategoriesStart
-  object                | // loadCategoriesComplete
-  ICountCompletePayload   // countAssignmentsComplete, countDeferredComplete
+  List<ICategoryModel> | number
 >({
-  [loadCategoriesStart.toString()]: (state) => (
-    state
-        .set('isFetching', true)
-  ),
-
-  [loadCategoriesComplete.toString()]: (state, { payload }: Action<object>) => {
-    const result = fromJS(payload);
-
-    const counts = result.get('data').reduce((sum: any, category: ICategoryModel) => {
-      return sum.set(category.get('id').toString(), category.getIn(['attributes', 'unmoderatedCount']));
+  [categoriesUpdated.toString()]: (state, { payload }: Action<List<ICategoryModel>>) => {
+    const counts = payload.reduce((sum, category) => {
+      return sum.set(category.id.toString(), category.unmoderatedCount);
     }, Map<string, number>());
 
     return state
@@ -141,17 +101,17 @@ const categoryCountsReducer = handleActions<
         .update('items', (i: any) => i.merge(counts));
   },
 
-  [countAssignmentsComplete.toString()]: (state, { payload: { count } }: Action<ICountCompletePayload>) => {
+  [assignmentCountUpdated.toString()]: (state, { payload }: Action<number>) => {
     return state.setIn(
       ['items', 'assignments'],
-      count,
+      payload,
     );
   },
 
-  [countDeferredComplete.toString()]: (state, { payload: { count } }: Action<ICountCompletePayload>) => {
+  [deferredCountUpdated.toString()]: (state, { payload }: Action<number>) => {
     return state.setIn(
       ['items', 'deferred'],
-      count,
+      payload,
     );
   },
 }, StateFactory());

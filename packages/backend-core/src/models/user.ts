@@ -19,6 +19,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 import { IArticleInstance } from './article';
 import { ICategoryInstance } from './category';
+import { updateHappened } from './last_update';
 
 export const USER_GROUP_SERVICE = 'service';
 
@@ -50,6 +51,7 @@ export interface IUserInstance extends Sequelize.Instance<IUserAttributes> {
 
   getAssignedArticles: Sequelize.BelongsToManyGetAssociationsMixin<IArticleInstance>;
   countAssignedArticles: Sequelize.BelongsToManyCountAssociationsMixin;
+  countAssignments(): number;
 
   getAssignedCategories: Sequelize.BelongsToManyGetAssociationsMixin<ICategoryInstance>;
   countAssignedCategories: Sequelize.BelongsToManyCountAssociationsMixin;
@@ -186,5 +188,19 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
       });
     },
   },
+  hooks: {
+    afterCreate: updateHappened,
+    afterDelete: updateHappened,
+    afterUpdate: updateHappened,
+    afterBulkCreate: updateHappened,
+    afterBulkUpdate: updateHappened,
+    afterBulkDestroy: updateHappened,
+  },
 
+  instanceMethods: {
+    async countAssignments() {
+      const articles: Array<IArticleInstance> = await this.getAssignedArticles();
+      return articles.reduce((sum, a) => sum + a.get('unmoderatedCount'), 0);
+    },
+  },
 });

@@ -23,7 +23,7 @@ import { createStructuredSelector } from 'reselect';
 import { IArticleModel, ICommentModel } from '../../../../../models';
 import { IRedialLocals } from '../../../../../types';
 import { ICommentAction } from '../../../../../types';
-import { getUser } from '../../../../auth/store';
+import { getMyUserId } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import {
   changeColumnSortGroupDefault,
@@ -248,7 +248,7 @@ const mapStateToProps = createStructuredSelector({
 
     return article && article.isAutoModerated;
   },
-  userId: (state: IAppStateRecord) => getUser(state).id,
+  userId: (state: IAppStateRecord) => getMyUserId(state),
 });
 
 const mergeProps = (stateProps: any, dispatchProps: any, ownProps: any) => {

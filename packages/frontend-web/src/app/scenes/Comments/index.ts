@@ -23,11 +23,10 @@ import { combineReducers } from 'redux-immutable';
 import { createStructuredSelector } from 'reselect';
 import { ICategoryModel, IUserModel } from '../../../models';
 import { IRedialLocals } from '../../../types';
-import { getIsAdmin, getUser as getCurrentUser } from'../../auth';
-import { IAppState, IAppStateRecord } from '../../stores';
+import { getCurrentUser, getIsAdmin } from'../../auth';
+import { getWebsocketState, IAppState, IAppStateRecord } from '../../stores';
 import { getArticleModerators, loadArticleModerators } from '../../stores/articleModerators';
-import { getCategories, getCategoriesIsLoading, loadCategories } from '../../stores/categories';
-import { loadUsers } from '../../stores/users';
+import { getCategories } from '../../stores/categories';
 import { withLoader } from '../../util';
 import { Comments as PureComments } from './Comments';
 
@@ -127,7 +126,7 @@ export const Comments = compose(
 
       return count + adjustment;
     },
-    isLoading: (state: IAppStateRecord, { params }: any) => !!params.articleId ? getArticleIsLoading(state) : getCategoriesIsLoading(state),
+    isLoading: (state: IAppStateRecord, { params }: any) => !!params.articleId ? getArticleIsLoading(state) : !getWebsocketState(state),
     moderators: (state: IAppStateRecord, { params }: any) => {
       if (!params.articleId) { return List<IUserModel>(); }
 
@@ -161,12 +160,6 @@ export const Comments = compose(
         isArticleDetail
             ? dispatch(loadArticleModerators(articleId))
             : Promise.resolve(),
-
-        !isArticleDetail
-            ? dispatch(loadCategories())
-            : Promise.resolve(),
-
-        dispatch(loadUsers()),
       ]);
     },
   }),

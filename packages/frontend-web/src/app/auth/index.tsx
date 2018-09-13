@@ -19,7 +19,7 @@ import { Login } from '../scenes/Login';
 
 import {
   getIsAuthenticating,
-  getUser,
+  getCurrentUser,
   isAdmin,
 } from './store';
 
@@ -27,7 +27,8 @@ export {
   reducer,
   startAuthentication,
   handleToken,
-  getUser,
+  getCurrentUser,
+  getMyUserId,
   isAdmin,
   getIsAdmin,
   logout,
@@ -35,7 +36,7 @@ export {
 
 // Take the regular authentication & redirect to login from before
 export const UserIsAuthenticated = UserAuthWrapper({
-  authSelector: getUser,
+  authSelector: getCurrentUser,
   authenticatingSelector: getIsAuthenticating,
   FailureComponent: Login,
   wrapperDisplayName: 'UserIsAuthenticated',
@@ -44,7 +45,7 @@ export const UserIsAuthenticated = UserAuthWrapper({
 // Admin Authorization, redirects non-admins
 // to / and don't send a redirect param
 export const UserIsAdmin = UserAuthWrapper({
-  authSelector: getUser,
+  authSelector: getCurrentUser,
   authenticatingSelector: getIsAuthenticating,
   failureRedirectPath: '/',
   wrapperDisplayName: 'UserIsAdmin',

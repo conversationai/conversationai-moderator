@@ -19,6 +19,7 @@ import {
   Category,
   IArticleInstance,
   ModeratorAssignment,
+  updateHappened,
   UserCategoryAssignment,
 } from '@conversationai/moderator-backend-core';
 
@@ -80,6 +81,7 @@ export async function createArticleIfNonExistant(item: IArticleData): Promise<IA
         userId: assignment.get('userId'),
       });
     }
+    updateHappened();
   }
 
   return { article, wasCreated };
@@ -112,7 +114,7 @@ async function obtainCategoryIdByLabel(categoryLabel: string): Promise<number> {
 }
 
 async function createCategory(categoryLabel: string): Promise<number> {
-  const [category] = await Category.findOrCreate({
+  const [category, wasCreated] = await Category.findOrCreate({
     where: {
       label: categoryLabel,
     },
@@ -132,6 +134,10 @@ async function createCategory(categoryLabel: string): Promise<number> {
       extra: {},
     },
   });
+
+  if (wasCreated) {
+    updateHappened();
+  }
 
   return category.id;
 }

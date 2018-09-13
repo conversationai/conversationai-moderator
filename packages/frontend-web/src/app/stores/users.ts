@@ -14,27 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
-import { Action, createAction } from 'redux-actions';
+import {List} from 'immutable';
+import { Action, createAction, handleActions } from 'redux-actions';
+import {makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
 import { IUserModel } from '../../models';
-import {
-  listModels,
-  makeAJAXAction,
-  makeRecordListReducer,
-  IRecordListStateRecord,
- } from '../util';
-import { IAppStateRecord, IThunkAction } from './index';
+import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'users'];
 const USERS_DATA = [...STATE_ROOT, 'items'];
-const USERS_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
-const USERS_HAS_DATA = [...STATE_ROOT, 'hasData'];
 
-const loadUsersStart = createAction(
-  'all-users/LOAD_USERS_START',
-);
-const loadUsersComplete = createAction<object>(
-  'all-users/LOAD_USERS_COMPLETE',
+export const usersUpdated = createAction<List<IUserModel>>(
+  'all-users/USERS_UPDATED',
 );
 
 export function getUsers(state: IAppStateRecord): List<IUserModel> {
@@ -45,32 +36,23 @@ export function getUserById(state: IAppStateRecord, userId: string): IUserModel 
   return state.getIn(USERS_DATA).find((user: IUserModel) => user.id === userId);
 }
 
-export function getUsersIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(USERS_LOADING_STATUS);
+export interface IUsersState {
+  items: List<IUserModel>;
 }
 
-export function loadUsers(): IThunkAction<void> {
-  return makeAJAXAction(
-    () => listModels('users', {
-      page: { limit: -1 },
-      filters: {
-        group: ['admin', 'general'],
-      },
-    }),
-    loadUsersStart,
-    loadUsersComplete,
-    (state: IAppStateRecord) => state.getIn(USERS_HAS_DATA) && getUsers(state),
-  );
-}
+export interface IUsersStateRecord extends TypedRecord<IUsersStateRecord>, IUsersState {}
 
-export type IUsersState = List<IUserModel>;
+const StateFactory = makeTypedFactory<IUsersState, IUsersStateRecord>({
+  items: List<IUserModel>(),
+});
 
-const recordListReducer = makeRecordListReducer<IUserModel>(
-  loadUsersStart.toString(),
-  loadUsersComplete.toString(),
-);
-
-const reducer: (state: IRecordListStateRecord<IUserModel>, action: Action<object|IUserModel>) => IRecordListStateRecord<IUserModel>
-  = recordListReducer.reducer;
+const reducer = handleActions<IUsersStateRecord, List<IUserModel>>( {
+  [usersUpdated.toString()]: (state: IUsersStateRecord, { payload }: Action<List<IUserModel>>) => {
+    return (
+      state
+        .set('items', payload)
+    );
+  },
+}, StateFactory());
 
 export { reducer };
