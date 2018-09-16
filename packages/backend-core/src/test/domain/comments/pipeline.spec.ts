@@ -30,7 +30,7 @@ import {
 import {
   IScores,
   ISummaryScores,
-} from '../../../domain/comments/shim';
+} from '../../../domain/comments';
 import {
   Article,
   Category,
@@ -41,7 +41,7 @@ import {
   Decision,
   Tag,
 } from '../../../models';
-import { ITagInstance } from '../../../models/tag';
+import { ITagInstance } from '../../../models';
 import {
   createArticle,
   createCategory,
@@ -56,10 +56,14 @@ import {
 
 describe('Comments Domain Pipeline Tests', () => {
   beforeEach(async () => {
-    await Tag.destroy({where: {}});
+    await CommentSummaryScore.destroy({where: {}});
+    await CommentScore.destroy({where: {}});
+    await CommentScoreRequest.destroy({where: {}});
+    await Decision.destroy({where: {}});
     await Comment.destroy({where: {}});
     await Article.destroy({where: {}});
     await Category.destroy({where: {}});
+    await Tag.destroy({where: {}});
   });
 
   describe('getCommentsToResendForScoring', () => {
