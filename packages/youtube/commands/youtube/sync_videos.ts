@@ -35,7 +35,7 @@ export function builder(yargs: yargs.Argv) {
 export async function handler() {
   const service = google.youtube('v3');
 
-  authorize(async (auth) => {
+  authorize(async (owner, auth) => {
 
     const categories = await Category.findAll({
       where: {
@@ -83,7 +83,7 @@ export async function handler() {
           }
 
           for (const item of response.data.items) {
-            mapPlaylistItemToArticle(categoryId, item);
+            mapPlaylistItemToArticle(owner, categoryId, item);
           }
         });
       });

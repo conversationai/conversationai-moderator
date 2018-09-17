@@ -35,7 +35,7 @@ export function builder(yargs: yargs.Argv) {
 export async function handler() {
   const service = google.youtube('v3');
 
-  authorize(async (auth) => {
+  authorize(async (owner, auth) => {
     service.channels.list({
       auth: auth,
       part: 'snippet',
@@ -52,7 +52,7 @@ export async function handler() {
       }
 
       for (const c of channels) {
-        mapChannelToCategory(c);
+        mapChannelToCategory(owner, c);
       }
     });
   });

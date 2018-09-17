@@ -13,7 +13,7 @@
     "lint:fix": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
     "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration && npm run compile:migrations",
     "compile:watch": "npm run compile:migrations && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --watch",
-    "compile:migrations": "cp -R src/migrations dist/",
+    "compile:migrations": "rm -f dist/migrations/* && cp -R src/migrations dist/",
     "build": "npm run compile"
   },
   "license": "Apache-2.0",

@@ -29,6 +29,7 @@ export interface IAuthorAttributes {
 
 export interface ICommentAttributes {
   id?: number;
+  ownerId?: number;
   sourceId: string;
   articleId: number | null;
   replyToSourceId?: string | null;
@@ -74,6 +75,11 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
     type: Sequelize.BIGINT.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
+  },
+
+  ownerId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: true,
   },
 
   sourceId: {
@@ -258,6 +264,7 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
      * Comment relationships
      */
     associate(models: any) {
+      Comment.belongsTo(models.User, {as: 'owner'});
       Comment.belongsTo(models.Article);
 
       Comment.hasMany(models.CommentScore, {

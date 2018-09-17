@@ -22,6 +22,7 @@ import { IUserInstance } from './user';
 export interface ICategoryAttributes {
   id?: number;
   label: string;
+  ownerId?: number;
   sourceId?: string;
   isActive?: boolean;
   extra?: any;
@@ -56,6 +57,11 @@ export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>
     type: Sequelize.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
+  },
+
+  ownerId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: true,
   },
 
   sourceId: {
@@ -159,6 +165,7 @@ export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>
      * Category relationships
      */
     associate(models: any) {
+      Category.belongsTo(models.User, {as: 'owner'});
       Category.hasMany(models.Article, {
         // These work around a weird sequelize bug which adds a unique constraint
         // only on article for seemingly no reason.

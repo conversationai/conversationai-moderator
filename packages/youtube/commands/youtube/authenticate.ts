@@ -17,19 +17,19 @@ limitations under the License.
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
-import { logger, User, USER_GROUP_YOUTUBE } from '@conversationai/moderator-backend-core';
+import { IUserInstance, logger, User, USER_GROUP_YOUTUBE } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
 export const SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl'];
 
-export function authorize(callback: (client: OAuth2Client) => Promise<void>) {
+export function authorize(callback: (owner: IUserInstance, client: OAuth2Client) => Promise<void>) {
   (async () => {
     const users = await User.findAll({where: {group: USER_GROUP_YOUTUBE, isActive: true}});
     for (const u of users) {
       const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'));
       logger.info(`Syncing ${u.get('name')}`);
       oauth2Client.setCredentials(JSON.parse(u.get('extra')));
-      await callback(oauth2Client);
+      await callback(u, oauth2Client);
     }
   })();
 }

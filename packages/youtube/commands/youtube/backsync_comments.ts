@@ -34,9 +34,8 @@ export function builder(yargs: yargs.Argv) {
 
 export async function handler() {
   const service = google.youtube('v3');
-  authorize(async (auth) => {
-
-    await foreachPendingDecision(async (decision, comment) => {
+  authorize(async (owner, auth) => {
+    await foreachPendingDecision(owner, async (decision, comment) => {
       const sourceId = comment.get('sourceId') as string;
       const status = decision.get('status');
 
