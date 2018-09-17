@@ -24,6 +24,8 @@ export const WHITE_COLOR = '#ffffff';
 export const GREY_COLOR = '#999999';
 export const NICE_DARK_BLUE = '#0f4a92';
 export const NICE_MIDDLE_BLUE = '#185bac';
+export const NICE_LIGHT_BLUE = '#95b3d8';
+export const NICE_BLUE_GREY = '#eff0f0';
 
 // TEXT COLOR
 export const DARK_PRIMARY_TEXT_COLOR = 'rgba(0, 0, 0, 0.87)';

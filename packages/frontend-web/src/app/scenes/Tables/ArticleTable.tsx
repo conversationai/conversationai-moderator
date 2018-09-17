@@ -19,6 +19,11 @@ import React from 'react';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
+import * as icons from '../../components/Icons';
+import { css } from '../../util';
+import { MagicTimestamp } from './components';
+import { ARTICLE_TABLE_STYLES } from './styles';
+import { NICE_MIDDLE_BLUE } from '../../styles';
 
 export interface IIArticleTableProps extends WithRouterProps {
   myUserId: string;
@@ -191,49 +196,88 @@ function executeSort(sortList: Array<string>) {
 }
 
 export class ArticleTable extends React.Component<IIArticleTableProps, IIArticleTableState> {
+  static renderModerators(article: IArticleModel) {
+    if (article.assignedModerators.length === 0) {
+      return <icons.UserIcon {...css(ARTICLE_TABLE_STYLES.smallIcon)}/>;
+    }
+
+    if (article.assignedModerators.length === 1) {
+      const u = article.assignedModerators[0];
+      if (u.avatarURL) {
+        return <img src={u.avatarURL} {...css(ARTICLE_TABLE_STYLES.smallImage)}/>;
+      }
+      else {
+        return <icons.UserIcon {...css(ARTICLE_TABLE_STYLES.smallIcon, {color: NICE_MIDDLE_BLUE})}/>;
+      }
+    }
+
+    const ret = [];
+    let limit = article.assignedModerators.length;
+    let extra = false;
+    if (limit > 4) {
+      limit = 3;
+      extra = true;
+    }
+    else if (limit === 4) {
+      limit = 4;
+    }
+
+    for (let i = 0; i < limit && i < 3; i++) {
+      const u = article.assignedModerators[i];
+      if (u.avatarURL) {
+        ret.push(<img src={u.avatarURL} {...css(ARTICLE_TABLE_STYLES.xsmallImage)}/>);
+      }
+      else {
+        ret.push(<icons.UserIcon {...css(ARTICLE_TABLE_STYLES.xsmallIcon, {color: NICE_MIDDLE_BLUE})}/>);
+      }
+    }
+    if (extra) {
+      ret.push(<icons.UserIcon {...css(ARTICLE_TABLE_STYLES.xsmallIcon)}/>);
+    }
+  }
+
   static renderRow(article: IArticleModel) {
     return (
-      <tr key={article.id}>
-        <td>
-          <a href={article.url} target="_blank">
-            {article.title}
+      <tr key={article.id} {...css(ARTICLE_TABLE_STYLES.dataBody)}>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
+          <a href={article.url} target="_blank" {...css(ARTICLE_TABLE_STYLES.cellLink)}>
+            <p style={{margin: '7px 0'}}>
+              <span key="label" {...css(ARTICLE_TABLE_STYLES.categoryLabel)}>{article.category.label}</span>&nbsp;
+              <span key="timestamp" {...css(ARTICLE_TABLE_STYLES.dateLabel)}><MagicTimestamp timestamp={article.sourceCreatedAt} inFuture={false}/></span>
+            </p>
+            <p style={{margin: '7px 0'}}>
+              {article.title}
+            </p>
           </a>
         </td>
-        <td>
-          {article.category.label}
-        </td>
-        <td>
-          <Link to={`/articles/${article.id}/new`}>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          <Link to={`/articles/${article.id}/new`} {...css(ARTICLE_TABLE_STYLES.cellLink)}>
             {article.unmoderatedCount}
           </Link>
         </td>
-        <td>
-          <Link to={`/articles/${article.id}/moderated/approved`}>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          <Link to={`/articles/${article.id}/moderated/approved`} {...css(ARTICLE_TABLE_STYLES.cellLink)}>
             {article.approvedCount}
           </Link>
         </td>
-        <td>
-          <Link to={`/articles/${article.id}/moderated/rejected`}>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          <Link to={`/articles/${article.id}/moderated/rejected`} {...css(ARTICLE_TABLE_STYLES.cellLink)}>
             {article.rejectedCount}
           </Link>
         </td>
-        <td>
-          <Link to={`/articles/${article.id}/moderated/deferred`}>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          <Link to={`/articles/${article.id}/moderated/deferred`} {...css(ARTICLE_TABLE_STYLES.cellLink)}>
             {article.deferredCount}
           </Link>
         </td>
-        <td>
-          <Link to={`/articles/${article.id}/moderated/flagged`}>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          <Link to={`/articles/${article.id}/moderated/flagged`} {...css(ARTICLE_TABLE_STYLES.cellLink)}>
             {article.flaggedCount}
           </Link>
         </td>
-        <td>
-          TODO
-        </td>
-        <td>
-          <ul>
-            {article.assignedModerators.map((u) => <li>{u.name}</li>)}
-          </ul>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell)}/>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.moderatorCell)}>
+          {ArticleTable.renderModerators(article)}
         </td>
       </tr>
     );
@@ -295,7 +339,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       }
       const newSort = newSortString(sort, nextSortItem);
       return (
-        <Link to={`/a/${currentFilter}/${newSort}`}>
+        <Link to={`/a/${currentFilter}/${newSort}`} {...css(ARTICLE_TABLE_STYLES.cellLink)}>
           {label} {direction}
         </Link>
       );
@@ -310,7 +354,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
     return (
       <div>
-        <div>
+        <div key="filters" {...css(ARTICLE_TABLE_STYLES.filterHeader)}>
           <select value={getFilterValue(filter, 'user')} onChange={setFilter('user')}>
             <option key="mine" value={me.id}>{me.name} (Me)</option>
             <option key="all" value="">All Users</option>
@@ -322,35 +366,32 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             {sortedCategories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
           </select>
         </div>
-        <table>
-          <thead>
+        <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
+          <thead {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
             <tr>
-              <th>
-                {renderHeaderItem('Headline', 'title')}
+              <th key="title" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.textCell)}>
+                {renderHeaderItem('Title', 'title')}
               </th>
-              <th>
-                {renderHeaderItem('Category', 'category')}
-              </th>
-              <th>
+              <th key="new" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
                 {renderHeaderItem('New', 'new')}
               </th>
-              <th>
+              <th key="approved" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
                 {renderHeaderItem('Approved', 'approved')}
               </th>
-              <th>
+              <th key="rejected" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
                 {renderHeaderItem('Rejected', 'rejected')}
               </th>
-              <th>
+              <th key="deferred" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
                 {renderHeaderItem('Deferred', 'deferred')}
               </th>
-              <th>
+              <th key="flagged" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
                 {renderHeaderItem('Flagged', 'flagged')}
               </th>
-              <th>
+              <th key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell)}>
                 Modified
               </th>
-              <th>
-                Moderators
+              <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.moderatorCell)}>
+                <icons.UserIcon {...css(ARTICLE_TABLE_STYLES.smallIcon)}/>
               </th>
             </tr>
           </thead>
