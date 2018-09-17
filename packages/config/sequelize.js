@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const path = require('path');
 const config = require('./index').config;
 
 /**
@@ -29,6 +28,7 @@ let mysqlConfig = {
   database: config.get('database_name'),
   username: config.get('database_user'),
   password: config.get('database_password'),
+  // TODO: Convince CLI to use correct character set
 };
 
 if (config.get('database_socket') !== 'nevermind') {
