@@ -15,8 +15,9 @@ limitations under the License.
 */
 
 import {
-  Article,
+  Article, Comment,
 } from '@conversationai/moderator-backend-core';
+
 import { createArticleIfNonExistant, IArticleData } from '../../../api/publisher/articles';
 import {
   expect,
@@ -65,8 +66,20 @@ describe('Publisher API', () => {
     return `${BASE_URL}/${path}`;
   }
 
-  describe(BASE_URL, () => {
+  function checkCreated(bodyData: any, ids: Array<string>) {
+    for (const i of ids) {
+      expect(bodyData[i]).to.be.an('string');
+      delete bodyData[i];
+    }
+    expect(bodyData).to.deep.equal({});
+  }
 
+  beforeEach(async () => {
+    await Comment.destroy({where: {}});
+    await Article.destroy({where: {}});
+  });
+
+  describe(BASE_URL, () => {
     describe('/articles', () => {
       const url = prefixed('articles');
 
@@ -83,9 +96,7 @@ describe('Publisher API', () => {
           expect(status).to.be.equal(200);
           was200 = true;
 
-          expect(body.data).to.deep.equal({
-            [validArticleData1.sourceId]: '1',
-          });
+          checkCreated(body.data, [validArticleData1.sourceId]);
         } finally {
           expect(was200).to.be.true;
         }
@@ -106,10 +117,7 @@ describe('Publisher API', () => {
           expect(status).to.be.equal(200);
           was200 = true;
 
-          expect(body.data).to.deep.equal({
-            [validArticleData1.sourceId]: '1',
-            [validArticleData2.sourceId]: '2',
-          });
+          checkCreated(body.data, [validArticleData1.sourceId, validArticleData2.sourceId]);
         } finally {
           expect(was200).to.be.true;
         }
@@ -132,10 +140,7 @@ describe('Publisher API', () => {
           expect(status).to.be.equal(200);
           was200 = true;
 
-          expect(body.data).to.deep.equal({
-            [validArticleData1.sourceId]: '2', // because number 2 was already inserted
-            [validArticleData2.sourceId]: '1',
-          });
+          checkCreated(body.data, [validArticleData1.sourceId, validArticleData2.sourceId]);
         } finally {
           expect(was200).to.be.true;
         }
@@ -247,9 +252,7 @@ describe('Publisher API', () => {
           expect(status).to.be.equal(200);
           was200 = true;
 
-          expect(body.data).to.deep.equal({
-            [commentData.sourceId]: '1',
-          });
+          checkCreated(body.data, [commentData.sourceId]);
         } finally {
           expect(was200).to.be.true;
         }
@@ -277,10 +280,7 @@ describe('Publisher API', () => {
           expect(status).to.be.equal(200);
           was200 = true;
 
-          expect(body.data).to.deep.equal({
-            [commentData1.sourceId]: '1',
-            [commentData2.sourceId]: '2',
-          });
+          checkCreated(body.data, [commentData1.sourceId, commentData2.sourceId]);
         } finally {
           expect(was200).to.be.true;
         }

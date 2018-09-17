@@ -15,6 +15,10 @@ limitations under the License.
 */
 
 import {
+  Comment,
+} from '@conversationai/moderator-backend-core';
+
+import {
   expect,
   makeComment,
 } from '../../test_helper';
@@ -24,6 +28,9 @@ import {
 } from '../../../api/services/authorCounts';
 
 describe('authorCounts Functions', () => {
+  beforeEach(async () => {
+    await Comment.destroy({where: {}});
+  });
 
   describe('getAuthorCounts', () => {
     it('should return 0 for unknown authors', async () => {

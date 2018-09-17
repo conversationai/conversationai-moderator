@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as WebSocket from 'ws';
 
+import { User } from '@conversationai/moderator-backend-core';
 import { clearInterested, makeServer } from '@conversationai/moderator-backend-core';
 
 import {mountAPI} from '../../../index';
@@ -25,8 +26,11 @@ import {
   sleep,
 } from '../../test_helper';
 
-
 describe('websocket tests', () => {
+  beforeEach(async () => {
+    await User.destroy({where: {}});
+  });
+
   afterEach(clearInterested);
 
   it('Test what we get when connect without authentication', async () => {

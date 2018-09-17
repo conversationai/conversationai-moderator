@@ -17,8 +17,13 @@ limitations under the License.
 import { NotFoundError } from '@conversationai/moderator-jsonapi';
 
 import {
+  Article,
+  Category,
+  Comment,
+  CommentSummaryScore,
   IArticleInstance,
   ICategoryInstance,
+  Tag,
 } from '@conversationai/moderator-backend-core';
 
 import {
@@ -37,6 +42,13 @@ import {
 } from '../../../api/services/histogramScores/util';
 
 describe('histogramScores Functions', () => {
+  beforeEach(async () => {
+    await CommentSummaryScore.destroy({where: {}});
+    await Comment.destroy({where: {}});
+    await Article.destroy({where: {}});
+    await Category.destroy({where: {}});
+    await Tag.destroy({where: {}});
+  });
 
   describe('getHistogramScoresForAllCategories', () => {
     it('returns scores across all categories for tag', async () => {

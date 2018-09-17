@@ -23,7 +23,9 @@ import {
 import {
   Article,
   Category,
+  Comment,
   ModeratorAssignment,
+  User,
   UserCategoryAssignment,
 } from '@conversationai/moderator-backend-core';
 
@@ -42,17 +44,18 @@ const BASE_URL = `/services/assignments`;
 
 describe(BASE_URL, () => {
   beforeEach(async () => {
+    await ModeratorAssignment.destroy({where: {}});
+    await UserCategoryAssignment.destroy({where: {}});
+    await Comment.destroy({where: {}});
+    await Article.destroy({where: {}});
+    await Category.destroy({where: {}});
+    await User.destroy({where: {}});
+
     this.category = await makeCategory();
     this.article = await makeArticle({categoryId: this.category.id});
     await makeComment({articleId: this.article.id});
     denormalizeCommentCountsForArticle(this.article);
     this.user = await makeUser();
-  });
-
-  afterEach (async () => {
-    await ModeratorAssignment.destroy({where: {}});
-    await Article.destroy({where: {}});
-    await Category.destroy({where: {}});
   });
 
   describe('/users/:id/count', () => {

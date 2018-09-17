@@ -14,8 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { cacheCommentTopScores } from '@conversationai/moderator-backend-core';
 import * as chai from 'chai';
+
+import {
+  Article,
+  Category,
+  Comment,
+  CommentSummaryScore,
+  Tag,
+} from '@conversationai/moderator-backend-core';
+
+import { cacheCommentTopScores } from '@conversationai/moderator-backend-core';
+
 import {
   expect,
   makeArticle,
@@ -31,6 +41,13 @@ import {
 const BASE_URL = `/services/histogramScores`;
 
 describe(BASE_URL, () => {
+  beforeEach(async () => {
+    await CommentSummaryScore.destroy({where: {}});
+    await Comment.destroy({where: {}});
+    await Article.destroy({where: {}});
+    await Category.destroy({where: {}});
+    await Tag.destroy({where: {}});
+  });
 
   describe('/articles/:articleId/tags/:tagId', () => {
 

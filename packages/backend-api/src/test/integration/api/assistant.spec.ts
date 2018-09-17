@@ -17,9 +17,12 @@ limitations under the License.
 import * as chai from 'chai';
 
 import {
+  Comment,
   CommentScoreRequest,
   sequelize,
+  User,
 } from '@conversationai/moderator-backend-core';
+
 import {
   expect,
   makeComment,
@@ -37,6 +40,8 @@ describe(prefixed, () => {
 
   describe('/scores/:id', () => {
     beforeEach(async () => {
+      await Comment.destroy({where: {}});
+      await User.destroy({where: {}});
       const comment = await makeComment();
       const user = await makeUser();
 
