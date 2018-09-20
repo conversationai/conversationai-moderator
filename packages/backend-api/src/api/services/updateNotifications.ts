@@ -97,25 +97,47 @@ async function getUserSummary(userId: number) {
 
 interface ISocketItem {
   userId: number;
-  ws: WebSocket;
+  ws: Array<WebSocket>;
   lastUserSummary: IUserSummary | null;
 }
 
 let lastGlobalSummaryMessage: IMessage | null = null;
 const socketItems = new Map<number, ISocketItem>();
 
+function removeSocket(si: ISocketItem, ws: WebSocket) {
+  const index = si.ws.indexOf(ws);
+  if (index >= 0) {
+    si.ws.splice(index, 1);
+  }
+  if (si.ws.length === 0) {
+    socketItems.delete(si.userId);
+  }
+}
+
 async function maybeSendUpdateToUser(si: ISocketItem, sendGlobal: boolean) {
-  if (sendGlobal) {
-    logger.info(`Sending global summary to user ${si.userId}`);
-    si.ws.send(JSON.stringify(lastGlobalSummaryMessage!));
+  const userSummaryMessage = await getUserSummary(si.userId);
+  const sendUser = !si.lastUserSummary || !isEqual(userSummaryMessage.data, si.lastUserSummary);
+
+  for (const ws of si.ws) {
+    try {
+      if (sendGlobal) {
+        logger.info(`Sending global summary to user ${si.userId}`);
+        await ws.send(JSON.stringify(lastGlobalSummaryMessage!));
+      }
+
+      if (sendUser) {
+        logger.info(`Sending local summary to user ${si.userId}`);
+        await ws.send(JSON.stringify(userSummaryMessage));
+      }
+    }
+    catch (e) {
+      logger.warn(`Websocket faulty for ${si.userId}`, e.message);
+      ws.terminate();
+      removeSocket(si, ws);
+    }
   }
 
-  const userSummaryMessage = await getUserSummary(si.userId);
-  if (!si.lastUserSummary || !isEqual(userSummaryMessage.data, si.lastUserSummary)) {
-    logger.info(`Sending local summary to user ${si.userId}`);
-    si.ws.send(JSON.stringify(userSummaryMessage));
-    si.lastUserSummary = userSummaryMessage.data as IUserSummary;
-  }
+  si.lastUserSummary = userSummaryMessage.data as IUserSummary;
 }
 
 async function maybeSendUpdates() {
@@ -147,9 +169,11 @@ export function createUpdateNotificationService(): express.Router {
     const userId = req.user.id;
     let si = socketItems.get(userId);
     if (!si) {
-      si = {userId, ws, lastUserSummary: null};
+      si = {userId, ws: [], lastUserSummary: null};
       socketItems.set(userId, si);
     }
+
+    si.ws.push(ws);
 
     if (lastGlobalSummaryMessage === null) {
       logger.info(`Setting up notifications`);
@@ -159,9 +183,10 @@ export function createUpdateNotificationService(): express.Router {
     }
 
     ws.on('close', () => {
-      socketItems.delete(userId);
+      removeSocket(si!, ws);
     });
 
+    logger.info(`Websocket opened to ${req.user.email}`);
     maybeSendUpdateToUser(si, true);
   });
 
@@ -172,7 +197,9 @@ export function createUpdateNotificationService(): express.Router {
 export function destroyUpdateNotificationService() {
   lastGlobalSummaryMessage = null;
   for (const si of socketItems.values()) {
-    si.ws.close();
+    for (const ws of si.ws) {
+      ws.close();
+    }
   }
   socketItems.clear();
 }
