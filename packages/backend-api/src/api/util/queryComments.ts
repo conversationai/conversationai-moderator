@@ -17,6 +17,7 @@ limitations under the License.
 import {
   Article,
   Comment,
+  IArticleInstance,
   ICommentInstance,
   ITopScores,
   TaggingSensitivity,
@@ -25,7 +26,7 @@ import { IFields, IListDetails }from '@conversationai/moderator-jsonapi';
 import * as Bluebird from 'bluebird';
 import { list } from './SequelizeHandler';
 
-export async function filterTopScoresByTaggingSensitivity(maxScores: ITopScores, tagId?: number, getComment?: (commentId: string) => Promise<ICommentInstance>): Promise<ITopScores> {
+export async function filterTopScoresByTaggingSensitivity(maxScores: ITopScores, tagId?: number, getComment?: (commentId: string) => Promise<ICommentInstance | null>): Promise<ITopScores> {
   // Omit scores below defined sensitivities.
   const allTaggingSensitivities = await TaggingSensitivity.findAll();
 
@@ -33,32 +34,37 @@ export async function filterTopScoresByTaggingSensitivity(maxScores: ITopScores,
     return !ts.get('categoryId') && !ts.get('tagId');
   });
 
-  const fetchComment = getComment || (async (commentId: string): Promise<ICommentInstance> => {
+  // Prefetch the associated article
+  const fetchComment = getComment || (async (commentId: string): Promise<ICommentInstance | null> => {
     const id = parseInt(commentId, 10);
 
-    return (await Comment.findById(
+    return Comment.findById(
       parseInt(maxScores[id].commentId.toString(), 10),
       { include: [Article] },
-    ))!;
+    );
   });
 
-  const comments = (await Bluebird.mapSeries(
+  const comments = await Bluebird.mapSeries(
     Object.keys(maxScores),
     fetchComment,
-  ))!;
+  );
 
   return Object.keys(maxScores).reduce((sum, commentId) => {
     const id = parseInt(commentId, 10);
     const scoreDetails = maxScores[id];
-    const comment = comments.find((c) => c.id === id) as ICommentInstance;
+    const comment = comments.find((c) => (c != null && c.id === id)) as ICommentInstance;
     const tagIdToFilter = tagId || comment.get('maxSummaryScoreTagId');
 
     const categoryTaggingSensitivity = allTaggingSensitivities.find((ts) => {
-      return comment.get('article') && ts.get('categoryId') === comment.get('article').get('categoryId') && !ts.get('tagId');
+      // We've prefetched the assoicated article, so we can use 'get' to fetch it.
+      // But that requires some munging of the sequelize types.
+      const article = (comment.get as (key: string) => IArticleInstance)('article');
+      return article && ts.get('categoryId') === article.get('categoryId') && !ts.get('tagId');
     });
 
     const completeTaggingSensitivity = allTaggingSensitivities.find((ts) => {
-      return comment.get('article') && ts.get('categoryId') === comment.get('article').get('categoryId') && ts.get('tagId') === tagIdToFilter;
+      const article = (comment.get as (key: string) => IArticleInstance)('article');
+      return article && ts.get('categoryId') === article.get('categoryId') && ts.get('tagId') === tagIdToFilter;
     });
 
     const tagTaggingSensitivity = allTaggingSensitivities.find((ts) => {

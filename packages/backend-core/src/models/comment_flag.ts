@@ -18,6 +18,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 
 export interface ICommentFlagAttributes {
+  id?: number;
   commentId: number;
   sourceId?: string;
   extra?: any;

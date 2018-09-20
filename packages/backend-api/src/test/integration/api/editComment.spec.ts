@@ -13,6 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+import * as chai from "chai";
+
+import {
+  Comment,
+} from '@conversationai/moderator-backend-core';
 
 import {
   expect,
@@ -22,11 +27,6 @@ import {
 import {
   app,
 } from './test_helper';
-
-import {
-  Comment,
-} from '@conversationai/moderator-backend-core';
-import * as chai from "chai";
 
 const URL = `/services/editComment`;
 
@@ -88,10 +88,10 @@ describe(URL, () => {
             });
 
             const updatedComment = await Comment.findOne({ where: { id: comment.id }});
-            const { name, location } = JSON.parse(updatedComment.get('author'));
+            const { name, location } = JSON.parse(updatedComment!.get('author'));
 
             expect(status).to.be.equal(200);
-            expect(updatedComment.get('text')).to.be.equal(updatedText);
+            expect(updatedComment!.get('text')).to.be.equal(updatedText);
             expect(name).to.be.equal(updatedAuthorName);
             expect(location).to.be.equal(updatedAuthorLocation);
 

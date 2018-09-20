@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { ITagInstance } from './tag';
 
 export interface ICommentSummaryScoreAttributes {
   id?: number;
@@ -28,6 +29,7 @@ export interface ICommentSummaryScoreAttributes {
 
 export interface ICommentSummaryScoreInstance
     extends Sequelize.Instance<ICommentSummaryScoreAttributes> {
+  getTag: Sequelize.BelongsToGetAssociationMixin<ITagInstance>;
 }
 
 /**

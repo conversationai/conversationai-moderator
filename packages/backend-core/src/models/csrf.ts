@@ -24,11 +24,10 @@ export interface ICSRFAttributes {
   referrer: string | null;
 }
 
-export interface ICSRFInstance
-    extends Sequelize.Instance<ICSRFAttributes> {
+export interface ICSRFInstance extends Sequelize.Instance<ICSRFAttributes> {
   id: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 /**

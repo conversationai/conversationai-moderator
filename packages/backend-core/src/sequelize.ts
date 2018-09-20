@@ -20,6 +20,10 @@ import * as Sequelize from 'sequelize';
 
 const mysqlConfig: any = {
   dialect: 'mysql',
+  define: {
+    charset: 'utf8',
+    collate: 'utf8_general_ci',
+  },
   logging: false,
   host: undefined,
   port: undefined,

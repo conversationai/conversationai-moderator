@@ -121,10 +121,8 @@ export function createShim(
       };
 
       // Check for a `replyTo`
-
-      if (comment.get('replyTo')) {
-        const replyTo = comment.get('replyTo');
-
+      const replyTo = await comment.getReplyTo();
+      if (replyTo) {
         postData.inReplyToComment = {
           commentId: replyTo.id,
           plainText: striptags(replyTo.get('text')),

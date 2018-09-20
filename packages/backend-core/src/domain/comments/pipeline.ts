@@ -74,7 +74,7 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
 
     let shim = shims.get(scorer.id);
     if (!shim) {
-      const extra: any = JSON.parse(scorer.get('extra')); // TODO: Not sure why necessary.  Fixed in later Sequelize?
+      const extra: any = JSON.parse(scorer.get('extra'));
 
       if (extra.endpointType === ENDPOINT_TYPE_API) {
         shim = await createApiShim(scorer, processMachineScore);
@@ -296,7 +296,7 @@ export async function completeMachineScoring(commentId: number): Promise<void> {
   await cacheCommentTopScores(comment);
   await processRulesForComment(comment);
   await denormalizeCountsForComment(comment);
-  await denormalizeCommentCountsForArticle(comment.get('article'));
+  await denormalizeCommentCountsForArticle(await comment.getArticle());
 }
 
 /**

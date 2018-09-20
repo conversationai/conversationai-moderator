@@ -7,9 +7,9 @@
   "scripts": {
     "build:webpack": "npm run compile:lib && NODE_ENV=production webpack --bail --progress --profile --colors --config tooling/webpack.config.production.js",
     "build:copy": "cp -R public/* build/",
-    "build": "npm run compile && npm run compile:lib && npm run build:webpack && npm run storybook:build && npm run build:copy",
+    "build": "npm run compile:web && npm run build:webpack && npm run storybook:build && npm run build:copy",
     "lint": "find src -name *.ts -o -name *.tsx | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
-    "watch": "npm run compile && npm run compile:watch | PORT=8000 webpack-dev-server --config tooling/webpack.config.js --progress --colors --host 0.0.0.0",
+    "watch": "npm run compile && npm run compile:watch | PORT=8000 API_URL=http://localhost:8080 webpack-dev-server --config tooling/webpack.config.js --progress --colors --host 0.0.0.0",
     "lint:fix": "find src -name *.ts -o -name *.tsx | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
     "test": "npm run spec && npm run storybook:test",
     "spec": "jest dist-commonjs/**",

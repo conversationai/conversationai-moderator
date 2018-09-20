@@ -62,7 +62,6 @@ function dropDatabase(done: any) {
 }
 
 before(cleanDatabase);
-beforeEach(cleanDatabase);
 after(dropDatabase);
 
 const expect = chai.expect;

@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { ITagInstance } from './tag';
 
 export const SCORE_SOURCE_TYPES = [
   'User',
@@ -43,6 +44,8 @@ export interface ICommentScoreInstance extends Sequelize.Instance<ICommentScoreA
   id: number;
   createdAt: string;
   updatedAt: string;
+
+  getTag: Sequelize.BelongsToGetAssociationMixin<ITagInstance>;
 }
 
 /**

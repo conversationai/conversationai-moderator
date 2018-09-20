@@ -15,7 +15,9 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+
 import { sequelize } from '../sequelize';
+import {ICommentInstance} from './comment';
 
 export interface ICommentScoreRequestAttributes {
   id?: number;
@@ -32,6 +34,7 @@ export interface ICommentScoreRequestInstance
   id: number;
   createdAt: string;
   updatedAt: string;
+  getComment: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
 }
 
 /**

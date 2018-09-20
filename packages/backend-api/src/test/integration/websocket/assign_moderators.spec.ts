@@ -17,7 +17,8 @@ limitations under the License.
 import * as chai from 'chai';
 import * as WebSocket from 'ws';
 
-import { clearInterested, makeServer } from '@conversationai/moderator-backend-core';
+import {Article, Category, User} from '@conversationai/moderator-backend-core';
+import {clearInterested, makeServer} from '@conversationai/moderator-backend-core';
 
 import {destroyUpdateNotificationService} from '../../../api/services/updateNotifications';
 import {mountAPI} from '../../../index';
@@ -47,6 +48,10 @@ describe('websocket tests: assign moderators', () => {
   let article: any;
 
   beforeEach(async () => {
+    await Article.destroy({where: {}});
+    await Category.destroy({where: {}});
+    await User.destroy({where: {}});
+
     user = await makeUser();
 
     category = await makeCategory();

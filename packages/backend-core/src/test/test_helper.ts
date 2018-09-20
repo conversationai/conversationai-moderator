@@ -34,9 +34,4 @@ function cleanDatabase(done: any) {
       .then(() => done(), (e) => done(e));
 }
 
-beforeEach('Clean database before each test run', cleanDatabase);
-after((done) => {
-  setTimeout(() => {
-    cleanDatabase(done);
-  }, 1000);
-});
+before('Clean database before', cleanDatabase);

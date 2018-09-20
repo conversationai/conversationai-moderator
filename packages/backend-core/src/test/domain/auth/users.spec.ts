@@ -30,6 +30,11 @@ const assert = chai.assert;
 // tslint:disable
 
 describe('Auth Domain Users Tests', function() {
+  beforeEach(async () => {
+    await UserSocialAuth.destroy({where:{}});
+    await User.destroy({where:{}});
+  });
+
   describe('isValidUser', function() {
     it('should return true for an active user', async () => {
       const activeUser = await User.create({

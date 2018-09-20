@@ -14,14 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as chai from 'chai';
+
+import {
+  Comment,
+} from '@conversationai/moderator-backend-core';
+
 import {
   expect,
   makeComment,
 } from '../../test_helper';
 import {
-  app
+  app,
 } from './test_helper';
-import * as chai from "chai";
 
 const BASE_URL = `/services/authorCounts`;
 
@@ -40,6 +45,9 @@ async function fakeAuthor(authorSourceId: string, approvedCount: number, rejecte
 }
 
 describe(BASE_URL, () => {
+  beforeEach(async () => {
+    await Comment.destroy({where: {}});
+  });
 
   describe('/authorCounts', () => {
 

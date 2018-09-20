@@ -84,7 +84,7 @@ async function getGlobalSummary() {
 }
 
 async function getUserSummary(userId: number) {
-  const user = await User.findById(userId);
+  const user = (await User.findById(userId))!;
   const assignments = await user.countAssignments();
 
   return {

@@ -58,7 +58,7 @@ export function createAssignmentsService(): express.Router {
 
   router.get('/users/:id/count', async (req, res, next) => {
     const user = await User.findById(req.params.id);
-    const count = await user.countAssignments();
+    const count = user ? await user.countAssignments() : 0;
 
     // So simple, not worth validating the schema.
     res.json({ count });

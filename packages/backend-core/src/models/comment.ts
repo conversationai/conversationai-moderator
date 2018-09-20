@@ -63,6 +63,7 @@ export interface ICommentInstance extends Sequelize.Instance<ICommentAttributes>
   getArticle: Sequelize.BelongsToGetAssociationMixin<IArticleInstance>;
   getDecisions: Sequelize.HasManyGetAssociationsMixin<IDecisionInstance>;
   getCommentSummaryScores: Sequelize.HasManyGetAssociationsMixin<ICommentSummaryScoreInstance>;
+  getReplyTo: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
 }
 
 /**
