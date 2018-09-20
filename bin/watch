@@ -1,12 +1,12 @@
 #!/bin/bash
 
-cd packages/backend-api
+cd packages/frontend-web
 npm run watch &
 cd -
 
-sleep 5
+sleep 20
 
-cd packages/frontend-web
+cd packages/backend-api
 npm run watch &
 cd -
 
