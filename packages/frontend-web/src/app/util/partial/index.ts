@@ -40,7 +40,7 @@ function makeNode<T>(): INode<T> {
 
 const mutableObjectCache = new Map<object | Array<any>, string>();
 
-function stringifyIfNecessary<T>(o: T, useEqualityForMutableObjects: boolean): T | string {
+function stringifyIfNecessary(o: any, useEqualityForMutableObjects: boolean): boolean | number | string {
   if (
     isArray(o) ||
     isPlainObject(o) ||
