@@ -42,7 +42,7 @@ import {
 import { API_URL } from '../../config';
 import { IAppDispatch } from '../../stores';
 import {css, partial, setCSRF, stylesheet} from '../../util';
-import { AddButton } from './components/AddButton';
+import { AddButton, EditButton } from './components/AddButton';
 import { AddUsers } from './components/AddUsers';
 import { EditUsers } from './components/EditUsers';
 import { LabelSettings } from './components/LabelSettings';
@@ -194,8 +194,6 @@ export interface ISettingsProps extends WithRouterProps {
 }
 
 export interface ISettingsState {
-  selectedOwner?: string;
-  selectedModerator?: string;
   users?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
@@ -216,8 +214,6 @@ export interface ISettingsState {
 
 export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   state: ISettingsState = {
-    selectedOwner: 'placeholder',
-    selectedModerator: 'placeholder',
     users: this.props.users,
     tags: this.props.tags,
     rules: this.props.rules,
@@ -270,16 +266,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleOwnerChange(event: React.FormEvent<any>) {
-    this.setState({ selectedOwner: (event.target as any).value });
-  }
-
-  @autobind
-  handleModeratorChange(event: React.FormEvent<any>) {
-    this.setState({ selectedModerator: (event.target as any).value });
-  }
-
-  @autobind
   handleAddUser(event: React.FormEvent<any>) {
     event.preventDefault();
     this.setState({
@@ -288,9 +274,9 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleEditUser(name: string) {
+  handleEditUser(event: React.FormEvent<any>) {
     this.setState({
-      selectedUser: this.state.users.find((user) => user.name === name),
+      selectedUser: this.state.users.find((user) => user.id === event.currentTarget.value),
       isEditUserScrimOpen: true,
     });
   }
@@ -608,11 +594,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({ homeIsFocused: false });
   }
 
-  @autobind
-  onUsersSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    this.handleEditUser(event.target.value);
-  }
-
   render() {
     const {
       categories,
@@ -620,8 +601,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     } = this.props;
 
     const {
-      selectedOwner,
-      selectedModerator,
       tags,
       users,
       rules,
@@ -635,7 +614,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       submitStatus,
     } = this.state;
     const sortedUsers = users.sort((a, b) => a.name.localeCompare(b.name));
-    const admins = sortedUsers.filter((user) => user.group === 'admin');
 
     const summaryScoreTag = tags.find((tag) => tag.key === 'SUMMARY_SCORE');
     const summaryScoreTagId = summaryScoreTag && summaryScoreTag.id;
@@ -686,51 +664,52 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           <form onSubmit={this.handleFormSubmit} {...css(STYLES.formContainer)}>
             <div key="editUsersSection">
               <div key="heading" {...css(STYLES.heading)}>
-                <h2 {...css(STYLES.headingText)}>Edit Users</h2>
+                <h2 {...css(STYLES.headingText)}>Users</h2>
               </div>
               <div key="body" {...css(STYLES.section)}>
-                <div {...css(SETTINGS_STYLES.row, SETTINGS_STYLES.selectContainer)}>
-                  <label {...css(SETTINGS_STYLES.label)} htmlFor="owners">
-                    Owners:
-                  </label>
-                  <select
-                    {...css(SETTINGS_STYLES.selectBox)}
-                    id="owners"
-                    name="owners"
-                    value={selectedOwner}
-                    onChange={this.onUsersSelectChange}
-                  >
-                    <option value="placeholder" disabled>Select an Owner</option>
-                    {admins.map((owner) => (
-                      <option value={owner.name} key={owner.id}>{owner.name}</option>
-                    ))}
-                  </select>
-                  <span aria-hidden="true" {...css(SETTINGS_STYLES.arrow)} />
+                <div {...css(SETTINGS_STYLES.row)}>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+                          Name
+                        </th>
+                        <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
+                          Email
+                        </th>
+                        <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+                          Role
+                        </th>
+                        <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+                          Is Active
+                        </th>
+                        <th key="5" {...css(SETTINGS_STYLES.userTableCell)}/>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sortedUsers.map((u) => (
+                        <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+                          <td {...css(SETTINGS_STYLES.userTableCell)}>
+                            {u.name}
+                          </td>
+                          <td {...css(SETTINGS_STYLES.userTableCell)}>
+                            {u.email}
+                          </td>
+                          <td {...css(SETTINGS_STYLES.userTableCell)}>
+                            {u.group}
+                          </td>
+                          <td {...css(SETTINGS_STYLES.userTableCell)}>
+                            {u.isActive ? 'Active' : ''}
+                          </td>
+                          <td {...css(SETTINGS_STYLES.userTableCell)}>
+                            <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id}/>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <div {...css(SETTINGS_STYLES.row, SETTINGS_STYLES.selectContainer)}>
-                  <label {...css(SETTINGS_STYLES.label)} htmlFor="moderators">
-                    Moderators:
-                  </label>
-                  <select
-                    {...css(SETTINGS_STYLES.selectBox)}
-                    id="moderators"
-                    name="moderators"
-                    value={selectedModerator}
-                    onChange={this.onUsersSelectChange}
-                  >
-                    <option value="placeholder" disabled>Select a Moderator</option>
-                    {sortedUsers.map((moderator) => (
-                      <option
-                        value={moderator.name}
-                        key={moderator.id}
-                      >
-                        {moderator.name}
-                      </option>
-                    ))}
-                  </select>
-                  <span aria-hidden="true" {...css(SETTINGS_STYLES.arrow)} />
-                </div>
-                <AddButton width={44} onClick={this.handleAddUser} label="Add a user" />
+                <AddButton width={44} onClick={this.handleAddUser} label="Add a user"/>
               </div>
             </div>
 
@@ -758,7 +737,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     onTagChange={this.handleTagChange}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddTag} label="Add a tag"/>
+                <AddButton width={44} onClick={this.handleAddTag} label="Add a tag"
+                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 
@@ -787,7 +767,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsList}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddAutomatedRule} label="Add an automated rule"/>
+                <AddButton width={44} onClick={this.handleAddAutomatedRule} label="Add an automated rule"
+                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 
@@ -813,7 +794,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsWithAllNoSummary}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddTaggingSensitivity} label="Add a tagging sensitivity rule"/>
+                <AddButton width={44} onClick={this.handleAddTaggingSensitivity} label="Add a tagging sensitivity rule"
+                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 
@@ -841,7 +823,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsWithAll}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddPreselect} label="Add a preselect"/>
+                <AddButton width={44} onClick={this.handleAddPreselect} label="Add a preselect"
+                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 

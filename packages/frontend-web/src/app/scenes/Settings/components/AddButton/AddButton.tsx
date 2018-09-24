@@ -15,10 +15,9 @@ limitations under the License.
 */
 
 import React from 'react';
-import { AddIcon } from '../../../../components';
+import { AddIcon, EditIcon } from '../../../../components';
 import {
   DARK_PRIMARY_TEXT_COLOR,
-  GUTTER_DEFAULT_SPACING,
   INPUT_DROP_SHADOW,
   OFFSCREEN,
   PALE_COLOR,
@@ -28,7 +27,6 @@ import { css, stylesheet } from '../../../../util';
 const STYLES = stylesheet({
   button: {
     backgroundColor: PALE_COLOR,
-    margin: `${GUTTER_DEFAULT_SPACING}px 0`,
     border: 'none',
     textAlign: 'left',
     padding: '6px 12px',
@@ -45,6 +43,7 @@ export interface IAddButtonProps {
   width: number;
   onClick(e: React.MouseEvent<any>): any;
   label?: string;
+  buttonStyles?: object;
 }
 
 export class AddButton extends React.Component<IAddButtonProps> {
@@ -54,13 +53,54 @@ export class AddButton extends React.Component<IAddButtonProps> {
   }
 
   render() {
-    const { width, onClick, label } = this.props;
+    const { width, onClick, label, buttonStyles} = this.props;
 
     return (
       <div>
         <label key="label" htmlFor={this.stringToId(label)} {...css(OFFSCREEN)}>{label}</label>
-        <button key="button" id={this.stringToId(label)} type="button" {...css(STYLES.button, { width })} onClick={onClick} >
+        <button
+          key="button"
+          id={this.stringToId(label)}
+          {...css(STYLES.button, { width }, buttonStyles)}
+          type="button"
+          onClick={onClick}
+        >
           <AddIcon size={20} fill={DARK_PRIMARY_TEXT_COLOR} />
+        </button>
+      </div>
+    );
+  }
+}
+
+export interface IEditButtonProps {
+  width: number;
+  onClick(e: React.MouseEvent<any>): any;
+  value?: any;
+  label?: string;
+  buttonStyles?: object;
+}
+
+export class EditButton extends React.Component<IEditButtonProps> {
+
+  stringToId(str: string): string {
+    return str.split(' ').join('_');
+  }
+
+  render() {
+    const { width, onClick, label, value, buttonStyles} = this.props;
+
+    return (
+      <div>
+        <label key="label" htmlFor={this.stringToId(label)} {...css(OFFSCREEN)}>{label}</label>
+        <button
+          key="button"
+          {...css(STYLES.button, { width }, buttonStyles)}
+          id={this.stringToId(label)}
+          type="button"
+          value={value}
+          onClick={onClick}
+        >
+          <EditIcon size={20} fill={DARK_PRIMARY_TEXT_COLOR} />
         </button>
       </div>
     );
