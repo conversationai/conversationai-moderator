@@ -24,13 +24,13 @@ import {
   ITaggingSensitivityModel,
   ITagModel,
 } from '../../../models';
-import { IAppDispatch, IAppState } from '../../stores';
+import { IAppDispatch, IAppState, IAppStateRecord } from '../../stores';
 import { getCategories } from '../../stores/categories';
 import { getPreselects } from '../../stores/preselects';
 import { getRules } from '../../stores/rules';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
 import { getTags } from '../../stores/tags';
-import { getUsers } from '../../stores/users';
+import { getSystemUsers, getUsers, loadSystemUsers, USER_GROUP_YOUTUBE } from '../../stores/users';
 import { ISettingsProps, Settings as PureSettings } from './Settings';
 
 import {
@@ -50,6 +50,7 @@ export type ISettingsOwnProps = Pick<
 export type ISettingsStateProps = Pick<
   ISettingsProps,
   'users' |
+  'youtubeUsers' |
   'tags' |
   'categories' |
   'rules' |
@@ -60,6 +61,7 @@ export type ISettingsStateProps = Pick<
 
 export type ISettingsDispatchProps = Pick<
   ISettingsProps,
+  'reloadYoutubeUsers' |
   'updatePreselects' |
   'updateRules' |
   'updateTaggingSensitivities' |
@@ -70,6 +72,7 @@ export type ISettingsDispatchProps = Pick<
 
 const mapStateToProps = createStructuredSelector({
   users: getUsers,
+  youtubeUsers: (state: IAppStateRecord) => getSystemUsers(USER_GROUP_YOUTUBE, state),
   tags: getTags,
   categories: getCategories,
   rules: getRules,
@@ -82,6 +85,7 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
   return {
+    reloadYoutubeUsers: () => loadSystemUsers(dispatch, USER_GROUP_YOUTUBE),
     updatePreselects: (oldPreselects, newPreselects) => dispatch(updatePreselects(oldPreselects, newPreselects)),
     updateRules: (oldRules, newRules) => dispatch(updateRules(oldRules, newRules)),
     updateTaggingSensitivities: (oldTaggingSensitivities, newTaggingSensitivities) => dispatch(updateTaggingSensitivities(oldTaggingSensitivities, newTaggingSensitivities)),

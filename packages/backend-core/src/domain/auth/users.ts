@@ -103,7 +103,6 @@ export async function saveYouTubeUserToken({name, email}: {name: string, email: 
     },
   });
 
-
   if (!created) {
     if (!await user.get('isActive')) {
       await user.set('isActive', true).save();

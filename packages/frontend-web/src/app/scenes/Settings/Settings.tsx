@@ -164,12 +164,12 @@ const STYLES: any = stylesheet({
   pluginLink: {
     display: 'inline-block',
     color: MEDIUM_COLOR,
-    marginBottom: `${GUTTER_DEFAULT_SPACING}px`,
   },
 });
 
 export interface ISettingsProps extends WithRouterProps {
   users?: List<IUserModel>;
+  youtubeUsers?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
   taggingSensitivities?:  List<ITaggingSensitivityModel>;
@@ -179,6 +179,7 @@ export interface ISettingsProps extends WithRouterProps {
   onCancel(): void;
   onSearchClick(): void;
   onAuthorSearchClick(): void;
+  reloadYoutubeUsers?(): Promise<void>;
   updatePreselects?(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>): void;
   updateRules?(oldRules: List<IRuleModel>, newRules: List<IRuleModel>): void;
   updateTaggingSensitivities?(oldTaggingSensitivities: List<ITaggingSensitivityModel>, newTaggingSensitivities: List<ITaggingSensitivityModel>): void;
@@ -195,6 +196,7 @@ export interface ISettingsProps extends WithRouterProps {
 
 export interface ISettingsState {
   users?: List<IUserModel>;
+  youtubeUsers?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
   taggingSensitivities?:  List<ITaggingSensitivityModel>;
@@ -214,6 +216,7 @@ export interface ISettingsState {
 export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   state: ISettingsState = {
     users: this.props.users,
+    youtubeUsers: this.props.youtubeUsers,
     tags: this.props.tags,
     rules: this.props.rules,
     taggingSensitivities:  this.props.taggingSensitivities,
@@ -230,10 +233,20 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     submitStatus: 'Saving changes...',
   };
 
+  componentDidMount() {
+    this.props.reloadYoutubeUsers();
+  }
+
   componentWillUpdate(nextProps: ISettingsProps) {
     if (!this.props.users.equals(nextProps.users)) {
       this.setState({
         users: nextProps.users,
+      });
+    }
+    if (nextProps.youtubeUsers &&
+      (!this.props.youtubeUsers || !this.props.youtubeUsers.equals(nextProps.youtubeUsers))) {
+      this.setState({
+        youtubeUsers: nextProps.youtubeUsers,
       });
     }
     if (!this.props.tags.equals(nextProps.tags)) {
@@ -392,6 +405,10 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       basePreselects: preselectsNew,
       baseTaggingSensitivities: taggingSensitivitiesNew,
     });
+    this.clearScrim();
+  }
+
+  clearScrim() {
     // Add some delay so that users know that saving action was taken
     setTimeout(
       () => {
@@ -562,33 +579,50 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     await this.setState({
       users: this.state.users.push(user),
       isAddUserScrimOpen: false,
+      isScrimVisible: true,
     });
 
     try {
       await this.props.addUser(user);
+      if (user.group === 'youtube') {
+        await this.props.reloadYoutubeUsers();
+      }
     }
     catch (e) {
       this.setState({
         submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
       });
     }
+    this.clearScrim();
   }
 
   @autobind
   async saveEditedUser(user: IUserModel) {
-    await this.setState({
-      users: this.state.users.set(this.state.users.findIndex((u) => u.id === user.id), user),
+    const newState: any = {
       isEditUserScrimOpen: false,
-    });
+      isScrimVisible: true,
+    };
+
+    if (user.group === 'youtube') {
+      newState['youtubeUsers']  = this.state.youtubeUsers.set(this.state.youtubeUsers.findIndex((u) => u.id === user.id), user);
+    }
+    else {
+      newState['users']  = this.state.users.set(this.state.users.findIndex((u) => u.id === user.id), user);
+    }
+    await this.setState(newState);
 
     try {
       await this.props.modifyUser(user);
+      if (user.group === 'youtube') {
+        await this.props.reloadYoutubeUsers();
+      }
     }
     catch (e) {
       this.setState({
         submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
       });
     }
+    this.clearScrim();
   }
 
   @autobind
@@ -658,6 +692,51 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       </div>
     );
   }
+
+  renderYoutubeUsers() {
+    const {
+      youtubeUsers,
+    } = this.state;
+
+    if (!youtubeUsers || youtubeUsers.count() === 0) {
+      return (<p>None configured</p>);
+    }
+    return (
+      <div key="youtubeUsersSection">
+        <table>
+          <thead>
+          <tr>
+            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+              Name
+            </th>
+            <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
+              Email
+            </th>
+            <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+              Is Active
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          {youtubeUsers.map((u) => (
+            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.name}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.email}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.isActive ? 'Active' : ''}
+              </td>
+            </tr>
+          ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
   render() {
     const {
       categories,
@@ -852,26 +931,30 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </h2>
             </div>
             <div key="pluginsContent" {...css(STYLES.section)}>
-              <h3>YouTube</h3>
-              <p>Click the link below, and select a user and one of that user's YouTube accounts.</p>
+              <h3>YouTube accounts</h3>
+              {this.renderYoutubeUsers()}
+              <p><a href={youtubeUrl} {...css(STYLES.pluginLink)}>Connect a YouTube Account</a></p>
+              <p>Click the link above, and select a Google user and one of that user's YouTube accounts.</p>
               <p>We'll then start syncing comments with the channels and videos in that account.</p>
-              <p><a href={youtubeUrl} {...css(STYLES.pluginLink)}>Connect Your YouTube Account</a></p>
-
+              <p>&nbsp;</p>
               <h3>Wordpress</h3>
               <p>Install the Wordpress plugin to use Moderator with your Wordpress blog.</p>
               <p>
                 <a href="https://github.com/Jigsaw-Code/osmod-wordpress" {...css(STYLES.pluginLink)}>Get started →</a>
               </p>
+              <p>&nbsp;</p>
               <h3>Discourse</h3>
               <p>Install the Discourse plugin to use Moderator with your Discourse community.</p>
               <p>
                 <a href="https://github.com/Jigsaw-Code/moderator-discourse" {...css(STYLES.pluginLink)}>Get started →</a>
               </p>
+              <p>&nbsp;</p>
               <h3>Reddit</h3>
               <p>A server running a cron job every minute that reads all comments copies them to on your subreddit and syncs their status. Requires owner rights on subreddit.</p>
               <p>
                 <a href="https://github.com/Jigsaw-Code/moderator-reddit" {...css(STYLES.pluginLink)}>Get started →</a>
               </p>
+              <p>&nbsp;</p>
             </div>
           </div>
         </div>
