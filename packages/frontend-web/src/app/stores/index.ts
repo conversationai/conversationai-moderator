@@ -123,6 +123,7 @@ export async function initialiseClientModel(dispatch: IAppDispatch) {
     (isActive: boolean) => {
       dispatch(websocketStateUpdated(isActive));
     },
+    () => {},
     (data) => {
       dispatch(deferredCountUpdated(data.deferred));
       dispatch(usersUpdated(data.users));
