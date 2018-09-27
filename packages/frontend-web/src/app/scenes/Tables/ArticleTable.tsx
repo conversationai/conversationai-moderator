@@ -236,19 +236,53 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
   }
 
+  static renderSupertext(article: IArticleModel) {
+    const supertext = [];
+    if (article.category) {
+      supertext.push(<span key="label" {...css(ARTICLE_TABLE_STYLES.categoryLabel)}>{article.category.label}</span>);
+    }
+    if (article.sourceCreatedAt) {
+      supertext.push(
+        <span key="timestamp" {...css(ARTICLE_TABLE_STYLES.dateLabel)}>
+          <MagicTimestamp timestamp={article.sourceCreatedAt} inFuture={false}/>
+        </span>,
+      );
+    }
+
+    if (supertext.length === 0) {
+      return '';
+    }
+    return <p style={{margin: '7px 0'}}>{supertext}</p>;
+  }
+
+  static renderTitle(article: IArticleModel) {
+    if (article.url) {
+      return (
+        <div>
+          {ArticleTable.renderSupertext(article)}
+          <p style={{margin: '7px 0'}}>
+            <a href={article.url} target="_blank" {...css(ARTICLE_TABLE_STYLES.cellLink)}>
+              {article.title}
+            </a>
+          </p>
+        </div>
+      );
+    }
+    return (
+      <div>
+        {ArticleTable.renderSupertext(article)}
+        <p style={{margin: '7px 0'}}>
+          {article.title}
+        </p>
+      </div>
+    );
+  }
+
   static renderRow(article: IArticleModel) {
     return (
       <tr key={article.id} {...css(ARTICLE_TABLE_STYLES.dataBody)}>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
-          <a href={article.url} target="_blank" {...css(ARTICLE_TABLE_STYLES.cellLink)}>
-            <p style={{margin: '7px 0'}}>
-              <span key="label" {...css(ARTICLE_TABLE_STYLES.categoryLabel)}>{article.category.label}</span>&nbsp;
-              <span key="timestamp" {...css(ARTICLE_TABLE_STYLES.dateLabel)}><MagicTimestamp timestamp={article.sourceCreatedAt} inFuture={false}/></span>
-            </p>
-            <p style={{margin: '7px 0'}}>
-              {article.title}
-            </p>
-          </a>
+          {ArticleTable.renderTitle(article)}
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
           <Link to={`/articles/${article.id}/new`} {...css(ARTICLE_TABLE_STYLES.cellLink)}>
@@ -291,6 +325,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       users,
       routeParams,
       router,
+      location,
     } = this.props;
 
     const me = users.find((u) => u.id === myUserId);
@@ -352,6 +387,41 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       };
     }
 
+    let category: ICategoryModel | null = null;
+    const m = /category=(\d+)/.exec(location.pathname);
+    if (m) {
+      for (const c of categories.toArray()) {
+        if (c.id === m[1]) {
+          category = c;
+        }
+      }
+    }
+
+    let count = 0;
+    const columns = ['unmoderatedCount', 'approvedCount', 'rejectedCount', 'deferredCount', 'flaggedCount'];
+    const summary: any =  {};
+    for (const i of columns) {
+      summary[i] = 0;
+    }
+
+    for (const a of processedArticles) {
+      count += 1;
+      for (const i of columns) {
+        summary[i] += a[i];
+      }
+    }
+
+    summary['id'] = 'summary';
+    summary['title'] = ` ${count} Title` + (count !== 1 ? 's' : '');
+    if (category) {
+      summary['title'] += ` in section ${category.label}`;
+    }
+
+    if (filter.length > 1 || (filter.length === 1 && filter[0].key !== 'category')) {
+      summary['title'] += ' matching filter';
+    }
+    summary['assignedModerators'] = category ? category.assignedModerators : [];
+
     return (
       <div>
         <div key="filters" {...css(ARTICLE_TABLE_STYLES.filterHeader)}>
@@ -396,6 +466,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             </tr>
           </thead>
           <tbody>
+            {ArticleTable.renderRow(summary)}
             {processedArticles.map((article: IArticleModel) => ArticleTable.renderRow(article))}
           </tbody>
         </table>
