@@ -18,12 +18,23 @@ import { List } from 'immutable';
 import React from 'react';
 import { Link, WithRouterProps } from 'react-router';
 
-import { ICategoryModel } from '../../../models';
+import { ICategoryModel, IUserModel } from '../../../models';
 import { logout } from '../../auth';
 import * as icons from '../../components/Icons';
-import { GUTTER_DEFAULT_SPACING, HEADER_HEIGHT, HEADLINE_TYPE, LIGHT_PRIMARY_TEXT_COLOR } from '../../styles';
+import {
+  GUTTER_DEFAULT_SPACING,
+  HEADER_HEIGHT,
+  HEADLINE_TYPE,
+  LIGHT_PRIMARY_TEXT_COLOR,
+  NICE_LIGHT_BLUE,
+  NICE_LIGHT_HIGHLIGHT_BLUE,
+  SIDEBAR_BLUE,
+} from '../../styles';
 import { NICE_DARK_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
 import { css, stylesheet } from '../../util';
+import { COMMON_STYLES } from './styles';
+
+const SIDEBAR_XPAD = 15;
 
 const STYLES = stylesheet({
   header: {
@@ -38,7 +49,7 @@ const STYLES = stylesheet({
 
   menuIcon: {
     color: LIGHT_PRIMARY_TEXT_COLOR,
-    marginLeft: '10px',
+    marginLeft: `10px`,
     position: 'relative',
     top: '-4px',
   },
@@ -77,33 +88,168 @@ const STYLES = stylesheet({
     fontSize: '10px',
     color: LIGHT_PRIMARY_TEXT_COLOR,
   },
+  sidebarOverlay: {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    right: '0',
+    bottom: '0',
+    backgroundColor: 'black',
+    opacity: '0.4',
+    zIndex: '1',
+  },
+
+  sidebar: {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    bottom: '0',
+    width: '27%',
+    backgroundColor: SIDEBAR_BLUE,
+    color: 'white',
+    opacity: '1',
+    zIndex: '2',
+  },
+
+  sidebarHeader: {
+    height: `${HEADER_HEIGHT * 1.5}px`,
+    lineHeight: `${HEADER_HEIGHT * 1.5}px`,
+    borderBottom: `1px solid ${NICE_LIGHT_BLUE}`,
+    padding: `0 ${SIDEBAR_XPAD}px`,
+    marginBottom: '10px',
+  },
+
+  sidebarHeaderIcon: {
+    marginRight: '30px',
+    position: 'relative',
+    top: '13px',
+  },
+
+  sidebarRow: {
+    width: '100%',
+    padding: `15px ${SIDEBAR_XPAD}px`,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    boxSizing: 'border-box',
+  },
+
+  sidebarRowSelected: {
+    backgroundColor: NICE_MIDDLE_BLUE,
+    borderLeft: `5px solid ${NICE_LIGHT_HIGHLIGHT_BLUE}`,
+    paddingLeft: `${SIDEBAR_XPAD - 5}px`,
+  },
+
+  sidebarRowHeader: {
+    fontSize: '12px',
+    color: NICE_LIGHT_BLUE,
+  },
+
+  sidebarSection: {
+  },
+
+  sidebarCount: {
+    marginLeft: `${SIDEBAR_XPAD}px`,
+  },
 });
 
 export interface IITableFrameProps extends WithRouterProps {
   dispatch: Function;
+  user: IUserModel;
   isAdmin: boolean;
   categories: List<ICategoryModel>;
 }
 
 export interface IITableFrameState {
+  sidebarVisible: boolean;
 }
 
 export class TableFrame extends React.Component<IITableFrameProps, IITableFrameState> {
+  constructor(props: IITableFrameProps) {
+    super(props);
+
+    this.state = {
+      sidebarVisible: false,
+    };
+  }
+
   @autobind
   logout() {
     this.props.dispatch(logout());
   }
 
-  render() {
+  @autobind
+  showSidebar() {
+    this.setState({sidebarVisible: true});
+  }
+
+  @autobind
+  hideSidebar() {
+    this.setState({sidebarVisible: false});
+  }
+
+  renderSidebar(isMe: boolean, category?: ICategoryModel) {
+    if (!this.state.sidebarVisible) {
+      return '';
+    }
+
     const {
-      isAdmin,
-      location,
+      user,
       categories,
     } = this.props;
 
-    function renderHeaderItem(icon: any, text: string, link: string, matcher?: (val: string) => boolean) {
+    const isMeSuffix = isMe ? '+user=me' : '';
+    const isMeFilter = isMe ? '/user=me' : '';
+    const allUnmoderated = categories.reduce((r: number, v: ICategoryModel) => (r + v.unmoderatedCount), 0);
+
+    return (
+      <div>
+        <div key="overlay" {...css(STYLES.sidebarOverlay)}/>
+        <div key="sidebar" {...css(STYLES.sidebar)}>
+          <div key="header" {...css(STYLES.sidebarHeader)} onClick={this.hideSidebar}>
+            {user.avatarURL ?
+              <img src={user.avatarURL} {...css(COMMON_STYLES.smallImage, STYLES.sidebarHeaderIcon)}/> :
+              <icons.UserIcon {...css(COMMON_STYLES.smallIcon, STYLES.sidebarHeaderIcon, {color: NICE_MIDDLE_BLUE})}/>
+            }
+            {user.name}
+          </div>
+          <div key="labels" {...css(STYLES.sidebarRow, STYLES.sidebarRowHeader)}>
+            <div key="label" {...css(STYLES.sidebarSection)}>Section</div>
+            <div key="count" {...css(STYLES.sidebarCount)}>New comments</div>
+          </div>
+          <div key="all" {...css(STYLES.sidebarRow, category ? {} : STYLES.sidebarRowSelected)}>
+            <div key="label" {...css(STYLES.sidebarSection)}>
+              <Link to={`/a${isMeFilter}`} onClick={this.hideSidebar}  {...css(COMMON_STYLES.cellLink)}>All</Link>
+            </div>
+            <div key="count" {...css(STYLES.sidebarCount)}>{allUnmoderated}</div>
+          </div>
+          {categories.map((c: ICategoryModel) => (
+            <div key={c.id} {...css(STYLES.sidebarRow, category && category.id === c.id ? STYLES.sidebarRowSelected : {})}>
+              <div key="label" {...css(STYLES.sidebarSection)}>
+                <Link to={`/a/category=${c.id}${isMeSuffix}`} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
+                  {c.label}
+                </Link>
+              </div>
+              <div key="count" {...css(STYLES.sidebarCount)}>{c.unmoderatedCount}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  render() {
+    const {
+      isAdmin,
+      categories,
+      location,
+    } = this.props;
+
+    const isMe = /user=me/.test(location.pathname);
+
+    function renderHeaderItem(icon: any, text: string, link: string, selected?: boolean) {
       let styles = {...css(STYLES.headerItem)};
-      if (matcher && matcher(location.pathname)) {
+      if (selected) {
         styles = {...css(STYLES.headerItem, STYLES.headerItemSelected)};
       }
 
@@ -117,13 +263,15 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
       );
     }
 
-    let category = 'All Sections';
+    let category = null;
+    let categoryStr = 'All Sections';
     const m = /category=(\d+)/.exec(location.pathname);
     if (m) {
-      category = `Unknown Section (${m[1]})`;
+      categoryStr = `Unknown Section (${m[1]})`;
       for (const c of categories.toArray()) {
         if (c.id === m[1]) {
-          category = `Section: ${c.label}`;
+          category = c;
+          categoryStr = `Section: ${c.label}`;
         }
       }
     }
@@ -131,11 +279,11 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     return (
       <div>
         <header key="header" role="banner" {...css(STYLES.header)}>
-          <div key="appName" >
-            <span key="icon" {...css(STYLES.menuIcon)}><icons.MenuIcon/></span> <span key="cat" {...css(STYLES.title)}>{category}</span>
+          <div key="appName"  onClick={this.showSidebar}>
+            <span key="icon" {...css(STYLES.menuIcon)}><icons.MenuIcon/></span> <span key="cat" {...css(STYLES.title)}>{categoryStr}</span>
           </div>
-          {renderHeaderItem(<icons.ListIcon/>, 'My Articles', '/a/user=me/~', (val) => /^\/a\/.*user=me.*/.test(val))}
-          {renderHeaderItem(<icons.ListIcon/>, 'All Articles', '/a',  (val) => (/^\/a.*/.test(val) && !/^\/a\/.*user=me.*/.test(val)))}
+          {renderHeaderItem(<icons.ListIcon/>, 'My Articles', '/a/user=me/~', isMe)}
+          {renderHeaderItem(<icons.ListIcon/>, 'All Articles', '/a', !isMe)}
           <div key="spacer" style={{flexGrow: 1}}/>
           {renderHeaderItem(<icons.SearchIcon/>, 'Search', '/search')}
           {isAdmin && renderHeaderItem(<icons.SettingsIcon/>, 'Settings', '/settings')}
@@ -146,6 +294,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
             </div>
           </div>
         </header>
+        {this.renderSidebar(isMe, category)}
         <div key="content">
           {this.props.children}
         </div>

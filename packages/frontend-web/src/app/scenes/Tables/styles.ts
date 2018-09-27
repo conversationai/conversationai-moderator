@@ -60,6 +60,18 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
     width: '80px',
     paddingRight: '10px',
   },
+  categoryLabel: {
+    textTransform: 'uppercase',
+    fontSize: '12px',
+    marginRight: '8px',
+  },
+  dateLabel: {
+    opacity: '0.5',
+    fontSize: '12px',
+  },
+});
+
+export const COMMON_STYLES = stylesheet({
   cellLink: {
     color: 'inherit',
     ':hover': {
@@ -83,14 +95,5 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
     width: `${IMAGE_BASE / 2}px`,
     height: `${IMAGE_BASE / 2}px`,
     borderRadius: `${IMAGE_BASE / 4}px`,
-  },
-  categoryLabel: {
-    textTransform: 'uppercase',
-    fontSize: '12px',
-    marginRight: '8px',
-  },
-  dateLabel: {
-    opacity: '0.5',
-    fontSize: '12px',
   },
 });
