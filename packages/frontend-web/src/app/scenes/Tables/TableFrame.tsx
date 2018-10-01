@@ -34,6 +34,7 @@ import { NICE_DARK_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
 import { css, stylesheet } from '../../util';
 import { COMMON_STYLES } from './styles';
 
+const ARTICLE_BASE_URL = '/articles';
 const SIDEBAR_XPAD = 15;
 
 const STYLES = stylesheet({
@@ -226,7 +227,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
           {categories.map((c: ICategoryModel) => (
             <div key={c.id} {...css(STYLES.sidebarRow, category && category.id === c.id ? STYLES.sidebarRowSelected : {})}>
               <div key="label" {...css(STYLES.sidebarSection)}>
-                <Link to={`/a/category=${c.id}${isMeSuffix}`} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
+                <Link to={`${ARTICLE_BASE_URL}/category=${c.id}${isMeSuffix}`} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
                   {c.label}
                 </Link>
               </div>
@@ -265,6 +266,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
 
     let category = null;
     let categoryStr = 'All Sections';
+    let categoryFilter = null;
     const m = /category=(\d+)/.exec(location.pathname);
     if (m) {
       categoryStr = `Unknown Section (${m[1]})`;
@@ -272,8 +274,16 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
         if (c.id === m[1]) {
           category = c;
           categoryStr = `Section: ${c.label}`;
+          categoryFilter = `category=${c.id}`;
         }
       }
+    }
+
+    let allArticles = ARTICLE_BASE_URL;
+    let myArticles = `${ARTICLE_BASE_URL}/user=me`;
+    if (categoryFilter) {
+      allArticles += `/${categoryFilter}`;
+      myArticles += `+${categoryFilter}`;
     }
 
     return (
@@ -282,8 +292,8 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
           <div key="appName"  onClick={this.showSidebar}>
             <span key="icon" {...css(STYLES.menuIcon)}><icons.MenuIcon/></span> <span key="cat" {...css(STYLES.title)}>{categoryStr}</span>
           </div>
-          {renderHeaderItem(<icons.ListIcon/>, 'My Articles', '/a/user=me/~', isMe)}
-          {renderHeaderItem(<icons.ListIcon/>, 'All Articles', '/a', !isMe)}
+          {renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}
+          {renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}
           <div key="spacer" style={{flexGrow: 1}}/>
           {renderHeaderItem(<icons.SearchIcon/>, 'Search', '/search')}
           {isAdmin && renderHeaderItem(<icons.SettingsIcon/>, 'Settings', '/settings')}

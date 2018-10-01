@@ -65,14 +65,15 @@ const commentsRoutes = (path: string) => (
 export const scenes = (history: any) => (
   <Router history={history}>
     <Route path="/" component={Root}>
-      <IndexRedirect to="dashboard/all" />
+      <IndexRedirect to="articles" />
+      <Route path="/" component={TableFrame}>
+        <Route path="articles" component={ArticleTable}/>
+        <Route path="articles/:filter/:sort" component={ArticleTable}/>
+        <Route path="articles/:filter" component={ArticleTable}/>
+      </Route>
       <Route path="dashboard" component={Dashboard}>
         <IndexRedirect to="all" />
         <Route path=":categoryId" component={DashboardArticles} />
-      </Route>
-      <Route path="tables" component={TableFrame}>
-        <Route path="articles" component={ArticleTable}/>
-        <Route path="articles/:filter/:sort" component={ArticleTable}/>
       </Route>
       <Route path="search" component={Search}>
         <IndexRoute component={SearchResults} />
