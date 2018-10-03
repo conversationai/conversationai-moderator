@@ -175,7 +175,6 @@ export interface ISettingsProps extends WithRouterProps {
   onCancel(): void;
   onSearchClick(): void;
   onAuthorSearchClick(): void;
-  reloadSettings?(): void;
   updatePreselects?(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>): void;
   updateRules?(oldRules: List<IRuleModel>, newRules: List<IRuleModel>): void;
   updateTaggingSensitivities?(oldTaggingSensitivities: List<ITaggingSensitivityModel>, newTaggingSensitivities: List<ITaggingSensitivityModel>): void;
@@ -413,7 +412,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     // Add some delay so that users know that saving action was taken
     setTimeout(
       () => {
-        this.props.reloadSettings();
         this.setState({
           isScrimVisible: false,
         });

@@ -32,8 +32,7 @@ import {
   getSummaryScoresById,
   loadCommentSummaryScores,
 } from '../../../../stores/commentSummaryScores';
-import { loadTaggingSensitivities } from '../../../../stores/taggingSensitivities';
-import { getTaggableTags, loadTags } from '../../../../stores/tags';
+import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
 import {
   adjustTabCount,
@@ -274,11 +273,6 @@ function mergeProps(
 // Add Route Change hook.
 const HookedModeratedComments = provideHooks<IRedialLocals>({
   fetch: async ({ params, dispatch }: any) => {
-    await Promise.all([
-      dispatch(loadTags()),
-      dispatch(loadTaggingSensitivities()),
-    ]);
-
     const {
       isArticleDetail,
       articleId,

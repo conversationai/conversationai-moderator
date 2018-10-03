@@ -14,56 +14,41 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
-import { Action, createAction } from 'redux-actions';
-import { TypedRecord } from 'typed-immutable-record';
-import { ITaggingSensitivityModel } from '../../models';
-import { listModels, makeAJAXAction, makeRecordListReducer, IRecordListStateRecord } from '../util';
-import { IAppStateRecord, IThunkAction } from './index';
+import {List} from 'immutable';
+import {Action, createAction, handleActions} from 'redux-actions';
+import {makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
+import {ITaggingSensitivityModel} from '../../models';
+import {IAppStateRecord} from './index';
 
 const STATE_ROOT = ['global', 'taggingSensitivities'];
 const TAGGING_SENSITIVITIES_DATA = [...STATE_ROOT, 'items'];
-const TAGGING_SENSITIVITIES_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
-const TAGGING_SENSITIVITIES_HAS_DATA = [...STATE_ROOT, 'hasData'];
 
-const loadTaggingSensitivitiesStart = createAction(
-  'all-taggingSensitivities/LOAD_TAGGING_SENSITIVITIES_START',
-);
-const loadTaggingSensitivitiesComplete = createAction<object>(
-  'all-taggingSensitivities/LOAD_TAGGING_SENSITIVITIES_COMPLETE',
+export const taggingSensitivitiesUpdated = createAction(
+  'all-taggingSensitivities/UPDATED',
 );
 
 export function getTaggingSensitivities(state: IAppStateRecord): List<ITaggingSensitivityModel> {
   return state.getIn(TAGGING_SENSITIVITIES_DATA);
 }
 
-export function getTaggingSensitivitiesIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(TAGGING_SENSITIVITIES_LOADING_STATUS);
+export interface ITaggingSensitivitiesState {
+  items: List<ITaggingSensitivityModel>;
 }
 
-export function loadTaggingSensitivities(forceUpdate?: boolean): IThunkAction<void> {
-  return makeAJAXAction(
-    () => listModels('tagging_sensitivities', {
-      page: { limit: -1 },
-    }),
-    loadTaggingSensitivitiesStart,
-    loadTaggingSensitivitiesComplete,
-    (state: IAppStateRecord) => forceUpdate ? null : state.getIn(TAGGING_SENSITIVITIES_HAS_DATA) && getTaggingSensitivities(state),
-  );
-}
+export interface ITaggingSensitivitiesStateRecord extends TypedRecord<ITaggingSensitivitiesStateRecord>, ITaggingSensitivitiesState {}
 
-export interface ITaggingSensitivityState {
-  taggingSensitivities: List<ITaggingSensitivityModel>;
-}
+const StateFactory = makeTypedFactory<ITaggingSensitivitiesState, ITaggingSensitivitiesStateRecord>({
+  items: List<ITaggingSensitivityModel>(),
+});
 
-export interface ITaggingSensitivityStateRecord extends TypedRecord<ITaggingSensitivityStateRecord>, ITaggingSensitivityState {}
-
-const recordListReducer = makeRecordListReducer<ITaggingSensitivityModel>(
-  loadTaggingSensitivitiesStart.toString(),
-  loadTaggingSensitivitiesComplete.toString(),
-);
-
-const reducer: (state: IRecordListStateRecord<ITaggingSensitivityModel>, action: Action<object|ITaggingSensitivityModel>) => IRecordListStateRecord<ITaggingSensitivityModel>
-  = recordListReducer.reducer;
+const reducer = handleActions<ITaggingSensitivitiesStateRecord, List<ITaggingSensitivityModel>>( {
+  [taggingSensitivitiesUpdated.toString()]: (state: ITaggingSensitivitiesStateRecord, { payload }: Action<List<ITaggingSensitivityModel>>) => {
+    return (
+      state
+        .set('items', payload)
+    );
+  },
+}, StateFactory());
 
 export { reducer };

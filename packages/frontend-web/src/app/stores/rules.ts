@@ -14,56 +14,41 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
-import { Action, createAction } from 'redux-actions';
-import { TypedRecord } from 'typed-immutable-record';
-import { IRuleModel } from '../../models';
-import { listModels, makeAJAXAction, makeRecordListReducer, IRecordListStateRecord } from '../util';
-import { IAppStateRecord, IThunkAction } from './index';
+import {List} from 'immutable';
+import {Action, createAction, handleActions} from 'redux-actions';
+import {makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
+import {IRuleModel} from '../../models';
+import {IAppStateRecord} from './index';
 
 const STATE_ROOT = ['global', 'rules'];
 const RULES_DATA = [...STATE_ROOT, 'items'];
-const RULES_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
-const RULES_HAS_DATA = [...STATE_ROOT, 'hasData'];
 
-const loadRulesStart = createAction(
-  'all-rules/LOAD_RULES_START',
-);
-const loadRulesComplete = createAction<object>(
-  'all-rules/LOAD_RULES_COMPLETE',
+export const rulesUpdated = createAction(
+  'all-rules/UPDATED',
 );
 
 export function getRules(state: IAppStateRecord): List<IRuleModel> {
   return state.getIn(RULES_DATA);
 }
 
-export function getRulesIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(RULES_LOADING_STATUS);
+export interface IRulesState {
+  items: List<IRuleModel>;
 }
 
-export function loadRules(forceUpdate?: boolean): IThunkAction<void> {
-  return makeAJAXAction(
-    () => listModels('moderation_rules', {
-      page: { limit: -1 },
-    }),
-    loadRulesStart,
-    loadRulesComplete,
-    (state: IAppStateRecord) => forceUpdate ? null : state.getIn(RULES_HAS_DATA) && getRules(state),
-  );
-}
+export interface IRulesStateRecord extends TypedRecord<IRulesStateRecord>, IRulesState {}
 
-export interface IRuleState {
-  rules: List<IRuleModel>;
-}
+const StateFactory = makeTypedFactory<IRulesState, IRulesStateRecord>({
+  items: List<IRuleModel>(),
+});
 
-export interface IRuleStateRecord extends TypedRecord<IRuleStateRecord>, IRuleState {}
-
-const recordListReducer = makeRecordListReducer<IRuleModel>(
-  loadRulesStart.toString(),
-  loadRulesComplete.toString(),
-);
-
-const reducer: (state: IRecordListStateRecord<IRuleModel>, action: Action<object|IRuleModel>) => IRecordListStateRecord<IRuleModel>
-  = recordListReducer.reducer;
+const reducer = handleActions<IRulesStateRecord, List<IRuleModel>>( {
+  [rulesUpdated.toString()]: (state: IRulesStateRecord, { payload }: Action<List<IRuleModel>>) => {
+    return (
+      state
+        .set('items', payload)
+    );
+  },
+}, StateFactory());
 
 export { reducer };

@@ -16,13 +16,11 @@ limitations under the License.
 
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { provideHooks } from 'redial';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { IRedialLocals } from '../../../../../types';
 import { getToken } from '../../../../auth/store';
 import { API_URL } from '../../../../config';
-import { getTags, loadTags } from '../../../../stores/tags';
+import { getTags } from '../../../../stores/tags';
 import { TagSelector as PureTagSelector } from './TagSelector';
 
 const mapStateToProps = createStructuredSelector({
@@ -78,11 +76,4 @@ const mapStateToProps = createStructuredSelector({
 export const TagSelector = compose(
   withRouter,
   connect(mapStateToProps),
-  provideHooks<IRedialLocals>({
-    fetch: ({ dispatch }) => {
-      return Promise.resolve(
-        dispatch(loadTags()),
-      );
-    },
-  }),
 )(PureTagSelector) as any;

@@ -34,10 +34,7 @@ import {
   getSummaryScoresById,
   loadCommentSummaryScores,
 } from '../../../../stores/commentSummaryScores';
-import { loadPreselects } from '../../../../stores/preselects';
-import { loadRules } from '../../../../stores/rules';
-import { loadTaggingSensitivities } from '../../../../stores/taggingSensitivities';
-import { getTaggableTags, loadTags } from '../../../../stores/tags';
+import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
 import {
   adjustTabCount,
@@ -272,13 +269,6 @@ export const NewComments = compose(
   connect(mapStateToProps, mapDispatchToProps, mergeProps) as any,
   provideHooks<IRedialLocals>({
     fetch: async ({ params, query, dispatch }) => {
-      await Promise.all([
-        dispatch(loadTags()),
-        dispatch(loadRules()),
-        dispatch(loadPreselects()),
-        dispatch(loadTaggingSensitivities()),
-      ]);
-
       const {
         isArticleDetail,
         articleId,

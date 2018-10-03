@@ -46,8 +46,7 @@ import {
   getSummaryScoresById,
   loadCommentSummaryScores,
 } from '../../../../stores/commentSummaryScores';
-import { loadTaggingSensitivities } from '../../../../stores/taggingSensitivities';
-import { getTaggableTags, getTags, loadTags } from '../../../../stores/tags';
+import { getTaggableTags, getTags } from '../../../../stores/tags';
 import { getCurrentUser, getUser } from '../../../../stores/users';
 import {
   adjustTabCount,
@@ -361,8 +360,6 @@ const HookedCommentDetail = provideHooks<IRedialLocals>({
     return Promise.all([
       dispatch(loadComment(commentId)),
       dispatch(loadScores(commentId)),
-      dispatch(loadTags()),
-      dispatch(loadTaggingSensitivities()),
       dispatch(loadCommentSummaryScores(commentId)),
     ]);
   },

@@ -964,6 +964,11 @@ function packGlobalData(data: any): IGlobalSummary {
 };
 }
 
+let gotSystem = false;
+let gotGlobal = false;
+let gotUser = false;
+let socketUp = false;
+
 export function connectNotifier(
   websocketStateHandler: (isActive: boolean) => void,
   systemNotificationHandler: (data: ISystemSummary) => void,
@@ -981,6 +986,7 @@ export function connectNotifier(
 
         ws.onclose = () => {
           console.log('websocket closed');
+          socketUp = false;
           websocketStateHandler(false);
           ws = null;
         };
@@ -988,17 +994,24 @@ export function connectNotifier(
 
       ws.onmessage = (message) => {
         const body: any = JSON.parse(message.data);
-        if (body.type === 'user') {
-          userNotificationHandler(body.data as IUserSummary);
-        }
-        else if (body.type === 'system') {
+
+        if (body.type === 'system') {
           systemNotificationHandler(packSystemData(body.data));
+          gotSystem = true;
         }
-        else {
+        else if (body.type === 'global'){
           globalNotificationHandler(packGlobalData(body.data));
+          gotGlobal = true;
+        }
+        else if (body.type === 'user') {
+          userNotificationHandler(body.data as IUserSummary);
+          gotUser = true;
         }
 
-        websocketStateHandler(true);
+        if (gotSystem && gotGlobal && gotUser && !socketUp) {
+          websocketStateHandler(true);
+          socketUp = true;
+        }
       };
     }
   }
