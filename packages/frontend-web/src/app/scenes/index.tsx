@@ -15,8 +15,11 @@ limitations under the License.
 */
 
 import { IndexRedirect, IndexRoute, Route, Router } from 'react-router';
+const { UserAuthWrapper } = require('redux-auth-wrapper');
 import { combineReducers } from 'redux-immutable';
-import { UserIsAdmin, UserIsAuthenticated } from '../auth';
+
+import {getCurrentUser, getIsAuthenticating, isAdmin} from '../auth/store';
+
 import {
   CommentDetail,
   Comments,
@@ -31,6 +34,7 @@ import {
   DashboardArticles,
   reducer as dashboardReducer,
 } from './Dashboard';
+import {Login} from './Login';
 import { Root } from './Root';
 import { reducer as rootReducer } from './Root';
 import { Search, SearchResults } from './Search';
@@ -44,6 +48,25 @@ export const reducer: any = combineReducers({
   commentsIndex: commentsIndexReducer,
   search: searchReducer,
   root: rootReducer,
+});
+
+// Take the regular authentication & redirect to login from before
+const UserIsAuthenticated = UserAuthWrapper({
+  authSelector: getCurrentUser,
+  authenticatingSelector: getIsAuthenticating,
+  FailureComponent: Login,
+  wrapperDisplayName: 'UserIsAuthenticated',
+});
+
+// Admin Authorization, redirects non-admins
+// to / and don't send a redirect param
+const UserIsAdmin = UserAuthWrapper({
+  authSelector: getCurrentUser,
+  authenticatingSelector: getIsAuthenticating,
+  failureRedirectPath: '/',
+  wrapperDisplayName: 'UserIsAdmin',
+  predicate: isAdmin,
+  allowRedirectBack: false,
 });
 
 const AuthSettings = UserIsAuthenticated(UserIsAdmin(Settings));
