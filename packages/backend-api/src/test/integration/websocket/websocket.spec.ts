@@ -93,7 +93,7 @@ describe('websocket tests', () => {
 
       await sleep(500);
       socket.close();
-      expect(gotMessage).is.equal(2);
+      expect(gotMessage).is.equal(3);
       expect(gotClose).is.false;
     }
     finally {

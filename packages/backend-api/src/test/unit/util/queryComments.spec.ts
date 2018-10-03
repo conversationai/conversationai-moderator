@@ -19,7 +19,7 @@ import {
   calculateTopScores,
 } from '@conversationai/moderator-backend-core';
 import {
-  Article, Category, Comment, Tag
+  Article, Category, Comment, Tag, TaggingSensitivity,
 } from '@conversationai/moderator-backend-core';
 
 import {
@@ -43,6 +43,7 @@ describe('queryComments Functions', () => {
       await Article.destroy({where: {}});
       await Category.destroy({where: {}});
       await Tag.destroy({where: {}});
+      await TaggingSensitivity.destroy({where: {}});
 
       this.category = await makeCategory({ label: 'Test' });
 
