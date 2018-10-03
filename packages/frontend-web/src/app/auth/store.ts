@@ -22,7 +22,7 @@ import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { RESTRICT_TO_SESSION } from '../config';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
 import { initialiseClientModel } from '../stores';
-import {checkAuthorization, clearCSRF, disconnectNotifier, getCSRF, getModel} from '../util';
+import {checkAuthorization, clearCSRF, disconnectNotifier, getCSRF} from '../util';
 
 import { IUserModel } from '../../models';
 
@@ -33,10 +33,8 @@ const startedAuthentication =
   createAction('auth/STARTED_AUTHENTICATION');
 const failedAuthentication =
   createAction('auth/FAILED_AUTHENTICATION');
-const updateUserId =
-  createAction<number>('auth/UPDATE_USER_ID');
 const completedAuthentication =
-  createAction<IUserModel>('auth/COMPLETED_AUTHENTICATION');
+  createAction<number>('auth/COMPLETED_AUTHENTICATION');
 
 export const logout: () => Action<void> = createAction('auth/LOGOUT');
 
@@ -77,20 +75,12 @@ function saveToken(token: string): string {
   return token;
 }
 
-async function loadUser(id: string): Promise<IUserModel> {
-  const data = await getModel<IUserModel>('users', id);
-
-  return data.model;
-}
-
 async function completeAuthentication(token: string, dispatch: IAppDispatch): Promise<void> {
   saveToken(token);
   setAxiosToken(token);
 
   const data = decodeToken(token);
-  await dispatch(updateUserId(data['user'] as number));
-  const user = await loadUser(data['user']);
-  await dispatch(completedAuthentication(user));
+  await dispatch(completedAuthentication(data['user'] as number));
   await initialiseClientModel(dispatch);
 }
 
@@ -171,8 +161,7 @@ const initialState = StateFactory();
 export const reducer = handleActions<
   IAuthenticationStateRecord,
   void       | // startedAuthentication, failedAuthentication, logout
-  number     | // updateUserId
-  IUserModel   // completedAuthentication
+  number       // completedAuthentication
 >({
   [startedAuthentication.toString()]: (state) => (
     state
@@ -185,16 +174,11 @@ export const reducer = handleActions<
       .set('isAuthenticated', false)
   ),
 
-  [updateUserId.toString()]: (state, { payload }: Action<number>) => (
+  [completedAuthentication.toString()]: (state, { payload }: Action<number>) => (
     state
       .set('userId', payload)
-  ),
-
-  [completedAuthentication.toString()]: (state, { payload }: Action<IUserModel>) => (
-    state
       .set('isAuthenticating', false)
       .set('isAuthenticated', true)
-      .set('user', payload)
   ),
 
   [logout.toString()]: (state) => {
@@ -204,7 +188,7 @@ export const reducer = handleActions<
     return state
       .set('isAuthenticating', false)
       .set('isAuthenticated', false)
-      .set('user', null);
+      .set('userId', null);
   },
 }, initialState);
 
@@ -216,22 +200,10 @@ export function getIsAuthenticated(state: IAppStateRecord): boolean {
   return state.getIn(['auth', 'isAuthenticated']);
 }
 
-// TODO: We really should be getting the user from the users list in the store
-//       Stored separately like this, we won't update it when the user's details change
-//       Also, it adds an extra round trip to the server on login.
-//       Start using getMyUserId instead.
-export function getCurrentUser(state: IAppStateRecord): IUserModel {
-  return state.getIn(['auth', 'user']);
-}
-
-export function getMyUserId(state: IAppStateRecord): string {
-  return state.getIn(['auth', 'userId']).toString();
-}
-
-export function isAdmin(user: IUserModel): boolean {
-  return user.get('group') === 'admin';
-}
-
-export function getIsAdmin(state: IAppStateRecord): boolean {
-  return isAdmin(getCurrentUser(state));
+export function getMyUserId(state: IAppStateRecord): string | null {
+  const userId = state.getIn(['auth', 'userId']);
+  if (!userId) {
+    return null;
+  }
+  return userId.toString();
 }

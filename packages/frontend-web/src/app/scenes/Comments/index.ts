@@ -23,10 +23,10 @@ import { combineReducers } from 'redux-immutable';
 import { createStructuredSelector } from 'reselect';
 import { ICategoryModel, IUserModel } from '../../../models';
 import { IRedialLocals } from '../../../types';
-import { getCurrentUser, getIsAdmin } from'../../auth';
 import { getWebsocketState, IAppState, IAppStateRecord } from '../../stores';
 import { getArticleModerators, loadArticleModerators } from '../../stores/articleModerators';
 import { getCategories } from '../../stores/categories';
+import {getCurrentUser, getCurrentUserIsAdmin} from '../../stores/users';
 import { withLoader } from '../../util';
 import { Comments as PureComments } from './Comments';
 
@@ -79,7 +79,7 @@ export const Comments = compose(
   withRouter,
   connect(createStructuredSelector({
     user: getCurrentUser,
-    isAdmin: getIsAdmin,
+    isAdmin: getCurrentUserIsAdmin,
     article: getArticle,
     category: (state: IAppStateRecord, { params }: any) => {
       if (params.categoryId && params.categoryId !== 'all') {

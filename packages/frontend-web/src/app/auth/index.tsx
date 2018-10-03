@@ -18,9 +18,6 @@ export {
   reducer,
   startAuthentication,
   handleToken,
-  getCurrentUser,
   getMyUserId,
-  isAdmin,
-  getIsAdmin,
   logout,
 } from './store';

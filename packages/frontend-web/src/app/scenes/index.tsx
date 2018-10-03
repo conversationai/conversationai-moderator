@@ -18,7 +18,8 @@ import { IndexRedirect, IndexRoute, Route, Router } from 'react-router';
 const { UserAuthWrapper } = require('redux-auth-wrapper');
 import { combineReducers } from 'redux-immutable';
 
-import {getCurrentUser, getIsAuthenticating, isAdmin} from '../auth/store';
+import {getIsAuthenticating} from '../auth/store';
+import {getCurrentUser, userIsAdmin} from '../stores/users';
 
 import {
   CommentDetail,
@@ -65,7 +66,7 @@ const UserIsAdmin = UserAuthWrapper({
   authenticatingSelector: getIsAuthenticating,
   failureRedirectPath: '/',
   wrapperDisplayName: 'UserIsAdmin',
-  predicate: isAdmin,
+  predicate: userIsAdmin,
   allowRedirectBack: false,
 });
 
