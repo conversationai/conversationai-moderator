@@ -92,7 +92,7 @@ function validateModelName(name: string): void {
 }
 
 export function validateID(id: any, valueName: string): void {
-  // Article ids are can be non-numeric to allow for flexibility with matching upstream publisher article ids
+  // Article ids can be non-numeric to allow for flexibility with matching upstream publisher article ids
   if (valueName === 'articleId') {
     // A legal id contains only alphanumeric characters, hyphens or dashes
     if (/^[a-z0-9_\-]+$/i.test(id) === false) {

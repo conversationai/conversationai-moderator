@@ -60,7 +60,6 @@ export type ISettingsStateProps = Pick<
 
 export type ISettingsDispatchProps = Pick<
   ISettingsProps,
-  'reloadSettings' |
   'updatePreselects' |
   'updateRules' |
   'updateTaggingSensitivities' |

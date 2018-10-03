@@ -97,9 +97,7 @@ export function startHistoryListener() {
               if (!key.endsWith('Id')) { return; }
               if (['all', 'deferred', 'assignments'].indexOf(params[key]) !== -1) { return; }
 
-              if (validateID(params[key], 'articleId') || 'number' !== typeof parseInt(params[key], 10)) {
-                throw new Error(`Found an unparse-able id in the URL (${key} = ${params[key]}). Might be an attempted exploit.`);
-              }
+              validateID(params[key], key);
             });
 
         // Define locals to be provided to all lifecycle hooks:

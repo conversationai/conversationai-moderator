@@ -140,14 +140,12 @@ describe('Notification tests', () => {
     assert.isTrue(await awaitNotification(async () => {
       tag = await makeTag();
     }));
-    console.log('gj1');
 
     assert.isTrue(await awaitNotification(async () => {
       tag.update({
         label: 'newname',
       });
     }));
-    console.log('gj2');
 
     assert.isTrue(await awaitNotification(async () => {
       tag.destroy();
