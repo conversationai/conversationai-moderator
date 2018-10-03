@@ -32,8 +32,8 @@
   "dependencies": {
     "@conversationai/moderator-config": "1.1.0",
     "@conversationai/moderator-jsonapi": "1.1.0",
-    "@types/express": "4.0.35",
-    "@types/faker": "4.1.0",
+    "@types/express": "4.11.1",
+    "@types/faker": "4.1.4",
     "express": "4.16.3",
     "faker": "4.1.0",
     "immutable": "3.8.1",
