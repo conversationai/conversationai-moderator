@@ -15,23 +15,60 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
+import {Location} from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { DispatchProp } from 'react-redux';
+import {DispatchProp} from 'react-redux';
+
 import { FOCUS_DATA_ATTR } from '../../config';
 import { focusedElement } from '../../stores/focus';
 import { css, stylesheet } from '../../util';
+import {Login} from '../Login';
 
 const STYLE = stylesheet({
   base: { height: '100%' },
+
+  placeholder: {
+    fontSize: '40px',
+    color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export interface IRootProps extends DispatchProp<any> {
+  isAuthenticated: boolean;
+  isConnected: boolean;
+  isAdmin: boolean;
   currentlyFocused: number;
+  location: Location;
 }
 
 export class Root extends React.Component<IRootProps> {
   render() {
+    const {isAuthenticated, isConnected, isAdmin, location} = this.props;
+
+    if (!isAuthenticated) {
+      return (<Login/>);
+    }
+
+    if (!isConnected) {
+      return (
+        <div {...css(STYLE.base, STYLE.placeholder)}>
+          Connecting....
+        </div>
+      );
+    }
+
+    if (location.pathname.startsWith('/settings') && !isAdmin) {
+      return (
+        <div {...css(STYLE.base, STYLE.placeholder)}>
+          Settings only available to admins....
+        </div>
+      );
+    }
+
     return (
       <div {...css(STYLE.base)}>
         {this.props.children}

@@ -99,7 +99,6 @@
     "redial": "0.5.0",
     "redux": "3.7.2",
     "redux-actions": "2.3.2",
-    "redux-auth-wrapper": "1.1.0",
     "redux-devtools": "3.4.1",
     "redux-immutable": "3.1.0",
     "redux-thunk": "2.2.0",

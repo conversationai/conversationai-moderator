@@ -23,7 +23,7 @@ import { combineReducers } from 'redux-immutable';
 import { createStructuredSelector } from 'reselect';
 import { ICategoryModel, IUserModel } from '../../../models';
 import { IRedialLocals } from '../../../types';
-import { getWebsocketState, IAppState, IAppStateRecord } from '../../stores';
+import { IAppState, IAppStateRecord } from '../../stores';
 import { getArticleModerators, loadArticleModerators } from '../../stores/articleModerators';
 import { getCategories } from '../../stores/categories';
 import {getCurrentUser, getCurrentUserIsAdmin} from '../../stores/users';
@@ -126,7 +126,7 @@ export const Comments = compose(
 
       return count + adjustment;
     },
-    isLoading: (state: IAppStateRecord, { params }: any) => !!params.articleId ? getArticleIsLoading(state) : !getWebsocketState(state),
+    isLoading: (state: IAppStateRecord, { params }: any) => params.articleId && getArticleIsLoading(state),
     moderators: (state: IAppStateRecord, { params }: any) => {
       if (!params.articleId) { return List<IUserModel>(); }
 

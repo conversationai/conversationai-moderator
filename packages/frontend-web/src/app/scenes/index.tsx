@@ -15,11 +15,7 @@ limitations under the License.
 */
 
 import { IndexRedirect, IndexRoute, Route, Router } from 'react-router';
-const { UserAuthWrapper } = require('redux-auth-wrapper');
 import { combineReducers } from 'redux-immutable';
-
-import {getIsAuthenticating} from '../auth/store';
-import {getCurrentUser, userIsAdmin} from '../stores/users';
 
 import {
   CommentDetail,
@@ -35,13 +31,10 @@ import {
   DashboardArticles,
   reducer as dashboardReducer,
 } from './Dashboard';
-import {Login} from './Login';
 import { Root } from './Root';
 import { reducer as rootReducer } from './Root';
 import { Search, SearchResults } from './Search';
-import {
-  reducer as searchReducer,
-} from './Search';
+import {reducer as searchReducer} from './Search';
 import { Settings } from './Settings';
 
 export const reducer: any = combineReducers({
@@ -50,27 +43,6 @@ export const reducer: any = combineReducers({
   search: searchReducer,
   root: rootReducer,
 });
-
-// Take the regular authentication & redirect to login from before
-const UserIsAuthenticated = UserAuthWrapper({
-  authSelector: getCurrentUser,
-  authenticatingSelector: getIsAuthenticating,
-  FailureComponent: Login,
-  wrapperDisplayName: 'UserIsAuthenticated',
-});
-
-// Admin Authorization, redirects non-admins
-// to / and don't send a redirect param
-const UserIsAdmin = UserAuthWrapper({
-  authSelector: getCurrentUser,
-  authenticatingSelector: getIsAuthenticating,
-  failureRedirectPath: '/',
-  wrapperDisplayName: 'UserIsAdmin',
-  predicate: userIsAdmin,
-  allowRedirectBack: false,
-});
-
-const AuthSettings = UserIsAuthenticated(UserIsAdmin(Settings));
 
 const commentsRoutes = (path: string) => (
   <Route path={path} component={Comments}>
@@ -91,8 +63,7 @@ const commentsRoutes = (path: string) => (
 
 export const scenes = (history: any) => (
   <Router history={history}>
-    <Route path="settings" component={AuthSettings} />
-    <Route path="/" component={UserIsAuthenticated(Root)}>
+    <Route path="/" component={Root}>
       <IndexRedirect to="dashboard/all" />
       <Route path="dashboard" component={Dashboard}>
         <IndexRedirect to="all" />
@@ -102,6 +73,7 @@ export const scenes = (history: any) => (
         <IndexRoute component={SearchResults} />
         <Route path="articles/:articleId/comments/:commentId" component={CommentDetail} />
       </Route>
+      <Route path="settings" component={Settings} />
       <Route path="articles">
         {commentsRoutes(':articleId')}
       </Route>
