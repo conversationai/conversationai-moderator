@@ -156,6 +156,20 @@ export function executeSort(sortList: Array<string>) {
         return b.deferredCount - a.deferredCount;
       case 'flagged':
         return b.flaggedCount - a.flaggedCount;
+      case 'lastModerated':
+        const lma = a.lastModeratedAt;
+        const lmb = b.lastModeratedAt;
+        console.log(lma, lmb);
+        if (!lma && !lmb) {
+          return 0;
+        }
+        if (!lma) {
+          return 1;
+        }
+        if (!lmb) {
+          return -1;
+        }
+        return (new Date(lmb)).getTime() - (new Date(lma)).getTime();
     }
   }
   return (a: IArticleModel, b: IArticleModel) => {

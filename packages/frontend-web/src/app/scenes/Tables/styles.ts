@@ -60,6 +60,11 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
     width: '80px',
     paddingRight: '10px',
   },
+  timeCell: {
+    textAlign: 'right',
+    width: '120px',
+    paddingRight: '20px',
+  },
   categoryLabel: {
     textTransform: 'uppercase',
     fontSize: '12px',

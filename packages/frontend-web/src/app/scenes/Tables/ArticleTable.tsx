@@ -130,7 +130,18 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     );
   }
 
+  static renderTime(time: string | null) {
+    if (!time) {
+      return 'Never';
+    }
+    return <MagicTimestamp timestamp={time} inFuture={false}/>;
+  }
+
   static renderRow(article: IArticleModel) {
+    let lastModerated: any = '';
+    if (article.id !== 'summary') {
+      lastModerated = ArticleTable.renderTime(article.lastModeratedAt);
+    }
     return (
       <tr key={article.id} {...css(ARTICLE_TABLE_STYLES.dataBody)}>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
@@ -161,7 +172,9 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             {article.flaggedCount}
           </Link>
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell)}/>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.timeCell)}>
+          {lastModerated}
+        </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.moderatorCell)}>
           {ArticleTable.renderModerators(article)}
         </td>
@@ -309,8 +322,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
               <th key="flagged" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
                 {renderHeaderItem('Flagged', 'flagged')}
               </th>
-              <th key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell)}>
-                Modified
+              <th key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
+                {renderHeaderItem('Modified', 'lastModerated')}
               </th>
               <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.moderatorCell)}>
                 <icons.UserIcon {...css(COMMON_STYLES.smallIcon)}/>
