@@ -130,6 +130,10 @@ describe('Comment Domain Rules Tests', () => {
       assert.isFalse(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      // Rules shouldn't updated lastModeratedAt
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should accept a comment when a single "accept" rule for Summary Score', async () => {
@@ -165,6 +169,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isFalse(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should accept a comment when unanimous "accept" actions are ruled', async () => {
@@ -210,6 +217,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isFalse(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should accept and highlight a comment when both "accept" and "highlight" actions are ruled', async () => {
@@ -252,6 +262,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isFalse(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should defer a comment when both "accept" and "reject" actions are ruled', async () => {
@@ -295,6 +308,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isTrue(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should reject when a "reject" action is ruled', async () => {
@@ -325,6 +341,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isFalse(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should reject when multiple "reject" actions are ruled', async () => {
@@ -368,6 +387,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isFalse(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should defer when a "defer" action is ruled', async () => {
@@ -398,6 +420,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isTrue(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should defer when both "accept" and "defer" actions are ruled', async () => {
@@ -450,6 +475,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isTrue(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should defer when "accept", "reject", and "defer" actions are ruled', async () => {
@@ -506,6 +534,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isTrue(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should highlight a comment if both "accept" and "highlight" actions are ruled', async () => {
@@ -549,6 +580,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isFalse(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should defer and not highlight a comment if both "reject" and "highlight" actions are ruled', async () => {
@@ -598,6 +632,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isTrue(updated.get('isDeferred'), 'isDeferred');
       assert.isTrue(updated.get('isModerated'), 'isModerated');
       assert.isFalse(updated.get('isScored'), 'isScored');
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should defer and not highlight a comment if both "defer" and "highlight" actions are ruled', async () => {
@@ -656,6 +693,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isTrue(updated.get('isDeferred'), 'isDeferred');
       assert.isTrue(updated.get('isModerated'), 'isModerated');
       assert.isFalse(updated.get('isScored'), 'isScored');
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should do nothing to the comment if no rules match', async () => {
@@ -699,6 +739,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isFalse(updated.get('isDeferred'), 'isDeferred');
       assert.isFalse(updated.get('isModerated'), 'isModerated');
       assert.isFalse(updated.get('isScored'), 'isScored');
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
   });
 
@@ -718,6 +761,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isFalse(updated.get('isDeferred'));
       assert.isFalse(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should do nothing if no comment scores are found', async () => {
@@ -797,6 +843,9 @@ describe('Comment Domain Rules Tests', () => {
       assert.isFalse(updated.get('isDeferred'));
       assert.isTrue(updated.get('isModerated'));
       assert.isFalse(updated.get('isScored'));
+
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
 
     it('should do nothing if article has disabled rule processing', async () => {

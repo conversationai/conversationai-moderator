@@ -54,7 +54,7 @@ describe(BASE_URL, () => {
     this.category = await makeCategory();
     this.article = await makeArticle({categoryId: this.category.id});
     await makeComment({articleId: this.article.id});
-    denormalizeCommentCountsForArticle(this.article);
+    denormalizeCommentCountsForArticle(this.article, false);
     this.user = await makeUser();
   });
 

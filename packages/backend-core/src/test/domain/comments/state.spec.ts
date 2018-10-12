@@ -60,6 +60,9 @@ async function shouldRecordDecision(comment: ICommentInstance, status: string, s
   assert.equal(firstDecision.get('source'), source);
   assert.equal(firstDecision.get('status'), status);
   assert.isTrue(firstDecision.get('isCurrentDecision'));
+  const article = await comment.getArticle();
+  assert.isNotNull(article.get('lastModeratedAt'));
+
 }
 
 describe('Comments Domain States Tests', () => {
@@ -238,7 +241,7 @@ describe('Comments Domain States Tests', () => {
 
   describe('setCommentState', () => {
     it('should set the passed in state on the comment', async () => {
-      const updated = await setCommentState(comment, { isAccepted: true });
+      const updated = await setCommentState(comment, null, { isAccepted: true });
 
       assert.equal(comment.id, updated.id);
       assert.isTrue(updated.get('isAccepted'));
@@ -247,6 +250,7 @@ describe('Comments Domain States Tests', () => {
     it('should include optional data and exclude conflicting keys with state', async () => {
       const updated = await setCommentState(
         comment,
+        null,
         { isHighlighted: true },
         { isHighlighted: false, isBatchResolved: true },
       );
@@ -254,6 +258,8 @@ describe('Comments Domain States Tests', () => {
       assert.equal(comment.id, updated.id);
       assert.isTrue(updated.get('isHighlighted'));
       assert.isTrue(updated.get('isBatchResolved'));
+      const updatedArticle = await updated.getArticle();
+      assert.isNull(updatedArticle.get('lastModeratedAt'));
     });
   });
 

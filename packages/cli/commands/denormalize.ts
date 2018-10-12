@@ -51,7 +51,7 @@ export async function handler(argv: any) {
   await Bluebird.mapSeries(articles, (a: IArticleInstance) => {
     logger.info('Denormalizing article ' + a.id);
 
-    return denormalizeCommentCountsForArticle(a);
+    return denormalizeCommentCountsForArticle(a, false);
   });
 
   logger.info('Counts denormalized successfully');

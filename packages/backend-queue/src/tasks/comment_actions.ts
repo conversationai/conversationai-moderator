@@ -691,7 +691,7 @@ export const addTagTask = handler<IAddTagData>(async (data) => {
   const article = await (comment as any)['getArticle']();
 
   await denormalizeCountsForComment(comment);
-  await denormalizeCommentCountsForArticle(article);
+  await denormalizeCommentCountsForArticle(article, false);
 
   return cs;
 });
@@ -730,7 +730,7 @@ export const removeTagTask = handler<IRemoveTagData>(async (data, logger) => {
   });
 
   await denormalizeCountsForComment(comment);
-  await denormalizeCommentCountsForArticle(article);
+  await denormalizeCommentCountsForArticle(article, false);
 
   logger.info(`Remove comment score ${commentScoreId}`);
 
