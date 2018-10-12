@@ -32,9 +32,9 @@ import {
 } from '../../styles';
 import { NICE_DARK_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
 import { css, stylesheet } from '../../util';
+import { dashboardLink, searchLink, settingsLink } from '../routes';
 import { COMMON_STYLES } from './styles';
 
-const ARTICLE_BASE_URL = '/articles';
 const SIDEBAR_XPAD = 15;
 
 const STYLES = stylesheet({
@@ -200,7 +200,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     } = this.props;
 
     const isMeSuffix = isMe ? '+user=me' : '';
-    const isMeFilter = isMe ? '/user=me' : '';
+    const allLink = isMe ? dashboardLink('user=me') : dashboardLink();
     const allUnmoderated = categories.reduce((r: number, v: ICategoryModel) => (r + v.unmoderatedCount), 0);
 
     return (
@@ -220,14 +220,14 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
           </div>
           <div key="all" {...css(STYLES.sidebarRow, category ? {} : STYLES.sidebarRowSelected)}>
             <div key="label" {...css(STYLES.sidebarSection)}>
-              <Link to={`/a${isMeFilter}`} onClick={this.hideSidebar}  {...css(COMMON_STYLES.cellLink)}>All</Link>
+              <Link to={allLink} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>All</Link>
             </div>
             <div key="count" {...css(STYLES.sidebarCount)}>{allUnmoderated}</div>
           </div>
           {categories.map((c: ICategoryModel) => (
             <div key={c.id} {...css(STYLES.sidebarRow, category && category.id === c.id ? STYLES.sidebarRowSelected : {})}>
               <div key="label" {...css(STYLES.sidebarSection)}>
-                <Link to={`${ARTICLE_BASE_URL}/category=${c.id}${isMeSuffix}`} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
+                <Link to={dashboardLink(`category=${c.id}${isMeSuffix}`)} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
                   {c.label}
                 </Link>
               </div>
@@ -279,8 +279,8 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
       }
     }
 
-    let allArticles = ARTICLE_BASE_URL;
-    let myArticles = `${ARTICLE_BASE_URL}/user=me`;
+    let allArticles = dashboardLink();
+    let myArticles = dashboardLink('user=me');
     if (categoryFilter) {
       allArticles += `/${categoryFilter}`;
       myArticles += `+${categoryFilter}`;
@@ -295,8 +295,8 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
           {renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}
           {renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}
           <div key="spacer" style={{flexGrow: 1}}/>
-          {renderHeaderItem(<icons.SearchIcon/>, 'Search', '/search')}
-          {isAdmin && renderHeaderItem(<icons.SettingsIcon/>, 'Settings', '/settings')}
+          {renderHeaderItem(<icons.SearchIcon/>, 'Search', searchLink())}
+          {isAdmin && renderHeaderItem(<icons.SettingsIcon/>, 'Settings', settingsLink())}
           <div key="logout" {...css(STYLES.headerItem)}>
             <div {...css(STYLES.headerLink)} aria-label="Logout" onClick={this.logout}>
               <icons.UserIcon/><br/>

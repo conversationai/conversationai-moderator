@@ -22,6 +22,7 @@ import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
 import * as icons from '../../components/Icons';
 import { NICE_MIDDLE_BLUE } from '../../styles';
 import { css } from '../../util';
+import { articlesLink, dashboardLink } from '../routes';
 import { MagicTimestamp } from './components';
 import { ARTICLE_TABLE_STYLES, COMMON_STYLES } from './styles';
 import {
@@ -136,27 +137,27 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           {ArticleTable.renderTitle(article)}
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={`/articles/${article.id}/new`} {...css(COMMON_STYLES.cellLink)}>
+          <Link to={articlesLink(article.id, 'new')} {...css(COMMON_STYLES.cellLink)}>
             {article.unmoderatedCount}
           </Link>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={`/articles/${article.id}/moderated/approved`} {...css(COMMON_STYLES.cellLink)}>
+          <Link to={articlesLink(article.id, 'approved')} {...css(COMMON_STYLES.cellLink)}>
             {article.approvedCount}
           </Link>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={`/articles/${article.id}/moderated/rejected`} {...css(COMMON_STYLES.cellLink)}>
+          <Link to={articlesLink(article.id, 'rejected')} {...css(COMMON_STYLES.cellLink)}>
             {article.rejectedCount}
           </Link>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={`/articles/${article.id}/moderated/deferred`} {...css(COMMON_STYLES.cellLink)}>
+          <Link to={articlesLink(article.id, 'deferred')} {...css(COMMON_STYLES.cellLink)}>
             {article.deferredCount}
           </Link>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={`/articles/${article.id}/moderated/flagged`} {...css(COMMON_STYLES.cellLink)}>
+          <Link to={articlesLink(article.id, 'flagged')} {...css(COMMON_STYLES.cellLink)}>
             {article.flaggedCount}
           </Link>
         </td>
@@ -225,7 +226,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       }
       const newSort = newSortString(sort, nextSortItem);
       return (
-        <Link to={`/a/${currentFilter}/${newSort}`} {...css(COMMON_STYLES.cellLink)}>
+        <Link to={dashboardLink(currentFilter, newSort)} {...css(COMMON_STYLES.cellLink)}>
           {label} {direction}
         </Link>
       );
@@ -234,7 +235,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     function setFilter(key: string) {
       return (e: any) => {
         const newFilter = newFilterString(filter, key, e.target.value);
-        router.push(`/a/${newFilter}/${currentSort}`);
+        router.push(dashboardLink(newFilter, currentSort));
       };
     }
 

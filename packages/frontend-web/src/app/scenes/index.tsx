@@ -33,6 +33,7 @@ import {
 } from './Dashboard';
 import { Root } from './Root';
 import { reducer as rootReducer } from './Root';
+import * as routes from './routes';
 import { Search, SearchResults } from './Search';
 import { reducer as searchReducer } from './Search';
 import { Settings } from './Settings';
@@ -65,25 +66,25 @@ const commentsRoutes = (path: string) => (
 export const scenes = (history: any) => (
   <Router history={history}>
     <Route path="/" component={Root}>
-      <IndexRedirect to="articles" />
+      <IndexRedirect to={routes.dashboardBase} />
       <Route path="/" component={TableFrame}>
-        <Route path="articles" component={ArticleTable}/>
-        <Route path="articles/:filter/:sort" component={ArticleTable}/>
-        <Route path="articles/:filter" component={ArticleTable}/>
+        <Route path={routes.dashboardBase} component={ArticleTable}/>
+        <Route path={`${routes.dashboardBase}/:filter/:sort`} component={ArticleTable}/>
+        <Route path={`${routes.dashboardBase}/:filter`} component={ArticleTable}/>
       </Route>
-      <Route path="dashboard" component={Dashboard}>
+      <Route path={routes.oldDashboardBase} component={Dashboard}>
         <IndexRedirect to="all" />
         <Route path=":categoryId" component={DashboardArticles} />
       </Route>
-      <Route path="search" component={Search}>
+      <Route path={routes.searchBase} component={Search}>
         <IndexRoute component={SearchResults} />
         <Route path="articles/:articleId/comments/:commentId" component={CommentDetail} />
       </Route>
-      <Route path="settings" component={Settings} />
-      <Route path="articles">
+      <Route path={routes.settingsBase} component={Settings} />
+      <Route path={routes.articlesBase}>
         {commentsRoutes(':articleId')}
       </Route>
-      <Route path="categories">
+      <Route path={routes.categoriesBase}>
         <IndexRedirect to="all" />
         {commentsRoutes(':categoryId')}
       </Route>
