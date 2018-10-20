@@ -43,10 +43,7 @@ const StateFactory = makeTypedFactory<IPreselectsState, IPreselectsStateRecord>(
 
 const reducer = handleActions<IPreselectsStateRecord, List<IPreselectModel>>( {
   [preselectsUpdated.toString()]: (state: IPreselectsStateRecord, { payload }: Action<List<IPreselectModel>>) => {
-    return (
-      state
-        .set('items', payload)
-    );
+    return state.set('items', payload);
   },
 }, StateFactory());
 

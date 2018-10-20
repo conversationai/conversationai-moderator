@@ -48,10 +48,7 @@ const StateFactory = makeTypedFactory<IArticlesState, IArticlesStateRecord>({
 
 const reducer = handleActions<IArticlesStateRecord, List<IArticleModel>>( {
   [articlesUpdated.toString()]: (state: IArticlesStateRecord, { payload }: Action<List<IArticleModel>>) => {
-    return (
-      state
-        .set('items', payload)
-    );
+    return state.set('items', payload);
   },
 }, StateFactory());
 

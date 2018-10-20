@@ -44,10 +44,7 @@ const StateFactory = makeTypedFactory<ITaggingSensitivitiesState, ITaggingSensit
 
 const reducer = handleActions<ITaggingSensitivitiesStateRecord, List<ITaggingSensitivityModel>>( {
   [taggingSensitivitiesUpdated.toString()]: (state: ITaggingSensitivitiesStateRecord, { payload }: Action<List<ITaggingSensitivityModel>>) => {
-    return (
-      state
-        .set('items', payload)
-    );
+    return state.set('items', payload);
   },
 }, StateFactory());
 

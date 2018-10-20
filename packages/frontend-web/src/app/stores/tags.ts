@@ -52,10 +52,7 @@ const StateFactory = makeTypedFactory<ITagsState, ITagsStateRecord>({
 
 const reducer = handleActions<ITagsStateRecord, List<ITagModel>>( {
   [tagsUpdated.toString()]: (state: ITagsStateRecord, { payload }: Action<List<ITagModel>>) => {
-    return (
-      state
-        .set('items', payload)
-    );
+    return state.set('items', payload);
   },
 }, StateFactory());
 

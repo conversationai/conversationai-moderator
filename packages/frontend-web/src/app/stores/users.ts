@@ -69,10 +69,7 @@ const StateFactory = makeTypedFactory<IUsersState, IUsersStateRecord>({
 
 const reducer = handleActions<IUsersStateRecord, List<IUserModel>>( {
   [usersUpdated.toString()]: (state: IUsersStateRecord, { payload }: Action<List<IUserModel>>) => {
-    return (
-      state
-        .set('items', payload)
-    );
+    return state.set('items', payload);
   },
 }, StateFactory());
 

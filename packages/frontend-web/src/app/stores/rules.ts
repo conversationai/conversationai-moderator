@@ -44,10 +44,7 @@ const StateFactory = makeTypedFactory<IRulesState, IRulesStateRecord>({
 
 const reducer = handleActions<IRulesStateRecord, List<IRuleModel>>( {
   [rulesUpdated.toString()]: (state: IRulesStateRecord, { payload }: Action<List<IRuleModel>>) => {
-    return (
-      state
-        .set('items', payload)
-    );
+    return state.set('items', payload);
   },
 }, StateFactory());
 
