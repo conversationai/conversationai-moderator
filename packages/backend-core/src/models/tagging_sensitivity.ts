@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { updateHappened } from './last_update';
 
 export interface ITaggingSensitivityAttributes {
   id?: number;
@@ -79,5 +80,13 @@ export const TaggingSensitivity = sequelize.define<
         constraints: false,
       });
     },
+  },
+  hooks: {
+    afterCreate: updateHappened,
+    afterDelete: updateHappened,
+    afterUpdate: updateHappened,
+    afterBulkCreate: updateHappened,
+    afterBulkUpdate: updateHappened,
+    afterBulkDestroy: updateHappened,
   },
 });

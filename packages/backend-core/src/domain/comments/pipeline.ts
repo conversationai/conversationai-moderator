@@ -109,7 +109,7 @@ async function checkScoringDone(comment: ICommentInstance): Promise<void> {
     .set('sentForScoring', sequelize.fn('now'))
     .save();
 
-  const isDoneScoring = await getIsDoneScoring(comment);
+  const isDoneScoring = await getIsDoneScoring(comment.id);
   if (isDoneScoring) {
     await completeMachineScoring(comment.id);
   }

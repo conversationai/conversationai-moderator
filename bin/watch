@@ -1,12 +1,15 @@
 #!/bin/bash
 
-cd packages/backend-api
+cd packages/frontend-web
 npm run watch &
 cd -
 
-sleep 5
+# Backend uses the frontend library.  So make sure the frontend initialisation process is
+# sufficiently far along before attempting to start backend.
+# TODO: we can probably eliminate this if we are more clever about how things are compiled
+sleep 20
 
-cd packages/frontend-web
+cd packages/backend-api
 npm run watch &
 cd -
 

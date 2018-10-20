@@ -24,7 +24,6 @@ import {
   ICommentScoreModel,
 } from '../../../../../models';
 import { IConfirmationAction, IRedialLocals } from '../../../../../types';
-import { getCurrentUser } from '../../../../auth';
 import { IAppDispatch, IAppState, IAppStateRecord } from '../../../../stores';
 import {
   approveComments,
@@ -47,9 +46,8 @@ import {
   getSummaryScoresById,
   loadCommentSummaryScores,
 } from '../../../../stores/commentSummaryScores';
-import { loadTaggingSensitivities } from '../../../../stores/taggingSensitivities';
-import { getTaggableTags, getTags, loadTags } from '../../../../stores/tags';
-import { getUserById } from '../../../../stores/users';
+import { getTaggableTags, getTags } from '../../../../stores/tags';
+import { getCurrentUser, getUser } from '../../../../stores/users';
 import {
   adjustTabCount,
   getArticle,
@@ -242,7 +240,7 @@ const mapStateToProps = createStructuredSelector({
 
   authorCountById: (state: IAppStateRecord) => (id: string) => getAuthorCountsById(state, id),
 
-  getUserById: (state: IAppStateRecord) => (userId: string) => getUserById(state, userId),
+  getUserById: (state: IAppStateRecord) => (userId: string) => getUser(state, userId),
 
   currentUser: getCurrentUser,
 }) as (state: IAppState, ownProps: ICommentDetailOwnProps) => ICommentDetailStateProps;
@@ -362,8 +360,6 @@ const HookedCommentDetail = provideHooks<IRedialLocals>({
     return Promise.all([
       dispatch(loadComment(commentId)),
       dispatch(loadScores(commentId)),
-      dispatch(loadTags()),
-      dispatch(loadTaggingSensitivities()),
       dispatch(loadCommentSummaryScores(commentId)),
     ]);
   },

@@ -14,41 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const { UserAuthWrapper } = require('redux-auth-wrapper');
-import { Login } from '../scenes/Login';
-
-import {
-  getIsAuthenticating,
-  getCurrentUser,
-  isAdmin,
-} from './store';
-
 export {
   reducer,
   startAuthentication,
   handleToken,
-  getCurrentUser,
   getMyUserId,
-  isAdmin,
-  getIsAdmin,
   logout,
 } from './store';
-
-// Take the regular authentication & redirect to login from before
-export const UserIsAuthenticated = UserAuthWrapper({
-  authSelector: getCurrentUser,
-  authenticatingSelector: getIsAuthenticating,
-  FailureComponent: Login,
-  wrapperDisplayName: 'UserIsAuthenticated',
-});
-
-// Admin Authorization, redirects non-admins
-// to / and don't send a redirect param
-export const UserIsAdmin = UserAuthWrapper({
-  authSelector: getCurrentUser,
-  authenticatingSelector: getIsAuthenticating,
-  failureRedirectPath: '/',
-  wrapperDisplayName: 'UserIsAdmin',
-  predicate: isAdmin,
-  allowRedirectBack: false,
-});

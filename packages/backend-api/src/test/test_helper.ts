@@ -17,22 +17,30 @@ limitations under the License.
 import * as chai from 'chai';
 
 import {
-  Article,
-  Category,
-  Comment,
-  CommentScore,
-  CommentSummaryScore,
+  logger,
+  MODERATION_RULE_ACTION_ACCEPT,
+  sequelize,
+} from '@conversationai/moderator-backend-core';
+import {
   IArticleInstance,
   ICategoryInstance,
   ICommentInstance,
   ICommentScoreInstance,
   ICommentSummaryScoreAttributes,
   ICommentSummaryScoreInstance,
+  IModerationRuleInstance,
+  IPreselectInstance,
   ITaggingSensitivityInstance,
   ITagInstance,
   IUserInstance,
-  logger,
-  sequelize,
+} from '@conversationai/moderator-backend-core';
+import {
+  Article,
+  Category,
+  Comment,
+  CommentScore,
+  CommentSummaryScore,
+  ModerationRule, Preselect,
   Tag,
   TaggingSensitivity,
   User,
@@ -164,6 +172,24 @@ export async function makeCategory(obj = {}): Promise<ICategoryInstance> {
     flaggedCount: 0,
     batchedCount: 0,
     recommendedCount: 0,
+    ...obj,
+  });
+}
+
+export async function makeRule(tag: ITagInstance, obj = {}): Promise<IModerationRuleInstance> {
+  return await ModerationRule.create({
+    tagId: tag.id,
+    lowerThreshold: 0,
+    upperThreshold: 1,
+    action: MODERATION_RULE_ACTION_ACCEPT,
+    ...obj,
+  });
+}
+
+export async function makePreselect(obj = {}): Promise<IPreselectInstance> {
+  return await Preselect.create({
+    lowerThreshold: 0,
+    upperThreshold: 1,
     ...obj,
   });
 }

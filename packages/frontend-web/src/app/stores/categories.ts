@@ -57,10 +57,7 @@ const CategoriesStateFactory = makeTypedFactory<ICategoriesState, ICategoriesSta
 
 const categoriesReducer = handleActions<ICategoriesStateRecord, List<ICategoryModel>>( {
   [categoriesUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<List<ICategoryModel>>) => {
-    return (
-      state
-        .set('items', payload)
-    );
+    return state.set('items', payload);
   },
 }, CategoriesStateFactory());
 

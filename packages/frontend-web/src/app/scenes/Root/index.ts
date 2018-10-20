@@ -15,14 +15,26 @@ limitations under the License.
 */
 
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+
+import { getIsAuthenticated } from '../../auth/store';
+import { getWebsocketState } from '../../stores';
 import { getCurrentlyFocused, reducer } from '../../stores/focus';
+import { getCurrentUserIsAdmin } from '../../stores/users';
 import { IRootProps, Root as PureRoot } from './Root';
+
 export { reducer };
 
-const mapStateToProps = createStructuredSelector({currentlyFocused: getCurrentlyFocused,});
+const mapStateToProps = createStructuredSelector({
+  currentlyFocused: getCurrentlyFocused,
+  isAuthenticated: getIsAuthenticated,
+  isConnected: getWebsocketState,
+  isAdmin: getCurrentUserIsAdmin,
+});
 
-export const Root: React.ComponentClass = connect<
-  Pick<IRootProps, 'currentlyFocused'>,
-  Pick<IRootProps, 'dispatch'>
->(mapStateToProps)(PureRoot);
+export const Root: React.ComponentClass = compose(
+  withRouter,
+  connect<Pick<IRootProps, 'currentlyFocused'>, Pick<IRootProps, 'dispatch'>>(mapStateToProps),
+)(PureRoot);

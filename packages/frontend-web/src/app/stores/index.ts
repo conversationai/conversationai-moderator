@@ -30,10 +30,14 @@ import { IState as ICommentsState, reducer as commentsReducer } from './comments
 import { ICommentSummaryScoresStateRecord, reducer as commentSummaryScoresReducer } from './commentSummaryScores';
 import { IFocusStateRecord, reducer as focusReducer } from './focus';
 import { IModeratorsStateRecord, reducer as moderatorsReducer } from './moderators';
-import { IPreselectStateRecord, reducer as preselectsReducer } from './preselects';
-import { IRuleStateRecord, reducer as rulesReducer } from './rules';
-import { ITaggingSensitivityStateRecord, reducer as taggingSensitivitiesReducer } from './taggingSensitivities';
-import { ITagsState, reducer as tagsReducer } from './tags';
+import { IPreselectsStateRecord, preselectsUpdated, reducer as preselectsReducer } from './preselects';
+import { IRulesStateRecord, reducer as rulesReducer, rulesUpdated } from './rules';
+import {
+  ITaggingSensitivitiesStateRecord,
+  reducer as taggingSensitivitiesReducer,
+  taggingSensitivitiesUpdated
+} from './taggingSensitivities';
+import { ITagsStateRecord, reducer as tagsReducer, tagsUpdated } from './tags';
 import { ITextSizesStateRecord, reducer as textSizesReducer } from './textSizes';
 import { IState as ITopScoresState, ISummaryState as ITopSummaryScoresState, scoreReducer as topScoresReducer, summaryScoreReducer as topSummaryScoresReducer } from './topScores';
 import { IUsersState, reducer as usersReducer, usersUpdated } from './users';
@@ -54,10 +58,10 @@ export interface IAppState {
   moderators: IModeratorsStateRecord;
   articleModerators: IArticleModeratorsStateRecord;
   categoryModerators: ICategoryModeratorsStateRecord;
-  tags: ITagsState;
-  rules: IRuleStateRecord;
-  preselects: IPreselectStateRecord;
-  taggingSensitivities: ITaggingSensitivityStateRecord;
+  tags: ITagsStateRecord;
+  rules: IRulesStateRecord;
+  preselects: IPreselectsStateRecord;
+  taggingSensitivities: ITaggingSensitivitiesStateRecord;
   focus: IFocusStateRecord;
   columnSorts: IColumnSortStateRecord;
   textSizes: ITextSizesStateRecord;
@@ -122,6 +126,12 @@ export async function initialiseClientModel(dispatch: IAppDispatch) {
   connectNotifier(
     (isActive: boolean) => {
       dispatch(websocketStateUpdated(isActive));
+    },
+    (data) => {
+      dispatch(tagsUpdated(data.tags));
+      dispatch(taggingSensitivitiesUpdated(data.taggingSensitivities));
+      dispatch(rulesUpdated(data.rules));
+      dispatch(preselectsUpdated(data.preselects));
     },
     (data) => {
       dispatch(deferredCountUpdated(data.deferred));

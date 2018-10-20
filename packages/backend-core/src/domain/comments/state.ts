@@ -85,11 +85,11 @@ export function scoresComplete(commentScoreRequests: Array<ICommentScoreRequestI
  * an empty `doneAt` field, it will resolve to false. Otherwise if they're all filled in
  * it will resolve to true
  */
-export async function getIsDoneScoring(comment: ICommentInstance) {
+export async function getIsDoneScoring(commentId: number) {
   // Find and count all comment score requests
   const commentScoreRequests = await CommentScoreRequest.findAll({
     where: {
-      commentId: comment.id,
+      commentId: commentId,
     },
     order: 'sentAt DESC',
   });

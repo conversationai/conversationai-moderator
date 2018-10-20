@@ -16,9 +16,11 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { updateHappened } from './last_update';
 
+export const MODERATION_RULE_ACTION_ACCEPT = 'Accept';
 export const MODERATION_RULE_ACTION_TYPES = [
-  'Accept',
+  MODERATION_RULE_ACTION_ACCEPT,
   'Reject',
   'Defer',
   'Highlight',
@@ -92,5 +94,13 @@ export const ModerationRule = sequelize.define<
         constraints: false,
       });
     },
+  },
+  hooks: {
+    afterCreate: updateHappened,
+    afterDelete: updateHappened,
+    afterUpdate: updateHappened,
+    afterBulkCreate: updateHappened,
+    afterBulkUpdate: updateHappened,
+    afterBulkDestroy: updateHappened,
   },
 });

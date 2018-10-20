@@ -44,8 +44,7 @@ import {
   resetComment,
 } from '../../../../stores/comments';
 import { getSummaryScoresById, loadCommentSummaryScores } from '../../../../stores/commentSummaryScores';
-import { loadTaggingSensitivities } from '../../../../stores/taggingSensitivities';
-import { getTaggableTags, loadTags } from '../../../../stores/tags';
+import { getTaggableTags } from '../../../../stores/tags';
 import { getSummaryScoresAboveThreshold, getTaggingSensitivitiesInCategory } from '../../store';
 
 const updateCommentStateAction: {
@@ -200,8 +199,6 @@ export const ThreadedCommentDetail: React.ComponentClass = compose(
     fetch: async ({ dispatch, params: { commentId } }) => {
 
       await Promise.all([
-        dispatch(loadTags()),
-        dispatch(loadTaggingSensitivities()),
         dispatch(loadComment(commentId)),
       ]);
     },

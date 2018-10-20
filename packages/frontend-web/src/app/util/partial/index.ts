@@ -40,7 +40,9 @@ function makeNode<T>(): INode<T> {
 
 const mutableObjectCache = new Map<object | Array<any>, string>();
 
-function stringifyIfNecessary<T>(o: T, useEqualityForMutableObjects: boolean): T | string {
+// We sometimes want to use "thing" o as a hashtable key.  This function converts o into something
+// stringlike for this purpose
+function stringifyIfNecessary(o: any, useEqualityForMutableObjects: boolean): boolean | number | string {
   if (
     isArray(o) ||
     isPlainObject(o) ||

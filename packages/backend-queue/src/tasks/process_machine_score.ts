@@ -16,6 +16,7 @@ limitations under the License.
 
 import {
   completeMachineScoring,
+  getIsDoneScoring,
   IScoreData,
   processMachineScore,
 } from '@conversationai/moderator-backend-core';
@@ -50,11 +51,13 @@ export interface IProcessMachineScoreData {
  *
  */
 export const processMachineScoreTask: IQueueHandler<IProcessMachineScoreData> = handler<IProcessMachineScoreData>(async (data) => {
-  const isDoneScoring = await processMachineScore(
+  await processMachineScore(
     data.commentId,
     data.userId,
     data.scoreData,
   );
+
+  const isDoneScoring = await getIsDoneScoring(data.commentId);
 
   if (isDoneScoring) {
     await completeMachineScoring(data.commentId);

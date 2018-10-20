@@ -24,10 +24,6 @@ import {
   IParams,
 } from '@conversationai/moderator-jsonapi/src/types';
 import {
-  ArticleModel,
-  CategoryModel,
-  CommentDatedModel,
-  CommentScoredModel,
   IArticleModel,
   IAuthorCountsModel,
   ICategoryModel,
@@ -35,7 +31,21 @@ import {
   ICommentModel,
   ICommentScoredModel,
   ICommentSummaryScoreModel,
+  IPreselectModel,
+  IRuleModel,
+  ITaggingSensitivityModel,
+  ITagModel,
   IUserModel,
+} from '../../models';
+import {
+  ArticleModel,
+  CategoryModel,
+  CommentDatedModel,
+  CommentScoredModel,
+  PreselectModel,
+  RuleModel,
+  TaggingSensitivityModel,
+  TagModel,
   UserModel,
 } from '../../models';
 import { ITopScore } from '../../types';
@@ -82,7 +92,7 @@ function validateModelName(name: string): void {
 }
 
 export function validateID(id: any, valueName: string): void {
-  // Article ids are can be non-numeric to allow for flexibility with matching upstream publisher article ids
+  // Article ids can be non-numeric to allow for flexibility with matching upstream publisher article ids
   if (valueName === 'articleId') {
     // A legal id contains only alphanumeric characters, hyphens or dashes
     if (/^[a-z0-9_\-]+$/i.test(id) === false) {
@@ -878,19 +888,92 @@ export async function listAuthorCounts(
 let ws: WebSocket = null;
 let intervalTimer: NodeJS.Timer;
 
+export interface ISystemSummary {
+  tags: List<ITagModel>;
+  taggingSensitivities: List<ITaggingSensitivityModel>;
+  rules: List<IRuleModel>;
+  preselects: List<IPreselectModel>;
+}
+
 export interface IGlobalSummary {
-  deferred: number;
   users: List<IUserModel>;
   categories: List<ICategoryModel>;
   articles: List<IArticleModel>;
+  deferred: number;
 }
 
 export interface IUserSummary {
   assignments: number;
 }
 
+// TODO: Ideally we'd have a type file describing types sent over the wire.
+//       When this is availabe, replace the "any" types in the code below.
+// TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
+//       Convert for now.  But at some point need to refactor to use numbers.
+function packSystemData(data: any): ISystemSummary {
+  return {
+    tags: List<ITagModel>(data.tags.map((t: any) => {
+      t.id = t.id.toString();
+      return TagModel(t);
+    })),
+    taggingSensitivities: List<ITaggingSensitivityModel>(data.taggingSensitivities.map((t: any) => {
+      return TaggingSensitivityModel(t);
+    })),
+    rules: List<IRuleModel>(data.rules.map((r: any) => {
+      return RuleModel(r);
+    })),
+    preselects: List<IPreselectModel>(data.preselects.map((p: any) => {
+      return PreselectModel(p);
+    })),
+  };
+}
+
+function packGlobalData(data: any): IGlobalSummary {
+  const userMap: {[key: number]: IUserModel} = {};
+  const catMap: {[key: number]: ICategoryModel} = {};
+
+  function convertAssignedModerators(am: Array<any>): Array<IUserModel> {
+    return am.map((i) => userMap[i.moderator_assignment.userId]);
+  }
+
+  return {
+    users: List<IUserModel>(data.users.map((u: any) => {
+      const id = u.id;
+      u.id = u.id.toString();
+      userMap[id] = u;
+      return UserModel(u);
+    })),
+
+    categories: List<ICategoryModel>(data.categories.map((c: any) => {
+      const id = c.id;
+      c.id = c.id.toString();
+      c.assignedModerators = convertAssignedModerators(c.assignedModerators);
+      const model = CategoryModel(c);
+      catMap[id] = model;
+      return model;
+    })),
+
+    articles: List<IArticleModel>(data.articles.map((a: any) => {
+      a.id = a.id.toString();
+      if (a.categoryId) {
+        a.category = catMap[a.categoryId];
+      }
+      a.assignedModerators = convertAssignedModerators(a.assignedModerators);
+      return ArticleModel(a);
+    })),
+
+    deferred: data.deferred,
+  };
+}
+
+let gotSystem = false;
+let gotGlobal = false;
+let gotUser = false;
+let socketUp = false;
+
 export function connectNotifier(
   websocketStateHandler: (isActive: boolean) => void,
+  systemNotificationHandler: (data: ISystemSummary) => void,
   globalNotificationHandler: (data: IGlobalSummary) => void,
   userNotificationHandler: (data: IUserSummary) => void) {
   function checkSocketAlive() {
@@ -905,6 +988,7 @@ export function connectNotifier(
 
         ws.onclose = () => {
           console.log('websocket closed');
+          socketUp = false;
           websocketStateHandler(false);
           ws = null;
         };
@@ -912,51 +996,24 @@ export function connectNotifier(
 
       ws.onmessage = (message) => {
         const body: any = JSON.parse(message.data);
-        if (body.type === 'user') {
+
+        if (body.type === 'system') {
+          systemNotificationHandler(packSystemData(body.data));
+          gotSystem = true;
+        }
+        else if (body.type === 'global'){
+          globalNotificationHandler(packGlobalData(body.data));
+          gotGlobal = true;
+        }
+        else if (body.type === 'user') {
           userNotificationHandler(body.data as IUserSummary);
-        }
-        else {
-          const userMap: {[key: number]: IUserModel} = {};
-          const catMap: {[key: number]: ICategoryModel} = {};
-
-          function convertAssignedModerators(am: Array<any>): Array<IUserModel> {
-            return am.map((i) => userMap[i.moderator_assignment.userId]);
-          }
-
-          // TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
-          //       Convert for now.  But at some point need to refactor to use numbers.
-          const data = {
-            deferred: body.data.deferred,
-
-            users: List<IUserModel>(body.data.users.map((u: any) => {
-              const id = u.id;
-              u.id = u.id.toString();
-              userMap[id] = u;
-              return UserModel(u);
-            })),
-
-            categories: List<ICategoryModel>(body.data.categories.map((c: any) => {
-              const id = c.id;
-              c.id = c.id.toString();
-              c.assignedModerators = convertAssignedModerators(c.assignedModerators);
-              const model = CategoryModel(c);
-              catMap[id] = model;
-              return model;
-            })),
-
-            articles: List<IArticleModel>(body.data.articles.map((a: any) => {
-              a.id = a.id.toString();
-              if (a.categoryId) {
-                a.category = catMap[a.categoryId];
-              }
-              a.assignedModerators = convertAssignedModerators(a.assignedModerators);
-              return ArticleModel(a);
-            })),
-          };
-          globalNotificationHandler(data);
+          gotUser = true;
         }
 
-        websocketStateHandler(true);
+        if (gotSystem && gotGlobal && gotUser && !socketUp) {
+          websocketStateHandler(true);
+          socketUp = true;
+        }
       };
     }
   }

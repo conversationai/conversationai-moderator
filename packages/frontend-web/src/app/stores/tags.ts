@@ -15,21 +15,17 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { Action, createAction } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
+import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
+
 import { ITagModel } from '../../models';
-import { listModels, makeAJAXAction, makeRecordListReducer, IRecordListStateRecord } from '../util';
-import { IAppStateRecord, IThunkAction } from './index';
+import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'tags'];
 const TAGS_DATA = [...STATE_ROOT, 'items'];
-const TAGS_HAS_DATA = [...STATE_ROOT, 'hasData'];
-const TAGS_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
 
-const loadTagsStart = createAction(
-  'all-tags/LOAD_TAGS_START',
-);
-const loadTagsComplete = createAction<object>(
-  'all-tags/LOAD_TAGS_COMPLETE',
+export const tagsUpdated = createAction<object>(
+  'all-tags/UPDATED',
 );
 
 export function getTags(state: IAppStateRecord): List<ITagModel> {
@@ -44,35 +40,20 @@ export function getTaggableTags(state: IAppStateRecord): List<ITagModel> {
   return state.getIn(TAGS_DATA).filter((tag: ITagModel) => tag.isTaggable);
 }
 
-export function getTagsIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(TAGS_LOADING_STATUS);
+export interface ITagsState {
+  items: List<ITagModel>;
 }
 
-export function loadTags(forceUpdate?: boolean): IThunkAction<Promise<List<ITagModel>>> {
-  return async (dispatch, getState): Promise<List<ITagModel>> => {
-    await dispatch(makeAJAXAction(
-      () => listModels('tags', {
-        page: { limit: -1 },
-        filters: {
-        },
-      }),
-      loadTagsStart,
-      loadTagsComplete,
-      (state: IAppStateRecord) => forceUpdate ? null : state.getIn(TAGS_HAS_DATA) && getTags(state),
-    ));
+export interface ITagsStateRecord extends TypedRecord<ITagsStateRecord>, ITagsState {}
 
-    return getTags(getState());
-  };
-}
+const StateFactory = makeTypedFactory<ITagsState, ITagsStateRecord>({
+  items: List<ITagModel>(),
+});
 
-export type ITagsState = List<ITagModel>;
-
-const recordListReducer = makeRecordListReducer<ITagModel>(
-  loadTagsStart.toString(),
-  loadTagsComplete.toString(),
-);
-
-const reducer: (state: IRecordListStateRecord<ITagModel>, action: Action<object|ITagModel>) => IRecordListStateRecord<ITagModel>
-  = recordListReducer.reducer;
+const reducer = handleActions<ITagsStateRecord, List<ITagModel>>( {
+  [tagsUpdated.toString()]: (state: ITagsStateRecord, { payload }: Action<List<ITagModel>>) => {
+    return state.set('items', payload);
+  },
+}, StateFactory());
 
 export { reducer };

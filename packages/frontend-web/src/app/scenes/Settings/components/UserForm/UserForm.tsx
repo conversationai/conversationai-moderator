@@ -51,7 +51,7 @@ export class UserForm extends React.Component<IAddUsersProps> {
 
     return (
       <div>
-        <div {...css(SETTINGS_STYLES.row)}>
+        <div key="name" {...css(SETTINGS_STYLES.row)}>
           <label htmlFor="name" {...css(SETTINGS_STYLES.label)}>Full Name</label>
           <input
             id="name"
@@ -61,7 +61,7 @@ export class UserForm extends React.Component<IAddUsersProps> {
             onChange={partial(this.onValueChange, 'name')}
           />
         </div>
-        <div {...css(SETTINGS_STYLES.row)}>
+        <div key="email" {...css(SETTINGS_STYLES.row)}>
           <label htmlFor="email" {...css(SETTINGS_STYLES.label)}>Email Address</label>
           <input
             id="email"
@@ -71,7 +71,7 @@ export class UserForm extends React.Component<IAddUsersProps> {
             onChange={partial(this.onValueChange, 'email')}
           />
         </div>
-        <div {...css(SETTINGS_STYLES.row, SETTINGS_STYLES.selectBoxRow)}>
+        <div key="group" {...css(SETTINGS_STYLES.row, SETTINGS_STYLES.selectBoxRow)}>
           <label htmlFor="name" {...css(SETTINGS_STYLES.label)}>Group</label>
           <select
             {...css(SETTINGS_STYLES.selectBox)}
@@ -86,7 +86,7 @@ export class UserForm extends React.Component<IAddUsersProps> {
           </select>
           <span aria-hidden="true" {...css(SETTINGS_STYLES.arrow)} />
         </div>
-        <div {...css(SETTINGS_STYLES.row)}>
+        <div key="active" {...css(SETTINGS_STYLES.row)}>
           <label htmlFor="isActive" {...css(SETTINGS_STYLES.label)}>User is active
             <input
               id="isActive"

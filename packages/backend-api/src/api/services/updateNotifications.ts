@@ -15,26 +15,43 @@ limitations under the License.
 */
 
 import * as express from 'express';
-import {isEqual, pick} from 'lodash';
+import { isEqual, pick } from 'lodash';
 import * as WebSocket from 'ws';
 
-import {Article, Category, Comment, User} from '@conversationai/moderator-backend-core';
-import {IArticleInstance, ICategoryInstance, IUserInstance} from '@conversationai/moderator-backend-core';
-import {logger, registerInterest} from '@conversationai/moderator-backend-core';
+import {
+  Article, Category, Comment, ModerationRule, Preselect, Tag, TaggingSensitivity, User,
+} from '@conversationai/moderator-backend-core';
+import {
+  IArticleInstance, ICategoryInstance, IModerationRuleInstance, IPreselectInstance,
+  ITaggingSensitivityInstance, ITagInstance, IUserInstance,
+} from '@conversationai/moderator-backend-core';
+import { logger, registerInterest } from '@conversationai/moderator-backend-core';
+
+const tagFields = ['id', 'color', 'description', 'key', 'label', 'isInBatchView', 'inSummaryScore', 'isTaggable'];
+const rangeFields = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'tagId'];
+const taggingSensitivityFields = rangeFields;
+const ruleFields = ['action', 'createdBy', ...rangeFields];
+const preselectFields = rangeFields;
 
 const userFields = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
-
 const commonFields = ['id', 'updatedAt', 'count', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
   'approvedCount', 'highlightedCount', 'rejectedCount', 'deferredCount', 'flaggedCount',
   'batchedCount', 'recommendedCount', 'assignedModerators', ];
 const categoryFields = [...commonFields, 'label'];
 const articleFields = [...commonFields, 'title', 'url', 'categoryId'];
 
+interface ISystemSummary {
+  tags: any;
+  taggingSensitivities: any;
+  rules: any;
+  preselects: any;
+}
+
 interface IGlobalSummary {
-  deferred: number;
   users: any;
   categories: any;
   articles: any;
+  deferred: number;
 }
 
 interface IUserSummary {
@@ -42,13 +59,43 @@ interface IUserSummary {
 }
 
 interface IMessage {
-  type: 'global' | 'user';
-  data: IGlobalSummary | IUserSummary;
+  type: 'system' | 'global' | 'user';
+  data: ISystemSummary | IGlobalSummary | IUserSummary;
+}
+
+async function getSystemSummary() {
+  const tags = await Tag.findAll({});
+  const tagdata = tags.map((t: ITagInstance) => {
+    return pick(t.toJSON(), tagFields);
+  });
+
+  const taggingSensitivities = await TaggingSensitivity.findAll({});
+  const tsdata = taggingSensitivities.map((t: ITaggingSensitivityInstance) => {
+    return pick(t.toJSON(), taggingSensitivityFields);
+  });
+
+  const rules = await ModerationRule.findAll({});
+  const ruledata = rules.map((r: IModerationRuleInstance) => {
+    return pick(r.toJSON(), ruleFields);
+  });
+
+  const preselects = await Preselect.findAll({});
+  const preselectdata = preselects.map((p: IPreselectInstance) => {
+    return pick(p.toJSON(), preselectFields);
+  });
+
+  return {
+    type: 'system',
+    data: {
+      tags: tagdata,
+      taggingSensitivities: tsdata,
+      rules: ruledata,
+      preselects: preselectdata,
+    },
+  } as IMessage;
 }
 
 async function getGlobalSummary() {
-  const deferred = await Comment.findAndCountAll({where: { isDeferred: true }, limit: 0});
-
   const users = await User.findAll({where: {group: ['admin', 'general']}});
   const userdata = users.map((u: IUserInstance) => {
     return pick(u.toJSON(), userFields);
@@ -72,13 +119,15 @@ async function getGlobalSummary() {
     return pick(a.toJSON(), articleFields);
   });
 
+  const deferred = await Comment.findAndCountAll({where: { isDeferred: true }, limit: 0});
+
   return {
     type: 'global',
     data: {
-      deferred: deferred['count'],
       users: userdata,
       categories: categorydata,
       articles: articledata,
+      deferred: deferred['count'],
     },
   } as IMessage;
 }
@@ -97,37 +146,89 @@ async function getUserSummary(userId: number) {
 
 interface ISocketItem {
   userId: number;
-  ws: WebSocket;
+  ws: Array<WebSocket>;
   lastUserSummary: IUserSummary | null;
 }
 
 let lastGlobalSummaryMessage: IMessage | null = null;
+let lastSystemSummaryMessage: IMessage | null = null;
 const socketItems = new Map<number, ISocketItem>();
 
-async function maybeSendUpdateToUser(si: ISocketItem, sendGlobal: boolean) {
-  if (sendGlobal) {
-    logger.info(`Sending global summary to user ${si.userId}`);
-    si.ws.send(JSON.stringify(lastGlobalSummaryMessage!));
+function removeSocket(si: ISocketItem, ws: WebSocket) {
+  const index = si.ws.indexOf(ws);
+  if (index >= 0) {
+    si.ws.splice(index, 1);
   }
-
-  const userSummaryMessage = await getUserSummary(si.userId);
-  if (!si.lastUserSummary || !isEqual(userSummaryMessage.data, si.lastUserSummary)) {
-    logger.info(`Sending local summary to user ${si.userId}`);
-    si.ws.send(JSON.stringify(userSummaryMessage));
-    si.lastUserSummary = userSummaryMessage.data as IUserSummary;
+  if (si.ws.length === 0) {
+    socketItems.delete(si.userId);
   }
 }
 
-async function maybeSendUpdates() {
-  const globalSummaryMessage = await getGlobalSummary();
-
-  const sendGlobal = !isEqual(globalSummaryMessage.data, lastGlobalSummaryMessage!.data);
-  if (sendGlobal) {
-    lastGlobalSummaryMessage = globalSummaryMessage;
+async function refreshGlobalMessages(updateHappened: boolean) {
+  let sendSystem = !updateHappened;
+  if (!lastSystemSummaryMessage) {
+    lastSystemSummaryMessage = await getSystemSummary();
+    sendSystem = true;
+  }
+  else if (updateHappened) {
+    const newMessage = await getSystemSummary();
+    sendSystem = !isEqual(newMessage.data, lastSystemSummaryMessage.data);
+    if (sendSystem) {
+      lastSystemSummaryMessage = newMessage;
+    }
   }
 
+  let sendGlobal = !updateHappened;
+  if (!lastGlobalSummaryMessage) {
+    lastGlobalSummaryMessage = await getGlobalSummary();
+    sendGlobal = true;
+  }
+  else if (updateHappened) {
+    const newMessage = await getGlobalSummary();
+    sendGlobal = !isEqual(newMessage.data, lastGlobalSummaryMessage.data);
+    if (sendGlobal) {
+      lastGlobalSummaryMessage = newMessage;
+    }
+  }
+
+  return {sendSystem, sendGlobal};
+}
+
+async function maybeSendUpdateToUser(si: ISocketItem,
+                                     {sendSystem, sendGlobal}: {sendSystem: boolean, sendGlobal: boolean}) {
+  const userSummaryMessage = await getUserSummary(si.userId);
+  const sendUser = !si.lastUserSummary || !isEqual(userSummaryMessage.data, si.lastUserSummary);
+
+  for (const ws of si.ws) {
+    try {
+      if (sendSystem) {
+        logger.info(`Sending system summary to user ${si.userId}`);
+        await ws.send(JSON.stringify(lastSystemSummaryMessage));
+      }
+
+      if (sendGlobal) {
+        logger.info(`Sending global summary to user ${si.userId}`);
+        await ws.send(JSON.stringify(lastGlobalSummaryMessage));
+      }
+
+      if (sendUser) {
+        logger.info(`Sending user summary to user ${si.userId}`);
+        await ws.send(JSON.stringify(userSummaryMessage));
+      }
+    }
+    catch (e) {
+      logger.warn(`Websocket faulty for ${si.userId}`, e.message);
+      ws.terminate();
+      removeSocket(si, ws);
+    }
+  }
+
+  si.lastUserSummary = userSummaryMessage.data as IUserSummary;
+}
+
+async function maybeSendUpdates() {
   for (const si of socketItems.values()) {
-    maybeSendUpdateToUser(si, sendGlobal);
+    maybeSendUpdateToUser(si, await refreshGlobalMessages(true));
   }
 }
 
@@ -147,22 +248,23 @@ export function createUpdateNotificationService(): express.Router {
     const userId = req.user.id;
     let si = socketItems.get(userId);
     if (!si) {
-      si = {userId, ws, lastUserSummary: null};
+      si = {userId, ws: [], lastUserSummary: null};
       socketItems.set(userId, si);
     }
 
+    si.ws.push(ws);
+
     if (lastGlobalSummaryMessage === null) {
       logger.info(`Setting up notifications`);
-      // First time through here, so register the notifier
-      lastGlobalSummaryMessage = await getGlobalSummary();
       registerInterest(maybeSendUpdates);
     }
 
     ws.on('close', () => {
-      socketItems.delete(userId);
+      removeSocket(si!, ws);
     });
 
-    maybeSendUpdateToUser(si, true);
+    logger.info(`Websocket opened to ${req.user.email}`);
+    maybeSendUpdateToUser(si, await refreshGlobalMessages(false));
   });
 
   return router;
@@ -172,7 +274,9 @@ export function createUpdateNotificationService(): express.Router {
 export function destroyUpdateNotificationService() {
   lastGlobalSummaryMessage = null;
   for (const si of socketItems.values()) {
-    si.ws.close();
+    for (const ws of si.ws) {
+      ws.close();
+    }
   }
   socketItems.clear();
 }

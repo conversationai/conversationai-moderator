@@ -23,7 +23,6 @@ import {
 
 // Needed for `.resolves` below.
 require('bluebird');
-require('sinon-bluebird');
 
 const assert = chai.assert;
 

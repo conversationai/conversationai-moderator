@@ -14,11 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {List} from 'immutable';
+import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import {makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { IUserModel } from '../../models';
+import { getMyUserId } from '../auth';
 import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'users'];
@@ -32,8 +33,28 @@ export function getUsers(state: IAppStateRecord): List<IUserModel> {
   return state.getIn(USERS_DATA);
 }
 
-export function getUserById(state: IAppStateRecord, userId: string): IUserModel {
-  return state.getIn(USERS_DATA).find((user: IUserModel) => user.id === userId);
+export function getUser(state: IAppStateRecord, id: string): IUserModel | null {
+  const users = getUsers(state);
+  if (!users || users.size === 0) {
+    return null;
+  }
+  return users.find((u) => u.id === id);
+}
+
+export function getCurrentUser(state: IAppStateRecord): IUserModel | null {
+  const id = getMyUserId(state);
+  if (!id) {
+    return null;
+  }
+  return getUser(state, id);
+}
+
+export function userIsAdmin(user: IUserModel | null): boolean {
+  return user && user.get('group') === 'admin';
+}
+
+export function getCurrentUserIsAdmin(state: IAppStateRecord): boolean {
+  return userIsAdmin(getCurrentUser(state));
 }
 
 export interface IUsersState {
@@ -48,10 +69,7 @@ const StateFactory = makeTypedFactory<IUsersState, IUsersStateRecord>({
 
 const reducer = handleActions<IUsersStateRecord, List<IUserModel>>( {
   [usersUpdated.toString()]: (state: IUsersStateRecord, { payload }: Action<List<IUserModel>>) => {
-    return (
-      state
-        .set('items', payload)
-    );
+    return state.set('items', payload);
   },
 }, StateFactory());
 

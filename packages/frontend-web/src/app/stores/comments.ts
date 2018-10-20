@@ -16,10 +16,9 @@ limitations under the License.
 
 import { List, Map } from 'immutable';
 import { Action } from 'redux-actions';
-import { IAppStateRecord } from '../stores';
 import { ICommentModel } from '../../models';
-import { IQueuedModelStateRecord, listCommentsById, makeQueuedModelStore , ILoadCompletePayload } from '../util';
-import { IThunkAction } from './index';
+import { ILoadCompletePayload, IQueuedModelStateRecord, listCommentsById, makeQueuedModelStore } from '../util';
+import { IAppStateRecord, IThunkAction } from './index';
 
 const queueModelStore = makeQueuedModelStore<string, ICommentModel>(
   async (commentIds: List<string>) => {

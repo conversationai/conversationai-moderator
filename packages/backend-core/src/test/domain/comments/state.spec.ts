@@ -177,7 +177,7 @@ describe('Comments Domain States Tests', () => {
         }),
       ]);
 
-      const isDoneScoring = await getIsDoneScoring(comment);
+      const isDoneScoring = await getIsDoneScoring(comment.id);
       assert.isTrue(isDoneScoring);
     });
 
@@ -200,7 +200,7 @@ describe('Comments Domain States Tests', () => {
         }),
       ]);
 
-      const isDoneScoring = await getIsDoneScoring(comment);
+      const isDoneScoring = await getIsDoneScoring(comment.id);
       assert.isFalse(isDoneScoring);
     });
 
@@ -230,7 +230,7 @@ describe('Comments Domain States Tests', () => {
           }),
         ]);
 
-        const isDoneScoring = await getIsDoneScoring(comment);
+        const isDoneScoring = await getIsDoneScoring(comment.id);
         assert.isTrue(isDoneScoring);
       },
     );

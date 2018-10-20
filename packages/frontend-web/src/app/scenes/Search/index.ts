@@ -57,8 +57,7 @@ import {
   resetComment,
 } from '../../stores/comments';
 import { loadCommentSummaryScores } from '../../stores/commentSummaryScores';
-import { loadTaggingSensitivities } from '../../stores/taggingSensitivities';
-import { getTaggableTags, loadTags } from '../../stores/tags';
+import { getTaggableTags } from '../../stores/tags';
 import { getArticle, loadArticle } from '../Comments/store';
 import { Search as PureSearch } from './Search';
 
@@ -133,8 +132,6 @@ export interface ISearchScope {
 }
 
 function mapDispatchToProps(dispatch: IAppDispatch): any {
-  dispatch(loadTags());
-
   return {
     onSearch: async (newScope: ISearchScope)  => {
       dispatch(executeCommentListLoader(newScope));
@@ -186,9 +183,8 @@ export const Search: React.ComponentClass = compose(
       query: { articleId },
     }) => {
       if (articleId) {
-        dispatch(loadArticle(articleId));
+        await dispatch(loadArticle(articleId));
       }
-      await dispatch(loadTaggingSensitivities());
     },
   }),
 )(PureSearch);

@@ -17,7 +17,6 @@ limitations under the License.
 import { List } from 'immutable';
 import { connect } from 'react-redux';
 import { InjectedRouter, withRouter } from 'react-router';
-import { provideHooks } from 'redial';
 import { createStructuredSelector } from 'reselect';
 import {
   IPreselectModel,
@@ -26,15 +25,12 @@ import {
   ITagModel,
   IUserModel,
 } from '../../../models';
-import { IRedialLocals } from '../../../types';
 import { IAppDispatch, IAppState } from '../../stores';
-import {
-  getCategories,
-} from '../../stores/categories';
-import { getPreselects, loadPreselects } from '../../stores/preselects';
-import { getRules, loadRules } from '../../stores/rules';
-import { getTaggingSensitivities, loadTaggingSensitivities } from '../../stores/taggingSensitivities';
-import { getTags, loadTags } from '../../stores/tags';
+import { getCategories } from '../../stores/categories';
+import { getPreselects } from '../../stores/preselects';
+import { getRules } from '../../stores/rules';
+import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
+import { getTags } from '../../stores/tags';
 import { getUsers } from '../../stores/users';
 import { ISettingsProps, Settings as PureSettings } from './Settings';
 
@@ -64,7 +60,6 @@ export type ISettingsStateProps = Pick<
 
 export type ISettingsDispatchProps = Pick<
   ISettingsProps,
-  'reloadSettings' |
   'updatePreselects' |
   'updateRules' |
   'updateTaggingSensitivities' |
@@ -84,20 +79,8 @@ const mapStateToProps = createStructuredSelector({
   onAuthorSearchClick: (_: IAppState, { router }: { router: InjectedRouter }) => () => router.push('/search?searchByAuthor=true'),
 }) as (state: IAppState, props: ISettingsOwnProps) => ISettingsStateProps;
 
-function makeReloadAction(dispatch: IAppDispatch) {
-  return async () => (
-    await Promise.all([
-      dispatch(loadTags(true)),
-      dispatch(loadRules(true)),
-      dispatch(loadPreselects(true)),
-      dispatch(loadTaggingSensitivities(true)),
-    ])
-  );
-}
-
 function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
   return {
-    reloadSettings: makeReloadAction(dispatch),
     updatePreselects: (oldPreselects, newPreselects) => dispatch(updatePreselects(oldPreselects, newPreselects)),
     updateRules: (oldRules, newRules) => dispatch(updateRules(oldRules, newRules)),
     updateTaggingSensitivities: (oldTaggingSensitivities, newTaggingSensitivities) => dispatch(updateTaggingSensitivities(oldTaggingSensitivities, newTaggingSensitivities)),
@@ -147,11 +130,4 @@ const ConnectedSettings = connect(
 )(PureSettings);
 
 // Add `router` prop.
-const RoutedSettings = withRouter(ConnectedSettings);
-
-// Add Route Change hook.
-export const Settings: React.ComponentType = provideHooks<IRedialLocals>({
-  fetch: ({ dispatch }) => {
-    makeReloadAction(dispatch)();
-  },
-})(RoutedSettings);
+export const Settings: React.ComponentType = withRouter(ConnectedSettings);

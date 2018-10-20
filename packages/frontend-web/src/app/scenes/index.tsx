@@ -16,7 +16,7 @@ limitations under the License.
 
 import { IndexRedirect, IndexRoute, Route, Router } from 'react-router';
 import { combineReducers } from 'redux-immutable';
-import { UserIsAdmin, UserIsAuthenticated } from '../auth';
+
 import {
   CommentDetail,
   Comments,
@@ -34,9 +34,7 @@ import {
 import { Root } from './Root';
 import { reducer as rootReducer } from './Root';
 import { Search, SearchResults } from './Search';
-import {
-  reducer as searchReducer,
-} from './Search';
+import { reducer as searchReducer } from './Search';
 import { Settings } from './Settings';
 
 export const reducer: any = combineReducers({
@@ -46,22 +44,16 @@ export const reducer: any = combineReducers({
   root: rootReducer,
 });
 
-const AuthSettings = UserIsAuthenticated(UserIsAdmin(Settings));
-
 const commentsRoutes = (path: string) => (
   <Route path={path} component={Comments}>
     <IndexRedirect to="new" />
     <Route path="new">
       <IndexRedirect to="SUMMARY_SCORE" />
-      <Route path=":tag">
-        <IndexRoute component={NewComments} />
-      </Route>
+      <Route path=":tag" component={NewComments}/>
     </Route>
     <Route path="moderated">
       <IndexRedirect to="approved" />
-      <Route path=":tag">
-        <IndexRoute component={ModeratedComments} />
-      </Route>
+      <Route path=":tag" component={ModeratedComments}/>
     </Route>
     <Route path="tagselector" component={TagSelector} />
     <Route path="comments/:commentId" component={CommentDetail} />
@@ -71,8 +63,7 @@ const commentsRoutes = (path: string) => (
 
 export const scenes = (history: any) => (
   <Router history={history}>
-    <Route path="settings" component={AuthSettings} />
-    <Route path="/" component={UserIsAuthenticated(Root)}>
+    <Route path="/" component={Root}>
       <IndexRedirect to="dashboard/all" />
       <Route path="dashboard" component={Dashboard}>
         <IndexRedirect to="all" />
@@ -82,6 +73,7 @@ export const scenes = (history: any) => (
         <IndexRoute component={SearchResults} />
         <Route path="articles/:articleId/comments/:commentId" component={CommentDetail} />
       </Route>
+      <Route path="settings" component={Settings} />
       <Route path="articles">
         {commentsRoutes(':articleId')}
       </Route>

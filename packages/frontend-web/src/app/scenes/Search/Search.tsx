@@ -125,11 +125,12 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
   componentWillUpdate(nextProps: ISearchProps, nextState: ISearchState) {
     if ( nextProps.allCommentIds.size > 0 && this.props.allCommentIds.size !== nextProps.allCommentIds.size && !nextState.searchReturned && !nextState.searchRequested) {
       // Aphrodite styles need to reinitialize
-      setTimeout(
-        this.setState({
-          searchReturned: true,
-          searchRequested: true,
-        }),
+      setTimeout(() => {
+          this.setState({
+            searchReturned: true,
+            searchRequested: true,
+          });
+        },
         180,
       );
     }

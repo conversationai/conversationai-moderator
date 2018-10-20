@@ -18,7 +18,7 @@ import * as chai from 'chai';
 import {
   findOrCreateUserSocialAuth,
   isValidUser,
-} from '../../../domain/auth/users';
+} from '../../../domain/auth';
 import {
   User,
   UserSocialAuth,
@@ -161,8 +161,8 @@ describe('Auth Domain Users Tests', function() {
       assert.equal(createdUser1.id, createdSocialAuth1.get('userId'));
 
       try {
-        await findOrCreateUserSocialAuth(createdUser2, userSocialAuthData2)
-        throw new Error('findOrCreateUserSocialAuth resolved successfully when it should have thrown a unique constraint error');
+        await findOrCreateUserSocialAuth(createdUser2, userSocialAuthData2);
+        assert(false, 'findOrCreateUserSocialAuth resolved successfully when it should have thrown a unique constraint error');
       } catch (err) {
         assert.instanceOf(err, sequelize.UniqueConstraintError);
       }

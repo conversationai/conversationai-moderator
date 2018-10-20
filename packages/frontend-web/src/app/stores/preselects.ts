@@ -15,55 +15,36 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { Action, createAction } from 'redux-actions';
-import { TypedRecord } from 'typed-immutable-record';
+import { Action, createAction, handleActions } from 'redux-actions';
+import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import { IPreselectModel } from '../../models';
-import { listModels, makeAJAXAction, makeRecordListReducer, IRecordListStateRecord } from '../util';
-import { IAppStateRecord, IThunkAction } from './index';
+import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'preselects'];
 const PRESELECTS_DATA = [...STATE_ROOT, 'items'];
-const PRESELECTS_LOADING_STATUS = [...STATE_ROOT, 'isFetching'];
-const PRESELECTS_HAS_DATA = [...STATE_ROOT, 'hasData'];
 
-const loadPreselectsStart = createAction(
-  'all-preselects/LOAD_PRESELECTS_START',
-);
-const loadPreselectsComplete = createAction<object>(
-  'all-preselects/LOAD_PRESELECTS_COMPLETE',
+export const preselectsUpdated = createAction(
+  'all-preselects/UPDATED',
 );
 
 export function getPreselects(state: IAppStateRecord): List<IPreselectModel> {
   return state.getIn(PRESELECTS_DATA);
 }
 
-export function getPreselectsIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(PRESELECTS_LOADING_STATUS);
+export interface IPreselectsState {
+  items: List<IPreselectModel>;
 }
 
-export function loadPreselects(forceUpdate?: boolean): IThunkAction<void> {
-  return makeAJAXAction(
-    () => listModels('preselects', {
-      page: { limit: -1 },
-    }),
-    loadPreselectsStart,
-    loadPreselectsComplete,
-    (state: IAppStateRecord) => forceUpdate ? null : state.getIn(PRESELECTS_HAS_DATA) && getPreselects(state),
-  );
-}
+export interface IPreselectsStateRecord extends TypedRecord<IPreselectsStateRecord>, IPreselectsState {}
 
-export interface IPreselectState {
-  preselects: List<IPreselectModel>;
-}
+const StateFactory = makeTypedFactory<IPreselectsState, IPreselectsStateRecord>({
+  items: List<IPreselectModel>(),
+});
 
-export interface IPreselectStateRecord extends TypedRecord<IPreselectStateRecord>, IPreselectState {}
-
-const recordListReducer = makeRecordListReducer<IPreselectModel>(
-  loadPreselectsStart.toString(),
-  loadPreselectsComplete.toString(),
-);
-
-const reducer: (state: IRecordListStateRecord<IPreselectModel>, action: Action<object|IPreselectModel>) => IRecordListStateRecord<IPreselectModel>
-  = recordListReducer.reducer;
+const reducer = handleActions<IPreselectsStateRecord, List<IPreselectModel>>( {
+  [preselectsUpdated.toString()]: (state: IPreselectsStateRecord, { payload }: Action<List<IPreselectModel>>) => {
+    return state.set('items', payload);
+  },
+}, StateFactory());
 
 export { reducer };
