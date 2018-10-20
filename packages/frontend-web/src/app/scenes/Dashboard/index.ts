@@ -22,8 +22,8 @@ import { combineReducers } from 'redux-immutable';
 import { createStructuredSelector } from 'reselect';
 import { CategoryModel } from '../../../models';
 import { IAppStateRecord } from '../../stores';
-import {getCategories} from '../../stores/categories';
-import {getCurrentUser, getCurrentUserIsAdmin} from '../../stores/users';
+import { getCategories } from '../../stores/categories';
+import { getCurrentUser, getCurrentUserIsAdmin } from '../../stores/users';
 import { reducer as articlesReducer } from './components/DashboardArticles';
 import { Dashboard as PureDashboard } from './Dashboard';
 

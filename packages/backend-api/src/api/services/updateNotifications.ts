@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import * as express from 'express';
-import {isEqual, pick} from 'lodash';
+import { isEqual, pick } from 'lodash';
 import * as WebSocket from 'ws';
 
 import {
@@ -25,7 +25,7 @@ import {
   IArticleInstance, ICategoryInstance, IModerationRuleInstance, IPreselectInstance,
   ITaggingSensitivityInstance, ITagInstance, IUserInstance,
 } from '@conversationai/moderator-backend-core';
-import {logger, registerInterest} from '@conversationai/moderator-backend-core';
+import { logger, registerInterest } from '@conversationai/moderator-backend-core';
 
 const tagFields = ['id', 'color', 'description', 'key', 'label', 'isInBatchView', 'inSummaryScore', 'isTaggable'];
 const rangeFields = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'tagId'];

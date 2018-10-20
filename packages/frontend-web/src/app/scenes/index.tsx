@@ -34,7 +34,7 @@ import {
 import { Root } from './Root';
 import { reducer as rootReducer } from './Root';
 import { Search, SearchResults } from './Search';
-import {reducer as searchReducer} from './Search';
+import { reducer as searchReducer } from './Search';
 import { Settings } from './Settings';
 
 export const reducer: any = combineReducers({

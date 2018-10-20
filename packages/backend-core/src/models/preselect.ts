@@ -16,7 +16,7 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
-import {updateHappened} from './last_update';
+import { updateHappened } from './last_update';
 
 export interface IPreselectAttributes {
   id?: number;

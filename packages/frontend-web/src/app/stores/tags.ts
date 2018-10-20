@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {List} from 'immutable';
-import {Action, createAction, handleActions} from 'redux-actions';
-import {makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+import { List } from 'immutable';
+import { Action, createAction, handleActions } from 'redux-actions';
+import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
-import {ITagModel} from '../../models';
-import {IAppStateRecord} from './index';
+import { ITagModel } from '../../models';
+import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'tags'];
 const TAGS_DATA = [...STATE_ROOT, 'items'];

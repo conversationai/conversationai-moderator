@@ -15,15 +15,15 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import {Location} from 'history';
+import { Location } from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {DispatchProp} from 'react-redux';
+import { DispatchProp } from 'react-redux';
 
 import { FOCUS_DATA_ATTR } from '../../config';
 import { focusedElement } from '../../stores/focus';
 import { css, stylesheet } from '../../util';
-import {Login} from '../Login';
+import { Login } from '../Login';
 
 const STYLE = stylesheet({
   base: { height: '100%' },
