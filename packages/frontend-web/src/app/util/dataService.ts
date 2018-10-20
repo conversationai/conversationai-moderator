@@ -906,6 +906,8 @@ export interface IUserSummary {
   assignments: number;
 }
 
+// TODO: Ideally we'd have a type file describing types sent over the wire.
+//       When this is availabe, replace the "any" types in the code below.
 // TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
 //       Convert for now.  But at some point need to refactor to use numbers.
 function packSystemData(data: any): ISystemSummary {
@@ -961,7 +963,7 @@ function packGlobalData(data: any): IGlobalSummary {
     })),
 
     deferred: data.deferred,
-};
+  };
 }
 
 let gotSystem = false;
