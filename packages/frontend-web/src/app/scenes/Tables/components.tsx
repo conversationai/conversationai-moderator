@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import {autobind} from 'core-decorators';
 import React from 'react';
 import Timer = NodeJS.Timer;
 
@@ -109,6 +110,7 @@ export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
     return (<span>{text}</span>);
   }
 
+  @autobind
   doUpdate() {
     this.timeoutId = undefined;
     this.forceUpdate();
