@@ -164,13 +164,13 @@ function removeSocket(si: ISocketItem, ws: WebSocket) {
   }
 }
 
-async function refreshGlobalMessages(updateHappened: boolean) {
-  let sendSystem = !updateHappened;
+async function refreshGlobalMessages(alwaysSend: boolean) {
+  let sendSystem = alwaysSend;
   if (!lastSystemSummaryMessage) {
     lastSystemSummaryMessage = await getSystemSummary();
     sendSystem = true;
   }
-  else if (updateHappened) {
+  else if (!alwaysSend) {
     const newMessage = await getSystemSummary();
     sendSystem = !isEqual(newMessage.data, lastSystemSummaryMessage.data);
     if (sendSystem) {
@@ -178,12 +178,12 @@ async function refreshGlobalMessages(updateHappened: boolean) {
     }
   }
 
-  let sendGlobal = !updateHappened;
+  let sendGlobal = alwaysSend;
   if (!lastGlobalSummaryMessage) {
     lastGlobalSummaryMessage = await getGlobalSummary();
     sendGlobal = true;
   }
-  else if (updateHappened) {
+  else if (!alwaysSend) {
     const newMessage = await getGlobalSummary();
     sendGlobal = !isEqual(newMessage.data, lastGlobalSummaryMessage.data);
     if (sendGlobal) {
@@ -191,13 +191,13 @@ async function refreshGlobalMessages(updateHappened: boolean) {
     }
   }
 
-  return {sendSystem, sendGlobal};
+  return {sendSystem, sendGlobal, sendUser: alwaysSend};
 }
 
 async function maybeSendUpdateToUser(si: ISocketItem,
-                                     {sendSystem, sendGlobal}: {sendSystem: boolean, sendGlobal: boolean}) {
+                                     {sendSystem, sendGlobal, sendUser}: {sendSystem: boolean, sendGlobal: boolean, sendUser: boolean}) {
   const userSummaryMessage = await getUserSummary(si.userId);
-  const sendUser = !si.lastUserSummary || !isEqual(userSummaryMessage.data, si.lastUserSummary);
+  sendUser = sendUser || !si.lastUserSummary || !isEqual(userSummaryMessage.data, si.lastUserSummary);
 
   for (const ws of si.ws) {
     try {
@@ -228,7 +228,7 @@ async function maybeSendUpdateToUser(si: ISocketItem,
 
 async function maybeSendUpdates() {
   for (const si of socketItems.values()) {
-    maybeSendUpdateToUser(si, await refreshGlobalMessages(true));
+    maybeSendUpdateToUser(si, await refreshGlobalMessages(false));
   }
 }
 
@@ -264,7 +264,7 @@ export function createUpdateNotificationService(): express.Router {
     });
 
     logger.info(`Websocket opened to ${req.user.email}`);
-    maybeSendUpdateToUser(si, await refreshGlobalMessages(false));
+    maybeSendUpdateToUser(si, await refreshGlobalMessages(true));
   });
 
   return router;
