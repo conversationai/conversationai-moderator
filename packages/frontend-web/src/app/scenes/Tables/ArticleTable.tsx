@@ -22,7 +22,7 @@ import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
 import * as icons from '../../components/Icons';
 import { NICE_MIDDLE_BLUE } from '../../styles';
 import { css } from '../../util';
-import { articlesLink, dashboardLink } from '../routes';
+import {articlesLink, categoriesLink, dashboardLink} from '../routes';
 import { MagicTimestamp } from './components';
 import { ARTICLE_TABLE_STYLES, COMMON_STYLES } from './styles';
 import {
@@ -142,33 +142,44 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     if (article.id !== 'summary') {
       lastModerated = ArticleTable.renderTime(article.lastModeratedAt);
     }
+
+    function getLink(tag: string) {
+      if (article.id === 'summary') {
+        if (article.category) {
+          return categoriesLink(article.category.id, tag);
+        }
+        return categoriesLink('all', tag);
+      }
+      return articlesLink(article.id, tag);
+    }
+
     return (
       <tr key={article.id} {...css(ARTICLE_TABLE_STYLES.dataBody)}>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
           {ArticleTable.renderTitle(article)}
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={articlesLink(article.id, 'new')} {...css(COMMON_STYLES.cellLink)}>
+          <Link to={getLink('new')} {...css(COMMON_STYLES.cellLink)}>
             {article.unmoderatedCount}
           </Link>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={articlesLink(article.id, 'approved')} {...css(COMMON_STYLES.cellLink)}>
+          <Link to={getLink('approved')} {...css(COMMON_STYLES.cellLink)}>
             {article.approvedCount}
           </Link>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={articlesLink(article.id, 'rejected')} {...css(COMMON_STYLES.cellLink)}>
+          <Link to={getLink('rejected')} {...css(COMMON_STYLES.cellLink)}>
             {article.rejectedCount}
           </Link>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={articlesLink(article.id, 'deferred')} {...css(COMMON_STYLES.cellLink)}>
+          <Link to={getLink('deferred')} {...css(COMMON_STYLES.cellLink)}>
             {article.deferredCount}
           </Link>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={articlesLink(article.id, 'flagged')} {...css(COMMON_STYLES.cellLink)}>
+          <Link to={getLink('flagged')} {...css(COMMON_STYLES.cellLink)}>
             {article.flaggedCount}
           </Link>
         </td>
@@ -285,6 +296,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     if (filter.length > 1 || (filter.length === 1 && filter[0].key !== 'category')) {
       summary['title'] += ' matching filter';
     }
+    summary['category'] = category;
     summary['assignedModerators'] = category ? category.assignedModerators : [];
 
     return (
