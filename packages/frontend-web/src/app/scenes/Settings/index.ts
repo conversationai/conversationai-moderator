@@ -23,7 +23,6 @@ import {
   IRuleModel,
   ITaggingSensitivityModel,
   ITagModel,
-  IUserModel,
 } from '../../../models';
 import { IAppDispatch, IAppState } from '../../stores';
 import { getCategories } from '../../stores/categories';
@@ -35,11 +34,12 @@ import { getUsers } from '../../stores/users';
 import { ISettingsProps, Settings as PureSettings } from './Settings';
 
 import {
+  addUser,
+  modifyUser,
   updatePreselects,
   updateRules,
   updateTaggingSensitivities,
   updateTags,
-  updateUsers,
 } from './store';
 
 export type ISettingsOwnProps = Pick<
@@ -64,7 +64,8 @@ export type ISettingsDispatchProps = Pick<
   'updateRules' |
   'updateTaggingSensitivities' |
   'updateTags' |
-  'updateUsers'
+  'addUser' |
+  'modifyUser'
 >;
 
 const mapStateToProps = createStructuredSelector({
@@ -85,7 +86,8 @@ function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
     updateRules: (oldRules, newRules) => dispatch(updateRules(oldRules, newRules)),
     updateTaggingSensitivities: (oldTaggingSensitivities, newTaggingSensitivities) => dispatch(updateTaggingSensitivities(oldTaggingSensitivities, newTaggingSensitivities)),
     updateTags: (oldTags, newTags) => dispatch(updateTags(oldTags, newTags)),
-    updateUsers: (oldUsers, newUsers) => dispatch(updateUsers(oldUsers, newUsers)),
+    addUser: addUser,
+    modifyUser: modifyUser,
   };
 }
 
@@ -103,7 +105,6 @@ function mergeProps(
       newRules: List<IRuleModel>,
       newTaggingSensitivities: List<ITaggingSensitivityModel>,
       newTags: List<ITagModel>,
-      newUsers: List<IUserModel>,
     ) => {
       try {
         Promise.all([
@@ -111,7 +112,6 @@ function mergeProps(
           dispatchProps.updateRules(stateProps.rules, newRules),
           dispatchProps.updateTaggingSensitivities(stateProps.taggingSensitivities, newTaggingSensitivities),
           dispatchProps.updateTags(stateProps.tags, newTags),
-          dispatchProps.updateUsers(stateProps.users, newUsers),
         ]);
       } catch (exception) {
         return exception as Error;

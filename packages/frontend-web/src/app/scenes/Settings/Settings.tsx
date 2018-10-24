@@ -183,13 +183,13 @@ export interface ISettingsProps extends WithRouterProps {
   updateRules?(oldRules: List<IRuleModel>, newRules: List<IRuleModel>): void;
   updateTaggingSensitivities?(oldTaggingSensitivities: List<ITaggingSensitivityModel>, newTaggingSensitivities: List<ITaggingSensitivityModel>): void;
   updateTags?(oldTags: List<ITagModel>, newTags: List<ITagModel>): void;
-  updateUsers?(oldUsers: List<IUserModel>, newUsers: List<IUserModel>): void;
+  addUser?(user: IUserModel): Promise<void>;
+  modifyUser?(user: IUserModel): Promise<void>;
   submitForm?(
     newPreselects: List<IPreselectModel>,
     newRules: List<IRuleModel>,
     newTaggingSensitivities: List<ITaggingSensitivityModel>,
     newTags: List<ITagModel>,
-    newUsers: List<IUserModel>,
   ): Error;
 }
 
@@ -199,7 +199,6 @@ export interface ISettingsState {
   rules?: List<IRuleModel>;
   taggingSensitivities?:  List<ITaggingSensitivityModel>;
   preselects?:  List<IPreselectModel>;
-  baseUsers?: List<IUserModel>;
   baseTags?: List<ITagModel>;
   baseRules?: List<IRuleModel>;
   baseTaggingSensitivities?:  List<ITaggingSensitivityModel>;
@@ -219,7 +218,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     rules: this.props.rules,
     taggingSensitivities:  this.props.taggingSensitivities,
     preselects:  this.props.preselects,
-    baseUsers: this.props.users,
     baseTags: this.props.tags,
     baseRules: this.props.rules,
     baseTaggingSensitivities:  this.props.taggingSensitivities,
@@ -235,7 +233,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   componentWillUpdate(nextProps: ISettingsProps) {
     if (!this.props.users.equals(nextProps.users)) {
       this.setState({
-        baseUsers: nextProps.users,
         users: nextProps.users,
       });
     }
@@ -362,17 +359,14 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  async handleFormSubmit(event?: React.FormEvent<any>) {
-    if (event) {
-      event.preventDefault();
-    }
+  async handleFormSubmit(event: React.FormEvent<any>) {
+    event.preventDefault();
 
     const {
       tags: tagsNew,
       rules: rulesNew,
       preselects: preselectsNew,
       taggingSensitivities: taggingSensitivitiesNew,
-      users: usersNew,
     } = this.state;
 
     const submitErrorStatus = await this.props.submitForm(
@@ -380,7 +374,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       rulesNew,
       taggingSensitivitiesNew,
       tagsNew,
-      usersNew,
     );
 
     if (submitErrorStatus) {
@@ -571,7 +564,14 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       isAddUserScrimOpen: false,
     });
 
-    this.handleFormSubmit();
+    try {
+      await this.props.addUser(user);
+    }
+    catch (e) {
+      this.setState({
+        submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
+      });
+    }
   }
 
   @autobind
@@ -581,7 +581,14 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       isEditUserScrimOpen: false,
     });
 
-    this.handleFormSubmit();
+    try {
+      await this.props.modifyUser(user);
+    }
+    catch (e) {
+      this.setState({
+        submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
+      });
+    }
   }
 
   @autobind
@@ -594,6 +601,63 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({ homeIsFocused: false });
   }
 
+  renderUsers() {
+    const { users } = this.state;
+    const sortedUsers = users.sort((a, b) => a.name.localeCompare(b.name));
+
+    return (
+      <div key="editUsersSection">
+        <div key="heading" {...css(STYLES.heading)}>
+          <h2 {...css(STYLES.headingText)}>Users</h2>
+        </div>
+        <div key="body" {...css(STYLES.section)}>
+          <div {...css(SETTINGS_STYLES.row)}>
+            <table>
+              <thead>
+              <tr>
+                <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+                  Name
+                </th>
+                <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
+                  Email
+                </th>
+                <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+                  Role
+                </th>
+                <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+                  Is Active
+                </th>
+                <th key="5" {...css(SETTINGS_STYLES.userTableCell)}/>
+              </tr>
+              </thead>
+              <tbody>
+              {sortedUsers.map((u) => (
+                <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+                  <td {...css(SETTINGS_STYLES.userTableCell)}>
+                    {u.name}
+                  </td>
+                  <td {...css(SETTINGS_STYLES.userTableCell)}>
+                    {u.email}
+                  </td>
+                  <td {...css(SETTINGS_STYLES.userTableCell)}>
+                    {u.group}
+                  </td>
+                  <td {...css(SETTINGS_STYLES.userTableCell)}>
+                    {u.isActive ? 'Active' : ''}
+                  </td>
+                  <td {...css(SETTINGS_STYLES.userTableCell)}>
+                    <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id}/>
+                  </td>
+                </tr>
+              ))}
+              </tbody>
+            </table>
+          </div>
+          <AddButton width={44} onClick={this.handleAddUser} label="Add a user"/>
+        </div>
+      </div>
+    );
+  }
   render() {
     const {
       categories,
@@ -602,7 +666,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
     const {
       tags,
-      users,
       rules,
       taggingSensitivities,
       preselects,
@@ -613,7 +676,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       homeIsFocused,
       submitStatus,
     } = this.state;
-    const sortedUsers = users.sort((a, b) => a.name.localeCompare(b.name));
 
     const summaryScoreTag = tags.find((tag) => tag.key === 'SUMMARY_SCORE');
     const summaryScoreTagId = summaryScoreTag && summaryScoreTag.id;
@@ -661,58 +723,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         </div>
         <div {...css(STYLES.body)}>
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
+          {this.renderUsers()}
           <form onSubmit={this.handleFormSubmit} {...css(STYLES.formContainer)}>
-            <div key="editUsersSection">
-              <div key="heading" {...css(STYLES.heading)}>
-                <h2 {...css(STYLES.headingText)}>Users</h2>
-              </div>
-              <div key="body" {...css(STYLES.section)}>
-                <div {...css(SETTINGS_STYLES.row)}>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
-                          Name
-                        </th>
-                        <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
-                          Email
-                        </th>
-                        <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
-                          Role
-                        </th>
-                        <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
-                          Is Active
-                        </th>
-                        <th key="5" {...css(SETTINGS_STYLES.userTableCell)}/>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {sortedUsers.map((u) => (
-                        <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
-                          <td {...css(SETTINGS_STYLES.userTableCell)}>
-                            {u.name}
-                          </td>
-                          <td {...css(SETTINGS_STYLES.userTableCell)}>
-                            {u.email}
-                          </td>
-                          <td {...css(SETTINGS_STYLES.userTableCell)}>
-                            {u.group}
-                          </td>
-                          <td {...css(SETTINGS_STYLES.userTableCell)}>
-                            {u.isActive ? 'Active' : ''}
-                          </td>
-                          <td {...css(SETTINGS_STYLES.userTableCell)}>
-                            <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id}/>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <AddButton width={44} onClick={this.handleAddUser} label="Add a user"/>
-              </div>
-            </div>
-
             <div key="editTagsSection">
               <div key="heading" {...css(STYLES.heading)}>
                 <h2 {...css(STYLES.headingText)}>Tags</h2>
