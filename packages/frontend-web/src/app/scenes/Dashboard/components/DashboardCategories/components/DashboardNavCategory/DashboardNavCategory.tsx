@@ -26,6 +26,7 @@ import {
   WHITE_COLOR,
 } from '../../../../../../styles';
 import { css, stylesheet } from '../../../../../../util';
+import { oldDashboardLink } from '../../../../../routes';
 
 const STYLES = stylesheet({
   button: {
@@ -104,7 +105,7 @@ export class DashboardNavCategory extends React.Component<IDashboardNavCategoryP
           isActive && STYLES.active,
         )}
       >
-        <Link key={`label${slug}`} to={`/dashboard/${slug}`} {...css(STYLES.label)}>{label}</Link>
+        <Link key={`label${slug}`} to={oldDashboardLink(slug)} {...css(STYLES.label)}>{label}</Link>
         {(slug === 'assignments' || slug === 'deferred') ? (
           <span
             key={`count${slug}`}

@@ -17,14 +17,17 @@ limitations under the License.
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { compose } from 'redux';
+
+import { oldDashboardLink } from '../../../../../routes';
 import { DashboardNavCategory as PureDashboardNavCategory, IDashboardNavCategoryProps } from './DashboardNavCategory';
 
 export type IDashboardNavCategoryOwnProps = Pick<IDashboardNavCategoryProps, 'label' | 'count' | 'slug'>;
 type IDashboardNavCategoryStateProps = Pick<IDashboardNavCategoryProps, 'isActive' | 'hasNewItems'>;
 
 function mapStateToProps(_state: any, { slug, router }: any): IDashboardNavCategoryStateProps {
+  const mylink = oldDashboardLink(slug);
   return {
-    isActive: router.isActive(`/dashboard/${slug}`),
+    isActive: router.isActive(mylink),
     hasNewItems: false,
   };
 }

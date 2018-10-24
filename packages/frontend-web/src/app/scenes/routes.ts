@@ -56,3 +56,10 @@ export function categoriesLink(id: string, type: string) {
 }
 
 export const oldDashboardBase = 'dashboard-old';
+export function oldDashboardLink(slug?: string) {
+  let ret = `/${oldDashboardBase}`;
+  if (slug) {
+    ret = `${ret}/${slug}`;
+  }
+  return ret;
+}
