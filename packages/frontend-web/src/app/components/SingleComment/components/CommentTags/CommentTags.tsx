@@ -15,10 +15,11 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
+import FocusTrap from 'focus-trap-react';
 import { List } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
-const FocusTrap = require('focus-trap-react');
+
 import { ICommentScoreModel, ITagModel } from '../../../../../models';
 import {
   GREY_COLOR,

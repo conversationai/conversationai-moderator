@@ -15,11 +15,11 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
+import FocusTrap from 'focus-trap-react';
 import { List } from 'immutable';
 import { generate } from 'randomstring';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
-const FocusTrap = require('focus-trap-react');
 
 import {
   CategoryModel,

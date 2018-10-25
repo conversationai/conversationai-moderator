@@ -15,11 +15,11 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
+import FocusTrap from 'focus-trap-react';
+import keyboardJS from 'keyboardjs';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const FocusTrap = require('focus-trap-react');
-import keyboardJS from 'keyboardjs';
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
 import { logout } from '../../auth';
 import {

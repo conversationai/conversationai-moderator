@@ -76,7 +76,7 @@
     "fastclick": "1.0.6",
     "file-loader": "0.10.1",
     "fixed-data-table-2": "0.8.13",
-    "focus-trap-react": "3.1.2",
+    "focus-trap-react": "4.0.1",
     "inline-style-prefixer": "3.0.1",
     "jest": "19.0.2",
     "json-loader": "0.5.4",

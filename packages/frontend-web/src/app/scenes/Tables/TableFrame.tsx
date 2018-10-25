@@ -14,13 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { autobind } from 'core-decorators';
+import FocusTrap from 'focus-trap-react';
 import { List } from 'immutable';
+import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { Link, WithRouterProps } from 'react-router';
 
 import { ICategoryModel, IUserModel } from '../../../models';
 import { logout } from '../../auth';
 import * as icons from '../../components/Icons';
+import {Scrim} from '../../components/Scrim';
 import {
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
@@ -72,6 +75,7 @@ const STYLES = stylesheet({
     flexGrow: 0,
     height: `${HEADER_HEIGHT - 10 - 3}px`,
   },
+
   headerItemSelected: {
     background: NICE_MIDDLE_BLUE,
     borderTopLeftRadius: `${6}px`,
@@ -85,19 +89,10 @@ const STYLES = stylesheet({
       textDecoration: 'underline',
     },
   },
+
   headerText: {
     fontSize: '10px',
     color: LIGHT_PRIMARY_TEXT_COLOR,
-  },
-  sidebarOverlay: {
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    right: '0',
-    bottom: '0',
-    backgroundColor: 'black',
-    opacity: '0.4',
-    zIndex: '1',
   },
 
   sidebar: {
@@ -109,7 +104,7 @@ const STYLES = stylesheet({
     backgroundColor: SIDEBAR_BLUE,
     color: 'white',
     opacity: '1',
-    zIndex: '2',
+    zIndex: 30,
   },
 
   sidebarHeader: {
@@ -189,6 +184,14 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     this.setState({sidebarVisible: false});
   }
 
+  componentWillMount() {
+    keyboardJS.bind('escape', this.hideSidebar);
+  }
+
+  componentWillUnmount() {
+    keyboardJS.unbind('escape', this.hideSidebar);
+  }
+
   renderSidebar(isMe: boolean, category?: ICategoryModel) {
     if (!this.state.sidebarVisible) {
       return '';
@@ -204,38 +207,39 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     const allUnmoderated = categories.reduce((r: number, v: ICategoryModel) => (r + v.unmoderatedCount), 0);
 
     return (
-      <div>
-        <div key="overlay" {...css(STYLES.sidebarOverlay)}/>
-        <div key="sidebar" {...css(STYLES.sidebar)}>
-          <div key="header" {...css(STYLES.sidebarHeader)} onClick={this.hideSidebar}>
-            {user.avatarURL ?
-              <img src={user.avatarURL} {...css(COMMON_STYLES.smallImage, STYLES.sidebarHeaderIcon)}/> :
-              <icons.UserIcon {...css(COMMON_STYLES.smallIcon, STYLES.sidebarHeaderIcon, {color: NICE_MIDDLE_BLUE})}/>
-            }
-            {user.name}
-          </div>
-          <div key="labels" {...css(STYLES.sidebarRow, STYLES.sidebarRowHeader)}>
-            <div key="label" {...css(STYLES.sidebarSection)}>Section</div>
-            <div key="count" {...css(STYLES.sidebarCount)}>New comments</div>
-          </div>
-          <div key="all" {...css(STYLES.sidebarRow, category ? {} : STYLES.sidebarRowSelected)}>
-            <div key="label" {...css(STYLES.sidebarSection)}>
-              <Link to={allLink} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>All</Link>
+      <Scrim isVisible onBackgroundClick={this.hideSidebar} scrimStyles={{background: 'rgba(0, 0, 0, 0.4)'}}>
+        <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}}>
+          <div key="sidebar" {...css(STYLES.sidebar)}>
+            <div key="header" {...css(STYLES.sidebarHeader)} onClick={this.hideSidebar}>
+              {user.avatarURL ?
+                <img src={user.avatarURL} {...css(COMMON_STYLES.smallImage, STYLES.sidebarHeaderIcon)}/> :
+                <icons.UserIcon {...css(COMMON_STYLES.smallIcon, STYLES.sidebarHeaderIcon, {color: NICE_MIDDLE_BLUE})}/>
+              }
+              {user.name}
             </div>
-            <div key="count" {...css(STYLES.sidebarCount)}>{allUnmoderated}</div>
-          </div>
-          {categories.map((c: ICategoryModel) => (
-            <div key={c.id} {...css(STYLES.sidebarRow, category && category.id === c.id ? STYLES.sidebarRowSelected : {})}>
+            <div key="labels" {...css(STYLES.sidebarRow, STYLES.sidebarRowHeader)}>
+              <div key="label" {...css(STYLES.sidebarSection)}>Section</div>
+              <div key="count" {...css(STYLES.sidebarCount)}>New comments</div>
+            </div>
+            <div key="all" {...css(STYLES.sidebarRow, category ? {} : STYLES.sidebarRowSelected)}>
               <div key="label" {...css(STYLES.sidebarSection)}>
-                <Link to={dashboardLink(`category=${c.id}${isMeSuffix}`)} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
-                  {c.label}
-                </Link>
+                <Link to={allLink} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>All</Link>
               </div>
-              <div key="count" {...css(STYLES.sidebarCount)}>{c.unmoderatedCount}</div>
+              <div key="count" {...css(STYLES.sidebarCount)}>{allUnmoderated}</div>
             </div>
-          ))}
-        </div>
-      </div>
+            {categories.map((c: ICategoryModel) => (
+              <div key={c.id} {...css(STYLES.sidebarRow, category && category.id === c.id ? STYLES.sidebarRowSelected : {})}>
+                <div key="label" {...css(STYLES.sidebarSection)}>
+                  <Link to={dashboardLink(`category=${c.id}${isMeSuffix}`)} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
+                    {c.label}
+                  </Link>
+                </div>
+                <div key="count" {...css(STYLES.sidebarCount)}>{c.unmoderatedCount}</div>
+              </div>
+            ))}
+          </div>
+        </FocusTrap>
+      </Scrim>
     );
   }
 

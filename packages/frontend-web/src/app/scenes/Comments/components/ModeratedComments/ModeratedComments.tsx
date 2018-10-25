@@ -15,12 +15,12 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
+import FocusTrap from 'focus-trap-react';
 import { List, Map, Set } from 'immutable';
+import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
-import { css, partial, stylesheet } from '../../../../util';
-const FocusTrap = require('focus-trap-react');
-import keyboardJS from 'keyboardjs';
+
 import { IArticleModel, ICommentModel, ITagModel, TagModel } from '../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../types';
 import { AssignTagsForm, Scrim } from '../../../../components';
@@ -53,7 +53,8 @@ import {
   TOOLTIP_Z_INDEX,
   WHITE_COLOR,
 } from '../../../../styles';
-import { getSortDefault } from '../../../../util/sortDefinitions';
+import { css, partial, stylesheet } from '../../../../util';
+import { getSortDefault } from '../../../../util';
 import { ModeratedStatusTabs } from './components/ModeratedStatusTabs';
 
 const ARROW_SIZE = 6;

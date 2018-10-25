@@ -14,11 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
-const FocusTrap = require('focus-trap-react');
 import { autobind } from 'core-decorators';
+import FocusTrap from 'focus-trap-react';
 import { List } from 'immutable';
 import keyboardJS from 'keyboardjs';
+import React from 'react';
+
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
 import {
   Header,

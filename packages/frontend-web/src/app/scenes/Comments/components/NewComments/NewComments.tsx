@@ -15,11 +15,11 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
+import FocusTrap from 'focus-trap-react';
 import { List, Map, Set } from 'immutable';
-import React from 'react';
-import { css, stylesheet } from '../../../../util';
-const FocusTrap = require('focus-trap-react');
 import keyboardJS from 'keyboardjs';
+import React from 'react';
+
 import {
   IArticleModel,
   ICommentDatedModel,
@@ -68,6 +68,7 @@ import {
   TOOLTIP_Z_INDEX,
   WHITE_COLOR,
 } from '../../../../styles';
+import { css, stylesheet } from '../../../../util';
 import {
   clearReturnSavedCommentRow,
   getReturnSavedCommentRow,
