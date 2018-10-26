@@ -14,17 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
+import { autobind } from 'core-decorators';
+import FocusTrap from 'focus-trap-react';
+import { List, Set } from 'immutable';
+import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
 import * as icons from '../../components/Icons';
-import { NICE_MIDDLE_BLUE } from '../../styles';
-import { css } from '../../util';
-import {articlesLink, categoriesLink, dashboardLink} from '../routes';
+import { Scrim } from '../../components/Scrim';
+import { ModelId } from '../../stores/moderators';
+import { NICE_MIDDLE_BLUE, SCRIM_STYLE } from '../../styles';
+import { css, stylesheet, updateRelationshipModels } from '../../util';
+import { AssignModeratorsSimple } from '../Root/components/AssignModerators';
+import { articlesLink, categoriesLink, dashboardLink } from '../routes';
 import { MagicTimestamp } from './components';
-import { ARTICLE_TABLE_STYLES, COMMON_STYLES } from './styles';
+import { ARTICLE_TABLE_STYLES, COMMON_STYLES, IMAGE_BASE } from './styles';
 import {
   executeFilter,
   executeSort, getFilterValue,
@@ -34,6 +40,59 @@ import {
   parseFilter,
   parseSort,
 } from './utils';
+
+const big = {
+  width: `${IMAGE_BASE}px`,
+  height: `${IMAGE_BASE}px`,
+};
+
+const small = {
+  width: `${IMAGE_BASE / 2}px`,
+  height: `${IMAGE_BASE / 2}px`,
+};
+
+const STYLES = stylesheet({
+  big: big,
+  small: small,
+
+  iconBackgroundCircle: {
+    ...big,
+    borderRadius: `${IMAGE_BASE}px`,
+    backgroundColor: '#eee',
+    display: 'inline-block',
+  },
+
+  iconBackgroundCircleSmall: {
+    ...small,
+    borderRadius: `${IMAGE_BASE / 2}px`,
+    backgroundColor: '#eee',
+    display: 'inline-block',
+  },
+
+  iconCenter: {
+    width: `100%`,
+    height: `100%`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  textCenterSmall: {
+    ...small,
+    fontSize: '12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  scrimPopup: {
+    background: 'rgba(0, 0, 0, 0.4)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
+});
 
 export interface IIArticleTableProps extends WithRouterProps {
   myUserId: string;
@@ -45,21 +104,77 @@ export interface IIArticleTableProps extends WithRouterProps {
 }
 
 export interface IIArticleTableState {
+  selectedArticle?: IArticleModel;
+  moderatorIds?: Set<ModelId>;
+  isSaving: boolean;
 }
 
 export class ArticleTable extends React.Component<IIArticleTableProps, IIArticleTableState> {
-  static renderModerators(article: IArticleModel) {
+  state: IIArticleTableState = {
+    selectedArticle: null,
+    moderatorIds: null,
+    isSaving: false,
+  };
+
+  @autobind
+  openSetModerators(article: IArticleModel) {
+    this.setState({
+      selectedArticle: article,
+      moderatorIds: Set<ModelId>(article.assignedModerators.map((m) => m.id)),
+      isSaving: false,
+    });
+  }
+
+  @autobind
+  clearPopups() {
+    this.setState({
+      selectedArticle: null,
+      moderatorIds: null,
+      isSaving: false,
+    });
+  }
+
+  componentWillMount() {
+    keyboardJS.bind('escape', this.clearPopups);
+  }
+
+  componentWillUnmount() {
+    keyboardJS.unbind('escape', this.clearPopups);
+  }
+
+  renderModerators(article: IArticleModel) {
+    if (article.id === 'summary') {
+      return null;
+    }
+
+    const that = this;
+    function openModeratorsDlg() {
+      that.openSetModerators(article);
+    }
+
     if (article.assignedModerators.length === 0) {
-      return <icons.UserIcon {...css(COMMON_STYLES.smallIcon)}/>;
+      return (
+        <div onClick={openModeratorsDlg} {...css(STYLES.iconBackgroundCircle)}>
+          <div {...css(STYLES.iconCenter)} >
+            <icons.UserPlusIcon {...css(COMMON_STYLES.smallIcon, {width: `${30}px`, height: `${30}px`})} onClick={openModeratorsDlg}/>
+          </div>
+        </div>
+      );
     }
 
     if (article.assignedModerators.length === 1) {
       const u = article.assignedModerators[0];
       if (u.avatarURL) {
-        return <img src={u.avatarURL} {...css(COMMON_STYLES.smallImage)}/>;
+        return <img src={u.avatarURL} onClick={openModeratorsDlg} {...css(COMMON_STYLES.smallImage)}/>;
       }
       else {
-        return <icons.UserIcon {...css(COMMON_STYLES.smallIcon, {color: NICE_MIDDLE_BLUE})}/>;
+        return (
+          <div onClick={openModeratorsDlg} {...css(STYLES.iconBackgroundCircle)}>
+            <div {...css(STYLES.iconCenter)} >
+              <icons.UserIcon {...css(COMMON_STYLES.smallIcon, {color: NICE_MIDDLE_BLUE})}/>
+            </div>
+          </div>
+        );
       }
     }
 
@@ -74,18 +189,102 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       limit = 4;
     }
 
-    for (let i = 0; i < limit && i < 3; i++) {
+    for (let i = 0; i < limit; i++) {
       const u = article.assignedModerators[i];
       if (u.avatarURL) {
-        ret.push(<img src={u.avatarURL} {...css(COMMON_STYLES.xsmallImage)}/>);
+        ret.push(<img key={u.id} src={u.avatarURL} {...css(COMMON_STYLES.xsmallImage, {margin: '1px'})}/>);
       }
       else {
-        ret.push(<icons.UserIcon {...css(COMMON_STYLES.xsmallIcon, {color: NICE_MIDDLE_BLUE})}/>);
+        ret.push(
+          <div {...css(STYLES.small, {display: 'inline-block', margin: '1px'})}>
+            <div {...css(STYLES.iconBackgroundCircleSmall)}>
+              <div {...css(STYLES.iconCenter)}>
+                <icons.UserIcon {...css(STYLES.small, {color: NICE_MIDDLE_BLUE})}/>
+              </div>
+            </div>
+          </div>,
+        );
       }
     }
     if (extra) {
-      ret.push(<icons.UserIcon {...css(COMMON_STYLES.xsmallIcon)}/>);
+      ret.push(
+        <div style={{display: 'inline-block', margin: '1px'}}>
+          <div key="extra" {...css(STYLES.textCenterSmall)}>+{article.assignedModerators.length - 3}</div>
+        </div>,
+      );
     }
+
+    return (
+      <div onClick={openModeratorsDlg} {...css({display: 'flex', flexWrap: 'wrap', justifyContent: 'center'})}>
+        {ret}
+      </div>
+    );
+  }
+
+  @autobind
+  onAddModerator(userId: string) {
+    this.setState({moderatorIds: this.state.moderatorIds.add(userId)});
+  }
+
+  @autobind
+  onRemoveModerator(userId: string) {
+    this.setState({moderatorIds: this.state.moderatorIds.remove(userId)});
+  }
+
+  @autobind
+  saveModerators() {
+    const articleId = this.state.selectedArticle.id;
+    const moderatorIds = this.state.moderatorIds.toArray() as Array<string>;
+    this.setState({
+      selectedArticle: null,
+      moderatorIds: null,
+      isSaving: true,
+    });
+
+    updateRelationshipModels(
+      'articles',
+      articleId,
+      'assignedModerators',
+      moderatorIds,
+    ).then(() => {
+      this.clearPopups();
+    });
+  }
+
+  renderSetModerators() {
+    const article = this.state.selectedArticle;
+
+    if (this.state.isSaving) {
+      return (
+        <Scrim isVisible onBackgroundClick={this.clearPopups} scrimStyles={STYLES.scrimPopup}>
+          <div tabIndex={0} {...css(SCRIM_STYLE.popup)}>
+            Saving....
+          </div>
+        </Scrim>
+      );
+    }
+
+    if (!article) {
+      return null;
+    }
+
+    return (
+      <Scrim isVisible onBackgroundClick={this.clearPopups} scrimStyles={STYLES.scrimPopup}>
+        <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}}>
+          <div tabIndex={0} {...css(SCRIM_STYLE.popup, {position: 'relative'})}>
+            <AssignModeratorsSimple
+              label="Assign a moderator"
+              article={article}
+              moderatorIds={this.state.moderatorIds}
+              onAddModerator={this.onAddModerator}
+              onRemoveModerator={this.onRemoveModerator}
+              onClickDone={this.saveModerators}
+              onClickClose={this.clearPopups}
+            />
+          </div>
+        </FocusTrap>
+      </Scrim>
+    );
   }
 
   static renderSupertext(article: IArticleModel) {
@@ -137,7 +336,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     return <MagicTimestamp timestamp={time} inFuture={false}/>;
   }
 
-  static renderRow(article: IArticleModel) {
+  renderRow(article: IArticleModel) {
     let lastModerated: any = '';
     if (article.id !== 'summary') {
       lastModerated = ArticleTable.renderTime(article.lastModeratedAt);
@@ -187,7 +386,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           {lastModerated}
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.moderatorCell)}>
-          {ArticleTable.renderModerators(article)}
+          {this.renderModerators(article)}
         </td>
       </tr>
     );
@@ -343,10 +542,11 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             </tr>
           </thead>
           <tbody>
-            {ArticleTable.renderRow(summary)}
-            {processedArticles.map((article: IArticleModel) => ArticleTable.renderRow(article))}
+            {this.renderRow(summary)}
+            {processedArticles.map((article: IArticleModel) => this.renderRow(article))}
           </tbody>
         </table>
+        {this.renderSetModerators()}
       </div>
     );
   }

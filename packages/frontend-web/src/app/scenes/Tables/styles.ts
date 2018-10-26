@@ -17,7 +17,7 @@ limitations under the License.
 import {HEADER_HEIGHT, NICE_BLUE_GREY, NICE_LIGHT_BLUE, NICE_MIDDLE_BLUE} from '../../styles';
 import {stylesheet} from '../../util';
 
-const IMAGE_BASE = 40;
+export const IMAGE_BASE = 40;
 
 export const ARTICLE_TABLE_STYLES = stylesheet({
   filterHeader: {
