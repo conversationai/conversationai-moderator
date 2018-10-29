@@ -54,7 +54,6 @@
     "passport": "0.4.0",
     "passport-google-oauth20": "1.0.0",
     "passport-jwt": "4.0.0",
-    "redis": "2.7.1",
     "request": "2.87.0",
     "sequelize": "3.30.4",
     "sequelize-cli": "2.7.0",
