@@ -41,7 +41,7 @@ import {
 } from '../../components';
 import { API_URL } from '../../config';
 import { IAppDispatch } from '../../stores';
-import {css, partial, setCSRF, stylesheet} from '../../util';
+import { css, partial, setCSRF, stylesheet } from '../../util';
 import { AddButton, EditButton } from './components/AddButton';
 import { AddUsers } from './components/AddUsers';
 import { EditUsers } from './components/EditUsers';

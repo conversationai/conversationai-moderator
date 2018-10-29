@@ -21,7 +21,7 @@ import * as qs from 'qs';
 import { createToken, isFirstUserInitialised, IUserInstance} from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
-import {generateServerCSRF, getClientCSRF} from './utils';
+import { generateServerCSRF, getClientCSRF } from './utils';
 
 export function createAuthRouter(): express.Router {
   const router = express.Router({

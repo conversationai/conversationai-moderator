@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {google} from 'googleapis';
+import { google } from 'googleapis';
 import * as yargs from 'yargs';
 
-import {Category, logger} from '@conversationai/moderator-backend-core';
+import { Category, logger } from '@conversationai/moderator-backend-core';
 
-import {authorize} from './authenticate';
-import {mapPlaylistItemToArticle} from './objectmap';
+import { authorize } from './authenticate';
+import { mapPlaylistItemToArticle } from './objectmap';
 
 export const command = 'youtube:videos:sync';
 export const describe = 'Sync youtube videos with OSMod articles for each active channel/category.';

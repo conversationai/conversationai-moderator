@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Article, Category, Comment, Decision} from '@conversationai/moderator-backend-core';
-import {IAuthorAttributes, ICommentInstance, IDecisionInstance, IUserInstance} from '@conversationai/moderator-backend-core';
-import {logger, sequelize} from '@conversationai/moderator-backend-core';
-import {postProcessComment, sendForScoring} from '@conversationai/moderator-backend-core';
+import { Article, Category, Comment, Decision } from '@conversationai/moderator-backend-core';
+import { IAuthorAttributes, ICommentInstance, IDecisionInstance, IUserInstance } from '@conversationai/moderator-backend-core';
+import { logger, sequelize } from '@conversationai/moderator-backend-core';
+import { postProcessComment, sendForScoring } from '@conversationai/moderator-backend-core';
 
 export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
   const channelId = channel.id!;

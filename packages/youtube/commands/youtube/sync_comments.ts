@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {google} from 'googleapis';
+import { google } from 'googleapis';
 import * as yargs from 'yargs';
 
-import {logger} from '@conversationai/moderator-backend-core';
+import { logger } from '@conversationai/moderator-backend-core';
 
-import {authorize} from './authenticate';
-import {foreachActiveChannel, mapCommentThreadToComments} from './objectmap';
+import { authorize } from './authenticate';
+import { foreachActiveChannel, mapCommentThreadToComments } from './objectmap';
 
 export const command = 'youtube:comments:sync';
 export const describe = 'Sync youtube comment threads with OSMod comments.';
