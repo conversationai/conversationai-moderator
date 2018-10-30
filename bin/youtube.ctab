@@ -1,0 +1,1 @@
+*/2 * * * * /app/bin/youtube-sync full >> /var/log/cron.log 2>& 1

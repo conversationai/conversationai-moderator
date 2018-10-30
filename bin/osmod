@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Forward to ./packages/cli/bin/osmod.js
+basename=`dirname $0`
+# Forward to ${basename}/../packages/cli/bin/osmod.js
 
 C=''
 
@@ -14,4 +15,4 @@ for i in "$@"; do
     C="$C '$i'"
 done
 
-bash -c "./packages/cli/bin/osmod.js$C"
+bash -c "${basename}/../packages/cli/bin/osmod.js$C"

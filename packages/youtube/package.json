@@ -14,7 +14,6 @@
     "@conversationai/moderator-config": "1.1.0",
     "@types/request": "2.47.0",
     "@types/yargs": "11.0.0",
-    "google-auth-library": "1.6.1",
     "googleapis": "32.0.0",
     "request": "2.87.0",
     "yargs": "11.1.0"

@@ -1,0 +1,34 @@
+#!/bin/bash
+
+basename=`dirname $0`
+mysqlx="mysql -u root -p${DATABASE_PASSWORD}"
+if [ ! -z "${DATABASE_HOST}" ]; then
+  mysqlx="$mysqlx -h ${DATABASE_HOST}"
+fi
+
+until $mysqlx -e "" ; do
+  echo "Can't configure the database:-(  waiting..."
+  sleep 10
+done
+
+if ! $mysqlx ${DATABASE_NAME} -e "select count(*) from SequelizeMeta;"; then
+  echo "Creating database and API service user."
+  echo
+  $mysqlx << EOF
+CREATE DATABASE ${DATABASE_NAME};
+CREATE USER '${DATABASE_USER}' IDENTIFIED BY '${DATABASE_PASSWORD}';
+GRANT ALL on ${DATABASE_NAME}.* to ${DATABASE_USER};
+EOF
+
+  # Load initial set of tables
+  $mysqlx ${DATABASE_NAME} < ${basename}/../packages/backend-core/seed/initial-database.sql
+  ${basename}/osmod migrate
+
+  # Add a service user that can talk to the Perspective API:
+  ${basename}/osmod users:create --group service --name "PerspectiveAPI" --moderator-type "perspective-api"
+else
+  echo "Running migrations."
+  ${basename}/osmod migrate
+fi
+
+

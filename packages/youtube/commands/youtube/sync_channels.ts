@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {google} from 'googleapis';
+import { google } from 'googleapis';
 import * as yargs from 'yargs';
 
-import {logger} from '@conversationai/moderator-backend-core';
+import { logger } from '@conversationai/moderator-backend-core';
 
-import {authorize} from './authenticate';
-import {mapChannelToCategory} from './objectmap';
+import { authorize } from './authenticate';
+import { mapChannelToCategory } from './objectmap';
 
 export const command = 'youtube:channels:sync';
 export const describe = 'Sync youtube channels with OSMod categories.';
@@ -33,8 +33,9 @@ export function builder(yargs: yargs.Argv) {
 }
 
 export async function handler() {
-  authorize((auth) => {
-    const service = google.youtube('v3');
+  const service = google.youtube('v3');
+
+  authorize(async (owner, auth) => {
     service.channels.list({
       auth: auth,
       part: 'snippet',
@@ -51,7 +52,7 @@ export async function handler() {
       }
 
       for (const c of channels) {
-        mapChannelToCategory(c);
+        mapChannelToCategory(owner, c);
       }
     });
   });

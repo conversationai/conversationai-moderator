@@ -26,6 +26,7 @@ import { createPublisherRouter } from './api/publisher';
 import { createRESTRouter } from './api/rest';
 import { createServicesRouter } from './api/services';
 import { createAuthRouter } from './auth/router';
+import { createYouTubeRouter } from './auth/youtube';
 
 export function mountAPI(testMode?: boolean): express.Express {
   const app = express();
@@ -69,6 +70,11 @@ export function mountAPI(testMode?: boolean): express.Express {
 
   // Auth routes
   app.use('/', createAuthRouter());
+
+  // Connect YouTube Account entrypoints
+  // Only the connect entrypoint should be authenticated.
+  app.get('/youtube/connect', passport.authenticate('jwt', {session: false}));
+  app.use('/youtube', createYouTubeRouter());
 
   app.use('/', (() => {
     const router = express.Router({

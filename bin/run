@@ -1,8 +1,36 @@
 #!/bin/bash
+# Script to run some moderator component inside a docker container
 
-cd packages/backend-api
-PORT=8080 node ./server.js &
-cd -
+basename=`dirname $0`
 
-cd packages/frontend-web
-PORT=8000 API_URL="http://localhost:8080" node tooling/server.js
+if [ "${IMAGE_FLAVOR}" == 'backend' ] ; then
+  ${basename}/initdb
+  cd ${basename}/../packages/backend-api
+  exec node ./server.js
+fi
+
+if [ "${IMAGE_FLAVOR}" == 'frontend' ] ; then
+  cd ${basename}/../packages/frontend-web
+  exec node tooling/server.js
+fi
+
+if [ "${IMAGE_FLAVOR}" == 'processing' ] ; then
+  # Pause to ensure database initialisation is complete.
+  sleep 60
+
+  if [ -f "${basename}/${MODERATOR_FLAVOR}.ctab" ]; then
+    crontab ${basename}/${MODERATOR_FLAVOR}.ctab
+    set | egrep -v '(BASHOPTS|BASH_VERSINFO|EUID|PPID|UID|SHELLOPTS|basename|BASH.*)' > environ
+    exec cron -f
+  fi
+
+  if [ -f "${basename}/${MODERATOR_FLAVOR}-sync" ]; then
+    ${basename}/${MODERATOR_FLAVOR}-sync full
+  fi
+
+  echo "No processing to do!"
+  exit 1
+fi
+
+echo "Unknown image flavor ${IMAGE_FLAVOR}"
+exit 1

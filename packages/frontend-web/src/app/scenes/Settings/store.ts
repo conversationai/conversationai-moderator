@@ -47,37 +47,19 @@ function diff<T extends Map<string, any>>(original: List<T>, current: List<T>): 
   return { modified: modified as List<T>, added: added as List<T>, removed: removed as List<T> };
 }
 
-async function addUser(user: IUserModel): Promise<void> {
+export async function addUser(user: IUserModel): Promise<void> {
   await createModel<IUserModel>(
     'users',
     user.set('key', slug(user.get('name'), '_').toUpperCase()) as any,
   );
 }
 
-async function modifyUser(user: IUserModel): Promise<void> {
+export async function modifyUser(user: IUserModel): Promise<void> {
   await updateModel<IUserModel>(
     'users',
     user.id,
     user as any,
   );
-}
-
-async function deleteUser(user: IUserModel): Promise<void> {
-  await destroyModel(
-    'users',
-    user.id,
-  );
-}
-
-export function updateUsers(oldUsers: List<IUserModel>, newUsers: List<IUserModel>): IThunkAction<void> {
-  return async (): Promise<void> => {
-    const { modified, added, removed } = diff<IUserModel>(oldUsers, newUsers);
-    await Promise.all([
-      Promise.all(modified.map(modifyUser).toArray()),
-      Promise.all(added.map(addUser).toArray()),
-      Promise.all(removed.map(deleteUser).toArray()),
-    ]);
-  };
 }
 
 async function addTag(tag: ITagModel): Promise<void> {

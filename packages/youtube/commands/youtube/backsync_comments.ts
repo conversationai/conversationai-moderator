@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {google} from 'googleapis';
+import { google } from 'googleapis';
 import * as yargs from 'yargs';
 
-import {logger} from '@conversationai/moderator-backend-core';
+import { logger } from '@conversationai/moderator-backend-core';
 
-import {authorize} from './authenticate';
-import {foreachPendingDecision, markDecisionExecuted} from './objectmap';
+import { authorize } from './authenticate';
+import { foreachPendingDecision, markDecisionExecuted } from './objectmap';
 
 export const command = 'youtube:comments:backsync';
 export const describe = 'Backsync comment moderation decisions.';
@@ -33,15 +33,14 @@ export function builder(yargs: yargs.Argv) {
 }
 
 export async function handler() {
-  authorize((auth) => {
-    const service = google.youtube('v3');
-
-    foreachPendingDecision((decision, comment) => {
+  const service = google.youtube('v3');
+  authorize(async (owner, auth) => {
+    await foreachPendingDecision(owner, async (decision, comment) => {
       const sourceId = comment.get('sourceId') as string;
       const status = decision.get('status');
 
       if (status === 'Defer') {
-        logger.info('Not syyncing comment %s:%s - in deferred state', comment.id, sourceId);
+        logger.info('Not syncing comment %s:%s - in deferred state', comment.id, sourceId);
         markDecisionExecuted(decision);
         return;
       }

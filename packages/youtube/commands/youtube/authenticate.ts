@@ -14,53 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {readFile, writeFile} from 'fs';
-import {OAuth2Client} from 'google-auth-library';
-import {google} from 'googleapis';
+import { OAuth2Client } from 'google-auth-library';
+import { google } from 'googleapis';
 
-const OAuth2 = google.auth.OAuth2;
+import { IUserInstance, logger, User, USER_GROUP_YOUTUBE } from '@conversationai/moderator-backend-core';
+import { config } from '@conversationai/moderator-config';
 
 export const SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl'];
 
-// TODO: Store stuff in the database
-const CLIENT_SECRET_FILE = 'client_secret.json';
-const TOKEN_FILE = 'token.json';
-
-export function readCredentials(callback: (client: OAuth2Client) => void) {
-  readFile(CLIENT_SECRET_FILE, (err, content) => {
-    if (err) {
-      console.log('Error loading client secret file: ' + err);
-      return;
+export function authorize(callback: (owner: IUserInstance, client: OAuth2Client) => Promise<void>) {
+  (async () => {
+    const users = await User.findAll({where: {group: USER_GROUP_YOUTUBE, isActive: true}});
+    for (const u of users) {
+      const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'));
+      logger.info(`Syncing ${u.get('name')}`);
+      oauth2Client.setCredentials(JSON.parse(u.get('extra')));
+      await callback(u, oauth2Client);
     }
-    const credentials = JSON.parse(content.toString());
-    const clientSecret = credentials.installed.client_secret;
-    const clientId = credentials.installed.client_id;
-    const redirectUrl = credentials.installed.redirect_uris[0];
-
-    const oauth2Client = new OAuth2(clientId, clientSecret, redirectUrl);
-
-    callback(oauth2Client);
-  });
-}
-
-export function saveToken(token: any) {
-  writeFile(TOKEN_FILE, JSON.stringify(token), (err) => {
-    if (err) {
-      throw err;
-    }
-  });
-  console.log('Token stored to ' + TOKEN_FILE);
-}
-
-export function authorize(callback: (client: OAuth2Client) => void) {
-  readCredentials((oauth2Client: OAuth2Client) => {
-    readFile('token.json', (err, token) => {
-      if (err) {
-        console.log('Error loading token file: ' + err);
-        return;
-      }
-      oauth2Client.credentials = JSON.parse(token.toString());
-      callback(oauth2Client);
-    });
-  });
+  })();
 }

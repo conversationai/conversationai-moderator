@@ -16,9 +16,12 @@ limitations under the License.
 
 import {
   IUserInstance,
+  User,
+  USER_GROUP_ADMIN,
+  USER_GROUP_YOUTUBE,
   UserSocialAuth,
 } from '../../models';
-import { IUserSocialAuthAttributes, IUserSocialAuthInstance } from '../../models/user_social_auth';
+import { IUserSocialAuthAttributes, IUserSocialAuthInstance } from '../../models/';
 
 /**
  * Indicates whether a user is valid to be authenticated
@@ -56,4 +59,55 @@ export async function findOrCreateUserSocialAuth(
   });
 
   return [userSocialAuth, created];
+}
+
+export async function isFirstUserInitialised() {
+  const count = await User.count({where: {group: USER_GROUP_ADMIN, isActive: true}});
+  return count > 0;
+}
+
+export async function ensureFirstUser({name, email}: {name: string, email: string}) {
+  if (await isFirstUserInitialised()) {
+    return;
+  }
+
+  const [user, created] = await User.findOrCreate({
+    where: {email: email},
+    defaults: {
+      name: name,
+      group: USER_GROUP_ADMIN,
+      isActive: true,
+    },
+  });
+
+  if (!created) {
+    // We are repurposing an existing user.  So ensure they have the correct properties
+    if (!await user.get('isActive')) {
+      await user.set('isActive', true).save();
+    }
+    if (await user.get('group') !== USER_GROUP_ADMIN) {
+      await user.set('group', USER_GROUP_ADMIN).save();
+    }
+  }
+
+  return user;
+}
+
+export async function saveYouTubeUserToken({name, email}: {name: string, email: string}, token: any) {
+  const [user, created] = await User.findOrCreate({
+    where: {email: email, group: USER_GROUP_YOUTUBE},
+    defaults: {
+      name: name,
+      group: USER_GROUP_YOUTUBE,
+      isActive: true,
+    },
+  });
+
+  if (!created) {
+    if (!await user.get('isActive')) {
+      await user.set('isActive', true).save();
+    }
+  }
+
+  await user.set('extra', token).save();
 }

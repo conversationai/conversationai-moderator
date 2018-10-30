@@ -110,8 +110,8 @@ export const SETTINGS_STYLES = {
     pointerEvents: 'none',
   },
 
-  selectContainer: {
-    width: 450,
-    position: 'relative',
+  userTableCell: {
+    textAlign: 'left',
+    padding: '5px 30px',
   },
 };

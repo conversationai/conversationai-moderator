@@ -14,17 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Article, Category, Comment, Decision} from '@conversationai/moderator-backend-core';
-import {IAuthorAttributes, ICommentInstance, IDecisionInstance} from '@conversationai/moderator-backend-core';
-import {logger, sequelize} from '@conversationai/moderator-backend-core';
-import {postProcessComment, sendForScoring} from '@conversationai/moderator-backend-core';
+import { Article, Category, Comment, Decision } from '@conversationai/moderator-backend-core';
+import { IAuthorAttributes, ICommentInstance, IDecisionInstance, IUserInstance } from '@conversationai/moderator-backend-core';
+import { logger, sequelize } from '@conversationai/moderator-backend-core';
+import { postProcessComment, sendForScoring } from '@conversationai/moderator-backend-core';
 
-export async function mapChannelToCategory(channel: any) {
+export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
   const channelId = channel.id!;
 
   try {
     const [category, created] = await Category.findOrCreate({
       where: {
+        ownerId: owner.id,
         sourceId: channelId,
       },
       defaults: {
@@ -50,7 +51,7 @@ export async function mapChannelToCategory(channel: any) {
       defaults: {
         sourceId: channelId,
         categoryId: category.id,
-        title: channel.snippet!.title!,
+        title: 'Channel comments',
         text: 'Comments associated with the channel itself.',
         url: 'https://www.youtube.com/channel/' + channelId,
         sourceCreatedAt: new Date(Date.parse(channel.snippet!.publishedAt!)),
@@ -69,9 +70,10 @@ export async function mapChannelToCategory(channel: any) {
   }
 }
 
-export async function foreachActiveChannel(callback: (channelId: string, articleIdMap: Map<string, number>) => void) {
+export async function foreachActiveChannel(owner: IUserInstance, callback: (channelId: string, articleIdMap: Map<string, number>) => Promise<void>) {
   const categories = await Category.findAll({
     where: {
+      ownerId: owner.id,
       sourceId: {ne: null},
       isActive: true,
     },
@@ -93,11 +95,11 @@ export async function foreachActiveChannel(callback: (channelId: string, article
       articleIdMap.set(a.get('sourceId'), a.id);
     }
 
-    callback(channelId, articleIdMap);
+    await callback(channelId, articleIdMap);
   }
 }
 
-export async function mapPlaylistItemToArticle(categoryId: number, item: any) {
+export async function mapPlaylistItemToArticle(owner: IUserInstance, categoryId: number, item: any) {
   const videoId = item.snippet.resourceId.videoId;
   logger.info('Got video %s (%s)', item.snippet.title, videoId);
 
@@ -108,6 +110,7 @@ export async function mapPlaylistItemToArticle(categoryId: number, item: any) {
       },
 
       defaults: {
+        ownerId: owner.id,
         sourceId: videoId,
         categoryId: categoryId,
         title: item.snippet.title.substring(0, 255),
@@ -130,7 +133,7 @@ export async function mapPlaylistItemToArticle(categoryId: number, item: any) {
   }
 }
 
-async function mapCommentToComment(articleId: number, ytcomment: any, replyToSourceId: string | undefined) {
+async function mapCommentToComment(owner: IUserInstance, articleId: number, ytcomment: any, replyToSourceId: string | undefined) {
   try {
 
     const author: IAuthorAttributes = {
@@ -144,6 +147,7 @@ async function mapCommentToComment(articleId: number, ytcomment: any, replyToSou
       },
 
       defaults: {
+        ownerId: owner.id,
         sourceId: ytcomment.id,
         articleId: articleId,
         authorSourceId: ytcomment.snippet.authorChannelId.value,
@@ -175,30 +179,36 @@ async function mapCommentToComment(articleId: number, ytcomment: any, replyToSou
   }
 }
 
-export async function mapCommentThreadToComments(channelId: string, articleIds: Map<string, number>, thread: any) {
+export async function mapCommentThreadToComments(
+  owner: IUserInstance,
+  channelId: string,
+  articleIds: Map<string, number>,
+  thread: any) {
   let articleId = articleIds.get(thread.snippet.videoId);
   if (!articleId) {
     articleId = articleIds.get(channelId);
   }
-  await mapCommentToComment(articleId!, thread.snippet.topLevelComment, undefined);
+  await mapCommentToComment(owner, articleId!, thread.snippet.topLevelComment, undefined);
   if (thread.replies) {
     for (const c of thread.replies.comments) {
-      await mapCommentToComment(articleId!, c, thread.snippet.topLevelComment.id);
+      await mapCommentToComment(owner, articleId!, c, thread.snippet.topLevelComment.id);
     }
   }
 }
 
-export async function foreachPendingDecision(callback: (decision: IDecisionInstance, comment: ICommentInstance) => void) {
+export async function foreachPendingDecision(
+  owner: IUserInstance,
+  callback: (decision: IDecisionInstance, comment: ICommentInstance) => Promise<void>) {
   const decisions = await Decision.findAll({
     where: {
       sentBackToPublisher: null,
       isCurrentDecision: true,
     } as any,
-    include: [Comment],
+    include: [{model: Comment, required: true, where: {ownerId: owner.id}}],
   });
 
   for (const d of decisions) {
-    callback(d, (await d.getComment())!);
+    await callback(d, await d.getComment());
   }
 }
 

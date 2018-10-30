@@ -16,10 +16,11 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
+import { generate } from 'randomstring';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
-import { css, partial, stylesheet } from '../../util';
 const FocusTrap = require('focus-trap-react');
+
 import {
   CategoryModel,
   ICategoryModel, IPreselectModel,
@@ -30,6 +31,7 @@ import {
   TaggingSensitivityModel, TagModel,
 } from '../../../models';
 import { IConfirmationAction } from '../../../types';
+import { getToken } from '../../auth/store';
 import {
   Button,
   Header,
@@ -37,8 +39,10 @@ import {
   Link,
   Scrim,
 } from '../../components';
+import { API_URL } from '../../config';
 import { IAppDispatch } from '../../stores';
-import { AddButton } from './components/AddButton';
+import { css, partial, setCSRF, stylesheet } from '../../util';
+import { AddButton, EditButton } from './components/AddButton';
 import { AddUsers } from './components/AddUsers';
 import { EditUsers } from './components/EditUsers';
 import { LabelSettings } from './components/LabelSettings';
@@ -160,12 +164,12 @@ const STYLES: any = stylesheet({
   pluginLink: {
     display: 'inline-block',
     color: MEDIUM_COLOR,
-    marginBottom: `${GUTTER_DEFAULT_SPACING}px`,
   },
 });
 
 export interface ISettingsProps extends WithRouterProps {
   users?: List<IUserModel>;
+  youtubeUsers?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
   taggingSensitivities?:  List<ITaggingSensitivityModel>;
@@ -175,29 +179,28 @@ export interface ISettingsProps extends WithRouterProps {
   onCancel(): void;
   onSearchClick(): void;
   onAuthorSearchClick(): void;
+  reloadYoutubeUsers?(): Promise<void>;
   updatePreselects?(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>): void;
   updateRules?(oldRules: List<IRuleModel>, newRules: List<IRuleModel>): void;
   updateTaggingSensitivities?(oldTaggingSensitivities: List<ITaggingSensitivityModel>, newTaggingSensitivities: List<ITaggingSensitivityModel>): void;
   updateTags?(oldTags: List<ITagModel>, newTags: List<ITagModel>): void;
-  updateUsers?(oldUsers: List<IUserModel>, newUsers: List<IUserModel>): void;
+  addUser?(user: IUserModel): Promise<void>;
+  modifyUser?(user: IUserModel): Promise<void>;
   submitForm?(
     newPreselects: List<IPreselectModel>,
     newRules: List<IRuleModel>,
     newTaggingSensitivities: List<ITaggingSensitivityModel>,
     newTags: List<ITagModel>,
-    newUsers: List<IUserModel>,
   ): Error;
 }
 
 export interface ISettingsState {
-  selectedOwner?: string;
-  selectedModerator?: string;
   users?: List<IUserModel>;
+  youtubeUsers?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
   taggingSensitivities?:  List<ITaggingSensitivityModel>;
   preselects?:  List<IPreselectModel>;
-  baseUsers?: List<IUserModel>;
   baseTags?: List<ITagModel>;
   baseRules?: List<IRuleModel>;
   baseTaggingSensitivities?:  List<ITaggingSensitivityModel>;
@@ -212,14 +215,12 @@ export interface ISettingsState {
 
 export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   state: ISettingsState = {
-    selectedOwner: 'placeholder',
-    selectedModerator: 'placeholder',
     users: this.props.users,
+    youtubeUsers: this.props.youtubeUsers,
     tags: this.props.tags,
     rules: this.props.rules,
     taggingSensitivities:  this.props.taggingSensitivities,
     preselects:  this.props.preselects,
-    baseUsers: this.props.users,
     baseTags: this.props.tags,
     baseRules: this.props.rules,
     baseTaggingSensitivities:  this.props.taggingSensitivities,
@@ -232,11 +233,20 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     submitStatus: 'Saving changes...',
   };
 
+  componentDidMount() {
+    this.props.reloadYoutubeUsers();
+  }
+
   componentWillUpdate(nextProps: ISettingsProps) {
     if (!this.props.users.equals(nextProps.users)) {
       this.setState({
-        baseUsers: nextProps.users,
         users: nextProps.users,
+      });
+    }
+    if (nextProps.youtubeUsers &&
+      (!this.props.youtubeUsers || !this.props.youtubeUsers.equals(nextProps.youtubeUsers))) {
+      this.setState({
+        youtubeUsers: nextProps.youtubeUsers,
       });
     }
     if (!this.props.tags.equals(nextProps.tags)) {
@@ -266,16 +276,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleOwnerChange(event: React.FormEvent<any>) {
-    this.setState({ selectedOwner: (event.target as any).value });
-  }
-
-  @autobind
-  handleModeratorChange(event: React.FormEvent<any>) {
-    this.setState({ selectedModerator: (event.target as any).value });
-  }
-
-  @autobind
   handleAddUser(event: React.FormEvent<any>) {
     event.preventDefault();
     this.setState({
@@ -284,9 +284,9 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleEditUser(name: string) {
+  handleEditUser(event: React.FormEvent<any>) {
     this.setState({
-      selectedUser: this.state.users.find((user) => user.name === name),
+      selectedUser: this.state.users.find((user) => user.id === event.currentTarget.value),
       isEditUserScrimOpen: true,
     });
   }
@@ -372,17 +372,14 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  async handleFormSubmit(event?: React.FormEvent<any>) {
-    if (event) {
-      event.preventDefault();
-    }
+  async handleFormSubmit(event: React.FormEvent<any>) {
+    event.preventDefault();
 
     const {
       tags: tagsNew,
       rules: rulesNew,
       preselects: preselectsNew,
       taggingSensitivities: taggingSensitivitiesNew,
-      users: usersNew,
     } = this.state;
 
     const submitErrorStatus = await this.props.submitForm(
@@ -390,7 +387,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       rulesNew,
       taggingSensitivitiesNew,
       tagsNew,
-      usersNew,
     );
 
     if (submitErrorStatus) {
@@ -409,6 +405,10 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       basePreselects: preselectsNew,
       baseTaggingSensitivities: taggingSensitivitiesNew,
     });
+    this.clearScrim();
+  }
+
+  clearScrim() {
     // Add some delay so that users know that saving action was taken
     setTimeout(
       () => {
@@ -579,19 +579,50 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     await this.setState({
       users: this.state.users.push(user),
       isAddUserScrimOpen: false,
+      isScrimVisible: true,
     });
 
-    this.handleFormSubmit();
+    try {
+      await this.props.addUser(user);
+      if (user.group === 'youtube') {
+        await this.props.reloadYoutubeUsers();
+      }
+    }
+    catch (e) {
+      this.setState({
+        submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
+      });
+    }
+    this.clearScrim();
   }
 
   @autobind
   async saveEditedUser(user: IUserModel) {
-    await this.setState({
-      users: this.state.users.set(this.state.users.findIndex((u) => u.id === user.id), user),
+    const newState: any = {
       isEditUserScrimOpen: false,
-    });
+      isScrimVisible: true,
+    };
 
-    this.handleFormSubmit();
+    if (user.group === 'youtube') {
+      newState['youtubeUsers']  = this.state.youtubeUsers.set(this.state.youtubeUsers.findIndex((u) => u.id === user.id), user);
+    }
+    else {
+      newState['users']  = this.state.users.set(this.state.users.findIndex((u) => u.id === user.id), user);
+    }
+    await this.setState(newState);
+
+    try {
+      await this.props.modifyUser(user);
+      if (user.group === 'youtube') {
+        await this.props.reloadYoutubeUsers();
+      }
+    }
+    catch (e) {
+      this.setState({
+        submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
+      });
+    }
+    this.clearScrim();
   }
 
   @autobind
@@ -604,9 +635,106 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({ homeIsFocused: false });
   }
 
-  @autobind
-  onUsersSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    this.handleEditUser(event.target.value);
+  renderUsers() {
+    const { users } = this.state;
+    const sortedUsers = users.sort((a, b) => a.name.localeCompare(b.name));
+
+    return (
+      <div key="editUsersSection">
+        <div key="heading" {...css(STYLES.heading)}>
+          <h2 {...css(STYLES.headingText)}>Users</h2>
+        </div>
+        <div key="body" {...css(STYLES.section)}>
+          <div {...css(SETTINGS_STYLES.row)}>
+            <table>
+              <thead>
+              <tr>
+                <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+                  Name
+                </th>
+                <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
+                  Email
+                </th>
+                <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+                  Role
+                </th>
+                <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+                  Is Active
+                </th>
+                <th key="5" {...css(SETTINGS_STYLES.userTableCell)}/>
+              </tr>
+              </thead>
+              <tbody>
+              {sortedUsers.map((u) => (
+                <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+                  <td {...css(SETTINGS_STYLES.userTableCell)}>
+                    {u.name}
+                  </td>
+                  <td {...css(SETTINGS_STYLES.userTableCell)}>
+                    {u.email}
+                  </td>
+                  <td {...css(SETTINGS_STYLES.userTableCell)}>
+                    {u.group}
+                  </td>
+                  <td {...css(SETTINGS_STYLES.userTableCell)}>
+                    {u.isActive ? 'Active' : ''}
+                  </td>
+                  <td {...css(SETTINGS_STYLES.userTableCell)}>
+                    <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id}/>
+                  </td>
+                </tr>
+              ))}
+              </tbody>
+            </table>
+          </div>
+          <AddButton width={44} onClick={this.handleAddUser} label="Add a user"/>
+        </div>
+      </div>
+    );
+  }
+
+  renderYoutubeUsers() {
+    const {
+      youtubeUsers,
+    } = this.state;
+
+    if (!youtubeUsers || youtubeUsers.count() === 0) {
+      return (<p>None configured</p>);
+    }
+    return (
+      <div key="youtubeUsersSection">
+        <table>
+          <thead>
+          <tr>
+            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+              Name
+            </th>
+            <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
+              Email
+            </th>
+            <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+              Is Active
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          {youtubeUsers.map((u) => (
+            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.name}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.email}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.isActive ? 'Active' : ''}
+              </td>
+            </tr>
+          ))}
+          </tbody>
+        </table>
+      </div>
+    );
   }
 
   render() {
@@ -616,10 +744,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     } = this.props;
 
     const {
-      selectedOwner,
-      selectedModerator,
       tags,
-      users,
       rules,
       taggingSensitivities,
       preselects,
@@ -630,8 +755,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       homeIsFocused,
       submitStatus,
     } = this.state;
-    const sortedUsers = users.sort((a, b) => a.name.localeCompare(b.name));
-    const admins = sortedUsers.filter((user) => user.group === 'admin');
 
     const summaryScoreTag = tags.find((tag) => tag.key === 'SUMMARY_SCORE');
     const summaryScoreTagId = summaryScoreTag && summaryScoreTag.id;
@@ -656,6 +779,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       }),
     ]).concat(categories) as List<ICategoryModel>;
 
+    const csrf = generate();
+    setCSRF(csrf);
+    const token = getToken();
+    const youtubeUrl = `${API_URL}/youtube/connect?&csrf=${csrf}&token=${token}`;
+
     return (
       <div {...css(STYLES.base)}>
         <div {...css(STYLES.header)}>
@@ -674,57 +802,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         </div>
         <div {...css(STYLES.body)}>
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
+          {this.renderUsers()}
           <form onSubmit={this.handleFormSubmit} {...css(STYLES.formContainer)}>
-            <div key="editUsersSection">
-              <div key="heading" {...css(STYLES.heading)}>
-                <h2 {...css(STYLES.headingText)}>Edit Users</h2>
-              </div>
-              <div key="body" {...css(STYLES.section)}>
-                <div {...css(SETTINGS_STYLES.row, SETTINGS_STYLES.selectContainer)}>
-                  <label {...css(SETTINGS_STYLES.label)} htmlFor="owners">
-                    Owners:
-                  </label>
-                  <select
-                    {...css(SETTINGS_STYLES.selectBox)}
-                    id="owners"
-                    name="owners"
-                    value={selectedOwner}
-                    onChange={this.onUsersSelectChange}
-                  >
-                    <option value="placeholder" disabled>Select an Owner</option>
-                    {admins.map((owner) => (
-                      <option value={owner.name} key={owner.id}>{owner.name}</option>
-                    ))}
-                  </select>
-                  <span aria-hidden="true" {...css(SETTINGS_STYLES.arrow)} />
-                </div>
-                <div {...css(SETTINGS_STYLES.row, SETTINGS_STYLES.selectContainer)}>
-                  <label {...css(SETTINGS_STYLES.label)} htmlFor="moderators">
-                    Moderators:
-                  </label>
-                  <select
-                    {...css(SETTINGS_STYLES.selectBox)}
-                    id="moderators"
-                    name="moderators"
-                    value={selectedModerator}
-                    onChange={this.onUsersSelectChange}
-                  >
-                    <option value="placeholder" disabled>Select a Moderator</option>
-                    {sortedUsers.map((moderator) => (
-                      <option
-                        value={moderator.name}
-                        key={moderator.id}
-                      >
-                        {moderator.name}
-                      </option>
-                    ))}
-                  </select>
-                  <span aria-hidden="true" {...css(SETTINGS_STYLES.arrow)} />
-                </div>
-                <AddButton width={44} onClick={this.handleAddUser} label="Add a user" />
-              </div>
-            </div>
-
             <div key="editTagsSection">
               <div key="heading" {...css(STYLES.heading)}>
                 <h2 {...css(STYLES.headingText)}>Tags</h2>
@@ -749,7 +828,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     onTagChange={this.handleTagChange}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddTag} label="Add a tag"/>
+                <AddButton width={44} onClick={this.handleAddTag} label="Add a tag"
+                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 
@@ -778,7 +858,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsList}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddAutomatedRule} label="Add an automated rule"/>
+                <AddButton width={44} onClick={this.handleAddAutomatedRule} label="Add an automated rule"
+                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 
@@ -804,7 +885,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsWithAllNoSummary}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddTaggingSensitivity} label="Add a tagging sensitivity rule"/>
+                <AddButton width={44} onClick={this.handleAddTaggingSensitivity} label="Add a tagging sensitivity rule"
+                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 
@@ -832,7 +914,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsWithAll}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddPreselect} label="Add a preselect"/>
+                <AddButton width={44} onClick={this.handleAddPreselect} label="Add a preselect"
+                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
               </div>
             </div>
 
@@ -848,21 +931,30 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </h2>
             </div>
             <div key="pluginsContent" {...css(STYLES.section)}>
+              <h3>YouTube accounts</h3>
+              {this.renderYoutubeUsers()}
+              <p><a href={youtubeUrl} {...css(STYLES.pluginLink)}>Connect a YouTube Account</a></p>
+              <p>Click the link above, and select a Google user and one of that user's YouTube accounts.</p>
+              <p>We'll then start syncing comments with the channels and videos in that account.</p>
+              <p>&nbsp;</p>
               <h3>Wordpress</h3>
               <p>Install the Wordpress plugin to use Moderator with your Wordpress blog.</p>
               <p>
                 <a href="https://github.com/Jigsaw-Code/osmod-wordpress" {...css(STYLES.pluginLink)}>Get started →</a>
               </p>
+              <p>&nbsp;</p>
               <h3>Discourse</h3>
               <p>Install the Discourse plugin to use Moderator with your Discourse community.</p>
               <p>
                 <a href="https://github.com/Jigsaw-Code/moderator-discourse" {...css(STYLES.pluginLink)}>Get started →</a>
               </p>
+              <p>&nbsp;</p>
               <h3>Reddit</h3>
               <p>A server running a cron job every minute that reads all comments copies them to on your subreddit and syncs their status. Requires owner rights on subreddit.</p>
               <p>
                 <a href="https://github.com/Jigsaw-Code/moderator-reddit" {...css(STYLES.pluginLink)}>Get started →</a>
               </p>
+              <p>&nbsp;</p>
             </div>
           </div>
         </div>

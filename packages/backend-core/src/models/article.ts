@@ -21,6 +21,7 @@ import { IUserInstance } from './user';
 
 export interface IArticleAttributes {
   id?: number;
+  ownerId?: number;
   sourceId: string;
   categoryId?: number;
   title: string;
@@ -61,6 +62,11 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     type: Sequelize.BIGINT.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
+  },
+
+  ownerId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: true,
   },
 
   sourceId: {
@@ -191,6 +197,7 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
      * Article relationships
      */
     associate(models: any) {
+      Article.belongsTo(models.User, {as: 'owner'});
       Article.belongsTo(models.Category);
       Article.hasMany(models.Comment);
 

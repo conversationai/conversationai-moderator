@@ -23,23 +23,23 @@ import {
   IRuleModel,
   ITaggingSensitivityModel,
   ITagModel,
-  IUserModel,
 } from '../../../models';
-import { IAppDispatch, IAppState } from '../../stores';
+import { IAppDispatch, IAppState, IAppStateRecord } from '../../stores';
 import { getCategories } from '../../stores/categories';
 import { getPreselects } from '../../stores/preselects';
 import { getRules } from '../../stores/rules';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
 import { getTags } from '../../stores/tags';
-import { getUsers } from '../../stores/users';
+import { getSystemUsers, getUsers, loadSystemUsers, USER_GROUP_YOUTUBE } from '../../stores/users';
 import { ISettingsProps, Settings as PureSettings } from './Settings';
 
 import {
+  addUser,
+  modifyUser,
   updatePreselects,
   updateRules,
   updateTaggingSensitivities,
   updateTags,
-  updateUsers,
 } from './store';
 
 export type ISettingsOwnProps = Pick<
@@ -50,6 +50,7 @@ export type ISettingsOwnProps = Pick<
 export type ISettingsStateProps = Pick<
   ISettingsProps,
   'users' |
+  'youtubeUsers' |
   'tags' |
   'categories' |
   'rules' |
@@ -60,15 +61,18 @@ export type ISettingsStateProps = Pick<
 
 export type ISettingsDispatchProps = Pick<
   ISettingsProps,
+  'reloadYoutubeUsers' |
   'updatePreselects' |
   'updateRules' |
   'updateTaggingSensitivities' |
   'updateTags' |
-  'updateUsers'
+  'addUser' |
+  'modifyUser'
 >;
 
 const mapStateToProps = createStructuredSelector({
   users: getUsers,
+  youtubeUsers: (state: IAppStateRecord) => getSystemUsers(USER_GROUP_YOUTUBE, state),
   tags: getTags,
   categories: getCategories,
   rules: getRules,
@@ -81,11 +85,13 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
   return {
+    reloadYoutubeUsers: () => loadSystemUsers(dispatch, USER_GROUP_YOUTUBE),
     updatePreselects: (oldPreselects, newPreselects) => dispatch(updatePreselects(oldPreselects, newPreselects)),
     updateRules: (oldRules, newRules) => dispatch(updateRules(oldRules, newRules)),
     updateTaggingSensitivities: (oldTaggingSensitivities, newTaggingSensitivities) => dispatch(updateTaggingSensitivities(oldTaggingSensitivities, newTaggingSensitivities)),
     updateTags: (oldTags, newTags) => dispatch(updateTags(oldTags, newTags)),
-    updateUsers: (oldUsers, newUsers) => dispatch(updateUsers(oldUsers, newUsers)),
+    addUser: addUser,
+    modifyUser: modifyUser,
   };
 }
 
@@ -103,7 +109,6 @@ function mergeProps(
       newRules: List<IRuleModel>,
       newTaggingSensitivities: List<ITaggingSensitivityModel>,
       newTags: List<ITagModel>,
-      newUsers: List<IUserModel>,
     ) => {
       try {
         Promise.all([
@@ -111,7 +116,6 @@ function mergeProps(
           dispatchProps.updateRules(stateProps.rules, newRules),
           dispatchProps.updateTaggingSensitivities(stateProps.taggingSensitivities, newTaggingSensitivities),
           dispatchProps.updateTags(stateProps.tags, newTags),
-          dispatchProps.updateUsers(stateProps.users, newUsers),
         ]);
       } catch (exception) {
         return exception as Error;
