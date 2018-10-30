@@ -71,12 +71,10 @@ export function mountAPI(testMode?: boolean): express.Express {
   // Auth routes
   app.use('/', createAuthRouter());
 
-  if (config.get('flavor') === 'youtube') {
-    // Connect YouTube Account entrypoints
-    // Only the connect entrypoint should be authenticated.
-    app.get('/youtube/connect', passport.authenticate('jwt', {session: false}));
-    app.use('/youtube', createYouTubeRouter());
-  }
+  // Connect YouTube Account entrypoints
+  // Only the connect entrypoint should be authenticated.
+  app.get('/youtube/connect', passport.authenticate('jwt', {session: false}));
+  app.use('/youtube', createYouTubeRouter());
 
   app.use('/', (() => {
     const router = express.Router({

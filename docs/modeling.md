@@ -46,7 +46,7 @@ Users are users of Osmod. This is the moderation team, and people who admin the
 Osmod system using the UI.
 
 - id (int) (required)
-- group (enum: general, admin, service) (required)
+- group (enum: general, admin, service, youtube) (required)
 - email (string) (required for all but users in the "service" group)
 - name (string) (required)
 - isActive (tinyint) (required)
@@ -367,6 +367,7 @@ For YouTube we use the following map:
 * YouTube Video -> OSMod Article
 * YouTube Comment ->  OSMod Comment
 
-YouTube allows comments on the channel as well as the Video.  To accommodate this, there is a special article that corresponds to the channel itself.
+YouTube allows comments on the channel as well as the Video.  To accommodate this, there is a special article that corresponds to the channel itself, labelled "Channel comments."
 
-Each object in this heirarchy is marked with the
+You can connect multiple YouTube accounts to a single OSMod instance.  Each connection has an associated user of type "youtube" that stores the necessary authentication credentials.
+We set the ownerID field of each category/article/comment fetched from YouTube to point to the YouTube user that is responsible for this entity.

@@ -28,13 +28,6 @@ const config = convict({
     env: 'NODE_ENV'
   },
 
-  flavor: {
-    doc: 'The application flavor',
-    format: ['vanilla', 'youtube'],
-    default: 'vanilla',
-    env: 'MODERATOR_FLAVOR'
-  },
-
   port: {
     doc: 'The port to bind to',
     format: 'port',

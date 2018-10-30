@@ -51,7 +51,7 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
       defaults: {
         sourceId: channelId,
         categoryId: category.id,
-        title: channel.snippet!.title!,
+        title: 'Channel comments',
         text: 'Comments associated with the channel itself.',
         url: 'https://www.youtube.com/channel/' + channelId,
         sourceCreatedAt: new Date(Date.parse(channel.snippet!.publishedAt!)),
