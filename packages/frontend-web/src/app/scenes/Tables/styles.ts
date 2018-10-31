@@ -14,18 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {HEADER_HEIGHT, NICE_BLUE_GREY, NICE_LIGHT_BLUE, NICE_MIDDLE_BLUE} from '../../styles';
-import {stylesheet} from '../../util';
+import { HEADER_HEIGHT, NICE_BLUE_GREY, NICE_LIGHT_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
+import { stylesheet } from '../../util';
 
 export const IMAGE_BASE = 40;
 
 export const ARTICLE_TABLE_STYLES = stylesheet({
-  filterHeader: {
-    backgroundColor: NICE_MIDDLE_BLUE,
-    width: '100%',
-    height: `${HEADER_HEIGHT}px`,
-    display: 'none',
-  },
   dataTable: {
     borderSpacing: 0,
     width: '100%',

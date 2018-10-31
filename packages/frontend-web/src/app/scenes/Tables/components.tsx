@@ -55,7 +55,7 @@ export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
 
       text = `${monthNames[monthIndex]} ${day}`;
       if (year !== (new Date(now)).getFullYear()) {
-        text += ', ${year}';
+        text += `, ${year}`;
       }
       isRelative = false;
     }

@@ -41,4 +41,13 @@ export const SCRIM_STYLE = {
       outline: 'none',
     },
   },
+
+  popupMenu: {
+    background: WHITE_COLOR,
+    boxShadow: MODAL_DROP_SHADOW,
+    outline: 0,
+    ':focus': {
+      outline: 'none',
+    },
+  },
 };
