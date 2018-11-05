@@ -28,7 +28,8 @@ export interface IArticleAttributes {
   text: string;
   url: string;
   sourceCreatedAt: Date | string | null;
-  isAutoModerated?: boolean | null;
+  isCommentingEnabled: boolean;
+  isAutoModerated: boolean;
   extra?: any | null;
   count?: number;
   unprocessedCount?: number;
@@ -42,7 +43,6 @@ export interface IArticleAttributes {
   batchedCount?: number;
   recommendedCount?: number;
   lastModeratedAt?: string;
-  disableRules?: boolean;
 }
 
 export interface IArticleInstance
@@ -101,15 +101,15 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     defaultValue: Sequelize.NOW,
   },
 
-  disableRules: {
+  isCommentingEnabled: {
     type: Sequelize.BOOLEAN,
     allowNull: false,
-    defaultValue: false,
+    defaultValue: true,
   },
 
   isAutoModerated: {
     type: Sequelize.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: true,
   },
 

@@ -32,13 +32,14 @@ const rangeFields = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'ta
 const taggingSensitivityFields = rangeFields;
 const ruleFields = ['action', 'createdBy', ...rangeFields];
 const preselectFields = rangeFields;
-
 const userFields = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
+
 const commonFields = ['id', 'updatedAt', 'count', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
   'approvedCount', 'highlightedCount', 'rejectedCount', 'deferredCount', 'flaggedCount',
   'batchedCount', 'recommendedCount', 'assignedModerators', ];
 const categoryFields = [...commonFields, 'label'];
-const articleFields = [...commonFields, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt'];
+const articleFields = [...commonFields, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
+  'isCommentingEnabled', 'isAutoModerated'];
 
 interface ISystemSummary {
   tags: any;

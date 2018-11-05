@@ -55,6 +55,8 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
         text: 'Comments associated with the channel itself.',
         url: 'https://www.youtube.com/channel/' + channelId,
         sourceCreatedAt: new Date(Date.parse(channel.snippet!.publishedAt!)),
+        isCommentingEnabled: true,
+        isAutoModerated: true,
       },
     });
 
@@ -117,6 +119,8 @@ export async function mapPlaylistItemToArticle(owner: IUserInstance, categoryId:
         text: item.snippet.description,
         url: 'https://www.youtube.com/watch?v=' + videoId,
         sourceCreatedAt: new Date(Date.parse(item.snippet.publishedAt)),
+        isCommentingEnabled: true,
+        isAutoModerated: true,
         extra: item,
       },
     });

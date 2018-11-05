@@ -850,7 +850,7 @@ describe('Comment Domain Rules Tests', () => {
 
     it('should do nothing if article has disabled rule processing', async () => {
       const category = await createCategory();
-      const article = await createArticle({ categoryId: category.id, disableRules: true });
+      const article = await createArticle({ categoryId: category.id, isAutoModerated: false });
       const comment = await createComment({ articleId: article.id });
 
       const [tag1, tag2] = await Promise.all([
