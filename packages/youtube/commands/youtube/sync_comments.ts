@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import * as yargs from 'yargs';
 
-import { logger } from '@conversationai/moderator-backend-core';
+import {IUserInstance, logger} from '@conversationai/moderator-backend-core';
 
 import { authorize } from './authenticate';
 import { foreachActiveChannel, mapCommentThreadToComments } from './objectmap';
@@ -31,39 +32,62 @@ export function builder(args: yargs.Argv) {
       'node $0 youtube:comments:sync');
 }
 
+const service = google.youtube('v3');
+
+async function sync_page_of_comments(owner: IUserInstance,
+                                     auth: OAuth2Client,
+                                     channelId: string,
+                                     articleIdMap: Map<string, number>,
+                                     pageToken?: string) {
+  return new Promise<string | undefined>((resolve, reject) => {
+    service.commentThreads.list({
+      auth: auth,
+      allThreadsRelatedToChannelId: channelId,
+      part: 'snippet,replies',
+      textFormat: 'plainText',
+      maxResults: 50,
+      pageToken: pageToken,
+      // TODO: Set moderationStatus: heldForReview to only get unmoderated comments?
+    }, (err: any, response: any) => {
+      if (err) {
+        logger.error('Google API returned an error: ' + err);
+        reject('Google API error');
+        return;
+      }
+
+      const comments = response!.data.items;
+      const nextPageToken = response!.data.nextPageToken;
+
+      if (comments.length === 0) {
+        logger.info('Couldn\'t find any threads for channel %s.', channelId);
+        resolve(undefined);
+        return;
+      }
+
+      (async () => {
+        for (const t of comments) {
+          await mapCommentThreadToComments(owner, channelId, articleIdMap, t);
+        }
+      })()
+        .then(() => {
+          resolve(nextPageToken);
+        })
+        .catch((reason) => reject(reason));
+    });
+  });
+}
+
 export async function handler() {
-  const service = google.youtube('v3');
-
   authorize(async (owner, auth) => {
-    foreachActiveChannel(owner, async (channelId: string, articleIdMap: Map<string, number>) => {
-      return new Promise<void>((resolve, reject) => {
-        service.commentThreads.list({
-          auth: auth,
-          allThreadsRelatedToChannelId: channelId,
-          part: 'snippet,replies',
-          textFormat: 'plainText',
-          // TODO: need to also set maxResults and pageToken to only get new comments.
-          // TODO: Set moderationStatus: heldForReview to only get unmoderated comments?
-          //
-        }, (err: any, response: any) => {
-          if (err) {
-            logger.error('Google API returned an error: ' + err);
-            reject('Google API error');
-            return;
-          }
+    await foreachActiveChannel(owner, async (channelId: string, articleIdMap: Map<string, number>) => {
+      logger.info('Syncing comments for channel %s', channelId);
 
-          if (response!.data.items.length === 0) {
-            logger.info('Couldn\'t find any threads for channel %s.', channelId);
-            resolve();
-            return;
-          }
-          (async () => {
-            for (const t of response!.data.items) {
-              await mapCommentThreadToComments(owner, channelId, articleIdMap, t);
-            }
-          })().then(() => resolve());
-        });
-      });
+      let next_page;
+      do {
+        next_page = await sync_page_of_comments(owner, auth, channelId, articleIdMap, next_page);
+      } while (next_page);
+
+      logger.info('Done sync of comments for channel %s.', channelId);
     });
   });
 }
