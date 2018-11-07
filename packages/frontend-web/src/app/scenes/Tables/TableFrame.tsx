@@ -227,16 +227,18 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
               </div>
               <div key="count" {...css(STYLES.sidebarCount)}>{allUnmoderated}</div>
             </div>
-            {categories.map((c: ICategoryModel) => (
-              <div key={c.id} {...css(STYLES.sidebarRow, category && category.id === c.id ? STYLES.sidebarRowSelected : {})}>
-                <div key="label" {...css(STYLES.sidebarSection)}>
-                  <Link to={dashboardLink(`category=${c.id}${isMeSuffix}`)} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
-                    {c.label}
-                  </Link>
+            <div {...css({maxHeight: '80vh', overflowY: 'auto'})}>
+              {categories.map((c: ICategoryModel) => (
+                <div key={c.id} {...css(STYLES.sidebarRow, category && category.id === c.id ? STYLES.sidebarRowSelected : {})}>
+                  <div key="label" {...css(STYLES.sidebarSection)}>
+                    <Link to={dashboardLink(`category=${c.id}${isMeSuffix}`)} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
+                      {c.label}
+                    </Link>
+                  </div>
+                  <div key="count" {...css(STYLES.sidebarCount)}>{c.unmoderatedCount}</div>
                 </div>
-                <div key="count" {...css(STYLES.sidebarCount)}>{c.unmoderatedCount}</div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </FocusTrap>
       </Scrim>

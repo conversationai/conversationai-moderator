@@ -605,7 +605,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     summary['assignedModerators'] = category ? category.assignedModerators : [];
 
     return (
-      <div>
+      <div {...css({maxHeight: '90vh', overflowY: 'auto'})}>
         <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable, {position: 'relative'})}>
           <thead {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
             <tr>
