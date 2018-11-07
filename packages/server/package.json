@@ -1,0 +1,13 @@
+{
+  "name": "osmod-server",
+  "version": "1.1.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@conversationai/moderator-backend-core": "1.1.0",
+    "@conversationai/moderator-backend-api": "1.1.0",
+    "@conversationai/moderator-frontend-web": "1.1.0"
+  }
+}
