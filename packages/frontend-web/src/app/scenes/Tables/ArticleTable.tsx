@@ -25,7 +25,14 @@ import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
 import { ModelId } from '../../stores/moderators';
-import { GREY_COLOR, NICE_CONTROL_BLUE, NICE_LIGHTEST_BLUE, NICE_MIDDLE_BLUE, SCRIM_STYLE } from '../../styles';
+import {
+  GREY_COLOR,
+  HEADER_HEIGHT,
+  NICE_CONTROL_BLUE,
+  NICE_LIGHTEST_BLUE,
+  NICE_MIDDLE_BLUE,
+  SCRIM_STYLE,
+} from '../../styles';
 import { css, stylesheet, updateRelationshipModels } from '../../util';
 import { AssignModeratorsSimple } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
@@ -118,6 +125,8 @@ export interface IIArticleTableState {
   popupToShow?: string;
   selectedArticle?: IArticleModel;
   moderatorIds?: Set<ModelId>;
+  page_size: number;
+  current_page: number;
 }
 
 export class ArticleTable extends React.Component<IIArticleTableProps, IIArticleTableState> {
@@ -125,6 +134,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     popupToShow: null,
     selectedArticle: null,
     moderatorIds: null,
+    page_size: Math.floor(window.innerHeight / HEADER_HEIGHT) - 4,
+    current_page: 0,
   };
 
   @autobind
@@ -511,6 +522,30 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     );
   }
 
+  @autobind
+  nextPage() {
+    this.setState({current_page: this.state.current_page + 1});
+  }
+  @autobind
+  previousPage() {
+    this.setState({current_page: this.state.current_page - 1});
+  }
+
+  renderPaging(pages: number) {
+    const canNext = this.state.current_page !== pages - 1;
+    const canPrevious = this.state.current_page !== 0;
+
+    return (
+      <div key="paging" {...css({width: '100%', display: 'flex', justifyContent: 'center', textSize: '18px', color: 'white', marginTop: '10px'})}>
+        <div {...css({width: '60%', textAlign: 'center', position: 'relative'})}>
+          {canPrevious && <span key="previous" onClick={this.previousPage} {...css({position: 'absolute', left: 0})}>&lt;&lt;</span>}
+          Page {this.state.current_page + 1} of {pages}&nbsp;
+          {canNext && <span key="next" onClick={this.nextPage} {...css({position: 'absolute', right: 0})}>&gt;&gt;</span>}
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const {
       articles,
@@ -531,13 +566,16 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       sort = [];
     }
 
-    let processedArticles: any = articles;
+    let processedArticles: Array<IArticleModel> = articles.toArray();
 
     if (Object.keys(filter).length > 0) {
       processedArticles = processedArticles.filter(executeFilter(filter));
     }
     if (sort.length > 0) {
       processedArticles = processedArticles.sort(executeSort(sort));
+    }
+    else {
+      processedArticles = processedArticles.sort(executeSort(['+sourceCreatedAt']));
     }
 
     const currentFilter = newFilterString(filter);
@@ -588,7 +626,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     for (const a of processedArticles) {
       count += 1;
       for (const i of columns) {
-        summary[i] += a[i];
+        summary[i] += (a as any)[i];
       }
     }
 
@@ -604,8 +642,16 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     summary['category'] = category;
     summary['assignedModerators'] = category ? category.assignedModerators : [];
 
+    const pages = Math.ceil(processedArticles.length / this.state.page_size);
+    const paging = pages > 1;
+    if (paging) {
+      const start = this.state.current_page * this.state.page_size;
+      const end = Math.min(start + this.state.page_size, processedArticles.length);
+      processedArticles = processedArticles.slice(start, end);
+    }
+
     return (
-      <div {...css({maxHeight: '90vh', overflowY: 'auto'})}>
+      <div>
         <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable, {position: 'relative'})}>
           <thead {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
             <tr>
@@ -628,7 +674,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
                 {renderHeaderItem('Flagged', 'flagged')}
               </th>
               <th key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
-                {renderHeaderItem('Modified', 'lastModerated')}
+                {renderHeaderItem('Modified', 'lastModeratedAt')}
               </th>
               <th key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell)}/>
               <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.moderatorCell, {color: NICE_LIGHTEST_BLUE})}>
@@ -642,6 +688,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             {processedArticles.map((article: IArticleModel) => this.renderRow(article))}
           </tbody>
         </table>
+        {paging && this.renderPaging(pages)}
         {this.renderSetModerators()}
       </div>
     );

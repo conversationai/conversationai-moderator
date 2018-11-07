@@ -156,10 +156,10 @@ export function executeSort(sortList: Array<string>) {
         return b.deferredCount - a.deferredCount;
       case 'flagged':
         return b.flaggedCount - a.flaggedCount;
-      case 'lastModerated':
-        const lma = a.lastModeratedAt;
-        const lmb = b.lastModeratedAt;
-        console.log(lma, lmb);
+      case 'lastModeratedAt':
+      case 'sourceCreatedAt':
+        const lma = a[comparator];
+        const lmb = b[comparator];
         if (!lma && !lmb) {
           return 0;
         }
