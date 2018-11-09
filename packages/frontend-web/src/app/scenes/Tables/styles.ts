@@ -40,7 +40,7 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
     height: `${HEADER_HEIGHT}px`,
     fontSize: '18px',
   },
-  moderatorCell: {
+  iconCell: {
     width: `${HEADER_HEIGHT}px`,
     minHeight: `${HEADER_HEIGHT}px`,
     textAlign: 'center',

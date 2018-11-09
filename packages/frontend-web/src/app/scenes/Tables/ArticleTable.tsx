@@ -105,6 +105,15 @@ const STYLES = stylesheet({
     justifyContent: 'center',
     alignContent: 'center',
   },
+
+  pagingBar: {
+    height: `${HEADER_HEIGHT}px`,
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    textSize: '18px',
+    color: 'white',
+  },
 });
 
 export interface IIArticleTableProps extends WithRouterProps {
@@ -134,7 +143,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     popupToShow: null,
     selectedArticle: null,
     moderatorIds: null,
-    page_size: Math.floor(window.innerHeight / HEADER_HEIGHT) - 4,
+    page_size: Math.floor(window.innerHeight / HEADER_HEIGHT) - 5,
     current_page: 0,
   };
 
@@ -258,7 +267,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     return (
       <div onClick={openDlg} {...css(imOpen ? STYLES.iconBackgroundCircle : big)}>
         <div {...css(STYLES.iconCenter)}>
-          <icons.FlagIcon {...css(COMMON_STYLES.xsmallImage, {color: article.isAutoModerated ? NICE_CONTROL_BLUE : GREY_COLOR})}/>
+          <icons.SpeechBubbleIcon {...css({color: article.isAutoModerated ? NICE_CONTROL_BLUE : GREY_COLOR})}/>
           {this.renderControlPopup(article)}
         </div>
       </div>
@@ -319,7 +328,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       }
       else {
         ret.push(
-          <div {...css(STYLES.small, {display: 'inline-block', margin: '1px'})}>
+          <div key={u.id} {...css(STYLES.small, {display: 'inline-block', margin: '1px'})}>
             <div {...css(STYLES.iconBackgroundCircleSmall)}>
               <div {...css(STYLES.iconCenter)}>
                 <icons.UserIcon {...css(STYLES.small, {color: NICE_MIDDLE_BLUE})}/>
@@ -331,8 +340,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
     if (extra) {
       ret.push(
-        <div style={{display: 'inline-block', margin: '1px'}}>
-          <div key="extra" {...css(STYLES.textCenterSmall)}>+{article.assignedModerators.length - 3}</div>
+        <div key="extra" style={{display: 'inline-block', margin: '1px'}}>
+          <div {...css(STYLES.textCenterSmall)}>+{article.assignedModerators.length - 3}</div>
         </div>,
       );
     }
@@ -512,10 +521,12 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.timeCell)}>
           {lastModerated}
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell)}>
-          {this.renderFlags(article)}
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.iconCell)}>
+          <div {...css({display: 'inline-block'})}>
+            {this.renderFlags(article)}
+          </div>
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.moderatorCell)}>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.iconCell)}>
           {this.renderModerators(article)}
         </td>
       </tr>
@@ -536,11 +547,11 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     const canPrevious = this.state.current_page !== 0;
 
     return (
-      <div key="paging" {...css({width: '100%', display: 'flex', justifyContent: 'center', textSize: '18px', color: 'white', marginTop: '10px'})}>
-        <div {...css({width: '60%', textAlign: 'center', position: 'relative'})}>
-          {canPrevious && <span key="previous" onClick={this.previousPage} {...css({position: 'absolute', left: 0})}>&lt;&lt;</span>}
+      <div key="paging" {...css(STYLES.pagingBar)}>
+        <div {...css({width: '60%', height: `${HEADER_HEIGHT}px`, lineHeight: `${HEADER_HEIGHT}px`, textAlign: 'center', position: 'relative'})}>
+          {canPrevious && <span key="previous" onClick={this.previousPage} {...css({position: 'absolute', left: 0})}><icons.ArrowIcon/></span>}
           Page {this.state.current_page + 1} of {pages}&nbsp;
-          {canNext && <span key="next" onClick={this.nextPage} {...css({position: 'absolute', right: 0})}>&gt;&gt;</span>}
+          {canNext && <span key="next" onClick={this.nextPage} {...css({position: 'absolute', right: 0})}><icons.ArrowFIcon/></span>}
         </div>
       </div>
     );
@@ -581,18 +592,34 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     const currentFilter = newFilterString(filter);
     const currentSort = newSortString(sort);
 
-    function renderHeaderItem(label: string, sortField: string) {
-      let direction = '';
+    function renderDirectionIndicatorUp() {
+      return (
+        <div {...css({position: 'absolute', left: 0, right: 0, top: '-18px', textAlign: 'center'})}>
+          <icons.KeyUpIcon/>
+        </div>
+      );
+    }
+
+    function renderDirectionIndicatorDown() {
+      return (
+        <div {...css({position: 'absolute', left: 0, right: 0, bottom: '-18px', textAlign: 'center'})}>
+          <icons.KeyDownIcon/>
+        </div>
+      );
+    }
+
+    function renderHeaderItem(label: string | JSX.Element, sortField: string) {
+      let directionIndicator: string | JSX.Element = '';
       let nextSortItem = `+${sortField}`;
 
       for (const item of sort) {
         if (item.endsWith(sortField)) {
           if (item[0] === '+') {
-            direction = '^';
+            directionIndicator = renderDirectionIndicatorDown();
             nextSortItem =  `-${sortField}`;
           }
           else if (item[0] === '-') {
-            direction = 'v';
+            directionIndicator = renderDirectionIndicatorUp();
             nextSortItem = sortField;
           }
           break;
@@ -601,7 +628,10 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       const newSort = newSortString(sort, nextSortItem);
       return (
         <Link to={dashboardLink(currentFilter, newSort)} {...css(COMMON_STYLES.cellLink)}>
-          {label} {direction}
+          <span {...css({position: 'relative'})}>
+            {label}
+            {directionIndicator}
+          </span>
         </Link>
       );
     }
@@ -651,12 +681,15 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
 
     return (
-      <div>
+      <div key="main">
         <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable, {position: 'relative'})}>
           <thead {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
             <tr>
               <th key="title" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.textCell)}>
                 {renderHeaderItem('Title', 'title')}
+                <div {...css({float: 'right'})}>
+                  {renderHeaderItem(<icons.ClockIcon/>, 'sourceCreatedAt')}
+                </div>
               </th>
               <th key="new" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
                 {renderHeaderItem('New', 'new')}
@@ -676,8 +709,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
               <th key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
                 {renderHeaderItem('Modified', 'lastModeratedAt')}
               </th>
-              <th key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell)}/>
-              <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.moderatorCell, {color: NICE_LIGHTEST_BLUE})}>
+              <th key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}/>
+              <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell, {color: NICE_LIGHTEST_BLUE})}>
                 <icons.FilterIcon {...css(medium)} onClick={this.openFilters}/>
                 {this.renderFilterPopup(filter, currentSort)}
               </th>
