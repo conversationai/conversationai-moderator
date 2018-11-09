@@ -18,24 +18,42 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as yargs from 'yargs';
 
-import { logger } from '@conversationai/moderator-backend-core';
-import { Article, Category } from '@conversationai/moderator-backend-core';
+import {
+  IAuthorAttributes,
+  logger,
+  postProcessComment,
+  sendForScoring,
+  updateHappened,
+} from '@conversationai/moderator-backend-core';
+import { Article, Category, Comment } from '@conversationai/moderator-backend-core';
+
+const PREEXISTING_CATEGORIES = 5;
+const PREEXISTING_ARTICLES = 20;
+const NEW_CATEGORIES = 1;
+const NEW_ARTICLES = 5;
+const NEW_COMMENTS = 20;
 
 export const command = 'comments:generate';
 export const describe = 'Generate some comments, with some associated categories and articles.  ' +
-  'We generate 1 category, 5 articles and 100 comments per invocation.  ' +
+  `We generate ${NEW_CATEGORIES} categories, ` +
+  `${NEW_ARTICLES * NEW_CATEGORIES} articles and ` +
+  `${NEW_COMMENTS * NEW_ARTICLES * NEW_CATEGORIES} comments per invocation.  ` +
   'Comments are spread across new categories/articles and last few existing ones';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
-    .usage('Usage: node $0 comments:generate');
+export function builder(args: yargs.Argv) {
+  return args
+    .usage('Usage: node $0 comments:generate [ --categories c ] [ -articles a ] \n' +
+           '                                 [ -comments o ]')
+    .number('categories')
+    .describe('categories', `Number of categories to create.`)
+    .default('categories', NEW_CATEGORIES)
+    .number('articles')
+    .describe('articles', `Number of articles to create for each category.`)
+    .default('articles', NEW_ARTICLES)
+    .number('comments')
+    .describe('comments', `Number of comments to create for each article.`)
+    .default('comments', NEW_COMMENTS);
 }
-
-const PREEXISTING_CATEGORIES = 5;
-const PREEXISTING_ARTICLES = 5;
-const NEW_CATEGORIES = 1;
-const NEW_ARTICLES = 5;
-// const NEW_COMMENTS = 100;
 
 function guid() {
   function s4() {
@@ -113,7 +131,7 @@ function get_sentences(data: string, count: number): string {
   return ret;
 }
 
-function get_words(data: string, count: number): string{
+function get_words(data: string, count: number): string {
   const start = Math.floor(data.length * Math.random());
   const offset = find_start_of_word(data, start);
   let end = start;
@@ -129,8 +147,7 @@ function get_words(data: string, count: number): string{
   return ret;
 }
 
-export async function handler() {
-  logger.info('Generating comments');
+export async function handler(argv: any) {
   const data = fs.readFileSync(path.join(__dirname, '../../data/alice.txt'), 'UTF8');
 
   const categories = await Category.findAll({
@@ -150,15 +167,31 @@ export async function handler() {
     limit: PREEXISTING_ARTICLES,
   });
 
-  for (let i = 0; i < NEW_CATEGORIES; i++ ) {
-    const new_category = await Category.create({
-      label: get_words(data, 5),
-    });
+  async function generate_comments() {
+    for (let i = 0; i < argv.comments; i++) {
+      const idx = Math.floor(articles.length * Math.random());
+      const article = articles[idx];
 
-    logger.info(`Generated category ${new_category.id}: ${new_category.get('label')}`);
-    categories.push(new_category);
+      const author: IAuthorAttributes = {
+        name: get_words(data, 3),
+      };
 
-    for (let i = 0; i < NEW_ARTICLES / NEW_CATEGORIES; i++) {
+      const comment = await Comment.create({
+        sourceId: guid(),
+        sourceCreatedAt: new Date(Date.now()),
+        articleId: article.id,
+        authorSourceId: guid(),
+        author: author,
+        text: get_sentences(data, 6),
+      });
+
+      await postProcessComment(comment);
+      await sendForScoring(comment);
+    }
+  }
+
+  async function generate_articles() {
+    for (let i = 0; i < argv.articles; i++) {
       const idx = Math.floor(categories.length * Math.random());
       const category = categories[idx];
 
@@ -175,6 +208,36 @@ export async function handler() {
 
       logger.info(`Generated article ${new_article.id}: ${new_article.get('title')}`);
       articles.push(new_article);
+      await generate_comments();
     }
+  }
+
+  if (argv.categories !== 0) {
+    for (let i = 0; i < argv.categories; i++) {
+      const new_category = await Category.create({
+        label: get_words(data, 5),
+      });
+
+      logger.info(`Generated category ${new_category.id}: ${new_category.get('label')}`);
+      categories.push(new_category);
+
+      if (argv.articles !== 0) {
+        await generate_articles();
+      }
+      else {
+        await generate_comments();
+      }
+    }
+  }
+  else if (argv.articles !== 0) {
+    await generate_articles();
+  }
+  else {
+    await generate_comments();
+  }
+
+  if (argv.comments === 0) {
+    logger.info(`Not generating comments, but trigger update anyway.`);
+    await updateHappened();
   }
 }
