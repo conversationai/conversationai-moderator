@@ -34,7 +34,7 @@ export const SCRIM_STYLE = {
     paddingRight: `${GUTTER_DEFAULT_SPACING}px`,
     paddingBottom: `${GUTTER_DEFAULT_SPACING}px`,
     paddingLeft: `${GUTTER_DEFAULT_SPACING}px`,
-    width: 400,
+    width: '400px',
     boxShadow: MODAL_DROP_SHADOW,
     outline: 0,
     ':focus': {
@@ -49,5 +49,23 @@ export const SCRIM_STYLE = {
     ':focus': {
       outline: 'none',
     },
+  },
+
+  popupTitle: {
+    marginTop: '5px',
+    marginBottom: '15px',
+    fontSize: '16px',
+    textAlign: 'left',
+  },
+
+  popupFooter: {
+    marginTop: '15px',
+    marginBottom: '5px',
+    fontSize: '16px',
+    fontWeight: 'bold',
+  },
+
+  popupContent: {
+    fontSize: '16px',
   },
 };

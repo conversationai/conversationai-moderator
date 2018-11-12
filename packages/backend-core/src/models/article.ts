@@ -220,5 +220,6 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
   hooks: {
     afterCreate: updateHappened,
     afterBulkCreate: updateHappened,
+    afterUpdate: updateHappened,
   },
 });
