@@ -625,6 +625,9 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           </Link>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.timeCell)}>
+          {article.id === 'summary' ? '' : <MagicTimestamp timestamp={article.updatedAt} inFuture={false}/>}
+        </td>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.timeCell)}>
           {lastModerated}
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.iconCell)}>
@@ -813,7 +816,10 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
                 {renderHeaderItem('Flagged', 'flagged')}
               </th>
               <th key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
-                {renderHeaderItem('Modified', 'lastModeratedAt')}
+                {renderHeaderItem('Modified', 'updatedAt')}
+              </th>
+              <th key="moderated" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
+                {renderHeaderItem('Moderated', 'lastModeratedAt')}
               </th>
               <th key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}/>
               <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell, {color: NICE_LIGHTEST_BLUE})}>

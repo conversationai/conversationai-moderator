@@ -158,6 +158,7 @@ export function executeSort(sortList: Array<string>) {
         return b.flaggedCount - a.flaggedCount;
       case 'lastModeratedAt':
       case 'sourceCreatedAt':
+      case 'updatedAt':
         const lma = a[comparator];
         const lmb = b[comparator];
         if (!lma && !lmb) {

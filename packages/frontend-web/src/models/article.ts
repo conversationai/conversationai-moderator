@@ -22,6 +22,7 @@ import { IUserModel, UserModel } from './user';
 export interface IArticleAttributes {
   id: string;
   sourceCreatedAt: string;
+  updatedAt: string;
   title: string;
   text: string;
   url: string;
@@ -48,6 +49,7 @@ export interface IArticleModel extends TypedRecord<IArticleModel>, IArticleAttri
 const ArticleModelRecord = Record({
   id: null,
   sourceCreatedAt: null,
+  updatedAt: null,
   text: null,
   title: null,
   url: null,

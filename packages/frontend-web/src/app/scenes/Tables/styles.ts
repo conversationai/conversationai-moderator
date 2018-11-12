@@ -56,7 +56,7 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
   },
   timeCell: {
     textAlign: 'right',
-    width: '120px',
+    width: '100px',
     paddingRight: '20px',
   },
   categoryLabel: {
