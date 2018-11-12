@@ -87,6 +87,12 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
     allowNull: false,
   },
 
+  articleId: {
+    type: Sequelize.BIGINT.UNSIGNED,
+    allowNull: true,
+    // references: { model: Article },
+  },
+
   replyToSourceId: {
     type: Sequelize.CHAR(255),
     allowNull: true,
@@ -169,12 +175,6 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
   sourceCreatedAt: {
     type: Sequelize.DATE,
     allowNull: true,
-  },
-
-  createdAt: {
-    type: Sequelize.DATE,
-    allowNull: false,
-    defaultValue: Sequelize.NOW,
   },
 
   sentForScoring: {

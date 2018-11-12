@@ -75,6 +75,11 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     allowNull: false,
   },
 
+  categoryId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: true,
+  },
+
   title: {
     type: Sequelize.CHAR(255),
     allowNull: false,
@@ -93,12 +98,6 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
   sourceCreatedAt: {
     type: Sequelize.DATE,
     allowNull: true,
-  },
-
-  createdAt: {
-    type: Sequelize.DATE,
-    allowNull: false,
-    defaultValue: Sequelize.NOW,
   },
 
   isCommentingEnabled: {

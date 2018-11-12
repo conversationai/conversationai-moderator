@@ -19,7 +19,6 @@ import { sequelize } from '../sequelize';
 import {updateHappened} from './last_update';
 
 export interface IUserCategoryAssignmentAttributes {
-  id?: number;
   categoryId: number;
   userId: number;
 }
