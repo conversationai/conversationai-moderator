@@ -28,13 +28,10 @@ import {
   IModerationRuleInstance,
   ITagInstance,
   IUserInstance,
+  User,
 } from '../../models';
-import {
-  denormalizeCommentCountsForArticle,
-} from '../articles/countDenormalization';
-import {
-  denormalizeCountsForComment,
-} from '../comments/countDenormalization';
+import {denormalizeCommentCountsForArticle} from '../articles';
+import {denormalizeCountsForComment} from '../comments';
 import { recordDecision } from './pipeline';
 
 export type IResolution = 'Accept' | 'Reject' | 'Defer';
@@ -172,7 +169,11 @@ export function getUnHighlightStateData(): Partial<ICommentAttributes> {
  * Set comment state and save it to the database. Passing an optional data object will add extra data,
  * but keys that conflict with `state` will be omitted
  */
-export async function setCommentState(comment: ICommentInstance, state: Partial<ICommentAttributes>, data?: Partial<ICommentAttributes>): Promise<ICommentInstance> {
+export async function setCommentState(
+  comment: ICommentInstance,
+  source: IUserInstance | IModerationRuleInstance | null,
+  state: Partial<ICommentAttributes>,
+  data?: Partial<ICommentAttributes>): Promise<ICommentInstance> {
 
   // Create an object of data to save and accept an optional `data` object for additional
   // data, omitting any keys that conflict with `state`
@@ -187,7 +188,7 @@ export async function setCommentState(comment: ICommentInstance, state: Partial<
   // denormalize the comment counts
   const article = await comment.getArticle();
   if (article) {
-    await denormalizeCommentCountsForArticle(article);
+    await denormalizeCommentCountsForArticle(article, source instanceof User.Instance);
   }
 
   return updated;
@@ -203,7 +204,7 @@ export async function approve(
   autoConfirm: boolean,
   data?: object,
 ): Promise<ICommentInstance> {
-  const updated = await setCommentState(comment, getApproveStateData(), data);
+  const updated = await setCommentState(comment, source, getApproveStateData(), data);
 
   await recordDecision(updated, 'Accept', source, autoConfirm);
 
@@ -220,7 +221,7 @@ export async function reject(
   autoConfirm: boolean,
   data?: object,
 ): Promise<ICommentInstance> {
-  const updated = await setCommentState(comment, getRejectStateData(), data);
+  const updated = await setCommentState(comment, source, getRejectStateData(), data);
 
   await recordDecision(updated, 'Reject', source, autoConfirm);
 
@@ -237,7 +238,7 @@ export async function defer(
   autoConfirm: boolean,
   data?: object,
 ): Promise<ICommentInstance> {
-  const updated = await setCommentState(comment, getDeferStateData(), data);
+  const updated = await setCommentState(comment, source, getDeferStateData(), data);
 
   await recordDecision(updated, 'Defer', source, autoConfirm);
 
@@ -250,18 +251,18 @@ export async function defer(
  */
 export async function highlight(
   comment: ICommentInstance,
-  _source?: IUserInstance | IModerationRuleInstance | null,
+  source: IUserInstance | IModerationRuleInstance | null,
   _autoConfirm?: boolean,
 ): Promise<ICommentInstance> {
   let updated = comment;
   if (comment.get('isHighlighted') === true) {
-    updated = await setCommentState(comment, {
+    updated = await setCommentState(comment, source, {
       ...getApproveStateData(),
       ...getUnHighlightStateData(),
     });
     await trigger('api.publisher.unhighlightComment', { comment: updated });
   } else {
-    updated = await setCommentState(comment, {
+    updated = await setCommentState(comment, source, {
       ...getApproveStateData(),
       ...getHighlightStateData(),
     });
@@ -274,8 +275,8 @@ export async function highlight(
 /**
  * Reset a comment in the database.
  */
-export function reset(comment: ICommentInstance, _source?: IUserInstance | IModerationRuleInstance | null ): Promise<ICommentInstance> {
-  return setCommentState(comment, getDefaultStateData());
+export function reset(comment: ICommentInstance, source: IUserInstance | IModerationRuleInstance | null ): Promise<ICommentInstance> {
+  return setCommentState(comment, source, getDefaultStateData());
 }
 
 /**
@@ -299,7 +300,7 @@ export async function addScore(comment: ICommentInstance, tag: ITagInstance, use
   // denormalize the comment counts
   const article = await comment.getArticle();
   if (article) {
-    await denormalizeCommentCountsForArticle(article);
+    await denormalizeCommentCountsForArticle(article, user !== null);
   }
 
   return score;

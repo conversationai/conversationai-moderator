@@ -38,7 +38,7 @@ export async function handler() {
     const articles = await Article.findAll();
     for (const a of articles) {
       logger.info('Denormalizing article ' + a.id);
-      denormalizeCommentCountsForArticle(a);
+      denormalizeCommentCountsForArticle(a, false);
     }
 
   }

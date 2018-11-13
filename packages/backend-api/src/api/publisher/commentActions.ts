@@ -42,7 +42,7 @@ export function queueMainAction(name: IKnownTasks): express.RequestHandler {
         const parsedUserId = parseInt(userId, 10);
         const parsedCommentId = parseInt(commentId, 10);
 
-        const isBatchAction = (dataArray.length > 1) ? true : false;
+        const isBatchAction = (dataArray.length > 1);
         await enqueue<ICommentActionData>(name, {
           commentId: parsedCommentId,
           userId: parsedUserId,

@@ -93,7 +93,7 @@ export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = ha
     }
 
     await denormalizeCountsForComment(comment);
-    await denormalizeCommentCountsForArticle(await comment.getArticle());
+    await denormalizeCommentCountsForArticle(await comment.getArticle(), false);
   } catch (err) { // Catching just for logging purposes
     logger.error('Catch Tag Addition', err);
     throw err;
@@ -138,7 +138,7 @@ export const processTagRevocationTask = handler<IProcessTagRevocationData>(async
     });
 
     await denormalizeCountsForComment(comment);
-    await denormalizeCommentCountsForArticle(await comment.getArticle());
+    await denormalizeCommentCountsForArticle(await comment.getArticle(), false);
   } catch (err) { // Catching just for logging purposes
     logger.error('Catch Tag Revocation', err);
     throw err;

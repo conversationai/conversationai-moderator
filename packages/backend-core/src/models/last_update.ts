@@ -31,12 +31,13 @@ export interface ILastUpdateInstance
 /**
  * Category model
  */
-const LastUpdate = sequelize.define<ILastUpdateInstance, ILastUpdateAttributes>('last_update', {
+const LastUpdate = sequelize.define<ILastUpdateInstance, ILastUpdateAttributes>('last_updates', {
   id: {
     type: Sequelize.INTEGER.UNSIGNED,
     primaryKey: true,
   },
-  counter: {
+
+  lastUpdate: {
     type: Sequelize.INTEGER.UNSIGNED,
   },
 });

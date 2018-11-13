@@ -27,7 +27,6 @@ export const MODERATION_RULE_ACTION_TYPES = [
 ];
 
 export interface IModerationRuleAttributes {
-  id?: number;
   tagId: number;
   categoryId?: number;
   createdBy?: number;
@@ -51,11 +50,26 @@ export interface IModerationRuleInstance
 export const ModerationRule = sequelize.define<
   IModerationRuleInstance,
   IModerationRuleAttributes
->('moderation_rule', {
+>('moderation_rules', {
   id: {
     type: Sequelize.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
+  },
+
+  tagId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: false,
+  },
+
+  categoryId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: true,
+  },
+
+  createdBy: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: true,
   },
 
   lowerThreshold: {

@@ -29,8 +29,9 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
         sourceId: channelId,
       },
       defaults: {
-        label: channel.snippet!.title!,
+        ownerId: owner.id,
         sourceId: channelId,
+        label: channel.snippet!.title!,
       },
     });
 
@@ -38,23 +39,32 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
       logger.info('Category created for channel %s (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
     }
     else {
+      category.set('label', channel.snippet!.title!);
+      await category.save();
       logger.info('Category updated for channel %s (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
     }
 
     // Create an article to store comments for the channel itself.
     // sourceId of this article is the channel ID
+    const defaults = {
+      categoryId: category.id,
+      title: 'Channel comments',
+      text: 'Comments associated with the channel itself.',
+      url: 'https://www.youtube.com/channel/' + channelId,
+      sourceCreatedAt: new Date(Date.parse(channel.snippet!.publishedAt!)),
+    };
     const [article, acreated] = await Article.findOrCreate({
       where: {
+        ownerId: owner.id,
         sourceId: channelId,
       },
 
       defaults: {
+        ...defaults,
+        ownerId: owner.id,
         sourceId: channelId,
-        categoryId: category.id,
-        title: 'Channel comments',
-        text: 'Comments associated with the channel itself.',
-        url: 'https://www.youtube.com/channel/' + channelId,
-        sourceCreatedAt: new Date(Date.parse(channel.snippet!.publishedAt!)),
+        isCommentingEnabled: true,
+        isAutoModerated: true,
       },
     });
 
@@ -62,11 +72,13 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
       logger.info('Article created for channel %s (local id: %s -> remote id: %s)', article.get('title'), article.id, channel.id);
     }
     else {
+      article.set(defaults);
+      await article.save();
       logger.info('Article updated for channel %s (local id: %s -> remote id: %s)', article.get('title'), article.id, channel.id);
     }
   }
   catch (error) {
-    logger.error('Failed update of channel%s: %s', channel.snippet!.title, error);
+    logger.error('Failed update of article for channel %s: %s', channel.snippet!.title, error);
   }
 }
 
@@ -103,6 +115,14 @@ export async function mapPlaylistItemToArticle(owner: IUserInstance, categoryId:
   const videoId = item.snippet.resourceId.videoId;
   logger.info('Got video %s (%s)', item.snippet.title, videoId);
 
+  const defaults = {
+    title: item.snippet.title.substring(0, 255),
+    text: item.snippet.description,
+    url: 'https://www.youtube.com/watch?v=' + videoId,
+    sourceCreatedAt: new Date(Date.parse(item.snippet.publishedAt)),
+    extra: item,
+  };
+
   try {
     const [article, created] = await Article.findOrCreate({
       where: {
@@ -110,14 +130,12 @@ export async function mapPlaylistItemToArticle(owner: IUserInstance, categoryId:
       },
 
       defaults: {
+        ...defaults,
         ownerId: owner.id,
         sourceId: videoId,
         categoryId: categoryId,
-        title: item.snippet.title.substring(0, 255),
-        text: item.snippet.description,
-        url: 'https://www.youtube.com/watch?v=' + videoId,
-        sourceCreatedAt: new Date(Date.parse(item.snippet.publishedAt)),
-        extra: item,
+        isCommentingEnabled: true,
+        isAutoModerated: true,
       },
     });
 
@@ -125,6 +143,8 @@ export async function mapPlaylistItemToArticle(owner: IUserInstance, categoryId:
       logger.info('Created article %s for video %s', article.id, article.get('sourceId'));
     }
     else {
+      article.set(defaults);
+      await article.save();
       logger.info('Updated article %s for video %s', article.id, article.get('sourceId'));
     }
   }
@@ -141,6 +161,16 @@ async function mapCommentToComment(owner: IUserInstance, articleId: number, ytco
       avatar: ytcomment.snippet.authorProfileImageUrl,
     };
 
+    const defaults = {
+      articleId: articleId,
+      authorSourceId: ytcomment.snippet.authorChannelId.value,
+      author: author,
+      text: ytcomment.snippet.textDisplay,
+      sourceCreatedAt: new Date(Date.parse(ytcomment.snippet.publishedAt)),
+      replyToSourceId: replyToSourceId,
+      extra: ytcomment,
+    };
+
     const [comment, created] = await Comment.findOrCreate({
       where: {
         sourceId: ytcomment.id,
@@ -149,13 +179,7 @@ async function mapCommentToComment(owner: IUserInstance, articleId: number, ytco
       defaults: {
         ownerId: owner.id,
         sourceId: ytcomment.id,
-        articleId: articleId,
-        authorSourceId: ytcomment.snippet.authorChannelId.value,
-        author: author,
-        text: ytcomment.snippet.textDisplay,
-        sourceCreatedAt: new Date(Date.parse(ytcomment.snippet.publishedAt)),
-        replyToSourceId: replyToSourceId,
-        extra: ytcomment,
+        ...defaults,
       },
     });
 
@@ -163,6 +187,8 @@ async function mapCommentToComment(owner: IUserInstance, articleId: number, ytco
       logger.info('Created comment %s (%s)', comment.id, comment.get('sourceId'));
     }
     else {
+      comment.set(defaults);
+      await comment.save();
       logger.info('Updated comment %s (%s)', comment.id, comment.get('sourceId'));
     }
 

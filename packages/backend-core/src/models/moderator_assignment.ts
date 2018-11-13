@@ -19,7 +19,6 @@ import { sequelize } from '../sequelize';
 import { updateHappened } from './last_update';
 
 export interface IModeratorAssignmentAttributes {
-  id?: number;
   userId: number;
   articleId: number;
 }
@@ -46,6 +45,15 @@ export const ModeratorAssignment = sequelize.define<
       type: Sequelize.INTEGER.UNSIGNED,
       primaryKey: true,
       autoIncrement: true,
+    },
+
+    userId: {
+      type: Sequelize.INTEGER.UNSIGNED,
+      allowNull: false,
+    },
+
+    articleId: {
+      type: Sequelize.BIGINT.UNSIGNED,
       allowNull: false,
     },
   },

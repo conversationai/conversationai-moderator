@@ -103,7 +103,7 @@ describe('Notification tests', () => {
     const article = await makeArticle();
 
     assert.isTrue(await awaitNotification(async () => {
-      await denormalizeCommentCountsForArticle(article);
+      await denormalizeCommentCountsForArticle(article, false);
     }));
   });
 
@@ -112,7 +112,7 @@ describe('Notification tests', () => {
     const article = await makeArticle({categoryId: category.id} );
 
     assert.isTrue(await awaitNotification(async () => {
-      await denormalizeCommentCountsForArticle(article);
+      await denormalizeCommentCountsForArticle(article, false);
     }));
   });
 

@@ -200,7 +200,7 @@ export async function resolveComment(
 export async function processRulesForComment(comment: ICommentInstance): Promise<IDecision | null> {
   const article = await comment.getArticle();
 
-  if (article && article.get('disableRules')) {
+  if (article && !article.get('isAutoModerated')) {
     return null;
   }
 

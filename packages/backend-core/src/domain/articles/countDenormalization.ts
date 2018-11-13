@@ -19,12 +19,12 @@ import {
   Comment,
   updateHappened,
 } from '../../models';
-import { IArticleInstance } from '../../models';
+import { IArticleAttributes, IArticleInstance } from '../../models';
 import {
   denormalizeCommentCountsForCategory,
 } from '../categories';
 
-export async function denormalizeCommentCountsForArticle(article: IArticleInstance | null): Promise<void> {
+export async function denormalizeCommentCountsForArticle(article: IArticleInstance | null, isModeratorAction: boolean): Promise<void> {
   if (!article) {
     return;
   }
@@ -56,7 +56,7 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     Comment.count({ where: { articleId: article.id, recommendedCount: { $gt: 0 } } }),
   ]);
 
-  await article.update({
+  const update: Partial<IArticleAttributes> = {
     count,
     unprocessedCount,
     unmoderatedCount,
@@ -68,7 +68,13 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     flaggedCount,
     batchedCount,
     recommendedCount,
-  });
+  };
+
+  if (isModeratorAction) {
+    update.lastModeratedAt = new Date();
+  }
+
+  await article.update(update);
 
   if (article.get('categoryId')) {
     const category = (await Category.findById(article.get('categoryId')))!;

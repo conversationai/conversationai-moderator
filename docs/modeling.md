@@ -127,6 +127,7 @@ This table holds the articles that can be commented on.
 - text (string) (required)
 - url (string) (required)
 - isAutoModerated (tinyint) (required) (Indicates whether the article is subject to automated moderation rules)
+- isCommentingEnabled (boolean) (Indicates whether commenting is enabled.  This field should be automatically synchronised with the host platform to enable/disable commenting.
 - count (int) Number of comments in this article
 - unprocessedCount (int) (Denormalized count of unprocessed comments (isScored = false))
 - unmoderatedCount (int) (Denormalized count of unmoderated comments (isScored = true AND isModerated = false))
@@ -138,9 +139,9 @@ This table holds the articles that can be commented on.
 - flaggedCount (int) (Denormalize COUNT of comments with flaggedCount > 0)
 - batchedCount (int) (Denormalize COUNT of comments with batchedCount > 0)
 - recommendedCount (int) (Denormalize COUNT of comments with recommendedCount > 0)
-- disableRules (tinyint) (Whether rule processing is disabled on this article)
 - createdAt (datetime)
 - modifiedAt (datetime)
+- lastModeratedAt (datetime) Time when a moderation action was last done.
 - extra (json)
 
 *Indexes*:

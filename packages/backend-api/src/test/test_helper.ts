@@ -83,6 +83,8 @@ export async function makeArticle(obj = {}): Promise<IArticleInstance> {
     text: 'Text',
     url: 'https://example.com',
     sourceCreatedAt: '2012-10-29T21:54:07.609Z',
+    isCommentingEnabled: true,
+    isAutoModerated: true,
     unprocessedCount: 0,
     unmoderatedCount: 0,
     moderatedCount: 0,

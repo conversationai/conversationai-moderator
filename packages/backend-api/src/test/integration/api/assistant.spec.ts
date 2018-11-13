@@ -40,6 +40,7 @@ describe(prefixed, () => {
 
   describe('/scores/:id', () => {
     beforeEach(async () => {
+      await CommentScoreRequest.destroy({where: {}});
       await Comment.destroy({where: {}});
       await User.destroy({where: {}});
       const comment = await makeComment();

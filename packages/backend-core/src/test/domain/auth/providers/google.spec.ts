@@ -58,7 +58,6 @@ describe('Auth Domain Google Tests', function() {
       };
 
       let expected = {
-        group: 'general',
         email: 'name@example.com',
         name: 'User Name',
       };

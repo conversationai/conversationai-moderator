@@ -18,6 +18,7 @@ import * as chai from 'chai';
 
 import {
   Comment,
+  CommentScoreRequest,
 } from '@conversationai/moderator-backend-core';
 
 import {
@@ -46,6 +47,7 @@ async function fakeAuthor(authorSourceId: string, approvedCount: number, rejecte
 
 describe(BASE_URL, () => {
   beforeEach(async () => {
+    await CommentScoreRequest.destroy({where: {}});
     await Comment.destroy({where: {}});
   });
 

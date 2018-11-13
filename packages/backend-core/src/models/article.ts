@@ -28,7 +28,8 @@ export interface IArticleAttributes {
   text: string;
   url: string;
   sourceCreatedAt: Date | string | null;
-  isAutoModerated?: boolean | null;
+  isCommentingEnabled: boolean;
+  isAutoModerated: boolean;
   extra?: any | null;
   count?: number;
   unprocessedCount?: number;
@@ -41,7 +42,7 @@ export interface IArticleAttributes {
   flaggedCount?: number;
   batchedCount?: number;
   recommendedCount?: number;
-  disableRules?: boolean;
+  lastModeratedAt?: string | Date;
 }
 
 export interface IArticleInstance
@@ -74,6 +75,11 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     allowNull: false,
   },
 
+  categoryId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: true,
+  },
+
   title: {
     type: Sequelize.CHAR(255),
     allowNull: false,
@@ -94,21 +100,15 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     allowNull: true,
   },
 
-  createdAt: {
-    type: Sequelize.DATE,
-    allowNull: false,
-    defaultValue: Sequelize.NOW,
-  },
-
-  disableRules: {
+  isCommentingEnabled: {
     type: Sequelize.BOOLEAN,
     allowNull: false,
-    defaultValue: false,
+    defaultValue: true,
   },
 
   isAutoModerated: {
     type: Sequelize.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
     defaultValue: true,
   },
 
@@ -170,6 +170,11 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
+  },
+
+  lastModeratedAt: {
+    type: Sequelize.DATE,
+    allowNull: true,
   },
 
   recommendedCount: {

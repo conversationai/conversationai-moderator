@@ -72,6 +72,8 @@ export function getArticleData(data: Partial<IArticleAttributes> = {}): IArticle
     text: faker.lorem.words(20),
     url: faker.internet.url(),
     sourceCreatedAt: '2012-10-29T21:54:07.609Z',
+    isCommentingEnabled: true,
+    isAutoModerated: true,
     ...data,
   };
 }

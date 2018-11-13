@@ -442,6 +442,7 @@ describe('Comments Domain Pipeline Tests', () => {
 
       assert.equal(updatedArticle.get('moderatedCount'), 1, 'article moderatedCount');
       assert.equal(updatedArticle.get('rejectedCount'), 1, 'article rejectedCount');
+      assert.isNull(updatedArticle.get('lastModeratedAt')); // last moderated doesn't get updated by machine ops
     });
 
     it('should record the Reject decision from a rule', async () => {
