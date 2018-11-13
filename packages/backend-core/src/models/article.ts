@@ -42,7 +42,7 @@ export interface IArticleAttributes {
   flaggedCount?: number;
   batchedCount?: number;
   recommendedCount?: number;
-  lastModeratedAt?: string;
+  lastModeratedAt?: string | Date;
 }
 
 export interface IArticleInstance

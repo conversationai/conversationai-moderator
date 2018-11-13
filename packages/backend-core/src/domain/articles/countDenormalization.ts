@@ -19,7 +19,7 @@ import {
   Comment,
   updateHappened,
 } from '../../models';
-import { IArticleInstance } from '../../models';
+import { IArticleAttributes, IArticleInstance } from '../../models';
 import {
   denormalizeCommentCountsForCategory,
 } from '../categories';
@@ -56,7 +56,7 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     Comment.count({ where: { articleId: article.id, recommendedCount: { $gt: 0 } } }),
   ]);
 
-  const update: any = {
+  const update: Partial<IArticleAttributes> = {
     count,
     unprocessedCount,
     unmoderatedCount,
