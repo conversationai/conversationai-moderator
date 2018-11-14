@@ -25,16 +25,17 @@ export const USER_GROUP_GENERAL = 'general';
 export const USER_GROUP_ADMIN = 'admin';
 export const USER_GROUP_SERVICE = 'service';
 export const USER_GROUP_YOUTUBE = 'youtube';
+export const USER_GROUP_MODERATOR = 'moderator';
 
 export const USER_GROUPS = [
   USER_GROUP_GENERAL,
   USER_GROUP_ADMIN,
   USER_GROUP_SERVICE,
   USER_GROUP_YOUTUBE,
+  USER_GROUP_MODERATOR,
 ];
 
 // Configuration constants for serevice users
-export const SERVICE_TYPE_MODERATOR = 'moderator';
 export const ENDPOINT_TYPE_PROXY = 'perspective-proxy';
 export const ENDPOINT_TYPE_API = 'perspective-api';
 
@@ -127,7 +128,8 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
      * Require an email address for non-service users
      */
     requireEmailForHumans() {
-      if (this.get('group') !== USER_GROUP_SERVICE) {
+      const group = this.get('group');
+      if (group === USER_GROUP_GENERAL || group === USER_GROUP_ADMIN) {
         const validEmail = Joi.validate(this.get('email'), Joi.string().email().required(), { convert: false });
         if (validEmail.error) {
           throw new Error('Email address required for human users');
@@ -139,10 +141,10 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
      * If `endpoint` is set, make sure it's a valid URL
      */
     requireValidURLForEndpoint() {
-      if (this.get('extra')) {
+      if (this.get('group') === USER_GROUP_MODERATOR) {
         const extra: any = this.get('extra');
 
-        if (extra && extra.serviceType === SERVICE_TYPE_MODERATOR) {
+        if (extra) {
           if (extra.endpointType === ENDPOINT_TYPE_PROXY || extra.endpointType === ENDPOINT_TYPE_API) {
             const validURL = Joi.validate(extra.endpoint, Joi.string().uri({
               scheme: ['http', 'https'],
@@ -154,6 +156,9 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
           else {
             throw new Error('Moderator user validation: Unknown modereator endpoint type ' + extra.endpointType);
           }
+        }
+        else {
+          throw new Error('Moderator user validation: No endpoint configuration');
         }
       }
     },

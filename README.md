@@ -93,7 +93,7 @@ mysql -u root -p $DATABASE_NAME < packages/backend-core/seed/initial-database.sq
 bin/osmod migrate
 
 # Add a service user that can talk to the Perspective API:
-bin/osmod users:create --group service --name "PerspectiveAPI" --moderator-type "perspective-api"
+bin/osmod users:create --group moderator --name "PerspectiveAPI" --moderator-type "perspective-api"
 
 # Run the server
 bin/watch
@@ -175,13 +175,13 @@ Create a service user:
 Add a service user that can talk to the Perspective API directly:
 
 ```bash
-./bin/osmod users:create --group service --name "PerspectiveAPI" --moderator-type "perspective-api"
+./bin/osmod users:create --group moderator --name "PerspectiveAPI" --moderator-type "perspective-api"
 ```
 
 Add a (legacy)sr   service user for the Perspective API proxy:
 
 ```bash
-./bin/osmod users:create --group service --name "PerspectiveProxy" --moderator-type "perspective-proxy" --endpoint=<proxy URL>
+./bin/osmod users:create --group moderator --name "PerspectiveProxy" --moderator-type "perspective-proxy" --endpoint=<proxy URL>
 ```
 
 where `<proxy URL>` is the URL of [The Perspective API proxy] you plan on using.

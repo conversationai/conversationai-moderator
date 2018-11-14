@@ -50,7 +50,7 @@ import {
   createCommentScoreRequest,
   createCommentSummaryScore,
   createModerationRule,
-  createServiceUser,
+  createModeratorUser,
   createTag,
   createUser,
 } from './fixture';
@@ -168,7 +168,7 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const [comment, serviceUser] = await Promise.all([
         createComment(),
-        createServiceUser(),
+        createModeratorUser(),
       ]);
 
       const commentScoreRequest = await createCommentScoreRequest({
@@ -315,7 +315,7 @@ describe('Comments Domain Pipeline Tests', () => {
       // Create similar fixture data as to previous test case, but leave out the score request creation
       const [comment, serviceUser] = await Promise.all([
         createComment(),
-        createServiceUser(),
+        createModeratorUser(),
       ]);
 
       try {
@@ -364,8 +364,8 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const [comment, serviceUser1, serviceUser2] = await Promise.all([
         createComment(),
-        createServiceUser(),
-        createServiceUser(),
+        createModeratorUser(),
+        createModeratorUser(),
       ]);
 
       // Make one request for each scorer
@@ -510,7 +510,7 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const [comment, serviceUser] = await Promise.all([
         createComment(),
-        createServiceUser(),
+        createModeratorUser(),
       ]);
 
       const commentScoreRequest = await createCommentScoreRequest({

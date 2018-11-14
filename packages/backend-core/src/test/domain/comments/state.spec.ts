@@ -34,7 +34,7 @@ import {
   createArticle,
   createComment,
   createCommentScoreRequest,
-  createServiceUser,
+  createModeratorUser,
   createUser,
 } from './fixture';
 
@@ -163,8 +163,8 @@ describe('Comments Domain States Tests', () => {
   describe('getIsDoneScoring', () => {
     it('should resolve to true if all score requests have a `doneAt` timestamp set', async () => {
       const [scorer1, scorer2] = await Promise.all([
-        createServiceUser(),
-        createServiceUser(),
+        createModeratorUser(),
+        createModeratorUser(),
       ]);
 
       await Promise.all([
@@ -187,8 +187,8 @@ describe('Comments Domain States Tests', () => {
     it('should resolve to false if unique scorer requests dont have a `doneAt` timestamp set', async () => {
 
       const [scorer1, scorer2] = await Promise.all([
-        createServiceUser(),
-        createServiceUser(),
+        createModeratorUser(),
+        createModeratorUser(),
       ]);
 
       await Promise.all([
@@ -212,8 +212,8 @@ describe('Comments Domain States Tests', () => {
       async () => {
 
         const [scorer1, scorer2] = await Promise.all([
-          createServiceUser(),
-          createServiceUser(),
+          createModeratorUser(),
+          createModeratorUser(),
         ]);
 
         await Promise.all([
