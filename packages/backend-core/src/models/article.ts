@@ -31,7 +31,7 @@ export interface IArticleAttributes {
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
   extra?: any | null;
-  count?: number;
+  allCount?: number;
   unprocessedCount?: number;
   unmoderatedCount?: number;
   moderatedCount?: number;
@@ -112,7 +112,7 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     defaultValue: true,
   },
 
-  count: {
+  allCount: {
     type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,

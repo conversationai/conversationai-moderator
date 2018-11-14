@@ -30,7 +30,7 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
   }
 
   const [
-    count,
+    allCount,
     unprocessedCount,
     unmoderatedCount,
     moderatedCount,
@@ -57,7 +57,7 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
   ]);
 
   const update: Partial<IArticleAttributes> = {
-    count,
+    allCount,
     unprocessedCount,
     unmoderatedCount,
     moderatedCount,

@@ -27,6 +27,7 @@ export interface IArticleAttributes {
   text: string;
   url: string;
   category: ICategoryModel;
+  allCount: number;
   unprocessedCount: number;
   unmoderatedCount: number;
   moderatedCount: number;
@@ -54,6 +55,7 @@ const ArticleModelRecord = Record({
   title: null,
   url: null,
   category: null,
+  allCount: null,
   unprocessedCount: null,
   unmoderatedCount: null,
   moderatedCount: null,

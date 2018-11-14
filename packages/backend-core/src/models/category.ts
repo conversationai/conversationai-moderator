@@ -26,7 +26,7 @@ export interface ICategoryAttributes {
   sourceId?: string;
   isActive?: boolean;
   extra?: any;
-  count?: number;
+  allCount?: number;
   unprocessedCount?: number;
   unmoderatedCount?: number;
   moderatedCount?: number;
@@ -80,7 +80,7 @@ export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>
     defaultValue: true,
   },
 
-  count: {
+  allCount: {
     type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
