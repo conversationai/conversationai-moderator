@@ -83,6 +83,9 @@ const mockHandler = new MockHandler({
   users: fakeUsers,
 }, serializers as any);
 
+
+// Note we have to reduce numberOfKeys to take into account
+// system attributes (id, updatedAt, links to other objects etc.)
 const models: {
   [key: string]: any;
 } = {
@@ -97,7 +100,7 @@ const models: {
     all: fakeArticles,
     spec: fakeArticles[0],
     // id, type, comments, assignedModerators, category
-    numberOfKeys: Object.keys(fakeArticles[0]).length - 5,
+    numberOfKeys: Object.keys(fakeArticles[0]).length - 6,
     include: ['comments', 'comments'],
   },
   // 'users': {
@@ -157,7 +160,7 @@ export function isIdentifier(resource: any) {
   expect(resource['type']).to.exist;
 }
 
-function getNormaliser(attr: string): (val:string) => any {
+function getNormaliser(attr: string): (val: string) => any {
   if (attr === 'sourceCreatedAt') {
     return (val: string) => Date.parse(val);
   }
@@ -346,7 +349,7 @@ export function sharedTestHelper() {
         it(`filtered ${modelType} objects by multiple attributes`, async () => {
           const firstAttr = modelKeys[0];
           const firstValue = lastObj[firstAttr];
-          const secondAttr = modelKeys[1];
+          const secondAttr = modelKeys[2];
           const secondValue = lastObj[secondAttr];
 
           const res = await chai.request(server).get(
