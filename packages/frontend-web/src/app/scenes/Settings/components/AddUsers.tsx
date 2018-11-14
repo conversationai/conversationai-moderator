@@ -31,6 +31,11 @@ import {
   OverflowContainer,
   RejectIcon,
 } from '../../../components';
+import {
+  USER_GROUP_ADMIN,
+  USER_GROUP_GENERAL,
+  USER_GROUP_SERVICE,
+} from '../../../stores/users';
 
 const STYLES = stylesheet({
   heading: {
@@ -62,12 +67,10 @@ const STYLES = stylesheet({
   },
 });
 
-export type IGroup = 'general' | 'admin';
-
 export interface IAddUsersProps {
+  userType: string;
   onClickClose(e: React.FormEvent<any>): any;
   onClickDone(user: IUserModel): any;
-  newUser?: IUserModel;
 }
 
 export interface IAddUsersState {
@@ -78,13 +81,26 @@ export interface IAddUsersState {
 export class AddUsers extends React.Component<IAddUsersProps, IAddUsersState> {
   // Find a way to generate random ids that will be thrown away.
   state = {
-    newUser: this.props.newUser || UserModel().set('group', 'general').set('isActive', true).set('id', 123),
+    newUser: UserModel().set('group', this.props.userType).set('isActive', true).set('id', 123),
     isDisabled: true,
   };
 
   @autobind
   isNewUserValid(user: IUserModel): boolean {
-    return !!user.name && user.name.length > 0 && !!user.email && user.email.length > 0 && !!user.group;
+    if (!user.name || user.name.length === 0) {
+      return false;
+    }
+
+    if (!user.group) {
+      return false;
+    }
+
+    if (user.group === USER_GROUP_GENERAL || user.group === USER_GROUP_ADMIN) {
+      if (!user.email || user.email.length === 0) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @autobind
@@ -113,12 +129,18 @@ export class AddUsers extends React.Component<IAddUsersProps, IAddUsersState> {
       isDisabled,
     } = this.state;
 
+    let title = 'Add a user';
+
+    if (newUser.group === USER_GROUP_SERVICE) {
+      title = 'Add a service user';
+    }
+
     return (
       <form onSubmit={this.onSubmit}>
         <OverflowContainer
           header={(
             <div {...css(STYLES.headerRow)}>
-              <h1 {...css(STYLES.heading)}>Add a user</h1>
+              <h1 {...css(STYLES.heading)}>{title}</h1>
               <button key="close button" {...css(STYLES.closeButton)} aria-label="Close" onClick={onClickClose}>
                 <RejectIcon style={{fill: DARK_COLOR}} />
               </button>

@@ -14,12 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as copyToClipboard from 'copy-to-clipboard';
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { List } from 'immutable';
 import { generate } from 'randomstring';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
+
+import IconButton from '@material-ui/core/IconButton';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 
 import {
   CategoryModel,
@@ -64,6 +68,11 @@ import {
 } from '../../styles';
 
 import { SETTINGS_STYLES } from './settingsStyles';
+import {
+  USER_GROUP_GENERAL,
+  USER_GROUP_SERVICE,
+  USER_GROUP_YOUTUBE,
+} from '../../stores/users';
 
 function validateColor(color: string): boolean {
   const div = document.createElement('div') as HTMLDivElement;
@@ -170,6 +179,8 @@ const STYLES: any = stylesheet({
 
 export interface ISettingsProps extends WithRouterProps {
   users?: List<IUserModel>;
+  serviceUsers?: List<IUserModel>;
+  moderatorUsers?: List<IUserModel>;
   youtubeUsers?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
@@ -180,6 +191,8 @@ export interface ISettingsProps extends WithRouterProps {
   onCancel(): void;
   onSearchClick(): void;
   onAuthorSearchClick(): void;
+  reloadServiceUsers?(): Promise<void>;
+  reloadModeratorUsers?(): Promise<void>;
   reloadYoutubeUsers?(): Promise<void>;
   updatePreselects?(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>): void;
   updateRules?(oldRules: List<IRuleModel>, newRules: List<IRuleModel>): void;
@@ -206,6 +219,7 @@ export interface ISettingsState {
   basePreselects?:  List<IPreselectModel>;
   isStatusScrimVisible?: boolean;
   isAddUserScrimVisible?: boolean;
+  addUserType?: string;
   isEditUserScrimVisible?: boolean;
   selectedUser?: IUserModel;
   homeIsFocused?: boolean;
@@ -230,6 +244,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   };
 
   componentDidMount() {
+    this.props.reloadServiceUsers();
+    this.props.reloadModeratorUsers();
     this.props.reloadYoutubeUsers();
   }
 
@@ -269,17 +285,22 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleAddUser(event: React.FormEvent<any>) {
+  handleAddUser(type: string, event: React.FormEvent<any>) {
     event.preventDefault();
     this.setState({
+      addUserType: type,
       isAddUserScrimVisible: true,
     });
   }
 
   @autobind
   handleEditUser(event: React.FormEvent<any>) {
+    const allUsers = new Map<string, IUserModel>();
+    this.props.users.map((u) => allUsers.set(u.id, u));
+    this.props.serviceUsers.map((u) => allUsers.set(u.id, u));
+
     this.setState({
-      selectedUser: this.props.users.find((user) => user.id === event.currentTarget.value),
+      selectedUser: allUsers.get(event.currentTarget.value),
       isEditUserScrimVisible: true,
     });
   }
@@ -362,6 +383,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         List([newValue]);
 
     this.setState({ preselects: updatedPreselects });
+  }
+
+  @autobind
+  handleAddServiceUser(event: React.FormEvent<any>) {
+    event.preventDefault();
+    console.log('got here');
   }
 
   @autobind
@@ -571,7 +598,10 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
     try {
       await this.props.addUser(user);
-      if (user.group === 'youtube') {
+      if (user.group === USER_GROUP_SERVICE) {
+        await this.props.reloadServiceUsers();
+      }
+      else if (user.group === USER_GROUP_YOUTUBE) {
         await this.props.reloadYoutubeUsers();
       }
       this.setState({
@@ -595,9 +625,13 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
     try {
       await this.props.modifyUser(user);
-      if (user.group === 'youtube') {
+      if (user.group === USER_GROUP_SERVICE) {
+        await this.props.reloadServiceUsers();
+      }
+      else if (user.group === USER_GROUP_YOUTUBE) {
         await this.props.reloadYoutubeUsers();
       }
+
       this.setState({
         submitStatus: 'Waiting for refresh...',
       });
@@ -671,8 +705,116 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </tbody>
             </table>
           </div>
-          <AddButton width={44} onClick={this.handleAddUser} label="Add a user"/>
+          <AddButton width={44} onClick={partial(this.handleAddUser, USER_GROUP_GENERAL)} label="Add a user"/>
         </div>
+      </div>
+    );
+  }
+
+  renderModeratorUsers() {
+    const {
+      moderatorUsers,
+    } = this.props;
+
+    if (!moderatorUsers || moderatorUsers.count() === 0) {
+      return (<p>None configured</p>);
+    }
+    return (
+      <div key="moderatorUsersSection">
+        <table>
+          <thead>
+          <tr>
+            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+              Name
+            </th>
+            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+              Type
+            </th>
+            <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+              Endpoint
+            </th>
+            <th key="5" {...css(SETTINGS_STYLES.userTableCell)}>
+              Is Active
+            </th>
+            <th key="6" {...css(SETTINGS_STYLES.userTableCell)}/>
+          </tr>
+          </thead>
+          <tbody>
+          {moderatorUsers.map((u) => (
+            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.name}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.extra.endpointType}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.extra.endpoint}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.isActive ? 'Active' : ''}
+              </td>
+            </tr>
+          ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  renderServiceUsers() {
+    const {
+      serviceUsers,
+    } = this.props;
+
+    if (!serviceUsers || serviceUsers.count() === 0) {
+      return (<p>None configured</p>);
+    }
+    return (
+      <div key="serviceUsersSection">
+        <table>
+          <thead>
+          <tr>
+            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+              ID
+            </th>
+            <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
+              Name
+            </th>
+            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+              JWT Authentication token
+            </th>
+            <th/>
+            <th key="6" {...css(SETTINGS_STYLES.userTableCell)}/>
+          </tr>
+          </thead>
+          <tbody>
+          {serviceUsers.map((u) => (
+            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.id}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.name}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell, {fontSize: '10px'})}>
+                {u.extra.jwt}
+              </td>
+              <td>
+                <IconButton aria-label="Copy to clipboard" onClick={partial(copyToClipboard, u.extra.jwt)}>
+                  <FileCopyIcon fontSize="small" />
+                </IconButton>
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.isActive ? 'Active' : ''}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id}/>
+              </td>
+            </tr>
+          ))}
+          </tbody>
+        </table>
       </div>
     );
   }
@@ -897,6 +1039,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
             {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
           >
             <AddUsers
+              userType={this.state.addUserType}
               onClickDone={this.saveAddedUser}
               onClickClose={this.closeScrims}
             />
@@ -1024,6 +1167,27 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               <Button key="save" buttonStyles={STYLES.save} label="Save" onClick={this.onSavePress}/>
             </div>
           </form>
+          <div key="serviceUsersHeader" {...css(STYLES.heading)}>
+            <h2 {...css(STYLES.headingText)}>
+              System accounts
+            </h2>
+          </div>
+          <div key="serviceUsers" {...css(STYLES.section)}>
+            <h3>Service accounts</h3>
+            <p>These accounts are used to access the OSMod API.</p>
+            {this.renderServiceUsers()}
+            <AddButton
+              width={44}
+              onClick={partial(this.handleAddUser, USER_GROUP_SERVICE)}
+              label="Add a service account"
+              buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+            />
+          </div>
+          <div key="moderatorUsers" {...css(STYLES.section)}>
+            <h3>Moderator accounts</h3>
+            <p>These accounts are responsible for sending comments to the Perspective API scorer.</p>
+            {this.renderModeratorUsers()}
+          </div>
           <div>
             <div key="pluginsHeader" {...css(STYLES.heading)}>
               <h2 {...css(STYLES.headingText)}>

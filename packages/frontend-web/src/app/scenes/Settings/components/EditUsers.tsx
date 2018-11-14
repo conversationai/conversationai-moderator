@@ -31,6 +31,11 @@ import {
   OverflowContainer,
   RejectIcon,
 } from '../../../components';
+import {
+  USER_GROUP_ADMIN,
+  USER_GROUP_GENERAL,
+  USER_GROUP_SERVICE,
+} from '../../../stores/users';
 
 const STYLES = stylesheet({
   heading: {
@@ -67,8 +72,6 @@ const STYLES = stylesheet({
   },
 });
 
-export type IGroup = 'general' | 'admin';
-
 export interface IEditUsersProps {
   onClickClose(e: React.FormEvent<any>): any;
   onClickDone(user: IUserModel): any;
@@ -89,7 +92,20 @@ export class EditUsers extends React.Component<IEditUsersProps, IEditUsersState>
 
   @autobind
   isUserValid(user: IUserModel): boolean {
-    return !!user.name && user.name.length > 0 && !!user.email && user.email.length > 0 && !!user.group;
+    if (!user.name || user.name.length === 0) {
+      return false;
+    }
+
+    if (!user.group) {
+      return false;
+    }
+
+    if (user.group === USER_GROUP_GENERAL || user.group === USER_GROUP_ADMIN) {
+      if (!user.email || user.email.length === 0) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @autobind
@@ -123,12 +139,18 @@ export class EditUsers extends React.Component<IEditUsersProps, IEditUsersState>
       isDisabled,
     } = this.state;
 
+    let title = 'Edit a user';
+
+    if (editedUser.group === USER_GROUP_SERVICE) {
+      title = 'Edit a service user';
+    }
+
     return (
       <form onSubmit={this.onSubmit}>
         <OverflowContainer
           header={(
             <div {...css(STYLES.headerRow)}>
-              <h1 {...css(STYLES.heading)}>Edit a user</h1>
+              <h1 {...css(STYLES.heading)}>{title}</h1>
 
               <button key="close button" type="button" {...css(STYLES.closeButton)} aria-label="Close" onClick={onClickClose}>
                 <RejectIcon style={{fill: DARK_COLOR}} />

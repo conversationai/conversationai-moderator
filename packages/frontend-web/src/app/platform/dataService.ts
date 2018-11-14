@@ -31,10 +31,12 @@ import {
   ICommentModel,
   ICommentScoredModel,
   ICommentSummaryScoreModel,
+  IUserModel,
 } from '../../models';
 import {
   CommentDatedModel,
   CommentScoredModel,
+  UserModel,
 } from '../../models';
 import { ITopScore } from '../../types';
 import { API_URL } from '../config';
@@ -872,4 +874,12 @@ export async function listAuthorCounts(
   );
 
   return Map<string | number, IAuthorCountsModel>(response.data.data);
+}
+
+export async function listSystemUsers(type: string): Promise<List<IUserModel>> {
+  const response: any = await axios.get(serviceURL('simple', `/systemUsers/${type}`));
+  return List<IUserModel>(response.data.users.map((u: any) => {
+    u.id = u.id.toString();
+    return UserModel(u);
+  }));
 }

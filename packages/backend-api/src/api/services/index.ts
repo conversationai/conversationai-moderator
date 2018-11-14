@@ -23,6 +23,7 @@ import { createEditCommentTextService } from './editComment';
 import { createHistogramScoresService } from './histogramScores';
 import { createModeratedCountsService } from './moderatedCounts';
 import { createSearchService } from './search';
+import { createSimpleRESTService } from './simple';
 import { createTextSizesService } from './textSizes';
 import { createTopScoresService } from './topScores';
 import { createUpdateNotificationService } from './updateNotifications';
@@ -44,6 +45,7 @@ export function createServicesRouter(): express.Router {
   router.use('/topScores', createTopScoresService());
   router.use('/editComment', createEditCommentTextService());
   router.use('/updates', createUpdateNotificationService());
+  router.use('/simple', createSimpleRESTService());
 
   return router;
 }

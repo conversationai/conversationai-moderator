@@ -18,18 +18,17 @@ import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
 import { IUserModel } from '../../../../models';
+import { USER_GROUP_ADMIN, USER_GROUP_GENERAL } from '../../../stores/users';
 import { partial } from '../../../util';
 import { css } from '../../../utilx';
 import { SETTINGS_STYLES } from '../settingsStyles';
-
-export type IGroup = 'general' | 'admin';
 
 export interface IAddUsersProps {
   onInputChange(type: string, value: string | boolean): any;
   user?: IUserModel;
 }
 
-const GROUPS = List(['general', 'admin']) as List<IGroup>;
+const GROUPS = List([USER_GROUP_GENERAL, USER_GROUP_ADMIN]) as List<string>;
 
 export class UserForm extends React.Component<IAddUsersProps> {
 
@@ -50,6 +49,8 @@ export class UserForm extends React.Component<IAddUsersProps> {
       user,
     } = this.props;
 
+    const realUser = (user.group === USER_GROUP_GENERAL || user.group === USER_GROUP_ADMIN);
+
     return (
       <div>
         <div key="name" {...css(SETTINGS_STYLES.row)}>
@@ -62,6 +63,7 @@ export class UserForm extends React.Component<IAddUsersProps> {
             onChange={partial(this.onValueChange, 'name')}
           />
         </div>
+        {realUser &&
         <div key="email" {...css(SETTINGS_STYLES.row)}>
           <label htmlFor="email" {...css(SETTINGS_STYLES.label)}>Email Address</label>
           <input
@@ -72,6 +74,8 @@ export class UserForm extends React.Component<IAddUsersProps> {
             onChange={partial(this.onValueChange, 'email')}
           />
         </div>
+        }
+        {realUser &&
         <div key="group" {...css(SETTINGS_STYLES.row, SETTINGS_STYLES.selectBoxRow)}>
           <label htmlFor="name" {...css(SETTINGS_STYLES.label)}>Group</label>
           <select
@@ -81,12 +85,13 @@ export class UserForm extends React.Component<IAddUsersProps> {
             value={user.group ? user.group : ''}
             onChange={partial(this.onValueChange, 'group')}
           >
-            { GROUPS.map((group: string) =>
-                <option value={group} key={group}>{group}</option>,
+            {GROUPS.map((group: string) =>
+              <option value={group} key={group}>{group}</option>,
             )}
           </select>
           <span aria-hidden="true" {...css(SETTINGS_STYLES.arrow)} />
         </div>
+        }
         <div key="active" {...css(SETTINGS_STYLES.row)}>
           <label htmlFor="isActive" {...css(SETTINGS_STYLES.label)}>User is active
             <input

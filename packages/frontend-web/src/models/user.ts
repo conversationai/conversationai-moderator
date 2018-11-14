@@ -25,6 +25,7 @@ export interface IUserAttributes {
   avatarURL?: string;
   group: string;
   isActive: boolean;
+  extra?: any;
 }
 
 export interface IUserModel extends TypedRecord<IUserModel>, IUserAttributes {}
@@ -37,6 +38,7 @@ const UserModelRecord = Record({
   avatarURL: null,
   group: null,
   isActive: null,
+  extra: null,
 });
 
 export function UserModel(keyValuePairs?: IUserAttributes): IUserModel {
