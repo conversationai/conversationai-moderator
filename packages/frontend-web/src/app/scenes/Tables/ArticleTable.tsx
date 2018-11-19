@@ -42,12 +42,14 @@ import { ARTICLE_TABLE_STYLES, COMMON_STYLES, IMAGE_BASE } from './styles';
 import {
   executeFilter,
   executeSort,
+  filterString,
   getFilterValue,
   IFilterItem,
-  newFilterString,
-  newSortString,
   parseFilter,
   parseSort,
+  sortString,
+  updateFilter,
+  updateSort,
 } from './utils';
 
 const big = {
@@ -267,7 +269,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
     function setFilter(key: string) {
       return (e: any) => {
-        const newFilter = newFilterString(currentFilter, key, e.target.value);
+        const newFilter = filterString(updateFilter(currentFilter, key, e.target.value));
         router.push(dashboardLink(newFilter, currentSort));
       };
     }
@@ -717,8 +719,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       processedArticles = processedArticles.sort(executeSort(['+sourceCreatedAt']));
     }
 
-    const currentFilter = newFilterString(filter);
-    const currentSort = newSortString(sort);
+    const currentFilter = filterString(filter);
+    const currentSort = sortString(sort);
 
     function renderDirectionIndicatorUp() {
       return (
@@ -753,7 +755,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           break;
         }
       }
-      const newSort = newSortString(sort, nextSortItem);
+      const newSort = sortString(updateSort(sort, nextSortItem));
       return (
         <Link to={dashboardLink(currentFilter, newSort)} {...css(COMMON_STYLES.cellLink)}>
           <span {...css({position: 'relative'})}>

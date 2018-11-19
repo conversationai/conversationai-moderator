@@ -38,14 +38,15 @@ export function parseFilter(filter: string | undefined): Array<IFilterItem> {
   return filterList;
 }
 
-export function newFilterString(filterList: Array<IFilterItem>, newKey?: string, newValue?: string): string {
-  if (newKey) {
-    filterList = filterList.filter((item: IFilterItem) => item.key !== newKey);
-    if (newValue) {
-      filterList.push({key: newKey, value: newValue});
-    }
+export function updateFilter(filterList: Array<IFilterItem>, newKey: string, newValue?: string): Array<IFilterItem> {
+  filterList = filterList.filter((item: IFilterItem) => item.key !== newKey);
+  if (newValue) {
+    filterList.push({key: newKey, value: newValue});
   }
+  return filterList;
+}
 
+export function filterString(filterList: Array<IFilterItem>): string {
   if (filterList.length === 0) {
     return '~';
   }
@@ -63,9 +64,11 @@ export function getFilterValue(filterList: Array<IFilterItem>, key: string) {
 
 export function executeFilter(filterList: Array<IFilterItem>) {
   return (article: IArticleModel) => {
-    for (const i of filterList){
+    for (const i of filterList) {
       switch (i.key) {
-        case 'user':
+        case 'title':
+          return article.title.indexOf(i.value) >= 0;
+        case 'moderators':
           if (i.value === 'unassigned') {
             if (article.assignedModerators && article.assignedModerators.length > 0) {
               return false;
@@ -100,6 +103,28 @@ export function executeFilter(filterList: Array<IFilterItem>) {
             }
           }
           break;
+
+        case 'isCommentingEnabled':
+        case 'isAutoModerated':
+          if (i.value === 'yes') {
+            return article[i.key];
+          }
+          else if (i.value === 'no') {
+            return !article[i.key];
+          }
+          break;
+
+        case 'commentsToReview':
+          if (i.value === 'yes') {
+            return (article.unmoderatedCount + article.deferredCount) > 0;
+          }
+          else if (i.value === 'new') {
+            return article.unmoderatedCount > 0;
+          }
+          else if (i.value === 'deferred') {
+            return article.deferredCount > 0;
+          }
+          break;
       }
     }
 
@@ -114,29 +139,25 @@ export function parseSort(sort: string | undefined) {
   return sort.split(',');
 }
 
-export function newSortString(sortList: Array<string>, newSort?: string): string {
-  function sortString(sl: Array<string>) {
-    if (sl.length === 0) {
-      return '~';
-    }
-    return sl.join(',');
-  }
-
+export function updateSort(sortList: Array<string>, newSort: string): Array<string> {
   function removeItem(sl: Array<string>, item: string) {
     return sl.filter((sortitem) => !sortitem.endsWith(item));
   }
 
-  if (!newSort) {
-    return sortString(sortList);
-  }
-
   if (!newSort.startsWith('+') && !newSort.startsWith('-')) {
-    return sortString(removeItem(sortList, newSort));
+    return removeItem(sortList, newSort);
   }
 
   sortList = removeItem(sortList, newSort.substr(1));
   sortList.unshift(newSort);
-  return sortString(sortList);
+  return sortList;
+}
+
+export function sortString(sl: Array<string>) {
+  if (sl.length === 0) {
+    return '~';
+  }
+  return sl.join(',');
 }
 
 export function executeSort(sortList: Array<string>) {
