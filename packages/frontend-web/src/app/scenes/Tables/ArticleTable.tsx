@@ -132,12 +132,16 @@ const FILTERS = 'filters';
 const SAVING = 'saving';
 
 export interface IIArticleTableState {
-  popupToShow?: string;
-  selectedArticle?: IArticleModel;
-  moderatorIds?: Set<ModelId>;
   page_size: number;
   current_page: number;
+  filter: Array<IFilterItem>;
+  sort: Array<string>;
 
+  popupToShow?: string;
+
+  // Fields used by article control popup and set moderators popup
+  selectedArticle?: IArticleModel;
+  moderatorIds?: Set<ModelId>;
   isCommentingEnabled?: boolean;
   isAutoModerated?: boolean;
 }
@@ -169,14 +173,37 @@ class ControlFlag extends React.Component<IIControlFlagProps> {
   }
 }
 
-export class ArticleTable extends React.Component<IIArticleTableProps, IIArticleTableState> {
-  state: IIArticleTableState = {
-    popupToShow: null,
-    selectedArticle: null,
-    moderatorIds: null,
-    page_size: Math.floor(window.innerHeight / HEADER_HEIGHT) - 5,
-    current_page: 0,
+function getStateFromProps(props: Readonly<IIArticleTableProps>) {
+  const filter: Array<IFilterItem> = props.routeParams ? parseFilter(props.routeParams.filter) : [];
+  const sort: Array<string> = props.routeParams ? parseSort(props.routeParams.sort) : [];
+
+  return {
+    filter,
+    sort,
   };
+}
+
+export class ArticleTable extends React.Component<IIArticleTableProps, IIArticleTableState> {
+  constructor(props: Readonly<IIArticleTableProps>) {
+    super(props);
+
+    this.state = {
+      page_size: Math.floor(window.innerHeight / HEADER_HEIGHT) - 5,
+      current_page: 0,
+
+      popupToShow: null,
+
+      // Fields used by article control popup and set moderators popup
+      selectedArticle: null,
+      moderatorIds: null,
+
+      ...getStateFromProps(props),
+    };
+  }
+
+  componentWillReceiveProps(nextProps: Readonly<IIArticleTableProps>): void {
+    this.setState(getStateFromProps(nextProps));
+  }
 
   @autobind
   openSetModerators(article: IArticleModel) {
@@ -670,21 +697,13 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     const {
       articles,
       categories,
-      routeParams,
       location,
     } = this.props;
 
-    let filter: Array<IFilterItem>;
-    let sort: Array<string>;
-
-    if (routeParams) {
-      filter = parseFilter(routeParams.filter);
-      sort = parseSort(routeParams.sort);
-    }
-    else {
-      filter = [];
-      sort = [];
-    }
+    const {
+      filter,
+      sort,
+    } = this.state;
 
     let processedArticles: Array<IArticleModel> = articles.toArray();
 
