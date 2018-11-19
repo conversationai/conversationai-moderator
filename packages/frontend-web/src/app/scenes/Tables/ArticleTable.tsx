@@ -175,6 +175,30 @@ class ControlFlag extends React.Component<IIControlFlagProps> {
   }
 }
 
+interface ISmallUserIconProps {
+  user: IUserModel;
+}
+
+class SmallUserIcon extends React.Component<ISmallUserIconProps> {
+  render() {
+    const user = this.props.user;
+    if (user.avatarURL) {
+      return (<img key={user.id} src={user.avatarURL} {...css(COMMON_STYLES.xsmallImage, {margin: '1px'})}/>);
+    }
+    else {
+      return (
+        <div key={user.id} {...css(STYLES.small, {display: 'inline-block', margin: '1px'})}>
+          <div {...css(STYLES.iconBackgroundCircleSmall)}>
+            <div {...css(STYLES.iconCenter)}>
+              <icons.UserIcon {...css(STYLES.small, {color: NICE_MIDDLE_BLUE})}/>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  }
+}
+
 function getStateFromProps(props: Readonly<IIArticleTableProps>) {
   const filter: Array<IFilterItem> = props.routeParams ? parseFilter(props.routeParams.filter) : [];
   const sort: Array<string> = props.routeParams ? parseSort(props.routeParams.sort) : [];
@@ -457,21 +481,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
 
     for (let i = 0; i < limit; i++) {
-      const u = article.assignedModerators[i];
-      if (u.avatarURL) {
-        ret.push(<img key={u.id} src={u.avatarURL} {...css(COMMON_STYLES.xsmallImage, {margin: '1px'})}/>);
-      }
-      else {
-        ret.push(
-          <div key={u.id} {...css(STYLES.small, {display: 'inline-block', margin: '1px'})}>
-            <div {...css(STYLES.iconBackgroundCircleSmall)}>
-              <div {...css(STYLES.iconCenter)}>
-                <icons.UserIcon {...css(STYLES.small, {color: NICE_MIDDLE_BLUE})}/>
-              </div>
-            </div>
-          </div>,
-        );
-      }
+      ret.push(<SmallUserIcon user={article.assignedModerators[i]}/>);
     }
     if (extra) {
       ret.push(
