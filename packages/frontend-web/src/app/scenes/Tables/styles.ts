@@ -14,7 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { HEADER_HEIGHT, NICE_BLUE_GREY, NICE_LIGHT_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
+import {
+  GUTTER_DEFAULT_SPACING,
+  HEADER_HEIGHT,
+  INPUT_DROP_SHADOW,
+  NICE_BLUE_GREY,
+  NICE_LIGHT_BLUE,
+  NICE_MIDDLE_BLUE,
+  PALE_COLOR,
+} from '../../styles';
 import { stylesheet } from '../../util';
 
 export const IMAGE_BASE = 40;
@@ -68,6 +76,19 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
     opacity: '0.5',
     fontSize: '12px',
   },
+
+  select: {
+    width: 'auto',
+    height: '36px',
+    paddingLeft: `${GUTTER_DEFAULT_SPACING / 2}px`,
+    paddingRight: `${GUTTER_DEFAULT_SPACING}px`,
+    border: 'none',
+    borderRadius: 2,
+    boxShadow: INPUT_DROP_SHADOW,
+    backgroundColor: PALE_COLOR,
+    fontSize: '16px',
+  },
+
 });
 
 export const COMMON_STYLES = stylesheet({

@@ -18,13 +18,15 @@ import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
-import React from 'react';
+import React, { KeyboardEvent, SyntheticEvent } from 'react';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
+import { Button } from '../../components/Button';
+import { Checkbox } from '../../components/Checkbox';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
-import {Toggle} from '../../components/Toggle';
+import { Toggle } from '../../components/Toggle';
 import { ModelId } from '../../stores/moderators';
 import {
   GREY_COLOR,
@@ -37,6 +39,7 @@ import {
 import { css, stylesheet, updateModel, updateRelationshipModels } from '../../util';
 import { AssignModeratorsSimple } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
+import { SETTINGS_STYLES } from '../Settings/settingsStyles';
 import { MagicTimestamp } from './components';
 import { ARTICLE_TABLE_STYLES, COMMON_STYLES, IMAGE_BASE } from './styles';
 import {
@@ -67,6 +70,12 @@ const small = {
   height: `${IMAGE_BASE / 2}px`,
 };
 
+const flexCenter = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
 const STYLES = stylesheet({
   big: big,
   small: small,
@@ -88,24 +97,18 @@ const STYLES = stylesheet({
   iconCenter: {
     width: `100%`,
     height: `100%`,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    ...flexCenter,
   },
 
   textCenterSmall: {
     ...small,
     fontSize: '12px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    ...flexCenter,
   },
 
   scrimPopup: {
     background: 'rgba(0, 0, 0, 0.4)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    ...flexCenter,
     alignContent: 'center',
   },
 
@@ -116,6 +119,23 @@ const STYLES = stylesheet({
     justifyContent: 'center',
     textSize: '18px',
     color: 'white',
+  },
+
+  filterSection: {
+    borderTop: '2px solid #eee',
+    padding: '20px',
+  },
+  filterTitle: {
+    fontSize: '16px',
+    fontWeight: 'normal',
+  },
+
+  filterHeading: {
+    ...SCRIM_STYLE.popupTitle,
+    fontSize: '16px',
+    fontWeight: 'bold',
+    margin: 0,
+    opacity: '0.4',
   },
 });
 
@@ -146,6 +166,17 @@ export interface IIArticleTableState {
   moderatorIds?: Set<ModelId>;
   isCommentingEnabled?: boolean;
   isAutoModerated?: boolean;
+
+  // Fields used by the set filters popup
+  titleFilter: string;
+  moderatorFilter: Set<ModelId>;
+  dateFilterKey: string;
+  dateFilterValue: string;
+  dateFilterFrom?: Date;
+  dateFilterTo?: Date;
+  isCommentingEnabledFilter: string;
+  isAutoModeratedFilter: string;
+  commentsToReviewFilter: string;
 }
 
 interface IIControlFlagProps {
@@ -203,9 +234,39 @@ function getStateFromProps(props: Readonly<IIArticleTableProps>) {
   const filter: Array<IFilterItem> = props.routeParams ? parseFilter(props.routeParams.filter) : [];
   const sort: Array<string> = props.routeParams ? parseSort(props.routeParams.sort) : [];
 
+  let dateFilterKey = 'sourceCreatedAt';
+  let dateFilterValue = '';
+  const dateFilterFrom = new Date(Date.now());
+  const dateFilterTo = new Date(Date.now());
+  for (let i = 0; i < filter.length; i++) {
+    if (['lastModeratedAt', 'updatedAt', 'sourceCreatedAt'].indexOf(filter[i].key) >= 0) {
+      dateFilterKey = filter[i].key;
+      const range = filter[i].value.split('|');
+      if (range.length < 2) {
+        dateFilterValue = range[0];
+      }
+      else {
+        dateFilterValue = 'custom';
+      }
+      break;
+    }
+  }
+
+  const moderatorFilterString = getFilterValue(filter, 'moderators');
+  const moderatorFilter = (moderatorFilterString.length > 0) ? moderatorFilterString.split(',') : [];
   return {
     filter,
     sort,
+
+    titleFilter: getFilterValue(filter, 'title'),
+    moderatorFilter: Set<string>(moderatorFilter),
+    dateFilterKey,
+    dateFilterValue,
+    dateFilterFrom,
+    dateFilterTo,
+    isCommentingEnabledFilter: getFilterValue(filter, 'isCommentingEnabled'),
+    isAutoModeratedFilter: getFilterValue(filter, 'isAutoModerated'),
+    commentsToReviewFilter: getFilterValue(filter, 'commentsToReview'),
   };
 }
 
@@ -275,42 +336,236 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     keyboardJS.unbind('escape', this.clearPopups);
   }
 
-  renderFilterPopup(currentFilter: Array<IFilterItem>, currentSort: string) {
+  filterEnabled(): boolean {
+    const {
+      filter,
+    } = this.state;
+
+    for (const i of filter) {
+      if (i.key === 'category') {
+        continue;
+      }
+      if (i.key === 'moderators' && i.value === 'me') {
+        continue;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  renderFilterPopup(currentSort: string) {
     if (this.state.popupToShow !== FILTERS) {
       return null;
     }
 
     const {
       myUserId,
-      categories,
       users,
       router,
     } = this.props;
 
+    const {
+      filter,
+      titleFilter,
+      moderatorFilter,
+      dateFilterKey,
+      dateFilterValue,
+      isCommentingEnabledFilter,
+      isAutoModeratedFilter,
+      commentsToReviewFilter,
+    } = this.state;
+
     const me = users.find((u) => u.id === myUserId);
     const others = users.filter((u) => u.id !== myUserId).sort((u1, u2) => ('' + u1.name).localeCompare(u2.name));
-    const sortedCategories = categories.sort((c1, c2) => ('' + c1.label).localeCompare(c2.label));
+
+    const that = this;
+    function changeFilter(param: 'titleFilter' | 'dateFilterKey' | 'dateFilterValue') {
+      return ((e: SyntheticEvent<any>) => {
+        that.setState({[param]: e.currentTarget.value} as any);
+      });
+    }
 
     function setFilter(key: string) {
-      return (e: any) => {
-        const newFilter = filterString(updateFilter(currentFilter, key, e.target.value));
-        router.push(dashboardLink(newFilter, currentSort));
+      return (e: SyntheticEvent<any>) => {
+        const f = updateFilter(filter, key, e.currentTarget.value);
+        router.push(dashboardLink(filterString(f), currentSort));
       };
     }
 
+    function checkForEnter(key: string) {
+      return (e: KeyboardEvent<any>) => {
+        if (e.key === 'Enter') {
+          const f = updateFilter(filter, key, e.currentTarget.value);
+          router.push(dashboardLink(filterString(f), currentSort));
+        }
+      };
+    }
+
+    function setModerator(id: string) {
+      // return (checked: boolean) => {
+      //   const mf = checked ? that.state.moderatorFilter.add(id) : that.state.moderatorFilter.remove(id);
+      return () => {
+        const mf = that.state.moderatorFilter.contains(id) ? that.state.moderatorFilter.delete(id) : that.state.moderatorFilter.add(id);
+        const moderators = mf.toArray().reduce<string | null>((s: string | null, v: ModelId) => (s ? `${s},${v}` : v.toString()), null);
+        const f = updateFilter(filter, 'moderators', moderators);
+        router.push(dashboardLink(filterString(f), currentSort));
+      };
+    }
+
+    function clearFilters() {
+      const f = filter.filter((item: IFilterItem) => {
+        if (item.key === 'category') {
+          return true;
+        }
+        return (item.key === 'moderators' && item.value === 'me');
+      });
+      router.push(dashboardLink(filterString(f), currentSort));
+    }
+
+    function renderModerator(u: IUserModel) {
+      return (
+        <tr key="{u.id}" onClick={setModerator(u.id)}>
+          <td key="icon">
+            <SmallUserIcon user={u}/>
+          </td>
+          <td key="text" {...css({textAlign: 'left'})}>
+            {u.name}
+          </td>
+          <td key="toggle" {...css({textAlign: 'right'})}>
+            <Checkbox isSelected={moderatorFilter.has(u.id)} onCheck={null}/>
+          </td>
+        </tr>
+      );
+    }
+
+    function renderCustomDateControls() {
+      if (dateFilterValue !== 'custom') {
+        return '';
+      }
+      return(
+        <div>
+          date1,date2
+        </div>
+      );
+    }
+
     return (
-      <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, {position: 'absolute', top: '0', right: '0'})}>
+      <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, {position: 'absolute', top: '0', right: '0', color: 'black'})}>
         <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}} >
-          <div key="filters">
-            <select value={getFilterValue(currentFilter, 'user')} onChange={setFilter('user')}>
-              <option key="mine" value={me.id}>{me.name} (Me)</option>
-              <option key="all" value="">All Users</option>
-              <option key="unassigned" value="unassigned">Unassigned</option>
-              {others.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+          <h4 key="header" {...css(SCRIM_STYLE.popupTitle, {padding: '20px', fontSize: '18px', margin: 0})}>
+            Filter titles
+            <div onClick={this.clearPopups} {...css({float: 'right'})}>
+              <icons.CloseIcon/>
+            </div>
+            <Button
+              label="Reset"
+              onClick={clearFilters}
+              buttonStyles={{float: 'right', marginRight: '30px', color: NICE_LIGHTEST_BLUE, backgroundColor: NICE_MIDDLE_BLUE, padding: '7px 20px', marginTop: '-6px'}}
+            />
+          </h4>
+          <div key="title" {...css(STYLES.filterSection)}>
+            <h5 key="header" {...css(STYLES.filterHeading)}>
+              Title
+            </h5>
+            <input
+              type="text"
+              value={titleFilter}
+              onKeyPress={checkForEnter('title')}
+              onChange={changeFilter('titleFilter')}
+              onBlur={setFilter('title')}
+              {...css(SETTINGS_STYLES.input, {width: '100%', marginTop: '20px'})}
+            />
+          </div>
+          <div key="moderators" {...css(STYLES.filterSection)}>
+            <h5 key="header" {...css(STYLES.filterHeading)}>
+              Moderators
+            </h5>
+            <table key="main" {...css({width: '100%', marginTop: '10px'})}>
+              <tbody>
+               {renderModerator(me)}
+               {others.map((u: IUserModel) => renderModerator(u))}
+              </tbody>
+            </table>
+          </div>
+          <div key="dates" {...css(STYLES.filterSection)}>
+            <h5 key="header" {...css(STYLES.filterHeading)}>
+              Date
+            </h5>
+            <table {...css({width: '100%', marginTop: '10px'})}>
+              <tbody>
+              <tr>
+                <th key="label" {...css({textAlign: 'left'})}>
+                  Filter by:
+                </th>
+                <td key="value" {...css({textAlign: 'right'})}>
+                  <select value={dateFilterKey} onChange={changeFilter('dateFilterKey')} {...css(ARTICLE_TABLE_STYLES.select, {width: '200px'})}>
+                    <option value="sourceCreatedAt">Date published</option>
+                    <option value="updatedAt">Date last modified</option>
+                    <option value="lastModeratedAt">Date last moderated</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <th key="label" {...css({textAlign: 'left'})}>
+                  Filter range:
+                </th>
+                <td key="value" {...css({textAlign: 'right'})}>
+                  <select value={dateFilterValue} onChange={changeFilter('dateFilterValue')} {...css(ARTICLE_TABLE_STYLES.select, {width: '200px'})}>
+                    <option value=""/>
+                    <option value="last-12-hours">Last 12 hours</option>
+                    <option value="last-24-hours">Last 24 hours</option>
+                    <option value="last-48-hours">Last 48 hours</option>
+                    <option value="last-7-days">Last 7 days</option>
+                    <option value="last-30-days">Last 30 days</option>
+                    <option value="custom">Custom range</option>
+                  </select>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            {renderCustomDateControls()}
+          </div>
+          <div key="commenting" {...css(STYLES.filterSection)}>
+            <h5 key="header" {...css(STYLES.filterHeading)}>
+              Comment settings
+            </h5>
+            <select
+              value={isCommentingEnabledFilter}
+              onChange={setFilter('isCommentingEnabled')}
+              {...css(ARTICLE_TABLE_STYLES.select, {width: '100%', marginTop: '20px'})}
+            >
+              <option value="">Show All</option>
+              <option value="yes">Comments Enabled</option>
+              <option value="no">Comments Disabled</option>
             </select>
-            <select value={getFilterValue(currentFilter, 'category')} onChange={setFilter('category')}>
-              <option key="all" value="">All</option>
-              {sortedCategories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+          </div>
+          <div key="automoderation" {...css(STYLES.filterSection)}>
+            <h5 key="header" {...css(STYLES.filterHeading)}>
+              Automoderation settnigs
+            </h5>
+            <select
+              value={isAutoModeratedFilter}
+              onChange={setFilter('isAutoModerated')}
+              {...css(ARTICLE_TABLE_STYLES.select, {width: '100%', marginTop: '20px'})}
+            >
+              <option value="">Show All</option>
+              <option value="yes">Automoderation Enabled</option>
+              <option value="no">Automoderation Disabled</option>
+            </select>
+          </div>
+          <div key="commentsToReview" {...css(STYLES.filterSection)}>
+            <h5 key="header" {...css(STYLES.filterHeading)}>
+              Comments to review
+            </h5>
+            <select
+              value={commentsToReviewFilter}
+              onChange={setFilter('commentsToReview')}
+              {...css(ARTICLE_TABLE_STYLES.select, {width: '100%', marginTop: '20px'})}
+            >
+              <option value="">Show All</option>
+              <option value="yes">New and deferred comments to review</option>
+              <option value="new">New comments to review</option>
+              <option value="deferred">Deferred comments to review</option>
             </select>
           </div>
         </FocusTrap>
@@ -710,6 +965,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       articles,
       categories,
       location,
+      myUserId,
     } = this.props;
 
     const {
@@ -720,7 +976,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     let processedArticles: Array<IArticleModel> = articles.toArray();
 
     if (Object.keys(filter).length > 0) {
-      processedArticles = processedArticles.filter(executeFilter(filter));
+      processedArticles = processedArticles.filter(executeFilter(filter, {myId: myUserId}));
     }
     if (sort.length > 0) {
       processedArticles = processedArticles.sort(executeSort(sort));
@@ -853,9 +1109,11 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
                 {renderHeaderItem('Moderated', 'lastModeratedAt')}
               </th>
               <th key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}/>
-              <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell, {color: NICE_LIGHTEST_BLUE})}>
-                <icons.FilterIcon {...css(medium)} onClick={this.openFilters}/>
-                {this.renderFilterPopup(filter, currentSort)}
+              <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell, {...flexCenter, color: this.filterEnabled() ? NICE_MIDDLE_BLUE : NICE_LIGHTEST_BLUE})}>
+                <div {...css({width: '44px', height: '44px', borderRadius: '50%', ...flexCenter, backgroundColor: this.filterEnabled() ? NICE_LIGHTEST_BLUE : NICE_MIDDLE_BLUE})}>
+                  <icons.FilterIcon {...css(medium)} onClick={this.openFilters}/>
+                </div>
+                {this.renderFilterPopup(currentSort)}
               </th>
             </tr>
           </thead>

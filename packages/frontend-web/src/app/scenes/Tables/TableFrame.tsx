@@ -202,8 +202,8 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
       categories,
     } = this.props;
 
-    const isMeSuffix = isMe ? '+user=me' : '';
-    const allLink = isMe ? dashboardLink('user=me') : dashboardLink();
+    const isMeSuffix = isMe ? '+moderators=me' : '';
+    const allLink = isMe ? dashboardLink('moderators=me') : dashboardLink();
     const allUnmoderated = categories.reduce((r: number, v: ICategoryModel) => (r + v.unmoderatedCount), 0);
 
     return (
@@ -252,7 +252,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
       location,
     } = this.props;
 
-    const isMe = /user=me/.test(location.pathname);
+    const isMe = /moderators=me/.test(location.pathname);
 
     function renderHeaderItem(icon: any, text: string, link: string, selected?: boolean) {
       let styles = {...css(STYLES.headerItem)};
@@ -286,7 +286,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     }
 
     let allArticles = dashboardLink();
-    let myArticles = dashboardLink('user=me');
+    let myArticles = dashboardLink('moderators=me');
     if (categoryFilter) {
       allArticles += `/${categoryFilter}`;
       myArticles += `+${categoryFilter}`;

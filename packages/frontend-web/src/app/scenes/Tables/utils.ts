@@ -62,32 +62,47 @@ export function getFilterValue(filterList: Array<IFilterItem>, key: string) {
   return '';
 }
 
-export function executeFilter(filterList: Array<IFilterItem>) {
+export interface IFilterContext {
+  myId: string;
+}
+
+export function executeFilter(filterList: Array<IFilterItem>, context: IFilterContext) {
   return (article: IArticleModel) => {
     for (const i of filterList) {
       switch (i.key) {
         case 'title':
-          return article.title.indexOf(i.value) >= 0;
+          if (article.title.toLocaleLowerCase().indexOf(i.value.toLocaleLowerCase()) < 0) {
+            return false;
+          }
+          break;
+
         case 'moderators':
+          let found = false;
           if (i.value === 'unassigned') {
-            if (article.assignedModerators && article.assignedModerators.length > 0) {
-              return false;
+            if (!article.assignedModerators || article.assignedModerators.length === 0) {
+              found = true;
             }
           }
-          else {
-            if (!article.assignedModerators) {
-              return false;
-            }
-            let found = false;
-            for (const m of article.assignedModerators) {
-              if (m.id === i.value) {
-                found = true;
-                break;
+          else if (article.assignedModerators && article.assignedModerators.length > 0) {
+            if (i.value === 'me') {
+              for (const m of article.assignedModerators) {
+                if (context.myId === m.id) {
+                  found = true;
+                  break;
+                }
+              }
+            } else {
+              const moderatorIds = new Set<string>(i.value.split(','));
+              for (const m of article.assignedModerators) {
+                if (moderatorIds.has(m.id)) {
+                  found = true;
+                  break;
+                }
               }
             }
-            if (!found) {
-              return false;
-            }
+          }
+          if (!found) {
+            return false;
           }
           break;
 
@@ -107,22 +122,32 @@ export function executeFilter(filterList: Array<IFilterItem>) {
         case 'isCommentingEnabled':
         case 'isAutoModerated':
           if (i.value === 'yes') {
-            return article[i.key];
+            if (!article[i.key]) {
+              return false;
+            }
           }
           else if (i.value === 'no') {
-            return !article[i.key];
+            if (article[i.key]) {
+              return false;
+            }
           }
           break;
 
         case 'commentsToReview':
           if (i.value === 'yes') {
-            return (article.unmoderatedCount + article.deferredCount) > 0;
+            if ((article.unmoderatedCount + article.deferredCount) === 0) {
+              return false;
+            }
           }
           else if (i.value === 'new') {
-            return article.unmoderatedCount > 0;
+            if (article.unmoderatedCount === 0) {
+              return false;
+            }
           }
           else if (i.value === 'deferred') {
-            return article.deferredCount > 0;
+            if (article.deferredCount === 0) {
+              return false;
+            }
           }
           break;
       }

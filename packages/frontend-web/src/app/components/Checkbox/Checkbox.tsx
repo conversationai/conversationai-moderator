@@ -37,10 +37,11 @@ const STYLES = stylesheet({
     borderColor: 'transparent',
     borderStyle: 'solid',
     overflow: 'hidden',
-    height: '24px',
-    width: '24px',
+    height: '30px',
+    width: '30px',
     cursor: 'pointer',
     boxSizing: 'border-box',
+    position: 'relative',
   },
 
   inputFocused: {
