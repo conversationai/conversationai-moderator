@@ -42,14 +42,15 @@ import { articlesLink, categoriesLink, dashboardLink } from '../routes';
 import { SETTINGS_STYLES } from '../Settings/settingsStyles';
 import { MagicTimestamp } from './components';
 import { ARTICLE_TABLE_STYLES, COMMON_STYLES, IMAGE_BASE } from './styles';
+import { FILTER_MODERATORS, FILTER_MODERATORS_ME, FILTER_MODERATORS_UNASSIGNED} from './utils';
 import {
   executeFilter,
   executeSort,
   filterString,
   getFilterValue,
-  IFilterItem,
+  IFilterItem, isFilterActive,
   parseFilter,
-  parseSort,
+  parseSort, resetFilterToRoot,
   sortString,
   updateFilter,
   updateSort,
@@ -148,10 +149,10 @@ export interface IIArticleTableProps extends WithRouterProps {
   router: InjectedRouter;
 }
 
-const MODERATORS = 'moderators';
-const CONTROLS = 'controls';
-const FILTERS = 'filters';
-const SAVING = 'saving';
+const POPUP_MODERATORS = 'moderators';
+const POPUP_CONTROLS = 'controls';
+const POPUP_FILTERS = 'filters';
+const POPUP_SAVING = 'saving';
 
 export interface IIArticleTableState {
   page_size: number;
@@ -169,7 +170,8 @@ export interface IIArticleTableState {
 
   // Fields used by the set filters popup
   titleFilter: string;
-  moderatorFilter: Set<ModelId>;
+  moderatorFilterString: string;
+  moderatorFilterUsers: Set<ModelId>;
   dateFilterKey: string;
   dateFilterValue: string;
   dateFilterFrom?: Date;
@@ -252,14 +254,22 @@ function getStateFromProps(props: Readonly<IIArticleTableProps>) {
     }
   }
 
-  const moderatorFilterString = getFilterValue(filter, 'moderators');
-  const moderatorFilter = (moderatorFilterString.length > 0) ? moderatorFilterString.split(',') : [];
+  const moderatorFilterString = getFilterValue(filter, FILTER_MODERATORS);
+  let moderatorFilterUsers: Array<string> = [];
+
+  if (moderatorFilterString.length > 0 &&
+    moderatorFilterString !== FILTER_MODERATORS_ME &&
+    moderatorFilterString !== FILTER_MODERATORS_UNASSIGNED) {
+    moderatorFilterUsers = moderatorFilterString.split(',');
+  }
+
   return {
     filter,
     sort,
 
     titleFilter: getFilterValue(filter, 'title'),
-    moderatorFilter: Set<string>(moderatorFilter),
+    moderatorFilterString: moderatorFilterString,
+    moderatorFilterUsers: Set<string>(moderatorFilterUsers),
     dateFilterKey,
     dateFilterValue,
     dateFilterFrom,
@@ -295,7 +305,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   @autobind
   openSetModerators(article: IArticleModel) {
     this.setState({
-      popupToShow: MODERATORS,
+      popupToShow: POPUP_MODERATORS,
       selectedArticle: article,
       moderatorIds: Set<ModelId>(article.assignedModerators.map((m) => m.id)),
     });
@@ -304,7 +314,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   @autobind
   openFilters() {
     this.setState({
-      popupToShow: FILTERS,
+      popupToShow: POPUP_FILTERS,
       selectedArticle: null,
     });
   }
@@ -312,7 +322,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   @autobind
   openControls(article: IArticleModel) {
     this.setState({
-      popupToShow: CONTROLS,
+      popupToShow: POPUP_CONTROLS,
       selectedArticle: article,
       isCommentingEnabled: article.isCommentingEnabled,
       isAutoModerated: article.isAutoModerated,
@@ -336,25 +346,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     keyboardJS.unbind('escape', this.clearPopups);
   }
 
-  filterEnabled(): boolean {
-    const {
-      filter,
-    } = this.state;
-
-    for (const i of filter) {
-      if (i.key === 'category') {
-        continue;
-      }
-      if (i.key === 'moderators' && i.value === 'me') {
-        continue;
-      }
-      return true;
-    }
-    return false;
-  }
-
   renderFilterPopup(currentSort: string) {
-    if (this.state.popupToShow !== FILTERS) {
+    if (this.state.popupToShow !== POPUP_FILTERS) {
       return null;
     }
 
@@ -367,7 +360,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     const {
       filter,
       titleFilter,
-      moderatorFilter,
+      moderatorFilterString,
+      moderatorFilterUsers,
       dateFilterKey,
       dateFilterValue,
       isCommentingEnabledFilter,
@@ -405,21 +399,21 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       // return (checked: boolean) => {
       //   const mf = checked ? that.state.moderatorFilter.add(id) : that.state.moderatorFilter.remove(id);
       return () => {
-        const mf = that.state.moderatorFilter.contains(id) ? that.state.moderatorFilter.delete(id) : that.state.moderatorFilter.add(id);
-        const moderators = mf.toArray().reduce<string | null>((s: string | null, v: ModelId) => (s ? `${s},${v}` : v.toString()), null);
-        const f = updateFilter(filter, 'moderators', moderators);
+        const currentUsers = that.state.moderatorFilterUsers;
+        const newUsers = currentUsers.contains(id) ? currentUsers.delete(id) : currentUsers.add(id);
+        const moderators = newUsers.toArray().reduce<string | null>((s: string | null, v: ModelId) => (s ? `${s},${v}` : v.toString()), null);
+        const f = updateFilter(filter, FILTER_MODERATORS, moderators);
         router.push(dashboardLink(filterString(f), currentSort));
       };
     }
 
-    function clearFilters() {
-      const f = filter.filter((item: IFilterItem) => {
-        if (item.key === 'category') {
-          return true;
-        }
-        return (item.key === 'moderators' && item.value === 'me');
-      });
+    function setModeratorUnassigned() {
+      const f = updateFilter(filter, FILTER_MODERATORS, FILTER_MODERATORS_UNASSIGNED);
       router.push(dashboardLink(filterString(f), currentSort));
+    }
+
+    function clearFilters() {
+      router.push(dashboardLink(filterString(resetFilterToRoot(filter)), currentSort));
     }
 
     function renderModerator(u: IUserModel) {
@@ -432,7 +426,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             {u.name}
           </td>
           <td key="toggle" {...css({textAlign: 'right'})}>
-            <Checkbox isSelected={moderatorFilter.has(u.id)} onCheck={null}/>
+            <Checkbox isSelected={moderatorFilterUsers.has(u.id)} onCheck={null}/>
           </td>
         </tr>
       );
@@ -476,17 +470,28 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
               {...css(SETTINGS_STYLES.input, {width: '100%', marginTop: '20px'})}
             />
           </div>
+          {moderatorFilterString !== FILTER_MODERATORS_ME &&
           <div key="moderators" {...css(STYLES.filterSection)}>
             <h5 key="header" {...css(STYLES.filterHeading)}>
               Moderators
             </h5>
             <table key="main" {...css({width: '100%', marginTop: '10px'})}>
               <tbody>
-               {renderModerator(me)}
-               {others.map((u: IUserModel) => renderModerator(u))}
+              <tr key="unassigned" onClick={setModeratorUnassigned}>
+                <td key="icon"/>
+                <td key="text" {...css({textAlign: 'left'})}>
+                  No moderator assigned.
+                </td>
+                <td key="toggle" {...css({textAlign: 'right'})}>
+                  <Checkbox isSelected={moderatorFilterString === FILTER_MODERATORS_UNASSIGNED} onCheck={null}/>
+                </td>
+              </tr>
+              {renderModerator(me)}
+              {others.map((u: IUserModel) => renderModerator(u))}
               </tbody>
             </table>
           </div>
+          }
           <div key="dates" {...css(STYLES.filterSection)}>
             <h5 key="header" {...css(STYLES.filterHeading)}>
               Date
@@ -541,7 +546,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           </div>
           <div key="automoderation" {...css(STYLES.filterSection)}>
             <h5 key="header" {...css(STYLES.filterHeading)}>
-              Automoderation settnigs
+              Automoderation settings
             </h5>
             <select
               value={isAutoModeratedFilter}
@@ -591,7 +596,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     const articleId = this.state.selectedArticle.id;
     const {isCommentingEnabled, isAutoModerated} = this.state;
     this.setState({
-      popupToShow: SAVING,
+      popupToShow: POPUP_SAVING,
       isCommentingEnabled: null,
       isAutoModerated: null,
     });
@@ -607,7 +612,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
   renderControlPopup(article: IArticleModel) {
     const imOpen = this.state.selectedArticle && this.state.selectedArticle.id === article.id;
-    if (this.state.popupToShow !== CONTROLS || !imOpen) {
+    if (this.state.popupToShow !== POPUP_CONTROLS || !imOpen) {
       return null;
     }
 
@@ -768,7 +773,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     const articleId = this.state.selectedArticle.id;
     const moderatorIds = this.state.moderatorIds.toArray() as Array<string>;
     this.setState({
-      popupToShow: SAVING,
+      popupToShow: POPUP_SAVING,
       selectedArticle: null,
       moderatorIds: null,
     });
@@ -786,7 +791,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   renderSetModerators() {
     const article = this.state.selectedArticle;
 
-    if (this.state.popupToShow === SAVING) {
+    if (this.state.popupToShow === POPUP_SAVING) {
       return (
         <Scrim isVisible onBackgroundClick={this.clearPopups} scrimStyles={STYLES.scrimPopup}>
           <div tabIndex={0} {...css(SCRIM_STYLE.popup)}>
@@ -796,7 +801,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       );
     }
 
-    if (this.state.popupToShow !== MODERATORS) {
+    if (this.state.popupToShow !== POPUP_MODERATORS) {
       return null;
     }
 
@@ -1076,6 +1081,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       processedArticles = processedArticles.slice(start, end);
     }
 
+    const filterActive = isFilterActive(this.state.filter);
     return (
       <div key="main">
         <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable, {position: 'relative'})}>
@@ -1109,8 +1115,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
                 {renderHeaderItem('Moderated', 'lastModeratedAt')}
               </th>
               <th key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}/>
-              <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell, {...flexCenter, color: this.filterEnabled() ? NICE_MIDDLE_BLUE : NICE_LIGHTEST_BLUE})}>
-                <div {...css({width: '44px', height: '44px', borderRadius: '50%', ...flexCenter, backgroundColor: this.filterEnabled() ? NICE_LIGHTEST_BLUE : NICE_MIDDLE_BLUE})}>
+              <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell, {...flexCenter, color: filterActive ? NICE_MIDDLE_BLUE : NICE_LIGHTEST_BLUE})}>
+                <div {...css({width: '44px', height: '44px', borderRadius: '50%', ...flexCenter, backgroundColor: filterActive ? NICE_LIGHTEST_BLUE : NICE_MIDDLE_BLUE})}>
                   <icons.FilterIcon {...css(medium)} onClick={this.openFilters}/>
                 </div>
                 {this.renderFilterPopup(currentSort)}

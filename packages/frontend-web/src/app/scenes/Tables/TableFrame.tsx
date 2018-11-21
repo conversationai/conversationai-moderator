@@ -37,6 +37,7 @@ import { NICE_DARK_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
 import { css, stylesheet } from '../../util';
 import { dashboardLink, oldDashboardLink, searchLink, settingsLink } from '../routes';
 import { COMMON_STYLES } from './styles';
+import {FILTER_CATEGORY, FILTER_MODERATORS, FILTER_MODERATORS_ME} from './utils';
 
 const SIDEBAR_XPAD = 15;
 
@@ -149,6 +150,8 @@ const STYLES = stylesheet({
   },
 });
 
+const MODS_ME = `${FILTER_MODERATORS}=${FILTER_MODERATORS_ME}`;
+
 export interface IITableFrameProps extends WithRouterProps {
   dispatch: Function;
   user: IUserModel;
@@ -202,8 +205,8 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
       categories,
     } = this.props;
 
-    const isMeSuffix = isMe ? '+moderators=me' : '';
-    const allLink = isMe ? dashboardLink('moderators=me') : dashboardLink();
+    const isMeSuffix = isMe ? `+${MODS_ME}` : '';
+    const allLink = isMe ? dashboardLink(MODS_ME) : dashboardLink();
     const allUnmoderated = categories.reduce((r: number, v: ICategoryModel) => (r + v.unmoderatedCount), 0);
 
     return (
@@ -231,7 +234,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
               {categories.map((c: ICategoryModel) => (
                 <div key={c.id} {...css(STYLES.sidebarRow, category && category.id === c.id ? STYLES.sidebarRowSelected : {})}>
                   <div key="label" {...css(STYLES.sidebarSection)}>
-                    <Link to={dashboardLink(`category=${c.id}${isMeSuffix}`)} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
+                    <Link to={dashboardLink(`${FILTER_CATEGORY}=${c.id}${isMeSuffix}`)} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
                       {c.label}
                     </Link>
                   </div>
@@ -252,7 +255,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
       location,
     } = this.props;
 
-    const isMe = /moderators=me/.test(location.pathname);
+    const isMe = location.pathname.indexOf(MODS_ME) >= 0;
 
     function renderHeaderItem(icon: any, text: string, link: string, selected?: boolean) {
       let styles = {...css(STYLES.headerItem)};
@@ -273,20 +276,21 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     let category = null;
     let categoryStr = 'All Sections';
     let categoryFilter = null;
-    const m = /category=(\d+)/.exec(location.pathname);
+    const re = new RegExp(`${FILTER_CATEGORY}=(\\d+)`);
+    const m = re.exec(location.pathname);
     if (m) {
       categoryStr = `Unknown Section (${m[1]})`;
       for (const c of categories.toArray()) {
         if (c.id === m[1]) {
           category = c;
           categoryStr = `Section: ${c.label}`;
-          categoryFilter = `category=${c.id}`;
+          categoryFilter = `${FILTER_CATEGORY}=${c.id}`;
         }
       }
     }
 
     let allArticles = dashboardLink();
-    let myArticles = dashboardLink('moderators=me');
+    let myArticles = dashboardLink(MODS_ME);
     if (categoryFilter) {
       allArticles += `/${categoryFilter}`;
       myArticles += `+${categoryFilter}`;

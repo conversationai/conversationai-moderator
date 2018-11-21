@@ -66,6 +66,12 @@ export interface IFilterContext {
   myId: string;
 }
 
+export const FILTER_CATEGORY = 'category';
+export const FILTER_CATEGORY_NONE = 'none';
+export const FILTER_MODERATORS = 'moderators';
+export const FILTER_MODERATORS_ME = 'me';
+export const FILTER_MODERATORS_UNASSIGNED = 'unassigned';
+
 export function executeFilter(filterList: Array<IFilterItem>, context: IFilterContext) {
   return (article: IArticleModel) => {
     for (const i of filterList) {
@@ -76,22 +82,24 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
           }
           break;
 
-        case 'moderators':
+        case FILTER_MODERATORS:
           let found = false;
-          if (i.value === 'unassigned') {
+          if (i.value === FILTER_MODERATORS_UNASSIGNED) {
             if (!article.assignedModerators || article.assignedModerators.length === 0) {
+              // TODO: Need to also handle category moderators
               found = true;
             }
           }
           else if (article.assignedModerators && article.assignedModerators.length > 0) {
-            if (i.value === 'me') {
+            if (i.value === FILTER_MODERATORS_ME) {
               for (const m of article.assignedModerators) {
                 if (context.myId === m.id) {
                   found = true;
                   break;
                 }
               }
-            } else {
+            }
+            else {
               const moderatorIds = new Set<string>(i.value.split(','));
               for (const m of article.assignedModerators) {
                 if (moderatorIds.has(m.id)) {
@@ -99,6 +107,7 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
                   break;
                 }
               }
+              // TODO: Need to also search category moderators.
             }
           }
           if (!found) {
@@ -106,8 +115,8 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
           }
           break;
 
-        case 'category':
-          if (i.value === 'none') {
+        case FILTER_CATEGORY:
+          if (i.value === FILTER_CATEGORY_NONE) {
             if (article.category) {
               return false;
             }
@@ -155,6 +164,29 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
 
     return true;
   };
+}
+
+export function resetFilterToRoot(filter: Array<IFilterItem>): Array<IFilterItem> {
+  return filter.filter((item: IFilterItem) => {
+    if (item.key === FILTER_CATEGORY) {
+      return true;
+    }
+    return (item.key === FILTER_MODERATORS && item.value === FILTER_MODERATORS_ME);
+  });
+}
+
+export function isFilterActive(filter: Array<IFilterItem>): boolean {
+  for (const i of filter) {
+    if (i.key === FILTER_CATEGORY) {
+      continue;
+      continue;
+    }
+    if (i.key === FILTER_MODERATORS && i.value === FILTER_MODERATORS_ME) {
+      continue;
+    }
+    return true;
+  }
+  return false;
 }
 
 export function parseSort(sort: string | undefined) {
