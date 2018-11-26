@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import Button from '@material-ui/core/Button';
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { List, Set } from 'immutable';
@@ -22,7 +23,6 @@ import React, { KeyboardEvent, SyntheticEvent } from 'react';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
-import { Button } from '../../components/Button';
 import { Checkbox } from '../../components/Checkbox';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
@@ -451,11 +451,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             <div onClick={this.clearPopups} {...css({float: 'right'})}>
               <icons.CloseIcon/>
             </div>
-            <Button
-              label="Reset"
-              onClick={clearFilters}
-              buttonStyles={{float: 'right', marginRight: '30px', color: NICE_LIGHTEST_BLUE, backgroundColor: NICE_MIDDLE_BLUE, padding: '7px 20px', marginTop: '-6px'}}
-            />
+            <Button variant="contained" color="primary" onClick={clearFilters} style={{float: 'right', marginTop: '-7px', marginRight: '30px'}}>Reset</Button>
           </h4>
           <div key="title" {...css(STYLES.filterSection)}>
             <h5 key="header" {...css(STYLES.filterHeading)}>
