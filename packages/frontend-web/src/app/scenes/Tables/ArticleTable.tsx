@@ -42,15 +42,32 @@ import { articlesLink, categoriesLink, dashboardLink } from '../routes';
 import { SETTINGS_STYLES } from '../Settings/settingsStyles';
 import { MagicTimestamp } from './components';
 import { ARTICLE_TABLE_STYLES, COMMON_STYLES, IMAGE_BASE } from './styles';
-import { FILTER_MODERATORS, FILTER_MODERATORS_ME, FILTER_MODERATORS_UNASSIGNED} from './utils';
+import {
+  FILTER_DATE_lastModeratedAt,
+  FILTER_DATE_sourceCreatedAt,
+  FILTER_DATE_updatedAt,
+  FILTER_MODERATORS,
+  FILTER_MODERATORS_ME,
+  FILTER_MODERATORS_UNASSIGNED,
+  FILTER_TITLE,
+  FILTER_TOGGLE_isAutoModerated,
+  FILTER_TOGGLE_isCommentingEnabled,
+  FILTER_TOGGLE_OFF,
+  FILTER_TOGGLE_ON,
+} from './utils';
 import {
   executeFilter,
   executeSort,
+  filterDateIsRange,
+  filterDatePrior,
+  filterDateSince,
   filterString,
   getFilterValue,
-  IFilterItem, isFilterActive,
+  IFilterItem,
+  isFilterActive,
   parseFilter,
-  parseSort, resetFilterToRoot,
+  parseSort,
+  resetFilterToRoot,
   sortString,
   updateFilter,
   updateSort,
@@ -174,8 +191,8 @@ export interface IIArticleTableState {
   moderatorFilterUsers: Set<ModelId>;
   dateFilterKey: string;
   dateFilterValue: string;
-  dateFilterFrom?: Date;
-  dateFilterTo?: Date;
+  dateFilterFrom?: string;
+  dateFilterTo?: string;
   isCommentingEnabledFilter: string;
   isAutoModeratedFilter: string;
   commentsToReviewFilter: string;
@@ -236,24 +253,6 @@ function getStateFromProps(props: Readonly<IIArticleTableProps>) {
   const filter: Array<IFilterItem> = props.routeParams ? parseFilter(props.routeParams.filter) : [];
   const sort: Array<string> = props.routeParams ? parseSort(props.routeParams.sort) : [];
 
-  let dateFilterKey = 'sourceCreatedAt';
-  let dateFilterValue = '';
-  const dateFilterFrom = new Date(Date.now());
-  const dateFilterTo = new Date(Date.now());
-  for (let i = 0; i < filter.length; i++) {
-    if (['lastModeratedAt', 'updatedAt', 'sourceCreatedAt'].indexOf(filter[i].key) >= 0) {
-      dateFilterKey = filter[i].key;
-      const range = filter[i].value.split('|');
-      if (range.length < 2) {
-        dateFilterValue = range[0];
-      }
-      else {
-        dateFilterValue = 'custom';
-      }
-      break;
-    }
-  }
-
   const moderatorFilterString = getFilterValue(filter, FILTER_MODERATORS);
   let moderatorFilterUsers: Array<string> = [];
 
@@ -263,19 +262,40 @@ function getStateFromProps(props: Readonly<IIArticleTableProps>) {
     moderatorFilterUsers = moderatorFilterString.split(',');
   }
 
+  let dateFilterKey = FILTER_DATE_sourceCreatedAt;
+  let dateFilterValue = '';
+  let dateFilterFrom = '';
+  let dateFilterTo = '';
+
+  for (const f of filter) {
+    if (f.key === FILTER_DATE_sourceCreatedAt ||
+        f.key === FILTER_DATE_updatedAt ||
+        f.key === FILTER_DATE_lastModeratedAt) {
+      dateFilterKey = f.key;
+      dateFilterValue = f.value;
+      break;
+    }
+  }
+
+  if (dateFilterValue && filterDateIsRange(dateFilterValue)) {
+    dateFilterValue = 'custom';
+    dateFilterFrom = '';
+    dateFilterTo = '';
+  }
+
   return {
     filter,
     sort,
 
-    titleFilter: getFilterValue(filter, 'title'),
+    titleFilter: getFilterValue(filter, FILTER_TITLE),
     moderatorFilterString: moderatorFilterString,
     moderatorFilterUsers: Set<string>(moderatorFilterUsers),
     dateFilterKey,
     dateFilterValue,
     dateFilterFrom,
     dateFilterTo,
-    isCommentingEnabledFilter: getFilterValue(filter, 'isCommentingEnabled'),
-    isAutoModeratedFilter: getFilterValue(filter, 'isAutoModerated'),
+    isCommentingEnabledFilter: getFilterValue(filter, FILTER_TOGGLE_isCommentingEnabled),
+    isAutoModeratedFilter: getFilterValue(filter, FILTER_TOGGLE_isAutoModerated),
     commentsToReviewFilter: getFilterValue(filter, 'commentsToReview'),
   };
 }
@@ -373,7 +393,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     const others = users.filter((u) => u.id !== myUserId).sort((u1, u2) => ('' + u1.name).localeCompare(u2.name));
 
     const that = this;
-    function changeFilter(param: 'titleFilter' | 'dateFilterKey' | 'dateFilterValue') {
+    function changeFilter(param: 'titleFilter') {
       return ((e: SyntheticEvent<any>) => {
         that.setState({[param]: e.currentTarget.value} as any);
       });
@@ -393,6 +413,30 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           router.push(dashboardLink(filterString(f), currentSort));
         }
       };
+    }
+
+    function changeDateFilter(currentFilter: Array<IFilterItem>, key: string, value: string) {
+      const newFilterValue = (value !== 'custom') ? value : 'sdf';
+      const newFilter = updateFilter(currentFilter, key, newFilterValue);
+      router.push(dashboardLink(filterString(newFilter)));
+    }
+
+    function changeDateFilterKey(e: SyntheticEvent<any>) {
+      const key = e.currentTarget.value;
+      if (that.state.dateFilterValue === '') {
+        that.setState({dateFilterKey: key});
+      }
+      else if (key !== that.state.dateFilterKey) {
+        const cleanedFilter = updateFilter(filter, that.state.dateFilterKey);
+        changeDateFilter(cleanedFilter, key, that.state.dateFilterValue);
+      }
+    }
+
+    function changeDateFilterValue(e: SyntheticEvent<any>) {
+      const newFilterValue = e.currentTarget.value;
+      if (newFilterValue !== that.state.dateFilterValue) {
+        changeDateFilter(filter, that.state.dateFilterKey, newFilterValue);
+      }
     }
 
     function setModerator(id: string) {
@@ -437,9 +481,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
         return '';
       }
       return(
-        <div>
-          date1,date2
-        </div>
+        <div>date range</div>
       );
     }
 
@@ -460,9 +502,9 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             <input
               type="text"
               value={titleFilter}
-              onKeyPress={checkForEnter('title')}
+              onKeyPress={checkForEnter(FILTER_TITLE)}
               onChange={changeFilter('titleFilter')}
-              onBlur={setFilter('title')}
+              onBlur={setFilter(FILTER_TITLE)}
               {...css(SETTINGS_STYLES.input, {width: '100%', marginTop: '20px'})}
             />
           </div>
@@ -499,10 +541,10 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
                   Filter by:
                 </th>
                 <td key="value" {...css({textAlign: 'right'})}>
-                  <select value={dateFilterKey} onChange={changeFilter('dateFilterKey')} {...css(ARTICLE_TABLE_STYLES.select, {width: '200px'})}>
-                    <option value="sourceCreatedAt">Date published</option>
-                    <option value="updatedAt">Date last modified</option>
-                    <option value="lastModeratedAt">Date last moderated</option>
+                  <select value={dateFilterKey} onChange={changeDateFilterKey} {...css(ARTICLE_TABLE_STYLES.select, {width: '200px'})}>
+                    <option value={FILTER_DATE_sourceCreatedAt}>Date published</option>
+                    <option value={FILTER_DATE_updatedAt}>Date last modified</option>
+                    <option value={FILTER_DATE_lastModeratedAt}>Date last moderated</option>
                   </select>
                 </td>
               </tr>
@@ -511,13 +553,14 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
                   Filter range:
                 </th>
                 <td key="value" {...css({textAlign: 'right'})}>
-                  <select value={dateFilterValue} onChange={changeFilter('dateFilterValue')} {...css(ARTICLE_TABLE_STYLES.select, {width: '200px'})}>
+                  <select value={dateFilterValue} onChange={changeDateFilterValue} {...css(ARTICLE_TABLE_STYLES.select, {width: '200px'})}>
                     <option value=""/>
-                    <option value="last-12-hours">Last 12 hours</option>
-                    <option value="last-24-hours">Last 24 hours</option>
-                    <option value="last-48-hours">Last 48 hours</option>
-                    <option value="last-7-days">Last 7 days</option>
-                    <option value="last-30-days">Last 30 days</option>
+                    <option value={filterDateSince(12)}>Last 12 hours</option>
+                    <option value={filterDateSince(24)}>Last 24 hours</option>
+                    <option value={filterDateSince(48)}>Last 48 hours</option>
+                    <option value={filterDateSince(168)}>Last 7 days</option>
+                    <option value={filterDatePrior(48)}>Older than 48 hours</option>
+                    <option value={filterDatePrior(168)}>Older than 7 days</option>
                     <option value="custom">Custom range</option>
                   </select>
                 </td>
@@ -532,12 +575,12 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             </h5>
             <select
               value={isCommentingEnabledFilter}
-              onChange={setFilter('isCommentingEnabled')}
+              onChange={setFilter(FILTER_TOGGLE_isCommentingEnabled)}
               {...css(ARTICLE_TABLE_STYLES.select, {width: '100%', marginTop: '20px'})}
             >
               <option value="">Show All</option>
-              <option value="yes">Comments Enabled</option>
-              <option value="no">Comments Disabled</option>
+              <option value={FILTER_TOGGLE_ON}>Comments Enabled</option>
+              <option value={FILTER_TOGGLE_OFF}>Comments Disabled</option>
             </select>
           </div>
           <div key="automoderation" {...css(STYLES.filterSection)}>
@@ -546,12 +589,12 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             </h5>
             <select
               value={isAutoModeratedFilter}
-              onChange={setFilter('isAutoModerated')}
+              onChange={setFilter(FILTER_TOGGLE_isAutoModerated)}
               {...css(ARTICLE_TABLE_STYLES.select, {width: '100%', marginTop: '20px'})}
             >
               <option value="">Show All</option>
-              <option value="yes">Automoderation Enabled</option>
-              <option value="no">Automoderation Disabled</option>
+              <option value={FILTER_TOGGLE_ON}>Automoderation Enabled</option>
+              <option value={FILTER_TOGGLE_OFF}>Automoderation Disabled</option>
             </select>
           </div>
           <div key="commentsToReview" {...css(STYLES.filterSection)}>

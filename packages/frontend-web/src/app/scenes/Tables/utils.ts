@@ -66,17 +66,27 @@ export interface IFilterContext {
   myId: string;
 }
 
+export const FILTER_TITLE = 'title';
 export const FILTER_CATEGORY = 'category';
 export const FILTER_CATEGORY_NONE = 'none';
 export const FILTER_MODERATORS = 'moderators';
 export const FILTER_MODERATORS_ME = 'me';
 export const FILTER_MODERATORS_UNASSIGNED = 'unassigned';
+export const FILTER_TOGGLE_isCommentingEnabled = 'isCommentingEnabled';
+export const FILTER_TOGGLE_isAutoModerated = 'isAutoModerated';
+export const FILTER_TOGGLE_ON = 'yes';
+export const FILTER_TOGGLE_OFF = 'no';
+export const FILTER_DATE_sourceCreatedAt = 'sourceCreatedAt';
+export const FILTER_DATE_updatedAt = 'updatedAt';
+export const FILTER_DATE_lastModeratedAt = 'lastModeratedAt';
+export const FILTER_DATE_SINCE = 'since-';
+export const FILTER_DATE_PRIOR = 'prior-';
 
 export function executeFilter(filterList: Array<IFilterItem>, context: IFilterContext) {
   return (article: IArticleModel) => {
     for (const i of filterList) {
       switch (i.key) {
-        case 'title':
+        case FILTER_TITLE:
           if (article.title.toLocaleLowerCase().indexOf(i.value.toLocaleLowerCase()) < 0) {
             return false;
           }
@@ -128,14 +138,33 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
           }
           break;
 
-        case 'isCommentingEnabled':
-        case 'isAutoModerated':
-          if (i.value === 'yes') {
+        case FILTER_DATE_sourceCreatedAt:
+        case FILTER_DATE_updatedAt:
+        case FILTER_DATE_lastModeratedAt:
+          if (i.value.startsWith(FILTER_DATE_SINCE)) {
+            const hours = Number(i.value.substr(FILTER_DATE_SINCE.length));
+            const cutoff = new Date(Date.now() - 1000 * 60 * 60 * hours);
+            if (new Date(article[i.key]) < cutoff) {
+              return false;
+            }
+          }
+          else if (i.value.startsWith(FILTER_DATE_PRIOR)) {
+            const hours = Number(i.value.substr(FILTER_DATE_PRIOR.length));
+            const cutoff = new Date(Date.now() - 1000 * 60 * 60 * hours);
+            if (new Date(article[i.key]) > cutoff) {
+              return false;
+            }
+          }
+          break;
+
+        case FILTER_TOGGLE_isCommentingEnabled:
+        case FILTER_TOGGLE_isAutoModerated:
+          if (i.value === FILTER_TOGGLE_ON) {
             if (!article[i.key]) {
               return false;
             }
           }
-          else if (i.value === 'no') {
+          else if (i.value === FILTER_TOGGLE_OFF) {
             if (article[i.key]) {
               return false;
             }
@@ -179,7 +208,6 @@ export function isFilterActive(filter: Array<IFilterItem>): boolean {
   for (const i of filter) {
     if (i.key === FILTER_CATEGORY) {
       continue;
-      continue;
     }
     if (i.key === FILTER_MODERATORS && i.value === FILTER_MODERATORS_ME) {
       continue;
@@ -187,6 +215,18 @@ export function isFilterActive(filter: Array<IFilterItem>): boolean {
     return true;
   }
   return false;
+}
+
+export function filterDateSince(hours: number) {
+  return `${FILTER_DATE_SINCE}${hours}`;
+}
+
+export function filterDatePrior(hours: number) {
+  return `${FILTER_DATE_PRIOR}${hours}`;
+}
+
+export function filterDateIsRange(value: string) {
+  return !(value.startsWith(FILTER_DATE_SINCE) || value.startsWith(FILTER_DATE_PRIOR));
 }
 
 export function parseSort(sort: string | undefined) {
