@@ -1,5 +1,4 @@
 {
-  "version": "1.8.9",
   "compilerOptions": {
     "module": "es6",
     "moduleResolution": "node",

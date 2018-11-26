@@ -14,54 +14,48 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var path = require("path");
-var webpack = require("webpack");
-var BabiliPlugin = require("babili-webpack-plugin");
-var publicPath = "/_assets/";
+const path = require('path');
+const webpack = require('webpack');
+const publicPath = "/_assets/";
 
 module.exports = {
-  entry: {
-    moderator: [
-      './dist/app/main'
-    ]
-  },
+  target: 'web',
+
+  entry: {moderator: './dist/app/main'},
+
   output: {
     path: path.join(__dirname, "..", "build"),
     publicPath: publicPath,
     filename: "js/[name].js",
     chunkFilename: "[id].js",
   },
-  target: 'web',
+
   module: {
-    preLoaders: [
+    rules: [
       {
         test: /\.jsx?$/,
-        loader: "source-map-loader"
-      }
-    ],
-    loaders: [
-      {
-        loader: 'babel',
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
+        use: 'source-map-loader',
+        enforce: 'pre'
       },
       {
-        loaders: ['json'],
-        test: /\.json$/,
+        test: /\.jsx?$/,
+        use: 'babel-loader',
+        exclude: /node_modules/,
+        enforce: 'post'
       }
     ]
   },
+
   devtool: "source-map",
-  debug: false,
   resolve: {
-    extensions: ["", ".web.js", ".js", ".jsx"],
-    packageAlias: 'browser',
+    extensions: [".js", ".jsx"],
     alias: {
       'aphrodite': 'aphrodite/no-important'
     }
   },
   plugins: [
     new webpack.PrefetchPlugin("react"),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
       __DEVELOPMENT__: false,
       __DEVPANEL__: false,
@@ -75,8 +69,5 @@ module.exports = {
         NODE_ENV: JSON.stringify("production")
       }
     }),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.NoErrorsPlugin(),
-    new BabiliPlugin(),
   ]
 };
