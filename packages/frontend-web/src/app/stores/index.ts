@@ -19,12 +19,13 @@ import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
-import { connectNotifier } from '../util';
+import { logout } from '../auth';
+import { connectNotifier, STATUS_RESET, STATUS_UP } from '../util';
 import { IArticleModeratorsStateRecord, reducer as articleModeratorsReducer } from './articleModerators';
 import { articlesUpdated, IArticlesState, reducer as articleReducer } from './articles';
 import { categoriesUpdated, ICategoriesState, reducer as categoriesReducer } from './categories';
 import { assignmentCountUpdated, deferredCountUpdated } from './categories';
-import { ICategoryModeratorsStateRecord , reducer as categoryModeratorsReducer} from './categoryModerators';
+import { ICategoryModeratorsStateRecord , reducer as categoryModeratorsReducer } from './categoryModerators';
 import { IColumnSortStateRecord, reducer as columnSortsReducer } from './columnSorts';
 import { IState as ICommentsState, reducer as commentsReducer } from './comments';
 import { ICommentSummaryScoresStateRecord, reducer as commentSummaryScoresReducer } from './commentSummaryScores';
@@ -35,7 +36,7 @@ import { IRulesStateRecord, reducer as rulesReducer, rulesUpdated } from './rule
 import {
   ITaggingSensitivitiesStateRecord,
   reducer as taggingSensitivitiesReducer,
-  taggingSensitivitiesUpdated
+  taggingSensitivitiesUpdated,
 } from './taggingSensitivities';
 import { ITagsStateRecord, reducer as tagsReducer, tagsUpdated } from './tags';
 import { ITextSizesStateRecord, reducer as textSizesReducer } from './textSizes';
@@ -124,8 +125,16 @@ export const reducer: any = combineReducers<IAppStateRecord>({
 
 export async function initialiseClientModel(dispatch: IAppDispatch) {
   connectNotifier(
-    (isActive: boolean) => {
-      dispatch(websocketStateUpdated(isActive));
+    (status: string) => {
+      if (status === STATUS_UP) {
+        dispatch(websocketStateUpdated(true));
+      }
+      else {
+        dispatch(websocketStateUpdated(false));
+        if (status === STATUS_RESET) {
+          dispatch(logout());
+        }
+      }
     },
     (data) => {
       dispatch(tagsUpdated(data.tags));
