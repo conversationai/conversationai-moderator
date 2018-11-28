@@ -20,117 +20,121 @@ import * as moment from 'moment';
 import * as sinon from 'sinon';
 import {
   createToken,
+  getTokenConfiguration,
   isExpired,
+  ITokenConfiguration,
   refreshToken,
   verifyToken,
-} from '../../../domain/auth/tokens';
-
-import { config } from '@conversationai/moderator-config';
+} from '../../../domain/auth';
 
 const assert = chai.assert;
 
-// tslint:disable
+describe('Auth Domain Token Tests', () => {
+  let config: ITokenConfiguration;
+  before(async () => {
+    config = await getTokenConfiguration();
+  });
 
-describe('Auth Domain Token Tests', function() {
   /**
    * Return a timestamp before out expiration cutoff
    */
   function getExpiredTimestamp() {
     return moment()
-      .subtract(config.get('token_expiration_minutes'), 'minutes')
+      .subtract(config.expiration_minutes, 'minutes')
       .subtract(1, 'second')
       .unix();
   }
 
-  let fakeGeneralUser = {
-    get: sinon.stub().withArgs('group').returns('general')
+  const fakeGeneralUser = {
+    get: sinon.stub().withArgs('group').returns('general'),
   } as any;
 
-  let fakeAdminUser = {
-    get: sinon.stub().withArgs('group').returns('admin')
+  const fakeAdminUser = {
+    get: sinon.stub().withArgs('group').returns('admin'),
   } as any;
 
-  let fakeServiceUser = {
-    get: sinon.stub().withArgs('group').returns('service')
+  const fakeServiceUser = {
+    get: sinon.stub().withArgs('group').returns('service'),
   } as any;
 
-  describe('isExpired', function() {
-    it('should return false for an unexpired token', function() {
-      let fakeToken = {
+  describe('isExpired', () => {
+    it('should return false for an unexpired token', async () => {
+      const fakeToken = {
         iat: moment().unix(),
-        user: 1
+        user: 1,
       };
 
-      assert.isFalse(isExpired(fakeGeneralUser, fakeToken));
-      assert.isFalse(isExpired(fakeAdminUser, fakeToken));
-      assert.isFalse(isExpired(fakeServiceUser, fakeToken));
+      assert.isFalse(await isExpired(fakeGeneralUser, fakeToken));
+      assert.isFalse(await isExpired(fakeAdminUser, fakeToken));
+      assert.isFalse(await isExpired(fakeServiceUser, fakeToken));
     });
 
-    it('should return true for an expired token', function() {
-      let fakeToken = {
+    it('should return true for an expired token', async () => {
+      const fakeToken = {
         iat: getExpiredTimestamp(),
-        user: 1
+        user: 1,
       };
 
-      assert.isTrue(isExpired(fakeGeneralUser, fakeToken));
-      assert.isTrue(isExpired(fakeAdminUser, fakeToken));
-      assert.isFalse(isExpired(fakeServiceUser, fakeToken));
+      assert.isTrue(await isExpired(fakeGeneralUser, fakeToken));
+      assert.isTrue(await isExpired(fakeAdminUser, fakeToken));
+      assert.isFalse(await isExpired(fakeServiceUser, fakeToken));
     });
 
-    it('should always return false for a user in the "service" group', function() {
-      let fakeValidToken = {
+    it('should always return false for a user in the "service" group', async () => {
+      const fakeValidToken = {
         iat: getExpiredTimestamp(),
-        user: 1
+        user: 1,
       };
 
-      let fakeExpiredToken = {
+      const fakeExpiredToken = {
         iat: getExpiredTimestamp(),
-        user: 1
+        user: 1,
       };
 
-      assert.isFalse(isExpired(fakeServiceUser, fakeValidToken));
-      assert.isFalse(isExpired(fakeServiceUser, fakeExpiredToken));
+      assert.isFalse(await isExpired(fakeServiceUser, fakeValidToken));
+      assert.isFalse(await isExpired(fakeServiceUser, fakeExpiredToken));
     });
   });
 
-  describe('create', function() {
-    it("should return a valid JWT token containing the user's id", function() {
-      let userId = 159;
-      let token = createToken(userId) as any;
-      let decoded: any;
+  describe('create', () => {
+    it('should return a valid JWT token containing the user\'s id', async () => {
+      const userId = 159;
+      const token = await createToken(userId);
+      assert.isNotNull(token);
 
       assert.doesNotThrow(() => {
-        decoded = jwt.verify(token, config.get('token_secret'));
+        const decoded = jwt.verify(token, config.secret);
+        assert.equal(decoded.user, userId);
       });
-
-      assert.equal(decoded ? decoded.user : null, userId);
     });
   });
 
-  describe('verifyToken', function() {
-    it('should return true for a valid token', function() {
-      let userId = 784;
-      let validToken = jwt.sign({user: userId}, config.get('token_secret'));
-      let verified = verifyToken(validToken) as any;
+  describe('verifyToken', () => {
+    it('should return true for a valid token', async () => {
+      const userId = 784;
+      const validToken = jwt.sign({user: userId}, config.secret);
+      const verified = await verifyToken(validToken);
       assert.isObject(verified);
-      assert.equal(verified.user, userId);
+      if (verified) {
+        assert.equal(verified.user, userId);
+      }
     });
 
-    it('should return false for a mismatched secret', function() {
-      let userId = 298;
-      let invalidToken = jwt.sign({user: userId}, config.get('token_secret') + 'a');
-      let verified = verifyToken(invalidToken);
-      assert.isFalse(verified);
+    it('should return false for a mismatched secret', async () => {
+      const userId = 298;
+      const invalidToken = jwt.sign({user: userId}, config.secret + 'a');
+      const verified = await verifyToken(invalidToken);
+      assert.isNull(verified);
     });
 
-    it('should return false for a token with no user id', function() {
-      let invalidToken = jwt.sign({}, config.get('token_secret'));
-      let verified = verifyToken(invalidToken);
-      assert.isFalse(verified);
+    it('should return false for a token with no user id', async () => {
+      const invalidToken = jwt.sign({}, config.secret);
+      const verified = await verifyToken(invalidToken);
+      assert.isNull(verified);
     });
   });
 
-  describe('refresh', function() {
+  describe('refresh', () => {
     /**
      * Return a timestamp at least a second in the past, which makes JWT generate a different token
      */
@@ -138,57 +142,60 @@ describe('Auth Domain Token Tests', function() {
       return moment().subtract(1, 'second').unix();
     }
 
-    it('should return a new token in exchange for a valid token', function() {
-      let userId = 4238;
+    it('should return a new token in exchange for a valid token', async () => {
+      const userId = 4238;
 
-      let token = jwt.sign({
+      const token = jwt.sign({
         iat: getRefreshableTimestamp(),
-        user: userId
-      }, config.get('token_secret'));
+        user: userId,
+      }, config.secret);
 
-      let refreshed = refreshToken(token) as any;
-      let decoded = jwt.verify(refreshed, config.get('token_secret'));
+      const refreshed = await refreshToken(token);
+      assert.isNotNull(refreshed);
+      if (refreshed) {
+        const decoded = jwt.verify(refreshed, config.secret);
 
-      assert.isString(refreshed);
-      assert.isObject(decoded);
-      assert.equal(decoded.user, userId);
-      assert.notEqual(token, refreshed);
+        assert.isString(refreshed);
+        assert.isObject(decoded);
+        assert.equal(decoded.user, userId);
+        assert.notEqual(token, refreshed);
+      }
     });
 
-    it('should return false for a mismatched secret', function() {
-      let userId = 387;
+    it('should return false for a mismatched secret', async () => {
+      const userId = 387;
 
-      let token = jwt.sign({
+      const token = jwt.sign({
         iat: getRefreshableTimestamp(),
-        user: userId
-      }, config.get('token_secret') + 'a');
+        user: userId,
+      }, config.secret + 'a');
 
-      let refreshed = refreshToken(token) as any;
+      const refreshed = await refreshToken(token);
 
-      assert.isFalse(refreshed);
+      assert.isNull(refreshed);
     });
 
-    it('should return false for an expired token', function() {
-      let userId = 387;
+    it('should return false for an expired token', async () => {
+      const userId = 387;
 
-      let token = jwt.sign({
+      const token = jwt.sign({
         iat: getExpiredTimestamp(),
-        user: userId
-      }, config.get('token_secret') + 'a');
+        user: userId,
+      }, config.secret + 'a');
 
-      let refreshed = refreshToken(token) as any;
+      const refreshed = await refreshToken(token);
 
-      assert.isFalse(refreshed);
+      assert.isNull(refreshed);
     });
 
-    it('should return false for a token with no user id', function() {
-      let token = jwt.sign({
+    it('should return false for a token with no user id', async () => {
+      const token = jwt.sign({
         iat: getRefreshableTimestamp(),
-      }, config.get('token_secret'));
+      }, config.secret);
 
-      let refreshed = refreshToken(token) as any;
+      const refreshed = await refreshToken(token);
 
-      assert.isFalse(refreshed);
+      assert.isNull(refreshed);
     });
   });
 });

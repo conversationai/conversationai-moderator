@@ -14,11 +14,47 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { config } from '@conversationai/moderator-config';
+import { randomBytes } from 'crypto';
 import * as jwt from 'jsonwebtoken';
 import { isNumber } from 'lodash';
 import * as moment from 'moment';
-import { IUserInstance } from '../../models';
+import { CONFIGURATION_TOKEN, getConfigItem, IUserInstance, setConfigItem } from '../../models';
+
+export interface ITokenConfiguration {
+  secret: string;
+  issuer: string;
+  expiration_minutes: number;
+}
+
+let config: ITokenConfiguration | null;
+
+export async function getTokenConfiguration(): Promise<ITokenConfiguration> {
+  if (config) {
+    return config;
+  }
+
+  config = await getConfigItem(CONFIGURATION_TOKEN) as ITokenConfiguration;
+  if (config) {
+    return config;
+  }
+
+  config = await new Promise<ITokenConfiguration>((resolve, reject) => {
+    randomBytes(48, (err, buffer) => {
+      if (err) {
+        reject(err);
+      }
+
+      resolve({
+        secret: buffer.toString('base64'),
+        issuer: 'OSMod',
+        expiration_minutes: 12 * 60,
+      });
+    });
+  });
+
+  await setConfigItem(CONFIGURATION_TOKEN, config);
+  return config;
+}
 
 export interface ITokenPayload {
   iat: number;
@@ -27,11 +63,7 @@ export interface ITokenPayload {
 }
 
 export function isValidToken(tokenPayload: ITokenPayload): boolean {
-  if (!isNumber(tokenPayload.user) || tokenPayload.user < 1) {
-    return false;
-  }
-
-  return true;
+  return !(!isNumber(tokenPayload.user) || tokenPayload.user < 1);
 }
 
 /**
@@ -42,12 +74,13 @@ export function isValidToken(tokenPayload: ITokenPayload): boolean {
  * @param {object} tokenPayload Decoded token payload object with an `iat` key
  * @return {boolean}
  */
-export function isExpired(user: IUserInstance, tokenPayload: ITokenPayload): boolean {
+export async function isExpired(user: IUserInstance, tokenPayload: ITokenPayload): Promise<boolean> {
   if (user.get('group') === 'service') {
     return false;
   }
 
-  const cutoff = moment().subtract(config.get('token_expiration_minutes'), 'minutes').unix();
+  const c = await getTokenConfiguration();
+  const cutoff = moment().subtract(c.expiration_minutes, 'minutes').unix();
 
   return tokenPayload.iat < cutoff;
 }
@@ -55,17 +88,19 @@ export function isExpired(user: IUserInstance, tokenPayload: ITokenPayload): boo
 /**
  * Create a JWT token for the passed in User model instance or user id
  *
- * @param {integer} user A user id
- * @return {mixed} Returns false if a user id can't be extracted, otherwise returns a JWT token string
+ * @param userId User's ID
+ * @param email: User's email address
+ * @return JWT token string
  */
-export function createToken(userId: number, email?: string): boolean | string {
+export async function createToken(userId: number, email?: string): Promise<string> {
+  const c = await getTokenConfiguration();
   return jwt.sign({
     user: userId,
     email,
   },
-  config.get('token_secret'),
+  c.secret,
   {
-    issuer: config.get('token_issuer'),
+    issuer: c.issuer,
   });
 }
 
@@ -74,19 +109,19 @@ export function createToken(userId: number, email?: string): boolean | string {
  * otherwise returns the decoded token
  *
  * @param  {string} token JWT token to verify
- * @return {mixed} Returns an object of decoded token data if valid, otherwise false
+ * @return If token is valid, return decoded token data
  */
-export function verifyToken(token: string): boolean | ITokenPayload {
+export async function verifyToken(token: string): Promise<ITokenPayload | null> {
+  const c = await getTokenConfiguration();
   try {
-    const decoded = jwt.verify(token, config.get('token_secret'));
-
+    const decoded = jwt.verify(token, c.secret);
     if (isValidToken(decoded)) {
       return decoded;
-    } else {
-      return false;
     }
-  } catch (err) {
-    return false;
+    return null;
+  }
+  catch (err) {
+    return null;
   }
 }
 
@@ -95,14 +130,12 @@ export function verifyToken(token: string): boolean | ITokenPayload {
  *
  * @param {string} token JWT token to decode and refresh
  */
-export function refreshToken(token: string): boolean | string {
-  const verified = verifyToken(token);
+export async function refreshToken(token: string): Promise<string | null> {
+  const verified = await verifyToken(token);
 
   if (verified) {
-    const payload = verified as ITokenPayload;
-
-    return createToken(payload.user, payload.email);
-  } else {
-    return false;
+    return createToken(verified.user, verified.email);
   }
+
+  return null;
 }

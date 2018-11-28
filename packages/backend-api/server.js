@@ -19,12 +19,15 @@ const { makeServer } = require('@conversationai/moderator-backend-core');
 const { mountAPI } = require('./dist/index');
 
 // Start up the app
-const {
-  app,
-  start,
-} = makeServer();
+async function init () {
+  const {
+    app,
+    start,
+  } = makeServer();
 
-app.use('/', mountAPI());
+  app.use('/', await mountAPI());
 
-start(config.get('port'));
+  start(config.get('port'));
+}
 
+init();

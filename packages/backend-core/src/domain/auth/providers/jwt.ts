@@ -16,11 +16,9 @@ limitations under the License.
 
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from '../../../models';
-import { IUserInstance } from '../../../models/user';
-import { isValidToken } from '../tokens';
+import { IUserInstance } from '../../../models';
+import { getTokenConfiguration, isValidToken } from '../tokens';
 import { isValidUser } from '../users';
-
-import { config } from '@conversationai/moderator-config';
 
 /**
  * Verify JWT payload from JWT Passportstrategy
@@ -57,25 +55,29 @@ export async function verifyJWT(jwtPayload: any): Promise<IUserInstance> {
 /**
  * JWT Passport strategy configuration
  */
-export const jwtStrategy = new Strategy(
-  {
-    secretOrKey: config.get('token_secret'),
-    issuer: config.get('token_issuer'),
+export async function getJwtStrategy() {
+  const config = await getTokenConfiguration();
 
-    jwtFromRequest: (ExtractJwt as any).fromExtractors([
-      // Pull JWT token out of request header formatted like so: "Authorization: JWT (token)"
-      ExtractJwt.fromAuthHeaderWithScheme("jwt"),
+  return new Strategy(
+    {
+      secretOrKey: config.secret,
+      issuer: config.issuer,
 
-      // Or, grab from `token` query string.
-      ExtractJwt.fromUrlQueryParameter('token'),
-    ]),
-  },
-  async (jwtPayload: any, callback: (err: any, user?: IUserInstance | false) => any) => {
-    try {
-      const user = await verifyJWT(jwtPayload);
-      callback(null, user);
-    } catch (e) {
-      callback(e);
-    }
-  },
-);
+      jwtFromRequest: (ExtractJwt as any).fromExtractors([
+        // Pull JWT token out of request header formatted like so: "Authorization: JWT (token)"
+        ExtractJwt.fromAuthHeaderWithScheme('jwt'),
+
+        // Or, grab from `token` query string.
+        ExtractJwt.fromUrlQueryParameter('token'),
+      ]),
+    },
+    async (jwtPayload: any, callback: (err: any, user?: IUserInstance | false) => any) => {
+      try {
+        const user = await verifyJWT(jwtPayload);
+        callback(null, user);
+      } catch (e) {
+        callback(e);
+      }
+    },
+  );
+}

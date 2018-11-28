@@ -18,7 +18,7 @@ import * as express from 'express';
 import * as passport from 'passport';
 import * as qs from 'qs';
 
-import { createToken, isFirstUserInitialised, IUserInstance} from '@conversationai/moderator-backend-core';
+import { createToken, isFirstUserInitialised, IUserInstance } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
 import { generateServerCSRF, getClientCSRF } from './utils';
@@ -122,7 +122,7 @@ export function createAuthRouter(): express.Router {
           );
         }
 
-        const token = createToken(user.id, user.get('email'));
+        const token = await createToken(user.id, user.get('email'));
         return redirectToFrontend(
           res,
           true,

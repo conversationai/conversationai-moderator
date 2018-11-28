@@ -83,7 +83,6 @@ const mockHandler = new MockHandler({
   users: fakeUsers,
 }, serializers as any);
 
-
 // Note we have to reduce numberOfKeys to take into account
 // system attributes (id, updatedAt, links to other objects etc.)
 const models: {

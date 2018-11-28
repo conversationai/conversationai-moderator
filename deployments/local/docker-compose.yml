@@ -33,8 +33,6 @@ services:
       GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
       GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
       HTTPS_LINKS_ONLY: 'false'
-      TOKEN_SECRET: "${TOKEN_SECRET}"
-      TOKEN_ISSUER: 'Open Source Moderator'
       API_URL: '${URL_BASE}:8080'
       FRONTEND_URL: '${URL_BASE}:8000'
       APP_NAME: 'Moderator'

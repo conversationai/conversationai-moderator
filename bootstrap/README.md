@@ -11,9 +11,6 @@ comments to the Moderator database.
 
 To generate a JWT token for a service user:
 
-* Set up the `TOKEN_SECRET` (and `TOKEN_ISSUER`) configuration items as described
-in the [root README](../README.md)
-
 * Create a service user:
 
 ```bash
