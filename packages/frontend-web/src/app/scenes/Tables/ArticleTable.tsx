@@ -485,6 +485,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
 
     function clearFilters() {
+      that.clearPopups();
       router.push(dashboardLink(filterString(resetFilterToRoot(filter)), currentSort));
     }
 
