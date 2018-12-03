@@ -82,6 +82,37 @@ export const FILTER_DATE_lastModeratedAt = 'lastModeratedAt';
 export const FILTER_DATE_SINCE = 'since-';
 export const FILTER_DATE_PRIOR = 'prior-';
 
+function articleHasModerator(article: IArticleModel, moderatorId: string) {
+  for (const m of article.assignedModerators) {
+    if (moderatorId === m.id) {
+      return true;
+    }
+  }
+  if (article.category) {
+    for (const m of article.category.assignedModerators) {
+      if (moderatorId === m.id) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function articleMatchesModerators(article: IArticleModel, moderatorIds: Set<string>) {
+  for (const m of article.assignedModerators) {
+    if (moderatorIds.has(m.id)) {
+      return true;
+    }
+  }
+  if (article.category) {
+    for (const m of article.category.assignedModerators) {
+      if (moderatorIds.has(m.id)) {
+        return true;
+      }
+    }
+  }
+}
+
 export function executeFilter(filterList: Array<IFilterItem>, context: IFilterContext) {
   return (article: IArticleModel) => {
     for (const i of filterList) {
@@ -95,29 +126,21 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
         case FILTER_MODERATORS:
           let found = false;
           if (i.value === FILTER_MODERATORS_UNASSIGNED) {
-            if (!article.assignedModerators || article.assignedModerators.length === 0) {
-              // TODO: Need to also handle category moderators
+            if (article.assignedModerators.length === 0) {
+              found = true;
+            }
+            else if (article.category && article.category.assignedModerators.length === 0) {
               found = true;
             }
           }
-          else if (article.assignedModerators && article.assignedModerators.length > 0) {
+          else if (article.assignedModerators.length > 0 ||
+                   (article.category && article.category.assignedModerators.length > 0)) {
             if (i.value === FILTER_MODERATORS_ME) {
-              for (const m of article.assignedModerators) {
-                if (context.myId === m.id) {
-                  found = true;
-                  break;
-                }
-              }
+              found = articleHasModerator(article, context.myId);
             }
             else {
               const moderatorIds = new Set<string>(i.value.split(','));
-              for (const m of article.assignedModerators) {
-                if (moderatorIds.has(m.id)) {
-                  found = true;
-                  break;
-                }
-              }
-              // TODO: Need to also search category moderators.
+              found = articleMatchesModerators(article, moderatorIds);
             }
           }
           if (!found) {

@@ -239,7 +239,7 @@ class SmallUserIcon extends React.Component<ISmallUserIconProps> {
   render() {
     const user = this.props.user;
     if (user.avatarURL) {
-      return (<img key={user.id} src={user.avatarURL} {...css(COMMON_STYLES.xsmallImage, {margin: '1px'})}/>);
+      return (<img alt={user.name} key={user.id} src={user.avatarURL} {...css(COMMON_STYLES.xsmallImage, {margin: '1px'})}/>);
     }
     else {
       return (
@@ -491,7 +491,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
     function renderModerator(u: IUserModel) {
       return (
-        <tr key="{u.id}" onClick={setModerator(u.id)}>
+        <tr key={u.id} onClick={setModerator(u.id)}>
           <td key="icon">
             <SmallUserIcon user={u}/>
           </td>
@@ -790,7 +790,14 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       that.openSetModerators(article);
     }
 
-    if (article.assignedModerators.length === 0) {
+    let s = Set(article.assignedModerators);
+    if (article.category) {
+      s = s.merge(article.category.assignedModerators);
+    }
+
+    const moderators = s.toArray();
+
+    if (moderators.length === 0) {
       return (
         <div onClick={openModeratorsDlg} {...css(STYLES.iconBackgroundCircle)}>
           <div {...css(STYLES.iconCenter)} >
@@ -800,10 +807,10 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       );
     }
 
-    if (article.assignedModerators.length === 1) {
-      const u = article.assignedModerators[0];
+    if (moderators.length === 1) {
+      const u = moderators[0];
       if (u.avatarURL) {
-        return <img src={u.avatarURL} onClick={openModeratorsDlg} {...css(COMMON_STYLES.smallImage)}/>;
+        return <img alt={u.name} src={u.avatarURL} onClick={openModeratorsDlg} {...css(COMMON_STYLES.smallImage)}/>;
       }
       else {
         return (
@@ -817,7 +824,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
 
     const ret = [];
-    let limit = article.assignedModerators.length;
+    let limit = moderators.length;
     let extra = false;
     if (limit > 4) {
       limit = 3;
@@ -828,12 +835,12 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
 
     for (let i = 0; i < limit; i++) {
-      ret.push(<SmallUserIcon user={article.assignedModerators[i]}/>);
+      ret.push(<SmallUserIcon user={moderators[i]}/>);
     }
     if (extra) {
       ret.push(
         <div key="extra" style={{display: 'inline-block', margin: '1px'}}>
-          <div {...css(STYLES.textCenterSmall)}>+{article.assignedModerators.length - 3}</div>
+          <div {...css(STYLES.textCenterSmall)}>+{moderators.length - 3}</div>
         </div>,
       );
     }
@@ -892,6 +899,11 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       return null;
     }
 
+    let categoryModeratorIds = null;
+    if (this.state.selectedArticle.category) {
+      categoryModeratorIds = Set<ModelId>(this.state.selectedArticle.category.assignedModerators.map((m) => m.id));
+    }
+
     return (
       <Scrim isVisible onBackgroundClick={this.clearPopups} scrimStyles={STYLES.scrimPopup}>
         <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}}>
@@ -900,6 +912,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
               label="Assign a moderator"
               article={article}
               moderatorIds={this.state.moderatorIds}
+              categoryModeratorIds={categoryModeratorIds}
               onAddModerator={this.onAddModerator}
               onRemoveModerator={this.onRemoveModerator}
               onClickDone={this.saveModerators}

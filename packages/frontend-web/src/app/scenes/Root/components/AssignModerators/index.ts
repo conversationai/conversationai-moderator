@@ -134,7 +134,6 @@ const mapStateToPropsSimple = createStructuredSelector({
   isReady: () => true,
 }) as (state: IAppStateRecord, ownProps: IAssignModeratorsOwnProps) => IAssignModeratorsStateProps;
 
-
 export const AssignModeratorsSimple: React.ComponentClass<IAssignModeratorsProps> = connect<IAssignModeratorsStateProps, IAssignModeratorsDispatchProps, IAssignModeratorsOwnProps>(
-  mapStateToPropsSimple
+  mapStateToPropsSimple,
 )(PureAssignModerators);

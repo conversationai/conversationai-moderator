@@ -932,35 +932,37 @@ function packGlobalData(data: any): IGlobalSummary {
   const userMap: {[key: number]: IUserModel} = {};
   const catMap: {[key: number]: ICategoryModel} = {};
 
-  function convertAssignedModerators(am: Array<any>): Array<IUserModel> {
-    return am.map((i) => userMap[i.moderator_assignment.userId]);
-  }
+  const users = List<IUserModel>(data.users.map((u: any) => {
+    const id = u.id;
+    u.id = u.id.toString();
+    userMap[id] = u;
+    return UserModel(u);
+  }));
+
+  const categories = List<ICategoryModel>(data.categories.map((c: any) => {
+    const id = c.id;
+    c.id = c.id.toString();
+    c.assignedModerators = c.assignedModerators.map((i: any) => userMap[i.user_category_assignment.userId]);
+    const model = CategoryModel(c);
+    catMap[id] = model;
+    return model;
+  }));
+
+  const articles = List<IArticleModel>(data.articles.map((a: any) => {
+    a.id = a.id.toString();
+    if (a.categoryId) {
+      a.category = catMap[a.categoryId];
+    }
+    a.assignedModerators = a.assignedModerators.map((i: any) => userMap[i.moderator_assignment.userId]);
+    return ArticleModel(a);
+  }));
 
   return {
-    users: List<IUserModel>(data.users.map((u: any) => {
-      const id = u.id;
-      u.id = u.id.toString();
-      userMap[id] = u;
-      return UserModel(u);
-    })),
+    users: users,
 
-    categories: List<ICategoryModel>(data.categories.map((c: any) => {
-      const id = c.id;
-      c.id = c.id.toString();
-      c.assignedModerators = convertAssignedModerators(c.assignedModerators);
-      const model = CategoryModel(c);
-      catMap[id] = model;
-      return model;
-    })),
+    categories: categories,
 
-    articles: List<IArticleModel>(data.articles.map((a: any) => {
-      a.id = a.id.toString();
-      if (a.categoryId) {
-        a.category = catMap[a.categoryId];
-      }
-      a.assignedModerators = convertAssignedModerators(a.assignedModerators);
-      return ArticleModel(a);
-    })),
+    articles: articles,
 
     deferred: data.deferred,
   };
@@ -1001,7 +1003,7 @@ export function connectNotifier(
           systemNotificationHandler(packSystemData(body.data));
           gotSystem = true;
         }
-        else if (body.type === 'global'){
+        else if (body.type === 'global') {
           globalNotificationHandler(packGlobalData(body.data));
           gotGlobal = true;
         }
