@@ -141,18 +141,37 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
         case FILTER_DATE_sourceCreatedAt:
         case FILTER_DATE_updatedAt:
         case FILTER_DATE_lastModeratedAt:
+          const dateValue = new Date(article[i.key]);
           if (i.value.startsWith(FILTER_DATE_SINCE)) {
             const hours = Number(i.value.substr(FILTER_DATE_SINCE.length));
             const cutoff = new Date(Date.now() - 1000 * 60 * 60 * hours);
-            if (new Date(article[i.key]) < cutoff) {
+            if (dateValue < cutoff) {
               return false;
             }
           }
           else if (i.value.startsWith(FILTER_DATE_PRIOR)) {
             const hours = Number(i.value.substr(FILTER_DATE_PRIOR.length));
             const cutoff = new Date(Date.now() - 1000 * 60 * 60 * hours);
-            if (new Date(article[i.key]) > cutoff) {
+            if (dateValue > cutoff) {
               return false;
+            }
+          }
+          else {
+            const values = filterDateRangeValues(i.value);
+            if (values) {
+              if (values[0] && values[0].length > 0) {
+                const fromDate = new Date(values[0]);
+                if (dateValue < fromDate) {
+                  return false;
+                }
+              }
+              if (values[1] && values[1].length > 0) {
+                const toDate = new Date(values[1]);
+                toDate.setDate(toDate.getDate() + 1);
+                if (dateValue > toDate) {
+                  return false;
+                }
+              }
             }
           }
           break;
@@ -225,8 +244,18 @@ export function filterDatePrior(hours: number) {
   return `${FILTER_DATE_PRIOR}${hours}`;
 }
 
-export function filterDateIsRange(value: string) {
-  return !(value.startsWith(FILTER_DATE_SINCE) || value.startsWith(FILTER_DATE_PRIOR));
+export function filterDateRangeValues(value: string) {
+  const values = value.split(':');
+  if (values.length !== 2) {
+    return null;
+  }
+  return values;
+}
+
+export function filterDateRange(from: string, to: string) {
+  from = from || '';
+  to = to || '';
+  return `${from}:${to}`;
 }
 
 export function parseSort(sort: string | undefined) {

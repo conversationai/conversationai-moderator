@@ -15,6 +15,8 @@ limitations under the License.
 */
 
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { List, Set } from 'immutable';
@@ -58,8 +60,9 @@ import {
 import {
   executeFilter,
   executeSort,
-  filterDateIsRange,
   filterDatePrior,
+  filterDateRange,
+  filterDateRangeValues,
   filterDateSince,
   filterString,
   getFilterValue,
@@ -72,6 +75,8 @@ import {
   updateFilter,
   updateSort,
 } from './utils';
+
+const DATE_FILTER_RANGE = 'custom';
 
 const big = {
   width: `${IMAGE_BASE}px`,
@@ -191,6 +196,7 @@ export interface IIArticleTableState {
   moderatorFilterUsers: Set<ModelId>;
   dateFilterKey: string;
   dateFilterValue: string;
+  dateFilterSelect?: string;
   dateFilterFrom?: string;
   dateFilterTo?: string;
   isCommentingEnabledFilter: string;
@@ -264,8 +270,9 @@ function getStateFromProps(props: Readonly<IIArticleTableProps>) {
 
   let dateFilterKey = FILTER_DATE_sourceCreatedAt;
   let dateFilterValue = '';
-  let dateFilterFrom = '';
-  let dateFilterTo = '';
+  let dateFilterSelect = null;
+  let dateFilterFrom = null;
+  let dateFilterTo = null;
 
   for (const f of filter) {
     if (f.key === FILTER_DATE_sourceCreatedAt ||
@@ -277,10 +284,14 @@ function getStateFromProps(props: Readonly<IIArticleTableProps>) {
     }
   }
 
-  if (dateFilterValue && filterDateIsRange(dateFilterValue)) {
-    dateFilterValue = 'custom';
-    dateFilterFrom = '';
-    dateFilterTo = '';
+  const dateFilterRangeValues = filterDateRangeValues(dateFilterValue);
+  if (dateFilterRangeValues) {
+    dateFilterSelect = DATE_FILTER_RANGE;
+    dateFilterFrom = dateFilterRangeValues[0];
+    dateFilterTo = dateFilterRangeValues[1];
+  }
+  else {
+    dateFilterSelect = dateFilterValue;
   }
 
   return {
@@ -292,6 +303,7 @@ function getStateFromProps(props: Readonly<IIArticleTableProps>) {
     moderatorFilterUsers: Set<string>(moderatorFilterUsers),
     dateFilterKey,
     dateFilterValue,
+    dateFilterSelect,
     dateFilterFrom,
     dateFilterTo,
     isCommentingEnabledFilter: getFilterValue(filter, FILTER_TOGGLE_isCommentingEnabled),
@@ -383,7 +395,9 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       moderatorFilterString,
       moderatorFilterUsers,
       dateFilterKey,
-      dateFilterValue,
+      dateFilterSelect,
+      dateFilterFrom,
+      dateFilterTo,
       isCommentingEnabledFilter,
       isAutoModeratedFilter,
       commentsToReviewFilter,
@@ -416,8 +430,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
 
     function changeDateFilter(currentFilter: Array<IFilterItem>, key: string, value: string) {
-      const newFilterValue = (value !== 'custom') ? value : 'sdf';
-      const newFilter = updateFilter(currentFilter, key, newFilterValue);
+      const newFilter = updateFilter(currentFilter, key, value);
       router.push(dashboardLink(filterString(newFilter)));
     }
 
@@ -432,11 +445,26 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       }
     }
 
-    function changeDateFilterValue(e: SyntheticEvent<any>) {
-      const newFilterValue = e.currentTarget.value;
-      if (newFilterValue !== that.state.dateFilterValue) {
-        changeDateFilter(filter, that.state.dateFilterKey, newFilterValue);
+    function changeDateFilterSelect(e: SyntheticEvent<any>) {
+      const newFilterSelect = e.currentTarget.value;
+      if (newFilterSelect !== that.state.dateFilterSelect) {
+        if (newFilterSelect !== DATE_FILTER_RANGE) {
+          changeDateFilter(filter, that.state.dateFilterKey, newFilterSelect);
+        }
+        else {
+          changeDateFilter(filter, that.state.dateFilterKey, filterDateRange(null, null));
+        }
       }
+    }
+
+    function changeDateFilterFrom(e: SyntheticEvent<any>) {
+      const newFilterValue = filterDateRange(e.currentTarget.value, that.state.dateFilterTo);
+      changeDateFilter(filter, that.state.dateFilterKey, newFilterValue);
+    }
+
+    function changeDateFilterTo(e: SyntheticEvent<any>) {
+      const newFilterValue = filterDateRange(that.state.dateFilterFrom, e.currentTarget.value);
+      changeDateFilter(filter, that.state.dateFilterKey, newFilterValue);
     }
 
     function setModerator(id: string) {
@@ -477,11 +505,30 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
 
     function renderCustomDateControls() {
-      if (dateFilterValue !== 'custom') {
+      if (dateFilterSelect !== DATE_FILTER_RANGE) {
         return '';
       }
       return(
-        <div>date range</div>
+        <div {...css({marginTop: '20px'})}>
+          <TextField
+            label="From"
+            type="date"
+            defaultValue={dateFilterFrom}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={changeDateFilterFrom}
+          />&nbsp;
+          <TextField
+            label="To"
+            type="date"
+            defaultValue={dateFilterTo}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={changeDateFilterTo}
+          />
+        </div>
       );
     }
 
@@ -553,7 +600,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
                   Filter range:
                 </th>
                 <td key="value" {...css({textAlign: 'right'})}>
-                  <select value={dateFilterValue} onChange={changeDateFilterValue} {...css(ARTICLE_TABLE_STYLES.select, {width: '200px'})}>
+                  <select value={dateFilterSelect} onChange={changeDateFilterSelect} {...css(ARTICLE_TABLE_STYLES.select, {width: '200px'})}>
                     <option value=""/>
                     <option value={filterDateSince(12)}>Last 12 hours</option>
                     <option value={filterDateSince(24)}>Last 24 hours</option>

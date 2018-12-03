@@ -25,8 +25,8 @@ import { mapPlaylistItemToArticle } from './objectmap';
 export const command = 'youtube:videos:sync';
 export const describe = 'Sync youtube videos with OSMod articles for each active channel/category.';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
+export function builder(args: yargs.Argv) {
+  return args
     .usage('Usage:\n\n' +
       'Sync videos with YouTube:\n' +
       'node $0 youtube:videos:sync');
@@ -39,7 +39,7 @@ async function get_playlist_for_channel(auth: OAuth2Client, channelId: string) {
     service.channels.list({
       auth: auth,
       id: channelId,
-      part: 'snippet,contentDetails',
+      part: 'contentDetails',
     }, (err: any, response: any) => {
       if (err) {
         logger.error('Google API returned an error: ' + err);
