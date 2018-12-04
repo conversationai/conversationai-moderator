@@ -21,8 +21,10 @@ export interface IFilterItem {
   value: string;
 }
 
+export const NOT_SET = '~';
+
 export function parseFilter(filter: string | undefined): Array<IFilterItem> {
-  if (!filter || filter.length === 0 || filter === '~') {
+  if (!filter || filter.length === 0 || filter === NOT_SET) {
     return [];
   }
 
@@ -48,7 +50,7 @@ export function updateFilter(filterList: Array<IFilterItem>, newKey: string, new
 
 export function filterString(filterList: Array<IFilterItem>): string {
   if (filterList.length === 0) {
-    return '~';
+    return NOT_SET;
   }
 
   return filterList.reduce<string>((r: string, i: IFilterItem) => (r ? `${r}+` : '') +  `${i.key}=${i.value}`, undefined);
@@ -282,7 +284,7 @@ export function filterDateRange(from: string, to: string) {
 }
 
 export function parseSort(sort: string | undefined) {
-  if (!sort || sort.length === 0 || sort === '~') {
+  if (!sort || sort.length === 0 || sort === NOT_SET) {
     return [];
   }
   return sort.split(',');
@@ -304,7 +306,7 @@ export function updateSort(sortList: Array<string>, newSort: string): Array<stri
 
 export function sortString(sl: Array<string>) {
   if (sl.length === 0) {
-    return '~';
+    return NOT_SET;
   }
   return sl.join(',');
 }

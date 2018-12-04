@@ -56,6 +56,7 @@ import {
   FILTER_TOGGLE_isCommentingEnabled,
   FILTER_TOGGLE_OFF,
   FILTER_TOGGLE_ON,
+  NOT_SET,
 } from './utils';
 import {
   executeFilter,
@@ -179,8 +180,13 @@ const POPUP_SAVING = 'saving';
 export interface IIArticleTableState {
   page_size: number;
   current_page: number;
+  total_pages: number;
+  filterString: string;
   filter: Array<IFilterItem>;
+  sortString: string;
   sort: Array<string>;
+  summary: IArticleModel;
+  visibleArticles: Array<IArticleModel>;
 
   popupToShow?: string;
 
@@ -255,10 +261,90 @@ class SmallUserIcon extends React.Component<ISmallUserIconProps> {
   }
 }
 
-function getStateFromProps(props: Readonly<IIArticleTableProps>) {
-  const filter: Array<IFilterItem> = props.routeParams ? parseFilter(props.routeParams.filter) : [];
-  const sort: Array<string> = props.routeParams ? parseSort(props.routeParams.sort) : [];
+function processArticles(
+  props: Readonly<IIArticleTableProps>,
+  current_page: number,
+  filter: Array<IFilterItem>,
+  sort: Array<string>) {
+  let processedArticles: Array<IArticleModel> = props.articles.toArray();
 
+  if (Object.keys(filter).length > 0) {
+    processedArticles = processedArticles.filter(executeFilter(filter, {myId: props.myUserId}));
+  }
+  if (sort.length > 0) {
+    processedArticles = processedArticles.sort(executeSort(sort));
+  }
+  else {
+    processedArticles = processedArticles.sort(executeSort(['+sourceCreatedAt']));
+  }
+
+  let count = 0;
+  const columns = ['unmoderatedCount', 'approvedCount', 'rejectedCount', 'deferredCount', 'flaggedCount'];
+  const summary: any =  {};
+  for (const i of columns) {
+    summary[i] = 0;
+  }
+
+  for (const a of processedArticles) {
+    count += 1;
+    for (const i of columns) {
+      summary[i] += (a as any)[i];
+    }
+  }
+
+  summary['id'] = 'summary';
+  summary['title'] = ` ${count} Title` + (count !== 1 ? 's' : '');
+
+  let category: ICategoryModel | null = null;
+  const m = /category=(\d+)/.exec(location.pathname);
+  if (m) {
+    for (const c of props.categories.toArray()) {
+      if (c.id === m[1]) {
+        category = c;
+      }
+    }
+  }
+
+  if (category) {
+    summary['title'] += ` in section ${category.label}`;
+  }
+
+  if (filter.length > 1 || (filter.length === 1 && filter[0].key !== 'category')) {
+    summary['title'] += ' matching filter';
+  }
+  summary['category'] = category;
+  summary['assignedModerators'] = category ? category.assignedModerators : [];
+
+  const page_size = Math.floor(window.innerHeight / HEADER_HEIGHT) - 5;
+  const pages = Math.ceil(processedArticles.length / page_size);
+  if (pages > 1) {
+    const start = current_page * page_size;
+    const end = Math.min(start + page_size, processedArticles.length);
+    processedArticles = processedArticles.slice(start, end);
+  }
+
+  return {
+    visibleArticles: [...processedArticles],
+    summary,
+    page_size,
+    total_pages: pages,
+    current_page: current_page,
+  };
+}
+
+function updateArticles(state: IIArticleTableState, props: IIArticleTableProps) {
+  const newVisible = [...state.visibleArticles];
+  const indexMap: { [key: string]: number; } = {};
+  newVisible.map((a, i) => { indexMap[a.id] = i; });
+  for (const a of props.articles.toArray()) {
+    if (indexMap[a.id]) {
+      newVisible[indexMap[a.id]] = a;
+    }
+  }
+  return {visibleArticles: newVisible};
+}
+
+function unpackFilter(filter: Array<IFilterItem>) {
   const moderatorFilterString = getFilterValue(filter, FILTER_MODERATORS);
   let moderatorFilterUsers: Array<string> = [];
 
@@ -295,9 +381,6 @@ function getStateFromProps(props: Readonly<IIArticleTableProps>) {
   }
 
   return {
-    filter,
-    sort,
-
     titleFilter: getFilterValue(filter, FILTER_TITLE),
     moderatorFilterString: moderatorFilterString,
     moderatorFilterUsers: Set<string>(moderatorFilterUsers),
@@ -315,23 +398,68 @@ function getStateFromProps(props: Readonly<IIArticleTableProps>) {
 export class ArticleTable extends React.Component<IIArticleTableProps, IIArticleTableState> {
   constructor(props: Readonly<IIArticleTableProps>) {
     super(props);
+    const filter: Array<IFilterItem> = props.routeParams ? parseFilter(props.routeParams.filter) : [];
+    const sort: Array<string> = props.routeParams ? parseSort(props.routeParams.sort) : [];
 
     this.state = {
-      page_size: Math.floor(window.innerHeight / HEADER_HEIGHT) - 5,
-      current_page: 0,
-
-      popupToShow: null,
-
-      // Fields used by article control popup and set moderators popup
-      selectedArticle: null,
-      moderatorIds: null,
-
-      ...getStateFromProps(props),
+      filterString: props.routeParams ? props.routeParams.filter : NOT_SET,
+      sortString: props.routeParams ? props.routeParams.sort : NOT_SET,
+      filter,
+      sort,
+      ...unpackFilter(filter),
+      ...processArticles(props, 0, filter, sort),
     };
   }
 
-  componentWillReceiveProps(nextProps: Readonly<IIArticleTableProps>): void {
-    this.setState(getStateFromProps(nextProps));
+  componentWillReceiveProps(props: Readonly<IIArticleTableProps>): void {
+    let filter: Array<IFilterItem> = this.state.filter;
+    let sort: Array<string> = this.state.sort;
+    let redoArticles = false;
+    let filterUpdated = false;
+    let sortUpdated = false;
+
+    const newState: any = {};
+
+    if (props.routeParams) {
+      if (this.state.filterString !== props.routeParams.filter) {
+        filterUpdated = true;
+      }
+      if (this.state.sortString !== props.routeParams.sort) {
+        sortUpdated = true;
+      }
+    }
+    else {
+      if (this.state.filterString !== NOT_SET) {
+        filterUpdated = true;
+      }
+      if (this.state.sortString !== NOT_SET) {
+        sortUpdated = true;
+      }
+    }
+
+    if (filterUpdated) {
+      filter = props.routeParams ? parseFilter(props.routeParams.filter) : [];
+      newState['filterString'] = props.routeParams ? props.routeParams.filter : NOT_SET;
+      newState['filter'] = filter;
+      Object.assign(newState, unpackFilter(filter));
+      redoArticles = true;
+    }
+
+    if (sortUpdated) {
+      sort = props.routeParams ? parseSort(props.routeParams.sort) : [];
+      newState['sortString'] = props.routeParams ? props.routeParams.sort : NOT_SET;
+      newState['sort'] = sort;
+      redoArticles = true;
+    }
+
+    if (redoArticles) {
+      Object.assign(newState, processArticles(props, this.state.current_page, filter, sort));
+    }
+    else {
+      Object.assign(newState, updateArticles(this.state, props));
+    }
+
+    this.setState(newState);
   }
 
   @autobind
@@ -1043,22 +1171,27 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
   @autobind
   nextPage() {
-    this.setState({current_page: this.state.current_page + 1});
-  }
-  @autobind
-  previousPage() {
-    this.setState({current_page: this.state.current_page - 1});
+    this.setState({...processArticles(this.props, this.state.current_page + 1, this.state.filter, this.state.sort)});
   }
 
-  renderPaging(pages: number) {
-    const canNext = this.state.current_page !== pages - 1;
+  @autobind
+  previousPage() {
+    this.setState({...processArticles(this.props, this.state.current_page - 1, this.state.filter, this.state.sort)});
+  }
+
+  renderPaging() {
+    if (this.state.total_pages < 2) {
+      return null;
+    }
+
+    const canNext = this.state.current_page !== this.state.total_pages - 1;
     const canPrevious = this.state.current_page !== 0;
 
     return (
       <div key="paging" {...css(STYLES.pagingBar)}>
         <div {...css({width: '60%', height: `${HEADER_HEIGHT}px`, lineHeight: `${HEADER_HEIGHT}px`, textAlign: 'center', position: 'relative'})}>
           {canPrevious && <span key="previous" onClick={this.previousPage} {...css({position: 'absolute', left: 0})}><icons.ArrowIcon/></span>}
-          Page {this.state.current_page + 1} of {pages}&nbsp;
+          Page {this.state.current_page + 1} of {this.state.total_pages}&nbsp;
           {canNext && <span key="next" onClick={this.nextPage} {...css({position: 'absolute', right: 0})}><icons.ArrowFIcon/></span>}
         </div>
       </div>
@@ -1067,28 +1200,11 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
   render() {
     const {
-      articles,
-      categories,
-      location,
-      myUserId,
-    } = this.props;
-
-    const {
       filter,
       sort,
+      summary,
+      visibleArticles,
     } = this.state;
-
-    let processedArticles: Array<IArticleModel> = articles.toArray();
-
-    if (Object.keys(filter).length > 0) {
-      processedArticles = processedArticles.filter(executeFilter(filter, {myId: myUserId}));
-    }
-    if (sort.length > 0) {
-      processedArticles = processedArticles.sort(executeSort(sort));
-    }
-    else {
-      processedArticles = processedArticles.sort(executeSort(['+sourceCreatedAt']));
-    }
 
     const currentFilter = filterString(filter);
     const currentSort = sortString(sort);
@@ -1137,50 +1253,6 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       );
     }
 
-    let category: ICategoryModel | null = null;
-    const m = /category=(\d+)/.exec(location.pathname);
-    if (m) {
-      for (const c of categories.toArray()) {
-        if (c.id === m[1]) {
-          category = c;
-        }
-      }
-    }
-
-    let count = 0;
-    const columns = ['unmoderatedCount', 'approvedCount', 'rejectedCount', 'deferredCount', 'flaggedCount'];
-    const summary: any =  {};
-    for (const i of columns) {
-      summary[i] = 0;
-    }
-
-    for (const a of processedArticles) {
-      count += 1;
-      for (const i of columns) {
-        summary[i] += (a as any)[i];
-      }
-    }
-
-    summary['id'] = 'summary';
-    summary['title'] = ` ${count} Title` + (count !== 1 ? 's' : '');
-    if (category) {
-      summary['title'] += ` in section ${category.label}`;
-    }
-
-    if (filter.length > 1 || (filter.length === 1 && filter[0].key !== 'category')) {
-      summary['title'] += ' matching filter';
-    }
-    summary['category'] = category;
-    summary['assignedModerators'] = category ? category.assignedModerators : [];
-
-    const pages = Math.ceil(processedArticles.length / this.state.page_size);
-    const paging = pages > 1;
-    if (paging) {
-      const start = this.state.current_page * this.state.page_size;
-      const end = Math.min(start + this.state.page_size, processedArticles.length);
-      processedArticles = processedArticles.slice(start, end);
-    }
-
     const filterActive = isFilterActive(this.state.filter);
     return (
       <div key="main">
@@ -1225,10 +1297,10 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           </thead>
           <tbody>
             {this.renderRow(summary)}
-            {processedArticles.map((article: IArticleModel) => this.renderRow(article))}
+            {visibleArticles.map((article: IArticleModel) => this.renderRow(article))}
           </tbody>
         </table>
-        {paging && this.renderPaging(pages)}
+        {this.renderPaging()}
         {this.renderSetModerators()}
       </div>
     );
