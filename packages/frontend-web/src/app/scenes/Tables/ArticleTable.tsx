@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2018 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,12 +24,9 @@ import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
-import { Toggle } from '../../components/Toggle';
 import { ModelId } from '../../stores/moderators';
 import {
-  GREY_COLOR,
   HEADER_HEIGHT,
-  NICE_CONTROL_BLUE,
   NICE_LIGHTEST_BLUE,
   NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
@@ -37,7 +34,8 @@ import {
 import { css, stylesheet, updateModel, updateRelationshipModels } from '../../util';
 import { AssignModeratorsSimple } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
-import { MagicTimestamp, SmallUserIcon } from './components';
+import { ArticleControlPopup } from './ArticleControlPopup';
+import { ControlFlag, MagicTimestamp, SmallUserIcon } from './components';
 import { FilterSidebar } from './FilterSidebar';
 import { ARTICLE_TABLE_STYLES, COMMON_STYLES, ICON_STYLES } from './styles';
 import { big, flexCenter, medium, small } from './styles';
@@ -109,35 +107,6 @@ export interface IIArticleTableState {
   // Fields used by article control popup and set moderators popup
   selectedArticle?: IArticleModel;
   moderatorIds?: Set<ModelId>;
-  isCommentingEnabled?: boolean;
-  isAutoModerated?: boolean;
-}
-
-interface IIControlFlagProps {
-  isCommentingEnabled?: boolean;
-  isAutoModerated?: boolean;
-}
-
-class ControlFlag extends React.Component<IIControlFlagProps> {
-  render() {
-    let style: any;
-    let Icon: any;
-
-    if (this.props.isAutoModerated) {
-      Icon = icons.SpeechBubbleIconCircle;
-    }
-    else {
-      Icon = icons.SpeechBubbleIcon;
-    }
-
-    if (this.props.isCommentingEnabled) {
-      style = {color: NICE_CONTROL_BLUE};
-    }
-    else {
-      style = {color: GREY_COLOR};
-    }
-    return (<Icon {...css(style)}/>);
-  }
 }
 
 function processArticles(
@@ -215,11 +184,13 @@ function updateArticles(state: IIArticleTableState, props: IIArticleTableProps) 
   const newVisible = [...state.visibleArticles];
   const indexMap: { [key: string]: number; } = {};
   newVisible.map((a, i) => { indexMap[a.id] = i; });
+
   for (const a of props.articles.toArray()) {
-    if (indexMap[a.id]) {
+    if (a.id in indexMap) {
       newVisible[indexMap[a.id]] = a;
     }
   }
+
   return {visibleArticles: newVisible};
 }
 
@@ -310,8 +281,6 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     this.setState({
       popupToShow: POPUP_CONTROLS,
       selectedArticle: article,
-      isCommentingEnabled: article.isCommentingEnabled,
-      isAutoModerated: article.isAutoModerated,
     });
   }
 
@@ -355,26 +324,10 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   }
 
   @autobind
-  handleCommentingEnabledClicked() {
-    this.setState({isCommentingEnabled: !this.state.isCommentingEnabled});
-  }
-
-  @autobind
-  handleAutoModeratedClicked() {
-    if (!this.state.isCommentingEnabled) {
-      return;
-    }
-    this.setState({isAutoModerated: !this.state.isAutoModerated});
-  }
-
-  @autobind
-  saveControls() {
+  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean) {
     const articleId = this.state.selectedArticle.id;
-    const {isCommentingEnabled, isAutoModerated} = this.state;
     this.setState({
       popupToShow: POPUP_SAVING,
-      isCommentingEnabled: null,
-      isAutoModerated: null,
     });
 
     updateModel<IArticleModel>(
@@ -393,52 +346,12 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
 
     return (
-      <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, {position: 'absolute', marginLeft: '-400px', marginTop: '-15px', width: '350px', padding: '20px'})}>
-        <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}} >
-          <h5 key="header" {...css(SCRIM_STYLE.popupTitle)}>Moderation settings</h5>
-          <table key="main" {...css({width: '100%'})}>
-            <tbody>
-              <tr key="comments" onClick={this.handleCommentingEnabledClicked}>
-                <td key="icon">
-                  <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled}/>
-                </td>
-                <td key="text" {...css({textAlign: 'left', padding: '15px 20px'})}>
-                  <label htmlFor="isCommentingEnabledToggle" {...css(SCRIM_STYLE.popupContent)}>
-                    Comments Enabled
-                  </label>
-                </td>
-                <td key="toggle" {...css({textAlign: 'right'})}>
-                  <Toggle
-                    inputId="isCommentingEnabledToggle"
-                    isSelected={this.state.isCommentingEnabled}
-                  />
-                </td>
-              </tr>
-              <tr key="automod" onClick={this.handleAutoModeratedClicked} {...css(this.state.isCommentingEnabled ? {} : {opacity: 0.5})}>
-                <td key="icon">
-                  <ControlFlag isAutoModerated={this.state.isAutoModerated}/>
-                </td>
-                <td key="text"  {...css({textAlign: 'left', padding: '15px 20px'})}>
-                  <label htmlFor="isAutoModeratedToggle" {...css(SCRIM_STYLE.popupContent)}>
-                    Auto Moderation Enabled
-                  </label>
-                </td>
-                <td key="toggle" {...css({textAlign: 'right'})}>
-                  <Toggle
-                    inputId="isAutoModeratedToggle"
-                    isSelected={this.state.isAutoModerated}
-                    isDisabled={!this.state.isCommentingEnabled}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div key="footer" {...css({textAlign: 'right', paddingTop: '20px'})}>
-            <span onClick={this.clearPopups} {...css({marginRight: '30px', opacity: '0.5'})}>Cancel</span>
-            <span onClick={this.saveControls} {...css({color: NICE_CONTROL_BLUE})}>Save</span>
-          </div>
-        </FocusTrap>
-      </div>
+      <ArticleControlPopup
+        article={this.state.selectedArticle}
+
+        saveControls={this.saveControls}
+        clearPopups={this.clearPopups}
+      />
     );
   }
 

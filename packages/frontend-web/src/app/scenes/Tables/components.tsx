@@ -19,7 +19,7 @@ import React from 'react';
 import Timer = NodeJS.Timer;
 import { IUserModel } from '../../../models';
 import * as icons from '../../components/Icons';
-import { NICE_MIDDLE_BLUE } from '../../styles';
+import { GREY_COLOR, NICE_CONTROL_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
 import { css } from '../../util';
 import { COMMON_STYLES, ICON_STYLES } from './styles';
 
@@ -150,5 +150,32 @@ export class SmallUserIcon extends React.Component<ISmallUserIconProps> {
         </div>
       );
     }
+  }
+}
+
+interface IIControlFlagProps {
+  isCommentingEnabled?: boolean;
+  isAutoModerated?: boolean;
+}
+
+export class ControlFlag extends React.Component<IIControlFlagProps> {
+  render() {
+    let style: any;
+    let Icon: any;
+
+    if (this.props.isAutoModerated) {
+      Icon = icons.SpeechBubbleIconCircle;
+    }
+    else {
+      Icon = icons.SpeechBubbleIcon;
+    }
+
+    if (this.props.isCommentingEnabled) {
+      style = {color: NICE_CONTROL_BLUE};
+    }
+    else {
+      style = {color: GREY_COLOR};
+    }
+    return (<Icon {...css(style)}/>);
   }
 }
