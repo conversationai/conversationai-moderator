@@ -14,18 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
-import React, { KeyboardEvent, SyntheticEvent } from 'react';
+import React from 'react';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
-import { Checkbox } from '../../components/Checkbox';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
 import { Toggle } from '../../components/Toggle';
@@ -41,89 +37,26 @@ import {
 import { css, stylesheet, updateModel, updateRelationshipModels } from '../../util';
 import { AssignModeratorsSimple } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
-import { SETTINGS_STYLES } from '../Settings/settingsStyles';
-import { MagicTimestamp } from './components';
-import { ARTICLE_TABLE_STYLES, COMMON_STYLES, IMAGE_BASE } from './styles';
+import { MagicTimestamp, SmallUserIcon } from './components';
+import { FilterSidebar } from './FilterSidebar';
+import { ARTICLE_TABLE_STYLES, COMMON_STYLES, ICON_STYLES } from './styles';
+import { big, flexCenter, medium, small } from './styles';
 import {
-  FILTER_DATE_lastModeratedAt,
-  FILTER_DATE_sourceCreatedAt,
-  FILTER_DATE_updatedAt,
-  FILTER_MODERATORS,
-  FILTER_MODERATORS_ME,
-  FILTER_MODERATORS_UNASSIGNED,
-  FILTER_TITLE,
-  FILTER_TOGGLE_isAutoModerated,
-  FILTER_TOGGLE_isCommentingEnabled,
-  FILTER_TOGGLE_OFF,
-  FILTER_TOGGLE_ON,
   NOT_SET,
 } from './utils';
 import {
   executeFilter,
   executeSort,
-  filterDatePrior,
-  filterDateRange,
-  filterDateRangeValues,
-  filterDateSince,
   filterString,
-  getFilterValue,
   IFilterItem,
   isFilterActive,
   parseFilter,
   parseSort,
-  resetFilterToRoot,
   sortString,
-  updateFilter,
   updateSort,
 } from './utils';
 
-const DATE_FILTER_RANGE = 'custom';
-
-const big = {
-  width: `${IMAGE_BASE}px`,
-  height: `${IMAGE_BASE}px`,
-};
-
-const medium = {
-  width: `${IMAGE_BASE * 3 / 4}px`,
-  height: `${IMAGE_BASE * 3 / 4}px`,
-};
-
-const small = {
-  width: `${IMAGE_BASE / 2}px`,
-  height: `${IMAGE_BASE / 2}px`,
-};
-
-const flexCenter = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
 const STYLES = stylesheet({
-  big: big,
-  small: small,
-
-  iconBackgroundCircle: {
-    ...big,
-    borderRadius: `${IMAGE_BASE}px`,
-    backgroundColor: '#eee',
-    display: 'inline-block',
-  },
-
-  iconBackgroundCircleSmall: {
-    ...small,
-    borderRadius: `${IMAGE_BASE / 2}px`,
-    backgroundColor: '#eee',
-    display: 'inline-block',
-  },
-
-  iconCenter: {
-    width: `100%`,
-    height: `100%`,
-    ...flexCenter,
-  },
-
   textCenterSmall: {
     ...small,
     fontSize: '12px',
@@ -143,23 +76,6 @@ const STYLES = stylesheet({
     justifyContent: 'center',
     textSize: '18px',
     color: 'white',
-  },
-
-  filterSection: {
-    borderTop: '2px solid #eee',
-    padding: '20px',
-  },
-  filterTitle: {
-    fontSize: '16px',
-    fontWeight: 'normal',
-  },
-
-  filterHeading: {
-    ...SCRIM_STYLE.popupTitle,
-    fontSize: '16px',
-    fontWeight: 'bold',
-    margin: 0,
-    opacity: '0.4',
   },
 });
 
@@ -195,19 +111,6 @@ export interface IIArticleTableState {
   moderatorIds?: Set<ModelId>;
   isCommentingEnabled?: boolean;
   isAutoModerated?: boolean;
-
-  // Fields used by the set filters popup
-  titleFilter: string;
-  moderatorFilterString: string;
-  moderatorFilterUsers: Set<ModelId>;
-  dateFilterKey: string;
-  dateFilterValue: string;
-  dateFilterSelect?: string;
-  dateFilterFrom?: string;
-  dateFilterTo?: string;
-  isCommentingEnabledFilter: string;
-  isAutoModeratedFilter: string;
-  commentsToReviewFilter: string;
 }
 
 interface IIControlFlagProps {
@@ -234,30 +137,6 @@ class ControlFlag extends React.Component<IIControlFlagProps> {
       style = {color: GREY_COLOR};
     }
     return (<Icon {...css(style)}/>);
-  }
-}
-
-interface ISmallUserIconProps {
-  user: IUserModel;
-}
-
-class SmallUserIcon extends React.Component<ISmallUserIconProps> {
-  render() {
-    const user = this.props.user;
-    if (user.avatarURL) {
-      return (<img alt={user.name} key={user.id} src={user.avatarURL} {...css(COMMON_STYLES.xsmallImage, {margin: '1px'})}/>);
-    }
-    else {
-      return (
-        <div key={user.id} {...css(STYLES.small, {display: 'inline-block', margin: '1px'})}>
-          <div {...css(STYLES.iconBackgroundCircleSmall)}>
-            <div {...css(STYLES.iconCenter)}>
-              <icons.UserIcon {...css(STYLES.small, {color: NICE_MIDDLE_BLUE})}/>
-            </div>
-          </div>
-        </div>
-      );
-    }
   }
 }
 
@@ -344,57 +223,6 @@ function updateArticles(state: IIArticleTableState, props: IIArticleTableProps) 
   return {visibleArticles: newVisible};
 }
 
-function unpackFilter(filter: Array<IFilterItem>) {
-  const moderatorFilterString = getFilterValue(filter, FILTER_MODERATORS);
-  let moderatorFilterUsers: Array<string> = [];
-
-  if (moderatorFilterString.length > 0 &&
-    moderatorFilterString !== FILTER_MODERATORS_ME &&
-    moderatorFilterString !== FILTER_MODERATORS_UNASSIGNED) {
-    moderatorFilterUsers = moderatorFilterString.split(',');
-  }
-
-  let dateFilterKey = FILTER_DATE_sourceCreatedAt;
-  let dateFilterValue = '';
-  let dateFilterSelect = null;
-  let dateFilterFrom = null;
-  let dateFilterTo = null;
-
-  for (const f of filter) {
-    if (f.key === FILTER_DATE_sourceCreatedAt ||
-        f.key === FILTER_DATE_updatedAt ||
-        f.key === FILTER_DATE_lastModeratedAt) {
-      dateFilterKey = f.key;
-      dateFilterValue = f.value;
-      break;
-    }
-  }
-
-  const dateFilterRangeValues = filterDateRangeValues(dateFilterValue);
-  if (dateFilterRangeValues) {
-    dateFilterSelect = DATE_FILTER_RANGE;
-    dateFilterFrom = dateFilterRangeValues[0];
-    dateFilterTo = dateFilterRangeValues[1];
-  }
-  else {
-    dateFilterSelect = dateFilterValue;
-  }
-
-  return {
-    titleFilter: getFilterValue(filter, FILTER_TITLE),
-    moderatorFilterString: moderatorFilterString,
-    moderatorFilterUsers: Set<string>(moderatorFilterUsers),
-    dateFilterKey,
-    dateFilterValue,
-    dateFilterSelect,
-    dateFilterFrom,
-    dateFilterTo,
-    isCommentingEnabledFilter: getFilterValue(filter, FILTER_TOGGLE_isCommentingEnabled),
-    isAutoModeratedFilter: getFilterValue(filter, FILTER_TOGGLE_isAutoModerated),
-    commentsToReviewFilter: getFilterValue(filter, 'commentsToReview'),
-  };
-}
-
 export class ArticleTable extends React.Component<IIArticleTableProps, IIArticleTableState> {
   constructor(props: Readonly<IIArticleTableProps>) {
     super(props);
@@ -406,7 +234,6 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       sortString: props.routeParams ? props.routeParams.sort : NOT_SET,
       filter,
       sort,
-      ...unpackFilter(filter),
       ...processArticles(props, 0, filter, sort),
     };
   }
@@ -441,7 +268,6 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       filter = props.routeParams ? parseFilter(props.routeParams.filter) : [];
       newState['filterString'] = props.routeParams ? props.routeParams.filter : NOT_SET;
       newState['filter'] = filter;
-      Object.assign(newState, unpackFilter(filter));
       redoArticles = true;
     }
 
@@ -511,285 +337,20 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       return null;
     }
 
-    const {
-      myUserId,
-      users,
-      router,
-    } = this.props;
-
-    const {
-      filter,
-      titleFilter,
-      moderatorFilterString,
-      moderatorFilterUsers,
-      dateFilterKey,
-      dateFilterSelect,
-      dateFilterFrom,
-      dateFilterTo,
-      isCommentingEnabledFilter,
-      isAutoModeratedFilter,
-      commentsToReviewFilter,
-    } = this.state;
-
-    const me = users.find((u) => u.id === myUserId);
-    const others = users.filter((u) => u.id !== myUserId).sort((u1, u2) => ('' + u1.name).localeCompare(u2.name));
-
-    const that = this;
-    function changeFilter(param: 'titleFilter') {
-      return ((e: SyntheticEvent<any>) => {
-        that.setState({[param]: e.currentTarget.value} as any);
-      });
-    }
-
-    function setFilter(key: string) {
-      return (e: SyntheticEvent<any>) => {
-        const f = updateFilter(filter, key, e.currentTarget.value);
-        router.push(dashboardLink(filterString(f), currentSort));
-      };
-    }
-
-    function checkForEnter(key: string) {
-      return (e: KeyboardEvent<any>) => {
-        if (e.key === 'Enter') {
-          const f = updateFilter(filter, key, e.currentTarget.value);
-          router.push(dashboardLink(filterString(f), currentSort));
-        }
-      };
-    }
-
-    function changeDateFilter(currentFilter: Array<IFilterItem>, key: string, value: string) {
-      const newFilter = updateFilter(currentFilter, key, value);
-      router.push(dashboardLink(filterString(newFilter)));
-    }
-
-    function changeDateFilterKey(e: SyntheticEvent<any>) {
-      const key = e.currentTarget.value;
-      if (that.state.dateFilterValue === '') {
-        that.setState({dateFilterKey: key});
-      }
-      else if (key !== that.state.dateFilterKey) {
-        const cleanedFilter = updateFilter(filter, that.state.dateFilterKey);
-        changeDateFilter(cleanedFilter, key, that.state.dateFilterValue);
-      }
-    }
-
-    function changeDateFilterSelect(e: SyntheticEvent<any>) {
-      const newFilterSelect = e.currentTarget.value;
-      if (newFilterSelect !== that.state.dateFilterSelect) {
-        if (newFilterSelect !== DATE_FILTER_RANGE) {
-          changeDateFilter(filter, that.state.dateFilterKey, newFilterSelect);
-        }
-        else {
-          changeDateFilter(filter, that.state.dateFilterKey, filterDateRange(null, null));
-        }
-      }
-    }
-
-    function changeDateFilterFrom(e: SyntheticEvent<any>) {
-      const newFilterValue = filterDateRange(e.currentTarget.value, that.state.dateFilterTo);
-      changeDateFilter(filter, that.state.dateFilterKey, newFilterValue);
-    }
-
-    function changeDateFilterTo(e: SyntheticEvent<any>) {
-      const newFilterValue = filterDateRange(that.state.dateFilterFrom, e.currentTarget.value);
-      changeDateFilter(filter, that.state.dateFilterKey, newFilterValue);
-    }
-
-    function setModerator(id: string) {
-      // return (checked: boolean) => {
-      //   const mf = checked ? that.state.moderatorFilter.add(id) : that.state.moderatorFilter.remove(id);
-      return () => {
-        const currentUsers = that.state.moderatorFilterUsers;
-        const newUsers = currentUsers.contains(id) ? currentUsers.delete(id) : currentUsers.add(id);
-        const moderators = newUsers.toArray().reduce<string | null>((s: string | null, v: ModelId) => (s ? `${s},${v}` : v.toString()), null);
-        const f = updateFilter(filter, FILTER_MODERATORS, moderators);
-        router.push(dashboardLink(filterString(f), currentSort));
-      };
-    }
-
-    function setModeratorUnassigned() {
-      const f = updateFilter(filter, FILTER_MODERATORS, FILTER_MODERATORS_UNASSIGNED);
-      router.push(dashboardLink(filterString(f), currentSort));
-    }
-
-    function clearFilters() {
-      that.clearPopups();
-      router.push(dashboardLink(filterString(resetFilterToRoot(filter)), currentSort));
-    }
-
-    function renderModerator(u: IUserModel) {
-      return (
-        <tr key={u.id} onClick={setModerator(u.id)}>
-          <td key="icon">
-            <SmallUserIcon user={u}/>
-          </td>
-          <td key="text" {...css({textAlign: 'left'})}>
-            {u.name}
-          </td>
-          <td key="toggle" {...css({textAlign: 'right'})}>
-            <Checkbox isSelected={moderatorFilterUsers.has(u.id)} onCheck={null}/>
-          </td>
-        </tr>
-      );
-    }
-
-    function renderCustomDateControls() {
-      if (dateFilterSelect !== DATE_FILTER_RANGE) {
-        return '';
-      }
-      return(
-        <div {...css({marginTop: '20px'})}>
-          <TextField
-            label="From"
-            type="date"
-            defaultValue={dateFilterFrom}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={changeDateFilterFrom}
-          />&nbsp;
-          <TextField
-            label="To"
-            type="date"
-            defaultValue={dateFilterTo}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={changeDateFilterTo}
-          />
-        </div>
-      );
+    const router = this.props.router;
+    function setFilter(newFilter: Array<IFilterItem>) {
+      router.push(dashboardLink(filterString(newFilter), currentSort));
     }
 
     return (
-      <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, {position: 'absolute', top: '0', right: '0', color: 'black'})}>
-        <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}} >
-          <h4 key="header" {...css(SCRIM_STYLE.popupTitle, {padding: '20px', fontSize: '18px', margin: 0})}>
-            Filter titles
-            <div onClick={this.clearPopups} {...css({float: 'right'})}>
-              <icons.CloseIcon/>
-            </div>
-            <Button variant="contained" color="primary" onClick={clearFilters} style={{float: 'right', marginTop: '-7px', marginRight: '30px'}}>Reset</Button>
-          </h4>
-          <div key="title" {...css(STYLES.filterSection)}>
-            <h5 key="header" {...css(STYLES.filterHeading)}>
-              Title
-            </h5>
-            <input
-              type="text"
-              value={titleFilter}
-              onKeyPress={checkForEnter(FILTER_TITLE)}
-              onChange={changeFilter('titleFilter')}
-              onBlur={setFilter(FILTER_TITLE)}
-              {...css(SETTINGS_STYLES.input, {width: '100%', marginTop: '20px'})}
-            />
-          </div>
-          {moderatorFilterString !== FILTER_MODERATORS_ME &&
-          <div key="moderators" {...css(STYLES.filterSection)}>
-            <h5 key="header" {...css(STYLES.filterHeading)}>
-              Moderators
-            </h5>
-            <table key="main" {...css({width: '100%', marginTop: '10px'})}>
-              <tbody>
-              <tr key="unassigned" onClick={setModeratorUnassigned}>
-                <td key="icon"/>
-                <td key="text" {...css({textAlign: 'left'})}>
-                  No moderator assigned.
-                </td>
-                <td key="toggle" {...css({textAlign: 'right'})}>
-                  <Checkbox isSelected={moderatorFilterString === FILTER_MODERATORS_UNASSIGNED} onCheck={null}/>
-                </td>
-              </tr>
-              {renderModerator(me)}
-              {others.map((u: IUserModel) => renderModerator(u))}
-              </tbody>
-            </table>
-          </div>
-          }
-          <div key="dates" {...css(STYLES.filterSection)}>
-            <h5 key="header" {...css(STYLES.filterHeading)}>
-              Date
-            </h5>
-            <table {...css({width: '100%', marginTop: '10px'})}>
-              <tbody>
-              <tr>
-                <th key="label" {...css({textAlign: 'left'})}>
-                  Filter by:
-                </th>
-                <td key="value" {...css({textAlign: 'right'})}>
-                  <select value={dateFilterKey} onChange={changeDateFilterKey} {...css(ARTICLE_TABLE_STYLES.select, {width: '200px'})}>
-                    <option value={FILTER_DATE_sourceCreatedAt}>Date published</option>
-                    <option value={FILTER_DATE_updatedAt}>Date last modified</option>
-                    <option value={FILTER_DATE_lastModeratedAt}>Date last moderated</option>
-                  </select>
-                </td>
-              </tr>
-              <tr>
-                <th key="label" {...css({textAlign: 'left'})}>
-                  Filter range:
-                </th>
-                <td key="value" {...css({textAlign: 'right'})}>
-                  <select value={dateFilterSelect} onChange={changeDateFilterSelect} {...css(ARTICLE_TABLE_STYLES.select, {width: '200px'})}>
-                    <option value=""/>
-                    <option value={filterDateSince(12)}>Last 12 hours</option>
-                    <option value={filterDateSince(24)}>Last 24 hours</option>
-                    <option value={filterDateSince(48)}>Last 48 hours</option>
-                    <option value={filterDateSince(168)}>Last 7 days</option>
-                    <option value={filterDatePrior(48)}>Older than 48 hours</option>
-                    <option value={filterDatePrior(168)}>Older than 7 days</option>
-                    <option value="custom">Custom range</option>
-                  </select>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-            {renderCustomDateControls()}
-          </div>
-          <div key="commenting" {...css(STYLES.filterSection)}>
-            <h5 key="header" {...css(STYLES.filterHeading)}>
-              Comment settings
-            </h5>
-            <select
-              value={isCommentingEnabledFilter}
-              onChange={setFilter(FILTER_TOGGLE_isCommentingEnabled)}
-              {...css(ARTICLE_TABLE_STYLES.select, {width: '100%', marginTop: '20px'})}
-            >
-              <option value="">Show All</option>
-              <option value={FILTER_TOGGLE_ON}>Comments Enabled</option>
-              <option value={FILTER_TOGGLE_OFF}>Comments Disabled</option>
-            </select>
-          </div>
-          <div key="automoderation" {...css(STYLES.filterSection)}>
-            <h5 key="header" {...css(STYLES.filterHeading)}>
-              Automoderation settings
-            </h5>
-            <select
-              value={isAutoModeratedFilter}
-              onChange={setFilter(FILTER_TOGGLE_isAutoModerated)}
-              {...css(ARTICLE_TABLE_STYLES.select, {width: '100%', marginTop: '20px'})}
-            >
-              <option value="">Show All</option>
-              <option value={FILTER_TOGGLE_ON}>Automoderation Enabled</option>
-              <option value={FILTER_TOGGLE_OFF}>Automoderation Disabled</option>
-            </select>
-          </div>
-          <div key="commentsToReview" {...css(STYLES.filterSection)}>
-            <h5 key="header" {...css(STYLES.filterHeading)}>
-              Comments to review
-            </h5>
-            <select
-              value={commentsToReviewFilter}
-              onChange={setFilter('commentsToReview')}
-              {...css(ARTICLE_TABLE_STYLES.select, {width: '100%', marginTop: '20px'})}
-            >
-              <option value="">Show All</option>
-              <option value="yes">New and deferred comments to review</option>
-              <option value="new">New comments to review</option>
-              <option value="deferred">Deferred comments to review</option>
-            </select>
-          </div>
-        </FocusTrap>
-      </div>
+      <FilterSidebar
+        filterString={this.state.filterString}
+        filter={this.state.filter}
+        myUserId={this.props.myUserId}
+        users={this.props.users}
+        setFilter={setFilter}
+        clearPopup={this.clearPopups}
+      />
     );
   }
 
@@ -899,9 +460,9 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
 
     return (
-      <div {...css(imOpen ? STYLES.iconBackgroundCircle : big)}>
+      <div {...css(imOpen ? ICON_STYLES.iconBackgroundCircle : big)}>
         {this.renderControlPopup(article)}
-        <div onClick={openDlg} {...css(STYLES.iconCenter)}>
+        <div onClick={openDlg} {...css(ICON_STYLES.iconCenter)}>
           <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated}/>
         </div>
       </div>
@@ -927,8 +488,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
     if (moderators.length === 0) {
       return (
-        <div onClick={openModeratorsDlg} {...css(STYLES.iconBackgroundCircle)}>
-          <div {...css(STYLES.iconCenter)} >
+        <div onClick={openModeratorsDlg} {...css(ICON_STYLES.iconBackgroundCircle)}>
+          <div {...css(ICON_STYLES.iconCenter)} >
             <icons.UserPlusIcon {...css(COMMON_STYLES.smallIcon, {width: `${30}px`, height: `${30}px`})} onClick={openModeratorsDlg}/>
           </div>
         </div>
@@ -942,8 +503,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       }
       else {
         return (
-          <div onClick={openModeratorsDlg} {...css(STYLES.iconBackgroundCircle)}>
-            <div {...css(STYLES.iconCenter)} >
+          <div onClick={openModeratorsDlg} {...css(ICON_STYLES.iconBackgroundCircle)}>
+            <div {...css(ICON_STYLES.iconCenter)} >
               <icons.UserIcon {...css(COMMON_STYLES.smallIcon, {color: NICE_MIDDLE_BLUE})}/>
             </div>
           </div>

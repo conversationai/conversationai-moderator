@@ -78,6 +78,10 @@ export const FILTER_TOGGLE_isCommentingEnabled = 'isCommentingEnabled';
 export const FILTER_TOGGLE_isAutoModerated = 'isAutoModerated';
 export const FILTER_TOGGLE_ON = 'yes';
 export const FILTER_TOGGLE_OFF = 'no';
+export const FILTER_TO_REVIEW = 'commentsToReview';
+export const FILTER_TO_REVIEW_ANY = 'any';
+export const FILTER_TO_REVIEW_NEW = 'new';
+export const FILTER_TO_REVIEW_DEFERRED = 'deferred';
 export const FILTER_DATE_sourceCreatedAt = 'sourceCreatedAt';
 export const FILTER_DATE_updatedAt = 'updatedAt';
 export const FILTER_DATE_lastModeratedAt = 'lastModeratedAt';
@@ -215,18 +219,18 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
           }
           break;
 
-        case 'commentsToReview':
-          if (i.value === 'yes') {
+        case FILTER_TO_REVIEW:
+          if (i.value === FILTER_TO_REVIEW_ANY) {
             if ((article.unmoderatedCount + article.deferredCount) === 0) {
               return false;
             }
           }
-          else if (i.value === 'new') {
+          else if (i.value === FILTER_TO_REVIEW_NEW) {
             if (article.unmoderatedCount === 0) {
               return false;
             }
           }
-          else if (i.value === 'deferred') {
+          else if (i.value === FILTER_TO_REVIEW_DEFERRED) {
             if (article.deferredCount === 0) {
               return false;
             }

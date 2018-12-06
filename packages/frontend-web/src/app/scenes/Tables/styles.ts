@@ -27,6 +27,27 @@ import { stylesheet } from '../../util';
 
 export const IMAGE_BASE = 40;
 
+export const big = {
+  width: `${IMAGE_BASE}px`,
+  height: `${IMAGE_BASE}px`,
+};
+
+export const medium = {
+  width: `${IMAGE_BASE * 3 / 4}px`,
+  height: `${IMAGE_BASE * 3 / 4}px`,
+};
+
+export const small = {
+  width: `${IMAGE_BASE / 2}px`,
+  height: `${IMAGE_BASE / 2}px`,
+};
+
+export const flexCenter = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
 export const ARTICLE_TABLE_STYLES = stylesheet({
   dataTable: {
     borderSpacing: 0,
@@ -115,5 +136,30 @@ export const COMMON_STYLES = stylesheet({
     width: `${IMAGE_BASE / 2}px`,
     height: `${IMAGE_BASE / 2}px`,
     borderRadius: `${IMAGE_BASE / 4}px`,
+  },
+});
+
+export const ICON_STYLES = stylesheet({
+  big: big,
+  small: small,
+
+  iconCenter: {
+    width: `100%`,
+    height: `100%`,
+    ...flexCenter,
+  },
+
+  iconBackgroundCircle: {
+    ...big,
+    borderRadius: `${IMAGE_BASE}px`,
+    backgroundColor: '#eee',
+    display: 'inline-block',
+  },
+
+  iconBackgroundCircleSmall: {
+    ...small,
+    borderRadius: `${IMAGE_BASE / 2}px`,
+    backgroundColor: '#eee',
+    display: 'inline-block',
   },
 });

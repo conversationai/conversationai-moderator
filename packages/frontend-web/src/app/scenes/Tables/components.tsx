@@ -14,9 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {autobind} from 'core-decorators';
+import { autobind } from 'core-decorators';
 import React from 'react';
 import Timer = NodeJS.Timer;
+import { IUserModel } from '../../../models';
+import * as icons from '../../components/Icons';
+import { NICE_MIDDLE_BLUE } from '../../styles';
+import { css } from '../../util';
+import { COMMON_STYLES, ICON_STYLES } from './styles';
 
 export interface IMagicTimestampProps {
   timestamp: string;
@@ -120,6 +125,30 @@ export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
       this.timeoutId = undefined;
+    }
+  }
+}
+
+interface ISmallUserIconProps {
+  user: IUserModel;
+}
+
+export class SmallUserIcon extends React.Component<ISmallUserIconProps> {
+  render() {
+    const user = this.props.user;
+    if (user.avatarURL) {
+      return (<img alt={user.name} key={user.id} src={user.avatarURL} {...css(COMMON_STYLES.xsmallImage, {margin: '1px'})}/>);
+    }
+    else {
+      return (
+        <div key={user.id} {...css(ICON_STYLES.small, {display: 'inline-block', margin: '1px'})}>
+          <div {...css(ICON_STYLES.iconBackgroundCircleSmall)}>
+            <div {...css(ICON_STYLES.iconCenter)}>
+              <icons.UserIcon {...css(ICON_STYLES.small, {color: NICE_MIDDLE_BLUE})}/>
+            </div>
+          </div>
+        </div>
+      );
     }
   }
 }
