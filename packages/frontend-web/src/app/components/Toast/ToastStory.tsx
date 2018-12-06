@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { action, storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+
 import {
   ARTICLE_CATEGORY_TYPE,
   ARTICLE_HEADLINE_TYPE,
@@ -60,7 +62,7 @@ const STORY_STYLES = {
   },
 };
 
-storiesOf('Toast', {})
+storiesOf('Toast', module)
   .add('default', () => {
     return (
       <div {...css(STORY_STYLES.base)}>

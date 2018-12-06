@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
 import {
   LIGHT_PRIMARY_TEXT_COLOR,
   MEDIUM_COLOR,
@@ -26,7 +26,7 @@ import {
   DeferIcon,
 } from '../Icons';
 
-storiesOf('CommentActionButton', {})
+storiesOf('CommentActionButton', module)
   .add('Full Width', () => (
     <div {...css({ background: MEDIUM_COLOR, display: 'inline-block' })}>
       <CommentActionButton

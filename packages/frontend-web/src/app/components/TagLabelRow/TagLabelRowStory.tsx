@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { action, storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+
 import { fakeTagModel } from '../../../models/fake';
 import { DARK_COLOR, MEDIUM_COLOR } from '../../styles';
 import { css } from '../../util';
@@ -45,7 +47,7 @@ const ACTION_STYLES = {
 const SNAPSHOT_WIDTH = 264;
 const SNAPSHOT_HEIGHT = 76;
 
-storiesOf('TagLabelRow', {})
+storiesOf('TagLabelRow', module)
   .add('Default', () => (
     <div>
       <button

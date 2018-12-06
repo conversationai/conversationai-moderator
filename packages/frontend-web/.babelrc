@@ -1,5 +1,5 @@
 {
-  "presets": ["react", "stage-1"],
+  "presets": ["react"],
   "plugins": ["lodash", "react-require", "transform-es2015-modules-commonjs",
     "transform-react-constant-elements", "transform-react-inline-elements",
     "transform-es2015-parameters", "react-hot-loader/babel"]

@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { action, storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+
 import { ARTICLE_HEADLINE_TYPE, DARK_SECONDARY_TEXT_COLOR, WHITE_COLOR } from '../../styles';
 import { css } from '../../util';
 import { Scrim } from '../Scrim';
@@ -26,7 +28,7 @@ const STYLES = {
   },
 };
 
-storiesOf('Scrim', {})
+storiesOf('Scrim', module)
   .add('dark', () => {
     return (
       <Scrim

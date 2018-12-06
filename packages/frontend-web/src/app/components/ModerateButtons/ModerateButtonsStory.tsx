@@ -14,12 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+
 import { List } from 'immutable';
 import { IConfirmationAction } from '../../../types';
 import { ModerateButtons } from '../ModerateButtons';
 
-storiesOf('ModerateButtons', {})
+storiesOf('ModerateButtons', module)
   .add('Horizontal', () => (
     <div>
       <ModerateButtons

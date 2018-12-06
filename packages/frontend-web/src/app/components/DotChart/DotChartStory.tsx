@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
 import * as faker from 'faker';
 import {
   LIGHT_PRIMARY_TEXT_COLOR,
@@ -97,7 +97,7 @@ function generateRules() {
   ];
 }
 
-storiesOf('DotChart', {})
+storiesOf('DotChart', module)
   .add('Default', () => {
     return (
       <div {...css({ backgroundColor: MEDIUM_COLOR, padding: '50px' })}>

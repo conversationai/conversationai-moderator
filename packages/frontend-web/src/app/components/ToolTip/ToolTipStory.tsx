@@ -14,9 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
-import { action } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 import React from 'react';
+
 import {
   BOX_DEFAULT_SPACING,
   GUTTER_DEFAULT_SPACING,
@@ -237,7 +238,7 @@ class ToolTipTarget extends React.PureComponent<object> {
   }
 }
 
-storiesOf('ToolTip', {})
+storiesOf('ToolTip', module)
   .add('topLeft arrow (multiple tags)', () => {
     return (
       <div>

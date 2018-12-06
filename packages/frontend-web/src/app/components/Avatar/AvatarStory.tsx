@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
 import { AuthorModelRecord, IAuthorModel } from '../../../models';
 import { fakeUserModel } from '../../../models/fake';
 import { Avatar } from '../Avatar';
@@ -37,7 +37,7 @@ const user = fakeUserModel({
   avatarURL: 'https://s3.amazonaws.com/uifaces/faces/twitter/xtopherpaul/128.jpg',
 });
 
-storiesOf('Avatar', {})
+storiesOf('Avatar', module)
   .add('commenter', () => {
     return (
       <Avatar size={54} target={authorWithAvatar} />

@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
 import { MEDIUM_COLOR } from '../../../../../../styles';
 import { css } from '../../../../../../util';
 import { DashboardNavCategory } from './DashboardNavCategory';
 
-storiesOf('DashboardNavCategory', {})
+storiesOf('DashboardNavCategory', module)
   .add('Default', () => (
     <div {...css({ background: MEDIUM_COLOR })}>
       <DashboardNavCategory

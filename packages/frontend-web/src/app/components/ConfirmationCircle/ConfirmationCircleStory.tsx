@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
 import { ConfirmationCircle } from './ConfirmationCircle';
 
 const APPROVE_COLOR = '#27d073';
@@ -28,7 +28,7 @@ export interface IConfirmationCircleProps {
   size: number;
 }
 
-storiesOf('ConfirmationCircle', {})
+storiesOf('ConfirmationCircle', module)
 .add('approve small', () => {
   return (
     <ConfirmationCircle

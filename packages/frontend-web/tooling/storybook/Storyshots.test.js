@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import initStoryshots from 'storyshots';
+import initStoryshots from '@storybook/addon-storyshots';
 initStoryshots({
   configPath: __dirname,
 });

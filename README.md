@@ -42,11 +42,12 @@ In a production setting, you'll also have to set the following:
 
 ### System setup:
 
-Install mysql, node (v8 or better), npm (v6 or better) and redis.  Instructions for Ubuntu:
+Install mysql, node (v10 or better), npm (v6 or better) and redis.  Instructions for Ubuntu:
 
 ```bash
 sudo apt install mysql-server nodejs npm redis
-sudo npm install -g npm
+sudo npm install -g npm n
+sudo n v10
 hash -r
 ```
 
