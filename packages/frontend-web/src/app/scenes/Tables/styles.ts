@@ -137,6 +137,11 @@ export const COMMON_STYLES = stylesheet({
     height: `${IMAGE_BASE / 2}px`,
     borderRadius: `${IMAGE_BASE / 4}px`,
   },
+  textCenterSmall: {
+    ...small,
+    fontSize: '12px',
+    ...flexCenter,
+  },
 });
 
 export const ICON_STYLES = stylesheet({

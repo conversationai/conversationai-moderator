@@ -35,10 +35,10 @@ import { css, stylesheet, updateModel, updateRelationshipModels } from '../../ut
 import { AssignModeratorsSimple } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
 import { ArticleControlPopup } from './ArticleControlPopup';
-import { ControlFlag, MagicTimestamp, SmallUserIcon } from './components';
+import { ControlFlag, MagicTimestamp, ModeratorsWidget } from './components';
 import { FilterSidebar } from './FilterSidebar';
 import { ARTICLE_TABLE_STYLES, COMMON_STYLES, ICON_STYLES } from './styles';
-import { big, flexCenter, medium, small } from './styles';
+import { big, flexCenter, medium } from './styles';
 import {
   NOT_SET,
 } from './utils';
@@ -55,12 +55,6 @@ import {
 } from './utils';
 
 const STYLES = stylesheet({
-  textCenterSmall: {
-    ...small,
-    fontSize: '12px',
-    ...flexCenter,
-  },
-
   scrimPopup: {
     background: 'rgba(0, 0, 0, 0.4)',
     ...flexCenter,
@@ -382,75 +376,14 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     );
   }
 
+  @autobind
   renderModerators(article: IArticleModel) {
     if (article.id === 'summary') {
       return null;
     }
 
-    const that = this;
-    function openModeratorsDlg() {
-      that.openSetModerators(article);
-    }
-
-    let s = Set(article.assignedModerators);
-    if (article.category) {
-      s = s.merge(article.category.assignedModerators);
-    }
-
-    const moderators = s.toArray();
-
-    if (moderators.length === 0) {
-      return (
-        <div onClick={openModeratorsDlg} {...css(ICON_STYLES.iconBackgroundCircle)}>
-          <div {...css(ICON_STYLES.iconCenter)} >
-            <icons.UserPlusIcon {...css(COMMON_STYLES.smallIcon, {width: `${30}px`, height: `${30}px`})} onClick={openModeratorsDlg}/>
-          </div>
-        </div>
-      );
-    }
-
-    if (moderators.length === 1) {
-      const u = moderators[0];
-      if (u.avatarURL) {
-        return <img alt={u.name} src={u.avatarURL} onClick={openModeratorsDlg} {...css(COMMON_STYLES.smallImage)}/>;
-      }
-      else {
-        return (
-          <div onClick={openModeratorsDlg} {...css(ICON_STYLES.iconBackgroundCircle)}>
-            <div {...css(ICON_STYLES.iconCenter)} >
-              <icons.UserIcon {...css(COMMON_STYLES.smallIcon, {color: NICE_MIDDLE_BLUE})}/>
-            </div>
-          </div>
-        );
-      }
-    }
-
-    const ret = [];
-    let limit = moderators.length;
-    let extra = false;
-    if (limit > 4) {
-      limit = 3;
-      extra = true;
-    }
-    else if (limit === 4) {
-      limit = 4;
-    }
-
-    for (let i = 0; i < limit; i++) {
-      ret.push(<SmallUserIcon user={moderators[i]}/>);
-    }
-    if (extra) {
-      ret.push(
-        <div key="extra" style={{display: 'inline-block', margin: '1px'}}>
-          <div {...css(STYLES.textCenterSmall)}>+{moderators.length - 3}</div>
-        </div>,
-      );
-    }
-
     return (
-      <div onClick={openModeratorsDlg} {...css({display: 'flex', flexWrap: 'wrap', justifyContent: 'center'})}>
-        {ret}
-      </div>
+      <ModeratorsWidget article={article} openSetModerators={this.openSetModerators}/>
     );
   }
 

@@ -15,9 +15,11 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
+import { Set } from 'immutable';
 import React from 'react';
 import Timer = NodeJS.Timer;
-import { IUserModel } from '../../../models';
+
+import { IArticleModel, IUserModel } from '../../../models';
 import * as icons from '../../components/Icons';
 import { GREY_COLOR, NICE_CONTROL_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
 import { css } from '../../util';
@@ -177,5 +179,90 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
       style = {color: GREY_COLOR};
     }
     return (<Icon {...css(style)}/>);
+  }
+}
+
+interface IIModeratorsWidgetProps {
+  article: IArticleModel;
+  openSetModerators(article: IArticleModel): void;
+}
+
+export class ModeratorsWidget extends React.Component<IIModeratorsWidgetProps> {
+  @autobind
+  openModeratorsDlg() {
+    this.props.openSetModerators(this.props.article);
+  }
+
+  render() {
+    const article = this.props.article;
+
+    let s = Set(article.assignedModerators);
+    if (article.category) {
+      s = s.merge(article.category.assignedModerators);
+    }
+
+    const moderators = s.toArray();
+
+    if (moderators.length === 0) {
+      return (
+        <div onClick={this.openModeratorsDlg} {...css(ICON_STYLES.iconBackgroundCircle)}>
+          <div {...css(ICON_STYLES.iconCenter)} >
+            <icons.UserPlusIcon
+              {...css(COMMON_STYLES.smallIcon, {width: `${30}px`, height: `${30}px`})}
+              onClick={this.openModeratorsDlg}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    if (moderators.length === 1) {
+      const u = moderators[0];
+      if (u.avatarURL) {
+        return (
+          <img
+            alt={u.name}
+            src={u.avatarURL}
+            onClick={this.openModeratorsDlg}
+            {...css(COMMON_STYLES.smallImage)}
+          />
+        );
+      } else {
+        return (
+          <div onClick={this.openModeratorsDlg} {...css(ICON_STYLES.iconBackgroundCircle)}>
+            <div {...css(ICON_STYLES.iconCenter)} >
+              <icons.UserIcon {...css(COMMON_STYLES.smallIcon, {color: NICE_MIDDLE_BLUE})}/>
+            </div>
+          </div>
+        );
+      }
+    }
+
+    const ret = [];
+    let limit = moderators.length;
+    let extra = false;
+    if (limit > 4) {
+      limit = 3;
+      extra = true;
+    } else if (limit === 4) {
+      limit = 4;
+    }
+
+    for (let i = 0; i < limit; i++) {
+      ret.push(<SmallUserIcon user={moderators[i]}/>);
+    }
+    if (extra) {
+      ret.push(
+        <div key="extra" style={{display: 'inline-block', margin: '1px'}}>
+          <div {...css(COMMON_STYLES.textCenterSmall)}>+{moderators.length - 3}</div>
+        </div>,
+      );
+    }
+
+    return (
+      <div onClick={this.openModeratorsDlg} {...css({display: 'flex', flexWrap: 'wrap', justifyContent: 'center'})}>
+        {ret}
+      </div>
+    );
   }
 }
