@@ -27,6 +27,7 @@ import {
   IUserModel,
 } from '../../../models';
 import { DATE_FORMAT_LONG } from '../../config';
+import { editAndRescoreComment } from '../../platform/dataService';
 import { ICommentSummaryScore } from '../../stores/commentSummaryScores';
 import {
   ARTICLE_CATEGORY_TYPE,
@@ -57,7 +58,7 @@ import {
   TAG_UNSUBSTANTIAL_COLOR,
   WHITE_COLOR,
 } from '../../styles';
-import { css, editAndRescoreComment, maybeCallback, partial, stylesheet } from '../../util';
+import { css, maybeCallback, partial, stylesheet } from '../../util';
 import {
   ApproveIcon,
   EditIcon,

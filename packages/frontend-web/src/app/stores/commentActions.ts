@@ -29,7 +29,7 @@ import {
   tagCommentsAnnotationRequest,
   tagCommentsRequest,
   tagCommentSummaryScoresRequest,
-} from '../util';
+} from '../platform/dataService';
 
 /**
  * Wrap a bunch of data service calls where we don't care about the result

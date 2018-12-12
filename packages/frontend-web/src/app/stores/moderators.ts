@@ -20,8 +20,8 @@ import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IArticleModel, ICategoryModel, IUserModel } from '../../models';
 import { IAppStateRecord, IThunkAction } from './index';
 
+import { listRelationshipModels, updateCategoryAssignments, updateRelationshipModels } from '../platform/dataService';
 import { getLoadedArticles } from '../scenes/Dashboard/components/DashboardArticles/store';
-import { listRelationshipModels, updateCategoryAssignments, updateRelationshipModels } from '../util';
 
 const STATE_ROOT = ['global', 'moderators'];
 const MODERATORS_IS_READY = [...STATE_ROOT, 'isReady'];

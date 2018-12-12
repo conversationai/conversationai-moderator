@@ -17,14 +17,15 @@ limitations under the License.
 import { List, Map } from 'immutable';
 import { Action } from 'redux-actions';
 import { ICommentModel } from '../../models';
-import { ILoadCompletePayload, IQueuedModelStateRecord, listCommentsById, makeQueuedModelStore } from '../util';
+import { listCommentsById } from '../platform/dataService';
+import { ILoadCompletePayload, IQueuedModelStateRecord, makeQueuedModelStore } from '../util';
 import { IAppStateRecord, IThunkAction } from './index';
 
 const queueModelStore = makeQueuedModelStore<string, ICommentModel>(
   async (commentIds: List<string>) => {
     const comments = await listCommentsById(commentIds);
 
-    return comments.reduce((sum, comment) => {
+    return comments.reduce((sum: Map<string, ICommentModel>, comment: ICommentModel) => {
       return sum.set(comment.get('id'), comment);
     }, Map<string, ICommentModel>());
   },

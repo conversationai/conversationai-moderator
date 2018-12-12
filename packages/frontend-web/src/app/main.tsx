@@ -37,11 +37,11 @@ import {
   reducer as authReducer,
   startAuthentication,
 } from './auth';
+import { validateID } from './platform/dataService';
 import { reducer as scenesReducer, scenes as makeRoutes } from './scenes';
 import { Login } from './scenes/Login';
 import { reducer as globalReducer } from './stores';
 import { clearReturnURL, getReturnURL } from './util';
-import { validateID } from './util/dataService';
 
 // Attach fastclick event handlers
 attachFastClick.attach(document.body);

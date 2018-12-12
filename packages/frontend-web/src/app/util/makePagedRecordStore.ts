@@ -17,8 +17,9 @@ limitations under the License.
 import { fromJS, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
+import { IMultipleResponse } from '../platform/dataService';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
-import { IMultipleResponse } from './dataService';
 import { makeAJAXAction } from './makeAJAXAction';
 import { convertArrayFromJSONAPI } from './makeRecordListReducer';
 

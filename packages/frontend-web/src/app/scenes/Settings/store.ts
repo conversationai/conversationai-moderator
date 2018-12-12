@@ -28,7 +28,7 @@ import {
   createModel,
   destroyModel,
   updateModel,
-} from '../../util';
+} from '../../platform/dataService';
 
 function diff<T extends Map<string, any>>(original: List<T>, current: List<T>): {
   modified: List<T>,

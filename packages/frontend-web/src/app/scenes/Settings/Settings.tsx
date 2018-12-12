@@ -31,7 +31,6 @@ import {
   TaggingSensitivityModel, TagModel,
 } from '../../../models';
 import { IConfirmationAction } from '../../../types';
-import { getToken } from '../../auth/store';
 import {
   Button,
   Header,
@@ -40,6 +39,7 @@ import {
   Scrim,
 } from '../../components';
 import { API_URL } from '../../config';
+import { getToken } from '../../platform/localStore';
 import { IAppDispatch } from '../../stores';
 import { css, partial, setCSRF, stylesheet } from '../../util';
 import { AddButton, EditButton } from './components/AddButton';

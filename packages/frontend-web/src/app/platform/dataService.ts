@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import {
   INewResource,
   IParams,
 } from '@conversationai/moderator-jsonapi/src/types';
+
 import {
   IArticleModel,
   IAuthorCountsModel,
@@ -49,10 +50,10 @@ import {
   UserModel,
 } from '../../models';
 import { ITopScore } from '../../types';
-import { getToken } from '../auth/store';
 import { API_URL } from '../config';
-import { convertArrayFromJSONAPI } from './makeRecordListReducer';
-import { convertFromJSONAPI } from './makeSingleRecordReducer';
+import { convertArrayFromJSONAPI } from '../util';
+import { convertFromJSONAPI } from '../util';
+import { getToken } from './localStore';
 
 export type IValidModelNames =
     'articles' |

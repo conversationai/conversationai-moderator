@@ -21,7 +21,6 @@ export * from './cssInJs';
 export * from './DotChartRenderer';
 export * from './sortDefinitions';
 export * from './createImmutableSelector';
-export * from './dataService';
 export * from './groupByColumn';
 export * from './highlightText';
 export * from './keyCodes';

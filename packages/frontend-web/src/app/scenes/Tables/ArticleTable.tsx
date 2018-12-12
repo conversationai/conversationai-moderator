@@ -24,6 +24,7 @@ import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
+import { updateModel, updateRelationshipModels } from '../../platform/dataService';
 import { ModelId } from '../../stores/moderators';
 import {
   HEADER_HEIGHT,
@@ -31,7 +32,7 @@ import {
   NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
 } from '../../styles';
-import { css, stylesheet, updateModel, updateRelationshipModels } from '../../util';
+import { css, stylesheet } from '../../util';
 import { AssignModeratorsSimple } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
 import { ArticleControlPopup } from './ArticleControlPopup';

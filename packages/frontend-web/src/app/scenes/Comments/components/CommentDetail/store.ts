@@ -18,17 +18,20 @@ import { fromJS, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
 import {
   IAuthorCountsModel,
   ICommentModel,
   ICommentScoreModel,
   ITaggingSensitivityModel,
 } from '../../../../../models';
-import { IThunkAction } from '../../../../stores';
 import {
   getModel,
   listAuthorCounts,
   listRelationshipModels,
+} from '../../../../platform/dataService';
+import { IThunkAction } from '../../../../stores';
+import {
   makeAJAXAction,
   makeRecordListReducer,
   makeSingleRecordReducer,
