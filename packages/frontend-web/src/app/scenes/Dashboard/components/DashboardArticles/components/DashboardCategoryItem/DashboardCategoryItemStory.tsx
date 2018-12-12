@@ -45,7 +45,7 @@ const STYLES = {
 };
 
 storiesOf('DashboardArticleItem', module)
-  .add('default', () => {
+  .add('test1', () => {
     const moderators = List([user1, user2, user3]);
 
     return (
