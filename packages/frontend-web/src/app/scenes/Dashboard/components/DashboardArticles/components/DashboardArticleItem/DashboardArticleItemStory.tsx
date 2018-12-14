@@ -19,7 +19,7 @@ import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import { fakeArticleModel, fakeUserModel } from '../../../../../../../models/fake';
-import { css } from '../../../../../../util';
+import { css } from '../../../../../../utilx';
 import { DashboardArticleItem } from '../DashboardArticleItem';
 
 const user1 = fakeUserModel({

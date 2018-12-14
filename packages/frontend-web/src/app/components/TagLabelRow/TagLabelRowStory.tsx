@@ -19,7 +19,7 @@ import { action } from '@storybook/addon-actions';
 
 import { fakeTagModel } from '../../../models/fake';
 import { DARK_COLOR, MEDIUM_COLOR } from '../../styles';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { TagLabelRow } from '../TagLabelRow';
 
 const tag1 = fakeTagModel({

@@ -17,7 +17,7 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 import { RejectIcon } from '../../components';
 

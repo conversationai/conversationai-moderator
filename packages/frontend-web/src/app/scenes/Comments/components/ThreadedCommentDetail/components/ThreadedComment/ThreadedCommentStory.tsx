@@ -18,7 +18,7 @@ import { storiesOf } from '@storybook/react';
 
 import { AuthorModelRecord, IAuthorModel } from '../../../../../../../models';
 import { fakeCommentModel } from '../../../../../../../models/fake';
-import { css } from '../../../../../../util';
+import { css } from '../../../../../../utilx';
 import { ThreadedComment } from './ThreadedComment';
 
 const author = AuthorModelRecord({

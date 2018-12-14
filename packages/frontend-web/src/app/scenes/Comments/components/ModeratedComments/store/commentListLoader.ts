@@ -18,8 +18,8 @@ import { Reducer } from 'redux-actions';
 import { IAppStateRecord, IThunkAction } from '../../../../../stores';
 import { getCurrentColumnSort } from '../../../../../stores/columnSorts';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
-import { makeLoadingReducer, ILoadingStateRecord } from '../../../../../util';
-import { commentSortDefinitions } from '../../../../../util/sortDefinitions';
+import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
+import { commentSortDefinitions,  } from '../../../../../utilx';
 import { storeCommentPagingOptions } from '../../CommentDetail';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
 import {

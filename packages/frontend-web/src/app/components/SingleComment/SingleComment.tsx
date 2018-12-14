@@ -58,7 +58,8 @@ import {
   TAG_UNSUBSTANTIAL_COLOR,
   WHITE_COLOR,
 } from '../../styles';
-import { css, maybeCallback, partial, stylesheet } from '../../util';
+import { maybeCallback, partial } from '../../util';
+import { css, stylesheet } from '../../utilx';
 import {
   ApproveIcon,
   EditIcon,

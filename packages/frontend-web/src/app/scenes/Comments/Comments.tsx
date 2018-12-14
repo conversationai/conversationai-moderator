@@ -33,7 +33,8 @@ import { loadArticleModerators, updateArticleModerators } from '../../stores/mod
 import {
   clearReturnSavedCommentRow,
 } from '../../util';
-import { css, identity, stylesheet } from '../../util';
+import { identity } from '../../util';
+import { css, stylesheet } from '../../utilx';
 import { AssignModerators } from '../Root/components/AssignModerators';
 import { ArticlePreview } from './components/ArticlePreview';
 

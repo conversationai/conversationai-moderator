@@ -19,7 +19,7 @@ import { action } from '@storybook/addon-actions';
 import { List } from 'immutable';
 
 import { fakeCategoryModel, fakeUserModel } from '../../../../../../../models/fake';
-import { css } from '../../../../../../util';
+import { css } from '../../../../../../utilx';
 import { DashboardCategoryItem } from '../DashboardCategoryItem';
 
 const user1 = fakeUserModel({

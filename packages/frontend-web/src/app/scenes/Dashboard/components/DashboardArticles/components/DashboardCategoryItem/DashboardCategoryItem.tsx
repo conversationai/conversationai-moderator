@@ -15,8 +15,9 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+
 import { ICategoryModel, IUserModel } from '../../../../../../../models';
 import { Link } from '../../../../../../components';
 import {
@@ -28,8 +29,9 @@ import {
   GUTTER_DEFAULT_SPACING,
   MEDIUM_COLOR,
 } from '../../../../../../styles';
-import { css, stylesheet } from '../../../../../../util';
-import { abbreviateModerators, maybeCallback, partial } from '../../../../../../util';
+import { css, stylesheet } from '../../../../../../utilx';
+import { maybeCallback, partial } from '../../../../../../util';
+import { abbreviateModerators } from '../../../../../../utilx';
 
 const STYLES = stylesheet({
   base: {

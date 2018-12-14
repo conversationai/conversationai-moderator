@@ -41,7 +41,8 @@ import {
 import { API_URL } from '../../config';
 import { getToken } from '../../platform/localStore';
 import { IAppDispatch } from '../../stores';
-import { css, partial, setCSRF, stylesheet } from '../../util';
+import { partial, setCSRF } from '../../util';
+import { css, stylesheet } from '../../utilx';
 import { AddButton, EditButton } from './components/AddButton';
 import { AddUsers } from './components/AddUsers';
 import { EditUsers } from './components/EditUsers';

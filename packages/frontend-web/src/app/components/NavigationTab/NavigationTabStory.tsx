@@ -24,7 +24,7 @@ import {
   LIGHT_PRIMARY_TEXT_COLOR,
   MEDIUM_COLOR,
 } from '../../styles';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import {
   ApproveIcon,
   DeferIcon,

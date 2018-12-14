@@ -17,7 +17,8 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
-import { css, partial, stylesheet } from '../../util';
+import { partial } from '../../util';
+import { css, stylesheet } from '../../utilx';
 const { Table, Column, Cell } = require('fixed-data-table-2');
 import { clamp } from 'lodash';
 import { ICommentModel, ITagModel } from '../../../models';

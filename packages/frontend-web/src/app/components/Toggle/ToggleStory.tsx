@@ -17,7 +17,7 @@ limitations under the License.
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { Toggle } from '../Toggle';
 
 storiesOf('Toggle', module)

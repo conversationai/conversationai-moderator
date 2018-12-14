@@ -17,7 +17,7 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List, Map } from 'immutable';
 import React from 'react';
-import { css, stylesheet } from '../../../../../../util';
+import { css, stylesheet } from '../../../../../../utilx';
 const { Table, Column, Cell } = require('fixed-data-table-2');
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../../../../../models';
 import { Link } from '../../../../../../components';

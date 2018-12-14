@@ -20,7 +20,8 @@ import React from 'react';
 
 import { ITagModel } from '../../../models';
 import { Button, CheckboxRow } from '../../components';
-import { css, maybeCallback, partial, stylesheet } from '../../util';
+import { maybeCallback, partial } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 import {
   GUTTER_DEFAULT_SPACING,

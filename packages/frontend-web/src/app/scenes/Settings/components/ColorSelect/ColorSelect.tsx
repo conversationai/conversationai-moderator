@@ -21,7 +21,7 @@ import {
   OFFSCREEN,
   PALE_COLOR,
 } from '../../../../styles';
-import { css, stylesheet } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 const SMALLER_SCREEN = window.innerWidth < 1200;
 
 const STYLES = stylesheet({

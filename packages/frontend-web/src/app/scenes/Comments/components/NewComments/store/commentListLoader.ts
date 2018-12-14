@@ -20,8 +20,8 @@ import { ITagModel } from '../../../../../../models';
 import { IAppStateRecord, IThunkAction } from '../../../../../stores';
 import { fetchCurrentColumnSort } from '../../../../../stores/columnSorts';
 import { getTags } from '../../../../../stores/tags';
-import { makeLoadingReducer, ILoadingStateRecord } from '../../../../../util';
-import { commentSortDefinitions } from '../../../../../util/sortDefinitions';
+import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
+import { commentSortDefinitions } from '../../../../../utilx';
 
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { storeCommentPagingOptions } from '../../CommentDetail';

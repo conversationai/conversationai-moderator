@@ -23,7 +23,7 @@ import {
   DARK_PRIMARY_TEXT_COLOR,
   LABEL_CHECK,
 } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 const AVATAR_SIZE = 46;
 

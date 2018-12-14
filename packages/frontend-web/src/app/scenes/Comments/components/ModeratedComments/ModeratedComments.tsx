@@ -53,8 +53,9 @@ import {
   TOOLTIP_Z_INDEX,
   WHITE_COLOR,
 } from '../../../../styles';
-import { css, partial, stylesheet } from '../../../../util';
-import { getSortDefault } from '../../../../util';
+import { partial } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
+import { getSortDefault } from '../../../../utilx';
 import { ModeratedStatusTabs } from './components/ModeratedStatusTabs';
 
 const ARROW_SIZE = 6;

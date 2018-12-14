@@ -23,7 +23,7 @@ import {
   DARK_LINK_TEXT_COLOR,
   MODAL_DROP_SHADOW,
 } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   base: {

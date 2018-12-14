@@ -20,7 +20,7 @@ import {
   BODY_TEXT_TYPE,
   TOOLTIP_Z_INDEX,
 } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 const BUFFER = 16;
 

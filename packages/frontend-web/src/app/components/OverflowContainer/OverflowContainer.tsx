@@ -21,7 +21,7 @@ import {
   DARK_PRIMARY_TEXT_COLOR,
   HEADLINE_TYPE,
 } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   container: {

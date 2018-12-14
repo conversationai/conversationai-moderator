@@ -31,7 +31,7 @@ import {
   LIGHT_SECONDARY_TEXT_COLOR,
   WHITE_COLOR,
 } from '../../../../styles';
-import { css } from '../../../../util';
+import { css } from '../../../../utilx';
 
 const ACTION_STYLES = {
   header: {

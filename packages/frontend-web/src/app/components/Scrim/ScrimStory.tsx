@@ -18,7 +18,7 @@ import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import { ARTICLE_HEADLINE_TYPE, DARK_SECONDARY_TEXT_COLOR, WHITE_COLOR } from '../../styles';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { Scrim } from '../Scrim';
 
 const STYLES = {

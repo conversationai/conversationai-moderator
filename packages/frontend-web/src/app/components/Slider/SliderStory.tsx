@@ -18,7 +18,7 @@ import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import { MEDIUM_COLOR } from '../../styles';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { DraggableHandle, Slider } from '../Slider';
 
 storiesOf('Slider', module)

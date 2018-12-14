@@ -14,16 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './abbreviateModerators';
-export * from './autoFocus';
 export * from './csrf';
-export * from './cssInJs';
 export * from './DotChartRenderer';
-export * from './sortDefinitions';
 export * from './createImmutableSelector';
 export * from './groupByColumn';
-export * from './highlightText';
-export * from './keyCodes';
 export * from './makeAJAXAction';
 export * from './makeCheckedSelectionStore';
 export * from './makeCurrentPagingIdentifierReducer';
@@ -34,8 +28,6 @@ export * from './makeSingleRecordReducer';
 export * from './makeQueuedModelStore';
 export * from './returnURL';
 export * from './timeout';
-export * from './withContext';
-export * from './withLoader';
 export * from './sortByLabel';
 export * from './returnSavedCommentRow';
 export * from './partial';

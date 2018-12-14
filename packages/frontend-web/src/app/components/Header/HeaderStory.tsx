@@ -24,7 +24,7 @@ import {
   LIGHT_PRIMARY_TEXT_COLOR,
   VISUALLY_HIDDEN,
 } from '../../styles';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { HomeIcon } from '../Icons';
 import { Link } from '../Link';
 import { Header } from './Header';

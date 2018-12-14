@@ -16,7 +16,7 @@ limitations under the License.
 
 import { storiesOf } from '@storybook/react';
 import { MEDIUM_COLOR } from '../../../../../../styles';
-import { css } from '../../../../../../util';
+import { css } from '../../../../../../utilx';
 import { DashboardNavCategory } from './DashboardNavCategory';
 
 storiesOf('DashboardNavCategory', module)

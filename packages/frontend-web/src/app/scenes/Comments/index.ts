@@ -27,7 +27,7 @@ import { IAppState, IAppStateRecord } from '../../stores';
 import { getArticleModerators, loadArticleModerators } from '../../stores/articleModerators';
 import { getCategories } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin } from '../../stores/users';
-import { withLoader } from '../../util';
+import { withLoader } from '../../utilx';
 import { Comments as PureComments } from './Comments';
 
 import {

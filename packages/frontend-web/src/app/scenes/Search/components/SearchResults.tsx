@@ -52,7 +52,8 @@ import {
   TOOLTIP_Z_INDEX,
   WHITE_COLOR,
 } from '../../../styles';
-import { always, css, partial, stylesheet } from '../../../util';
+import { always, partial } from '../../../util';
+import { css, stylesheet } from '../../../utilx';
 
 const TOAST_DELAY = 6000;
 

@@ -19,7 +19,7 @@ import { action } from '@storybook/addon-actions';
 
 import { AuthorModelRecord, IAuthorModel } from '../../../models';
 import { fakeCommentModel } from '../../../models/fake';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { SingleComment } from '../SingleComment';
 
 const date = new Date(2016, 10, 30);

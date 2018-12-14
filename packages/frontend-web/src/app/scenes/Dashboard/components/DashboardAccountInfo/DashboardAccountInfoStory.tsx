@@ -19,7 +19,7 @@ import { action } from '@storybook/addon-actions';
 
 import { fakeUserModel } from '../../../../../models/fake';
 import { MEDIUM_COLOR } from '../../../../styles';
-import { css } from '../../../../util';
+import { css } from '../../../../utilx';
 import { DashboardAccountInfo } from '../DashboardAccountInfo';
 const user = fakeUserModel({
   name: 'Person Name',

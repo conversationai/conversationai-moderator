@@ -28,7 +28,7 @@ import {
   MEDIUM_COLOR,
   OFFSCREEN,
 } from '../../../../styles';
-import { css, stylesheet } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 
 const AVATAR_SIZE = 32;
 const ARROW_SIZE = 6;

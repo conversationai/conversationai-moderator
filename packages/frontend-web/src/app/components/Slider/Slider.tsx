@@ -17,7 +17,7 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { clamp } from 'lodash';
 import React from 'react';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 const Draggable = require('react-draggable');
 import {
   HANDLE_LABEL_TYPE,
@@ -32,7 +32,7 @@ import {
   LEFT_ARROW_KEY,
   RIGHT_ARROW_KEY,
   UP_ARROW_KEY,
-} from '../../util';
+} from '../../utilx';
 
 const HANDLE_SIZE = 22;
 const HANDLE_HIT_CONTAINER_SIZE = 44;

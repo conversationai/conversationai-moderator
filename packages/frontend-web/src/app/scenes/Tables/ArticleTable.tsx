@@ -32,7 +32,7 @@ import {
   NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
 } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 import { AssignModeratorsSimple } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
 import { ArticleControlPopup } from './ArticleControlPopup';

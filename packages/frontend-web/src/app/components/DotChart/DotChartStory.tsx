@@ -21,7 +21,7 @@ import {
   MEDIUM_COLOR,
 } from '../../styles';
 import { groupByDateColumns, groupByScoreColumns } from '../../util';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { DotChart } from '../DotChart';
 import {
   ApproveIcon,

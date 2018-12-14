@@ -22,7 +22,7 @@ import Timer = NodeJS.Timer;
 import { IArticleModel, IUserModel } from '../../../models';
 import * as icons from '../../components/Icons';
 import { GREY_COLOR, NICE_CONTROL_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { COMMON_STYLES, ICON_STYLES } from './styles';
 
 export interface IMagicTimestampProps {

@@ -25,7 +25,7 @@ import {
   LIGHT_SECONDARY_TEXT_COLOR,
   SHORT_SCREEN_QUERY,
 } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   base: {

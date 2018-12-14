@@ -34,7 +34,7 @@ import {
   SIDEBAR_BLUE,
 } from '../../styles';
 import { NICE_DARK_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 import { dashboardLink, oldDashboardLink, searchLink, settingsLink } from '../routes';
 import { COMMON_STYLES } from './styles';
 import {FILTER_CATEGORY, FILTER_MODERATORS, FILTER_MODERATORS_ME} from './utils';
