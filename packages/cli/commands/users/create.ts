@@ -36,7 +36,7 @@ export function builder(args: yargs.Argv) {
     .usage('Usage: node $0 create --group general --name "User Name" \\\n' +
            '                                  --email name@example.com\n' +
            '       node $0 create --group service --name "Service Name"\n' +
-           '       node $0 create --group service --name "Service Name" \\\n' +
+           '       node $0 create --group moderator --name "Service Name" \\\n' +
            '                                  --moderator-type <type> --api-key <key> \\\n' +
            '                                  [--endpoint <url>] [--user-agent <agent>] [--attributes <attributes>]\n')
     .demand('group')
