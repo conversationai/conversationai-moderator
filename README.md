@@ -46,6 +46,7 @@ Install mysql, node (v10 or better), npm (v6 or better) and redis.  Instructions
 
 ```bash
 sudo apt install mysql-server nodejs npm redis
+sudo apt install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 sudo npm install -g npm n
 sudo n v10
 hash -r
