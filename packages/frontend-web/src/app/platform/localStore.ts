@@ -17,9 +17,11 @@ limitations under the License.
 import { RESTRICT_TO_SESSION } from '../config';
 
 const LOCAL_STORAGE_AUTH_TOKEN_KEY = 'moderator/auth_token';
+const javascriptStorage: any = {};
+
 const storage = () => {
   if (typeof localStorage === 'undefined') {
-    return {} as any;
+    return javascriptStorage;
   }
   if (RESTRICT_TO_SESSION) {
     return sessionStorage;

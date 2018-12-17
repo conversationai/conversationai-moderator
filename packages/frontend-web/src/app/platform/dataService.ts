@@ -19,6 +19,15 @@ import { fromJS, List, Map } from 'immutable';
 import { isNaN, pick } from 'lodash';
 import qs from 'qs';
 
+let myws: any;
+
+if (typeof(WebSocket) === 'undefined') {
+  myws = require('ws');
+}
+else {
+  myws = WebSocket;
+}
+
 import {
   INewResource,
   IParams,
@@ -54,6 +63,8 @@ import { API_URL } from '../config';
 import { convertArrayFromJSONAPI } from '../util';
 import { convertFromJSONAPI } from '../util';
 import { getToken } from './localStore';
+
+  // const WebSocket = (typeof window === null) require('ws');
 
 export type IValidModelNames =
     'articles' |
@@ -984,16 +995,16 @@ export function connectNotifier(
   globalNotificationHandler: (data: IGlobalSummary) => void,
   userNotificationHandler: (data: IUserSummary) => void) {
   function checkSocketAlive() {
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
+    if (!ws || ws.readyState !== myws.OPEN) {
       const token = getToken();
       const baseurl = serviceURL(`updates/summary/?token=${token}`);
       const url = 'ws:' + baseurl.substr(baseurl.indexOf(':') + 1);
 
-      ws = new WebSocket(url);
+      ws = new myws(url);
       ws.onopen = () => {
         console.log('opened websocket');
 
-        ws.onclose = (e: CloseEvent) => {
+        ws.onclose = (e: {code: number}) => {
           console.log('websocket closed', e.code);
           socketUp = false;
           if (!gotSystem && !gotGlobal && !gotUser) {
@@ -1007,7 +1018,7 @@ export function connectNotifier(
         };
       };
 
-      ws.onmessage = (message) => {
+      ws.onmessage = (message: {data: any}) => {
         const body: any = JSON.parse(message.data);
 
         if (body.type === 'system') {

@@ -36,7 +36,7 @@ const completedAuthentication =
 
 export const logout: () => Action<void> = createAction('auth/LOGOUT');
 
-function setAxiosToken(token: string): void {
+export function setAxiosToken(token: string): void {
   // Use query string for auth.
   axios.interceptors.request.use((config) => {
     config.params = {
@@ -58,7 +58,7 @@ function setAxiosToken(token: string): void {
   }
 }
 
-function decodeToken(token: string): any {
+export function decodeToken(token: string): any {
   return jwtDecode(token);
 }
 

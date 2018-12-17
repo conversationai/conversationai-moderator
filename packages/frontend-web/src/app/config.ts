@@ -14,76 +14,64 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-declare var __DEVELOPMENT__: string;
+// Config from webpack
+declare const __DEVELOPMENT__: boolean;
+declare const ENV_API_URL: string;
+declare const ENV_APP_NAME: string;
+declare const ENV_REQUIRE_REASON_TO_REJECT: boolean;
+declare const ENV_COMMENTS_EDITABLE_FLAG: boolean;
+declare const ENV_RESTRICT_TO_SESSION: boolean;
+declare const ENV_MODERATOR_GUIDELINES_URL: string;
+declare const ENV_SUBMIT_FEEDBACK_URL: string;
+// End config from webpack
 
-export const DEVELOPMENT = (typeof __DEVELOPMENT__ !== 'undefined')
-    ? __DEVELOPMENT__
-    : true;
+// Config from HTML template
 
-declare var ENV_API_URL: string;
+function get_config() {
+  if (typeof(window) !== 'undefined') {
+    return (window as any)['osmod_config'];
+  }
+  return (global as any)['osmod_config'];
+}
 
-const ENV_API_URL_VALUE = (typeof ENV_API_URL !== 'undefined')
-    ? ENV_API_URL
-    : '';
+function getString(key: string, fallback: string): string {
+  const osmod_config = get_config();
+  if (typeof osmod_config === 'undefined' || !(key in osmod_config)) {
+    return fallback;
+  }
+  const val = osmod_config[key] as string;
+  if (val.startsWith('{{') || val.length === 0) {
+    return fallback;
+  }
 
-export const API_URL = (
-   (window as any)['API_URL'] && ((window as any)['API_URL'] !== '{{API_URL}}')
- ) ? (window as any)['API_URL'] : ENV_API_URL_VALUE;
+  return val;
+}
 
-declare var ENV_APP_NAME: string;
+function getBoolean(key: string, fallback: boolean): boolean {
+  const osmod_config = get_config();
+  if (typeof osmod_config === 'undefined' || !(key in osmod_config)) {
+    return fallback;
+  }
+  const val = osmod_config[key] as string;
+  if (val.startsWith('{{') || val.length === 0) {
+    return fallback;
+  }
 
-const ENV_APP_NAME_VALUE = (typeof ENV_APP_NAME !== 'undefined')
-    ? ENV_APP_NAME
-    : 'Moderator';
+  return val === 'true';
+}
 
-export const APP_NAME = (
-   (window as any)['APP_NAME'] && ((window as any)['APP_NAME'] !== '{{APP_NAME}}')
- ) ? (window as any)['APP_NAME'] : ENV_APP_NAME_VALUE;
+// End config from HTML template
 
-declare var ENV_REQUIRE_REASON_TO_REJECT: boolean;
-
-const ENV_REQUIRE_REASON_TO_REJECT_VALUE = (typeof ENV_REQUIRE_REASON_TO_REJECT !== 'undefined')
-    ? ENV_REQUIRE_REASON_TO_REJECT
-    : false;
-export const REQUIRE_REASON_TO_REJECT = (
-   (window as any)['REQUIRE_REASON_TO_REJECT'] && ((window as any)['REQUIRE_REASON_TO_REJECT'] !== '{{REQUIRE_REASON_TO_REJECT}}')
- ) ? (window as any)['REQUIRE_REASON_TO_REJECT'] === 'true' : ENV_REQUIRE_REASON_TO_REJECT_VALUE;
-
-declare var ENV_COMMENTS_EDITABLE_FLAG: boolean;
-
-const ENV_COMMENTS_EDITABLE_FLAG_VALUE = (typeof ENV_COMMENTS_EDITABLE_FLAG !== 'undefined')
-  ? ENV_COMMENTS_EDITABLE_FLAG
-  : true;
-export const COMMENTS_EDITABLE_FLAG = (
-  (window as any)['COMMENTS_EDITABLE_FLAG'] && ((window as any)['COMMENTS_EDITABLE_FLAG'] !== '{{COMMENTS_EDITABLE_FLAG}}')
-) ? (window as any)['COMMENTS_EDITABLE_FLAG'] === 'true' : ENV_COMMENTS_EDITABLE_FLAG_VALUE;
-declare var ENV_RESTRICT_TO_SESSION: boolean;
-
-const ENV_RESTRICT_TO_SESSION_VALUE = (typeof ENV_RESTRICT_TO_SESSION !== 'undefined')
-    ? ENV_RESTRICT_TO_SESSION
-    : false;
-export const RESTRICT_TO_SESSION = (
-   (window as any)['RESTRICT_TO_SESSION'] && ((window as any)['RESTRICT_TO_SESSION'] !== '{{RESTRICT_TO_SESSION}}')
- ) ? (window as any)['RESTRICT_TO_SESSION'] === 'true' : ENV_RESTRICT_TO_SESSION_VALUE;
-
-declare var ENV_MODERATOR_GUIDELINES_URL: string;
-const ENV_MODERATOR_GUIDELINES_URL_VALUE = (typeof ENV_MODERATOR_GUIDELINES_URL !== 'undefined')
-    ? ENV_MODERATOR_GUIDELINES_URL
-    : '';
-export const MODERATOR_GUIDELINES_URL = (
-   (window as any)['MODERATOR_GUIDELINES_URL'] && ((window as any)['MODERATOR_GUIDELINES_URL'] !== '{{MODERATOR_GUIDELINES_URL}}')
- ) ? (window as any)['MODERATOR_GUIDELINES_URL'] : ENV_MODERATOR_GUIDELINES_URL_VALUE;
-
-declare var ENV_SUBMIT_FEEDBACK_URL: string;
-const ENV_SUBMIT_FEEDBACK_URL_VALUE = (typeof ENV_SUBMIT_FEEDBACK_URL !== 'undefined')
-    ? ENV_SUBMIT_FEEDBACK_URL
-    : '';
-export const SUBMIT_FEEDBACK_URL = (
-   (window as any)['SUBMIT_FEEDBACK_URL'] && ((window as any)['SUBMIT_FEEDBACK_URL'] !== '{{SUBMIT_FEEDBACK_URL}}')
- ) ? (window as any)['SUBMIT_FEEDBACK_URL'] : ENV_SUBMIT_FEEDBACK_URL_VALUE;
-
+// Turn externally defined config into exports
+export const DEVELOPMENT = (typeof __DEVELOPMENT__ !== 'undefined') ? __DEVELOPMENT__  : true;
+export const API_URL = getString('API_URL', (typeof ENV_API_URL !== 'undefined') ? ENV_API_URL : '');
+export const APP_NAME = getString('APP_NAME', (typeof ENV_APP_NAME !== 'undefined') ? ENV_APP_NAME : 'Moderator');
+export const REQUIRE_REASON_TO_REJECT = getBoolean('REQUIRE_REASON_TO_REJECT', (typeof ENV_REQUIRE_REASON_TO_REJECT !== 'undefined') ? ENV_REQUIRE_REASON_TO_REJECT : false);
+export const COMMENTS_EDITABLE_FLAG = getBoolean('COMMENTS_EDITABLE_FLAG', (typeof ENV_COMMENTS_EDITABLE_FLAG !== 'undefined') ? ENV_COMMENTS_EDITABLE_FLAG : true);
+export const RESTRICT_TO_SESSION = getBoolean('RESTRICT_TO_SESSION', (typeof ENV_RESTRICT_TO_SESSION !== 'undefined') ? ENV_RESTRICT_TO_SESSION : false);
+export const MODERATOR_GUIDELINES_URL = getString('MODERATOR_GUIDELINES_URL', (typeof ENV_MODERATOR_GUIDELINES_URL !== 'undefined') ? ENV_MODERATOR_GUIDELINES_URL : '');
+export const SUBMIT_FEEDBACK_URL = getString('SUBMIT_FEEDBACK_URL', (typeof ENV_SUBMIT_FEEDBACK_URL !== 'undefined') ? ENV_SUBMIT_FEEDBACK_URL : '');
 export const FOCUS_DATA_ATTR = 'data-focus-id';
-export const ANNOTATION_THRESHOLD = 0.6;
 export const DEFAULT_DRAG_HANDLE_POS1 = 0;
 export const DEFAULT_DRAG_HANDLE_POS2 = 0.2;
 export const DATE_FORMAT_LONG = 'MMM. D, YYYY h:mm A';
