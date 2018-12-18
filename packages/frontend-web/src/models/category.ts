@@ -21,9 +21,18 @@ import { IUserModel, UserModel } from './user';
 export interface ICategoryAttributes {
   id: string | 'all' | 'deferred' | 'assignments';
   label: string;
+  updatedAt: string;
+  allCount: number;
   unprocessedCount: number;
   unmoderatedCount: number;
   moderatedCount: number;
+  deferredCount: number;
+  approvedCount: number;
+  highlightedCount: number;
+  rejectedCount: number;
+  flaggedCount: number;
+  recommendedCount: number;
+  batchedCount: number;
   assignedModerators: Array<IUserModel>;
 }
 
@@ -32,9 +41,18 @@ export interface ICategoryModel extends TypedRecord<ICategoryModel>, ICategoryAt
 const CategoryModelRecord = Record({
   id: null,
   label: null,
+  updatedAt: null,
+  allCount: null,
   unprocessedCount: null,
   unmoderatedCount: null,
   moderatedCount: null,
+  deferredCount: null,
+  approvedCount: null,
+  highlightedCount: null,
+  rejectedCount: null,
+  flaggedCount: null,
+  recommendedCount: null,
+  batchedCount: null,
   assignedModerators: null,
 });
 

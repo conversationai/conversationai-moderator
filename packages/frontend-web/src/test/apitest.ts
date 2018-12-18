@@ -20,8 +20,9 @@ limitations under the License.
 };
 
 import { decodeToken, setAxiosToken } from '../app/auth/store';
-import {connectNotifier, IGlobalSummary, ISystemSummary, IUserSummary} from '../app/platform/dataService';
-import {saveToken} from '../app/platform/localStore';
+import { connectNotifier } from '../app/platform/dataService';
+import { saveToken } from '../app/platform/localStore';
+import { globalUpdate, systemUpdate, userUpdate } from './notificationChecks';
 
 const token = process.argv[2];
 if (!token) {
@@ -42,29 +43,20 @@ saveToken(token);
 setAxiosToken(token);
 
 function websocketStateHandler(status: string): void {
-  console.log('state change', status);
-}
-
-function systemNotificationHandler(data: ISystemSummary): void {
-  console.log('Received system update message', data);
-}
-
-function globalNotificationHandler(data: IGlobalSummary): void {
-  console.log('Received global update message', data);
-}
-
-function userNotificationHandler(data: IUserSummary): void {
-  console.log('Received user update message', data);
+  console.log(`WebSocket state change.  New status: ${status}`);
 }
 
 connectNotifier(
   websocketStateHandler,
-  systemNotificationHandler,
-  globalNotificationHandler,
-  userNotificationHandler,
-  );
+  systemUpdate.notificationHandler,
+  globalUpdate.notificationHandler,
+  userUpdate.notificationHandler,
+);
 
 setTimeout(() => {
+  systemUpdate.stateCheck();
+  globalUpdate.stateCheck();
+  userUpdate.stateCheck();
   console.log('shutting down.');
   process.exit(0);
 }, 10000);

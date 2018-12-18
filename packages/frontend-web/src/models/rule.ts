@@ -18,8 +18,14 @@ import { fromJS, Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 import { ICommentAction } from '../types';
 
+export const MODERATION_RULE_ACTION_ACCEPT = 'Accept';
+export const MODERATION_RULE_ACTION_REJECT = 'Reject';
+export const MODERATION_RULE_ACTION_DEFER = 'Defer';
+export const MODERATION_RULE_ACTION_HIGHLIGHT = 'Highlight';
+
 export interface IRuleAttributes {
   id: string;
+  // This is wrong.  It should be one of the actions above.
   action: ICommentAction | null;
   categoryId: string | null;
   createdBy: string | null;
@@ -45,6 +51,7 @@ export function RuleModel(keyValuePairs?: IRuleAttributes): IRuleModel {
 
   if (typeof immutableKeyValuePairs.get('action') === 'string') {
     immutableKeyValuePairs = immutableKeyValuePairs.update('action', (rule: string) => {
+      // TODO fix up this crazyness.
       if (rule === 'Accept') {
         rule = 'Approve';
       }
