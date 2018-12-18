@@ -35,7 +35,6 @@
     "@types/request": "2.47.0",
     "@types/sequelize": "3.4.43",
     "@types/underscore.string": "0.0.30",
-    "@types/winston": "2.3.0",
     "bluebird": "3.5.2",
     "body-parser": "1.17.1",
     "compression": "1.6.2",

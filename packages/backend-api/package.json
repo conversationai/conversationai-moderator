@@ -39,7 +39,6 @@
     "@types/request": "2.47.0",
     "@types/sequelize": "3.4.43",
     "@types/underscore.string": "0.0.30",
-    "@types/winston": "2.3.0",
     "bluebird": "3.5.2",
     "canvas": "2.2.0",
     "express": "4.16.3",
@@ -57,7 +56,6 @@
     "randomstring": "1.1.5",
     "request": "2.87.0",
     "sequelize": "3.30.4",
-    "underscore.string": "3.3.4",
-    "winston": "2.3.1"
+    "underscore.string": "3.3.4"
   }
 }

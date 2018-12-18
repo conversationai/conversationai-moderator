@@ -21,7 +21,7 @@ const publicPath = "/_assets/";
 module.exports = {
   target: 'web',
 
-  entry: {moderator: './dist/app/main'},
+  entry: {moderator: ['@babel/polyfill', './dist/app/main']},
 
   output: {
     path: path.join(__dirname, "..", "build"),

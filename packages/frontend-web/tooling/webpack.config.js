@@ -25,6 +25,7 @@ module.exports = {
     moderator: [
       `webpack-dev-server/client?http://0.0.0.0:${config.get('port')}`,
       'webpack/hot/only-dev-server',
+      '@babel/polyfill',
       './dist/app/main'
     ]
   },
