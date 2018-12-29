@@ -40,6 +40,11 @@ function getString(key: string, fallback: string): string {
     return fallback;
   }
   const val = osmod_config[key] as string;
+
+  if (typeof val === 'undefined') {
+    return fallback;
+  }
+
   if (val.startsWith('{{') || val.length === 0) {
     return fallback;
   }
@@ -52,7 +57,13 @@ function getBoolean(key: string, fallback: boolean): boolean {
   if (typeof osmod_config === 'undefined' || !(key in osmod_config)) {
     return fallback;
   }
+
   const val = osmod_config[key] as string;
+
+  if (typeof val === 'undefined') {
+    return fallback;
+  }
+
   if (val.startsWith('{{') || val.length === 0) {
     return fallback;
   }

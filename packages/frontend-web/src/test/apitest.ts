@@ -42,21 +42,27 @@ catch (e) {
 saveToken(token);
 setAxiosToken(token);
 
-function websocketStateHandler(status: string): void {
-  console.log(`WebSocket state change.  New status: ${status}`);
-}
+(async () => {
+  const readyPromise = new Promise<void>((resolve) => {
+    function websocketStateHandler(status: string): void {
+      console.log(`WebSocket state change.  New status: ${status}`);
+      resolve();
+    }
 
-connectNotifier(
-  websocketStateHandler,
-  systemUpdate.notificationHandler,
-  globalUpdate.notificationHandler,
-  userUpdate.notificationHandler,
-);
+    connectNotifier(
+      websocketStateHandler,
+      systemUpdate.notificationHandler,
+      globalUpdate.notificationHandler,
+      userUpdate.notificationHandler,
+    );
+  });
 
-setTimeout(() => {
+  await readyPromise;
+
   systemUpdate.stateCheck();
   globalUpdate.stateCheck();
   userUpdate.stateCheck();
+
   console.log('shutting down.');
   process.exit(0);
-}, 10000);
+})();
