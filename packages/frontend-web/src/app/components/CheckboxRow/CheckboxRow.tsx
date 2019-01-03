@@ -43,6 +43,11 @@ const STYLES = stylesheet({
     color: DARK_PRIMARY_TEXT_COLOR,
   },
 
+  rowDisabled: {
+    opacity: '0.75',
+    backgroundColor: '#eee',
+  },
+
   avatar: {
     height: AVATAR_SIZE,
     marginRight: '28px',
@@ -66,6 +71,7 @@ const STYLES = stylesheet({
 export interface ICheckboxRowProps {
   label: string;
   isSelected?: boolean;
+  isDisabled?: boolean;
   user?: IUserModel;
   onChange?(): void;
 }
@@ -74,13 +80,13 @@ export class CheckboxRow
     extends React.Component<ICheckboxRowProps> {
 
   render() {
-    const { label, user, isSelected } = this.props;
+    const { label, user, isSelected, isDisabled } = this.props;
 
     const id = label.replace(/\s/g, '');
 
     return (
       <div {...css(STYLES.base)}>
-        <div {...css(STYLES.row)}>
+        <div {...css(STYLES.row, isDisabled ? STYLES.rowDisabled : {})}>
           <label
             htmlFor={id}
             onClick={this.handleClick}

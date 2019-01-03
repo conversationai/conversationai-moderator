@@ -22,10 +22,12 @@ import { IUserModel, UserModel } from './user';
 export interface IArticleAttributes {
   id: string;
   sourceCreatedAt: string;
+  updatedAt: string;
   title: string;
   text: string;
   url: string;
   category: ICategoryModel;
+  allCount: number;
   unprocessedCount: number;
   unmoderatedCount: number;
   moderatedCount: number;
@@ -39,6 +41,7 @@ export interface IArticleAttributes {
   automatedCount: number;
   lastModeratedAt: string;
   assignedModerators: Array<IUserModel>;
+  isCommentingEnabled: boolean;
   isAutoModerated: boolean;
 }
 
@@ -47,10 +50,12 @@ export interface IArticleModel extends TypedRecord<IArticleModel>, IArticleAttri
 const ArticleModelRecord = Record({
   id: null,
   sourceCreatedAt: null,
+  updatedAt: null,
   text: null,
   title: null,
   url: null,
   category: null,
+  allCount: null,
   unprocessedCount: null,
   unmoderatedCount: null,
   moderatedCount: null,
@@ -63,6 +68,7 @@ const ArticleModelRecord = Record({
   recommendedCount: null,
   lastModeratedAt: null,
   assignedModerators: null,
+  isCommentingEnabled: null,
   isAutoModerated: null,
 });
 

@@ -22,6 +22,14 @@ export const DIVIDER_COLOR = '#ededed';
 export const PALE_COLOR = '#f4f7f9';
 export const WHITE_COLOR = '#ffffff';
 export const GREY_COLOR = '#999999';
+export const NICE_DARK_BLUE = '#0f4a92';
+export const NICE_MIDDLE_BLUE = '#185bac';
+export const NICE_LIGHT_BLUE = '#95b3d8';
+export const NICE_LIGHTEST_BLUE = '#e1e9f4';
+export const NICE_CONTROL_BLUE = '#2e84ed';
+export const NICE_BLUE_GREY = '#eff0f0';
+export const SIDEBAR_BLUE = '#0f4a92';
+export const NICE_LIGHT_HIGHLIGHT_BLUE = '#2e83ed';
 
 // TEXT COLOR
 export const DARK_PRIMARY_TEXT_COLOR = 'rgba(0, 0, 0, 0.87)';

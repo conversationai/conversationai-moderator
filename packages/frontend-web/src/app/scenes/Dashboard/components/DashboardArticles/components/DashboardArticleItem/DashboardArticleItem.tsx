@@ -16,8 +16,9 @@ limitations under the License.
 
 import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import { List } from 'immutable';
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../../../../../models';
 import { CanvasTruncate, Link } from '../../../../../../components';
 import {
@@ -31,6 +32,7 @@ import {
 } from '../../../../../../styles';
 import { css, partial, stylesheet } from '../../../../../../util';
 import { abbreviateModerators } from '../../../../../../util';
+import { oldDashboardLink } from '../../../../../routes';
 
 const STYLES = stylesheet({
   base: {
@@ -177,7 +179,7 @@ export class DashboardArticleItem
               article.category.label &&
               category &&
               category.label !== article.category.label && (
-                <Link key={`${article.category.id}`} {...css(STYLES.category)} to={`/dashboard/${article.category.id}`}>
+                <Link key={`${article.category.id}`} {...css(STYLES.category)} to={oldDashboardLink(article.category.id)}>
                   {article.category.label}
                 </Link>
             )}
@@ -196,7 +198,7 @@ export class DashboardArticleItem
           <div {...css(STYLES.moderation)}>
             {articleModerators.size === 0 && (
               <button
-                key="assignArticlModerators"
+                key="assignArticleModerators"
                 {...css(STYLES.moderatorButton)}
                 onClick={partial(onAddArticleModeratorClick, article)}
                 aria-controls={this.context.ariaControlsArticle}

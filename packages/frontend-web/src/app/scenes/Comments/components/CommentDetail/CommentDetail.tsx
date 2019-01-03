@@ -13,15 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-import React from 'react';
-import { WithRouterProps } from 'react-router';
-import { css, stylesheet } from '../../../../util';
-const FocusTrap = require('focus-trap-react');
 import { autobind } from 'core-decorators';
+import FocusTrap from 'focus-trap-react';
 import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
-import { Link } from 'react-router';
+import React from 'react';
+import { Link, WithRouterProps } from 'react-router';
+
 import {
   CommentScoreModel,
   IAuthorCountsModel,
@@ -79,6 +77,7 @@ import {
   WHITE_COLOR,
 } from '../../../../styles';
 import { clearReturnSavedCommentRow, partial, setReturnSavedCommentRow, timeout } from '../../../../util';
+import { css, stylesheet } from '../../../../util';
 import { Shortcuts } from '../Shortcuts';
 
 const ACTION_PROPERTY_MAP: {

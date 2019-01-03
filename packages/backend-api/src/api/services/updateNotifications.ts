@@ -34,7 +34,7 @@ const ruleFields = ['action', 'createdBy', ...rangeFields];
 const preselectFields = rangeFields;
 const userFields = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
 
-const commonFields = ['id', 'updatedAt', 'count', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
+const commonFields = ['id', 'updatedAt', 'allCount', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
   'approvedCount', 'highlightedCount', 'rejectedCount', 'deferredCount', 'flaggedCount',
   'batchedCount', 'recommendedCount', 'assignedModerators', ];
 const categoryFields = [...commonFields, 'label'];

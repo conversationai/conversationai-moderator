@@ -65,31 +65,33 @@ type IAssignModeratorsDispatchProps = Pick<
   'onRemoveModerator'
 >;
 
-const mapStateToProps = createStructuredSelector({
-  users: (state: IAppStateRecord): Array<IUserModel> => {
-    const userId = getMyUserId(state);
-    const allUsers = getUsers(state);
-    const currentUser = [];
-    const assignedUsers = [];
-    const unassignedUsers = [];
+function getSortedUsers (state: IAppStateRecord): Array<IUserModel> {
+  const userId = getMyUserId(state);
+  const allUsers = getUsers(state);
+  const currentUser = [];
+  const assignedUsers = [];
+  const unassignedUsers = [];
 
-    for (const u of allUsers.toArray()) {
-      if (u.id === userId) {
-        currentUser.push(u);
-      }
-      else if (getIsModeratedUser(state, u.id)) {
-        assignedUsers.push(u);
-      }
-      else {
-        unassignedUsers.push(u);
-      }
+  for (const u of allUsers.toArray()) {
+    if (u.id === userId) {
+      currentUser.push(u);
     }
+    else if (getIsModeratedUser(state, u.id)) {
+      assignedUsers.push(u);
+    }
+    else {
+      unassignedUsers.push(u);
+    }
+  }
 
-    const assignedUsersSorted = assignedUsers.sort((a, b) => a.name.localeCompare(b.name));
-    const unassignedUsersSorted = unassignedUsers.sort((a, b) => a.name.localeCompare(b.name));
+  const assignedUsersSorted = assignedUsers.sort((a, b) => a.name.localeCompare(b.name));
+  const unassignedUsersSorted = unassignedUsers.sort((a, b) => a.name.localeCompare(b.name));
 
-    return [...currentUser, ...assignedUsersSorted, ...unassignedUsersSorted];
-  },
+  return [...currentUser, ...assignedUsersSorted, ...unassignedUsersSorted];
+}
+
+const mapStateToProps = createStructuredSelector({
+  users: getSortedUsers,
 
   moderatorIds: (state: IAppStateRecord, { article }: any) => (
     article
@@ -125,4 +127,13 @@ function mapDispatchToProps(dispatch: IAppDispatch, { article, category }: IAssi
 export const AssignModerators: React.ComponentClass<IAssignModeratorsProps> = connect<IAssignModeratorsStateProps, IAssignModeratorsDispatchProps, IAssignModeratorsOwnProps>(
   mapStateToProps,
   mapDispatchToProps,
+)(PureAssignModerators);
+
+const mapStateToPropsSimple = createStructuredSelector({
+  users: getSortedUsers,
+  isReady: () => true,
+}) as (state: IAppStateRecord, ownProps: IAssignModeratorsOwnProps) => IAssignModeratorsStateProps;
+
+export const AssignModeratorsSimple: React.ComponentClass<IAssignModeratorsProps> = connect<IAssignModeratorsStateProps, IAssignModeratorsDispatchProps, IAssignModeratorsOwnProps>(
+  mapStateToPropsSimple,
 )(PureAssignModerators);

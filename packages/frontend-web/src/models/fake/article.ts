@@ -26,6 +26,7 @@ export function fakeArticleModel(overrides: Partial<IArticleAttributes> = {}): I
     text: faker.lorem.paragraph(),
     url: faker.internet.url(),
     category: fakeCategoryModel(),
+    allCount: 0,
     unprocessedCount: 0,
     unmoderatedCount: 0,
     moderatedCount: 0,

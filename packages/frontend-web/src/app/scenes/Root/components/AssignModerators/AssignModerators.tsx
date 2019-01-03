@@ -95,6 +95,7 @@ export type ModelId = string | number;
 export interface IModeratorListProps {
   users: List<IUserModel>;
   moderatorIds: Set<ModelId>;
+  categoryModeratorIds?: Set<ModelId>;
   onModeratorStatusChange?(userId: string, checked: boolean): void;
 }
 
@@ -103,13 +104,15 @@ class ModeratorList extends React.Component<IModeratorListProps> {
     const {
       users,
       moderatorIds,
+      categoryModeratorIds,
       onModeratorStatusChange,
     } = this.props;
 
     return (
       <ul {...css(STYLES.list)}>
         {users.map((user) => {
-          const isSelected = moderatorIds && moderatorIds.includes(user.id);
+          const isDisabled = categoryModeratorIds && categoryModeratorIds.includes(user.id);
+          const isSelected = moderatorIds && moderatorIds.includes(user.id) || isDisabled;
 
           return (
             <li {...css(STYLES.listItem)} key={user.id}>
@@ -117,6 +120,7 @@ class ModeratorList extends React.Component<IModeratorListProps> {
                 label={user.name}
                 user={user}
                 isSelected={isSelected}
+                isDisabled={isDisabled}
                 onChange={partial(onModeratorStatusChange, user.id, isSelected)}
               />
             </li>
@@ -146,6 +150,7 @@ export interface IAssignModeratorsProps {
   category?: ICategoryModel;
   users?: List<IUserModel>;
   moderatorIds?: Set<ModelId>;
+  categoryModeratorIds?: Set<ModelId>;
   isReady?: boolean;
   label: string;
   onClickDone?(assignment: ICategoryModel | IArticleModel,  moderators: Array<IUserModel>): void;
@@ -177,6 +182,7 @@ export class AssignModerators
     const {
       label,
       moderatorIds,
+      categoryModeratorIds,
       isReady,
     } = this.props;
 
@@ -192,6 +198,7 @@ export class AssignModerators
             <ModeratorList
               users={this.state.users}
               moderatorIds={moderatorIds}
+              categoryModeratorIds={categoryModeratorIds}
               onModeratorStatusChange={this.onModeratorStatusChange}
             />
           </div>

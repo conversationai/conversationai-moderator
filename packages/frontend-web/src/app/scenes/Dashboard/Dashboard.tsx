@@ -15,11 +15,11 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import React from 'react';
-import PropTypes from 'prop-types';
-import { css, stylesheet } from '../../util';
-const FocusTrap = require('focus-trap-react');
+import FocusTrap from 'focus-trap-react';
 import keyboardJS from 'keyboardjs';
+import PropTypes from 'prop-types';
+import React from 'react';
+
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
 import { logout } from '../../auth';
 import {
@@ -46,10 +46,13 @@ import {
   SCRIM_STYLE,
   WHITE_COLOR,
 } from '../../styles';
-import { autoFocus, withContext} from '../../util';
+import { css, stylesheet } from '../../util';
+import { autoFocus, withContext } from '../../util';
 import { AssignModerators } from '../Root/components/AssignModerators';
+import { settingsLink } from '../routes';
 import { DashboardAccountInfo } from './components/DashboardAccountInfo';
 import { DashboardCategories } from './components/DashboardCategories';
+
 const ACCOUNT_SETTINGS_POPUP_ID = 'account-dropdown';
 const ASSIGN_ARTICLE_MODERATORS_POPUP_ID = 'assign-article-moderators';
 const ASSIGN_CATEGORY_MODERATORS_POPUP_ID = 'assign-category-moderators';
@@ -285,7 +288,7 @@ export class Dashboard extends React.Component<IDashboardProps, IDashboardState>
                   >
                     {isAdmin && (
                       <li {...css(STYLES.accountModalListItem)}>
-                        <Link key="settingsLink" {...css(STYLES.accountModalLink)} to="/settings">
+                        <Link key="settingsLink" {...css(STYLES.accountModalLink)} to={settingsLink()}>
                           Settings
                         </Link>
                       </li>

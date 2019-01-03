@@ -16,11 +16,11 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import formatDate from 'date-fns/format';
+import FocusTrap from 'focus-trap-react';
 import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
-import { always, css, partial, stylesheet } from '../../../util';
-const FocusTrap = require('focus-trap-react');
+
 import { ISearchScope } from '../';
 import { IArticleModel, ICommentModel, ITagModel, TagModel } from '../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../types';
@@ -40,7 +40,6 @@ import {
   ToolTip,
 } from '../../../components';
 import { DATE_FORMAT_LONG, REQUIRE_REASON_TO_REJECT } from '../../../config';
-
 import {
   DARK_COLOR,
   GUTTER_DEFAULT_SPACING,
@@ -53,6 +52,7 @@ import {
   TOOLTIP_Z_INDEX,
   WHITE_COLOR,
 } from '../../../styles';
+import { always, css, partial, stylesheet } from '../../../util';
 
 const TOAST_DELAY = 6000;
 
