@@ -1362,9 +1362,10 @@ exports[`Storyshots AssignModerators Default 1`] = `
                       "boxSizing": "border-box",
                       "cursor": "pointer",
                       "display": "block",
-                      "height": "24px",
+                      "height": "30px",
                       "overflow": "hidden",
-                      "width": "24px",
+                      "position": "relative",
+                      "width": "30px",
                     }
                   }
                 >
@@ -1528,9 +1529,10 @@ exports[`Storyshots AssignModerators Default 1`] = `
                       "boxSizing": "border-box",
                       "cursor": "pointer",
                       "display": "block",
-                      "height": "24px",
+                      "height": "30px",
                       "overflow": "hidden",
-                      "width": "24px",
+                      "position": "relative",
+                      "width": "30px",
                     }
                   }
                 >
@@ -1694,9 +1696,10 @@ exports[`Storyshots AssignModerators Default 1`] = `
                       "boxSizing": "border-box",
                       "cursor": "pointer",
                       "display": "block",
-                      "height": "24px",
+                      "height": "30px",
                       "overflow": "hidden",
-                      "width": "24px",
+                      "position": "relative",
+                      "width": "30px",
                     }
                   }
                 >
@@ -1946,9 +1949,10 @@ exports[`Storyshots Checkbox checked 1`] = `
         "boxSizing": "border-box",
         "cursor": "pointer",
         "display": "block",
-        "height": "24px",
+        "height": "30px",
         "overflow": "hidden",
-        "width": "24px",
+        "position": "relative",
+        "width": "30px",
       }
     }
   >
@@ -2036,9 +2040,10 @@ exports[`Storyshots Checkbox checked and disabled 1`] = `
         "boxSizing": "border-box",
         "cursor": "pointer",
         "display": "block",
-        "height": "24px",
+        "height": "30px",
         "overflow": "hidden",
-        "width": "24px",
+        "position": "relative",
+        "width": "30px",
       }
     }
   >
@@ -2124,9 +2129,10 @@ exports[`Storyshots Checkbox unchecked 1`] = `
         "boxSizing": "border-box",
         "cursor": "pointer",
         "display": "block",
-        "height": "24px",
+        "height": "30px",
         "overflow": "hidden",
-        "width": "24px",
+        "position": "relative",
+        "width": "30px",
       }
     }
   >
@@ -2213,9 +2219,10 @@ exports[`Storyshots Checkbox unchecked and disabled 1`] = `
         "boxSizing": "border-box",
         "cursor": "pointer",
         "display": "block",
-        "height": "24px",
+        "height": "30px",
         "overflow": "hidden",
-        "width": "24px",
+        "position": "relative",
+        "width": "30px",
       }
     }
   >
@@ -2367,9 +2374,10 @@ exports[`Storyshots CheckboxRow Default 1`] = `
             "boxSizing": "border-box",
             "cursor": "pointer",
             "display": "block",
-            "height": "24px",
+            "height": "30px",
             "overflow": "hidden",
-            "width": "24px",
+            "position": "relative",
+            "width": "30px",
           }
         }
       >
@@ -2524,9 +2532,10 @@ exports[`Storyshots CheckboxRow Selected 1`] = `
             "boxSizing": "border-box",
             "cursor": "pointer",
             "display": "block",
-            "height": "24px",
+            "height": "30px",
             "overflow": "hidden",
-            "width": "24px",
+            "position": "relative",
+            "width": "30px",
           }
         }
       >
@@ -5862,9 +5871,10 @@ exports[`Storyshots LabelSettings spam 1`] = `
               "boxSizing": "border-box",
               "cursor": "pointer",
               "display": "block",
-              "height": "24px",
+              "height": "30px",
               "overflow": "hidden",
-              "width": "24px",
+              "position": "relative",
+              "width": "30px",
             }
           }
         >
@@ -5960,9 +5970,10 @@ exports[`Storyshots LabelSettings spam 1`] = `
               "boxSizing": "border-box",
               "cursor": "pointer",
               "display": "block",
-              "height": "24px",
+              "height": "30px",
               "overflow": "hidden",
-              "width": "24px",
+              "position": "relative",
+              "width": "30px",
             }
           }
         >
@@ -6058,9 +6069,10 @@ exports[`Storyshots LabelSettings spam 1`] = `
               "boxSizing": "border-box",
               "cursor": "pointer",
               "display": "block",
-              "height": "24px",
+              "height": "30px",
               "overflow": "hidden",
-              "width": "24px",
+              "position": "relative",
+              "width": "30px",
             }
           }
         >
