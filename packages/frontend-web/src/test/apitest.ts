@@ -14,21 +14,35 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+function usage() {
+  console.log(`usage: node ${process.argv[1]} <api_url> <token>`);
+  console.log(`   where api_url is the URL for the API backend (e.g., http://localhost:8080)`);
+  console.log(`   and <token> is an access token for an OSMod user.  (As allocated by bin/osmod user:get-token`);
+}
+
+const api_url = process.argv[2];
+if (!api_url) {
+  console.log('You need to specify an API URL.');
+  usage();
+  process.exit(1);
+}
+
+const token = process.argv[3];
+if (!token) {
+  console.log('You need to specify a token.');
+  usage();
+  process.exit(1);
+}
+
 // Set up config before importing as config variables are set during import
 (global as any)['osmod_config'] = {
-  API_URL: process.env['API_URL'],
+  API_URL: api_url,
 };
 
 import { decodeToken, setAxiosToken } from '../app/auth/store';
 import { connectNotifier } from '../app/platform/dataService';
 import { saveToken } from '../app/platform/localStore';
 import { globalUpdate, systemUpdate, userUpdate } from './notificationChecks';
-
-const token = process.argv[2];
-if (!token) {
-  console.log('You need to specify a token.');
-  process.exit(1);
-}
 
 try {
   const data = decodeToken(token);
