@@ -11539,61 +11539,61 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
         </div>
         <style>
           
-            .comment-body a {
-              text-decoration: underline;
-            }
-          
-            .comment-body b {
-              color: #f00;
-            }
-          
-            .comment-body::selection,
-            .comment-body *::selection {
-              background: #326891;
-              borderColor: rgba(255, 255, 255, 1);
-              color: rgba(255, 255, 255, 1);
-            }
-          
-            .tag {
-              border-bottom-width: 1px;
-              border-bottom-style: solid;
-            }
-          
-            .tag-obscene {
-              border-bottom-color: #d71b60;
-              color: #d71b60;
-            }
-          
-            .tag-incoherent {
-              border-bottom-color: #9c28b1;
-              color: #9c28b1;
-            }
-          
-            .tag-spam {
-              border-bottom-color: #673bb8;
-              color: #673bb8;
-            }
-          
-            .tag-off-topic {
-              border-bottom-color: #3f51b5;
-              color: #3f51b5;
-            }
-          
-            .tag-inflammatory {
-              border-bottom-color: #1976d3;
-              color: #1976d3;
-            }
-          
-            .tag-unsubstantial {
-              border-bottom-color: #3d5afe;
-              color: #3d5afe;
-            }
-          
-            .tag-other {
-              border-bottom-color: #01828f;
-              color: #01828f;
-            }
-          
+  .comment-body a {
+    text-decoration: underline;
+  }
+
+  .comment-body b {
+    color: #f00;
+  }
+
+  .comment-body::selection,
+  .comment-body *::selection {
+    background: #326891;
+    borderColor: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .tag {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+
+  .tag-obscene {
+    border-bottom-color: #d71b60;
+    color: #d71b60;
+  }
+
+  .tag-incoherent {
+    border-bottom-color: #9c28b1;
+    color: #9c28b1;
+  }
+
+  .tag-spam {
+    border-bottom-color: #673bb8;
+    color: #673bb8;
+  }
+
+  .tag-off-topic {
+    border-bottom-color: #3f51b5;
+    color: #3f51b5;
+  }
+
+  .tag-inflammatory {
+    border-bottom-color: #1976d3;
+    color: #1976d3;
+  }
+
+  .tag-unsubstantial {
+    border-bottom-color: #3d5afe;
+    color: #3d5afe;
+  }
+
+  .tag-other {
+    border-bottom-color: #01828f;
+    color: #01828f;
+  }
+
         </style>
         <div
           className="comment-body"
@@ -12089,61 +12089,61 @@ exports[`Storyshots SingleComment default list 1`] = `
         </div>
         <style>
           
-            .comment-body a {
-              text-decoration: underline;
-            }
-          
-            .comment-body b {
-              color: #f00;
-            }
-          
-            .comment-body::selection,
-            .comment-body *::selection {
-              background: #326891;
-              borderColor: rgba(255, 255, 255, 1);
-              color: rgba(255, 255, 255, 1);
-            }
-          
-            .tag {
-              border-bottom-width: 1px;
-              border-bottom-style: solid;
-            }
-          
-            .tag-obscene {
-              border-bottom-color: #d71b60;
-              color: #d71b60;
-            }
-          
-            .tag-incoherent {
-              border-bottom-color: #9c28b1;
-              color: #9c28b1;
-            }
-          
-            .tag-spam {
-              border-bottom-color: #673bb8;
-              color: #673bb8;
-            }
-          
-            .tag-off-topic {
-              border-bottom-color: #3f51b5;
-              color: #3f51b5;
-            }
-          
-            .tag-inflammatory {
-              border-bottom-color: #1976d3;
-              color: #1976d3;
-            }
-          
-            .tag-unsubstantial {
-              border-bottom-color: #3d5afe;
-              color: #3d5afe;
-            }
-          
-            .tag-other {
-              border-bottom-color: #01828f;
-              color: #01828f;
-            }
-          
+  .comment-body a {
+    text-decoration: underline;
+  }
+
+  .comment-body b {
+    color: #f00;
+  }
+
+  .comment-body::selection,
+  .comment-body *::selection {
+    background: #326891;
+    borderColor: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .tag {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+
+  .tag-obscene {
+    border-bottom-color: #d71b60;
+    color: #d71b60;
+  }
+
+  .tag-incoherent {
+    border-bottom-color: #9c28b1;
+    color: #9c28b1;
+  }
+
+  .tag-spam {
+    border-bottom-color: #673bb8;
+    color: #673bb8;
+  }
+
+  .tag-off-topic {
+    border-bottom-color: #3f51b5;
+    color: #3f51b5;
+  }
+
+  .tag-inflammatory {
+    border-bottom-color: #1976d3;
+    color: #1976d3;
+  }
+
+  .tag-unsubstantial {
+    border-bottom-color: #3d5afe;
+    color: #3d5afe;
+  }
+
+  .tag-other {
+    border-bottom-color: #01828f;
+    color: #01828f;
+  }
+
         </style>
         <div
           className="comment-body"
@@ -12639,61 +12639,61 @@ exports[`Storyshots SingleComment default moderating 1`] = `
         </div>
         <style>
           
-            .comment-body a {
-              text-decoration: underline;
-            }
-          
-            .comment-body b {
-              color: #f00;
-            }
-          
-            .comment-body::selection,
-            .comment-body *::selection {
-              background: #326891;
-              borderColor: rgba(255, 255, 255, 1);
-              color: rgba(255, 255, 255, 1);
-            }
-          
-            .tag {
-              border-bottom-width: 1px;
-              border-bottom-style: solid;
-            }
-          
-            .tag-obscene {
-              border-bottom-color: #d71b60;
-              color: #d71b60;
-            }
-          
-            .tag-incoherent {
-              border-bottom-color: #9c28b1;
-              color: #9c28b1;
-            }
-          
-            .tag-spam {
-              border-bottom-color: #673bb8;
-              color: #673bb8;
-            }
-          
-            .tag-off-topic {
-              border-bottom-color: #3f51b5;
-              color: #3f51b5;
-            }
-          
-            .tag-inflammatory {
-              border-bottom-color: #1976d3;
-              color: #1976d3;
-            }
-          
-            .tag-unsubstantial {
-              border-bottom-color: #3d5afe;
-              color: #3d5afe;
-            }
-          
-            .tag-other {
-              border-bottom-color: #01828f;
-              color: #01828f;
-            }
-          
+  .comment-body a {
+    text-decoration: underline;
+  }
+
+  .comment-body b {
+    color: #f00;
+  }
+
+  .comment-body::selection,
+  .comment-body *::selection {
+    background: #326891;
+    borderColor: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .tag {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+
+  .tag-obscene {
+    border-bottom-color: #d71b60;
+    color: #d71b60;
+  }
+
+  .tag-incoherent {
+    border-bottom-color: #9c28b1;
+    color: #9c28b1;
+  }
+
+  .tag-spam {
+    border-bottom-color: #673bb8;
+    color: #673bb8;
+  }
+
+  .tag-off-topic {
+    border-bottom-color: #3f51b5;
+    color: #3f51b5;
+  }
+
+  .tag-inflammatory {
+    border-bottom-color: #1976d3;
+    color: #1976d3;
+  }
+
+  .tag-unsubstantial {
+    border-bottom-color: #3d5afe;
+    color: #3d5afe;
+  }
+
+  .tag-other {
+    border-bottom-color: #01828f;
+    color: #01828f;
+  }
+
         </style>
         <div
           className="comment-body"
@@ -13201,61 +13201,61 @@ exports[`Storyshots SingleComment has url 1`] = `
         </div>
         <style>
           
-            .comment-body a {
-              text-decoration: underline;
-            }
-          
-            .comment-body b {
-              color: #f00;
-            }
-          
-            .comment-body::selection,
-            .comment-body *::selection {
-              background: #326891;
-              borderColor: rgba(255, 255, 255, 1);
-              color: rgba(255, 255, 255, 1);
-            }
-          
-            .tag {
-              border-bottom-width: 1px;
-              border-bottom-style: solid;
-            }
-          
-            .tag-obscene {
-              border-bottom-color: #d71b60;
-              color: #d71b60;
-            }
-          
-            .tag-incoherent {
-              border-bottom-color: #9c28b1;
-              color: #9c28b1;
-            }
-          
-            .tag-spam {
-              border-bottom-color: #673bb8;
-              color: #673bb8;
-            }
-          
-            .tag-off-topic {
-              border-bottom-color: #3f51b5;
-              color: #3f51b5;
-            }
-          
-            .tag-inflammatory {
-              border-bottom-color: #1976d3;
-              color: #1976d3;
-            }
-          
-            .tag-unsubstantial {
-              border-bottom-color: #3d5afe;
-              color: #3d5afe;
-            }
-          
-            .tag-other {
-              border-bottom-color: #01828f;
-              color: #01828f;
-            }
-          
+  .comment-body a {
+    text-decoration: underline;
+  }
+
+  .comment-body b {
+    color: #f00;
+  }
+
+  .comment-body::selection,
+  .comment-body *::selection {
+    background: #326891;
+    borderColor: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .tag {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+
+  .tag-obscene {
+    border-bottom-color: #d71b60;
+    color: #d71b60;
+  }
+
+  .tag-incoherent {
+    border-bottom-color: #9c28b1;
+    color: #9c28b1;
+  }
+
+  .tag-spam {
+    border-bottom-color: #673bb8;
+    color: #673bb8;
+  }
+
+  .tag-off-topic {
+    border-bottom-color: #3f51b5;
+    color: #3f51b5;
+  }
+
+  .tag-inflammatory {
+    border-bottom-color: #1976d3;
+    color: #1976d3;
+  }
+
+  .tag-unsubstantial {
+    border-bottom-color: #3d5afe;
+    color: #3d5afe;
+  }
+
+  .tag-other {
+    border-bottom-color: #01828f;
+    color: #01828f;
+  }
+
         </style>
         <div
           className="comment-body"
@@ -13751,61 +13751,61 @@ exports[`Storyshots SingleComment read only 1`] = `
         </div>
         <style>
           
-            .comment-body a {
-              text-decoration: underline;
-            }
-          
-            .comment-body b {
-              color: #f00;
-            }
-          
-            .comment-body::selection,
-            .comment-body *::selection {
-              background: #326891;
-              borderColor: rgba(255, 255, 255, 1);
-              color: rgba(255, 255, 255, 1);
-            }
-          
-            .tag {
-              border-bottom-width: 1px;
-              border-bottom-style: solid;
-            }
-          
-            .tag-obscene {
-              border-bottom-color: #d71b60;
-              color: #d71b60;
-            }
-          
-            .tag-incoherent {
-              border-bottom-color: #9c28b1;
-              color: #9c28b1;
-            }
-          
-            .tag-spam {
-              border-bottom-color: #673bb8;
-              color: #673bb8;
-            }
-          
-            .tag-off-topic {
-              border-bottom-color: #3f51b5;
-              color: #3f51b5;
-            }
-          
-            .tag-inflammatory {
-              border-bottom-color: #1976d3;
-              color: #1976d3;
-            }
-          
-            .tag-unsubstantial {
-              border-bottom-color: #3d5afe;
-              color: #3d5afe;
-            }
-          
-            .tag-other {
-              border-bottom-color: #01828f;
-              color: #01828f;
-            }
-          
+  .comment-body a {
+    text-decoration: underline;
+  }
+
+  .comment-body b {
+    color: #f00;
+  }
+
+  .comment-body::selection,
+  .comment-body *::selection {
+    background: #326891;
+    borderColor: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .tag {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+
+  .tag-obscene {
+    border-bottom-color: #d71b60;
+    color: #d71b60;
+  }
+
+  .tag-incoherent {
+    border-bottom-color: #9c28b1;
+    color: #9c28b1;
+  }
+
+  .tag-spam {
+    border-bottom-color: #673bb8;
+    color: #673bb8;
+  }
+
+  .tag-off-topic {
+    border-bottom-color: #3f51b5;
+    color: #3f51b5;
+  }
+
+  .tag-inflammatory {
+    border-bottom-color: #1976d3;
+    color: #1976d3;
+  }
+
+  .tag-unsubstantial {
+    border-bottom-color: #3d5afe;
+    color: #3d5afe;
+  }
+
+  .tag-other {
+    border-bottom-color: #01828f;
+    color: #01828f;
+  }
+
         </style>
         <div
           className="comment-body"
