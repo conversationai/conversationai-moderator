@@ -19,7 +19,6 @@ exports[`Storyshots Arrow active 1`] = `
     }
   >
     <span
-      disabled={undefined}
       style={
         Object {
           ":disabled": Object {
@@ -96,7 +95,6 @@ exports[`Storyshots Arrow active 1`] = `
     }
   >
     <span
-      disabled={undefined}
       style={
         Object {
           ":disabled": Object {
@@ -173,7 +171,6 @@ exports[`Storyshots Arrow active 1`] = `
     }
   >
     <span
-      disabled={undefined}
       style={
         Object {
           ":disabled": Object {
@@ -250,7 +247,6 @@ exports[`Storyshots Arrow active 1`] = `
     }
   >
     <span
-      disabled={undefined}
       style={
         Object {
           ":disabled": Object {
@@ -332,7 +328,6 @@ exports[`Storyshots Arrow default 1`] = `
     }
   >
     <span
-      disabled={undefined}
       style={
         Object {
           ":disabled": Object {
@@ -408,7 +403,6 @@ exports[`Storyshots Arrow default 1`] = `
     }
   >
     <span
-      disabled={undefined}
       style={
         Object {
           ":disabled": Object {
@@ -484,7 +478,6 @@ exports[`Storyshots Arrow default 1`] = `
     }
   >
     <span
-      disabled={undefined}
       style={
         Object {
           ":disabled": Object {
@@ -560,7 +553,6 @@ exports[`Storyshots Arrow default 1`] = `
     }
   >
     <span
-      disabled={undefined}
       style={
         Object {
           ":disabled": Object {
@@ -641,7 +633,6 @@ exports[`Storyshots Arrow disabled 1`] = `
     }
   >
     <span
-      disabled={true}
       style={
         Object {
           ":disabled": Object {
@@ -717,7 +708,6 @@ exports[`Storyshots Arrow disabled 1`] = `
     }
   >
     <span
-      disabled={true}
       style={
         Object {
           ":disabled": Object {
@@ -793,7 +783,6 @@ exports[`Storyshots Arrow disabled 1`] = `
     }
   >
     <span
-      disabled={true}
       style={
         Object {
           ":disabled": Object {
@@ -869,7 +858,6 @@ exports[`Storyshots Arrow disabled 1`] = `
     }
   >
     <span
-      disabled={true}
       style={
         Object {
           ":disabled": Object {
@@ -1461,7 +1449,6 @@ exports[`Storyshots AssignModerators Default 1`] = `
                       }
                     }
                     type="checkbox"
-                    value={undefined}
                   />
                   <span
                     style={
@@ -1628,7 +1615,6 @@ exports[`Storyshots AssignModerators Default 1`] = `
                       }
                     }
                     type="checkbox"
-                    value={undefined}
                   />
                   <span
                     style={
@@ -1795,7 +1781,6 @@ exports[`Storyshots AssignModerators Default 1`] = `
                       }
                     }
                     type="checkbox"
-                    value={undefined}
                   />
                   <span
                     style={
@@ -1856,7 +1841,6 @@ exports[`Storyshots AssignModerators Default 1`] = `
     }
   >
     <button
-      disabled={undefined}
       onClick={[Function]}
       style={
         Object {
@@ -1980,7 +1964,6 @@ exports[`Storyshots Avatar no avatar 1`] = `
 
 exports[`Storyshots Button Done 1`] = `
 <button
-  disabled={undefined}
   onClick={[Function]}
   style={
     Object {
@@ -2122,7 +2105,6 @@ exports[`Storyshots Checkbox checked and disabled 1`] = `
     <input
       checked={true}
       disabled={true}
-      id={undefined}
       onBlur={[Function]}
       onChange={[Function]}
       onFocus={[Function]}
@@ -2140,7 +2122,6 @@ exports[`Storyshots Checkbox checked and disabled 1`] = `
         }
       }
       type="checkbox"
-      value={undefined}
     />
     <span
       style={
@@ -2212,7 +2193,6 @@ exports[`Storyshots Checkbox unchecked 1`] = `
     <input
       checked={false}
       disabled={false}
-      id={undefined}
       onBlur={[Function]}
       onChange={[Function]}
       onFocus={[Function]}
@@ -2302,7 +2282,6 @@ exports[`Storyshots Checkbox unchecked and disabled 1`] = `
     <input
       checked={false}
       disabled={true}
-      id={undefined}
       onBlur={[Function]}
       onChange={[Function]}
       onFocus={[Function]}
@@ -2320,7 +2299,6 @@ exports[`Storyshots Checkbox unchecked and disabled 1`] = `
         }
       }
       type="checkbox"
-      value={undefined}
     />
     <span
       style={
@@ -2476,7 +2454,6 @@ exports[`Storyshots CheckboxRow Default 1`] = `
             }
           }
           type="checkbox"
-          value={undefined}
         />
         <span
           style={
@@ -2634,7 +2611,6 @@ exports[`Storyshots CheckboxRow Selected 1`] = `
             }
           }
           type="checkbox"
-          value={undefined}
         />
         <span
           style={
@@ -2757,7 +2733,6 @@ exports[`Storyshots CommentActionButton Disabled 1`] = `
     aria-label="Approve"
     disabled={true}
     onBlur={[Function]}
-    onClick={undefined}
     onFocus={[Function]}
     onMouseEnter={[Function]}
     onMouseLeave={[Function]}
@@ -2850,9 +2825,7 @@ exports[`Storyshots CommentActionButton Full Width 1`] = `
 >
   <button
     aria-label="Approve"
-    disabled={undefined}
     onBlur={[Function]}
-    onClick={undefined}
     onFocus={[Function]}
     onMouseEnter={[Function]}
     onMouseLeave={[Function]}
@@ -2944,9 +2917,7 @@ exports[`Storyshots CommentActionButton Hide Label 1`] = `
 >
   <button
     aria-label="Approve"
-    disabled={undefined}
     onBlur={[Function]}
-    onClick={undefined}
     onFocus={[Function]}
     onMouseEnter={[Function]}
     onMouseLeave={[Function]}
@@ -4287,8 +4258,6 @@ exports[`Storyshots DashboardAccountInfo Default 1`] = `
       </div>
     </div>
     <button
-      aria-controls={undefined}
-      aria-expanded={undefined}
       data-focus-id="account-dropdown"
       onClick={[Function]}
       style={
@@ -4436,8 +4405,6 @@ exports[`Storyshots DashboardArticleItem default 1`] = `
           </span>
         </span>
         <button
-          aria-controls={undefined}
-          aria-expanded={undefined}
           onClick={[Function]}
           style={
             Object {
@@ -4614,8 +4581,6 @@ exports[`Storyshots DashboardArticleItem multiline 1`] = `
             </span>
           </span>
           <button
-            aria-controls={undefined}
-            aria-expanded={undefined}
             onClick={[Function]}
             style={
               Object {
@@ -5984,7 +5949,6 @@ exports[`Storyshots LabelSettings spam 1`] = `
               }
             }
             type="checkbox"
-            value={undefined}
           />
           <span
             style={
@@ -6083,7 +6047,6 @@ exports[`Storyshots LabelSettings spam 1`] = `
               }
             }
             type="checkbox"
-            value={undefined}
           />
           <span
             style={
@@ -6182,7 +6145,6 @@ exports[`Storyshots LabelSettings spam 1`] = `
               }
             }
             type="checkbox"
-            value={undefined}
           />
           <span
             style={
@@ -6418,7 +6380,6 @@ exports[`Storyshots ModerateButtons Horizontal 1`] = `
   >
     <button
       aria-label="Approve"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -6505,7 +6466,6 @@ exports[`Storyshots ModerateButtons Horizontal 1`] = `
     </button>
     <button
       aria-label="Reject"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -6592,7 +6552,6 @@ exports[`Storyshots ModerateButtons Horizontal 1`] = `
     </button>
     <button
       aria-label="Highlight"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -6679,7 +6638,6 @@ exports[`Storyshots ModerateButtons Horizontal 1`] = `
     </button>
     <button
       aria-label="Defer"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -6787,7 +6745,6 @@ exports[`Storyshots ModerateButtons Vertical 1`] = `
   >
     <button
       aria-label="Approve"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -6874,7 +6831,6 @@ exports[`Storyshots ModerateButtons Vertical 1`] = `
     </button>
     <button
       aria-label="Reject"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -6961,7 +6917,6 @@ exports[`Storyshots ModerateButtons Vertical 1`] = `
     </button>
     <button
       aria-label="Highlight"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -7048,7 +7003,6 @@ exports[`Storyshots ModerateButtons Vertical 1`] = `
     </button>
     <button
       aria-label="Defer"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -7156,7 +7110,6 @@ exports[`Storyshots ModerateButtons Vertical Approve 1`] = `
   >
     <button
       aria-label="Approve"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -7258,7 +7211,6 @@ exports[`Storyshots ModerateButtons Vertical Approve 1`] = `
     </button>
     <button
       aria-label="Reject"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -7345,7 +7297,6 @@ exports[`Storyshots ModerateButtons Vertical Approve 1`] = `
     </button>
     <button
       aria-label="Highlight"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -7432,7 +7383,6 @@ exports[`Storyshots ModerateButtons Vertical Approve 1`] = `
     </button>
     <button
       aria-label="Defer"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -7540,7 +7490,6 @@ exports[`Storyshots ModerateButtons Vertical Defer 1`] = `
   >
     <button
       aria-label="Approve"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -7627,7 +7576,6 @@ exports[`Storyshots ModerateButtons Vertical Defer 1`] = `
     </button>
     <button
       aria-label="Reject"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -7714,7 +7662,6 @@ exports[`Storyshots ModerateButtons Vertical Defer 1`] = `
     </button>
     <button
       aria-label="Highlight"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -7801,7 +7748,6 @@ exports[`Storyshots ModerateButtons Vertical Defer 1`] = `
     </button>
     <button
       aria-label="Defer"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -7924,7 +7870,6 @@ exports[`Storyshots ModerateButtons Vertical Highlight 1`] = `
   >
     <button
       aria-label="Approve"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -8026,7 +7971,6 @@ exports[`Storyshots ModerateButtons Vertical Highlight 1`] = `
     </button>
     <button
       aria-label="Reject"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -8113,7 +8057,6 @@ exports[`Storyshots ModerateButtons Vertical Highlight 1`] = `
     </button>
     <button
       aria-label="Highlight"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -8215,7 +8158,6 @@ exports[`Storyshots ModerateButtons Vertical Highlight 1`] = `
     </button>
     <button
       aria-label="Defer"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -8323,7 +8265,6 @@ exports[`Storyshots ModerateButtons Vertical Reject 1`] = `
   >
     <button
       aria-label="Approve"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -8410,7 +8351,6 @@ exports[`Storyshots ModerateButtons Vertical Reject 1`] = `
     </button>
     <button
       aria-label="Reject"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -8512,7 +8452,6 @@ exports[`Storyshots ModerateButtons Vertical Reject 1`] = `
     </button>
     <button
       aria-label="Highlight"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -8599,7 +8538,6 @@ exports[`Storyshots ModerateButtons Vertical Reject 1`] = `
     </button>
     <button
       aria-label="Defer"
-      disabled={undefined}
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
@@ -16203,7 +16141,6 @@ exports[`Storyshots Toggle checked and disabled 1`] = `
     <input
       checked={true}
       disabled={true}
-      id={undefined}
       onBlur={[Function]}
       onChange={[Function]}
       onFocus={[Function]}
@@ -16221,7 +16158,6 @@ exports[`Storyshots Toggle checked and disabled 1`] = `
         }
       }
       type="checkbox"
-      value={undefined}
     />
     <span
       style={
@@ -16274,7 +16210,6 @@ exports[`Storyshots Toggle unchecked 1`] = `
     <input
       checked={false}
       disabled={false}
-      id={undefined}
       onBlur={[Function]}
       onChange={[Function]}
       onFocus={[Function]}
@@ -16345,7 +16280,6 @@ exports[`Storyshots Toggle unchecked and disabled 1`] = `
     <input
       checked={false}
       disabled={true}
-      id={undefined}
       onBlur={[Function]}
       onChange={[Function]}
       onFocus={[Function]}
@@ -16363,7 +16297,6 @@ exports[`Storyshots Toggle unchecked and disabled 1`] = `
         }
       }
       type="checkbox"
-      value={undefined}
     />
     <span
       style={
