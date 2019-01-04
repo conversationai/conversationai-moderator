@@ -65,11 +65,6 @@ exports[`Storyshots Arrow active 1`] = `
         >
           <g>
             <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
-            <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
             />
@@ -140,11 +135,6 @@ exports[`Storyshots Arrow active 1`] = `
           width={24}
         >
           <g>
-            <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
             <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
@@ -217,11 +207,6 @@ exports[`Storyshots Arrow active 1`] = `
         >
           <g>
             <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
-            <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
             />
@@ -292,11 +277,6 @@ exports[`Storyshots Arrow active 1`] = `
           width={24}
         >
           <g>
-            <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
             <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
@@ -373,11 +353,6 @@ exports[`Storyshots Arrow default 1`] = `
         >
           <g>
             <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
-            <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
             />
@@ -447,11 +422,6 @@ exports[`Storyshots Arrow default 1`] = `
           width={24}
         >
           <g>
-            <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
             <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
@@ -523,11 +493,6 @@ exports[`Storyshots Arrow default 1`] = `
         >
           <g>
             <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
-            <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
             />
@@ -597,11 +562,6 @@ exports[`Storyshots Arrow default 1`] = `
           width={24}
         >
           <g>
-            <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
             <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
@@ -678,11 +638,6 @@ exports[`Storyshots Arrow disabled 1`] = `
         >
           <g>
             <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
-            <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
             />
@@ -752,11 +707,6 @@ exports[`Storyshots Arrow disabled 1`] = `
           width={24}
         >
           <g>
-            <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
             <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
@@ -828,11 +778,6 @@ exports[`Storyshots Arrow disabled 1`] = `
         >
           <g>
             <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
-            <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
             />
@@ -902,11 +847,6 @@ exports[`Storyshots Arrow disabled 1`] = `
           width={24}
         >
           <g>
-            <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
             <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
@@ -10930,11 +10870,6 @@ exports[`Storyshots Shortcuts default 1`] = `
         >
           <g>
             <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
-            <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
             />
@@ -11053,11 +10988,6 @@ exports[`Storyshots Shortcuts default 1`] = `
           width={24}
         >
           <g>
-            <path
-              d="M-4-4H20V20H-4Z"
-              fill="none"
-              transform="translate(4 4)"
-            />
             <path
               d="M16,7H3.83L9.42,1.41,8,0,0,8l8,8,1.41-1.41L3.83,9H16Z"
               transform="translate(4 4)"
