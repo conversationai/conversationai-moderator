@@ -573,7 +573,7 @@ export class ModeratedComments
             buttonLabel={this.state.toastButtonLabel}
             onClick={this.handleUndoClick}
           >
-            <div>
+            <div key="toastContent">
               { this.state.showCount && (
                 <span key="toastCount" {...css(STYLES.actionToastCount)}>
                   {this.state.toastIcon}

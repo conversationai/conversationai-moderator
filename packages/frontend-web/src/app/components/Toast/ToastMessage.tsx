@@ -75,13 +75,14 @@ export class ToastMessage extends React.PureComponent<IToastMessageProps> {
         <div id="dialog-title" {...css(STYLES.comments)}>{children}</div>
         {buttonLabel ? (
           <button
+            key="buttonLabel"
             {...css(STYLES.button)}
             onClick={onClick}
           >
             {buttonLabel}
           </button>
           ) : (
-            <div>{icon}</div>
+            <div key="icon">{icon}</div>
           )
         }
       </div>

@@ -82,7 +82,7 @@ storiesOf('Toast', module)
           onClick={action('action undid')}
         >
           <div key={'Undo'}>
-            <div {...css(STORY_STYLES.largeCount)}>
+            <div key="content" {...css(STORY_STYLES.largeCount)}>
               <ApproveIcon
                 width={30}
                 height={30}
@@ -90,7 +90,7 @@ storiesOf('Toast', module)
               />
                135
             </div>
-            <div {...css(STORY_STYLES.smallText)}>Comments approved</div>
+            <div key="footer" {...css(STORY_STYLES.smallText)}>Comments approved</div>
           </div>
         </ToastMessage>
       </div>
@@ -104,10 +104,10 @@ storiesOf('Toast', module)
           onClick={action('action undid')}
         >
           <div key={'Refresh'}>
-            <div>
-              <RefreshIcon {...css({ fill: MEDIUM_COLOR })} /> Refresh
+            <div key="icon">
+              <RefreshIcon key="icon" {...css({ fill: MEDIUM_COLOR })} /> Refresh
             </div>
-            <div {...css(STORY_STYLES.progress)}>
+            <div key="progress" {...css(STORY_STYLES.progress)}>
               <div>Approval rating in progress.</div>
               <div {...css(STORY_STYLES.progressMargin)}>75% complete.</div>
             </div>
