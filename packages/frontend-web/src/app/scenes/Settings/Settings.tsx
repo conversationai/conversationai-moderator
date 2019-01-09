@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -206,9 +206,9 @@ export interface ISettingsState {
   baseRules?: List<IRuleModel>;
   baseTaggingSensitivities?:  List<ITaggingSensitivityModel>;
   basePreselects?:  List<IPreselectModel>;
-  isScrimVisible?: boolean;
-  isAddUserScrimOpen?: boolean;
-  isEditUserScrimOpen?: boolean;
+  isStatusScrimVisible?: boolean;
+  isAddUserScrimVisible?: boolean;
+  isEditUserScrimVisible?: boolean;
   selectedUser?: IUserModel;
   homeIsFocused?: boolean;
   submitStatus?: string;
@@ -226,9 +226,9 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     baseRules: this.props.rules,
     baseTaggingSensitivities:  this.props.taggingSensitivities,
     basePreselects:  this.props.preselects,
-    isScrimVisible: false,
-    isAddUserScrimOpen: false,
-    isEditUserScrimOpen: false,
+    isStatusScrimVisible: false,
+    isAddUserScrimVisible: false,
+    isEditUserScrimVisible: false,
     selectedUser: null,
     homeIsFocused: false,
     submitStatus: 'Saving changes...',
@@ -280,7 +280,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   handleAddUser(event: React.FormEvent<any>) {
     event.preventDefault();
     this.setState({
-      isAddUserScrimOpen: true,
+      isAddUserScrimVisible: true,
     });
   }
 
@@ -288,7 +288,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   handleEditUser(event: React.FormEvent<any>) {
     this.setState({
       selectedUser: this.state.users.find((user) => user.id === event.currentTarget.value),
-      isEditUserScrimOpen: true,
+      isEditUserScrimVisible: true,
     });
   }
 
@@ -406,15 +406,15 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       basePreselects: preselectsNew,
       baseTaggingSensitivities: taggingSensitivitiesNew,
     });
-    this.clearScrim();
+    this.closeStatusScrim();
   }
 
-  clearScrim() {
+  closeStatusScrim() {
     // Add some delay so that users know that saving action was taken
     setTimeout(
       () => {
         this.setState({
-          isScrimVisible: false,
+          isStatusScrimVisible: false,
         });
       },
       600,
@@ -550,7 +550,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   onSavePress() {
     this.setState({
-      isScrimVisible: true,
+      isStatusScrimVisible: true,
     });
   }
 
@@ -560,18 +560,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  closeAddUserScrim(e: React.FormEvent<any>) {
+  closeScrims(e: React.FormEvent<any>) {
     e.preventDefault();
     this.setState({
-      isAddUserScrimOpen: false,
-    });
-  }
-
-  @autobind
-  closeEditUserScrim(e: React.FormEvent<any>) {
-    e.preventDefault();
-    this.setState({
-      isEditUserScrimOpen: false,
+      isAddUserScrimVisible: false,
+      isEditUserScrimVisible: false,
     });
   }
 
@@ -579,8 +572,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   async saveAddedUser(user: IUserModel) {
     await this.setState({
       users: this.state.users.push(user),
-      isAddUserScrimOpen: false,
-      isScrimVisible: true,
+      isAddUserScrimVisible: false,
+      isStatusScrimVisible: true,
     });
 
     try {
@@ -594,14 +587,14 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
       });
     }
-    this.clearScrim();
+    this.closeStatusScrim();
   }
 
   @autobind
   async saveEditedUser(user: IUserModel) {
-    const newState: any = {
-      isEditUserScrimOpen: false,
-      isScrimVisible: true,
+    const newState: Partial<ISettingsState> = {
+      isEditUserScrimVisible: false,
+      isStatusScrimVisible: true,
     };
 
     if (user.group === 'youtube') {
@@ -623,7 +616,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
       });
     }
-    this.clearScrim();
+    this.closeStatusScrim();
   }
 
   @autobind
@@ -749,9 +742,9 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       rules,
       taggingSensitivities,
       preselects,
-      isScrimVisible,
-      isAddUserScrimOpen,
-      isEditUserScrimOpen,
+      isStatusScrimVisible,
+      isAddUserScrimVisible,
+      isEditUserScrimVisible,
       selectedUser,
       homeIsFocused,
       submitStatus,
@@ -829,8 +822,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     onTagChange={this.handleTagChange}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddTag} label="Add a tag"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
+                <AddButton
+                  width={44}
+                  onClick={this.handleAddTag}
+                  label="Add a tag"
+                  buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+                />
               </div>
             </div>
 
@@ -859,8 +856,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsList}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddAutomatedRule} label="Add an automated rule"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
+                <AddButton
+                  width={44}
+                  onClick={this.handleAddAutomatedRule}
+                  label="Add an automated rule"
+                  buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+                />
               </div>
             </div>
 
@@ -886,8 +887,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsWithAllNoSummary}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddTaggingSensitivity} label="Add a tagging sensitivity rule"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
+                <AddButton
+                  width={44}
+                  onClick={this.handleAddTaggingSensitivity}
+                  label="Add a tagging sensitivity rule"
+                  buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+                />
               </div>
             </div>
 
@@ -915,8 +920,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     tags={tagsWithAll}
                   />
                 ))}
-                <AddButton width={44} onClick={this.handleAddPreselect} label="Add a preselect"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
+                <AddButton
+                  width={44}
+                  onClick={this.handleAddPreselect}
+                  label="Add a preselect"
+                  buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+                />
               </div>
             </div>
 
@@ -962,7 +971,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         <Scrim
           key="changesScrim"
           scrimStyles={SCRIM_STYLE.scrim}
-          isVisible={isScrimVisible}
+          isVisible={isStatusScrimVisible}
         >
           <FocusTrap
             focusTrapOptions={{
@@ -977,8 +986,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         <Scrim
           key="addUserScrim"
           scrimStyles={SCRIM_STYLE.scrim}
-          isVisible={isAddUserScrimOpen}
-          onBackgroundClick={this.closeAddUserScrim}
+          isVisible={isAddUserScrimVisible}
+          onBackgroundClick={this.closeScrims}
         >
           <FocusTrap
             focusTrapOptions={{
@@ -992,7 +1001,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
             >
               <AddUsers
                 onClickDone={this.saveAddedUser}
-                onClickClose={this.closeAddUserScrim}
+                onClickClose={this.closeScrims}
               />
             </div>
           </FocusTrap>
@@ -1000,8 +1009,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         <Scrim
           key="editUserScrim"
           scrimStyles={SCRIM_STYLE.scrim}
-          isVisible={isEditUserScrimOpen}
-          onBackgroundClick={this.closeEditUserScrim}
+          isVisible={isEditUserScrimVisible}
+          onBackgroundClick={this.closeScrims}
         >
           <FocusTrap
             focusTrapOptions={{
@@ -1016,7 +1025,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               <EditUsers
                 userToEdit={selectedUser}
                 onClickDone={this.saveEditedUser}
-                onClickClose={this.closeEditUserScrim}
+                onClickClose={this.closeScrims}
               />
             </div>
           </FocusTrap>

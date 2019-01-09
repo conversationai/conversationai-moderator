@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,15 +17,15 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
-import { IUserModel } from '../../../../../models';
-import { partial } from '../../../../util';
-import { css } from '../../../../utilx';
-import { SETTINGS_STYLES } from '../../settingsStyles';
+import { IUserModel } from '../../../../models';
+import { partial } from '../../../util';
+import { css } from '../../../utilx';
+import { SETTINGS_STYLES } from '../settingsStyles';
 
 export type IGroup = 'general' | 'admin';
 
 export interface IAddUsersProps {
-  onInputChage(type: string, value: string | boolean): any;
+  onInputChange(type: string, value: string | boolean): any;
   user?: IUserModel;
 }
 
@@ -37,12 +37,12 @@ export class UserForm extends React.Component<IAddUsersProps> {
   onValueChange(property: string, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     e.preventDefault();
 
-    this.props.onInputChage(property, e.target.value);
+    this.props.onInputChange(property, e.target.value);
   }
 
   @autobind
   onIsActiveChange(e: React.ChangeEvent<HTMLInputElement>) {
-    this.props.onInputChage('isActive', e.target.checked);
+    this.props.onInputChange('isActive', e.target.checked);
   }
 
   render() {

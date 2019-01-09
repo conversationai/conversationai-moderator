@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,21 +16,21 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import React from 'react';
-import { IUserModel, UserModel } from '../../../../../models';
+import { IUserModel } from '../../../../models';
 import {
   DARK_COLOR,
   GUTTER_DEFAULT_SPACING,
   PALE_COLOR,
   SCRIM_Z_INDEX,
-} from '../../../../styles';
-import { css, stylesheet } from '../../../../utilx';
-import { UserForm } from '../UserForm';
+} from '../../../styles';
+import { css, stylesheet } from '../../../utilx';
+import { UserForm } from './UserForm';
 
 import {
   Button,
   OverflowContainer,
   RejectIcon,
-} from '../../../../components';
+} from '../../../components';
 
 const STYLES = stylesheet({
   heading: {
@@ -41,6 +41,11 @@ const STYLES = stylesheet({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+
+  body: {
+    marginTop: `${GUTTER_DEFAULT_SPACING}px`,
+    marginBottom: `${GUTTER_DEFAULT_SPACING}px`,
   },
 
   row: {
@@ -64,43 +69,48 @@ const STYLES = stylesheet({
 
 export type IGroup = 'general' | 'admin';
 
-export interface IAddUsersProps {
+export interface IEditUsersProps {
   onClickClose(e: React.FormEvent<any>): any;
   onClickDone(user: IUserModel): any;
-  newUser?: IUserModel;
+  userToEdit?: IUserModel;
 }
 
-export interface IAddUsersState {
-  newUser?: IUserModel;
+export interface IEditUsersState {
+  editedUser?: IUserModel;
   isDisabled?: boolean;
 }
 
-export class AddUsers extends React.Component<IAddUsersProps, IAddUsersState> {
-  // Find a way to generate random ids that will be thrown away.
+export class EditUsers extends React.Component<IEditUsersProps, IEditUsersState> {
+
   state = {
-    newUser: this.props.newUser || UserModel().set('group', 'general').set('isActive', true).set('id', 123),
+    editedUser: this.props.userToEdit,
     isDisabled: true,
   };
 
   @autobind
-  isNewUserValid(user: IUserModel): boolean {
+  isUserValid(user: IUserModel): boolean {
     return !!user.name && user.name.length > 0 && !!user.email && user.email.length > 0 && !!user.group;
   }
 
   @autobind
-  onInputChage(inputType: string, value: string) {
-    const newUser = this.state.newUser.set(inputType, value);
+  onInputChange(inputType: string, value: string) {
+    const editedUser = this.state.editedUser.set(inputType, value);
     this.setState({
-      newUser,
-      isDisabled: !this.isNewUserValid(newUser),
+      editedUser,
+      isDisabled: !this.isUserValid(editedUser),
     });
+  }
+
+  @autobind
+  iseEditedUserValid(user: IUserModel): boolean {
+    return !!user.name && user.name.length > 0 && !!user.email && user.email.length > 0 && !!user.group;
   }
 
   @autobind
   onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    this.props.onClickDone(this.state.newUser);
+    this.props.onClickDone(this.state.editedUser);
   }
 
   render() {
@@ -109,7 +119,7 @@ export class AddUsers extends React.Component<IAddUsersProps, IAddUsersState> {
     } = this.props;
 
     const {
-      newUser,
+      editedUser,
       isDisabled,
     } = this.state;
 
@@ -118,15 +128,16 @@ export class AddUsers extends React.Component<IAddUsersProps, IAddUsersState> {
         <OverflowContainer
           header={(
             <div {...css(STYLES.headerRow)}>
-              <h1 {...css(STYLES.heading)}>Add a user</h1>
-              <button key="close button" {...css(STYLES.closeButton)} aria-label="Close" onClick={onClickClose}>
+              <h1 {...css(STYLES.heading)}>Edit a user</h1>
+
+              <button key="close button" type="button" {...css(STYLES.closeButton)} aria-label="Close" onClick={onClickClose}>
                 <RejectIcon style={{fill: DARK_COLOR}} />
               </button>
             </div>
           )}
           body={(
-            <div  {...css({ marginTop: `${GUTTER_DEFAULT_SPACING}px`, marginBottom: `${GUTTER_DEFAULT_SPACING}px`, })}>
-              <UserForm onInputChage={this.onInputChage} user={newUser} />
+            <div {...css(STYLES.body)}>
+              <UserForm onInputChange={this.onInputChange} user={editedUser} />
             </div>
           )}
           footer={(

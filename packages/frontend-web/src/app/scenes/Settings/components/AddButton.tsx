@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@ limitations under the License.
 */
 
 import React from 'react';
-import { AddIcon, EditIcon } from '../../../../components';
+import { AddIcon, EditIcon } from '../../../components';
 import {
   DARK_PRIMARY_TEXT_COLOR,
   INPUT_DROP_SHADOW,
   OFFSCREEN,
   PALE_COLOR,
-} from '../../../../styles';
-import { css, stylesheet } from '../../../../utilx';
+} from '../../../styles';
+import { css, stylesheet } from '../../../utilx';
 
 const STYLES = stylesheet({
   button: {
