@@ -15,7 +15,7 @@ limitations under the License.
 */
 import check from 'check-types';
 
-import { IGlobalSummary, ISystemSummary, IUserSummary } from '../app/platform/dataService';
+import { IGlobalSummary, ISystemSummary, IUserSummary } from '../app/platform/websocketService';
 import {
   checkArticle,
   checkCategory,
