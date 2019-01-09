@@ -731,6 +731,240 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     );
   }
 
+  renderTags(tags: List<ITagModel>) {
+    return (
+      <div key="editTagsSection">
+        <div key="heading" {...css(STYLES.heading)}>
+          <h2 {...css(STYLES.headingText)}>Tags</h2>
+        </div>
+        <div key="body" {...css(STYLES.section)}>
+          <div {...css(SETTINGS_STYLES.row, {padding: 0})}>
+            <p {...css(STYLES.labelTitle, SMALLER_SCREEN && {width: '184px', marginRight: '20px'})}>Label</p>
+            <p {...css(STYLES.descriptionTitle)}>Description</p>
+            <p {...css(STYLES.colorTitle, SMALLER_SCREEN && {marginRight: '20px'})}>Color</p>
+            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>In Batch View</p>
+            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>Is Taggable</p>
+            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'}, { marginRight: '98px'})}>In Summary Score</p>
+          </div>
+          {tags && tags.map((tag, i) => (
+            <LabelSettings
+              tag={tag}
+              key={i}
+              onLabelChange={this.handleLabelChange}
+              onDescriptionChange={this.handleDescriptionChange}
+              onColorChange={this.handleColorChange}
+              onDeletePress={this.handleTagDeletePress}
+              onTagChange={this.handleTagChange}
+            />
+          ))}
+          <AddButton
+            width={44}
+            onClick={this.handleAddTag}
+            label="Add a tag"
+            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  renderRules(tags: List<ITagModel>, categories: List<ICategoryModel>) {
+    const {
+      rules,
+    } = this.state;
+
+    return (
+      <div key="editRulesSection">
+        <div key="heading" {...css(STYLES.heading)}>
+          <h2 {...css(STYLES.headingText)}>Automated Rules</h2>
+        </div>
+        <div key="body" {...css(STYLES.section)}>
+          {rules && rules.map((rule, i) => (
+            <RuleRow
+              key={i}
+              onDelete={this.handleAutomatedRuleDelete}
+              rule={rule}
+              onCategoryChange={partial(this.handleAutomatedRuleChange, 'categoryId', rule)}
+              onTagChange={partial(this.handleAutomatedRuleChange, 'tagId', rule)}
+              onLowerThresholdChange={partial(this.handleAutomatedRuleChange, 'lowerThreshold', rule)}
+              onUpperThresholdChange={partial(this.handleAutomatedRuleChange, 'upperThreshold', rule)}
+              rangeBottom={Math.round(rule.lowerThreshold * 100)}
+              rangeTop={Math.round(rule.upperThreshold * 100)}
+              selectedTag={rule.tagId}
+              selectedCategory={rule.categoryId}
+              selectedAction={rule.action}
+              hasTagging
+              onModerateButtonClick={this.handleModerateButtonClick}
+              categories={categories}
+              tags={tags}
+            />
+          ))}
+          <AddButton
+            width={44}
+            onClick={this.handleAddAutomatedRule}
+            label="Add an automated rule"
+            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  renderSensitivities(tags: List<ITagModel>, categories: List<ICategoryModel>) {
+    const {
+      taggingSensitivities,
+    } = this.state;
+    return (
+      <div key="editSensitivitiesSection">
+        <div key="heading" {...css(STYLES.heading)}>
+          <h2 {...css(STYLES.headingText)}>Tagging Sensitivity (determines at what score range a tag will appear in the UI)</h2>
+        </div>
+        <div key="body" {...css(STYLES.section)}>
+          {taggingSensitivities && taggingSensitivities.map((ts, i) => (
+            <RuleRow
+              key={i}
+              onDelete={this.handleTaggingSensitivityDelete}
+              rule={ts}
+              onCategoryChange={partial(this.handleTaggingSensitivityChange, 'categoryId', ts)}
+              onTagChange={partial(this.handleTaggingSensitivityChange, 'tagId', ts)}
+              onLowerThresholdChange={partial(this.handleTaggingSensitivityChange, 'lowerThreshold', ts)}
+              onUpperThresholdChange={partial(this.handleTaggingSensitivityChange, 'upperThreshold', ts)}
+              rangeBottom={Math.round(ts.lowerThreshold * 100)}
+              rangeTop={Math.round(ts.upperThreshold * 100)}
+              selectedTag={ts.tagId}
+              selectedCategory={ts.categoryId}
+              categories={categories}
+              tags={tags}
+            />
+          ))}
+          <AddButton
+            width={44}
+            onClick={this.handleAddTaggingSensitivity}
+            label="Add a tagging sensitivity rule"
+            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  renderPreselects(tags: List<ITagModel>, categories: List<ICategoryModel>) {
+    const {
+      preselects,
+    } = this.state;
+    return (
+      <div key="editRangesSection">
+        <div key="heading" {...css(STYLES.heading)}>
+          <h2 {...css(STYLES.headingText)}>
+            Preselected Batch Ranges (sets the default score range on a per category basis for tags in the batch selection view)
+          </h2>
+        </div>
+        <div key="body" {...css(STYLES.section)}>
+          {preselects && preselects.map((preselect, i) => (
+            <RuleRow
+              key={i}
+              onDelete={this.handlePreselectDelete}
+              rule={preselect}
+              onCategoryChange={partial(this.handlePreselectChange, 'categoryId', preselect)}
+              onTagChange={partial(this.handlePreselectChange, 'tagId', preselect)}
+              onLowerThresholdChange={partial(this.handlePreselectChange, 'lowerThreshold', preselect)}
+              onUpperThresholdChange={partial(this.handlePreselectChange, 'upperThreshold', preselect)}
+              rangeBottom={Math.round(preselect.lowerThreshold * 100)}
+              rangeTop={Math.round(preselect.upperThreshold * 100)}
+              selectedTag={preselect.tagId}
+              selectedCategory={preselect.categoryId}
+              categories={categories}
+              tags={tags}
+            />
+          ))}
+          <AddButton
+            width={44}
+            onClick={this.handleAddPreselect}
+            label="Add a preselect"
+            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  renderAddUserScrim() {
+    return (
+      <Scrim
+        key="addUserScrim"
+        scrimStyles={SCRIM_STYLE.scrim}
+        isVisible={this.state.isAddUserScrimVisible}
+        onBackgroundClick={this.closeScrims}
+      >
+        <FocusTrap
+          focusTrapOptions={{
+            clickOutsideDeactivates: true,
+          }}
+        >
+          <div
+            key="addUserContainer"
+            tabIndex={0}
+            {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
+          >
+            <AddUsers
+              onClickDone={this.saveAddedUser}
+              onClickClose={this.closeScrims}
+            />
+          </div>
+        </FocusTrap>
+      </Scrim>
+    );
+  }
+
+  renderEditUserScrim() {
+    return (
+      <Scrim
+        key="editUserScrim"
+        scrimStyles={SCRIM_STYLE.scrim}
+        isVisible={this.state.isEditUserScrimVisible}
+        onBackgroundClick={this.closeScrims}
+      >
+        <FocusTrap
+          focusTrapOptions={{
+            clickOutsideDeactivates: true,
+          }}
+        >
+          <div
+            key="editUserContainer"
+            tabIndex={0}
+            {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
+          >
+            <EditUsers
+              userToEdit={this.state.selectedUser}
+              onClickDone={this.saveEditedUser}
+              onClickClose={this.closeScrims}
+            />
+          </div>
+        </FocusTrap>
+      </Scrim>
+    );
+  }
+
+  renderStatusScrim() {
+    return (
+      <Scrim
+        key="statusScrim"
+        scrimStyles={SCRIM_STYLE.scrim}
+        isVisible={this.state.isStatusScrimVisible}
+      >
+        <FocusTrap
+          focusTrapOptions={{
+            clickOutsideDeactivates: true,
+          }}
+        >
+          <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})} tabIndex={0}>
+            <p>{this.state.submitStatus}</p>
+          </div>
+        </FocusTrap>
+      </Scrim>
+    );
+  }
+
   render() {
     const {
       categories,
@@ -739,20 +973,13 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
     const {
       tags,
-      rules,
-      taggingSensitivities,
-      preselects,
-      isStatusScrimVisible,
-      isAddUserScrimVisible,
-      isEditUserScrimVisible,
-      selectedUser,
       homeIsFocused,
-      submitStatus,
     } = this.state;
 
     const summaryScoreTag = tags.find((tag) => tag.key === 'SUMMARY_SCORE');
     const summaryScoreTagId = summaryScoreTag && summaryScoreTag.id;
-    const tagsList = tags;
+    const tagsNoSummary = tags.filter((tag) => tag.id !== summaryScoreTagId).toList();
+
     const tagsWithAll = List([
       TagModel({
         id: null,
@@ -763,7 +990,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     ]).concat(tags) as List<ITagModel>;
     const tagsWithAllNoSummary = tagsWithAll.filter((tag) => tag.id !== summaryScoreTagId).toList();
 
-    const allCategories = List([
+    const categoriesWithAll = List([
       CategoryModel({
         id: null,
         label: 'All',
@@ -798,137 +1025,10 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
           {this.renderUsers()}
           <form onSubmit={this.handleFormSubmit} {...css(STYLES.formContainer)}>
-            <div key="editTagsSection">
-              <div key="heading" {...css(STYLES.heading)}>
-                <h2 {...css(STYLES.headingText)}>Tags</h2>
-              </div>
-              <div key="body" {...css(STYLES.section)}>
-                <div {...css(SETTINGS_STYLES.row, {padding: 0})}>
-                  <p {...css(STYLES.labelTitle, SMALLER_SCREEN && {width: '184px', marginRight: '20px'})}>Label</p>
-                  <p {...css(STYLES.descriptionTitle)}>Description</p>
-                  <p {...css(STYLES.colorTitle, SMALLER_SCREEN && {marginRight: '20px'})}>Color</p>
-                  <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>In Batch View</p>
-                  <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>Is Taggable</p>
-                  <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'}, { marginRight: '98px'})}>In Summary Score</p>
-                </div>
-                {tags && tags.map((tag, i) => tag.id !== summaryScoreTagId && (
-                  <LabelSettings
-                    tag={tag}
-                    key={i}
-                    onLabelChange={this.handleLabelChange}
-                    onDescriptionChange={this.handleDescriptionChange}
-                    onColorChange={this.handleColorChange}
-                    onDeletePress={this.handleTagDeletePress}
-                    onTagChange={this.handleTagChange}
-                  />
-                ))}
-                <AddButton
-                  width={44}
-                  onClick={this.handleAddTag}
-                  label="Add a tag"
-                  buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
-                />
-              </div>
-            </div>
-
-            <div key="editRulesSection">
-              <div key="heading" {...css(STYLES.heading)}>
-                <h2 {...css(STYLES.headingText)}>Automated Rules</h2>
-              </div>
-              <div key="body" {...css(STYLES.section)}>
-                {rules && rules.map((rule, i) => (
-                  <RuleRow
-                    key={i}
-                    onDelete={this.handleAutomatedRuleDelete}
-                    rule={rule}
-                    onCategoryChange={partial(this.handleAutomatedRuleChange, 'categoryId', rule)}
-                    onTagChange={partial(this.handleAutomatedRuleChange, 'tagId', rule)}
-                    onLowerThresholdChange={partial(this.handleAutomatedRuleChange, 'lowerThreshold', rule)}
-                    onUpperThresholdChange={partial(this.handleAutomatedRuleChange, 'upperThreshold', rule)}
-                    rangeBottom={Math.round(rule.lowerThreshold * 100)}
-                    rangeTop={Math.round(rule.upperThreshold * 100)}
-                    selectedTag={rule.tagId}
-                    selectedCategory={rule.categoryId}
-                    selectedAction={rule.action}
-                    hasTagging
-                    onModerateButtonClick={this.handleModerateButtonClick}
-                    categories={allCategories}
-                    tags={tagsList}
-                  />
-                ))}
-                <AddButton
-                  width={44}
-                  onClick={this.handleAddAutomatedRule}
-                  label="Add an automated rule"
-                  buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
-                />
-              </div>
-            </div>
-
-            <div key="editSensitivitiesSection">
-              <div key="heading" {...css(STYLES.heading)}>
-                <h2 {...css(STYLES.headingText)}>Tagging Sensitivity (determines at what score range a tag will appear in the UI)</h2>
-              </div>
-              <div key="body" {...css(STYLES.section)}>
-                {taggingSensitivities && taggingSensitivities.map((ts, i) => ts.tagId !== summaryScoreTagId &&  (
-                  <RuleRow
-                    key={i}
-                    onDelete={this.handleTaggingSensitivityDelete}
-                    rule={ts}
-                    onCategoryChange={partial(this.handleTaggingSensitivityChange, 'categoryId', ts)}
-                    onTagChange={partial(this.handleTaggingSensitivityChange, 'tagId', ts)}
-                    onLowerThresholdChange={partial(this.handleTaggingSensitivityChange, 'lowerThreshold', ts)}
-                    onUpperThresholdChange={partial(this.handleTaggingSensitivityChange, 'upperThreshold', ts)}
-                    rangeBottom={Math.round(ts.lowerThreshold * 100)}
-                    rangeTop={Math.round(ts.upperThreshold * 100)}
-                    selectedTag={ts.tagId}
-                    selectedCategory={ts.categoryId}
-                    categories={allCategories}
-                    tags={tagsWithAllNoSummary}
-                  />
-                ))}
-                <AddButton
-                  width={44}
-                  onClick={this.handleAddTaggingSensitivity}
-                  label="Add a tagging sensitivity rule"
-                  buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
-                />
-              </div>
-            </div>
-
-            <div key="editRangesSection">
-              <div key="heading" {...css(STYLES.heading)}>
-                <h2 {...css(STYLES.headingText)}>
-                  Preselected Batch Ranges (sets the default score range on a per category basis for tags in the batch selection view)
-                </h2>
-              </div>
-              <div key="body" {...css(STYLES.section)}>
-                {preselects && preselects.map((preselect, i) => (
-                  <RuleRow
-                    key={i}
-                    onDelete={this.handlePreselectDelete}
-                    rule={preselect}
-                    onCategoryChange={partial(this.handlePreselectChange, 'categoryId', preselect)}
-                    onTagChange={partial(this.handlePreselectChange, 'tagId', preselect)}
-                    onLowerThresholdChange={partial(this.handlePreselectChange, 'lowerThreshold', preselect)}
-                    onUpperThresholdChange={partial(this.handlePreselectChange, 'upperThreshold', preselect)}
-                    rangeBottom={Math.round(preselect.lowerThreshold * 100)}
-                    rangeTop={Math.round(preselect.upperThreshold * 100)}
-                    selectedTag={preselect.tagId}
-                    selectedCategory={preselect.categoryId}
-                    categories={allCategories}
-                    tags={tagsWithAll}
-                  />
-                ))}
-                <AddButton
-                  width={44}
-                  onClick={this.handleAddPreselect}
-                  label="Add a preselect"
-                  buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
-                />
-              </div>
-            </div>
-
+            {this.renderTags(tagsNoSummary)}
+            {this.renderRules(tags, categoriesWithAll)}
+            {this.renderSensitivities(tagsWithAllNoSummary, categoriesWithAll)}
+            {this.renderPreselects(tagsWithAll, categoriesWithAll)}
             <div key="submitSection" {...css(STYLES.buttonGroup)}>
               <Button key="cancel" buttonStyles={STYLES.cancel} label="Cancel" onClick={this.onCancelPress}/>
               <Button key="save" buttonStyles={STYLES.save} label="Save" onClick={this.onSavePress}/>
@@ -968,68 +1068,9 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
             </div>
           </div>
         </div>
-        <Scrim
-          key="changesScrim"
-          scrimStyles={SCRIM_STYLE.scrim}
-          isVisible={isStatusScrimVisible}
-        >
-          <FocusTrap
-            focusTrapOptions={{
-              clickOutsideDeactivates: true,
-            }}
-          >
-            <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})} tabIndex={0}>
-              <p>{submitStatus}</p>
-            </div>
-          </FocusTrap>
-        </Scrim>
-        <Scrim
-          key="addUserScrim"
-          scrimStyles={SCRIM_STYLE.scrim}
-          isVisible={isAddUserScrimVisible}
-          onBackgroundClick={this.closeScrims}
-        >
-          <FocusTrap
-            focusTrapOptions={{
-              clickOutsideDeactivates: true,
-            }}
-          >
-            <div
-              key="addUserContainer"
-              tabIndex={0}
-              {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
-            >
-              <AddUsers
-                onClickDone={this.saveAddedUser}
-                onClickClose={this.closeScrims}
-              />
-            </div>
-          </FocusTrap>
-        </Scrim>
-        <Scrim
-          key="editUserScrim"
-          scrimStyles={SCRIM_STYLE.scrim}
-          isVisible={isEditUserScrimVisible}
-          onBackgroundClick={this.closeScrims}
-        >
-          <FocusTrap
-            focusTrapOptions={{
-              clickOutsideDeactivates: true,
-            }}
-          >
-            <div
-              key="editUserContainer"
-              tabIndex={0}
-              {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
-            >
-              <EditUsers
-                userToEdit={selectedUser}
-                onClickDone={this.saveEditedUser}
-                onClickClose={this.closeScrims}
-              />
-            </div>
-          </FocusTrap>
-        </Scrim>
+        {this.renderStatusScrim()}
+        {this.renderAddUserScrim()}
+        {this.renderEditUserScrim()}
       </div>
     );
   }
