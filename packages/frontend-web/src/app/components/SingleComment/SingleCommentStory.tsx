@@ -14,10 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { action, storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+
 import { AuthorModelRecord, IAuthorModel } from '../../../models';
 import { fakeCommentModel } from '../../../models/fake';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { SingleComment } from '../SingleComment';
 
 const date = new Date(2016, 10, 30);
@@ -51,7 +53,7 @@ const STORY_STYLES = {
   },
 };
 
-storiesOf('SingleComment', {})
+storiesOf('SingleComment', module)
   .add('default list', () => {
     return (
       <div {...css(STORY_STYLES.base)}>

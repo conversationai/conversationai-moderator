@@ -18,7 +18,7 @@ import React from 'react';
 import {
   SCRIM_Z_INDEX,
 } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   background: {

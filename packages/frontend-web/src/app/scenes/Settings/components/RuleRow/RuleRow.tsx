@@ -29,7 +29,8 @@ import {
   OFFSCREEN,
   PALE_COLOR,
 } from '../../../../styles';
-import { css, maybeCallback, partial, stylesheet } from '../../../../util';
+import { maybeCallback, partial } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 import { sortByLabel } from '../../../../util';
 import { SETTINGS_STYLES } from '../../settingsStyles';
 

@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+
 import { OverflowContainer } from './OverflowContainer';
 
 const header = (<h1>OverflowContainer header</h1>);
@@ -23,7 +24,7 @@ const body = (<p>OverflowContainer body Lorem ipsum dolor sit amet, consectetur 
 /* tslint:enable:max-line-length */
 const footer = (<h2>OverflowContainer footer</h2>);
 
-storiesOf('OverflowContainer', {})
+storiesOf('OverflowContainer', module)
     .add('Default', () => (
       <OverflowContainer header={header} body={body} footer={footer} />
     ))

@@ -23,7 +23,8 @@ import {
   LIGHT_PRIMARY_TEXT_COLOR,
   OFFSCREEN,
 } from '../../styles';
-import { css, maybeCallback, stylesheet } from '../../util';
+import { maybeCallback } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   bar: {

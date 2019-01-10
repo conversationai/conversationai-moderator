@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
 import { List, Set } from 'immutable';
 import { fakeArticleModel, fakeUserModel } from '../../../../../models/fake';
 import { AssignModerators } from './AssignModerators';
@@ -38,7 +38,7 @@ const users = List([
 
 const moderatorIds = Set<number|string>([users.get(0).id]);
 
-storiesOf('AssignModerators', {})
+storiesOf('AssignModerators', module)
     .add('Default', () => (
       <AssignModerators
         users={users}

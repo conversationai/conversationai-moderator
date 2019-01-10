@@ -19,10 +19,11 @@ import formatDate from 'date-fns/format';
 import { Set } from 'immutable';
 import { clamp } from 'lodash';
 import React from 'react';
+
 import { ICommentDatedModel, ICommentScoredModel, IRuleModel } from '../../../../../../../models';
 import { DATE_FORMAT_LONG } from '../../../../../../config';
 import { COLCOUNT } from '../../../../../../config';
-import { css, stylesheet } from '../../../../../../util';
+import { css, stylesheet } from '../../../../../../utilx';
 import { groupByDateColumns, groupByScoreColumns, IGroupedComments } from '../../../../../../util';
 
 import {

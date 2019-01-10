@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
 import { Login } from './Login';
 
 export interface ILoginProps {
   hasFailure?: boolean;
 }
 
-storiesOf('Login', {})
+storiesOf('Login', module)
   .add('Login page', () => {
     return <Login />;
   })

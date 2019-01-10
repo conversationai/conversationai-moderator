@@ -34,13 +34,13 @@ import { ARTICLE_HEADER,
   VISUALLY_HIDDEN,
   WHITE_COLOR,
 } from '../../../../styles';
-import { css, stylesheet } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 
 import {
   CloseIcon,
   OpenIcon,
 } from '../../../../components';
-import { abbreviateModerators } from '../../../../util';
+import { abbreviateModerators } from '../../../../utilx';
 
 const STYLES = stylesheet({
   base: {

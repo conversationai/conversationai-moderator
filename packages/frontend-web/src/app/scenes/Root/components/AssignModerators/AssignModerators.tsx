@@ -19,7 +19,8 @@ import { List, Set } from 'immutable';
 import React from 'react';
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../../../models';
 import { Button, CheckboxRow, OverflowContainer, RejectIcon } from '../../../../components';
-import { css, partial, stylesheet } from '../../../../util';
+import { partial } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 
 import {
   DARK_COLOR,

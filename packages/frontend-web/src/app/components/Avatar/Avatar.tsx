@@ -21,7 +21,7 @@ import {
   IUserModel,
 } from '../../../models';
 import { DIVIDER_COLOR, MEDIUM_COLOR } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 import { UserIcon } from '../Icons';
 
 const ICON_SIZE = '100%';

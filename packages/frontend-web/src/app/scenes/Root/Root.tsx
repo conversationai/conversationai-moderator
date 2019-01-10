@@ -22,7 +22,7 @@ import { DispatchProp } from 'react-redux';
 
 import { FOCUS_DATA_ATTR } from '../../config';
 import { focusedElement } from '../../stores/focus';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 import { Login } from '../Login';
 
 const STYLE = stylesheet({

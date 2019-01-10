@@ -14,55 +14,56 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var path = require('path');
-var webpack = require('webpack');
-var config = require('@conversationai/moderator-config').config;
+const path = require('path');
+const webpack = require('webpack');
+const config = require('@conversationai/moderator-config').config;
 
 module.exports = {
+  target: 'web',
+
   entry: {
     moderator: [
       `webpack-dev-server/client?http://0.0.0.0:${config.get('port')}`,
       'webpack/hot/only-dev-server',
+      '@babel/polyfill',
       './dist/app/main'
     ]
   },
+
   output: {
     path: path.join(__dirname, "..", "build", "public"),
     filename: "js/[name].js"
   },
-  target: 'web',
+
   module: {
-    preLoaders: [
+    rules: [
       {
         test: /\.jsx?$/,
-        loader: "source-map-loader"
-      }
-    ],
-    loaders: [
-      {
-        loaders: ['babel'],
-        test: /\.jsx?$/,
-        exclude: /node_modules/
+        use: 'source-map-loader',
+        enforce: 'pre'
       },
       {
-        loaders: ['json'],
-        test: /\.json$/,
+        test: /\.jsx?$/,
+        use: 'babel-loader',
+        exclude: /node_modules/,
+        enforce: 'post'
       }
-    ],
+    ]
   },
+
   devtool: "eval",
-  debug: true,
+
   resolve: {
-    extensions: ["", ".web.js", ".js", ".jsx"],
-    packageAlias: 'browser',
+    extensions: [".web.js", ".js", ".jsx"],
     alias: {
       'aphrodite': 'aphrodite/no-important'
     }
   },
+
   plugins: [
     new webpack.PrefetchPlugin("react"),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
       __DEVELOPMENT__: false,
       __DEVPANEL__: true,
@@ -74,6 +75,7 @@ module.exports = {
       ENV_SUBMIT_FEEDBACK_URL: "'" + (process.env['SUBMIT_FEEDBACK_URL'] || '') + "'"
     }),
   ],
+
   devServer: {
     contentBase: path.join(__dirname, "..", "public"),
     port: config.get('port'),

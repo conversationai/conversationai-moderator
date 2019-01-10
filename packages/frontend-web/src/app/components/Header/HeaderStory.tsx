@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { action, storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+
 import {
   ARTICLE_HEADLINE_TYPE,
   GUTTER_DEFAULT_SPACING,
@@ -22,7 +24,7 @@ import {
   LIGHT_PRIMARY_TEXT_COLOR,
   VISUALLY_HIDDEN,
 } from '../../styles';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { HomeIcon } from '../Icons';
 import { Link } from '../Link';
 import { Header } from './Header';
@@ -53,7 +55,7 @@ const STORY_STYLES = {
   },
 };
 
-storiesOf('Header', {})
+storiesOf('Header', module)
 .add('main header', () => {
   return (
     <Header onSearchClick={action('clicked search')}>

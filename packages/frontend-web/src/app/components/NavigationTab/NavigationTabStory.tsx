@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { action, storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+
 import {
   DARK_PRIMARY_TEXT_COLOR,
   GUTTER_DEFAULT_SPACING,
@@ -22,7 +24,7 @@ import {
   LIGHT_PRIMARY_TEXT_COLOR,
   MEDIUM_COLOR,
 } from '../../styles';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import {
   ApproveIcon,
   DeferIcon,
@@ -51,7 +53,7 @@ const STYLES = {
   },
 };
 
-storiesOf('NavigationTab', {})
+storiesOf('NavigationTab', module)
   .add('Default', () => (
     <div {...css(STYLES.mainDark)}>
       <button

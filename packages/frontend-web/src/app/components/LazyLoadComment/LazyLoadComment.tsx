@@ -27,7 +27,8 @@ import {
   ModerateButtons,
   ReplyIcon,
 } from '../../components';
-import { css, maybeCallback, partial } from '../../util';
+import { maybeCallback, partial } from '../../util';
+import { css } from '../../utilx';
 import {
   ConfirmationCircle,
 } from '../ConfirmationCircle';

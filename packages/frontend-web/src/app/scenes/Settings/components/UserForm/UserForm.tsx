@@ -18,7 +18,8 @@ import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
 import { IUserModel } from '../../../../../models';
-import { css, partial } from '../../../../util';
+import { partial } from '../../../../util';
+import { css } from '../../../../utilx';
 import { SETTINGS_STYLES } from '../../settingsStyles';
 
 export type IGroup = 'general' | 'admin';

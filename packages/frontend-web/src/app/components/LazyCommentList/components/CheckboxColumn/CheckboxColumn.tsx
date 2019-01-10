@@ -17,7 +17,8 @@ limitations under the License.
 import React from 'react';
 import { ICommentModel } from '../../../../../models';
 import { Checkbox } from '../../../../components';
-import { css, maybeCallback, partial, stylesheet } from '../../../../util';
+import { maybeCallback, partial } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 
 import {
   ARTICLE_CATEGORY_TYPE,

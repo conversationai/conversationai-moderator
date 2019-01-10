@@ -25,7 +25,7 @@ import {
   OFFSCREEN,
   WHITE_COLOR,
 } from '../../../../../../styles';
-import { css, stylesheet } from '../../../../../../util';
+import { css, stylesheet } from '../../../../../../utilx';
 import { oldDashboardLink } from '../../../../../routes';
 
 const STYLES = stylesheet({

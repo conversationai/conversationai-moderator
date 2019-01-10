@@ -27,7 +27,7 @@ import {
   LIGHT_SECONDARY_TEXT_COLOR,
   LIGHT_TERTIARY_TEXT_COLOR,
 } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   link: {

@@ -32,7 +32,7 @@ import {
   listHistogramScoresByCategoryByDate,
   listMaxHistogramScoresByCategory,
   listMaxSummaryScoreByArticle,
-} from '../../../../../util';
+} from '../../../../../platform/dataService';
 
 const SCORES_HAS_DATA = [...DATA_PREFIX, 'commentScores', 'hasData'];
 const SCORES_DATA = [...DATA_PREFIX, 'commentScores', 'scores'];

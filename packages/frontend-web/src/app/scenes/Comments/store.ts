@@ -22,15 +22,17 @@ import {
   IArticleModel,
   ITaggingSensitivityModel,
 } from '../../../models';
+import {
+  getModel,
+  ISingleResponse,
+  updateModel,
+} from '../../platform/dataService';
 import { IAppStateRecord, IThunkAction } from '../../stores';
 import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
 import {
-  getModel,
-  ISingleResponse,
   makeAJAXAction,
   makeSingleRecordReducer,
-  updateModel,
 } from '../../util';
 
 const DATA_PREFIX = ['scenes', 'commentsIndex'];
@@ -67,7 +69,7 @@ function makeRootModelStore<T>(name: string, getter: any): any {
     loadModelComplete.toString(),
   );
 
-  function getModel(state: IAppStateRecord): T {
+  function getModelFromState(state: IAppStateRecord): T {
     return state.getIn(DATA);
   }
 
@@ -79,7 +81,7 @@ function makeRootModelStore<T>(name: string, getter: any): any {
     reducer,
     updateRecord,
     loadModel,
-    getModel,
+    getModel: getModelFromState,
     getIsLoading,
   };
 }
@@ -115,14 +117,14 @@ function makeTabCountAdjusterStore(): any {
   type IResetTabCountAdjusterPayload = {
     uid: string | number;
   };
-  const resetTabCountAdjuster =
+  const resetTabCountAdjusterAction =
     createAction<IResetTabCountAdjusterPayload>(`comments/RESET_TAB_COUNT_ADJUSTER`);
 
   type IAdjustTabCountPayload = {
     field: string;
     amount: number;
   };
-  const adjustTabCount =
+  const adjustTabCountAction =
     createAction<IAdjustTabCountPayload>(`comments/ADJUST_TAB_COUNT`);
 
   interface ITabAdjusterState {
@@ -146,28 +148,28 @@ function makeTabCountAdjusterStore(): any {
     IResetTabCountAdjusterPayload | // resetTabCountAdjuster
     IAdjustTabCountPayload          // adjustTabCount
   >({
-    [resetTabCountAdjuster.toString()]: (state, { payload: { uid } }: Action<IResetTabCountAdjusterPayload>) => {
+    [resetTabCountAdjusterAction.toString()]: (state, { payload: { uid } }: Action<IResetTabCountAdjusterPayload>) => {
       if (state.get('uid') === uid) { return state; }
 
       return initialState.set('uid', uid);
     },
 
-    [adjustTabCount.toString()]: (state, { payload: { field, amount } }: Action<IAdjustTabCountPayload>) => (
+    [adjustTabCountAction.toString()]: (state, { payload: { field, amount } }: Action<IAdjustTabCountPayload>) => (
       state.update(field, (v: number) => v + amount)
     ),
   }, initialState);
 
   const DATA = [...DATA_PREFIX, 'tabCountAdjustments'];
 
-  function getTabCountAdjustments(state: IAppStateRecord): ITabAdjusterStateRecord {
+  function getTabCountAdjustmentsFromState(state: IAppStateRecord): ITabAdjusterStateRecord {
     return state.getIn(DATA);
   }
 
   return {
     reducer,
-    getTabCountAdjustments,
-    resetTabCountAdjuster,
-    adjustTabCount,
+    getTabCountAdjustments: getTabCountAdjustmentsFromState,
+    resetTabCountAdjuster: resetTabCountAdjusterAction,
+    adjustTabCount: adjustTabCountAction,
   };
 }
 

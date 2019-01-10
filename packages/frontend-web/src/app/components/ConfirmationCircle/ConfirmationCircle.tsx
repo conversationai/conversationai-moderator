@@ -16,7 +16,7 @@ limitations under the License.
 
 import React from 'react';
 import { LIGHT_PRIMARY_TEXT_COLOR } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 import {
   ApproveIcon,
   DeferIcon,

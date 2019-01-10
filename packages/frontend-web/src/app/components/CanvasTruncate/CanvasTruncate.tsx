@@ -18,7 +18,7 @@ import { autobind } from 'core-decorators';
 import { fromJS, Map } from 'immutable';
 import React from 'react';
 import { ITypeDefinition } from '../../styles';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { getTextHeight, measureLine, wordWrap } from '../../util/measureText';
 
 const canvas = document.createElement('canvas');

@@ -17,11 +17,11 @@ limitations under the License.
 import { fromJS, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+import { IAppStateRecord, IThunkAction } from '.';
 import { IArticleModel, IUserModel} from '../../models';
-import { IAppStateRecord, IThunkAction } from '../stores';
+import { listRelationshipModels } from '../platform/dataService';
 import {
   convertItemFromJSONAPI,
-  listRelationshipModels,
 } from '../util';
 import { updateArticleModeratorsById, updateArticleModeratorsComplete } from './moderators';
 

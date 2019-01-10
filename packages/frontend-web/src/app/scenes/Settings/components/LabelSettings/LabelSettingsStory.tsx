@@ -14,7 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { action, storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+
 import { fakeTagModel } from '../../../../../models/fake';
 import { LabelSettings } from './LabelSettings';
 
@@ -25,7 +27,7 @@ const tag = fakeTagModel({
   label: 'Hello',
 });
 
-storiesOf('LabelSettings', {})
+storiesOf('LabelSettings', module)
   .add('spam', () => {
     return (
       <LabelSettings

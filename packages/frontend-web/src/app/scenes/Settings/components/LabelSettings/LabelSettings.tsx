@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
+
 import React from 'react';
 import { ITagModel } from '../../../../../models';
 import { Checkbox } from '../../../../components';
@@ -25,7 +26,8 @@ import {
   LIGHT_PRIMARY_TEXT_COLOR,
   PALE_COLOR,
 } from '../../../../styles';
-import { css, partial, stylesheet } from '../../../../util';
+import { partial } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 import { SETTINGS_STYLES } from '../../settingsStyles';
 import { ColorSelect } from '../ColorSelect';
 

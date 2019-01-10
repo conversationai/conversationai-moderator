@@ -17,6 +17,11 @@ limitations under the License.
 import { fromJS, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+import {
+  getModeratedCommentIdsForArticle as fetchModeratedCommentIdsForArticle,
+  getModeratedCommentIdsForCategory as fetchModeratedCommentIdsForCategory,
+  IModeratedComments,
+} from '../../../../../platform/dataService';
 import { IAppStateRecord, IThunkAction } from '../../../../../stores';
 import {
   approveComment,
@@ -25,11 +30,6 @@ import {
   rejectComment,
   resetComment,
 } from '../../../../../stores/comments';
-import {
-  IModeratedComments,
-  getModeratedCommentIdsForArticle as fetchModeratedCommentIdsForArticle,
-  getModeratedCommentIdsForCategory as fetchModeratedCommentIdsForCategory,
-} from '../../../../../util';
 
 import { DATA_PREFIX } from './reduxPrefix';
 

@@ -32,7 +32,8 @@ import {
   VISUALLY_HIDDEN,
   WHITE_COLOR,
 } from '../../../../styles';
-import { css, identity, partial, stylesheet } from '../../../../util';
+import { identity, partial } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 import {
   AddIcon,
 } from '../../../Icons';

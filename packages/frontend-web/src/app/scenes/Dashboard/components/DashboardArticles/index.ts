@@ -23,7 +23,7 @@ import { CategoryModel } from '../../../../../models';
 import { IRedialLocals } from '../../../../../types';
 import { IAppStateRecord } from '../../../../stores';
 import { getCategories, getCategoryCounts } from '../../../../stores/categories';
-import { articleSortDefinitions } from '../../../../util';
+import { articleSortDefinitions } from '../../../../utilx';
 import {
   DashboardArticles as PureDashboardArticles,
 } from './DashboardArticles';

@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
 import { ArrowIcon } from '../../components';
 import { DARK_COLOR } from '../../styles';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { Arrow } from '../Arrow';
 
-storiesOf('Arrow', {})
+storiesOf('Arrow', module)
   .add('default', () => (
     <div>
       <Arrow

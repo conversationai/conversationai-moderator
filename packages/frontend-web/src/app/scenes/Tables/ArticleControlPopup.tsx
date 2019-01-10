@@ -23,7 +23,7 @@ import { IArticleModel } from '../../../models';
 import { Toggle } from '../../components/Toggle';
 import { ModelId } from '../../stores/moderators';
 import { NICE_CONTROL_BLUE, SCRIM_STYLE } from '../../styles';
-import { css } from '../../util';
+import { css } from '../../utilx';
 import { ControlFlag } from './components';
 
 export interface IIControlPopupProps {

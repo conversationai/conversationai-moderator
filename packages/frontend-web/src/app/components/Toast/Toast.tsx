@@ -16,7 +16,7 @@ limitations under the License.
 
 import React from 'react';
 import { DARK_TERTIARY_TEXT_COLOR } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   base: {

@@ -19,13 +19,15 @@ import { createAction } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
 import { IArticleModel } from '../../../../../models';
 import { getMyUserId } from '../../../../auth';
-import { IAppDispatch, IAppStateRecord, IThunkAction } from '../../../../stores';
 import {
-  convertArrayFromJSONAPI,
   listAssignedArticles,
   listDeferredArticles,
   listModels,
   listRelationshipModels,
+} from '../../../../platform/dataService';
+import { IAppDispatch, IAppStateRecord, IThunkAction } from '../../../../stores';
+import {
+  convertArrayFromJSONAPI,
   makePagedRecordStore,
 } from '../../../../util';
 

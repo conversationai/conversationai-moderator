@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
 import { List } from 'immutable';
 import { fakeCategoryModel, fakeRuleModel, fakeTagModel } from '../../../../../models/fake';
 import { RuleRow } from './RuleRow';
@@ -40,7 +40,7 @@ const tags = List([
 const rangeBottom = 0;
 const rangeTop = 100;
 
-storiesOf('RuleRow', {})
+storiesOf('RuleRow', module)
   .add('Rule Row', () => {
     return (
       <RuleRow

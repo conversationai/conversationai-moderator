@@ -18,8 +18,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { getToken } from '../../../../auth/store';
 import { API_URL } from '../../../../config';
+import { getToken } from '../../../../platform/localStore';
 import { getTags } from '../../../../stores/tags';
 import { TagSelector as PureTagSelector } from './TagSelector';
 

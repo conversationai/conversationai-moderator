@@ -17,7 +17,7 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { css } from '../../util';
+import { css } from '../../utilx';
 
 export interface IAspectRatioProps extends React.HTMLProps<any> {
   ratio: number;

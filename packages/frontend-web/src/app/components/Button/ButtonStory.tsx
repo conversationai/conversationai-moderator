@@ -14,10 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { action, storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+
 import { Button } from './Button';
 
-storiesOf('Button', {})
+storiesOf('Button', module)
     .add('Done', () => (
         <Button label="Done" onClick={action('Done')} />
     ));

@@ -22,7 +22,7 @@ import {
   LIGHT_COLOR,
   MEDIUM_COLOR,
 } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   button: {

@@ -25,7 +25,7 @@ import { getWebsocketState, IAppStateRecord } from '../../stores';
 import { getArticles } from '../../stores/articles';
 import { getCategories } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUsers } from '../../stores/users';
-import { withLoader } from '../../util';
+import { withLoader } from '../../utilx';
 import { ArticleTable as PureArticleTable } from './ArticleTable';
 import { TableFrame as PureTableFrame } from './TableFrame';
 

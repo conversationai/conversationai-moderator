@@ -17,7 +17,7 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import React from 'react';
 import { IArticleModel } from '../../../../../../../../../models';
-import { css, stylesheet } from '../../../../../../../../util';
+import { css, stylesheet } from '../../../../../../../../utilx';
 
 const STYLES = stylesheet({
   lazy: {

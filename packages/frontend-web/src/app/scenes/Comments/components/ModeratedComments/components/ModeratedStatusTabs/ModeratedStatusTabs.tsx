@@ -34,7 +34,7 @@ import {
   MEDIUM_COLOR,
   WHITE_COLOR,
 } from '../../../../../../styles';
-import { css, stylesheet } from '../../../../../../util';
+import { css, stylesheet } from '../../../../../../utilx';
 
 const ICON_SIZE = 30;
 

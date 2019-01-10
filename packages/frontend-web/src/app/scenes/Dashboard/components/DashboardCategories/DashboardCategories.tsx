@@ -17,7 +17,7 @@ limitations under the License.
 import { Map } from 'immutable';
 import React from 'react';
 import { ICategoryModel } from '../../../../../models';
-import { css } from '../../../../util';
+import { css } from '../../../../utilx';
 import { DashboardNavCategory } from './components/DashboardNavCategory';
 
 const CATEGORY_STYLES = {

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { configure } from '@kadira/storybook';
+import { configure } from '@storybook/react';
 import React from 'react';
 
 const req = require.context('../../dist/app', true, /Story\.jsx?$/)

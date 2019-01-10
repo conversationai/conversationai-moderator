@@ -20,7 +20,7 @@ import {
 } from 'aphrodite';
 import { Map } from 'immutable';
 import { isEmpty } from 'lodash';
-import { memoize } from './partial';
+import { memoize } from '../util/partial';
 const Prefixer = require('inline-style-prefixer');
 import { DEVELOPMENT } from '../config';
 

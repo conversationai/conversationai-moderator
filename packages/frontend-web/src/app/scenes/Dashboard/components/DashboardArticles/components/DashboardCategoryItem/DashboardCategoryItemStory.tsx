@@ -14,10 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { action, storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 import { List } from 'immutable';
+
 import { fakeCategoryModel, fakeUserModel } from '../../../../../../../models/fake';
-import { css } from '../../../../../../util';
+import { css } from '../../../../../../utilx';
 import { DashboardCategoryItem } from '../DashboardCategoryItem';
 
 const user1 = fakeUserModel({
@@ -42,8 +44,8 @@ const STYLES = {
   },
 };
 
-storiesOf('DashboardArticleItem', {})
-  .add('default', () => {
+storiesOf('DashboardArticleItem', module)
+  .add('test1', () => {
     const moderators = List([user1, user2, user3]);
 
     return (

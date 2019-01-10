@@ -14,11 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { action, storiesOf } from '@kadira/storybook';
-import { css } from '../../util';
+import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
+
+import { css } from '../../utilx';
 import { Checkbox } from '../Checkbox';
 
-storiesOf('Checkbox', {})
+storiesOf('Checkbox', module)
   .add('checked', () => {
     return (
       <div {...css({ width: `22px`, position: 'relative' })}>

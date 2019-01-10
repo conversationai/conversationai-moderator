@@ -6,8 +6,8 @@
     "url": "https://github.com/conversationai/conversationai-moderator"
   },
   "engines": {
-    "node": ">=8.11.1",
-    "npm": ">=6.1.0"
+    "node": ">=10.14.2",
+    "npm": ">=6.4.1"
   },
   "scripts": {
     "start": "bin/run"
@@ -22,7 +22,7 @@
     "chai": "4.2.0",
     "chai-http": "4.2.0",
     "faker": "4.1.0",
-    "lerna": "3.4.0",
+    "lerna": "3.6.0",
     "mocha": "5.2.0",
     "nsp": "3.2.1",
     "sinon": "6.3.5",

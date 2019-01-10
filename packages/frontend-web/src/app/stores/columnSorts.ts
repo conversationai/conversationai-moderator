@@ -17,6 +17,8 @@ limitations under the License.
 import { fromJS, Map, Record } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
+import { getStoreItem, saveStoreItem } from '../platform/localStore';
 import { IAppStateRecord, IThunkAction } from './index';
 
 export interface IColumnSortGroupAttributes {
@@ -43,11 +45,9 @@ export type IChangeColumnSortGroupDefaultPayload = {
   key: string;
 };
 export const changeColumnSortGroupDefault: (payload: IChangeColumnSortGroupDefaultPayload) => Action<IChangeColumnSortGroupDefaultPayload> =
-  createAction<IChangeColumnSortGroupDefaultPayload>( 'column-sorts/CHANGE_COLUMN_SORT_GROUP_DEFAULT',);
+  createAction<IChangeColumnSortGroupDefaultPayload>('column-sorts/CHANGE_COLUMN_SORT_GROUP_DEFAULT');
 
-const LOCAL_STORAGE_DATA_KEY = 'moderator/column-sorts-data';
-const LOCAL_STORAGE_VERSION_KEY = 'moderator/column-sorts-version';
-
+const LOCAL_STORAGE_KEY = 'column-sorts';
 const SCHEMA_VERSION = 1;
 
 const STATE_ROOT = ['global', 'columnSorts'];
@@ -111,10 +111,7 @@ const StateFactory = makeTypedFactory<IColumnSortState, IColumnSortStateRecord>(
 export const initialState = StateFactory();
 
 function writeToLocalStorage(state: IColumnSortStateRecord): void {
-  const stringData = JSON.stringify(state.toJS());
-
-  localStorage.setItem(LOCAL_STORAGE_DATA_KEY, stringData);
-  localStorage.setItem(LOCAL_STORAGE_VERSION_KEY, SCHEMA_VERSION.toString());
+  saveStoreItem(LOCAL_STORAGE_KEY, SCHEMA_VERSION, JSON.stringify(state.toJS()));
 }
 
 function parseGroup(group: any): IColumnSortGroup {
@@ -122,17 +119,9 @@ function parseGroup(group: any): IColumnSortGroup {
 }
 
 function loadFromLocalStorage(): IColumnSortStateRecord {
-  const stringData = localStorage.getItem(LOCAL_STORAGE_DATA_KEY);
+  const stringData = getStoreItem(LOCAL_STORAGE_KEY, SCHEMA_VERSION);
 
-  if (!stringData) { return initialState; }
-
-  const versionString = localStorage.getItem(LOCAL_STORAGE_VERSION_KEY);
-
-  if (!versionString) { return initialState; }
-
-  const versionData = parseInt(versionString, 10);
-
-  if (versionData !== SCHEMA_VERSION) {
+  if (!stringData) {
     return initialState;
   }
 

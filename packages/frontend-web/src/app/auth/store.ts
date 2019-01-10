@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,15 +19,13 @@ import axios from 'axios';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
-import { RESTRICT_TO_SESSION } from '../config';
+import { checkAuthorization, disconnectNotifier } from '../platform/dataService';
+import { getToken, saveToken } from '../platform/localStore';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
 import { initialiseClientModel } from '../stores';
-import {checkAuthorization, clearCSRF, disconnectNotifier, getCSRF} from '../util';
+import { clearCSRF, getCSRF } from '../util';
 
 import { IUserModel } from '../../models';
-
-const LOCAL_STORAGE_TOKEN_KEY = 'moderator/auth_token';
-const storage = () => RESTRICT_TO_SESSION ? sessionStorage : localStorage;
 
 const startedAuthentication =
   createAction('auth/STARTED_AUTHENTICATION');
@@ -38,7 +36,7 @@ const completedAuthentication =
 
 export const logout: () => Action<void> = createAction('auth/LOGOUT');
 
-function setAxiosToken(token: string): void {
+export function setAxiosToken(token: string): void {
   // Use query string for auth.
   axios.interceptors.request.use((config) => {
     config.params = {
@@ -53,26 +51,15 @@ function setAxiosToken(token: string): void {
   // axios.defaults.headers.common['Authorization'] = 'JWT ' + token;
 }
 
-if (storage()[LOCAL_STORAGE_TOKEN_KEY]) {
-  setAxiosToken(storage()[LOCAL_STORAGE_TOKEN_KEY]);
-}
-
-function decodeToken(token: string): any {
-  return jwtDecode(token);
-}
-
-export function getToken(): string | undefined {
-  return storage()[LOCAL_STORAGE_TOKEN_KEY];
-}
-
-function saveToken(token: string): string {
+{
+  const token = getToken();
   if (token) {
-    storage()[LOCAL_STORAGE_TOKEN_KEY] = token;
-  } else {
-    delete storage()[LOCAL_STORAGE_TOKEN_KEY];
+    setAxiosToken(token);
   }
+}
 
-  return token;
+export function decodeToken(token: string): any {
+  return jwtDecode(token);
 }
 
 async function completeAuthentication(token: string, dispatch: IAppDispatch): Promise<void> {
@@ -114,7 +101,7 @@ function verifyCSRF(csrf?: string): void {
 function refreshToken(): IThunkAction<void> {
   return async (dispatch) => {
     await completeAuthentication(
-      storage()[LOCAL_STORAGE_TOKEN_KEY],
+      getToken(),
       dispatch,
     );
   };
@@ -124,7 +111,7 @@ export function startAuthentication(): IThunkAction<void> {
   return async (dispatch) => {
     dispatch(startedAuthentication());
 
-    const localKey = storage()[LOCAL_STORAGE_TOKEN_KEY];
+    const localKey = getToken();
 
     if (localKey) {
       // try to validate

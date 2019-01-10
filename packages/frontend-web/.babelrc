@@ -1,6 +1,6 @@
 {
-  "presets": ["react", "stage-1"],
-  "plugins": ["lodash", "react-require", "transform-es2015-modules-commonjs",
-    "transform-react-constant-elements", "transform-react-inline-elements",
-    "transform-es2015-parameters", "react-hot-loader/babel"]
+  "presets": ["@babel/preset-react", "@babel/preset-env"],
+  "plugins": ["lodash", "react-require",
+    "@babel/transform-react-constant-elements", "@babel/transform-react-inline-elements",
+    "react-hot-loader/babel"]
 }

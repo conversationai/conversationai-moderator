@@ -23,7 +23,8 @@ import {
   LIGHT_PRIMARY_TEXT_COLOR,
   MEDIUM_COLOR,
 } from '../../styles';
-import { css, maybeCallback, partial, stylesheet } from '../../util';
+import { maybeCallback, partial } from '../../util';
+import { css, stylesheet } from '../../utilx';
 import { CommentActionButton } from '../CommentActionButton';
 import { ConfirmationCircle } from '../ConfirmationCircle';
 

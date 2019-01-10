@@ -39,13 +39,14 @@
 <body>
   <div id="app"></div>
   <script>
-    window.API_URL = '{{API_URL}}';
-    window.APP_NAME = '{{APP_NAME}}';
-    window.REQUIRE_REASON_TO_REJECT = '{{REQUIRE_REASON_TO_REJECT}}';
-    window.RESTRICT_TO_SESSION = '{{RESTRICT_TO_SESSION}}';
-    window.MODERATOR_GUIDELINES_URL = '{{MODERATOR_GUIDELINES_URL}}';
-    window.SUBMIT_FEEDBACK_URL = '{{SUBMIT_FEEDBACK_URL}}';
-    window.COMMENTS_EDITABLE_FLAG = '{{COMMENTS_EDITABLE_FLAG}}';
+    window.osmod_config = window.osmod_config || {};
+    window.osmod_config.API_URL = '{{API_URL}}';
+    window.osmod_config.APP_NAME = '{{APP_NAME}}';
+    window.osmod_config.REQUIRE_REASON_TO_REJECT = '{{REQUIRE_REASON_TO_REJECT}}';
+    window.osmod_config.RESTRICT_TO_SESSION = '{{RESTRICT_TO_SESSION}}';
+    window.osmod_config.MODERATOR_GUIDELINES_URL = '{{MODERATOR_GUIDELINES_URL}}';
+    window.osmod_config.SUBMIT_FEEDBACK_URL = '{{SUBMIT_FEEDBACK_URL}}';
+    window.osmod_config.COMMENTS_EDITABLE_FLAG = '{{COMMENTS_EDITABLE_FLAG}}';
   </script>
   <script src="js/moderator.js"></script>
 </body>

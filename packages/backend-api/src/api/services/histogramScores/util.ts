@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+const { Canvas } = require('canvas');
+
 import {
   Article,
   Category,
@@ -22,6 +24,7 @@ import {
 } from '@conversationai/moderator-backend-core';
 import { DotChartRenderer, groupByDateColumns, groupByScoreColumns } from '@conversationai/moderator-frontend-web';
 import * as JSONAPI from '@conversationai/moderator-jsonapi';
+
 import { sort } from '../../util/SequelizeHandler';
 
 export interface ICommentScoredOrDated {
@@ -343,8 +346,6 @@ export async function getMaxSummaryScoreForCategory(categoryId: number | 'all'):
     },
   );
 }
-
-const Canvas = require('canvas-prebuilt');
 
 const DEFAULT_IMAGE_WIDTH = 400;
 const DEFAULT_IMAGE_HEIGHT = 200;

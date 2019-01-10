@@ -17,7 +17,7 @@ limitations under the License.
 import React from 'react';
 import { IArticleModel } from '../../../../../../../../../models';
 import { Link } from '../../../../../../../../components';
-import { css, stylesheet } from '../../../../../../../../util';
+import { css, stylesheet } from '../../../../../../../../utilx';
 
 const STYLES = stylesheet({
   link: {

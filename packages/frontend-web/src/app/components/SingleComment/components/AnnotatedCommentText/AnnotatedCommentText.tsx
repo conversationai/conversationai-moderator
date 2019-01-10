@@ -33,7 +33,8 @@ import {
   SEMI_BOLD_TYPE,
   WHITE_COLOR,
 } from '../../../../styles';
-import { css, partial, stylesheet } from '../../../../util';
+import { partial } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 import { ToolTip } from '../../../ToolTip';
 
 const TOOLTIP_ARROW_SIZE = 16;

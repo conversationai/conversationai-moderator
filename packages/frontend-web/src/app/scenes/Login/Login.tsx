@@ -25,7 +25,7 @@ import {
   LOGIN_TITLE_TYPE,
   MEDIUM_COLOR,
 } from '../../styles';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 import {
   API_URL,

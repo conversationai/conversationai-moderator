@@ -14,32 +14,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-var path = require('path');
-var webpack = require("webpack");
+const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   resolve: {
-    extensions: ["", ".web.js", ".js", ".jsx"],
-    packageAlias: 'browser',
+    extensions: [".js", ".jsx"],
     alias: {
       'aphrodite': 'aphrodite/no-important'
     }
   },
+
   module: {
-    preLoaders: [
+    rules: [
       {
         test: /\.jsx?$/,
-        loader: "source-map-loader"
-      }
-    ],
-    loaders: [
+        loader: "source-map-loader",
+        enforce: 'pre'
+      },
       {
         test: /\.jsx?$/,
-        loader: 'babel',
-        exclude: /node_modules/
+        loader: 'babel-loader',
+        exclude: /node_modules/,
+        enforce: 'post'
       },
     ]
   },
+
   plugins: [
     new webpack.DefinePlugin({
       __DEVELOPMENT__: true,

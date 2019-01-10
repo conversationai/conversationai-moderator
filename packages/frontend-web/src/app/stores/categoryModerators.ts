@@ -19,9 +19,9 @@ import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { ICategoryModel, IUserModel } from '../../models';
+import { listRelationshipModels } from '../platform/dataService';
 import {
   convertItemFromJSONAPI,
-  listRelationshipModels,
 } from '../util';
 import { IAppStateRecord, IThunkAction } from './index';
 import { updateCategoryModeratorsComplete } from './moderators';

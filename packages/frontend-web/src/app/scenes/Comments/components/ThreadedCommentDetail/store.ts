@@ -19,9 +19,9 @@ import { combineReducers } from 'redux-immutable';
 import {
   ICommentModel,
 } from '../../../../../models';
+import { getModel } from '../../../../platform/dataService';
 import { IAppStateRecord, IThunkAction } from '../../../../stores';
 import {
-  getModel,
   makeAJAXAction,
   makeSingleRecordReducer,
 } from '../../../../util';

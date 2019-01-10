@@ -46,8 +46,8 @@ import {
   SCRIM_STYLE,
   WHITE_COLOR,
 } from '../../styles';
-import { css, stylesheet } from '../../util';
-import { autoFocus, withContext } from '../../util';
+import { css, stylesheet } from '../../utilx';
+import { autoFocus, withContext } from '../../utilx';
 import { AssignModerators } from '../Root/components/AssignModerators';
 import { settingsLink } from '../routes';
 import { DashboardAccountInfo } from './components/DashboardAccountInfo';

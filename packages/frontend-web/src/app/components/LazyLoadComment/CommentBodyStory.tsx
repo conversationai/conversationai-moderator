@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf} from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
+
 import { AuthorModelRecord, IAuthorModel } from '../../../models';
 import { fakeCommentModel } from '../../../models/fake';
 import { BasicBody, LinkedBasicBody } from '../LazyLoadComment';
@@ -44,7 +45,7 @@ const comment = fakeCommentModel({
 const returnEmpty = () => '';
 const returnFalse = () => false;
 
-storiesOf('CommentBody', {})
+storiesOf('CommentBody', module)
   .add('Basic', () => {
     return (
       <div>

@@ -23,7 +23,7 @@ import {
   NICE_MIDDLE_BLUE,
   PALE_COLOR,
 } from '../../styles';
-import { stylesheet } from '../../util';
+import { stylesheet } from '../../utilx';
 
 export const IMAGE_BASE = 40;
 

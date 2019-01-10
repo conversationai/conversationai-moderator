@@ -23,7 +23,7 @@ import { createStructuredSelector } from 'reselect';
 import { ICommentModel } from '../../../../../models';
 import { IConfirmationAction, IRedialLocals } from '../../../../../types';
 import { IAppDispatch, IAppState, IAppStateRecord } from '../../../../stores';
-import { withLoader } from '../../../../util';
+import { withLoader } from '../../../../utilx';
 import { getComment, getIsLoading, loadComment, updateComment } from './store';
 import { IThreadedCommentDetailProps, ThreadedCommentDetail as PureThreadedCommentDetail } from './ThreadedCommentDetail';
 export { reducer } from './store';

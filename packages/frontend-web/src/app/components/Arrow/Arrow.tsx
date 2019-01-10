@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { css, stylesheet } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 import { OPACITY_TRANSITION } from '../../styles';
 

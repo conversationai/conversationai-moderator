@@ -19,7 +19,7 @@ import { ICommentModel, ITagModel } from '../../../../../models';
 import {
   DARK_SECONDARY_TEXT_COLOR,
 } from '../../../../styles';
-import { css } from '../../../../util';
+import { css } from '../../../../utilx';
 
 export interface ISortColumnProps extends React.HTMLProps<any> {
   style?: object;

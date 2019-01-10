@@ -27,7 +27,7 @@ import { Checkbox } from '../../components/Checkbox';
 import * as icons from '../../components/Icons';
 import { ModelId } from '../../stores/moderators';
 import { SCRIM_STYLE } from '../../styles';
-import {css, stylesheet} from '../../util';
+import {css, stylesheet} from '../../utilx';
 import { SETTINGS_STYLES } from '../Settings/settingsStyles';
 import { SmallUserIcon } from './components';
 import { ARTICLE_TABLE_STYLES } from './styles';

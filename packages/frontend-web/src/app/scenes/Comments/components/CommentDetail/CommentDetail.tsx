@@ -77,7 +77,7 @@ import {
   WHITE_COLOR,
 } from '../../../../styles';
 import { clearReturnSavedCommentRow, partial, setReturnSavedCommentRow, timeout } from '../../../../util';
-import { css, stylesheet } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 import { Shortcuts } from '../Shortcuts';
 
 const ACTION_PROPERTY_MAP: {

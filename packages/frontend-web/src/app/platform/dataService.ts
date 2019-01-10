@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,10 +19,20 @@ import { fromJS, List, Map } from 'immutable';
 import { isNaN, pick } from 'lodash';
 import qs from 'qs';
 
+let myws: any;
+
+if (typeof(WebSocket) === 'undefined') {
+  myws = require('ws');
+}
+else {
+  myws = WebSocket;
+}
+
 import {
   INewResource,
   IParams,
 } from '@conversationai/moderator-jsonapi/src/types';
+
 import {
   IArticleModel,
   IAuthorCountsModel,
@@ -49,10 +59,12 @@ import {
   UserModel,
 } from '../../models';
 import { ITopScore } from '../../types';
-import { getToken } from '../auth/store';
 import { API_URL } from '../config';
-import { convertArrayFromJSONAPI } from './makeRecordListReducer';
-import { convertFromJSONAPI } from './makeSingleRecordReducer';
+import { convertArrayFromJSONAPI } from '../util';
+import { convertFromJSONAPI } from '../util';
+import { getToken } from './localStore';
+
+  // const WebSocket = (typeof window === null) require('ws');
 
 export type IValidModelNames =
     'articles' |
@@ -888,6 +900,10 @@ export async function listAuthorCounts(
 let ws: WebSocket = null;
 let intervalTimer: NodeJS.Timer;
 
+export const STATUS_DOWN = 'down';
+export const STATUS_UP = 'up';
+export const STATUS_RESET = 'reset';
+
 export interface ISystemSummary {
   tags: List<ITagModel>;
   taggingSensitivities: List<ITaggingSensitivityModel>;
@@ -974,29 +990,35 @@ let gotUser = false;
 let socketUp = false;
 
 export function connectNotifier(
-  websocketStateHandler: (isActive: boolean) => void,
+  websocketStateHandler: (status: string) => void,
   systemNotificationHandler: (data: ISystemSummary) => void,
   globalNotificationHandler: (data: IGlobalSummary) => void,
   userNotificationHandler: (data: IUserSummary) => void) {
   function checkSocketAlive() {
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
+    if (!ws || ws.readyState !== myws.OPEN) {
       const token = getToken();
       const baseurl = serviceURL(`updates/summary/?token=${token}`);
       const url = 'ws:' + baseurl.substr(baseurl.indexOf(':') + 1);
 
-      ws = new WebSocket(url);
+      ws = new myws(url);
       ws.onopen = () => {
         console.log('opened websocket');
 
-        ws.onclose = () => {
-          console.log('websocket closed');
+        ws.onclose = (e: {code: number}) => {
+          console.log('websocket closed', e.code);
           socketUp = false;
-          websocketStateHandler(false);
+          if (!gotSystem && !gotGlobal && !gotUser) {
+            // Never got a message.  Server is rejecting our advances.  Log out and try logging in again.
+            websocketStateHandler(STATUS_RESET);
+          }
+          else {
+            websocketStateHandler(STATUS_DOWN);
+          }
           ws = null;
         };
       };
 
-      ws.onmessage = (message) => {
+      ws.onmessage = (message: {data: any}) => {
         const body: any = JSON.parse(message.data);
 
         if (body.type === 'system') {
@@ -1013,7 +1035,7 @@ export function connectNotifier(
         }
 
         if (gotSystem && gotGlobal && gotUser && !socketUp) {
-          websocketStateHandler(true);
+          websocketStateHandler(STATUS_UP);
           socketUp = true;
         }
       };

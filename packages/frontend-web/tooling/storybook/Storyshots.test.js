@@ -14,7 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import initStoryshots from 'storyshots';
+import initStoryshots from '@storybook/addon-storyshots';
+import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
+
+jest.mock('date-fns/distance_in_words_to_now');
+
+distanceInWordsToNow.mockReturnValue('over X years');
+
 initStoryshots({
   configPath: __dirname,
 });
