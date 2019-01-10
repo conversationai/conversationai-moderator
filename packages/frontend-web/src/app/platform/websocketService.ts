@@ -37,6 +37,8 @@ import {
 import { serviceURL } from './dataService';
 import { getToken } from './localStore';
 
+// TODO: Is it possible to nail down the types of this object?
+// The WebSocket type is subtly different between browser and non-browser implementation, which makes this difficult.
 let myws: any;
 
 if (typeof(WebSocket) === 'undefined') {
@@ -167,7 +169,7 @@ export function connectNotifier(
         };
       };
 
-      ws.onmessage = (message: {data: any}) => {
+      ws.onmessage = (message: {data: string}) => {
         const body: any = JSON.parse(message.data);
 
         if (body.type === 'system') {
