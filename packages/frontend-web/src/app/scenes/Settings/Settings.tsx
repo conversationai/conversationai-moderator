@@ -196,8 +196,6 @@ export interface ISettingsProps extends WithRouterProps {
 }
 
 export interface ISettingsState {
-  users?: List<IUserModel>;
-  youtubeUsers?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
   taggingSensitivities?:  List<ITaggingSensitivityModel>;
@@ -216,8 +214,6 @@ export interface ISettingsState {
 
 export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   state: ISettingsState = {
-    users: this.props.users,
-    youtubeUsers: this.props.youtubeUsers,
     tags: this.props.tags,
     rules: this.props.rules,
     taggingSensitivities:  this.props.taggingSensitivities,
@@ -231,25 +227,21 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     isEditUserScrimVisible: false,
     selectedUser: null,
     homeIsFocused: false,
-    submitStatus: 'Saving changes...',
   };
 
   componentDidMount() {
     this.props.reloadYoutubeUsers();
   }
 
+  componentWillReceiveProps(_: Readonly<ISettingsProps>) {
+    if (this.state.isStatusScrimVisible) {
+      this.setState({
+        isStatusScrimVisible: false,
+      });
+    }
+  }
+
   componentWillUpdate(nextProps: ISettingsProps) {
-    if (!this.props.users.equals(nextProps.users)) {
-      this.setState({
-        users: nextProps.users,
-      });
-    }
-    if (nextProps.youtubeUsers &&
-      (!this.props.youtubeUsers || !this.props.youtubeUsers.equals(nextProps.youtubeUsers))) {
-      this.setState({
-        youtubeUsers: nextProps.youtubeUsers,
-      });
-    }
     if (!this.props.tags.equals(nextProps.tags)) {
       this.setState({
         baseTags: nextProps.tags,
@@ -287,7 +279,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   handleEditUser(event: React.FormEvent<any>) {
     this.setState({
-      selectedUser: this.state.users.find((user) => user.id === event.currentTarget.value),
+      selectedUser: this.props.users.find((user) => user.id === event.currentTarget.value),
       isEditUserScrimVisible: true,
     });
   }
@@ -551,6 +543,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   onSavePress() {
     this.setState({
       isStatusScrimVisible: true,
+      submitStatus: 'Saving changes...',
     });
   }
 
@@ -571,9 +564,9 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   async saveAddedUser(user: IUserModel) {
     await this.setState({
-      users: this.state.users.push(user),
       isAddUserScrimVisible: false,
       isStatusScrimVisible: true,
+      submitStatus: 'Saving changes...',
     });
 
     try {
@@ -581,42 +574,39 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       if (user.group === 'youtube') {
         await this.props.reloadYoutubeUsers();
       }
+      this.setState({
+        submitStatus: 'Waiting for refresh...',
+      });
     }
     catch (e) {
       this.setState({
         submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
       });
     }
-    this.closeStatusScrim();
   }
 
   @autobind
   async saveEditedUser(user: IUserModel) {
-    const newState: Partial<ISettingsState> = {
+    await this.setState({
       isEditUserScrimVisible: false,
       isStatusScrimVisible: true,
-    };
-
-    if (user.group === 'youtube') {
-      newState['youtubeUsers']  = this.state.youtubeUsers.set(this.state.youtubeUsers.findIndex((u) => u.id === user.id), user);
-    }
-    else {
-      newState['users']  = this.state.users.set(this.state.users.findIndex((u) => u.id === user.id), user);
-    }
-    await this.setState(newState);
+      submitStatus: 'Saving changes...',
+    });
 
     try {
       await this.props.modifyUser(user);
       if (user.group === 'youtube') {
         await this.props.reloadYoutubeUsers();
       }
+      this.setState({
+        submitStatus: 'Waiting for refresh...',
+      });
     }
     catch (e) {
       this.setState({
         submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
       });
     }
-    this.closeStatusScrim();
   }
 
   @autobind
@@ -630,7 +620,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   renderUsers() {
-    const { users } = this.state;
+    const { users } = this.props;
     const sortedUsers = users.sort((a, b) => a.name.localeCompare(b.name));
 
     return (
@@ -690,7 +680,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   renderYoutubeUsers() {
     const {
       youtubeUsers,
-    } = this.state;
+    } = this.props;
 
     if (!youtubeUsers || youtubeUsers.count() === 0) {
       return (<p>None configured</p>);
