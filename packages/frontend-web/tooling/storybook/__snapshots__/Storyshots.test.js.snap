@@ -4272,124 +4272,160 @@ exports[`Storyshots DashboardArticleItem default 1`] = `
       Object {
         "alignItems": "center",
         "display": "flex",
-        "flexDirection": "column",
-        "height": "100%",
-        "justifyContent": "center",
+        "flexWrap": "no-wrap",
+        "justifyContent": "space-between",
+        "overflow": "hidden",
+        "width": "100%",
       }
     }
   >
-    <a
-      onClick={[Function]}
+    <div
       style={
         Object {
-          ":focus": Object {
-            "outline": "none",
-            "textDecoration": "underline",
-          },
-          "color": "#326891",
-          "textAlign": "left",
-          "textDecoration": "none",
+          "paddingRight": "24px",
           "width": "100%",
         }
       }
     >
-      <h2
+      <div
         style={
           Object {
-            "color": "rgba(0, 0, 0, 0.87)",
-            "fontFamily": "LibreFranklin-Medium, sans-serif",
-            "fontSize": "16px",
-            "fontWeight": 400,
-            "lineHeight": 1.5,
-            "margin": "0 24px 0 0",
-            "opacity": 0.86,
-            "textTransform": "uppercase",
+            "display": "flex",
+            "marginBottom": "24px",
           }
         }
       >
-        Category Name
-      </h2>
-    </a>
-    <div
-      style={
-        Object {
-          "alignSelf": "flex-start",
-        }
-      }
-    >
-      <p
+        <p
+          style={
+            Object {
+              "color": "rgba(0, 0, 0, 0.38)",
+              "fontFamily": "LibreFranklin-Medium, sans-serif",
+              "fontSize": "13px",
+              "fontWeight": 400,
+              "lineHeight": 1.5,
+              "margin": 0,
+            }
+          }
+        >
+          over X years
+           ago 
+        </p>
+      </div>
+      <a
+        aria-labelledby="article1"
+        onClick={[Function]}
         style={
           Object {
-            "color": "rgba(0, 0, 0, 0.38)",
+            ":focus": Object {
+              "outline": "none",
+              "textDecoration": "underline",
+            },
+            "color": "rgba(0, 0, 0, 0.87)",
+            "display": "block",
             "fontFamily": "LibreFranklin-Medium, sans-serif",
-            "fontSize": 14,
+            "fontSize": 16,
             "fontWeight": 400,
             "lineHeight": 1.5,
             "margin": 0,
           }
         }
       >
-        <span>
-          <span
-            title="Person1"
-          >
-            Person1
-          </span>
-          <span>
-            , 
-          </span>
-          <span
-            title="Person2"
-          >
-            Person2
-          </span>
-          <span>
-             and 
-          </span>
-          <span
-            title="Person3"
-          >
-            1
-             other
-          </span>
-        </span>
-        <button
-          onClick={[Function]}
+        <span
+          aria-label="Hello, welcome to this article"
+          id="article1"
           style={
             Object {
-              ":focus": Object {
-                "borderBottomColor": "#326891",
-                "outline": "none",
-              },
-              ":hover": Object {
-                "borderBottomColor": "#326891",
-                "transition": "borderBottomColor 0.3s ease",
-              },
-              "background": "none",
-              "borderBottomColor": "transparent",
-              "borderBottomStyle": "solid",
-              "borderBottomWidth": 2,
-              "borderLeft": "none",
-              "borderRight": "none",
-              "borderTop": "none",
-              "color": "#326891",
-              "cursor": "pointer",
+              "display": "block",
+              "height": "0px",
+              "overflow": "hidden",
+              "width": "100%",
+            }
+          }
+          title="Hello, welcome to this article"
+        />
+      </a>
+      <div
+        style={
+          Object {
+            "alignItems": "center",
+            "display": "flex",
+            "marginTop": "24px",
+          }
+        }
+      >
+        <p
+          style={
+            Object {
+              "color": "rgba(0, 0, 0, 0.38)",
               "fontFamily": "LibreFranklin-Medium, sans-serif",
-              "fontSize": "14px",
+              "fontSize": 14,
               "fontWeight": 400,
               "lineHeight": 1.5,
-              "marginLeft": "24px",
-              "marginRight": 0,
-              "marginTop": "12px",
-              "padding": 0,
-              "transition": "borderBottomColor 0.3s ease",
-              "whiteSpace": "nowrap",
+              "margin": 0,
             }
           }
         >
-          Edit
-        </button>
-      </p>
+          <span>
+            <span
+              title="Person1"
+            >
+              Person1
+            </span>
+            <span>
+              , 
+            </span>
+            <span
+              title="Person2"
+            >
+              Person2
+            </span>
+            <span>
+               and 
+            </span>
+            <span
+              title="Person3"
+            >
+              1
+               other
+            </span>
+          </span>
+          <button
+            onClick={[Function]}
+            style={
+              Object {
+                ":focus": Object {
+                  "borderBottomColor": "#326891",
+                  "outline": "none",
+                },
+                ":hover": Object {
+                  "borderBottomColor": "#326891",
+                  "transition": "borderBottomColor 0.3s ease",
+                },
+                "background": "none",
+                "borderBottomColor": "transparent",
+                "borderBottomStyle": "solid",
+                "borderBottomWidth": 2,
+                "borderLeft": "none",
+                "borderRight": "none",
+                "borderTop": "none",
+                "color": "#326891",
+                "cursor": "pointer",
+                "fontFamily": "LibreFranklin-Medium, sans-serif",
+                "fontSize": "14px",
+                "fontWeight": 400,
+                "lineHeight": 1.5,
+                "marginLeft": "24px",
+                "marginRight": 0,
+                "padding": 0,
+                "transition": "borderBottomColor 0.3s ease",
+                "whiteSpace": "nowrap",
+              }
+            }
+          >
+            Edit
+          </button>
+        </p>
+      </div>
     </div>
   </div>
 </div>
@@ -6223,7 +6259,7 @@ exports[`Storyshots Login Login failed 1`] = `
     </p>
     <p>
       <a
-        href="/auth/login/google?&referrer=nullblank"
+        href="/auth/login/google?&referrer=http%3A%2F%2Flocalhost%2F"
         style={
           Object {
             "backgroundColor": "#326891",
@@ -6278,7 +6314,7 @@ exports[`Storyshots Login Login page 1`] = `
   <div>
     <p>
       <a
-        href="/auth/login/google?&referrer=nullblank"
+        href="/auth/login/google?&referrer=http%3A%2F%2Flocalhost%2F"
         style={
           Object {
             "backgroundColor": "#326891",

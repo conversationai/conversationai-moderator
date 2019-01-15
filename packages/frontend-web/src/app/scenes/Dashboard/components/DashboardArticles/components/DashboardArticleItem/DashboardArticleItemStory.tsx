@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import { storiesOf } from '@storybook/react';
+import { List } from 'immutable';
 
 import { fakeArticleModel, fakeUserModel } from '../../../../../../../models/fake';
 import { css } from '../../../../../../utilx';
-import { DashboardArticleItem } from '../DashboardArticleItem';
+import { DashboardArticleItem } from './DashboardArticleItem';
 
 const user1 = fakeUserModel({
   name: 'Person1',
