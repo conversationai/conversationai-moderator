@@ -25,7 +25,6 @@ import {
 import { APP_NAME } from './config';
 const { syncHistoryWithStore, LOCATION_CHANGE } = require('react-router-redux');
 const ReduxThunk = require('redux-thunk').default;
-const attachFastClick = require('fastclick');
 import Immutable from 'immutable';
 import { isEmpty, pick } from 'lodash';
 import qs from 'qs';
@@ -42,9 +41,6 @@ import { reducer as scenesReducer, scenes as makeRoutes } from './scenes';
 import { Login } from './scenes/Login';
 import { reducer as globalReducer } from './stores';
 import { clearReturnURL, getReturnURL } from './util';
-
-// Attach fastclick event handlers
-attachFastClick.attach(document.body);
 
 // Add the reducer to your store on the `routing` key
 const store = createStore(

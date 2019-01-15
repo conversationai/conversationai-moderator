@@ -87,7 +87,6 @@
     "core-decorators": "0.20.0",
     "date-fns": "1.28.0",
     "enzyme": "3.3.0",
-    "fastclick": "1.0.6",
     "file-loader": "0.10.1",
     "fixed-data-table-2": "0.8.13",
     "focus-trap-react": "4.0.1",
