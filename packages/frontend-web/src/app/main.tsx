@@ -30,8 +30,6 @@ import { combineReducers } from 'redux-immutable';
 import thunk from 'redux-thunk';
 import { IRedialLocals } from '../types';
 
-const { syncHistoryWithStore, LOCATION_CHANGE } = require('react-router-redux');
-
 import {
   handleToken,
   reducer as authReducer,
@@ -47,14 +45,6 @@ import { clearReturnURL, getReturnURL } from './util';
 // Add the reducer to your store on the `routing` key
 const store = createStore(
   combineReducers({
-    routing: (
-      state = Immutable.fromJS({ locationBeforeTransitions: null }),
-      action: any,
-    ) => (
-      action.type === LOCATION_CHANGE
-          ? state.set('locationBeforeTransitions', action['payload'])
-          : state
-    ),
     scenes: scenesReducer,
     global: globalReducer,
     auth: authReducer,
@@ -68,18 +58,11 @@ const store = createStore(
 
 const { dispatch, getState } = store;
 
-// Create an enhanced history that syncs navigation events with the store
-const history = syncHistoryWithStore(browserHistory as any, store, {
-  selectLocationState(state: Immutable.Map<string, any>) {
-    return state.get('routing').toJS();
-  },
-});
-
-const routes = makeRoutes(history);
+const routes = makeRoutes(browserHistory);
 
 export function startHistoryListener() {
   // Listen for route changes on the browser history instance:
-  history.listen((location: any) => {
+  browserHistory.listen((location: any) => {
     // Match routes based on location object:
     match(
       { routes, location } as any,

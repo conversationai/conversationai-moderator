@@ -108,7 +108,6 @@
     "react-linkify": "0.2.2",
     "react-redux": "5.1.1",
     "react-router": "3.2.1",
-    "react-router-redux": "4.0.8",
     "react-test-renderer": "16.6.3",
     "redial": "0.5.0",
     "redux": "3.7.2",
