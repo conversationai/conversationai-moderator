@@ -682,9 +682,10 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                   <span
                     key="authorNameEditable"
                     contentEditable
+                    suppressContentEditableWarning
                     ref={this.saveAuthorNameRef}
                     onClick={this.focusName}
-                    {...css(STYLES.contentEditableContainer)}
+                    {...css(STYLES.contentEditableContainer, {minWidth: '300px'})}
                   >
                     {author.name}
                   </span>
@@ -702,6 +703,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                         <span
                           key="authorLocationEditable"
                           contentEditable
+                          suppressContentEditableWarning
                           ref={this.saveAuthorLocationRef}
                           onClick={this.focusLocation}
                           {...css(STYLES.contentEditableContainer)}
@@ -854,6 +856,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                 <div
                   key="content"
                   contentEditable
+                  suppressContentEditableWarning
                   ref={this.saveCommentTextRef}
                   onClick={this.focusText}
                   {...css(STYLES.contentEditableContainer)}
