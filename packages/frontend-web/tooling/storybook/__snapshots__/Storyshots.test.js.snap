@@ -10406,7 +10406,7 @@ exports[`Storyshots Shortcuts default 1`] = `
       Keyboard Shortcuts
     </h2>
     <button
-      label="close modal"
+      aria-label="close modal"
       onClick={[Function]}
       style={
         Object {
