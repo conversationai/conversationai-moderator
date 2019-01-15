@@ -14,28 +14,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import Immutable from 'immutable';
+import { isEmpty, pick } from 'lodash';
+import qs from 'qs';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { browserHistory, match } from 'react-router';
+import { trigger } from 'redial';
 import {
   applyMiddleware,
   compose,
   createStore,
 } from 'redux';
-import { APP_NAME } from './config';
-const { syncHistoryWithStore, LOCATION_CHANGE } = require('react-router-redux');
-const ReduxThunk = require('redux-thunk').default;
-import Immutable from 'immutable';
-import { isEmpty, pick } from 'lodash';
-import qs from 'qs';
-import { trigger } from 'redial';
 import { combineReducers } from 'redux-immutable';
+import thunk from 'redux-thunk';
 import { IRedialLocals } from '../types';
+
+const { syncHistoryWithStore, LOCATION_CHANGE } = require('react-router-redux');
+
 import {
   handleToken,
   reducer as authReducer,
   startAuthentication,
 } from './auth';
+import { APP_NAME } from './config';
 import { validateID } from './platform/dataService';
 import { reducer as scenesReducer, scenes as makeRoutes } from './scenes';
 import { Login } from './scenes/Login';
@@ -59,7 +61,7 @@ const store = createStore(
   }),
   Immutable.Map(),
   compose(
-    applyMiddleware(ReduxThunk),
+    applyMiddleware(thunk),
     (window as any)['devToolsExtension'] ? (window as any)['devToolsExtension']() : (f: any) => f,
   ),
 );
