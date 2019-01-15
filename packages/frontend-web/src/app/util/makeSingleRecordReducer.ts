@@ -58,7 +58,7 @@ export function convertItemFromJSONAPI<T>(data: any, included?: List<any>): T {
   const modelData = fromJS(data);
 
   if (modelData instanceof List) {
-    console.error('Expected data to be a single item, not an array.', modelData.toJS());
+    console.error('Expected data to be a single item, not an array.', modelData);
     throw (
       'makeSingleRecordReducer expects the result to be a single item. ' +
       'This result was an array, did you mean to use makeRecordListReducer?'
@@ -72,16 +72,18 @@ export function convertItemFromJSONAPI<T>(data: any, included?: List<any>): T {
       const d = value.get('data');
 
       if (d instanceof Map) {
+        const dd = d as Map<string, any>;
         const found = included.find((m) => (
-          m.get('type') === d.get('type') &&
-          m.get('id') === d.get('id')
+          m.get('type') === dd.get('type') &&
+          m.get('id') === dd.get('id')
         ));
 
         if (found) {
           return sum.set(key, resourceToModel(found));
         }
       } else if (d instanceof List) {
-        return sum.set(key, d.map((item: Map<string, any>) => {
+        const dd = d as List<Map<string, any>>;
+        return sum.set(key, dd.map((item) => {
           const found = included.find((m) => (
             m.get('type') === item.get('type') &&
             m.get('id') === item.get('id')
@@ -102,7 +104,7 @@ export function convertItemFromJSONAPI<T>(data: any, included?: List<any>): T {
 export function convertFromJSONAPI<T>(result: any): T {
   const resultData = fromJS(result);
   const dataList = resultData.get('data');
-  const dataItem = (dataList instanceof List) ? dataList.get(0) : dataList;
+  const dataItem = (dataList instanceof List) ? (dataList as List<T>).get(0) : dataList;
 
   return convertItemFromJSONAPI<T>(dataItem, resultData.get('included'));
 }
