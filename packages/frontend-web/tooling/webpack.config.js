@@ -79,5 +79,6 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname, "..", "public"),
     port: config.get('port'),
+    historyApiFallback: true,
   },
 };

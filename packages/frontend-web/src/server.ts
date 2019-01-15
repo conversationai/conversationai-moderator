@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const fs = require('fs');
 import * as express from 'express';
 import { Application, Request, Response } from 'express';
+import fs from 'fs';
 
 export function mountWebFrontend(modifyOutput?: (output: string) => string): Application {
   const app = express();
@@ -24,8 +24,15 @@ export function mountWebFrontend(modifyOutput?: (output: string) => string): App
   app.disable('etag');
   app.set('trust proxy', true);
 
+  const files = __dirname + '/../public';
+  const css = files + '/css';
+  const images = files + '/images';
+
+  const builds = __dirname + '/../build';
+  const js = builds + '/js';
+
   function renderRoot(_req: Request, res: Response): void {
-    const html = fs.readFileSync(__dirname + '/../build/index.html', 'utf8');
+    const html = fs.readFileSync(files + '/index.html', 'utf8');
 
     let path = '';
 
@@ -84,10 +91,10 @@ export function mountWebFrontend(modifyOutput?: (output: string) => string): App
     res.send(output);
   }
 
-  app.get('/', renderRoot);
-  app.get('/index.html', renderRoot);
-
-  app.use(express.static(__dirname + '/../build'));
+  app.use('/css', express.static(css));
+  app.use('/images', express.static(images));
+  app.use('/js', express.static(js));
+  app.get('/*', renderRoot);
 
   return app;
 }

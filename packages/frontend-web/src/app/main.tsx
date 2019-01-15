@@ -16,7 +16,7 @@ limitations under the License.
 
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { hashHistory, match } from 'react-router';
+import { browserHistory, match } from 'react-router';
 import {
   applyMiddleware,
   compose,
@@ -71,7 +71,7 @@ const store = createStore(
 const { dispatch, getState } = store;
 
 // Create an enhanced history that syncs navigation events with the store
-const history = syncHistoryWithStore(hashHistory as any, store, {
+const history = syncHistoryWithStore(browserHistory as any, store, {
   selectLocationState(state: Immutable.Map<string, any>) {
     return state.get('routing').toJS();
   },
