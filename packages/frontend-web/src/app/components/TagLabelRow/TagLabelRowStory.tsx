@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import { storiesOf } from '@storybook/react';
 
 import { fakeTagModel } from '../../../models/fake';
 import { DARK_COLOR, MEDIUM_COLOR } from '../../styles';
@@ -51,6 +51,7 @@ storiesOf('TagLabelRow', module)
   .add('Default', () => (
     <div>
       <button
+        key="inflammatory"
         {...css(ACTION_STYLES.button)}
         onClick={action('Tag Row Clicked')}
         aria-label="Inflammatory"
@@ -64,6 +65,7 @@ storiesOf('TagLabelRow', module)
         />
       </button>
       <button
+        key="off-topic"
         {...css(ACTION_STYLES.button)}
         onClick={action('Tag Row Clicked')}
         aria-label="Off Topic"
