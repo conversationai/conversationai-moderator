@@ -14,11 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { List } from 'immutable';
+
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 
-import {AuthorModelRecord, IAuthorModel } from '../../../models';
-import { fakeCommentModel } from '../../../models/fake';
+import {AuthorModelRecord, IAuthorModel, ITagModel } from '../../../models';
+import { fakeCommentModel, fakeTagModel } from '../../../models/fake';
 import { css } from '../../utilx';
 import { SingleComment } from './SingleComment';
 
@@ -38,6 +40,8 @@ const comment = fakeCommentModel({
   flaggedCount: 2,
   recommendedCount: 5,
 });
+
+const availableTags = List<ITagModel>().push(fakeTagModel({}), fakeTagModel({}));
 
 const STORY_STYLES = {
   base: {
@@ -85,6 +89,18 @@ storiesOf('SingleComment', module)
             comment={comment}
             commentEditingEnabled
             onUpdateCommentText={action('Updating Comment')}
+          />
+        </div>
+      </div>
+    );
+  })
+  .add('tags to add', () => {
+    return (
+      <div {...css(STORY_STYLES.base)}>
+        <div {...css(STORY_STYLES.detail)}>
+          <SingleComment
+            comment={comment}
+            availableTags={availableTags}
           />
         </div>
       </div>
