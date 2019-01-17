@@ -44,8 +44,8 @@ const STYLES = {
   },
 };
 
-storiesOf('DashboardArticleItem', module)
-  .add('test1', () => {
+storiesOf('DashboardCategoryItemStory', module)
+  .add('base', () => {
     const moderators = List([user1, user2, user3]);
 
     return (

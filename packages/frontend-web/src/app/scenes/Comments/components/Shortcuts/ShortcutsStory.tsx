@@ -20,6 +20,6 @@ import { storiesOf } from '@storybook/react';
 import { Shortcuts } from '../Shortcuts';
 
 storiesOf('Shortcuts', module)
-  .add('default', () => {
+  .add('base', () => {
     return <Shortcuts onClose={action('close modal')}/>;
   });

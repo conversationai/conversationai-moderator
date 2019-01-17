@@ -289,7 +289,7 @@ exports[`Storyshots Arrow active 1`] = `
 </div>
 `;
 
-exports[`Storyshots Arrow default 1`] = `
+exports[`Storyshots Arrow base 1`] = `
 <div>
   <div
     style={
@@ -2606,7 +2606,7 @@ exports[`Storyshots CheckboxRow Selected 1`] = `
 </div>
 `;
 
-exports[`Storyshots ColorSelect default 1`] = `
+exports[`Storyshots ColorSelect base 1`] = `
 <div
   style={
     Object {
@@ -4255,7 +4255,183 @@ exports[`Storyshots DashboardAccountInfo Default 1`] = `
 </div>
 `;
 
-exports[`Storyshots DashboardArticleItem default 1`] = `
+exports[`Storyshots DashboardArticleItem multiline 1`] = `
+<div
+  style={
+    Object {
+      "borderColor": "gray",
+      "borderStyle": "solid",
+      "borderWidth": 1,
+      "padding": "20px 24px",
+      "width": "738px",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "display": "flex",
+        "flexWrap": "no-wrap",
+        "justifyContent": "space-between",
+        "overflow": "hidden",
+        "width": "100%",
+      }
+    }
+  >
+    <div
+      style={
+        Object {
+          "paddingRight": "24px",
+          "width": "100%",
+        }
+      }
+    >
+      <div
+        style={
+          Object {
+            "display": "flex",
+            "marginBottom": "24px",
+          }
+        }
+      >
+        <p
+          style={
+            Object {
+              "color": "rgba(0, 0, 0, 0.38)",
+              "fontFamily": "LibreFranklin-Medium, sans-serif",
+              "fontSize": "13px",
+              "fontWeight": 400,
+              "lineHeight": 1.5,
+              "margin": 0,
+            }
+          }
+        >
+          over X years
+           ago 
+        </p>
+      </div>
+      <a
+        aria-labelledby="article1"
+        onClick={[Function]}
+        style={
+          Object {
+            ":focus": Object {
+              "outline": "none",
+              "textDecoration": "underline",
+            },
+            "color": "rgba(0, 0, 0, 0.87)",
+            "display": "block",
+            "fontFamily": "LibreFranklin-Medium, sans-serif",
+            "fontSize": 16,
+            "fontWeight": 400,
+            "lineHeight": 1.5,
+            "margin": 0,
+          }
+        }
+      >
+        <span
+          aria-label="Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article"
+          id="article1"
+          style={
+            Object {
+              "display": "block",
+              "height": "0px",
+              "overflow": "hidden",
+              "width": "100%",
+            }
+          }
+          title="Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article"
+        />
+      </a>
+      <div
+        style={
+          Object {
+            "alignItems": "center",
+            "display": "flex",
+            "marginTop": "24px",
+          }
+        }
+      >
+        <p
+          style={
+            Object {
+              "color": "rgba(0, 0, 0, 0.38)",
+              "fontFamily": "LibreFranklin-Medium, sans-serif",
+              "fontSize": 14,
+              "fontWeight": 400,
+              "lineHeight": 1.5,
+              "margin": 0,
+            }
+          }
+        >
+          <span>
+            <span
+              title="Person1"
+            >
+              Person1
+            </span>
+            <span>
+              , 
+            </span>
+            <span
+              title="Person2"
+            >
+              Person2
+            </span>
+            <span>
+               and 
+            </span>
+            <span
+              title="Person3"
+            >
+              1
+               other
+            </span>
+          </span>
+          <button
+            onClick={[Function]}
+            style={
+              Object {
+                ":focus": Object {
+                  "borderBottomColor": "#326891",
+                  "outline": "none",
+                },
+                ":hover": Object {
+                  "borderBottomColor": "#326891",
+                  "transition": "borderBottomColor 0.3s ease",
+                },
+                "background": "none",
+                "borderBottomColor": "transparent",
+                "borderBottomStyle": "solid",
+                "borderBottomWidth": 2,
+                "borderLeft": "none",
+                "borderRight": "none",
+                "borderTop": "none",
+                "color": "#326891",
+                "cursor": "pointer",
+                "fontFamily": "LibreFranklin-Medium, sans-serif",
+                "fontSize": "14px",
+                "fontWeight": 400,
+                "lineHeight": 1.5,
+                "marginLeft": "24px",
+                "marginRight": 0,
+                "padding": 0,
+                "transition": "borderBottomColor 0.3s ease",
+                "whiteSpace": "nowrap",
+              }
+            }
+          >
+            Edit
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots DashboardArticleItem singleline 1`] = `
 <div
   style={
     Object {
@@ -4431,7 +4607,7 @@ exports[`Storyshots DashboardArticleItem default 1`] = `
 </div>
 `;
 
-exports[`Storyshots DashboardArticleItem multiline 1`] = `
+exports[`Storyshots DashboardCategoryItemStory test1 1`] = `
 <div
   style={
     Object {
@@ -4448,160 +4624,124 @@ exports[`Storyshots DashboardArticleItem multiline 1`] = `
       Object {
         "alignItems": "center",
         "display": "flex",
-        "flexWrap": "no-wrap",
-        "justifyContent": "space-between",
-        "overflow": "hidden",
-        "width": "100%",
+        "flexDirection": "column",
+        "height": "100%",
+        "justifyContent": "center",
       }
     }
   >
-    <div
+    <a
+      onClick={[Function]}
       style={
         Object {
-          "paddingRight": "24px",
+          ":focus": Object {
+            "outline": "none",
+            "textDecoration": "underline",
+          },
+          "color": "#326891",
+          "textAlign": "left",
+          "textDecoration": "none",
           "width": "100%",
         }
       }
     >
-      <div
+      <h2
         style={
           Object {
-            "display": "flex",
-            "marginBottom": "24px",
+            "color": "rgba(0, 0, 0, 0.87)",
+            "fontFamily": "LibreFranklin-Medium, sans-serif",
+            "fontSize": "16px",
+            "fontWeight": 400,
+            "lineHeight": 1.5,
+            "margin": "0 24px 0 0",
+            "opacity": 0.86,
+            "textTransform": "uppercase",
           }
         }
       >
-        <p
-          style={
-            Object {
-              "color": "rgba(0, 0, 0, 0.38)",
-              "fontFamily": "LibreFranklin-Medium, sans-serif",
-              "fontSize": "13px",
-              "fontWeight": 400,
-              "lineHeight": 1.5,
-              "margin": 0,
-            }
-          }
-        >
-          over X years
-           ago 
-        </p>
-      </div>
-      <a
-        aria-labelledby="article1"
-        onClick={[Function]}
+        Category Name
+      </h2>
+    </a>
+    <div
+      style={
+        Object {
+          "alignSelf": "flex-start",
+        }
+      }
+    >
+      <p
         style={
           Object {
-            ":focus": Object {
-              "outline": "none",
-              "textDecoration": "underline",
-            },
-            "color": "rgba(0, 0, 0, 0.87)",
-            "display": "block",
+            "color": "rgba(0, 0, 0, 0.38)",
             "fontFamily": "LibreFranklin-Medium, sans-serif",
-            "fontSize": 16,
+            "fontSize": 14,
             "fontWeight": 400,
             "lineHeight": 1.5,
             "margin": 0,
           }
         }
       >
-        <span
-          aria-label="Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article"
-          id="article1"
+        <span>
+          <span
+            title="Person1"
+          >
+            Person1
+          </span>
+          <span>
+            , 
+          </span>
+          <span
+            title="Person2"
+          >
+            Person2
+          </span>
+          <span>
+             and 
+          </span>
+          <span
+            title="Person3"
+          >
+            1
+             other
+          </span>
+        </span>
+        <button
+          onClick={[Function]}
           style={
             Object {
-              "display": "block",
-              "height": "0px",
-              "overflow": "hidden",
-              "width": "100%",
-            }
-          }
-          title="Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article"
-        />
-      </a>
-      <div
-        style={
-          Object {
-            "alignItems": "center",
-            "display": "flex",
-            "marginTop": "24px",
-          }
-        }
-      >
-        <p
-          style={
-            Object {
-              "color": "rgba(0, 0, 0, 0.38)",
+              ":focus": Object {
+                "borderBottomColor": "#326891",
+                "outline": "none",
+              },
+              ":hover": Object {
+                "borderBottomColor": "#326891",
+                "transition": "borderBottomColor 0.3s ease",
+              },
+              "background": "none",
+              "borderBottomColor": "transparent",
+              "borderBottomStyle": "solid",
+              "borderBottomWidth": 2,
+              "borderLeft": "none",
+              "borderRight": "none",
+              "borderTop": "none",
+              "color": "#326891",
+              "cursor": "pointer",
               "fontFamily": "LibreFranklin-Medium, sans-serif",
-              "fontSize": 14,
+              "fontSize": "14px",
               "fontWeight": 400,
               "lineHeight": 1.5,
-              "margin": 0,
+              "marginLeft": "24px",
+              "marginRight": 0,
+              "marginTop": "12px",
+              "padding": 0,
+              "transition": "borderBottomColor 0.3s ease",
+              "whiteSpace": "nowrap",
             }
           }
         >
-          <span>
-            <span
-              title="Person1"
-            >
-              Person1
-            </span>
-            <span>
-              , 
-            </span>
-            <span
-              title="Person2"
-            >
-              Person2
-            </span>
-            <span>
-               and 
-            </span>
-            <span
-              title="Person3"
-            >
-              1
-               other
-            </span>
-          </span>
-          <button
-            onClick={[Function]}
-            style={
-              Object {
-                ":focus": Object {
-                  "borderBottomColor": "#326891",
-                  "outline": "none",
-                },
-                ":hover": Object {
-                  "borderBottomColor": "#326891",
-                  "transition": "borderBottomColor 0.3s ease",
-                },
-                "background": "none",
-                "borderBottomColor": "transparent",
-                "borderBottomStyle": "solid",
-                "borderBottomWidth": 2,
-                "borderLeft": "none",
-                "borderRight": "none",
-                "borderTop": "none",
-                "color": "#326891",
-                "cursor": "pointer",
-                "fontFamily": "LibreFranklin-Medium, sans-serif",
-                "fontSize": "14px",
-                "fontWeight": 400,
-                "lineHeight": 1.5,
-                "marginLeft": "24px",
-                "marginRight": 0,
-                "padding": 0,
-                "transition": "borderBottomColor 0.3s ease",
-                "whiteSpace": "nowrap",
-              }
-            }
-          >
-            Edit
-          </button>
-        </p>
-      </div>
+          Edit
+        </button>
+      </p>
     </div>
   </div>
 </div>
@@ -10407,7 +10547,7 @@ exports[`Storyshots Scrim red 1`] = `
 </div>
 `;
 
-exports[`Storyshots Shortcuts default 1`] = `
+exports[`Storyshots Shortcuts base 1`] = `
 <div
   style={
     Object {
@@ -13884,7 +14024,7 @@ exports[`Storyshots SingleComment read only 1`] = `
 </div>
 `;
 
-exports[`Storyshots Slider default 1`] = `
+exports[`Storyshots Slider base 1`] = `
 <div
   style={
     Object {
@@ -15722,7 +15862,7 @@ exports[`Storyshots ThreadedComment default list 1`] = `
 </div>
 `;
 
-exports[`Storyshots Toast default 1`] = `
+exports[`Storyshots Toast base 1`] = `
 <div
   style={
     Object {

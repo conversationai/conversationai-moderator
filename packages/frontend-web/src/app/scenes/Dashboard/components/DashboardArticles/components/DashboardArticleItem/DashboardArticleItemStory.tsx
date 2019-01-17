@@ -47,7 +47,7 @@ const STYLES = {
 const getLinkTarget = () => 'target';
 
 storiesOf('DashboardArticleItem', module)
-  .add('default', () => {
+  .add('singleline', () => {
     const moderators = List([user1, user2, user3]);
 
     return (

@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import { storiesOf } from '@storybook/react';
 
 import {
   ARTICLE_CATEGORY_TYPE,
@@ -63,7 +63,7 @@ const STORY_STYLES = {
 };
 
 storiesOf('Toast', module)
-  .add('default', () => {
+  .add('base', () => {
     return (
       <div {...css(STORY_STYLES.base)}>
         <Toast backgroundColor={LIGHT_PRIMARY_TEXT_COLOR}>
