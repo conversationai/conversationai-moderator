@@ -42,6 +42,16 @@ import { ARTICLE_TABLE_STYLES, COMMON_STYLES, ICON_STYLES } from './styles';
 import { big, flexCenter, medium } from './styles';
 import {
   NOT_SET,
+  SORT_APPROVED,
+  SORT_DEFERRED,
+  SORT_FLAGGED,
+  SORT_HIGHLIGHTED,
+  SORT_LAST_MODERATED,
+  SORT_NEW,
+  SORT_REJECTED,
+  SORT_SOURCE_CREATED,
+  SORT_TITLE,
+  SORT_UPDATED,
 } from './utils';
 import {
   executeFilter,
@@ -122,7 +132,14 @@ function processArticles(
   }
 
   let count = 0;
-  const columns = ['unmoderatedCount', 'approvedCount', 'rejectedCount', 'deferredCount', 'flaggedCount'];
+  const columns = [
+    'unmoderatedCount',
+    'approvedCount',
+    'rejectedCount',
+    'deferredCount',
+    'highlightedCount',
+    'flaggedCount',
+  ];
   const summary: any =  {};
   for (const i of columns) {
     summary[i] = 0;
@@ -555,6 +572,11 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           </Link>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          <Link to={getLink('highlighted')} {...css(COMMON_STYLES.cellLink)}>
+            {article.highlightedCount}
+          </Link>
+        </td>
+        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
           <Link to={getLink('flagged')} {...css(COMMON_STYLES.cellLink)}>
             {article.flaggedCount}
           </Link>
@@ -668,31 +690,34 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           <thead {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
             <tr>
               <th key="title" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.textCell)}>
-                {renderHeaderItem('Title', 'title')}
+                {renderHeaderItem('Title', SORT_TITLE)}
                 <div {...css({float: 'right'})}>
-                  {renderHeaderItem(<icons.ClockIcon/>, 'sourceCreatedAt')}
+                  {renderHeaderItem(<icons.ClockIcon/>, SORT_SOURCE_CREATED)}
                 </div>
               </th>
               <th key="new" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-                {renderHeaderItem('New', 'new')}
+                {renderHeaderItem('New', SORT_NEW)}
               </th>
               <th key="approved" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-                {renderHeaderItem('Approved', 'approved')}
+                {renderHeaderItem('Approved', SORT_APPROVED)}
               </th>
               <th key="rejected" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-                {renderHeaderItem('Rejected', 'rejected')}
+                {renderHeaderItem('Rejected', SORT_REJECTED)}
               </th>
               <th key="deferred" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-                {renderHeaderItem('Deferred', 'deferred')}
+                {renderHeaderItem('Deferred', SORT_DEFERRED)}
+              </th>
+              <th key="highlighted" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+                {renderHeaderItem('Highlighted', SORT_HIGHLIGHTED)}
               </th>
               <th key="flagged" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-                {renderHeaderItem('Flagged', 'flagged')}
+                {renderHeaderItem('Flagged', SORT_FLAGGED)}
               </th>
               <th key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
-                {renderHeaderItem('Modified', 'updatedAt')}
+                {renderHeaderItem('Modified', SORT_UPDATED)}
               </th>
               <th key="moderated" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
-                {renderHeaderItem('Moderated', 'lastModeratedAt')}
+                {renderHeaderItem('Moderated', SORT_LAST_MODERATED)}
               </th>
               <th key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}/>
               <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell, {...flexCenter, color: filterActive ? NICE_MIDDLE_BLUE : NICE_LIGHTEST_BLUE})}>
