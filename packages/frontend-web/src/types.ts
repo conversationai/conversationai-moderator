@@ -30,9 +30,9 @@ export type IConfirmationAction = 'approve' | 'defer' | 'highlight' | 'reject'| 
 
 export type ICommentAction = 'highlight' | 'approve' | 'defer' | 'reject' | 'tag';
 
+export type IModerationAction = 'approve' | 'defer' | 'highlight' | 'reject';
+
 export interface ITopScore {
   start: number;
   end: number;
 }
-
-export type IReducer = Function;

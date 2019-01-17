@@ -15,12 +15,26 @@ limitations under the License.
 */
 
 import faker from 'faker';
-import { IRuleAttributes, IRuleModel, RuleModel } from '../rule';
+
+import {
+  IRuleAttributes,
+  IRuleModel,
+  RULE_ACTION_ACCEPT,
+  RULE_ACTION_DEFER,
+  RULE_ACTION_HIGHLIGHT,
+  RULE_ACTION_REJECT,
+  RuleModel,
+} from '../rule';
 
 export function fakeRuleModel(overrides: Partial<IRuleAttributes> = {}): IRuleModel {
   return RuleModel({
     id: faker.random.number().toString(),
-    action: faker.random.arrayElement(['approve', 'defer', 'highlight', 'reject']),
+    action: faker.random.arrayElement([
+      RULE_ACTION_ACCEPT,
+      RULE_ACTION_REJECT,
+      RULE_ACTION_DEFER,
+      RULE_ACTION_HIGHLIGHT,
+    ]),
     lowerThreshold: faker.random.number({ min: 0, max: 1, precision: 0.01 }),
     upperThreshold: faker.random.number({ min: 0, max: 1, precision: 0.01 }),
     ...overrides,

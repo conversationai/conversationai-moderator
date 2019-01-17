@@ -17,8 +17,19 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
-import { ICategoryModel, IPreselectModel, IRuleModel, ITaggingSensitivityModel, ITagModel } from '../../../../../models';
-import { IConfirmationAction } from '../../../../../types';
+import {
+  ICategoryModel,
+  IPreselectModel,
+  IRuleAction,
+  IRuleModel,
+  ITaggingSensitivityModel,
+  ITagModel,
+  RULE_ACTION_ACCEPT,
+  RULE_ACTION_DEFER,
+  RULE_ACTION_HIGHLIGHT,
+  RULE_ACTION_REJECT,
+} from '../../../../../models';
+import { IModerationAction } from '../../../../../types';
 import { ModerateButtons } from '../../../../components';
 import {
   ARTICLE_CATEGORY_TYPE,
@@ -30,8 +41,8 @@ import {
   PALE_COLOR,
 } from '../../../../styles';
 import { maybeCallback, partial } from '../../../../util';
-import { css, stylesheet } from '../../../../utilx';
 import { sortByLabel } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 import { SETTINGS_STYLES } from '../../settingsStyles';
 
 const INPUT_HEIGHT = 36;
@@ -92,11 +103,11 @@ export interface IRuleRowProps {
   tags: List<ITagModel>;
   rangeBottom: number;
   rangeTop: number;
-  selectedAction?: string;
+  selectedAction?: IRuleAction;
   hasTagging?: boolean;
   onModerateButtonClick?(
-    rule: IRuleModel | ITaggingSensitivityModel | IPreselectModel,
-    action: IConfirmationAction,
+    rule: IRuleModel,
+    action: IRuleAction,
   ): any;
   buttons?: JSX.Element;
   selectedCategory: string;
@@ -123,6 +134,32 @@ export class RuleRow extends React.Component<IRuleRowProps> {
     callback(e.target.value);
   }
 
+  @autobind
+  notifyWrapperOfActionChange(action: IModerationAction) {
+    const {
+      onModerateButtonClick,
+      rule,
+    } = this.props;
+    let raction: IRuleAction;
+    switch (action) {
+      case 'approve':
+        raction = RULE_ACTION_ACCEPT;
+        break;
+      case 'reject':
+        raction = RULE_ACTION_REJECT;
+        break;
+      case 'defer':
+        raction = RULE_ACTION_DEFER;
+        break;
+      case 'highlight':
+        raction = RULE_ACTION_HIGHLIGHT;
+        break;
+    }
+
+    if (onModerateButtonClick) {
+      onModerateButtonClick(rule as IRuleModel, raction);
+    }
+  }
   render() {
     const {
       categories,
@@ -130,7 +167,6 @@ export class RuleRow extends React.Component<IRuleRowProps> {
       rangeBottom,
       rangeTop,
       hasTagging,
-      onModerateButtonClick,
       selectedCategory,
       selectedTag,
       selectedAction,
@@ -145,6 +181,18 @@ export class RuleRow extends React.Component<IRuleRowProps> {
     const sortedCategories = sortByLabel(categories);
     const sortedTags = sortByLabel(tags);
 
+    function convertRuleAction(a: IRuleAction) {
+      switch (a) {
+        case RULE_ACTION_ACCEPT:
+          return 'approve';
+        case RULE_ACTION_REJECT:
+          return 'reject';
+        case RULE_ACTION_DEFER:
+          return 'defer';
+        case RULE_ACTION_HIGHLIGHT:
+          return 'highlight';
+      }
+    }
     return (
       <div {...css(STYLES.base, SETTINGS_STYLES.row)}>
         <div {...css(STYLES.selectContainer)}>
@@ -202,10 +250,9 @@ export class RuleRow extends React.Component<IRuleRowProps> {
             <ModerateButtons
               darkOnLight
               hideLabel
-              activeButtons={selectedAction
-                  && List.of(selectedAction.toLowerCase()) as List<IConfirmationAction>}
+              activeButtons={List<IModerationAction>().push(convertRuleAction(selectedAction))}
               containerSize={36}
-              onClick={partial(maybeCallback(onModerateButtonClick), rule)}
+              onClick={this.notifyWrapperOfActionChange}
             />
           )}
         <button

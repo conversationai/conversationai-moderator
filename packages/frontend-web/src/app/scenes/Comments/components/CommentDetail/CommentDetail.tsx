@@ -32,6 +32,7 @@ import {
 } from '../../../../../models';
 import {
   IConfirmationAction,
+  IModerationAction,
 } from '../../../../../types';
 import {
   Arrow,
@@ -329,7 +330,7 @@ export interface ICommentDetailState {
     top: number,
     left: number,
   };
-  activeButtons?: List<IConfirmationAction>;
+  activeButtons?: List<IModerationAction>;
   upArrowIsFocused?: boolean;
   downArrowIsFocused?: boolean;
   infoIconFocused?: boolean;
@@ -961,7 +962,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   }
 
   @autobind
-  async moderateComment(action: IConfirmationAction) {
+  async moderateComment(action: IModerationAction) {
     const isModerated = this.props.comment.isModerated;
     const shouldResetAction = this.state.activeButtons && this.state.activeButtons.includes(action);
     const commentAction: IConfirmationAction = shouldResetAction ? 'reset' : action;
@@ -1099,7 +1100,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     this.setState({ isConfirmationModalVisible: false });
   }
 
-  getActiveButtons(props: ICommentDetailProps): List<IConfirmationAction> {
+  getActiveButtons(props: ICommentDetailProps): List<IModerationAction> {
     const comment: ICommentModel = props.comment;
     if (!comment) { return null; }
     let activeButtons = List();
@@ -1109,7 +1110,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     if (comment.isHighlighted) { activeButtons = activeButtons.push('highlight'); }
     if (comment.isDeferred) { activeButtons = List(['defer']); }
 
-    return activeButtons as List<IConfirmationAction>;
+    return activeButtons as List<IModerationAction>;
   }
 
   @autobind

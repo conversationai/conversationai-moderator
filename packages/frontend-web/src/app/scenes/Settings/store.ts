@@ -108,7 +108,7 @@ export function updateTags(oldTags: List<ITagModel>, newTags: List<ITagModel>): 
 async function addRule(rule: IRuleModel): Promise<void> {
   await createModel<IRuleModel>(
     'moderation_rules',
-    rule.set('action', rule.action.toLowerCase() === 'approve' ? 'Accept' : rule.action) as any,
+    rule as any,
   );
 }
 
@@ -116,7 +116,7 @@ async function modifyRule(rule: IRuleModel): Promise<void> {
   await updateModel<IRuleModel>(
     'moderation_rules',
     rule.id,
-    rule.set('action', rule.action.toLowerCase() === 'approve' ? 'Accept' : rule.action) as any,
+    rule as any,
   );
 }
 

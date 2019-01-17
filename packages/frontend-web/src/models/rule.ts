@@ -14,19 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { fromJS, Record } from 'immutable';
+import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
-import { ICommentAction } from '../types';
 
-export const MODERATION_RULE_ACTION_ACCEPT = 'Accept';
-export const MODERATION_RULE_ACTION_REJECT = 'Reject';
-export const MODERATION_RULE_ACTION_DEFER = 'Defer';
-export const MODERATION_RULE_ACTION_HIGHLIGHT = 'Highlight';
+export const RULE_ACTION_ACCEPT = 'Accept';
+export const RULE_ACTION_REJECT = 'Reject';
+export const RULE_ACTION_DEFER = 'Defer';
+export const RULE_ACTION_HIGHLIGHT = 'Highlight';
+
+export type IRuleAction = 'Accept' | 'Reject' | 'Defer' | 'Highlight';
 
 export interface IRuleAttributes {
   id: string;
-  // This is wrong.  It should be one of the actions above.
-  action: ICommentAction | null;
+  action: IRuleAction | null;
   categoryId: string | null;
   createdBy: string | null;
   lowerThreshold: number;
@@ -47,18 +47,5 @@ const RuleModelRecord = Record({
 });
 
 export function RuleModel(keyValuePairs?: IRuleAttributes): IRuleModel {
-  let immutableKeyValuePairs = fromJS(keyValuePairs);
-
-  if (typeof immutableKeyValuePairs.get('action') === 'string') {
-    immutableKeyValuePairs = immutableKeyValuePairs.update('action', (rule: string) => {
-      // TODO fix up this crazyness.
-      if (rule === 'Accept') {
-        rule = 'Approve';
-      }
-
-      return rule;
-    });
-  }
-
-  return new RuleModelRecord(immutableKeyValuePairs) as IRuleModel;
+  return new RuleModelRecord(keyValuePairs) as IRuleModel;
 }

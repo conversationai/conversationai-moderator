@@ -17,8 +17,8 @@ limitations under the License.
 import { storiesOf } from '@storybook/react';
 
 import { List } from 'immutable';
-import { IConfirmationAction } from '../../../types';
-import { ModerateButtons } from '../ModerateButtons';
+import { IModerationAction } from '../../../types';
+import { ModerateButtons } from './ModerateButtons';
 
 storiesOf('ModerateButtons', module)
   .add('Horizontal', () => (
@@ -38,7 +38,7 @@ storiesOf('ModerateButtons', module)
   .add('Vertical Approve', () => (
     <div>
       <ModerateButtons
-        activeButtons={List(['approve']) as List<IConfirmationAction>}
+        activeButtons={List(['approve']) as List<IModerationAction>}
         vertical
       />
     </div>
@@ -46,7 +46,7 @@ storiesOf('ModerateButtons', module)
   .add('Vertical Reject', () => (
     <div>
       <ModerateButtons
-        activeButtons={List(['reject']) as List<IConfirmationAction>}
+        activeButtons={List(['reject']) as List<IModerationAction>}
         vertical
       />
     </div>
@@ -54,7 +54,7 @@ storiesOf('ModerateButtons', module)
   .add('Vertical Highlight', () => (
     <div>
       <ModerateButtons
-        activeButtons={List(['approve', 'highlight']) as List<IConfirmationAction>}
+        activeButtons={List(['approve', 'highlight']) as List<IModerationAction>}
         vertical
       />
     </div>
@@ -62,7 +62,7 @@ storiesOf('ModerateButtons', module)
   .add('Vertical Defer', () => (
     <div>
       <ModerateButtons
-        activeButtons={List(['defer']) as List<IConfirmationAction>}
+        activeButtons={List(['defer']) as List<IModerationAction>}
         vertical
       />
     </div>

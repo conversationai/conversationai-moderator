@@ -27,14 +27,19 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 
 import {
   CategoryModel,
-  ICategoryModel, IPreselectModel,
-  IRuleModel, ITaggingSensitivityModel,
-  ITagModel, IUserModel,
+  ICategoryModel,
+  IPreselectModel,
+  IRuleAction,
+  IRuleModel,
+  ITaggingSensitivityModel,
+  ITagModel,
+  IUserModel,
   PreselectModel,
+  RULE_ACTION_ACCEPT,
   RuleModel,
-  TaggingSensitivityModel, TagModel,
+  TaggingSensitivityModel,
+  TagModel,
 } from '../../../models';
-import { IConfirmationAction } from '../../../types';
 import {
   Button,
   Header,
@@ -72,7 +77,6 @@ import {
   VISUALLY_HIDDEN,
   WHITE_COLOR,
 } from '../../styles';
-
 import { SETTINGS_STYLES } from './settingsStyles';
 
 function validateColor(color: string): boolean {
@@ -335,7 +339,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         tagId: '1',
         lowerThreshold: .8,
         upperThreshold: 1,
-        action: 'approve',
+        action: RULE_ACTION_ACCEPT,
       },
     );
 
@@ -517,7 +521,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleModerateButtonClick(rule: IRuleModel, action: IConfirmationAction) {
+  handleModerateButtonClick(rule: IRuleModel, action: IRuleAction) {
     const updatedRules = this.state.rules.update(
         this.state.rules.findIndex(((r) => r.equals(rule))),
         (r) => r.set('action', action));

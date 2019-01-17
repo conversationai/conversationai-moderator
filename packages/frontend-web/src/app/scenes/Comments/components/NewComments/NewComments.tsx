@@ -24,9 +24,9 @@ import {
   IArticleModel,
   ICommentDatedModel,
   ICommentModel,
-  ICommentScoredModel,
+  ICommentScoredModel, IRuleAction,
   IRuleModel,
-  ITagModel,
+  ITagModel, RULE_ACTION_ACCEPT, RULE_ACTION_DEFER, RULE_ACTION_HIGHLIGHT, RULE_ACTION_REJECT,
   TagModel,
 } from '../../../../../models';
 import { ICommentAction } from '../../../../../types';
@@ -301,7 +301,7 @@ export interface INewCommentsState {
   isNavStuck?: boolean;
   isConfirmationModalVisible?: boolean;
   isRuleInfoVisible?: boolean;
-  confirmationAction?: ICommentAction;
+  confirmationAction?: IRuleAction;
   actionCount?: number;
   actionText?: string;
   toastButtonLabel?: 'Undo';
@@ -945,16 +945,16 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     }
   }
 
-  matchAction(action: ICommentAction) {
+  matchAction(action: IRuleAction) {
     let showActionIcon;
 
-    if (action === 'approve') {
+    if (action === RULE_ACTION_ACCEPT) {
       showActionIcon = <ApproveIcon {...css({ fill: DARK_COLOR })} />;
-    } else if (action === 'reject') {
+    } else if (action === RULE_ACTION_REJECT) {
       showActionIcon = <RejectIcon {...css({ fill: DARK_COLOR })} />;
-    } else if (action === 'highlight') {
+    } else if (action === RULE_ACTION_HIGHLIGHT) {
       showActionIcon = <HighlightIcon {...css({ fill: DARK_COLOR })} />;
-    } else if (action === 'defer') {
+    } else if (action === RULE_ACTION_DEFER) {
       showActionIcon = <DeferIcon {...css({ fill: DARK_COLOR })} />;
     }
 
@@ -962,7 +962,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind
-  triggerActionToast(action: ICommentAction, count: number, callback: (action?: ICommentAction) => any) {
+  triggerActionToast(action: IRuleAction, count: number, callback: (action?: IRuleAction) => any) {
     this.setState({
       isConfirmationModalVisible: true,
       confirmationAction: action,
@@ -1017,7 +1017,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   @autobind
   onTagButtonClick(tagId: string) {
     const ids = this.getSelectedIDs();
-    this.triggerActionToast('tag', ids.length, () => this.props.tagComments(ids, tagId));
+    this.triggerActionToast('Accept', ids.length, () => this.props.tagComments(ids, tagId));
     this.toggleTaggingToolTip();
   }
 

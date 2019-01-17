@@ -20,7 +20,11 @@ import { List } from 'immutable';
 import React from 'react';
 const Linkify = require('react-linkify').default;
 import { ICommentModel, ITagModel } from '../../../models';
-import { IConfirmationAction, ITopScore } from '../../../types';
+import {
+  IConfirmationAction,
+  IModerationAction,
+  ITopScore,
+} from '../../../types';
 import {
   Avatar,
   Link,
@@ -115,7 +119,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
     });
   }
 
-  getActiveButtons(): List<IConfirmationAction> {
+  getActiveButtons(): List<IModerationAction> {
     const { comment, tagRejectionModalVisible } = this.props;
     const shouldDisplayReject = tagRejectionModalVisible && tagRejectionModalVisible.id === comment.id && tagRejectionModalVisible.isVisible;
 
@@ -126,7 +130,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
     if (comment.isHighlighted) { activeCommentStates.push('highlight'); }
     if (comment.isDeferred) { activeCommentStates.push('defer'); }
 
-    return List<IConfirmationAction>(activeCommentStates);
+    return List<IModerationAction>(activeCommentStates);
   }
 
   isModerated() {
@@ -140,7 +144,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
 
     const activeCommentStates = this.getActiveButtons();
 
-    const shouldReset = this.isModerated() && activeCommentStates.includes(action);
+    const shouldReset = this.isModerated() && activeCommentStates.includes(action as IModerationAction);
 
     // Highlight action already contains special reset function
     const newAction = shouldReset
@@ -236,7 +240,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
       output.push(addRange(comment.text, currentIndex, topScore.end, true));
       output.push(addRange(comment.text, currentIndex, comment.text.length));
     } else {
-      output = [<span>{comment.text}</span>];
+      output = [<span key={comment.id}>{comment.text}</span>];
     }
 
     return(
