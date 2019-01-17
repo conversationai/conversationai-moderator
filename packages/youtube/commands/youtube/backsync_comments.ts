@@ -17,7 +17,11 @@ limitations under the License.
 import { google } from 'googleapis';
 import * as yargs from 'yargs';
 
-import { logger } from '@conversationai/moderator-backend-core';
+import {
+  logger,
+  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_DEFER,
+} from '@conversationai/moderator-backend-core';
 
 import { authorize } from './authenticate';
 import { foreachPendingDecision, markDecisionExecuted } from './objectmap';
@@ -39,13 +43,13 @@ export async function handler() {
       const sourceId = comment.get('sourceId') as string;
       const status = decision.get('status');
 
-      if (status === 'Defer') {
+      if (status === MODERATION_ACTION_DEFER) {
         logger.info('Not syncing comment %s:%s - in deferred state', comment.id, sourceId);
         markDecisionExecuted(decision);
         return;
       }
 
-      const moderationStatus = (status === 'Accept') ? 'published' : 'rejected';
+      const moderationStatus = (status === MODERATION_ACTION_ACCEPT) ? 'published' : 'rejected';
       logger.info('Syncing comment %s:%s to %s (%s) ', comment.id, sourceId, moderationStatus, decision.id);
       service.comments.setModerationStatus({
           auth: auth,

@@ -26,6 +26,8 @@ import {
   highlight,
   ICommentInstance,
   IResolution,
+  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_REJECT,
   reject,
   reset,
   Tag,
@@ -523,7 +525,7 @@ export const acceptCommentsTask = handler<IAcceptCommentsData>((data, logger) =>
     userId || null,
     logger,
     isBatchAction,
-    'Accept',
+    MODERATION_ACTION_ACCEPT,
     approve,
     !!autoConfirmDecision,
   );
@@ -552,7 +554,7 @@ export const rejectCommentsTask = handler<IRejectCommentsData>((data, logger) =>
     userId || null,
     logger,
     isBatchAction,
-    'Reject',
+    MODERATION_ACTION_REJECT,
     reject,
     !!autoConfirmDecision,
   );

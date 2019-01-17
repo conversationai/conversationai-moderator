@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,6 +25,9 @@ import {
   ICommentInstance,
   ICommentSummaryScoreInstance,
   IModerationRuleInstance,
+  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_DEFER,
+  MODERATION_ACTION_REJECT,
   ModerationRule,
   Tag,
 } from '../../models';
@@ -49,8 +52,7 @@ export function compileScores(commentScores: Array<ICommentSummaryScoreInstance>
 
   return mapValues(grouped, (scores) => {
     // Pull out `score` field values and return their average
-    // TODO(ldixon): typehack to be fixed.
-    return max(scores.map((score) => (score as any).get('score')));
+    return max(scores.map((score: ICommentSummaryScoreInstance) => score.get('score')));
   });
 }
 
@@ -149,7 +151,7 @@ export async function resolveComment(
     await comment.set('isAutoResolved', true).save();
 
     return {
-      resolution: 'Defer',
+      resolution: MODERATION_ACTION_DEFER,
       resolver: null,
     };
   }
@@ -166,7 +168,7 @@ export async function resolveComment(
     await comment.set('isAutoResolved', true).save();
 
     return {
-      resolution: 'Accept',
+      resolution: MODERATION_ACTION_ACCEPT,
       resolver: appliedRule,
     };
   } else if (replacedAction === 'reject') {
@@ -175,7 +177,7 @@ export async function resolveComment(
     await comment.set('isAutoResolved', true).save();
 
     return {
-      resolution: 'Reject',
+      resolution: MODERATION_ACTION_REJECT,
       resolver: appliedRule,
     };
   } else if (replacedAction === 'defer') {
@@ -184,7 +186,7 @@ export async function resolveComment(
     await comment.set('isAutoResolved', true).save();
 
     return {
-      resolution: 'Defer',
+      resolution: MODERATION_ACTION_DEFER,
       resolver: appliedRule,
     };
   } else {

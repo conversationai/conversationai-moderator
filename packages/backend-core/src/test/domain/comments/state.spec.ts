@@ -29,6 +29,9 @@ import {
   CommentScoreRequest,
   Decision,
   ICommentInstance,
+  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_DEFER,
+  MODERATION_ACTION_REJECT,
 } from '../../../models';
 import {
   createArticle,
@@ -272,7 +275,7 @@ describe('Comments Domain States Tests', () => {
       assert.isTrue(updated.get('isAccepted'));
       assert.isFalse(updated.get('isDeferred'));
 
-      await shouldRecordDecision(updated, 'Accept', 'User', user.id);
+      await shouldRecordDecision(updated, MODERATION_ACTION_ACCEPT, 'User', user.id);
     });
 
     it('should optionally accept additional data', async () => {
@@ -283,7 +286,7 @@ describe('Comments Domain States Tests', () => {
       assert.isTrue(updated.get('isAccepted'));
       assert.isFalse(updated.get('isDeferred'));
 
-      await shouldRecordDecision(updated, 'Accept', 'User', user.id);
+      await shouldRecordDecision(updated, MODERATION_ACTION_ACCEPT, 'User', user.id);
     });
   });
 
@@ -296,7 +299,7 @@ describe('Comments Domain States Tests', () => {
       assert.isFalse(updated.get('isAccepted'));
       assert.isFalse(updated.get('isDeferred'));
 
-      await shouldRecordDecision(updated, 'Reject', 'User', user.id);
+      await shouldRecordDecision(updated, MODERATION_ACTION_REJECT, 'User', user.id);
     });
   });
 
@@ -309,7 +312,7 @@ describe('Comments Domain States Tests', () => {
       assert.isNull(updated.get('isAccepted'));
       assert.isTrue(updated.get('isDeferred'));
 
-      await shouldRecordDecision(updated, 'Defer', 'User', user.id);
+      await shouldRecordDecision(updated, MODERATION_ACTION_DEFER, 'User', user.id);
     });
   });
 

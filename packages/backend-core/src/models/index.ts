@@ -102,6 +102,7 @@ export * from './comment_score_request';
 export * from './comment_size';
 export * from './comment_top_score';
 export * from './configuration';
+export * from './constants';
 export * from './csrf';
 export * from './decision';
 export * from './last_update';
