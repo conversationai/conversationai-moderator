@@ -16,10 +16,10 @@ limitations under the License.
 
 import check from 'check-types';
 import {
-  MODERATION_RULE_ACTION_ACCEPT,
-  MODERATION_RULE_ACTION_DEFER,
-  MODERATION_RULE_ACTION_HIGHLIGHT,
-  MODERATION_RULE_ACTION_REJECT,
+  RULE_ACTION_ACCEPT,
+  RULE_ACTION_DEFER,
+  RULE_ACTION_HIGHLIGHT,
+  RULE_ACTION_REJECT,
 } from '../models';
 
 const loggedBad: any = {};
@@ -91,7 +91,8 @@ function category_id_or_null(val: any) {
     return true;
   }
 
-  return categoryIds.has(val);
+  // TODO: Don't like this inconsistency between categoryIds.  We really need to pin down ids into a single type.
+  return categoryIds.has(val.toString());
 }
 
 function tag_id_or_null(val: any) {
@@ -116,10 +117,10 @@ function action(val: any) {
   }
 
   return [
-    MODERATION_RULE_ACTION_ACCEPT,
-    MODERATION_RULE_ACTION_REJECT,
-    MODERATION_RULE_ACTION_HIGHLIGHT,
-    MODERATION_RULE_ACTION_DEFER,
+    RULE_ACTION_ACCEPT,
+    RULE_ACTION_REJECT,
+    RULE_ACTION_HIGHLIGHT,
+    RULE_ACTION_DEFER,
   ].indexOf(val) >= 0;
 }
 
@@ -219,6 +220,7 @@ export function checkCategory(o: any) {
   if (!checkObject(o, 'category', categoryFields)) {
     return false;
   }
+
   categoryIds.add(o.id);
   return true;
 }

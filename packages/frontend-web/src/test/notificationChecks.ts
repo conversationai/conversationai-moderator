@@ -26,12 +26,15 @@ import {
   checkUser,
 } from './objectChecks';
 
-export const globalUpdate = {
+export const globalUpdate: any = {
+  data: null,
+
   gotUpdate: false,
   gotCategories: false,
   gotArticles: false,
   gotUsers: false,
   gotDeferred: false,
+
   notificationHandler(data: IGlobalSummary) {
     console.log('Received global update message');
     globalUpdate.gotUpdate = true;
@@ -39,16 +42,21 @@ export const globalUpdate = {
     globalUpdate.gotArticles = true;
     globalUpdate.gotUsers = data.users.toArray().length > 0;
     globalUpdate.gotDeferred = check.number(data.deferred);
-    for (const u of data.users.toArray()) {
+    globalUpdate.data = data;
+  },
+
+  dataCheck() {
+    for (const u of globalUpdate.data.users.toArray()) {
       globalUpdate.gotUsers = globalUpdate.gotUsers && checkUser(u);
     }
-    for (const c of data.categories.toArray()) {
+    for (const c of globalUpdate.data.categories.toArray()) {
       globalUpdate.gotCategories = globalUpdate.gotCategories && checkCategory(c);
     }
-    for (const a of data.articles.toArray()) {
+    for (const a of globalUpdate.data.articles.toArray()) {
       globalUpdate.gotArticles = globalUpdate.gotArticles && checkArticle(a);
     }
   },
+
   stateCheck() {
     if (!globalUpdate.gotUpdate) {
       console.log('ERROR: Didn\'t get global update message');
@@ -69,12 +77,14 @@ export const globalUpdate = {
   },
 };
 
-export const systemUpdate = {
+export const systemUpdate: any = {
+  data: null,
   gotUpdate: false,
   gotTags: false,
   gotTaggingSensitivities: false,
   gotRules: false,
   gotPreselects: false,
+
   notificationHandler(data: ISystemSummary) {
     console.log('Received system update message');
     systemUpdate.gotUpdate = true;
@@ -82,19 +92,24 @@ export const systemUpdate = {
     systemUpdate.gotTaggingSensitivities = true;
     systemUpdate.gotRules = true;
     systemUpdate.gotPreselects = true;
-    for (const t of data.tags.toArray()) {
+    systemUpdate.data = data;
+  },
+
+  dataCheck() {
+    for (const t of systemUpdate.data.tags.toArray()) {
       systemUpdate.gotTags = systemUpdate.gotTags && checkTag(t);
     }
-    for (const t of data.taggingSensitivities.toArray()) {
+    for (const t of systemUpdate.data.taggingSensitivities.toArray()) {
       systemUpdate.gotTaggingSensitivities = systemUpdate.gotTaggingSensitivities && checkTaggingSensitivity(t);
     }
-    for (const r of data.rules.toArray()) {
+    for (const r of systemUpdate.data.rules.toArray()) {
       systemUpdate.gotRules = systemUpdate.gotRules && checkRule(r);
     }
-    for (const s of data.preselects.toArray()) {
+    for (const s of systemUpdate.data.preselects.toArray()) {
       systemUpdate.gotPreselects = systemUpdate.gotPreselects && checkPreselect(s);
     }
   },
+
   stateCheck() {
     if (!systemUpdate.gotUpdate) {
       console.log('ERROR: Didn\'t get system update message');

@@ -73,6 +73,9 @@ setAxiosToken(token);
 
   await readyPromise;
 
+  globalUpdate.dataCheck();
+  systemUpdate.dataCheck();
+
   systemUpdate.stateCheck();
   globalUpdate.stateCheck();
   userUpdate.stateCheck();
