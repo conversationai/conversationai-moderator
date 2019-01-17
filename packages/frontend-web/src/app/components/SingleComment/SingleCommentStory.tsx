@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import { storiesOf } from '@storybook/react';
 
-import { AuthorModelRecord, IAuthorModel } from '../../../models';
+import {AuthorModelRecord, IAuthorModel } from '../../../models';
 import { fakeCommentModel } from '../../../models/fake';
 import { css } from '../../utilx';
-import { SingleComment } from '../SingleComment';
+import { SingleComment } from './SingleComment';
 
 const date = new Date(2016, 10, 30);
 
@@ -54,29 +54,13 @@ const STORY_STYLES = {
 };
 
 storiesOf('SingleComment', module)
-  .add('default list', () => {
+  .add('base', () => {
     return (
       <div {...css(STORY_STYLES.base)}>
         <div {...css(STORY_STYLES.detail)}>
-          <SingleComment comment={comment} />
-        </div>
-      </div>
-    );
-  })
-  .add('read only', () => {
-    return (
-      <div {...css(STORY_STYLES.base)}>
-        <div {...css(STORY_STYLES.detail)}>
-          <SingleComment comment={comment} />
-        </div>
-      </div>
-    );
-  })
-  .add('default moderating', () => {
-    return (
-      <div {...css(STORY_STYLES.base)}>
-        <div {...css(STORY_STYLES.detail)}>
-          <SingleComment comment={comment} />
+          <SingleComment
+            comment={comment}
+          />
         </div>
       </div>
     );
@@ -99,6 +83,7 @@ storiesOf('SingleComment', module)
         <div {...css(STORY_STYLES.detail)}>
           <SingleComment
             comment={comment}
+            commentEditingEnabled
             onUpdateCommentText={action('Updating Comment')}
           />
         </div>

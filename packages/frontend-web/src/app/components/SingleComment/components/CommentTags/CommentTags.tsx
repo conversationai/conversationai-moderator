@@ -261,7 +261,7 @@ export class CommentTags extends React.PureComponent<ICommentTagsProps, IComment
                     const tagAlreadySet = scores && scores.find((s) => (s.tagId === t.id && s.sourceType === 'Moderator'));
 
                     return (
-                      <li>
+                      <li key={t.id}>
                         <button
                           onClick={tagAlreadySet ? identity : partial(this.tagComment, t.id)}
                           key={`tag-${i}`}

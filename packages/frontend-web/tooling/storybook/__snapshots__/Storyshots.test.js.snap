@@ -4607,7 +4607,7 @@ exports[`Storyshots DashboardArticleItem singleline 1`] = `
 </div>
 `;
 
-exports[`Storyshots DashboardCategoryItemStory test1 1`] = `
+exports[`Storyshots DashboardCategoryItemStory base 1`] = `
 <div
   style={
     Object {
@@ -11262,6 +11262,495 @@ exports[`Storyshots Shortcuts base 1`] = `
 </div>
 `;
 
+exports[`Storyshots SingleComment base 1`] = `
+<div
+  style={
+    Object {
+      "background": "rgba(0, 0, 0, 0.1)",
+      "padding": "20px 0",
+      "width": "100%",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "background": "#fff",
+        "margin": "0 auto",
+        "maxWidth": "700px",
+      }
+    }
+  >
+    <div>
+      <div
+        style={
+          Object {
+            "alignItems": "baseline",
+            "borderBottom": "2px solid #ededed",
+            "display": "flex",
+            "flexWrap": "no-wrap",
+            "padding": "24px 0",
+            "width": "100%",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "width": "100%",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "display": "flex",
+                "marginRight": 18,
+              }
+            }
+          >
+            <img
+              alt="Bridie Skiles IV"
+              height={60}
+              src="https://s3.amazonaws.com/pimage.example.com/7778/5652/cropped-77785652.jpg"
+              style={
+                Object {
+                  "background": "#ededed",
+                  "height": 60,
+                  "marginRight": "24px",
+                  "overflow": "hidden",
+                  "width": 60,
+                }
+              }
+              width={60}
+            />
+          </div>
+          <div
+            style={
+              Object {
+                "display": "flex",
+                "flex": 1,
+                "flexDirection": "column",
+                "justifyContent": "flex-end",
+              }
+            }
+          >
+            <div
+              style={
+                Object {
+                  "alignItems": "center",
+                  "color": "rgba(0, 0, 0, 0.87)",
+                  "display": "flex",
+                  "fontFamily": "LibreFranklin-Medium, sans-serif",
+                  "fontSize": 16,
+                  "fontWeight": 400,
+                  "justifyContent": "space-between",
+                  "lineHeight": 1.5,
+                }
+              }
+            >
+              <a
+                onClick={[Function]}
+                style={
+                  Object {
+                    ":focus": Object {
+                      "outline": 0,
+                      "textDecoration": "underline",
+                    },
+                    "color": "rgba(0, 0, 0, 0.87)",
+                    "userSelect": "text",
+                  }
+                }
+              >
+                Bridie Skiles IV
+              </a>
+            </div>
+            <div
+              style={
+                Object {
+                  "alignItems": "flex-end",
+                  "display": "flex",
+                  "flexWrap": "wrap",
+                  "justifyContent": "space-between",
+                  "marginTop": "5px",
+                }
+              }
+            >
+              <div>
+                <div
+                  style={
+                    Object {
+                      "color": "rgba(0, 0, 0, 0.54)",
+                      "fontFamily": "LibreFranklin-Medium, sans-serif",
+                      "fontSize": 12,
+                      "fontWeight": 400,
+                      "lineHeight": 1.5,
+                      "marginRight": "10px",
+                      "userSelect": "text",
+                    }
+                  }
+                >
+                  <span>
+                    NYC
+                  </span>
+                </div>
+              </div>
+              <div
+                style={
+                  Object {
+                    "display": "flex",
+                    "flexWrap": "no-wrap",
+                  }
+                }
+              >
+                <div
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "display": "flex",
+                      "flexWrap": "no-wrap",
+                      "marginRight": "10px",
+                      "overflow": "hidden",
+                    }
+                  }
+                >
+                  <div
+                    style={
+                      Object {
+                        "display": "flex",
+                        "marginRight": "5px",
+                      }
+                    }
+                  >
+                    <svg
+                      fill="currentColor"
+                      height={20}
+                      preserveAspectRatio="xMidYMid meet"
+                      style={
+                        Object {
+                          "fill": "rgba(0, 0, 0, 0.54)",
+                          "verticalAlign": "middle",
+                        }
+                      }
+                      viewBox="0 0 24 24"
+                      width={20}
+                    >
+                      <g>
+                        <path
+                          d="M0,0H24V24H0V0Z"
+                          fill="none"
+                        />
+                        <path
+                          d="M20,4H4A2,2,0,0,0,2,6V18a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V6A2,2,0,0,0,20,4Zm0,14H4V8l8,5,8-5V18Zm-8-7L4,6H20Z"
+                        />
+                      </g>
+                    </svg>
+                  </div>
+                  <div
+                    style={
+                      Object {
+                        "color": "rgba(0, 0, 0, 0.54)",
+                        "fontFamily": "LibreFranklin-Medium, sans-serif",
+                        "fontSize": 12,
+                        "fontWeight": 400,
+                        "lineHeight": 1.5,
+                        "maxWidth": 120,
+                        "overflow": "hidden",
+                        "textOverflow": "ellipsis",
+                        "whiteSpace": "no-wrap",
+                      }
+                    }
+                  >
+                    <a
+                      href="mailto:name@email.com"
+                      style={
+                        Object {
+                          ":focus": Object {
+                            "outline": 0,
+                            "textDecoration": "underline",
+                          },
+                          "color": "rgba(0, 0, 0, 0.54)",
+                          "textDecoration": "none",
+                        }
+                      }
+                    >
+                      name@email.com
+                    </a>
+                  </div>
+                </div>
+                <a
+                  onClick={[Function]}
+                  style={
+                    Object {
+                      ":focus": Object {
+                        "outline": 0,
+                        "textDecoration": "underline",
+                      },
+                    }
+                  }
+                >
+                  <div
+                    style={
+                      Object {
+                        "alignItems": "center",
+                        "display": "flex",
+                        "flexWrap": "no-wrap",
+                        "marginRight": "10px",
+                        "overflow": "hidden",
+                      }
+                    }
+                  >
+                    <div
+                      style={
+                        Object {
+                          "display": "flex",
+                          "marginRight": "5px",
+                        }
+                      }
+                    >
+                      <svg
+                        fill="currentColor"
+                        height={20}
+                        preserveAspectRatio="xMidYMid meet"
+                        style={
+                          Object {
+                            "fill": "rgba(0, 0, 0, 0.54)",
+                            "verticalAlign": "middle",
+                          }
+                        }
+                        viewBox="0 0 24 24"
+                        width={20}
+                      >
+                        <g>
+                          <path
+                            d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"
+                          />
+                          <path
+                            d="M0 0h24v24H0zm0 0h24v24H0z"
+                            fill="none"
+                          />
+                        </g>
+                      </svg>
+                    </div>
+                    <div
+                      style={
+                        Object {
+                          "color": "rgba(0, 0, 0, 0.54)",
+                          "fontFamily": "LibreFranklin-Medium, sans-serif",
+                          "fontSize": 12,
+                          "fontWeight": 400,
+                          "lineHeight": 1.5,
+                          "maxWidth": 120,
+                          "overflow": "hidden",
+                          "textOverflow": "ellipsis",
+                          "whiteSpace": "no-wrap",
+                        }
+                      }
+                    >
+                      test
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        style={
+          Object {
+            "display": "flex",
+            "flexDirection": "column",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "justifyContent": "flex-end",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "alignItems": "center",
+                "display": "flex",
+                "justifyContent": "flex-end",
+                "marginTop": "12px",
+                "position": "relative",
+              }
+            }
+          >
+            <div
+              style={
+                Object {
+                  "marginRight": 4,
+                }
+              }
+            >
+              <h4
+                style={
+                  Object {
+                    "clip": "rect(1px, 1px, 1px, 1px)",
+                    "display": "block",
+                    "height": 1,
+                    "margin": 0,
+                    "overflow": "hidden",
+                    "position": "absolute",
+                    "width": 1,
+                  }
+                }
+              >
+                Assigned tags
+              </h4>
+              <p
+                style={
+                  Object {
+                    "clip": "rect(1px, 1px, 1px, 1px)",
+                    "display": "block",
+                    "height": 1,
+                    "margin": 0,
+                    "overflow": "hidden",
+                    "position": "absolute",
+                    "width": 1,
+                  }
+                }
+              >
+                Click to remove.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div
+          style={
+            Object {
+              "display": "flex",
+              "marginBottom": "24px",
+              "marginTop": "24px",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "color": "rgba(0, 0, 0, 0.54)",
+                "fontFamily": "LibreFranklin-Medium, sans-serif",
+                "fontSize": 14,
+                "fontWeight": 400,
+                "lineHeight": 1.5,
+              }
+            }
+          >
+            <span>
+              Nov. 30, 2016 12:00 AM
+               
+            </span>
+            <span>
+              • 
+              2
+               Flag
+              s
+            </span>
+            <span>
+              • 
+              5
+               Recommendation
+              s
+            </span>
+          </div>
+        </div>
+        <style>
+          
+  .comment-body a {
+    text-decoration: underline;
+  }
+
+  .comment-body b {
+    color: #f00;
+  }
+
+  .comment-body::selection,
+  .comment-body *::selection {
+    background: #326891;
+    borderColor: rgba(255, 255, 255, 1);
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .tag {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+  }
+
+  .tag-obscene {
+    border-bottom-color: #d71b60;
+    color: #d71b60;
+  }
+
+  .tag-incoherent {
+    border-bottom-color: #9c28b1;
+    color: #9c28b1;
+  }
+
+  .tag-spam {
+    border-bottom-color: #673bb8;
+    color: #673bb8;
+  }
+
+  .tag-off-topic {
+    border-bottom-color: #3f51b5;
+    color: #3f51b5;
+  }
+
+  .tag-inflammatory {
+    border-bottom-color: #1976d3;
+    color: #1976d3;
+  }
+
+  .tag-unsubstantial {
+    border-bottom-color: #3d5afe;
+    color: #3d5afe;
+  }
+
+  .tag-other {
+    border-bottom-color: #01828f;
+    color: #01828f;
+  }
+
+        </style>
+        <div
+          className="comment-body"
+          style={
+            Object {
+              "color": "rgba(0, 0, 0, 0.87)",
+              "fontFamily": "Georgia, serif",
+              "fontSize": "20px",
+              "fontWeight": 400,
+              "lineHeight": 1.7,
+              "marginBottom": "96px",
+              "position": "relative",
+              "whiteSpace": "pre-wrap",
+              "wordWrap": "break-word",
+            }
+          }
+        >
+          <div>
+            <div
+              onMouseDown={[Function]}
+              onTouchStart={[Function]}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots SingleComment can edit comment 1`] = `
 <div
   style={
@@ -11624,1168 +12113,62 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
                 Click to remove.
               </p>
             </div>
-            <button
-              aria-label="Add tag to comment"
-              onBlur={[Function]}
-              onClick={[Function]}
-              onFocus={[Function]}
-              onMouseEnter={[Function]}
-              onMouseLeave={[Function]}
-              style={
-                Object {
-                  ":focus": Object {
-                    "backgroundColor": "#326891",
-                    "outline": 0,
-                  },
-                  ":hover": Object {
-                    "backgroundColor": "#326891",
-                  },
-                  "backgroundColor": "transparent",
-                  "border": "none",
-                  "borderRadius": 2,
-                  "cursor": "pointer",
-                  "marginBottom": 4,
-                  "padding": 6,
-                }
-              }
-            >
-              <span
-                style={
-                  Object {
-                    "clip": "rect(1px, 1px, 1px, 1px)",
-                    "height": 0,
-                    "position": "absolute",
-                    "width": 0,
-                  }
-                }
-              >
-                Add a comment wide tag
-              </span>
-              <svg
-                fill="currentColor"
-                height={24}
-                preserveAspectRatio="xMidYMid meet"
-                style={
-                  Object {
-                    "fill": "#326891",
-                    "verticalAlign": "middle",
-                  }
-                }
-                viewBox="0 0 24 24"
-                width={24}
-              >
-                <g>
-                  <path
-                    d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-                  />
-                  <path
-                    d="M0 0h24v24H0z"
-                    fill="none"
-                  />
-                </g>
-              </svg>
-            </button>
           </div>
-        </div>
-        <div
-          style={
-            Object {
-              "display": "flex",
-              "marginBottom": "24px",
-              "marginTop": "24px",
-            }
-          }
-        >
-          <div
+          <button
+            aria-label="Edit Comment Text"
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
             style={
               Object {
+                ":focus": Object {
+                  "backgroundColor": "#326891",
+                  "outline": 0,
+                },
+                ":hover": Object {
+                  "backgroundColor": "#326891",
+                },
+                "background": "none",
+                "borderBottom": 0,
+                "borderLeft": 0,
+                "borderRadius": 2,
+                "borderRight": 0,
+                "borderTop": 0,
                 "color": "rgba(0, 0, 0, 0.54)",
+                "cursor": "pointer",
                 "fontFamily": "LibreFranklin-Medium, sans-serif",
-                "fontSize": 14,
+                "fontSize": 12,
                 "fontWeight": 400,
+                "height": "36px",
                 "lineHeight": 1.5,
+                "marginLeft": "10px",
+                "marginTop": "10px",
+                "overflow": "visible",
+                "padding": "6px",
+                "width": "36px",
               }
             }
           >
-            <span>
-              Nov. 30, 2016 12:00 AM
-               
-            </span>
-            <span>
-              • 
-              2
-               Flag
-              s
-            </span>
-            <span>
-              • 
-              5
-               Recommendation
-              s
-            </span>
-          </div>
-        </div>
-        <style>
-          
-  .comment-body a {
-    text-decoration: underline;
-  }
-
-  .comment-body b {
-    color: #f00;
-  }
-
-  .comment-body::selection,
-  .comment-body *::selection {
-    background: #326891;
-    borderColor: rgba(255, 255, 255, 1);
-    color: rgba(255, 255, 255, 1);
-  }
-
-  .tag {
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-  }
-
-  .tag-obscene {
-    border-bottom-color: #d71b60;
-    color: #d71b60;
-  }
-
-  .tag-incoherent {
-    border-bottom-color: #9c28b1;
-    color: #9c28b1;
-  }
-
-  .tag-spam {
-    border-bottom-color: #673bb8;
-    color: #673bb8;
-  }
-
-  .tag-off-topic {
-    border-bottom-color: #3f51b5;
-    color: #3f51b5;
-  }
-
-  .tag-inflammatory {
-    border-bottom-color: #1976d3;
-    color: #1976d3;
-  }
-
-  .tag-unsubstantial {
-    border-bottom-color: #3d5afe;
-    color: #3d5afe;
-  }
-
-  .tag-other {
-    border-bottom-color: #01828f;
-    color: #01828f;
-  }
-
-        </style>
-        <div
-          className="comment-body"
-          style={
-            Object {
-              "color": "rgba(0, 0, 0, 0.87)",
-              "fontFamily": "Georgia, serif",
-              "fontSize": "20px",
-              "fontWeight": 400,
-              "lineHeight": 1.7,
-              "marginBottom": "96px",
-              "position": "relative",
-              "whiteSpace": "pre-wrap",
-              "wordWrap": "break-word",
-            }
-          }
-        >
-          <div>
-            <div
-              onMouseDown={[Function]}
-              onTouchStart={[Function]}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`Storyshots SingleComment default list 1`] = `
-<div
-  style={
-    Object {
-      "background": "rgba(0, 0, 0, 0.1)",
-      "padding": "20px 0",
-      "width": "100%",
-    }
-  }
->
-  <div
-    style={
-      Object {
-        "background": "#fff",
-        "margin": "0 auto",
-        "maxWidth": "700px",
-      }
-    }
-  >
-    <div>
-      <div
-        style={
-          Object {
-            "alignItems": "baseline",
-            "borderBottom": "2px solid #ededed",
-            "display": "flex",
-            "flexWrap": "no-wrap",
-            "padding": "24px 0",
-            "width": "100%",
-          }
-        }
-      >
-        <div
-          style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "width": "100%",
-            }
-          }
-        >
-          <div
-            style={
-              Object {
-                "display": "flex",
-                "marginRight": 18,
-              }
-            }
-          >
-            <img
-              alt="Bridie Skiles IV"
-              height={60}
-              src="https://s3.amazonaws.com/pimage.example.com/7778/5652/cropped-77785652.jpg"
+            <svg
+              fill="currentColor"
+              height={20}
+              preserveAspectRatio="xMidYMid meet"
               style={
                 Object {
-                  "background": "#ededed",
-                  "height": 60,
-                  "marginRight": "24px",
-                  "overflow": "hidden",
-                  "width": 60,
+                  "fill": "#326891",
+                  "verticalAlign": "middle",
                 }
               }
-              width={60}
-            />
-          </div>
-          <div
-            style={
-              Object {
-                "display": "flex",
-                "flex": 1,
-                "flexDirection": "column",
-                "justifyContent": "flex-end",
-              }
-            }
-          >
-            <div
-              style={
-                Object {
-                  "alignItems": "center",
-                  "color": "rgba(0, 0, 0, 0.87)",
-                  "display": "flex",
-                  "fontFamily": "LibreFranklin-Medium, sans-serif",
-                  "fontSize": 16,
-                  "fontWeight": 400,
-                  "justifyContent": "space-between",
-                  "lineHeight": 1.5,
-                }
-              }
+              viewBox="0 0 24 24"
+              width={20}
             >
-              <a
-                onClick={[Function]}
-                style={
-                  Object {
-                    ":focus": Object {
-                      "outline": 0,
-                      "textDecoration": "underline",
-                    },
-                    "color": "rgba(0, 0, 0, 0.87)",
-                    "userSelect": "text",
-                  }
-                }
-              >
-                Bridie Skiles IV
-              </a>
-            </div>
-            <div
-              style={
-                Object {
-                  "alignItems": "flex-end",
-                  "display": "flex",
-                  "flexWrap": "wrap",
-                  "justifyContent": "space-between",
-                  "marginTop": "5px",
-                }
-              }
-            >
-              <div>
-                <div
-                  style={
-                    Object {
-                      "color": "rgba(0, 0, 0, 0.54)",
-                      "fontFamily": "LibreFranklin-Medium, sans-serif",
-                      "fontSize": 12,
-                      "fontWeight": 400,
-                      "lineHeight": 1.5,
-                      "marginRight": "10px",
-                      "userSelect": "text",
-                    }
-                  }
-                >
-                  <span>
-                    NYC
-                  </span>
-                </div>
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "flex",
-                    "flexWrap": "no-wrap",
-                  }
-                }
-              >
-                <div
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "display": "flex",
-                      "flexWrap": "no-wrap",
-                      "marginRight": "10px",
-                      "overflow": "hidden",
-                    }
-                  }
-                >
-                  <div
-                    style={
-                      Object {
-                        "display": "flex",
-                        "marginRight": "5px",
-                      }
-                    }
-                  >
-                    <svg
-                      fill="currentColor"
-                      height={20}
-                      preserveAspectRatio="xMidYMid meet"
-                      style={
-                        Object {
-                          "fill": "rgba(0, 0, 0, 0.54)",
-                          "verticalAlign": "middle",
-                        }
-                      }
-                      viewBox="0 0 24 24"
-                      width={20}
-                    >
-                      <g>
-                        <path
-                          d="M0,0H24V24H0V0Z"
-                          fill="none"
-                        />
-                        <path
-                          d="M20,4H4A2,2,0,0,0,2,6V18a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V6A2,2,0,0,0,20,4Zm0,14H4V8l8,5,8-5V18Zm-8-7L4,6H20Z"
-                        />
-                      </g>
-                    </svg>
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "color": "rgba(0, 0, 0, 0.54)",
-                        "fontFamily": "LibreFranklin-Medium, sans-serif",
-                        "fontSize": 12,
-                        "fontWeight": 400,
-                        "lineHeight": 1.5,
-                        "maxWidth": 120,
-                        "overflow": "hidden",
-                        "textOverflow": "ellipsis",
-                        "whiteSpace": "no-wrap",
-                      }
-                    }
-                  >
-                    <a
-                      href="mailto:name@email.com"
-                      style={
-                        Object {
-                          ":focus": Object {
-                            "outline": 0,
-                            "textDecoration": "underline",
-                          },
-                          "color": "rgba(0, 0, 0, 0.54)",
-                          "textDecoration": "none",
-                        }
-                      }
-                    >
-                      name@email.com
-                    </a>
-                  </div>
-                </div>
-                <a
-                  onClick={[Function]}
-                  style={
-                    Object {
-                      ":focus": Object {
-                        "outline": 0,
-                        "textDecoration": "underline",
-                      },
-                    }
-                  }
-                >
-                  <div
-                    style={
-                      Object {
-                        "alignItems": "center",
-                        "display": "flex",
-                        "flexWrap": "no-wrap",
-                        "marginRight": "10px",
-                        "overflow": "hidden",
-                      }
-                    }
-                  >
-                    <div
-                      style={
-                        Object {
-                          "display": "flex",
-                          "marginRight": "5px",
-                        }
-                      }
-                    >
-                      <svg
-                        fill="currentColor"
-                        height={20}
-                        preserveAspectRatio="xMidYMid meet"
-                        style={
-                          Object {
-                            "fill": "rgba(0, 0, 0, 0.54)",
-                            "verticalAlign": "middle",
-                          }
-                        }
-                        viewBox="0 0 24 24"
-                        width={20}
-                      >
-                        <g>
-                          <path
-                            d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"
-                          />
-                          <path
-                            d="M0 0h24v24H0zm0 0h24v24H0z"
-                            fill="none"
-                          />
-                        </g>
-                      </svg>
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "color": "rgba(0, 0, 0, 0.54)",
-                          "fontFamily": "LibreFranklin-Medium, sans-serif",
-                          "fontSize": 12,
-                          "fontWeight": 400,
-                          "lineHeight": 1.5,
-                          "maxWidth": 120,
-                          "overflow": "hidden",
-                          "textOverflow": "ellipsis",
-                          "whiteSpace": "no-wrap",
-                        }
-                      }
-                    >
-                      test
-                    </div>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        style={
-          Object {
-            "display": "flex",
-            "flexDirection": "column",
-          }
-        }
-      >
-        <div
-          style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "justifyContent": "flex-end",
-            }
-          }
-        >
-          <div
-            style={
-              Object {
-                "alignItems": "center",
-                "display": "flex",
-                "justifyContent": "flex-end",
-                "marginTop": "12px",
-                "position": "relative",
-              }
-            }
-          >
-            <div
-              style={
-                Object {
-                  "marginRight": 4,
-                }
-              }
-            >
-              <h4
-                style={
-                  Object {
-                    "clip": "rect(1px, 1px, 1px, 1px)",
-                    "display": "block",
-                    "height": 1,
-                    "margin": 0,
-                    "overflow": "hidden",
-                    "position": "absolute",
-                    "width": 1,
-                  }
-                }
-              >
-                Assigned tags
-              </h4>
-              <p
-                style={
-                  Object {
-                    "clip": "rect(1px, 1px, 1px, 1px)",
-                    "display": "block",
-                    "height": 1,
-                    "margin": 0,
-                    "overflow": "hidden",
-                    "position": "absolute",
-                    "width": 1,
-                  }
-                }
-              >
-                Click to remove.
-              </p>
-            </div>
-            <button
-              aria-label="Add tag to comment"
-              onBlur={[Function]}
-              onClick={[Function]}
-              onFocus={[Function]}
-              onMouseEnter={[Function]}
-              onMouseLeave={[Function]}
-              style={
-                Object {
-                  ":focus": Object {
-                    "backgroundColor": "#326891",
-                    "outline": 0,
-                  },
-                  ":hover": Object {
-                    "backgroundColor": "#326891",
-                  },
-                  "backgroundColor": "transparent",
-                  "border": "none",
-                  "borderRadius": 2,
-                  "cursor": "pointer",
-                  "marginBottom": 4,
-                  "padding": 6,
-                }
-              }
-            >
-              <span
-                style={
-                  Object {
-                    "clip": "rect(1px, 1px, 1px, 1px)",
-                    "height": 0,
-                    "position": "absolute",
-                    "width": 0,
-                  }
-                }
-              >
-                Add a comment wide tag
-              </span>
-              <svg
-                fill="currentColor"
-                height={24}
-                preserveAspectRatio="xMidYMid meet"
-                style={
-                  Object {
-                    "fill": "#326891",
-                    "verticalAlign": "middle",
-                  }
-                }
-                viewBox="0 0 24 24"
-                width={24}
-              >
-                <g>
-                  <path
-                    d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-                  />
-                  <path
-                    d="M0 0h24v24H0z"
-                    fill="none"
-                  />
-                </g>
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div
-          style={
-            Object {
-              "display": "flex",
-              "marginBottom": "24px",
-              "marginTop": "24px",
-            }
-          }
-        >
-          <div
-            style={
-              Object {
-                "color": "rgba(0, 0, 0, 0.54)",
-                "fontFamily": "LibreFranklin-Medium, sans-serif",
-                "fontSize": 14,
-                "fontWeight": 400,
-                "lineHeight": 1.5,
-              }
-            }
-          >
-            <span>
-              Nov. 30, 2016 12:00 AM
-               
-            </span>
-            <span>
-              • 
-              2
-               Flag
-              s
-            </span>
-            <span>
-              • 
-              5
-               Recommendation
-              s
-            </span>
-          </div>
-        </div>
-        <style>
-          
-  .comment-body a {
-    text-decoration: underline;
-  }
-
-  .comment-body b {
-    color: #f00;
-  }
-
-  .comment-body::selection,
-  .comment-body *::selection {
-    background: #326891;
-    borderColor: rgba(255, 255, 255, 1);
-    color: rgba(255, 255, 255, 1);
-  }
-
-  .tag {
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-  }
-
-  .tag-obscene {
-    border-bottom-color: #d71b60;
-    color: #d71b60;
-  }
-
-  .tag-incoherent {
-    border-bottom-color: #9c28b1;
-    color: #9c28b1;
-  }
-
-  .tag-spam {
-    border-bottom-color: #673bb8;
-    color: #673bb8;
-  }
-
-  .tag-off-topic {
-    border-bottom-color: #3f51b5;
-    color: #3f51b5;
-  }
-
-  .tag-inflammatory {
-    border-bottom-color: #1976d3;
-    color: #1976d3;
-  }
-
-  .tag-unsubstantial {
-    border-bottom-color: #3d5afe;
-    color: #3d5afe;
-  }
-
-  .tag-other {
-    border-bottom-color: #01828f;
-    color: #01828f;
-  }
-
-        </style>
-        <div
-          className="comment-body"
-          style={
-            Object {
-              "color": "rgba(0, 0, 0, 0.87)",
-              "fontFamily": "Georgia, serif",
-              "fontSize": "20px",
-              "fontWeight": 400,
-              "lineHeight": 1.7,
-              "marginBottom": "96px",
-              "position": "relative",
-              "whiteSpace": "pre-wrap",
-              "wordWrap": "break-word",
-            }
-          }
-        >
-          <div>
-            <div
-              onMouseDown={[Function]}
-              onTouchStart={[Function]}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`Storyshots SingleComment default moderating 1`] = `
-<div
-  style={
-    Object {
-      "background": "rgba(0, 0, 0, 0.1)",
-      "padding": "20px 0",
-      "width": "100%",
-    }
-  }
->
-  <div
-    style={
-      Object {
-        "background": "#fff",
-        "margin": "0 auto",
-        "maxWidth": "700px",
-      }
-    }
-  >
-    <div>
-      <div
-        style={
-          Object {
-            "alignItems": "baseline",
-            "borderBottom": "2px solid #ededed",
-            "display": "flex",
-            "flexWrap": "no-wrap",
-            "padding": "24px 0",
-            "width": "100%",
-          }
-        }
-      >
-        <div
-          style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "width": "100%",
-            }
-          }
-        >
-          <div
-            style={
-              Object {
-                "display": "flex",
-                "marginRight": 18,
-              }
-            }
-          >
-            <img
-              alt="Bridie Skiles IV"
-              height={60}
-              src="https://s3.amazonaws.com/pimage.example.com/7778/5652/cropped-77785652.jpg"
-              style={
-                Object {
-                  "background": "#ededed",
-                  "height": 60,
-                  "marginRight": "24px",
-                  "overflow": "hidden",
-                  "width": 60,
-                }
-              }
-              width={60}
-            />
-          </div>
-          <div
-            style={
-              Object {
-                "display": "flex",
-                "flex": 1,
-                "flexDirection": "column",
-                "justifyContent": "flex-end",
-              }
-            }
-          >
-            <div
-              style={
-                Object {
-                  "alignItems": "center",
-                  "color": "rgba(0, 0, 0, 0.87)",
-                  "display": "flex",
-                  "fontFamily": "LibreFranklin-Medium, sans-serif",
-                  "fontSize": 16,
-                  "fontWeight": 400,
-                  "justifyContent": "space-between",
-                  "lineHeight": 1.5,
-                }
-              }
-            >
-              <a
-                onClick={[Function]}
-                style={
-                  Object {
-                    ":focus": Object {
-                      "outline": 0,
-                      "textDecoration": "underline",
-                    },
-                    "color": "rgba(0, 0, 0, 0.87)",
-                    "userSelect": "text",
-                  }
-                }
-              >
-                Bridie Skiles IV
-              </a>
-            </div>
-            <div
-              style={
-                Object {
-                  "alignItems": "flex-end",
-                  "display": "flex",
-                  "flexWrap": "wrap",
-                  "justifyContent": "space-between",
-                  "marginTop": "5px",
-                }
-              }
-            >
-              <div>
-                <div
-                  style={
-                    Object {
-                      "color": "rgba(0, 0, 0, 0.54)",
-                      "fontFamily": "LibreFranklin-Medium, sans-serif",
-                      "fontSize": 12,
-                      "fontWeight": 400,
-                      "lineHeight": 1.5,
-                      "marginRight": "10px",
-                      "userSelect": "text",
-                    }
-                  }
-                >
-                  <span>
-                    NYC
-                  </span>
-                </div>
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "flex",
-                    "flexWrap": "no-wrap",
-                  }
-                }
-              >
-                <div
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "display": "flex",
-                      "flexWrap": "no-wrap",
-                      "marginRight": "10px",
-                      "overflow": "hidden",
-                    }
-                  }
-                >
-                  <div
-                    style={
-                      Object {
-                        "display": "flex",
-                        "marginRight": "5px",
-                      }
-                    }
-                  >
-                    <svg
-                      fill="currentColor"
-                      height={20}
-                      preserveAspectRatio="xMidYMid meet"
-                      style={
-                        Object {
-                          "fill": "rgba(0, 0, 0, 0.54)",
-                          "verticalAlign": "middle",
-                        }
-                      }
-                      viewBox="0 0 24 24"
-                      width={20}
-                    >
-                      <g>
-                        <path
-                          d="M0,0H24V24H0V0Z"
-                          fill="none"
-                        />
-                        <path
-                          d="M20,4H4A2,2,0,0,0,2,6V18a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V6A2,2,0,0,0,20,4Zm0,14H4V8l8,5,8-5V18Zm-8-7L4,6H20Z"
-                        />
-                      </g>
-                    </svg>
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "color": "rgba(0, 0, 0, 0.54)",
-                        "fontFamily": "LibreFranklin-Medium, sans-serif",
-                        "fontSize": 12,
-                        "fontWeight": 400,
-                        "lineHeight": 1.5,
-                        "maxWidth": 120,
-                        "overflow": "hidden",
-                        "textOverflow": "ellipsis",
-                        "whiteSpace": "no-wrap",
-                      }
-                    }
-                  >
-                    <a
-                      href="mailto:name@email.com"
-                      style={
-                        Object {
-                          ":focus": Object {
-                            "outline": 0,
-                            "textDecoration": "underline",
-                          },
-                          "color": "rgba(0, 0, 0, 0.54)",
-                          "textDecoration": "none",
-                        }
-                      }
-                    >
-                      name@email.com
-                    </a>
-                  </div>
-                </div>
-                <a
-                  onClick={[Function]}
-                  style={
-                    Object {
-                      ":focus": Object {
-                        "outline": 0,
-                        "textDecoration": "underline",
-                      },
-                    }
-                  }
-                >
-                  <div
-                    style={
-                      Object {
-                        "alignItems": "center",
-                        "display": "flex",
-                        "flexWrap": "no-wrap",
-                        "marginRight": "10px",
-                        "overflow": "hidden",
-                      }
-                    }
-                  >
-                    <div
-                      style={
-                        Object {
-                          "display": "flex",
-                          "marginRight": "5px",
-                        }
-                      }
-                    >
-                      <svg
-                        fill="currentColor"
-                        height={20}
-                        preserveAspectRatio="xMidYMid meet"
-                        style={
-                          Object {
-                            "fill": "rgba(0, 0, 0, 0.54)",
-                            "verticalAlign": "middle",
-                          }
-                        }
-                        viewBox="0 0 24 24"
-                        width={20}
-                      >
-                        <g>
-                          <path
-                            d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"
-                          />
-                          <path
-                            d="M0 0h24v24H0zm0 0h24v24H0z"
-                            fill="none"
-                          />
-                        </g>
-                      </svg>
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "color": "rgba(0, 0, 0, 0.54)",
-                          "fontFamily": "LibreFranklin-Medium, sans-serif",
-                          "fontSize": 12,
-                          "fontWeight": 400,
-                          "lineHeight": 1.5,
-                          "maxWidth": 120,
-                          "overflow": "hidden",
-                          "textOverflow": "ellipsis",
-                          "whiteSpace": "no-wrap",
-                        }
-                      }
-                    >
-                      test
-                    </div>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        style={
-          Object {
-            "display": "flex",
-            "flexDirection": "column",
-          }
-        }
-      >
-        <div
-          style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "justifyContent": "flex-end",
-            }
-          }
-        >
-          <div
-            style={
-              Object {
-                "alignItems": "center",
-                "display": "flex",
-                "justifyContent": "flex-end",
-                "marginTop": "12px",
-                "position": "relative",
-              }
-            }
-          >
-            <div
-              style={
-                Object {
-                  "marginRight": 4,
-                }
-              }
-            >
-              <h4
-                style={
-                  Object {
-                    "clip": "rect(1px, 1px, 1px, 1px)",
-                    "display": "block",
-                    "height": 1,
-                    "margin": 0,
-                    "overflow": "hidden",
-                    "position": "absolute",
-                    "width": 1,
-                  }
-                }
-              >
-                Assigned tags
-              </h4>
-              <p
-                style={
-                  Object {
-                    "clip": "rect(1px, 1px, 1px, 1px)",
-                    "display": "block",
-                    "height": 1,
-                    "margin": 0,
-                    "overflow": "hidden",
-                    "position": "absolute",
-                    "width": 1,
-                  }
-                }
-              >
-                Click to remove.
-              </p>
-            </div>
-            <button
-              aria-label="Add tag to comment"
-              onBlur={[Function]}
-              onClick={[Function]}
-              onFocus={[Function]}
-              onMouseEnter={[Function]}
-              onMouseLeave={[Function]}
-              style={
-                Object {
-                  ":focus": Object {
-                    "backgroundColor": "#326891",
-                    "outline": 0,
-                  },
-                  ":hover": Object {
-                    "backgroundColor": "#326891",
-                  },
-                  "backgroundColor": "transparent",
-                  "border": "none",
-                  "borderRadius": 2,
-                  "cursor": "pointer",
-                  "marginBottom": 4,
-                  "padding": 6,
-                }
-              }
-            >
-              <span
-                style={
-                  Object {
-                    "clip": "rect(1px, 1px, 1px, 1px)",
-                    "height": 0,
-                    "position": "absolute",
-                    "width": 0,
-                  }
-                }
-              >
-                Add a comment wide tag
-              </span>
-              <svg
-                fill="currentColor"
-                height={24}
-                preserveAspectRatio="xMidYMid meet"
-                style={
-                  Object {
-                    "fill": "#326891",
-                    "verticalAlign": "middle",
-                  }
-                }
-                viewBox="0 0 24 24"
-                width={24}
-              >
-                <g>
-                  <path
-                    d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-                  />
-                  <path
-                    d="M0 0h24v24H0z"
-                    fill="none"
-                  />
-                </g>
-              </svg>
-            </button>
-          </div>
+              <path
+                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+              />
+            </svg>
+          </button>
         </div>
         <div
           style={
@@ -13274,67 +12657,6 @@ exports[`Storyshots SingleComment has url 1`] = `
                 Click to remove.
               </p>
             </div>
-            <button
-              aria-label="Add tag to comment"
-              onBlur={[Function]}
-              onClick={[Function]}
-              onFocus={[Function]}
-              onMouseEnter={[Function]}
-              onMouseLeave={[Function]}
-              style={
-                Object {
-                  ":focus": Object {
-                    "backgroundColor": "#326891",
-                    "outline": 0,
-                  },
-                  ":hover": Object {
-                    "backgroundColor": "#326891",
-                  },
-                  "backgroundColor": "transparent",
-                  "border": "none",
-                  "borderRadius": 2,
-                  "cursor": "pointer",
-                  "marginBottom": 4,
-                  "padding": 6,
-                }
-              }
-            >
-              <span
-                style={
-                  Object {
-                    "clip": "rect(1px, 1px, 1px, 1px)",
-                    "height": 0,
-                    "position": "absolute",
-                    "width": 0,
-                  }
-                }
-              >
-                Add a comment wide tag
-              </span>
-              <svg
-                fill="currentColor"
-                height={24}
-                preserveAspectRatio="xMidYMid meet"
-                style={
-                  Object {
-                    "fill": "#326891",
-                    "verticalAlign": "middle",
-                  }
-                }
-                viewBox="0 0 24 24"
-                width={24}
-              >
-                <g>
-                  <path
-                    d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-                  />
-                  <path
-                    d="M0 0h24v24H0z"
-                    fill="none"
-                  />
-                </g>
-              </svg>
-            </button>
           </div>
         </div>
         <div
@@ -13373,556 +12695,6 @@ exports[`Storyshots SingleComment has url 1`] = `
               Nov. 30, 2016 12:00 AM
                
             </a>
-            <span>
-              • 
-              2
-               Flag
-              s
-            </span>
-            <span>
-              • 
-              5
-               Recommendation
-              s
-            </span>
-          </div>
-        </div>
-        <style>
-          
-  .comment-body a {
-    text-decoration: underline;
-  }
-
-  .comment-body b {
-    color: #f00;
-  }
-
-  .comment-body::selection,
-  .comment-body *::selection {
-    background: #326891;
-    borderColor: rgba(255, 255, 255, 1);
-    color: rgba(255, 255, 255, 1);
-  }
-
-  .tag {
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-  }
-
-  .tag-obscene {
-    border-bottom-color: #d71b60;
-    color: #d71b60;
-  }
-
-  .tag-incoherent {
-    border-bottom-color: #9c28b1;
-    color: #9c28b1;
-  }
-
-  .tag-spam {
-    border-bottom-color: #673bb8;
-    color: #673bb8;
-  }
-
-  .tag-off-topic {
-    border-bottom-color: #3f51b5;
-    color: #3f51b5;
-  }
-
-  .tag-inflammatory {
-    border-bottom-color: #1976d3;
-    color: #1976d3;
-  }
-
-  .tag-unsubstantial {
-    border-bottom-color: #3d5afe;
-    color: #3d5afe;
-  }
-
-  .tag-other {
-    border-bottom-color: #01828f;
-    color: #01828f;
-  }
-
-        </style>
-        <div
-          className="comment-body"
-          style={
-            Object {
-              "color": "rgba(0, 0, 0, 0.87)",
-              "fontFamily": "Georgia, serif",
-              "fontSize": "20px",
-              "fontWeight": 400,
-              "lineHeight": 1.7,
-              "marginBottom": "96px",
-              "position": "relative",
-              "whiteSpace": "pre-wrap",
-              "wordWrap": "break-word",
-            }
-          }
-        >
-          <div>
-            <div
-              onMouseDown={[Function]}
-              onTouchStart={[Function]}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`Storyshots SingleComment read only 1`] = `
-<div
-  style={
-    Object {
-      "background": "rgba(0, 0, 0, 0.1)",
-      "padding": "20px 0",
-      "width": "100%",
-    }
-  }
->
-  <div
-    style={
-      Object {
-        "background": "#fff",
-        "margin": "0 auto",
-        "maxWidth": "700px",
-      }
-    }
-  >
-    <div>
-      <div
-        style={
-          Object {
-            "alignItems": "baseline",
-            "borderBottom": "2px solid #ededed",
-            "display": "flex",
-            "flexWrap": "no-wrap",
-            "padding": "24px 0",
-            "width": "100%",
-          }
-        }
-      >
-        <div
-          style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "width": "100%",
-            }
-          }
-        >
-          <div
-            style={
-              Object {
-                "display": "flex",
-                "marginRight": 18,
-              }
-            }
-          >
-            <img
-              alt="Bridie Skiles IV"
-              height={60}
-              src="https://s3.amazonaws.com/pimage.example.com/7778/5652/cropped-77785652.jpg"
-              style={
-                Object {
-                  "background": "#ededed",
-                  "height": 60,
-                  "marginRight": "24px",
-                  "overflow": "hidden",
-                  "width": 60,
-                }
-              }
-              width={60}
-            />
-          </div>
-          <div
-            style={
-              Object {
-                "display": "flex",
-                "flex": 1,
-                "flexDirection": "column",
-                "justifyContent": "flex-end",
-              }
-            }
-          >
-            <div
-              style={
-                Object {
-                  "alignItems": "center",
-                  "color": "rgba(0, 0, 0, 0.87)",
-                  "display": "flex",
-                  "fontFamily": "LibreFranklin-Medium, sans-serif",
-                  "fontSize": 16,
-                  "fontWeight": 400,
-                  "justifyContent": "space-between",
-                  "lineHeight": 1.5,
-                }
-              }
-            >
-              <a
-                onClick={[Function]}
-                style={
-                  Object {
-                    ":focus": Object {
-                      "outline": 0,
-                      "textDecoration": "underline",
-                    },
-                    "color": "rgba(0, 0, 0, 0.87)",
-                    "userSelect": "text",
-                  }
-                }
-              >
-                Bridie Skiles IV
-              </a>
-            </div>
-            <div
-              style={
-                Object {
-                  "alignItems": "flex-end",
-                  "display": "flex",
-                  "flexWrap": "wrap",
-                  "justifyContent": "space-between",
-                  "marginTop": "5px",
-                }
-              }
-            >
-              <div>
-                <div
-                  style={
-                    Object {
-                      "color": "rgba(0, 0, 0, 0.54)",
-                      "fontFamily": "LibreFranklin-Medium, sans-serif",
-                      "fontSize": 12,
-                      "fontWeight": 400,
-                      "lineHeight": 1.5,
-                      "marginRight": "10px",
-                      "userSelect": "text",
-                    }
-                  }
-                >
-                  <span>
-                    NYC
-                  </span>
-                </div>
-              </div>
-              <div
-                style={
-                  Object {
-                    "display": "flex",
-                    "flexWrap": "no-wrap",
-                  }
-                }
-              >
-                <div
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "display": "flex",
-                      "flexWrap": "no-wrap",
-                      "marginRight": "10px",
-                      "overflow": "hidden",
-                    }
-                  }
-                >
-                  <div
-                    style={
-                      Object {
-                        "display": "flex",
-                        "marginRight": "5px",
-                      }
-                    }
-                  >
-                    <svg
-                      fill="currentColor"
-                      height={20}
-                      preserveAspectRatio="xMidYMid meet"
-                      style={
-                        Object {
-                          "fill": "rgba(0, 0, 0, 0.54)",
-                          "verticalAlign": "middle",
-                        }
-                      }
-                      viewBox="0 0 24 24"
-                      width={20}
-                    >
-                      <g>
-                        <path
-                          d="M0,0H24V24H0V0Z"
-                          fill="none"
-                        />
-                        <path
-                          d="M20,4H4A2,2,0,0,0,2,6V18a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V6A2,2,0,0,0,20,4Zm0,14H4V8l8,5,8-5V18Zm-8-7L4,6H20Z"
-                        />
-                      </g>
-                    </svg>
-                  </div>
-                  <div
-                    style={
-                      Object {
-                        "color": "rgba(0, 0, 0, 0.54)",
-                        "fontFamily": "LibreFranklin-Medium, sans-serif",
-                        "fontSize": 12,
-                        "fontWeight": 400,
-                        "lineHeight": 1.5,
-                        "maxWidth": 120,
-                        "overflow": "hidden",
-                        "textOverflow": "ellipsis",
-                        "whiteSpace": "no-wrap",
-                      }
-                    }
-                  >
-                    <a
-                      href="mailto:name@email.com"
-                      style={
-                        Object {
-                          ":focus": Object {
-                            "outline": 0,
-                            "textDecoration": "underline",
-                          },
-                          "color": "rgba(0, 0, 0, 0.54)",
-                          "textDecoration": "none",
-                        }
-                      }
-                    >
-                      name@email.com
-                    </a>
-                  </div>
-                </div>
-                <a
-                  onClick={[Function]}
-                  style={
-                    Object {
-                      ":focus": Object {
-                        "outline": 0,
-                        "textDecoration": "underline",
-                      },
-                    }
-                  }
-                >
-                  <div
-                    style={
-                      Object {
-                        "alignItems": "center",
-                        "display": "flex",
-                        "flexWrap": "no-wrap",
-                        "marginRight": "10px",
-                        "overflow": "hidden",
-                      }
-                    }
-                  >
-                    <div
-                      style={
-                        Object {
-                          "display": "flex",
-                          "marginRight": "5px",
-                        }
-                      }
-                    >
-                      <svg
-                        fill="currentColor"
-                        height={20}
-                        preserveAspectRatio="xMidYMid meet"
-                        style={
-                          Object {
-                            "fill": "rgba(0, 0, 0, 0.54)",
-                            "verticalAlign": "middle",
-                          }
-                        }
-                        viewBox="0 0 24 24"
-                        width={20}
-                      >
-                        <g>
-                          <path
-                            d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"
-                          />
-                          <path
-                            d="M0 0h24v24H0zm0 0h24v24H0z"
-                            fill="none"
-                          />
-                        </g>
-                      </svg>
-                    </div>
-                    <div
-                      style={
-                        Object {
-                          "color": "rgba(0, 0, 0, 0.54)",
-                          "fontFamily": "LibreFranklin-Medium, sans-serif",
-                          "fontSize": 12,
-                          "fontWeight": 400,
-                          "lineHeight": 1.5,
-                          "maxWidth": 120,
-                          "overflow": "hidden",
-                          "textOverflow": "ellipsis",
-                          "whiteSpace": "no-wrap",
-                        }
-                      }
-                    >
-                      test
-                    </div>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        style={
-          Object {
-            "display": "flex",
-            "flexDirection": "column",
-          }
-        }
-      >
-        <div
-          style={
-            Object {
-              "alignItems": "center",
-              "display": "flex",
-              "justifyContent": "flex-end",
-            }
-          }
-        >
-          <div
-            style={
-              Object {
-                "alignItems": "center",
-                "display": "flex",
-                "justifyContent": "flex-end",
-                "marginTop": "12px",
-                "position": "relative",
-              }
-            }
-          >
-            <div
-              style={
-                Object {
-                  "marginRight": 4,
-                }
-              }
-            >
-              <h4
-                style={
-                  Object {
-                    "clip": "rect(1px, 1px, 1px, 1px)",
-                    "display": "block",
-                    "height": 1,
-                    "margin": 0,
-                    "overflow": "hidden",
-                    "position": "absolute",
-                    "width": 1,
-                  }
-                }
-              >
-                Assigned tags
-              </h4>
-              <p
-                style={
-                  Object {
-                    "clip": "rect(1px, 1px, 1px, 1px)",
-                    "display": "block",
-                    "height": 1,
-                    "margin": 0,
-                    "overflow": "hidden",
-                    "position": "absolute",
-                    "width": 1,
-                  }
-                }
-              >
-                Click to remove.
-              </p>
-            </div>
-            <button
-              aria-label="Add tag to comment"
-              onBlur={[Function]}
-              onClick={[Function]}
-              onFocus={[Function]}
-              onMouseEnter={[Function]}
-              onMouseLeave={[Function]}
-              style={
-                Object {
-                  ":focus": Object {
-                    "backgroundColor": "#326891",
-                    "outline": 0,
-                  },
-                  ":hover": Object {
-                    "backgroundColor": "#326891",
-                  },
-                  "backgroundColor": "transparent",
-                  "border": "none",
-                  "borderRadius": 2,
-                  "cursor": "pointer",
-                  "marginBottom": 4,
-                  "padding": 6,
-                }
-              }
-            >
-              <span
-                style={
-                  Object {
-                    "clip": "rect(1px, 1px, 1px, 1px)",
-                    "height": 0,
-                    "position": "absolute",
-                    "width": 0,
-                  }
-                }
-              >
-                Add a comment wide tag
-              </span>
-              <svg
-                fill="currentColor"
-                height={24}
-                preserveAspectRatio="xMidYMid meet"
-                style={
-                  Object {
-                    "fill": "#326891",
-                    "verticalAlign": "middle",
-                  }
-                }
-                viewBox="0 0 24 24"
-                width={24}
-              >
-                <g>
-                  <path
-                    d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-                  />
-                  <path
-                    d="M0 0h24v24H0z"
-                    fill="none"
-                  />
-                </g>
-              </svg>
-            </button>
-          </div>
-        </div>
-        <div
-          style={
-            Object {
-              "display": "flex",
-              "marginBottom": "24px",
-              "marginTop": "24px",
-            }
-          }
-        >
-          <div
-            style={
-              Object {
-                "color": "rgba(0, 0, 0, 0.54)",
-                "fontFamily": "LibreFranklin-Medium, sans-serif",
-                "fontSize": 14,
-                "fontWeight": 400,
-                "lineHeight": 1.5,
-              }
-            }
-          >
-            <span>
-              Nov. 30, 2016 12:00 AM
-               
-            </span>
             <span>
               • 
               2
