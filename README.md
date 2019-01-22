@@ -150,7 +150,8 @@ where `command` is one of
 
 #### Managing Users
 
-If you are an admin, you can create admin, general and service users via the UI.  Also, if there are no admin users,
+If you are an administrator, you can create other administrators, general moderator users,
+and service users via the settings pages in the OSMod UI.  Also, if there are no admin users,
 the UI will turn the first user to log in into an admin.  But you can also create users via the commandline.
 
 Create a human user:

@@ -28,7 +28,10 @@ export interface IAddUsersProps {
   user?: IUserModel;
 }
 
-const GROUPS = List([USER_GROUP_GENERAL, USER_GROUP_ADMIN]) as List<string>;
+const GROUPS = List([
+  [USER_GROUP_GENERAL, 'Moderator'],
+  [USER_GROUP_ADMIN, 'Administrator'],
+]) as List<Array<string>>;
 
 export class UserForm extends React.Component<IAddUsersProps> {
 
@@ -85,8 +88,8 @@ export class UserForm extends React.Component<IAddUsersProps> {
             value={user.group ? user.group : ''}
             onChange={partial(this.onValueChange, 'group')}
           >
-            {GROUPS.map((group: string) =>
-              <option value={group} key={group}>{group}</option>,
+            {GROUPS.map((group: Array<string>) =>
+              <option value={group[0]} key={group[0]}>{group[1]}</option>,
             )}
           </select>
           <span aria-hidden="true" {...css(SETTINGS_STYLES.arrow)} />

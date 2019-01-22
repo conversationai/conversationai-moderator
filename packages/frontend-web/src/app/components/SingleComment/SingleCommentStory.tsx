@@ -19,7 +19,7 @@ import { List } from 'immutable';
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 
-import {AuthorModelRecord, IAuthorModel, ITagModel } from '../../../models';
+import { AuthorModelRecord, IAuthorModel, ITagModel } from '../../../models';
 import { fakeCommentModel, fakeTagModel } from '../../../models/fake';
 import { css } from '../../utilx';
 import { SingleComment } from './SingleComment';

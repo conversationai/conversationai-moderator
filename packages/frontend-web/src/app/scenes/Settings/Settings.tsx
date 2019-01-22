@@ -45,6 +45,12 @@ import {
 import { API_URL } from '../../config';
 import { getToken } from '../../platform/localStore';
 import { IAppDispatch } from '../../stores';
+import {
+  USER_GROUP_ADMIN,
+  USER_GROUP_GENERAL,
+  USER_GROUP_SERVICE,
+  USER_GROUP_YOUTUBE,
+} from '../../stores/users';
 import { partial, setCSRF } from '../../util';
 import { css, stylesheet } from '../../utilx';
 import { AddButton, EditButton } from './components/AddButton';
@@ -68,11 +74,6 @@ import {
 } from '../../styles';
 
 import { SETTINGS_STYLES } from './settingsStyles';
-import {
-  USER_GROUP_GENERAL,
-  USER_GROUP_SERVICE,
-  USER_GROUP_YOUTUBE,
-} from '../../stores/users';
 
 function validateColor(color: string): boolean {
   const div = document.createElement('div') as HTMLDivElement;
@@ -692,7 +693,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     {u.email}
                   </td>
                   <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    {u.group}
+                    {u.group === USER_GROUP_ADMIN ? 'Administrator' : 'Moderator'}
                   </td>
                   <td {...css(SETTINGS_STYLES.userTableCell)}>
                     {u.isActive ? 'Active' : ''}
