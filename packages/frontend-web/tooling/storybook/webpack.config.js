@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
@@ -24,27 +23,4 @@ module.exports = {
       'aphrodite': 'aphrodite/no-important'
     }
   },
-
-  module: {
-    rules: [
-      {
-        test: /\.jsx?$/,
-        loader: "source-map-loader",
-        enforce: 'pre'
-      },
-      {
-        test: /\.jsx?$/,
-        loader: 'babel-loader',
-        exclude: /node_modules/,
-        enforce: 'post'
-      },
-    ]
-  },
-
-  plugins: [
-    new webpack.DefinePlugin({
-      __DEVELOPMENT__: true,
-      ENV_API_URL: process.env['API_URL'] ? "'" + (process.env['API_URL']) + "'" : undefined
-    }),
-  ]
-}
+};

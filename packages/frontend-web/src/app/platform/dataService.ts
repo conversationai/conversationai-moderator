@@ -43,8 +43,6 @@ import { API_URL } from '../config';
 import { convertArrayFromJSONAPI } from '../util';
 import { convertFromJSONAPI } from '../util';
 
-  // const WebSocket = (typeof window === null) require('ws');
-
 export type IValidModelNames =
     'articles' |
     'categories' |

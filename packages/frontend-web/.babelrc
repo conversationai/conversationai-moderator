@@ -1,6 +1,20 @@
 {
-  "presets": ["@babel/preset-react", "@babel/preset-env"],
-  "plugins": ["lodash", "react-require",
-    "@babel/transform-react-constant-elements", "@babel/transform-react-inline-elements",
-    "react-hot-loader/babel"]
+  "presets": [
+    "@babel/preset-react",
+    "@babel/preset-env"
+  ],
+  "plugins": [
+    "lodash",
+    "react-require",
+    "@babel/transform-react-constant-elements",
+    "@babel/transform-react-inline-elements",
+    "react-hot-loader/babel"
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "require-context-hook"
+      ]
+    }
+  }
 }
