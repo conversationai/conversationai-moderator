@@ -21,7 +21,6 @@ import { IArticleModel, ICategoryModel, IUserModel } from '../../models';
 import { IAppStateRecord, IThunkAction } from './index';
 
 import { listRelationshipModels, updateCategoryAssignments, updateRelationshipModels } from '../platform/dataService';
-import { getLoadedArticles } from '../scenes/Dashboard/components/DashboardArticles/store';
 
 const STATE_ROOT = ['global', 'moderators'];
 const MODERATORS_IS_READY = [...STATE_ROOT, 'isReady'];
@@ -225,22 +224,6 @@ export function updateArticleModerators(article: IArticleModel, moderators: Arra
   };
 }
 
-export function updateArticleModeratorsByIds(moderatorIds: Array<string>, removedModeratorIds?: Array<string>): IThunkAction<Promise<void>> {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const users = state.getIn(['global', 'users', 'items']);
-    const articleModerators = users.filter((u: IUserModel) => moderatorIds.some((id) => id === u.id));
-    const articles = getLoadedArticles(state);
-    articles.forEach((article) => {
-      const existingModerators = (removedModeratorIds && article.assignedModerators) ?
-          article.assignedModerators.filter((user) => !removedModeratorIds.some((id) => id === user.id)) :
-          article.assignedModerators;
-      dispatch(updateArticleModeratorsComplete({ article, moderators: [...existingModerators, ...articleModerators] as Array<IUserModel> }));
-    });
-    articles.forEach((article) => dispatch(loadArticleModerators(article)));
-  };
-}
-
 export type IUpdateCategoryModeratorsStartPayload = {
   category: ICategoryModel;
 };
@@ -255,19 +238,11 @@ export const updateCategoryModeratorsComplete: (payload: IUpdateCategoryModerato
   createAction<IUpdateCategoryModeratorsCompletePayload>('dashboard/UPDATE_CATEGORY_MODERATORS_COMPLETE');
 
 export function updateCategoryModerators(category: ICategoryModel, moderators: Array<IUserModel>): IThunkAction<Promise<void>> {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
     await dispatch(updateCategoryModeratorsStart({ category }));
     const moderatorIds = moderators.length > 0 ? moderators.map((u) => u.id) : [];
-    const removedModeratorIds = getCategoryModeratorIds(getState())
-        .toArray().filter((id) => !moderatorIds.some((modId) => modId === id));
-
-    if (typeof(parseInt(category.id)) === 'number') {
-      // post to service that adds/removes moderators to all articles for the category
+    if (typeof(parseInt(category.id, 10)) === 'number') {
       await updateCategoryAssignments(category.id, moderatorIds);
-      // Go update state for the articles.
-      await dispatch(updateArticleModeratorsByIds(moderatorIds, removedModeratorIds));
-      const articles = getLoadedArticles(getState());
-      articles.forEach((article) => dispatch(loadArticleModerators(article)));
     }
     await dispatch(updateCategoryModeratorsComplete({ category, moderators }));
   };

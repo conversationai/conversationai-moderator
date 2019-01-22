@@ -33,7 +33,7 @@ const loadArticleModeratorsComplete =
 
 export type ISaveArticlePayload = {
   article: IArticleModel;
-  moderators: Array<IUserModel>;
+  moderators: Array<string>;
 };
 export const saveArticle: (payload: ISaveArticlePayload) => Action<ISaveArticlePayload> =
   createAction<ISaveArticlePayload>('article-moderators/SAVE_ARTICLE');

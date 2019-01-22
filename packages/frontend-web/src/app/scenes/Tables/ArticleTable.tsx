@@ -105,6 +105,7 @@ export interface IIArticleTableState {
   sortString: string;
   sort: Array<string>;
   summary: IArticleModel;
+  usersMap: Map<string, IUserModel>;
   visibleArticles: Array<IArticleModel>;
 
   popupToShow?: string;
@@ -130,6 +131,9 @@ function processArticles(
   else {
     processedArticles = processedArticles.sort(executeSort(['+sourceCreatedAt']));
   }
+
+  const usersMap = new Map<string, IUserModel>();
+  props.users.map((u) => usersMap.set(u.id, u));
 
   let count = 0;
   const columns = [
@@ -184,6 +188,7 @@ function processArticles(
   }
 
   return {
+    usersMap,
     visibleArticles: [...processedArticles],
     summary,
     page_size,
@@ -276,7 +281,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     this.setState({
       popupToShow: POPUP_MODERATORS,
       selectedArticle: article,
-      moderatorIds: Set<ModelId>(article.assignedModerators.map((m) => m.id)),
+      moderatorIds: Set<ModelId>(article.assignedModerators),
     });
   }
 
@@ -401,7 +406,11 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
 
     return (
-      <ModeratorsWidget article={article} openSetModerators={this.openSetModerators}/>
+      <ModeratorsWidget
+        users={this.state.usersMap}
+        article={article}
+        openSetModerators={this.openSetModerators}
+      />
     );
   }
 
@@ -454,7 +463,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
     let categoryModeratorIds = null;
     if (this.state.selectedArticle.category) {
-      categoryModeratorIds = Set<ModelId>(this.state.selectedArticle.category.assignedModerators.map((m) => m.id));
+      categoryModeratorIds = Set<ModelId>(this.state.selectedArticle.category.assignedModerators);
     }
 
     return (

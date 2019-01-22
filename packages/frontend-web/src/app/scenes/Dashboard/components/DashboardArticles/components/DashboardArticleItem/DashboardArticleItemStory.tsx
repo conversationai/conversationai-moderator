@@ -14,25 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
-import { List } from 'immutable';
 
-import { fakeArticleModel, fakeUserModel } from '../../../../../../../models/fake';
+import { fakeArticleModel } from '../../../../../../../models/fake';
 import { css } from '../../../../../../utilx';
 import { DashboardArticleItem } from './DashboardArticleItem';
-
-const user1 = fakeUserModel({
-  name: 'Person1',
-});
-
-const user2 = fakeUserModel({
-  name: 'Person2',
-});
-
-const user3 = fakeUserModel({
-  name: 'Person3',
-});
 
 const STYLES = {
   base: {
@@ -48,8 +34,6 @@ const getLinkTarget = () => 'target';
 
 storiesOf('DashboardArticleItem', module)
   .add('singleline', () => {
-    const moderators = List([user1, user2, user3]);
-
     return (
       <div {...css(STYLES.base)}>
         <DashboardArticleItem
@@ -58,16 +42,12 @@ storiesOf('DashboardArticleItem', module)
             sourceCreatedAt: (new Date()).toISOString(),
             title: 'Hello, welcome to this article',
           })}
-          articleModerators={moderators}
           getLinkTarget={getLinkTarget}
-          onAddArticleModeratorClick={action('Add Moderator Clicked')}
         />
       </div>
     );
   })
   .add('multiline', () => {
-    const moderators = List([user1, user2, user3]);
-
     return (
       <div {...css(STYLES.base)}>
         <DashboardArticleItem
@@ -76,9 +56,7 @@ storiesOf('DashboardArticleItem', module)
             sourceCreatedAt: (new Date()).toISOString(),
             title: 'Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article Hello, welcome to this article',
           })}
-          articleModerators={moderators}
           getLinkTarget={getLinkTarget}
-          onAddArticleModeratorClick={action('Add Moderator Clicked')}
         />
       </div>
     );

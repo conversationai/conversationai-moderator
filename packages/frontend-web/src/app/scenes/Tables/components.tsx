@@ -183,6 +183,7 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
 }
 
 interface IIModeratorsWidgetProps {
+  users: Map<string, IUserModel>;
   article: IArticleModel;
   openSetModerators(article: IArticleModel): void;
 }
@@ -194,14 +195,14 @@ export class ModeratorsWidget extends React.Component<IIModeratorsWidgetProps> {
   }
 
   render() {
-    const article = this.props.article;
+    const { article, users }  = this.props;
 
     let s = Set(article.assignedModerators);
     if (article.category) {
       s = s.merge(article.category.assignedModerators);
     }
 
-    const moderators = s.toArray();
+    const moderators = s.toArray().map((uid: string) => users.get(uid));
 
     if (moderators.length === 0) {
       return (

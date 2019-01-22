@@ -89,14 +89,14 @@ export const FILTER_DATE_SINCE = 'since-';
 export const FILTER_DATE_PRIOR = 'prior-';
 
 function articleHasModerator(article: IArticleModel, moderatorId: string) {
-  for (const m of article.assignedModerators) {
-    if (moderatorId === m.id) {
+  for (const mId of article.assignedModerators) {
+    if (moderatorId === mId) {
       return true;
     }
   }
   if (article.category) {
-    for (const m of article.category.assignedModerators) {
-      if (moderatorId === m.id) {
+    for (const mId of article.category.assignedModerators) {
+      if (moderatorId === mId) {
         return true;
       }
     }
@@ -105,14 +105,14 @@ function articleHasModerator(article: IArticleModel, moderatorId: string) {
 }
 
 function articleMatchesModerators(article: IArticleModel, moderatorIds: Set<string>) {
-  for (const m of article.assignedModerators) {
-    if (moderatorIds.has(m.id)) {
+  for (const mId of article.assignedModerators) {
+    if (moderatorIds.has(mId)) {
       return true;
     }
   }
   if (article.category) {
-    for (const m of article.category.assignedModerators) {
-      if (moderatorIds.has(m.id)) {
+    for (const mId of article.category.assignedModerators) {
+      if (moderatorIds.has(mId)) {
         return true;
       }
     }

@@ -203,12 +203,6 @@ const CELL_STYLES = stylesheet({
   },
 });
 
-export interface ILazyArticle {
-  id: string;
-  hasLoaded: boolean;
-  model: IArticleModel;
-}
-
 export interface ILazyArticleList {
   width: number;
   height: number;
@@ -266,7 +260,6 @@ export class LazyArticleList extends React.Component<ILazyArticleList> {
       articlePropsForRow,
       getLinkTarget,
       category,
-      onAddArticleModeratorClick,
     } = this.props;
 
     return (
@@ -282,8 +275,6 @@ export class LazyArticleList extends React.Component<ILazyArticleList> {
               getLinkTarget={getLinkTarget}
               article={null}
               category={category}
-              articleModerators={null}
-              onAddArticleModeratorClick={onAddArticleModeratorClick}
             />
           </LazyLoadArticle>
         </div>

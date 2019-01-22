@@ -15,14 +15,12 @@ limitations under the License.
 */
 
 import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
-import { List } from 'immutable';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { IArticleModel, ICategoryModel, IUserModel } from '../../../../../../../models';
+import { IArticleModel, ICategoryModel } from '../../../../../../../models';
 import { CanvasTruncate, Link } from '../../../../../../components';
 import {
-  ARTICLE_CAPTION_TYPE,
   ARTICLE_CATEGORY_TYPE,
   ARTICLE_HEADLINE_TYPE,
   DARK_PRIMARY_TEXT_COLOR,
@@ -30,9 +28,7 @@ import {
   GUTTER_DEFAULT_SPACING,
   MEDIUM_COLOR,
 } from '../../../../../../styles';
-import { partial } from '../../../../../../util';
 import { css, stylesheet } from '../../../../../../utilx';
-import { abbreviateModerators } from '../../../../../../utilx';
 import { oldDashboardLink } from '../../../../../routes';
 
 const STYLES = stylesheet({
@@ -86,49 +82,6 @@ const STYLES = stylesheet({
     },
   },
 
-  moderation: {
-    display: 'flex',
-    marginTop: `${GUTTER_DEFAULT_SPACING}px`,
-    alignItems: 'center',
-  },
-
-  moderatorButton: {
-    ...ARTICLE_CAPTION_TYPE,
-    fontSize: '14px',
-    color: MEDIUM_COLOR,
-    background: 'none',
-    marginRight: `${GUTTER_DEFAULT_SPACING}px`,
-    padding: 0,
-    cursor: 'pointer',
-    borderTop: 'none',
-    borderRight: 'none',
-    borderLeft: 'none',
-    borderBottomWidth: 2,
-    borderBottomStyle: 'solid',
-    borderBottomColor: 'transparent',
-    transition: 'borderBottomColor 0.3s ease',
-    whiteSpace: 'nowrap',
-    ':hover': {
-      transition: 'borderBottomColor 0.3s ease',
-      borderBottomColor: MEDIUM_COLOR,
-    },
-    ':focus': {
-      outline: 'none',
-      borderBottomColor: MEDIUM_COLOR,
-    },
-  },
-
-  editButton: {
-    marginLeft: `${GUTTER_DEFAULT_SPACING}px`,
-    marginRight: 0,
-  },
-
-  moderators: {
-    ...ARTICLE_CAPTION_TYPE,
-    color: DARK_TERTIARY_TEXT_COLOR,
-    margin: 0,
-  },
-
   comments: {
     ...ARTICLE_CATEGORY_TYPE,
     display: 'flex',
@@ -139,10 +92,8 @@ const STYLES = stylesheet({
 });
 
 export interface IDashboardArticleItemProps {
-  onAddArticleModeratorClick?(article: IArticleModel): void;
   article: IArticleModel;
   category?: ICategoryModel;
-  articleModerators?: List<IUserModel>;
   getLinkTarget(article: IArticleModel): string;
 }
 
@@ -164,8 +115,6 @@ export class DashboardArticleItem
     const {
       article,
       category,
-      articleModerators,
-      onAddArticleModeratorClick,
       getLinkTarget,
     } = this.props;
 
@@ -195,35 +144,6 @@ export class DashboardArticleItem
           >
             <CanvasTruncate id={`article${article.id}`} text={article.title} lines={2} fontStyles={STYLES.title} />
           </Link>
-
-          <div {...css(STYLES.moderation)}>
-            {articleModerators.size === 0 && (
-              <button
-                key="assignArticleModerators"
-                {...css(STYLES.moderatorButton)}
-                onClick={partial(onAddArticleModeratorClick, article)}
-                aria-controls={this.context.ariaControlsArticle}
-                aria-expanded={this.context.ariaExpandedArticle}
-              >
-                + Assign a Moderator
-              </button>
-            )}
-
-            <p {...css(STYLES.moderators)}>
-              {articleModerators && abbreviateModerators(articleModerators)}
-              {articleModerators.size >= 1 && (
-                <button
-                  key="addArticleModerators"
-                  {...css(STYLES.moderatorButton, STYLES.editButton)}
-                  onClick={partial(onAddArticleModeratorClick, article)}
-                  aria-controls={this.context.ariaControlsArticle}
-                  aria-expanded={this.context.ariaExpandedArticle}
-                >
-                  Edit
-                </button>
-              )}
-            </p>
-          </div>
         </div>
       </div>
     );
