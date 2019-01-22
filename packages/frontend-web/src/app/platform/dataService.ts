@@ -19,15 +19,6 @@ import { fromJS, List, Map } from 'immutable';
 import { isNaN, pick } from 'lodash';
 import qs from 'qs';
 
-let myws: any;
-
-if (typeof(WebSocket) === 'undefined') {
-  myws = require('ws');
-}
-else {
-  myws = WebSocket;
-}
-
 import {
   INewResource,
   IParams,
@@ -36,33 +27,21 @@ import {
 import {
   IArticleModel,
   IAuthorCountsModel,
-  ICategoryModel,
   ICommentDatedModel,
   ICommentModel,
   ICommentScoredModel,
   ICommentSummaryScoreModel,
-  IPreselectModel,
-  IRuleModel,
-  ITaggingSensitivityModel,
-  ITagModel,
   IUserModel,
 } from '../../models';
 import {
-  ArticleModel,
-  CategoryModel,
   CommentDatedModel,
   CommentScoredModel,
-  PreselectModel,
-  RuleModel,
-  TaggingSensitivityModel,
-  TagModel,
   UserModel,
 } from '../../models';
 import { ITopScore } from '../../types';
 import { API_URL } from '../config';
 import { convertArrayFromJSONAPI } from '../util';
 import { convertFromJSONAPI } from '../util';
-import { getToken } from './localStore';
 
   // const WebSocket = (typeof window === null) require('ws');
 
@@ -897,156 +876,10 @@ export async function listAuthorCounts(
   return Map<string | number, IAuthorCountsModel>(response.data.data);
 }
 
-let ws: WebSocket = null;
-let intervalTimer: NodeJS.Timer;
-
-export const STATUS_DOWN = 'down';
-export const STATUS_UP = 'up';
-export const STATUS_RESET = 'reset';
-
-export interface ISystemSummary {
-  tags: List<ITagModel>;
-  taggingSensitivities: List<ITaggingSensitivityModel>;
-  rules: List<IRuleModel>;
-  preselects: List<IPreselectModel>;
-}
-
-export interface IGlobalSummary {
-  users: List<IUserModel>;
-  categories: List<ICategoryModel>;
-  articles: List<IArticleModel>;
-  deferred: number;
-}
-
-export interface IUserSummary {
-  assignments: number;
-}
-
-// TODO: Ideally we'd have a type file describing types sent over the wire.
-//       When this is availabe, replace the "any" types in the code below.
-// TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
-//       Convert for now.  But at some point need to refactor to use numbers.
-function packSystemData(data: any): ISystemSummary {
-  return {
-    tags: List<ITagModel>(data.tags.map((t: any) => {
-      t.id = t.id.toString();
-      return TagModel(t);
-    })),
-    taggingSensitivities: List<ITaggingSensitivityModel>(data.taggingSensitivities.map((t: any) => {
-      return TaggingSensitivityModel(t);
-    })),
-    rules: List<IRuleModel>(data.rules.map((r: any) => {
-      return RuleModel(r);
-    })),
-    preselects: List<IPreselectModel>(data.preselects.map((p: any) => {
-      return PreselectModel(p);
-    })),
-  };
-}
-
-function packGlobalData(data: any): IGlobalSummary {
-  const userMap: {[key: number]: IUserModel} = {};
-  const catMap: {[key: number]: ICategoryModel} = {};
-
-  const users = List<IUserModel>(data.users.map((u: any) => {
-    const id = u.id;
+export async function listSystemUsers(type: string): Promise<List<IUserModel>> {
+  const response: any = await axios.get(serviceURL('simple', `/systemUsers/${type}`));
+  return List<IUserModel>(response.data.users.map((u: any) => {
     u.id = u.id.toString();
-    userMap[id] = u;
     return UserModel(u);
   }));
-
-  const categories = List<ICategoryModel>(data.categories.map((c: any) => {
-    const id = c.id;
-    c.id = c.id.toString();
-    c.assignedModerators = c.assignedModerators.map((i: any) => userMap[i.user_category_assignment.userId]);
-    const model = CategoryModel(c);
-    catMap[id] = model;
-    return model;
-  }));
-
-  const articles = List<IArticleModel>(data.articles.map((a: any) => {
-    a.id = a.id.toString();
-    if (a.categoryId) {
-      a.category = catMap[a.categoryId];
-    }
-    a.assignedModerators = a.assignedModerators.map((i: any) => userMap[i.moderator_assignment.userId]);
-    return ArticleModel(a);
-  }));
-
-  return {
-    users: users,
-
-    categories: categories,
-
-    articles: articles,
-
-    deferred: data.deferred,
-  };
-}
-
-let gotSystem = false;
-let gotGlobal = false;
-let gotUser = false;
-let socketUp = false;
-
-export function connectNotifier(
-  websocketStateHandler: (status: string) => void,
-  systemNotificationHandler: (data: ISystemSummary) => void,
-  globalNotificationHandler: (data: IGlobalSummary) => void,
-  userNotificationHandler: (data: IUserSummary) => void) {
-  function checkSocketAlive() {
-    if (!ws || ws.readyState !== myws.OPEN) {
-      const token = getToken();
-      const baseurl = serviceURL(`updates/summary/?token=${token}`);
-      const url = 'ws:' + baseurl.substr(baseurl.indexOf(':') + 1);
-
-      ws = new myws(url);
-      ws.onopen = () => {
-        console.log('opened websocket');
-
-        ws.onclose = (e: {code: number}) => {
-          console.log('websocket closed', e.code);
-          socketUp = false;
-          if (!gotSystem && !gotGlobal && !gotUser) {
-            // Never got a message.  Server is rejecting our advances.  Log out and try logging in again.
-            websocketStateHandler(STATUS_RESET);
-          }
-          else {
-            websocketStateHandler(STATUS_DOWN);
-          }
-          ws = null;
-        };
-      };
-
-      ws.onmessage = (message: {data: any}) => {
-        const body: any = JSON.parse(message.data);
-
-        if (body.type === 'system') {
-          systemNotificationHandler(packSystemData(body.data));
-          gotSystem = true;
-        }
-        else if (body.type === 'global') {
-          globalNotificationHandler(packGlobalData(body.data));
-          gotGlobal = true;
-        }
-        else if (body.type === 'user') {
-          userNotificationHandler(body.data as IUserSummary);
-          gotUser = true;
-        }
-
-        if (gotSystem && gotGlobal && gotUser && !socketUp) {
-          websocketStateHandler(STATUS_UP);
-          socketUp = true;
-        }
-      };
-    }
-  }
-
-  checkSocketAlive();
-  intervalTimer = setInterval(checkSocketAlive, 10000);
-}
-
-export function disconnectNotifier() {
-  clearInterval(intervalTimer);
-  ws.close();
 }

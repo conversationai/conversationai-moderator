@@ -68,13 +68,13 @@ import {
   TOOLTIP_Z_INDEX,
   WHITE_COLOR,
 } from '../../../../styles';
-import { css, stylesheet } from '../../../../utilx';
 import {
   clearReturnSavedCommentRow,
   getReturnSavedCommentRow,
   partial,
   setReturnSavedCommentRow,
 } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 import { BatchSelector } from './components/BatchSelector';
 
 const ACTION_BAR_HEIGHT_FIXED = 68;
@@ -840,14 +840,14 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               buttonLabel={this.state.toastButtonLabel}
               onClick={this.handleUndoClick}
             >
-              <div>
+              <div key="toastContent">
                 { this.state.showCount && (
-                  <span {...css(STYLES.actionToastCount)}>
+                  <span key="toastCount" {...css(STYLES.actionToastCount)}>
                     {this.state.toastIcon}
                     {this.state.actionCount}
                   </span>
                 )}
-                <p>{this.state.actionText}</p>
+                <p key="actionText">{this.state.actionText}</p>
               </div>
             </ToastMessage>
           </FocusTrap>

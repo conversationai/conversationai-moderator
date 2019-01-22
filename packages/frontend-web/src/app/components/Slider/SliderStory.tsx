@@ -14,15 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import { storiesOf } from '@storybook/react';
 
 import { MEDIUM_COLOR } from '../../styles';
 import { css } from '../../utilx';
 import { DraggableHandle, Slider } from '../Slider';
 
 storiesOf('Slider', module)
-  .add('default', () => (
+  .add('base', () => (
     <div {...css({ background: MEDIUM_COLOR, padding: '20px' })}>
       <Slider>
         <DraggableHandle

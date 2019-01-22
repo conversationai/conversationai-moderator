@@ -98,13 +98,6 @@ const config = convict({
     env: 'DATABASE_SOCKET'
   },
 
-  current_git_sha: {
-    doc: 'The SHA1 of the most recent git commit',
-    format: String,
-    default: 'unknown-sha',
-    env: 'CURRENT_GIT_SHA'
-  },
-
   redis_url: {
     doc: 'The Redis config URL used by the worker queue',
     format: String,
@@ -151,26 +144,6 @@ const config = convict({
     format: String,
     default: 'referrer',
     env: 'REDIRECT_OAUTH_TO'
-  },
-
-  token_secret: {
-    doc: 'Secret key used in encoding JWT tokens, should be unique to each environment',
-    format: String,
-    default: 'token',
-    env: 'TOKEN_SECRET'
-  },
-
-  token_issuer: {
-    doc: 'Simple text identifier of where a JWT was issued from',
-    format: String,
-    default: 'Open Source Moderator',
-    env: 'TOKEN_ISSUER'
-  },
-
-  token_expiration_minutes: {
-    doc: 'The number of minutes before a token expires',
-    format: Number,
-    default: 60 * 12, // 12 hours
   },
 
   publisher_notification_mode: {

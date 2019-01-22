@@ -29,6 +29,11 @@ import {
   destroyModel,
   updateModel,
 } from '../../platform/dataService';
+import {
+  USER_GROUP_ADMIN,
+  USER_GROUP_GENERAL,
+  USER_GROUP_SERVICE,
+} from '../../stores/users';
 
 function diff<T extends Map<string, any>>(original: List<T>, current: List<T>): {
   modified: List<T>,
@@ -55,6 +60,11 @@ export async function addUser(user: IUserModel): Promise<void> {
 }
 
 export async function modifyUser(user: IUserModel): Promise<void> {
+  // Strip out the extra field for most categories of user
+  if (user.group === USER_GROUP_GENERAL || user.group === USER_GROUP_ADMIN || user.group === USER_GROUP_SERVICE) {
+    user = user.delete('extra');
+  }
+
   await updateModel<IUserModel>(
     'users',
     user.id,

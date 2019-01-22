@@ -19,8 +19,9 @@ import axios from 'axios';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
-import { checkAuthorization, disconnectNotifier } from '../platform/dataService';
+import { checkAuthorization} from '../platform/dataService';
 import { getToken, saveToken } from '../platform/localStore';
+import { disconnectNotifier } from '../platform/websocketService';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
 import { initialiseClientModel } from '../stores';
 import { clearCSRF, getCSRF } from '../util';

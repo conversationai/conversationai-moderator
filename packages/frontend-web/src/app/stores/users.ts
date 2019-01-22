@@ -21,16 +21,16 @@ import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { IUserModel } from '../../models';
 import { getMyUserId } from '../auth';
-import { listModels } from '../platform/dataService';
+import { listSystemUsers } from '../platform/dataService';
 import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'users'];
-const USERS_DATA = [...STATE_ROOT, 'moderators'];
-const YOUTUBE_USERS_DATA = [...STATE_ROOT, 'youtubeUsers'];
+const USERS_DATA = [...STATE_ROOT, 'humans'];
 
 export const USER_GROUP_GENERAL = 'general';
 export const USER_GROUP_ADMIN = 'admin';
 export const USER_GROUP_SERVICE = 'service';
+export const USER_GROUP_MODERATOR = 'moderator';
 export const USER_GROUP_YOUTUBE = 'youtube';
 
 export const usersUpdated = createAction<List<IUserModel>>(
@@ -72,31 +72,39 @@ export function getCurrentUserIsAdmin(state: IAppStateRecord): boolean {
 }
 
 export function getSystemUsers(type: string, state: IAppStateRecord): List<IUserModel> {
-  if (type === USER_GROUP_YOUTUBE) {
-    return state.getIn(YOUTUBE_USERS_DATA);
+  if (type === USER_GROUP_SERVICE ||
+    type === USER_GROUP_MODERATOR ||
+    type === USER_GROUP_YOUTUBE) {
+    return state.getIn([...STATE_ROOT, type]);
   }
   return List<IUserModel>();
 }
 
 export interface IUsersState {
-  moderators: List<IUserModel>;
-  youtubeUsers: List<IUserModel>;
+  humans: List<IUserModel>;
+  [USER_GROUP_SERVICE]: List<IUserModel>;
+  [USER_GROUP_MODERATOR]: List<IUserModel>;
+  [USER_GROUP_YOUTUBE]: List<IUserModel>;
 }
 
 export interface IUsersStateRecord extends TypedRecord<IUsersStateRecord>, IUsersState {}
 
 const StateFactory = makeTypedFactory<IUsersState, IUsersStateRecord>({
-  moderators: List<IUserModel>(),
-  youtubeUsers: List<IUserModel>(),
+  humans: List<IUserModel>(),
+  [USER_GROUP_SERVICE]: List<IUserModel>(),
+  [USER_GROUP_MODERATOR]: List<IUserModel>(),
+  [USER_GROUP_YOUTUBE]: List<IUserModel>(),
 });
 
 const reducer = handleActions<IUsersStateRecord, List<IUserModel> | ILoadSystemUsers>( {
   [usersUpdated.toString()]: (state: IUsersStateRecord, { payload }: Action<List<IUserModel>>) => {
-    return state.set('moderators', payload);
+    return state.set('humans', payload);
   },
   [systemUsersLoaded.toString()]: (state: IUsersStateRecord, { payload }: Action<ILoadSystemUsers>) => {
-    if (payload.type === USER_GROUP_YOUTUBE) {
-      state = state.set('youtubeUsers', payload.users);
+    if (payload.type === USER_GROUP_SERVICE ||
+      payload.type === USER_GROUP_MODERATOR ||
+      payload.type === USER_GROUP_YOUTUBE) {
+      state = state.set(payload.type, payload.users);
     }
     return state;
   },
@@ -105,10 +113,7 @@ const reducer = handleActions<IUsersStateRecord, List<IUserModel> | ILoadSystemU
 export { reducer };
 
 export async function loadSystemUsers(dispatch: Dispatch<IAppStateRecord>, type: string): Promise<void> {
-  const result = await listModels<IUserModel>('users', {
-    filters: {group: type},
-    page: {limit: -1},
-  });
+  const result = await listSystemUsers(type);
 
-  await dispatch(systemUsersLoaded({type, users: result.models}));
+  await dispatch(systemUsersLoaded({type, users: result}));
 }

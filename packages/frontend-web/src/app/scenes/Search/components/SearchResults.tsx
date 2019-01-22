@@ -734,14 +734,14 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
               buttonLabel={this.state.toastButtonLabel}
               onClick={this.handleUndoClick}
             >
-              <div>
+              <div key="toastContent">
                 { this.state.showCount && (
-                  <span {...css(STYLES.actionToastCount)}>
+                  <span key="toastCount" {...css(STYLES.actionToastCount)}>
                     {showActionIcon}
                     {actionCount}
                   </span>
                 )}
-                <p>{actionText}</p>
+                <p key="actionText">{actionText}</p>
               </div>
             </ToastMessage>
           </FocusTrap>
@@ -759,7 +759,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
             }}
           >
             <ToastMessage icon={ruleToastIcon}>
-              <p>{actionText}</p>
+              <p key="toastContent">{actionText}</p>
             </ToastMessage>
           </FocusTrap>
         </Scrim>

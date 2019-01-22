@@ -16,18 +16,19 @@ limitations under the License.
 
 import {
   Article,
+  checkScoringDone,
   Comment,
   logger,
   sendToScorer,
-  User,
+  User, USER_GROUP_MODERATOR,
 } from '@conversationai/moderator-backend-core';
 import * as yargs from 'yargs';
 
 export const command = 'comments:send-to-scorer';
 export const describe = 'Send comments to Endpoint of user object to get scored.';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
+export function builder(args: yargs.Argv) {
+  return args
     .usage('Usage:\n\n' +
       'Send a comment for scoring:\n' +
       'node $0 comments:send-to-scorer --comment-id=4 --user-id=1')
@@ -60,7 +61,12 @@ export async function handler(argv: any) {
   try {
     const user = await User.findById(argv.userId);
     if (!user) {
-      logger.error(`No such user: ${argv.userId}`);
+      logger.error(`No such user`);
+      return;
+    }
+
+    if (user.get('group') !== USER_GROUP_MODERATOR) {
+      logger.error(`User is not a moderator`);
       return;
     }
 
@@ -69,6 +75,7 @@ export async function handler(argv: any) {
     for (const c of comments) {
       logger.info('Comment id ', c.id);
       await sendToScorer(c, user);
+      await checkScoringDone(c);
     }
 
     logger.info('Processing Completed.');

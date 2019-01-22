@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,12 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as copyToClipboard from 'copy-to-clipboard';
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { List } from 'immutable';
 import { generate } from 'randomstring';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
+
+import IconButton from '@material-ui/core/IconButton';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 
 import {
   CategoryModel,
@@ -41,6 +45,12 @@ import {
 import { API_URL } from '../../config';
 import { getToken } from '../../platform/localStore';
 import { IAppDispatch } from '../../stores';
+import {
+  USER_GROUP_ADMIN,
+  USER_GROUP_GENERAL,
+  USER_GROUP_SERVICE,
+  USER_GROUP_YOUTUBE,
+} from '../../stores/users';
 import { partial, setCSRF } from '../../util';
 import { css, stylesheet } from '../../utilx';
 import { AddButton, EditButton } from './components/AddButton';
@@ -170,6 +180,8 @@ const STYLES: any = stylesheet({
 
 export interface ISettingsProps extends WithRouterProps {
   users?: List<IUserModel>;
+  serviceUsers?: List<IUserModel>;
+  moderatorUsers?: List<IUserModel>;
   youtubeUsers?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
@@ -180,6 +192,8 @@ export interface ISettingsProps extends WithRouterProps {
   onCancel(): void;
   onSearchClick(): void;
   onAuthorSearchClick(): void;
+  reloadServiceUsers?(): Promise<void>;
+  reloadModeratorUsers?(): Promise<void>;
   reloadYoutubeUsers?(): Promise<void>;
   updatePreselects?(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>): void;
   updateRules?(oldRules: List<IRuleModel>, newRules: List<IRuleModel>): void;
@@ -196,8 +210,6 @@ export interface ISettingsProps extends WithRouterProps {
 }
 
 export interface ISettingsState {
-  users?: List<IUserModel>;
-  youtubeUsers?: List<IUserModel>;
   tags?: List<ITagModel>;
   rules?: List<IRuleModel>;
   taggingSensitivities?:  List<ITaggingSensitivityModel>;
@@ -206,9 +218,10 @@ export interface ISettingsState {
   baseRules?: List<IRuleModel>;
   baseTaggingSensitivities?:  List<ITaggingSensitivityModel>;
   basePreselects?:  List<IPreselectModel>;
-  isScrimVisible?: boolean;
-  isAddUserScrimOpen?: boolean;
-  isEditUserScrimOpen?: boolean;
+  isStatusScrimVisible?: boolean;
+  isAddUserScrimVisible?: boolean;
+  addUserType?: string;
+  isEditUserScrimVisible?: boolean;
   selectedUser?: IUserModel;
   homeIsFocused?: boolean;
   submitStatus?: string;
@@ -216,8 +229,6 @@ export interface ISettingsState {
 
 export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   state: ISettingsState = {
-    users: this.props.users,
-    youtubeUsers: this.props.youtubeUsers,
     tags: this.props.tags,
     rules: this.props.rules,
     taggingSensitivities:  this.props.taggingSensitivities,
@@ -226,30 +237,28 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     baseRules: this.props.rules,
     baseTaggingSensitivities:  this.props.taggingSensitivities,
     basePreselects:  this.props.preselects,
-    isScrimVisible: false,
-    isAddUserScrimOpen: false,
-    isEditUserScrimOpen: false,
+    isStatusScrimVisible: false,
+    isAddUserScrimVisible: false,
+    isEditUserScrimVisible: false,
     selectedUser: null,
     homeIsFocused: false,
-    submitStatus: 'Saving changes...',
   };
 
   componentDidMount() {
+    this.props.reloadServiceUsers();
+    this.props.reloadModeratorUsers();
     this.props.reloadYoutubeUsers();
   }
 
+  componentWillReceiveProps(_: Readonly<ISettingsProps>) {
+    if (this.state.isStatusScrimVisible) {
+      this.setState({
+        isStatusScrimVisible: false,
+      });
+    }
+  }
+
   componentWillUpdate(nextProps: ISettingsProps) {
-    if (!this.props.users.equals(nextProps.users)) {
-      this.setState({
-        users: nextProps.users,
-      });
-    }
-    if (nextProps.youtubeUsers &&
-      (!this.props.youtubeUsers || !this.props.youtubeUsers.equals(nextProps.youtubeUsers))) {
-      this.setState({
-        youtubeUsers: nextProps.youtubeUsers,
-      });
-    }
     if (!this.props.tags.equals(nextProps.tags)) {
       this.setState({
         baseTags: nextProps.tags,
@@ -277,18 +286,23 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleAddUser(event: React.FormEvent<any>) {
+  handleAddUser(type: string, event: React.FormEvent<any>) {
     event.preventDefault();
     this.setState({
-      isAddUserScrimOpen: true,
+      addUserType: type,
+      isAddUserScrimVisible: true,
     });
   }
 
   @autobind
   handleEditUser(event: React.FormEvent<any>) {
+    const allUsers = new Map<string, IUserModel>();
+    this.props.users.map((u) => allUsers.set(u.id, u));
+    this.props.serviceUsers.map((u) => allUsers.set(u.id, u));
+
     this.setState({
-      selectedUser: this.state.users.find((user) => user.id === event.currentTarget.value),
-      isEditUserScrimOpen: true,
+      selectedUser: allUsers.get(event.currentTarget.value),
+      isEditUserScrimVisible: true,
     });
   }
 
@@ -373,6 +387,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
+  handleAddServiceUser(event: React.FormEvent<any>) {
+    event.preventDefault();
+    console.log('got here');
+  }
+
+  @autobind
   async handleFormSubmit(event: React.FormEvent<any>) {
     event.preventDefault();
 
@@ -406,15 +426,15 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       basePreselects: preselectsNew,
       baseTaggingSensitivities: taggingSensitivitiesNew,
     });
-    this.clearScrim();
+    this.closeStatusScrim();
   }
 
-  clearScrim() {
+  closeStatusScrim() {
     // Add some delay so that users know that saving action was taken
     setTimeout(
       () => {
         this.setState({
-          isScrimVisible: false,
+          isStatusScrimVisible: false,
         });
       },
       600,
@@ -550,7 +570,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   onSavePress() {
     this.setState({
-      isScrimVisible: true,
+      isStatusScrimVisible: true,
+      submitStatus: 'Saving changes...',
     });
   }
 
@@ -560,70 +581,67 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  closeAddUserScrim(e: React.FormEvent<any>) {
+  closeScrims(e: React.FormEvent<any>) {
     e.preventDefault();
     this.setState({
-      isAddUserScrimOpen: false,
-    });
-  }
-
-  @autobind
-  closeEditUserScrim(e: React.FormEvent<any>) {
-    e.preventDefault();
-    this.setState({
-      isEditUserScrimOpen: false,
+      isAddUserScrimVisible: false,
+      isEditUserScrimVisible: false,
     });
   }
 
   @autobind
   async saveAddedUser(user: IUserModel) {
     await this.setState({
-      users: this.state.users.push(user),
-      isAddUserScrimOpen: false,
-      isScrimVisible: true,
+      isAddUserScrimVisible: false,
+      isStatusScrimVisible: true,
+      submitStatus: 'Saving changes...',
     });
 
     try {
       await this.props.addUser(user);
-      if (user.group === 'youtube') {
+      if (user.group === USER_GROUP_SERVICE) {
+        await this.props.reloadServiceUsers();
+      }
+      else if (user.group === USER_GROUP_YOUTUBE) {
         await this.props.reloadYoutubeUsers();
       }
+      this.setState({
+        submitStatus: 'Waiting for refresh...',
+      });
     }
     catch (e) {
       this.setState({
         submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
       });
     }
-    this.clearScrim();
   }
 
   @autobind
   async saveEditedUser(user: IUserModel) {
-    const newState: any = {
-      isEditUserScrimOpen: false,
-      isScrimVisible: true,
-    };
-
-    if (user.group === 'youtube') {
-      newState['youtubeUsers']  = this.state.youtubeUsers.set(this.state.youtubeUsers.findIndex((u) => u.id === user.id), user);
-    }
-    else {
-      newState['users']  = this.state.users.set(this.state.users.findIndex((u) => u.id === user.id), user);
-    }
-    await this.setState(newState);
+    await this.setState({
+      isEditUserScrimVisible: false,
+      isStatusScrimVisible: true,
+      submitStatus: 'Saving changes...',
+    });
 
     try {
       await this.props.modifyUser(user);
-      if (user.group === 'youtube') {
+      if (user.group === USER_GROUP_SERVICE) {
+        await this.props.reloadServiceUsers();
+      }
+      else if (user.group === USER_GROUP_YOUTUBE) {
         await this.props.reloadYoutubeUsers();
       }
+
+      this.setState({
+        submitStatus: 'Waiting for refresh...',
+      });
     }
     catch (e) {
       this.setState({
         submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
       });
     }
-    this.clearScrim();
   }
 
   @autobind
@@ -637,7 +655,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   renderUsers() {
-    const { users } = this.state;
+    const { users } = this.props;
     const sortedUsers = users.sort((a, b) => a.name.localeCompare(b.name));
 
     return (
@@ -675,7 +693,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
                     {u.email}
                   </td>
                   <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    {u.group}
+                    {u.group === USER_GROUP_ADMIN ? 'Administrator' : 'Moderator'}
                   </td>
                   <td {...css(SETTINGS_STYLES.userTableCell)}>
                     {u.isActive ? 'Active' : ''}
@@ -688,8 +706,116 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </tbody>
             </table>
           </div>
-          <AddButton width={44} onClick={this.handleAddUser} label="Add a user"/>
+          <AddButton width={44} onClick={partial(this.handleAddUser, USER_GROUP_GENERAL)} label="Add a user"/>
         </div>
+      </div>
+    );
+  }
+
+  renderModeratorUsers() {
+    const {
+      moderatorUsers,
+    } = this.props;
+
+    if (!moderatorUsers || moderatorUsers.count() === 0) {
+      return (<p>None configured</p>);
+    }
+    return (
+      <div key="moderatorUsersSection">
+        <table>
+          <thead>
+          <tr>
+            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+              Name
+            </th>
+            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+              Type
+            </th>
+            <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+              Endpoint
+            </th>
+            <th key="5" {...css(SETTINGS_STYLES.userTableCell)}>
+              Is Active
+            </th>
+            <th key="6" {...css(SETTINGS_STYLES.userTableCell)}/>
+          </tr>
+          </thead>
+          <tbody>
+          {moderatorUsers.map((u) => (
+            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.name}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.extra.endpointType}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.extra.endpoint}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.isActive ? 'Active' : ''}
+              </td>
+            </tr>
+          ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  renderServiceUsers() {
+    const {
+      serviceUsers,
+    } = this.props;
+
+    if (!serviceUsers || serviceUsers.count() === 0) {
+      return (<p>None configured</p>);
+    }
+    return (
+      <div key="serviceUsersSection">
+        <table>
+          <thead>
+          <tr>
+            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
+              ID
+            </th>
+            <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
+              Name
+            </th>
+            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
+              JWT Authentication token
+            </th>
+            <th/>
+            <th key="6" {...css(SETTINGS_STYLES.userTableCell)}/>
+          </tr>
+          </thead>
+          <tbody>
+          {serviceUsers.map((u) => (
+            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.id}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.name}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell, {fontSize: '10px'})}>
+                {u.extra.jwt}
+              </td>
+              <td>
+                <IconButton aria-label="Copy to clipboard" onClick={partial(copyToClipboard, u.extra.jwt)}>
+                  <FileCopyIcon fontSize="small" />
+                </IconButton>
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                {u.isActive ? 'Active' : ''}
+              </td>
+              <td {...css(SETTINGS_STYLES.userTableCell)}>
+                <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id}/>
+              </td>
+            </tr>
+          ))}
+          </tbody>
+        </table>
       </div>
     );
   }
@@ -697,7 +823,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   renderYoutubeUsers() {
     const {
       youtubeUsers,
-    } = this.state;
+    } = this.props;
 
     if (!youtubeUsers || youtubeUsers.count() === 0) {
       return (<p>None configured</p>);
@@ -738,6 +864,241 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     );
   }
 
+  renderTags(tags: List<ITagModel>) {
+    return (
+      <div key="editTagsSection">
+        <div key="heading" {...css(STYLES.heading)}>
+          <h2 {...css(STYLES.headingText)}>Tags</h2>
+        </div>
+        <div key="body" {...css(STYLES.section)}>
+          <div {...css(SETTINGS_STYLES.row, {padding: 0})}>
+            <p {...css(STYLES.labelTitle, SMALLER_SCREEN && {width: '184px', marginRight: '20px'})}>Label</p>
+            <p {...css(STYLES.descriptionTitle)}>Description</p>
+            <p {...css(STYLES.colorTitle, SMALLER_SCREEN && {marginRight: '20px'})}>Color</p>
+            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>In Batch View</p>
+            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>Is Taggable</p>
+            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'}, { marginRight: '98px'})}>In Summary Score</p>
+          </div>
+          {tags && tags.map((tag, i) => (
+            <LabelSettings
+              tag={tag}
+              key={i}
+              onLabelChange={this.handleLabelChange}
+              onDescriptionChange={this.handleDescriptionChange}
+              onColorChange={this.handleColorChange}
+              onDeletePress={this.handleTagDeletePress}
+              onTagChange={this.handleTagChange}
+            />
+          ))}
+          <AddButton
+            width={44}
+            onClick={this.handleAddTag}
+            label="Add a tag"
+            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  renderRules(tags: List<ITagModel>, categories: List<ICategoryModel>) {
+    const {
+      rules,
+    } = this.state;
+
+    return (
+      <div key="editRulesSection">
+        <div key="heading" {...css(STYLES.heading)}>
+          <h2 {...css(STYLES.headingText)}>Automated Rules</h2>
+        </div>
+        <div key="body" {...css(STYLES.section)}>
+          {rules && rules.map((rule, i) => (
+            <RuleRow
+              key={i}
+              onDelete={this.handleAutomatedRuleDelete}
+              rule={rule}
+              onCategoryChange={partial(this.handleAutomatedRuleChange, 'categoryId', rule)}
+              onTagChange={partial(this.handleAutomatedRuleChange, 'tagId', rule)}
+              onLowerThresholdChange={partial(this.handleAutomatedRuleChange, 'lowerThreshold', rule)}
+              onUpperThresholdChange={partial(this.handleAutomatedRuleChange, 'upperThreshold', rule)}
+              rangeBottom={Math.round(rule.lowerThreshold * 100)}
+              rangeTop={Math.round(rule.upperThreshold * 100)}
+              selectedTag={rule.tagId}
+              selectedCategory={rule.categoryId}
+              selectedAction={rule.action}
+              hasTagging
+              onModerateButtonClick={this.handleModerateButtonClick}
+              categories={categories}
+              tags={tags}
+            />
+          ))}
+          <AddButton
+            width={44}
+            onClick={this.handleAddAutomatedRule}
+            label="Add an automated rule"
+            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  renderSensitivities(tags: List<ITagModel>, categories: List<ICategoryModel>) {
+    const {
+      taggingSensitivities,
+    } = this.state;
+    return (
+      <div key="editSensitivitiesSection">
+        <div key="heading" {...css(STYLES.heading)}>
+          <h2 {...css(STYLES.headingText)}>Tagging Sensitivity (determines at what score range a tag will appear in the UI)</h2>
+        </div>
+        <div key="body" {...css(STYLES.section)}>
+          {taggingSensitivities && taggingSensitivities.map((ts, i) => (
+            <RuleRow
+              key={i}
+              onDelete={this.handleTaggingSensitivityDelete}
+              rule={ts}
+              onCategoryChange={partial(this.handleTaggingSensitivityChange, 'categoryId', ts)}
+              onTagChange={partial(this.handleTaggingSensitivityChange, 'tagId', ts)}
+              onLowerThresholdChange={partial(this.handleTaggingSensitivityChange, 'lowerThreshold', ts)}
+              onUpperThresholdChange={partial(this.handleTaggingSensitivityChange, 'upperThreshold', ts)}
+              rangeBottom={Math.round(ts.lowerThreshold * 100)}
+              rangeTop={Math.round(ts.upperThreshold * 100)}
+              selectedTag={ts.tagId}
+              selectedCategory={ts.categoryId}
+              categories={categories}
+              tags={tags}
+            />
+          ))}
+          <AddButton
+            width={44}
+            onClick={this.handleAddTaggingSensitivity}
+            label="Add a tagging sensitivity rule"
+            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  renderPreselects(tags: List<ITagModel>, categories: List<ICategoryModel>) {
+    const {
+      preselects,
+    } = this.state;
+    return (
+      <div key="editRangesSection">
+        <div key="heading" {...css(STYLES.heading)}>
+          <h2 {...css(STYLES.headingText)}>
+            Preselected Batch Ranges (sets the default score range on a per category basis for tags in the batch selection view)
+          </h2>
+        </div>
+        <div key="body" {...css(STYLES.section)}>
+          {preselects && preselects.map((preselect, i) => (
+            <RuleRow
+              key={i}
+              onDelete={this.handlePreselectDelete}
+              rule={preselect}
+              onCategoryChange={partial(this.handlePreselectChange, 'categoryId', preselect)}
+              onTagChange={partial(this.handlePreselectChange, 'tagId', preselect)}
+              onLowerThresholdChange={partial(this.handlePreselectChange, 'lowerThreshold', preselect)}
+              onUpperThresholdChange={partial(this.handlePreselectChange, 'upperThreshold', preselect)}
+              rangeBottom={Math.round(preselect.lowerThreshold * 100)}
+              rangeTop={Math.round(preselect.upperThreshold * 100)}
+              selectedTag={preselect.tagId}
+              selectedCategory={preselect.categoryId}
+              categories={categories}
+              tags={tags}
+            />
+          ))}
+          <AddButton
+            width={44}
+            onClick={this.handleAddPreselect}
+            label="Add a preselect"
+            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  renderAddUserScrim() {
+    return (
+      <Scrim
+        key="addUserScrim"
+        scrimStyles={SCRIM_STYLE.scrim}
+        isVisible={this.state.isAddUserScrimVisible}
+        onBackgroundClick={this.closeScrims}
+      >
+        <FocusTrap
+          focusTrapOptions={{
+            clickOutsideDeactivates: true,
+          }}
+        >
+          <div
+            key="addUserContainer"
+            tabIndex={0}
+            {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
+          >
+            <AddUsers
+              userType={this.state.addUserType}
+              onClickDone={this.saveAddedUser}
+              onClickClose={this.closeScrims}
+            />
+          </div>
+        </FocusTrap>
+      </Scrim>
+    );
+  }
+
+  renderEditUserScrim() {
+    return (
+      <Scrim
+        key="editUserScrim"
+        scrimStyles={SCRIM_STYLE.scrim}
+        isVisible={this.state.isEditUserScrimVisible}
+        onBackgroundClick={this.closeScrims}
+      >
+        <FocusTrap
+          focusTrapOptions={{
+            clickOutsideDeactivates: true,
+          }}
+        >
+          <div
+            key="editUserContainer"
+            tabIndex={0}
+            {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
+          >
+            <EditUsers
+              userToEdit={this.state.selectedUser}
+              onClickDone={this.saveEditedUser}
+              onClickClose={this.closeScrims}
+            />
+          </div>
+        </FocusTrap>
+      </Scrim>
+    );
+  }
+
+  renderStatusScrim() {
+    return (
+      <Scrim
+        key="statusScrim"
+        scrimStyles={SCRIM_STYLE.scrim}
+        isVisible={this.state.isStatusScrimVisible}
+      >
+        <FocusTrap
+          focusTrapOptions={{
+            clickOutsideDeactivates: true,
+          }}
+        >
+          <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})} tabIndex={0}>
+            <p>{this.state.submitStatus}</p>
+          </div>
+        </FocusTrap>
+      </Scrim>
+    );
+  }
+
   render() {
     const {
       categories,
@@ -746,20 +1107,13 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
     const {
       tags,
-      rules,
-      taggingSensitivities,
-      preselects,
-      isScrimVisible,
-      isAddUserScrimOpen,
-      isEditUserScrimOpen,
-      selectedUser,
       homeIsFocused,
-      submitStatus,
     } = this.state;
 
     const summaryScoreTag = tags.find((tag) => tag.key === 'SUMMARY_SCORE');
     const summaryScoreTagId = summaryScoreTag && summaryScoreTag.id;
-    const tagsList = tags;
+    const tagsNoSummary = tags.filter((tag) => tag.id !== summaryScoreTagId).toList();
+
     const tagsWithAll = List([
       TagModel({
         id: null,
@@ -770,7 +1124,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     ]).concat(tags) as List<ITagModel>;
     const tagsWithAllNoSummary = tagsWithAll.filter((tag) => tag.id !== summaryScoreTagId).toList();
 
-    const allCategories = List([
+    const categoriesWithAll = List([
       CategoryModel({
         id: null,
         label: 'All',
@@ -805,126 +1159,36 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
           {this.renderUsers()}
           <form onSubmit={this.handleFormSubmit} {...css(STYLES.formContainer)}>
-            <div key="editTagsSection">
-              <div key="heading" {...css(STYLES.heading)}>
-                <h2 {...css(STYLES.headingText)}>Tags</h2>
-              </div>
-              <div key="body" {...css(STYLES.section)}>
-                <div {...css(SETTINGS_STYLES.row, {padding: 0})}>
-                  <p {...css(STYLES.labelTitle, SMALLER_SCREEN && {width: '184px', marginRight: '20px'})}>Label</p>
-                  <p {...css(STYLES.descriptionTitle)}>Description</p>
-                  <p {...css(STYLES.colorTitle, SMALLER_SCREEN && {marginRight: '20px'})}>Color</p>
-                  <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>In Batch View</p>
-                  <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>Is Taggable</p>
-                  <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'}, { marginRight: '98px'})}>In Summary Score</p>
-                </div>
-                {tags && tags.map((tag, i) => tag.id !== summaryScoreTagId && (
-                  <LabelSettings
-                    tag={tag}
-                    key={i}
-                    onLabelChange={this.handleLabelChange}
-                    onDescriptionChange={this.handleDescriptionChange}
-                    onColorChange={this.handleColorChange}
-                    onDeletePress={this.handleTagDeletePress}
-                    onTagChange={this.handleTagChange}
-                  />
-                ))}
-                <AddButton width={44} onClick={this.handleAddTag} label="Add a tag"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
-              </div>
-            </div>
-
-            <div key="editRulesSection">
-              <div key="heading" {...css(STYLES.heading)}>
-                <h2 {...css(STYLES.headingText)}>Automated Rules</h2>
-              </div>
-              <div key="body" {...css(STYLES.section)}>
-                {rules && rules.map((rule, i) => (
-                  <RuleRow
-                    key={i}
-                    onDelete={this.handleAutomatedRuleDelete}
-                    rule={rule}
-                    onCategoryChange={partial(this.handleAutomatedRuleChange, 'categoryId', rule)}
-                    onTagChange={partial(this.handleAutomatedRuleChange, 'tagId', rule)}
-                    onLowerThresholdChange={partial(this.handleAutomatedRuleChange, 'lowerThreshold', rule)}
-                    onUpperThresholdChange={partial(this.handleAutomatedRuleChange, 'upperThreshold', rule)}
-                    rangeBottom={Math.round(rule.lowerThreshold * 100)}
-                    rangeTop={Math.round(rule.upperThreshold * 100)}
-                    selectedTag={rule.tagId}
-                    selectedCategory={rule.categoryId}
-                    selectedAction={rule.action}
-                    hasTagging
-                    onModerateButtonClick={this.handleModerateButtonClick}
-                    categories={allCategories}
-                    tags={tagsList}
-                  />
-                ))}
-                <AddButton width={44} onClick={this.handleAddAutomatedRule} label="Add an automated rule"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
-              </div>
-            </div>
-
-            <div key="editSensitivitiesSection">
-              <div key="heading" {...css(STYLES.heading)}>
-                <h2 {...css(STYLES.headingText)}>Tagging Sensitivity (determines at what score range a tag will appear in the UI)</h2>
-              </div>
-              <div key="body" {...css(STYLES.section)}>
-                {taggingSensitivities && taggingSensitivities.map((ts, i) => ts.tagId !== summaryScoreTagId &&  (
-                  <RuleRow
-                    key={i}
-                    onDelete={this.handleTaggingSensitivityDelete}
-                    rule={ts}
-                    onCategoryChange={partial(this.handleTaggingSensitivityChange, 'categoryId', ts)}
-                    onTagChange={partial(this.handleTaggingSensitivityChange, 'tagId', ts)}
-                    onLowerThresholdChange={partial(this.handleTaggingSensitivityChange, 'lowerThreshold', ts)}
-                    onUpperThresholdChange={partial(this.handleTaggingSensitivityChange, 'upperThreshold', ts)}
-                    rangeBottom={Math.round(ts.lowerThreshold * 100)}
-                    rangeTop={Math.round(ts.upperThreshold * 100)}
-                    selectedTag={ts.tagId}
-                    selectedCategory={ts.categoryId}
-                    categories={allCategories}
-                    tags={tagsWithAllNoSummary}
-                  />
-                ))}
-                <AddButton width={44} onClick={this.handleAddTaggingSensitivity} label="Add a tagging sensitivity rule"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
-              </div>
-            </div>
-
-            <div key="editRangesSection">
-              <div key="heading" {...css(STYLES.heading)}>
-                <h2 {...css(STYLES.headingText)}>
-                  Preselected Batch Ranges (sets the default score range on a per category basis for tags in the batch selection view)
-                </h2>
-              </div>
-              <div key="body" {...css(STYLES.section)}>
-                {preselects && preselects.map((preselect, i) => (
-                  <RuleRow
-                    key={i}
-                    onDelete={this.handlePreselectDelete}
-                    rule={preselect}
-                    onCategoryChange={partial(this.handlePreselectChange, 'categoryId', preselect)}
-                    onTagChange={partial(this.handlePreselectChange, 'tagId', preselect)}
-                    onLowerThresholdChange={partial(this.handlePreselectChange, 'lowerThreshold', preselect)}
-                    onUpperThresholdChange={partial(this.handlePreselectChange, 'upperThreshold', preselect)}
-                    rangeBottom={Math.round(preselect.lowerThreshold * 100)}
-                    rangeTop={Math.round(preselect.upperThreshold * 100)}
-                    selectedTag={preselect.tagId}
-                    selectedCategory={preselect.categoryId}
-                    categories={allCategories}
-                    tags={tagsWithAll}
-                  />
-                ))}
-                <AddButton width={44} onClick={this.handleAddPreselect} label="Add a preselect"
-                           buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}/>
-              </div>
-            </div>
-
+            {this.renderTags(tagsNoSummary)}
+            {this.renderRules(tags, categoriesWithAll)}
+            {this.renderSensitivities(tagsWithAllNoSummary, categoriesWithAll)}
+            {this.renderPreselects(tagsWithAll, categoriesWithAll)}
             <div key="submitSection" {...css(STYLES.buttonGroup)}>
               <Button key="cancel" buttonStyles={STYLES.cancel} label="Cancel" onClick={this.onCancelPress}/>
               <Button key="save" buttonStyles={STYLES.save} label="Save" onClick={this.onSavePress}/>
             </div>
           </form>
+          <div key="serviceUsersHeader" {...css(STYLES.heading)}>
+            <h2 {...css(STYLES.headingText)}>
+              System accounts
+            </h2>
+          </div>
+          <div key="serviceUsers" {...css(STYLES.section)}>
+            <h3>Service accounts</h3>
+            <p>These accounts are used to access the OSMod API.</p>
+            {this.renderServiceUsers()}
+            <AddButton
+              width={44}
+              onClick={partial(this.handleAddUser, USER_GROUP_SERVICE)}
+              label="Add a service account"
+              buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
+            />
+          </div>
+          <div key="moderatorUsers" {...css(STYLES.section)}>
+            <h3>Moderator accounts</h3>
+            <p>These accounts are responsible for sending comments to the Perspective API scorer.</p>
+            {this.renderModeratorUsers()}
+          </div>
           <div>
             <div key="pluginsHeader" {...css(STYLES.heading)}>
               <h2 {...css(STYLES.headingText)}>
@@ -959,68 +1223,9 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
             </div>
           </div>
         </div>
-        <Scrim
-          key="changesScrim"
-          scrimStyles={SCRIM_STYLE.scrim}
-          isVisible={isScrimVisible}
-        >
-          <FocusTrap
-            focusTrapOptions={{
-              clickOutsideDeactivates: true,
-            }}
-          >
-            <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})} tabIndex={0}>
-              <p>{submitStatus}</p>
-            </div>
-          </FocusTrap>
-        </Scrim>
-        <Scrim
-          key="addUserScrim"
-          scrimStyles={SCRIM_STYLE.scrim}
-          isVisible={isAddUserScrimOpen}
-          onBackgroundClick={this.closeAddUserScrim}
-        >
-          <FocusTrap
-            focusTrapOptions={{
-              clickOutsideDeactivates: true,
-            }}
-          >
-            <div
-              key="addUserContainer"
-              tabIndex={0}
-              {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
-            >
-              <AddUsers
-                onClickDone={this.saveAddedUser}
-                onClickClose={this.closeAddUserScrim}
-              />
-            </div>
-          </FocusTrap>
-        </Scrim>
-        <Scrim
-          key="editUserScrim"
-          scrimStyles={SCRIM_STYLE.scrim}
-          isVisible={isEditUserScrimOpen}
-          onBackgroundClick={this.closeEditUserScrim}
-        >
-          <FocusTrap
-            focusTrapOptions={{
-              clickOutsideDeactivates: true,
-            }}
-          >
-            <div
-              key="editUserContainer"
-              tabIndex={0}
-              {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
-            >
-              <EditUsers
-                userToEdit={selectedUser}
-                onClickDone={this.saveEditedUser}
-                onClickClose={this.closeEditUserScrim}
-              />
-            </div>
-          </FocusTrap>
-        </Scrim>
+        {this.renderStatusScrim()}
+        {this.renderAddUserScrim()}
+        {this.renderEditUserScrim()}
       </div>
     );
   }

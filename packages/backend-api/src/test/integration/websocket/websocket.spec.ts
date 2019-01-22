@@ -36,7 +36,7 @@ describe('websocket tests', () => {
   it('Test what we get when connect without authentication', async () => {
     const serverStuff = makeServer(true);
     const app = serverStuff.app;
-    app.use('/', mountAPI(true));
+    app.use('/', await mountAPI(true));
     const server = serverStuff.start(3000);
 
     try {
@@ -73,7 +73,7 @@ describe('websocket tests', () => {
       req.user = user;
       next();
     });
-    app.use('/', mountAPI(true));
+    app.use('/', await mountAPI(true));
     const server = serverStuff.start(3000);
 
     try {

@@ -64,7 +64,7 @@ describe('websocket tests: assign moderators', () => {
       next();
     });
 
-    app.use('/', mountAPI(true));
+    app.use('/', await mountAPI(true));
     server = serverStuff.start(3000);
     socket = new WebSocket('ws://localhost:3000/services/updates/summary');
     socket.onclose = () => {

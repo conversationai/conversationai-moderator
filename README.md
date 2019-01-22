@@ -38,7 +38,6 @@ In a production setting, you'll also have to set the following:
 * `URL_BASE`: Base URL: Used by docker-compose to generate the other URLs.
 * `API_URL`: URL for the API endpoint
 * `FRONTEND_URL`: URL for the Frontend endpoint
-* `TOKEN_SECRET`: A secret used to generate authentication tokens.
 
 ### System setup:
 
@@ -93,7 +92,7 @@ mysql -u root -p $DATABASE_NAME < packages/backend-core/seed/initial-database.sq
 bin/osmod migrate
 
 # Add a service user that can talk to the Perspective API:
-bin/osmod users:create --group service --name "PerspectiveAPI" --moderator-type "perspective-api"
+bin/osmod users:create --group moderator --name "PerspectiveAPI" --moderator-type "perspective-api"
 
 # Run the server
 bin/watch
@@ -151,7 +150,8 @@ where `command` is one of
 
 #### Managing Users
 
-If you are an admin, you can create admin and general users via the UI.  Also, if there are no admin users,
+If you are an administrator, you can create other administrators, general moderator users,
+and service users via the settings pages in the OSMod UI.  Also, if there are no admin users,
 the UI will turn the first user to log in into an admin.  But you can also create users via the commandline.
 
 Create a human user:
@@ -175,13 +175,13 @@ Create a service user:
 Add a service user that can talk to the Perspective API directly:
 
 ```bash
-./bin/osmod users:create --group service --name "PerspectiveAPI" --moderator-type "perspective-api"
+./bin/osmod users:create --group moderator --name "PerspectiveAPI" --moderator-type "perspective-api"
 ```
 
 Add a (legacy)sr   service user for the Perspective API proxy:
 
 ```bash
-./bin/osmod users:create --group service --name "PerspectiveProxy" --moderator-type "perspective-proxy" --endpoint=<proxy URL>
+./bin/osmod users:create --group moderator --name "PerspectiveProxy" --moderator-type "perspective-proxy" --endpoint=<proxy URL>
 ```
 
 where `<proxy URL>` is the URL of [The Perspective API proxy] you plan on using.

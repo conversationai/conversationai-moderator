@@ -25,7 +25,7 @@ EOF
   ${basename}/osmod migrate
 
   # Add a service user that can talk to the Perspective API:
-  ${basename}/osmod users:create --group service --name "PerspectiveAPI" --moderator-type "perspective-api"
+  ${basename}/osmod users:create --group moderator --name "PerspectiveAPI" --moderator-type "perspective-api"
 else
   echo "Running migrations."
   ${basename}/osmod migrate

@@ -46,9 +46,10 @@ import {
   MODERATION_RULE_ACTION_TYPES,
   ModerationRule,
   SCORE_SOURCE_TYPES,
-  SERVICE_TYPE_MODERATOR,
   Tag,
   User,
+  USER_GROUP_MODERATOR,
+  USER_GROUP_SERVICE,
 } from '../../../models';
 import { sequelize } from '../../../sequelize';
 
@@ -115,21 +116,6 @@ export async function createCommentScoreRequest(data?: object): Promise<IComment
 
 // Users
 
-export function getServiceUserData(data: Partial<IUserAttributes> = {}): IUserAttributes {
-  return {
-    group: 'service',
-    name: faker.name.firstName(),
-    isActive: true,
-    extra: {
-      serviceType: SERVICE_TYPE_MODERATOR,
-      endpointType: ENDPOINT_TYPE_PROXY,
-      endpoint: 'http://www.google.com',
-    },
-    ...data,
-  // TODO(ldixon): fix typehack.
-  } as any;
-}
-
 export async function createUser(data: Partial<IUserAttributes> = {}): Promise<IUserInstance> {
   return await User.create({
     group: 'general',
@@ -141,7 +127,25 @@ export async function createUser(data: Partial<IUserAttributes> = {}): Promise<I
 }
 
 export async function createServiceUser(data: Partial<IUserAttributes> = {}): Promise<IUserInstance> {
-  return await User.create(getServiceUserData(data));
+  return await User.create({
+    group: USER_GROUP_SERVICE,
+    name: faker.name.firstName(),
+    isActive: true,
+    ...data,
+  });
+}
+
+export async function createModeratorUser(data: Partial<IUserAttributes> = {}): Promise<IUserInstance> {
+  return await User.create({
+    group: USER_GROUP_MODERATOR,
+    name: faker.name.firstName(),
+    isActive: true,
+    extra: {
+      endpointType: ENDPOINT_TYPE_PROXY,
+      endpoint: 'http://www.google.com',
+    },
+    ...data,
+  });
 }
 
 // Comment scores

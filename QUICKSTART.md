@@ -63,7 +63,6 @@ export GOOGLE_CLOUD_API_KEY=<API key from step 4>
 
 export MODERATOR_FLAVOR=youtube
 export DATABASE_PASSWORD=password
-export TOKEN_SECRET="sdf"
 export ATTRIBUTE_REQUESTS
 read -r -d '' ATTRIBUTE_REQUESTS << EOM
 {

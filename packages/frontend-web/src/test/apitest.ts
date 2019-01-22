@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ limitations under the License.
 function usage() {
   console.log(`usage: node ${process.argv[1]} <api_url> <token>`);
   console.log(`   where api_url is the URL for the API backend (e.g., http://localhost:8080)`);
-  console.log(`   and <token> is an access token for an OSMod user.  (As allocated by bin/osmod user:get-token`);
+  console.log(`   and <token> is an access token for an OSMod user.  (As allocated by bin/osmod user:get-token)`);
 }
 
 const api_url = process.argv[2];
@@ -40,8 +40,8 @@ if (!token) {
 };
 
 import { decodeToken, setAxiosToken } from '../app/auth/store';
-import { connectNotifier } from '../app/platform/dataService';
 import { saveToken } from '../app/platform/localStore';
+import { connectNotifier } from '../app/platform/websocketService';
 import { globalUpdate, systemUpdate, userUpdate } from './notificationChecks';
 
 try {

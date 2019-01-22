@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,19 +17,21 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
-import { IUserModel } from '../../../../../models';
-import { partial } from '../../../../util';
-import { css } from '../../../../utilx';
-import { SETTINGS_STYLES } from '../../settingsStyles';
-
-export type IGroup = 'general' | 'admin';
+import { IUserModel } from '../../../../models';
+import { USER_GROUP_ADMIN, USER_GROUP_GENERAL } from '../../../stores/users';
+import { partial } from '../../../util';
+import { css } from '../../../utilx';
+import { SETTINGS_STYLES } from '../settingsStyles';
 
 export interface IAddUsersProps {
-  onInputChage(type: string, value: string | boolean): any;
+  onInputChange(type: string, value: string | boolean): any;
   user?: IUserModel;
 }
 
-const GROUPS = List(['general', 'admin']) as List<IGroup>;
+const GROUPS = List([
+  [USER_GROUP_GENERAL, 'Moderator'],
+  [USER_GROUP_ADMIN, 'Administrator'],
+]) as List<Array<string>>;
 
 export class UserForm extends React.Component<IAddUsersProps> {
 
@@ -37,18 +39,20 @@ export class UserForm extends React.Component<IAddUsersProps> {
   onValueChange(property: string, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     e.preventDefault();
 
-    this.props.onInputChage(property, e.target.value);
+    this.props.onInputChange(property, e.target.value);
   }
 
   @autobind
   onIsActiveChange(e: React.ChangeEvent<HTMLInputElement>) {
-    this.props.onInputChage('isActive', e.target.checked);
+    this.props.onInputChange('isActive', e.target.checked);
   }
 
   render() {
     const {
       user,
     } = this.props;
+
+    const realUser = (user.group === USER_GROUP_GENERAL || user.group === USER_GROUP_ADMIN);
 
     return (
       <div>
@@ -62,6 +66,7 @@ export class UserForm extends React.Component<IAddUsersProps> {
             onChange={partial(this.onValueChange, 'name')}
           />
         </div>
+        {realUser &&
         <div key="email" {...css(SETTINGS_STYLES.row)}>
           <label htmlFor="email" {...css(SETTINGS_STYLES.label)}>Email Address</label>
           <input
@@ -72,6 +77,8 @@ export class UserForm extends React.Component<IAddUsersProps> {
             onChange={partial(this.onValueChange, 'email')}
           />
         </div>
+        }
+        {realUser &&
         <div key="group" {...css(SETTINGS_STYLES.row, SETTINGS_STYLES.selectBoxRow)}>
           <label htmlFor="name" {...css(SETTINGS_STYLES.label)}>Group</label>
           <select
@@ -81,12 +88,13 @@ export class UserForm extends React.Component<IAddUsersProps> {
             value={user.group ? user.group : ''}
             onChange={partial(this.onValueChange, 'group')}
           >
-            { GROUPS.map((group: string) =>
-                <option value={group} key={group}>{group}</option>,
+            {GROUPS.map((group: Array<string>) =>
+              <option value={group[0]} key={group[0]}>{group[1]}</option>,
             )}
           </select>
           <span aria-hidden="true" {...css(SETTINGS_STYLES.arrow)} />
         </div>
+        }
         <div key="active" {...css(SETTINGS_STYLES.row)}>
           <label htmlFor="isActive" {...css(SETTINGS_STYLES.label)}>User is active
             <input

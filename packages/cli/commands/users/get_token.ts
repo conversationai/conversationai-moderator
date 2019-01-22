@@ -21,8 +21,8 @@ export const command = 'users:get-token';
 
 export const describe = 'Get a JWT token for a user specified by id or email';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
+export function builder(args: yargs.Argv) {
+  return args
     .usage('Usage:\n\n' +
            'Create token for user by id:\n' +
            'node $0 get-token --id 4\n\n' +
@@ -43,7 +43,7 @@ export function builder(yargs: yargs.Argv) {
 
 export async function handler(argv: any) {
   if (!argv.email) {
-    const token = createToken(argv.id);
+    const token = await createToken(argv.id);
     logger.info('JWT token for id: %d:\n\n\t%s', argv.id, token);
     process.exit(0);
   }
@@ -53,14 +53,13 @@ export async function handler(argv: any) {
       where: { email: argv.email },
     });
 
-    if (user) {
-      const token = createToken(user.id, user.get('email'));
-      logger.info('JWT token for "%s" (id: %d):\n\n\t%s', user.get('name'), user.id, user.get('email'), token);
-      process.exit(0);
-    } else {
+    if (!user) {
       logger.error('User not found');
       process.exit(1);
     }
+    const token = await createToken(user.id, user.get('email'));
+    logger.info('JWT token for "%s" (id: %d):\n\n\t%s', user.get('name'), user.id, user.get('email'), token);
+    process.exit(0);
   } catch (err) {
     logger.error('Error creating token for user: ', err.name, err.message);
     logger.error(err.errors);

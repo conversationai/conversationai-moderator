@@ -105,7 +105,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
   searchInputRef: any = null;
 
   state: ISearchState = {
-    searchInputValue: this.props.searchTerm,
+    searchInputValue: this.props.searchTerm || '',
     searchRequested: false,
     searchReturned: false,
     searchByArticle: !!this.props.articleId,

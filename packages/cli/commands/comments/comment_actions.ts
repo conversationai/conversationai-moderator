@@ -24,8 +24,8 @@ Bluebird.promisifyAll(request);
 export const command = 'comments:actions';
 export const describe = 'Send comments to be approved or rejected at endpoint.';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
+export function builder(args: yargs.Argv) {
+  return args
       .usage('Usage:\n\n' +
         'Send comment for action by id, or by comma seperated values:\n' +
         'node $0 comments:actions --comment-id=943,950,956\n\n' +
@@ -58,7 +58,7 @@ export async function handler(argv: any) {
   const user = await User.findById(argv.userId);
 
   if (user) {
-    const token = createToken(user.id);
+    const token = await createToken(user.id);
     let data = argv.commentId;
     let postData = {
       data : [argv.commentId],

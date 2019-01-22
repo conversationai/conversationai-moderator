@@ -14,9 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/**
+ * Provide an abstraction on top of the local/session storage on the browser.
+ * On non-browser platforms, provide a fake interface that just stores stuff
+ * in a javascript object.
+ */
 import { RESTRICT_TO_SESSION } from '../config';
 
 const LOCAL_STORAGE_AUTH_TOKEN_KEY = 'moderator/auth_token';
+
+// TODO: One day, we'll need to flesh out this object with the full Storage API
+// Can't add a more specific type as the Storage type doesn't exist when building outside the browser.
 const javascriptStorage: any = {};
 
 const storage = () => {

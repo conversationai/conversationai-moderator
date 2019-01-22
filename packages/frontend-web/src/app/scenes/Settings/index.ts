@@ -30,7 +30,14 @@ import { getPreselects } from '../../stores/preselects';
 import { getRules } from '../../stores/rules';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
 import { getTags } from '../../stores/tags';
-import { getSystemUsers, getUsers, loadSystemUsers, USER_GROUP_YOUTUBE } from '../../stores/users';
+import {
+  getSystemUsers,
+  getUsers,
+  loadSystemUsers,
+  USER_GROUP_MODERATOR,
+  USER_GROUP_SERVICE,
+  USER_GROUP_YOUTUBE
+} from '../../stores/users';
 import { ISettingsProps, Settings as PureSettings } from './Settings';
 
 import {
@@ -50,6 +57,8 @@ export type ISettingsOwnProps = Pick<
 export type ISettingsStateProps = Pick<
   ISettingsProps,
   'users' |
+  'serviceUsers' |
+  'moderatorUsers' |
   'youtubeUsers' |
   'tags' |
   'categories' |
@@ -61,6 +70,8 @@ export type ISettingsStateProps = Pick<
 
 export type ISettingsDispatchProps = Pick<
   ISettingsProps,
+  'reloadServiceUsers' |
+  'reloadModeratorUsers' |
   'reloadYoutubeUsers' |
   'updatePreselects' |
   'updateRules' |
@@ -72,6 +83,8 @@ export type ISettingsDispatchProps = Pick<
 
 const mapStateToProps = createStructuredSelector({
   users: getUsers,
+  serviceUsers: (state: IAppStateRecord) => getSystemUsers(USER_GROUP_SERVICE, state),
+  moderatorUsers: (state: IAppStateRecord) => getSystemUsers(USER_GROUP_MODERATOR, state),
   youtubeUsers: (state: IAppStateRecord) => getSystemUsers(USER_GROUP_YOUTUBE, state),
   tags: getTags,
   categories: getCategories,
@@ -85,6 +98,8 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
   return {
+    reloadServiceUsers: () => loadSystemUsers(dispatch, USER_GROUP_SERVICE),
+    reloadModeratorUsers: () => loadSystemUsers(dispatch, USER_GROUP_MODERATOR),
     reloadYoutubeUsers: () => loadSystemUsers(dispatch, USER_GROUP_YOUTUBE),
     updatePreselects: (oldPreselects, newPreselects) => dispatch(updatePreselects(oldPreselects, newPreselects)),
     updateRules: (oldRules, newRules) => dispatch(updateRules(oldRules, newRules)),

@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import { storiesOf } from '@storybook/react';
 
 import { ColorSelect } from './ColorSelect';
 
 storiesOf('ColorSelect', module)
-  .add('default', () => {
+  .add('base', () => {
     return (
       <ColorSelect
         color={'#FC724A'}

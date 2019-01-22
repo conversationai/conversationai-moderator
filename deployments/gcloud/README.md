@@ -145,7 +145,6 @@ docker run --publish 8080:8080 --publish 8000:8000 \
    --env GOOGLE_SCORE_AUTH=$GOOGLE_SCORE_AUTH \
    --env GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
    --env GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
-   --env TOKEN_SECRET=$TOKEN_SECRET \
    --mount type=bind,source=/cloudsql,destination=/cloudsql/
    $MODERATOR_IMAGE_ID
 ```
@@ -169,7 +168,6 @@ export DATABASE_USER=os_moderator
 export DATABASE_PASSWORD=password
 export GOOGLE_CLIENT_ID=<as retrieved when setting up OAuth>
 export GOOGLE_CLIENT_SECRET=<as retrieved when setting up OAuth>
-export TOKEN_SECRET=<Secret string - set to whatever you want>
 export GOOGLE_SCORE_AUTH=<get this from Jigsaw/Perspective team>
 export FRONTEND_URL=http://<hostname or IP address>/
 export API_URL=http://<hostname or IP address>:8080/

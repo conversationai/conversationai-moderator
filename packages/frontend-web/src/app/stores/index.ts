@@ -20,7 +20,7 @@ import { combineReducers } from 'redux-immutable';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { logout } from '../auth';
-import { connectNotifier, STATUS_RESET, STATUS_UP } from '../platform/dataService';
+import { connectNotifier, STATUS_RESET, STATUS_UP } from '../platform/websocketService';
 import { IArticleModeratorsStateRecord, reducer as articleModeratorsReducer } from './articleModerators';
 import { articlesUpdated, IArticlesState, reducer as articleReducer } from './articles';
 import { categoriesUpdated, ICategoriesState, reducer as categoriesReducer } from './categories';

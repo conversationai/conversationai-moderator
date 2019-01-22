@@ -184,6 +184,8 @@ export class CommentTags extends React.PureComponent<ICommentTagsProps, IComment
       isMetaTagFocused,
     } = this.state;
 
+    const canSetTags = availableTags && availableTags.size > 0;
+
     return (
       <div {...css(STYLES.base)}>
         <div {...css(STYLES.tagsContainer)}>
@@ -212,6 +214,7 @@ export class CommentTags extends React.PureComponent<ICommentTagsProps, IComment
             );
           })}
         </div>
+        {canSetTags &&
         <button
           aria-label="Add tag to comment"
           ref={this.saveTaggingTooltipButtonRef}
@@ -226,12 +229,13 @@ export class CommentTags extends React.PureComponent<ICommentTagsProps, IComment
           <AddIcon
             {...css({
               fill: isMetaTagHovered || isMetaTagFocused
-                  ? LIGHT_PRIMARY_TEXT_COLOR
-                  : MEDIUM_COLOR,
+                ? LIGHT_PRIMARY_TEXT_COLOR
+                : MEDIUM_COLOR,
             })}
             size={ICON_SIZE}
           />
         </button>
+        }
         {isTaggingToolTipMetaVisible && (
           <ToolTip
             arrowPosition="topCenter"
@@ -253,24 +257,24 @@ export class CommentTags extends React.PureComponent<ICommentTagsProps, IComment
               <div {...css(STYLES.toolTipWithTagsContainer)} ref={this.saveTaggingTooltipRef}>
                 <h4 {...css(STYLES.offscreen)}>Available tags</h4>
                 <ul {...css(STYLES.toolTipWithTagsUl)}>
-                { availableTags && availableTags.map((t, i) => {
-                  const tagAlreadySet = scores && scores.find((s) => (s.tagId === t.id && s.sourceType === 'Moderator'));
+                  {availableTags && availableTags.map((t, i) => {
+                    const tagAlreadySet = scores && scores.find((s) => (s.tagId === t.id && s.sourceType === 'Moderator'));
 
-                  return (
-                    <li>
-                      <button
-                        onClick={tagAlreadySet ? identity : partial(this.tagComment, t.id)}
-                        key={`tag-${i}`}
-                        {...css(
-                          STYLES.toolTipWithTagsButton,
-                          tagAlreadySet && STYLES.toolTipWithTagsTagAlreadySet,
-                        )}
-                      >
-                        {t.label}
-                      </button>
-                    </li>
-                  );
-                })}
+                    return (
+                      <li key={t.id}>
+                        <button
+                          onClick={tagAlreadySet ? identity : partial(this.tagComment, t.id)}
+                          key={`tag-${i}`}
+                          {...css(
+                            STYLES.toolTipWithTagsButton,
+                            tagAlreadySet && STYLES.toolTipWithTagsTagAlreadySet,
+                          )}
+                        >
+                          {t.label}
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </FocusTrap>

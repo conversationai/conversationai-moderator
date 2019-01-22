@@ -42,10 +42,9 @@ import {
   ITagInstance,
   IUserInstance,
   ModerationRule,
-  SERVICE_TYPE_MODERATOR,
   Tag,
   User,
-  USER_GROUP_SERVICE,
+  USER_GROUP_MODERATOR,
 } from '../../models';
 import { sequelize } from '../../sequelize';
 import { denormalizeCommentCountsForArticle } from '../articles';
@@ -76,6 +75,11 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
     if (!shim) {
       const extra: any = JSON.parse(scorer.get('extra'));
 
+      if (!extra) {
+        logger.error(`Missing endpoint config for scorer ${scorer.id}`);
+        return;
+      }
+
       if (extra.endpointType === ENDPOINT_TYPE_API) {
         shim = await createApiShim(scorer, processMachineScore);
       }
@@ -83,7 +87,7 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
         shim = await createProxyShim(scorer, processMachineScore);
       }
       else {
-        logger.error(`Unknown moderator endpoint type: ${extra['endpoint']}`);
+        logger.error(`Unknown moderator endpoint type: ${extra['endpoint']} for scorer ${scorer.id}`);
         return;
       }
       shims.set(scorer.id, shim);
@@ -103,7 +107,7 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
   }
 }
 
-async function checkScoringDone(comment: ICommentInstance): Promise<void> {
+export async function checkScoringDone(comment: ICommentInstance): Promise<void> {
   // Mark timestamp for when comment was last sent for scoring
   await comment
     .set('sentForScoring', sequelize.fn('now'))
@@ -121,18 +125,15 @@ async function checkScoringDone(comment: ICommentInstance): Promise<void> {
 export async function sendForScoring(comment: ICommentInstance): Promise<void> {
   const serviceUsers = await User.findAll({
     where: {
-      group: USER_GROUP_SERVICE,
+      group: USER_GROUP_MODERATOR,
       isActive: true,
     },
   } as any);
 
   let foundServiceUser = false;
   for (const scorer of serviceUsers) {
-    const extra: any = JSON.parse(scorer.get('extra'));
-    if (extra && extra.serviceType === SERVICE_TYPE_MODERATOR) {
-      await sendToScorer(comment, scorer);
-      foundServiceUser = true;
-    }
+    await sendToScorer(comment, scorer);
+    foundServiceUser = true;
   }
 
   if (foundServiceUser) {

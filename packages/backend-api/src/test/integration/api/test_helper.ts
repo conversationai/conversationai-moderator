@@ -23,8 +23,12 @@ import { makeServer } from '@conversationai/moderator-backend-core';
 import { mountAPI } from '../../../index';
 
 chai.use(chaiHttp);
+let app: express.Application;
 
-const serverStuff = makeServer(true);
-const app: express.Application = serverStuff.app;
-app.use('/', mountAPI(true));
+before(async () => {
+  const serverStuff = makeServer(true);
+  app = serverStuff.app;
+  app.use('/', await mountAPI(true));
+});
+
 export { app };

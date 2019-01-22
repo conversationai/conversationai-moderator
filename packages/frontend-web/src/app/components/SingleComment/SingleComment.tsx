@@ -658,7 +658,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
         >
           <div {...css(PROFILE_STYLES.header)}>
             { author.avatar && (
-              <div {...css(PROFILE_STYLES.avatarColumn)}>
+              <div key="avatarColumn" {...css(PROFILE_STYLES.avatarColumn)}>
                 <img
                   src={author.avatar}
                   {...css(PROFILE_STYLES.avatar)}
@@ -668,7 +668,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                 />
               </div>
             )}
-            <div {...css(PROFILE_STYLES.nameColumn)}>
+            <div key="nameColumn" {...css(PROFILE_STYLES.nameColumn)}>
               <div {...css(PROFILE_STYLES.name)}>
                 {!inEditMode ? (
                   <Link
@@ -682,9 +682,10 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                   <span
                     key="authorNameEditable"
                     contentEditable
+                    suppressContentEditableWarning
                     ref={this.saveAuthorNameRef}
                     onClick={this.focusName}
-                    {...css(STYLES.contentEditableContainer)}
+                    {...css(STYLES.contentEditableContainer, {minWidth: '300px'})}
                   >
                     {author.name}
                   </span>
@@ -695,13 +696,14 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               <div {...css(PROFILE_STYLES.meta)}>
                 <div>
                   {author.location && (
-                    <div {...css(PROFILE_STYLES.location)}>
+                    <div key="location" {...css(PROFILE_STYLES.location)}>
                       {!inEditMode ? (
                         <span key="authorLocation">{author.location}</span>
                       ) : (
                         <span
                           key="authorLocationEditable"
                           contentEditable
+                          suppressContentEditableWarning
                           ref={this.saveAuthorLocationRef}
                           onClick={this.focusLocation}
                           {...css(STYLES.contentEditableContainer)}
@@ -716,6 +718,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                 <div {...css(PROFILE_STYLES.details)}>
                   {authorCounts && (
                     <DetailRow
+                      key="authorCounts"
                       icon={(
                         <ApproveIcon
                           {...css({ fill: DARK_SECONDARY_TEXT_COLOR })}
@@ -729,6 +732,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                   )}
                   {(author as any)['approvalRating'] && (
                     <DetailRow
+                      key="author"
                       icon={(
                         <ReputationIcon
                           {...css({ fill: DARK_SECONDARY_TEXT_COLOR })}
@@ -740,6 +744,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                   )}
                   {(author as any)['isSubscriber'] && (
                     <DetailRow
+                      key="subscriber"
                       label="Subscriber"
                       icon={(
                         <FaceIcon
@@ -751,6 +756,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                   )}
                   {author.email && (
                     <DetailRow
+                      key="email"
                       label={(
                         <a {...css(DETAIL_LINK)} href={'mailto:' + author.email}>
                           {author.email}
@@ -767,6 +773,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
 
                   {comment.authorSourceId && (
                     <Link
+                      key="authorSourceId"
                       to={`/search?searchByAuthor=true&term=${comment.authorSourceId}`}
                       {...css(STYLES.linkFocus)}
                     >
@@ -826,17 +833,17 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
           >
             <div {...css(COMMENT_STYLES.metaType)}>
               {url ? (
-                <Link to={url} {...css(COMMENT_STYLES.link)}>{SUBMITTED_AT} </Link>
+                <Link key="submittedAt" to={url} {...css(COMMENT_STYLES.link)}>{SUBMITTED_AT} </Link>
               ) : (
-                <span>{SUBMITTED_AT} </span>
+                <span key="submittedAt">{SUBMITTED_AT} </span>
               )}
               {comment.flaggedCount > 0 && (
-                <span>
+                <span key="flaggedCount">
                   &bull; {comment.flaggedCount} Flag{comment.flaggedCount > 1 ? 's' : null}
                 </span>
               )}
               {comment.recommendedCount > 0 && (
-                <span>
+                <span key="recommendedCount">
                   &bull; {comment.recommendedCount} Recommendation{comment.recommendedCount > 1 ? 's' : null}
                 </span>
               )}
@@ -847,20 +854,27 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
             {inEditMode ? (
               <div>
                 <div
+                  key="content"
                   contentEditable
+                  suppressContentEditableWarning
                   ref={this.saveCommentTextRef}
                   onClick={this.focusText}
                   {...css(STYLES.contentEditableContainer)}
                 >
                   {comment.text}
                 </div>
-                <div {...css(STYLES.buttonGroup)}>
+                <div
+                  key="buttons"
+                  {...css(STYLES.buttonGroup)}
+                >
                   <Button
+                    key="save"
                     label="Save"
                     onClick={this.saveEditedCommentText}
                     buttonStyles={STYLES.save}
                   />
                   <Button
+                    key="cancel"
                     label="Cancel"
                     onClick={this.cancelEditedCommentText}
                     buttonStyles={STYLES.cancel}

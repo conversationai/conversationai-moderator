@@ -21,7 +21,7 @@ import { css } from '../../utilx';
 import { Arrow } from '../Arrow';
 
 storiesOf('Arrow', module)
-  .add('default', () => (
+  .add('base', () => (
     <div>
       <Arrow
         direction={'up'}
