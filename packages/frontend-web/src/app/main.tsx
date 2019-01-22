@@ -14,74 +14,55 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import Immutable from 'immutable';
+import { isEmpty, pick } from 'lodash';
+import qs from 'qs';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { hashHistory, match } from 'react-router';
+import { browserHistory, match } from 'react-router';
+import { trigger } from 'redial';
 import {
   applyMiddleware,
   compose,
   createStore,
 } from 'redux';
-import { APP_NAME } from './config';
-const { syncHistoryWithStore, LOCATION_CHANGE } = require('react-router-redux');
-const ReduxThunk = require('redux-thunk').default;
-const attachFastClick = require('fastclick');
-import Immutable from 'immutable';
-import { isEmpty, pick } from 'lodash';
-import qs from 'qs';
-import { trigger } from 'redial';
 import { combineReducers } from 'redux-immutable';
+import thunk from 'redux-thunk';
 import { IRedialLocals } from '../types';
+
 import {
   handleToken,
   reducer as authReducer,
   startAuthentication,
 } from './auth';
+import { APP_NAME } from './config';
 import { validateID } from './platform/dataService';
 import { reducer as scenesReducer, scenes as makeRoutes } from './scenes';
 import { Login } from './scenes/Login';
 import { reducer as globalReducer } from './stores';
 import { clearReturnURL, getReturnURL } from './util';
 
-// Attach fastclick event handlers
-attachFastClick.attach(document.body);
-
 // Add the reducer to your store on the `routing` key
 const store = createStore(
   combineReducers({
-    routing: (
-      state = Immutable.fromJS({ locationBeforeTransitions: null }),
-      action: any,
-    ) => (
-      action.type === LOCATION_CHANGE
-          ? state.set('locationBeforeTransitions', action['payload'])
-          : state
-    ),
     scenes: scenesReducer,
     global: globalReducer,
     auth: authReducer,
   }),
   Immutable.Map(),
   compose(
-    applyMiddleware(ReduxThunk),
+    applyMiddleware(thunk),
     (window as any)['devToolsExtension'] ? (window as any)['devToolsExtension']() : (f: any) => f,
   ),
 );
 
 const { dispatch, getState } = store;
 
-// Create an enhanced history that syncs navigation events with the store
-const history = syncHistoryWithStore(hashHistory as any, store, {
-  selectLocationState(state: Immutable.Map<string, any>) {
-    return state.get('routing').toJS();
-  },
-});
-
-const routes = makeRoutes(history);
+const routes = makeRoutes(browserHistory);
 
 export function startHistoryListener() {
   // Listen for route changes on the browser history instance:
-  history.listen((location: any) => {
+  browserHistory.listen((location: any) => {
     // Match routes based on location object:
     match(
       { routes, location } as any,

@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const jwtDecode = require('jwt-decode');
 import axios from 'axios';
+import JwtDecode from 'jwt-decode';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
@@ -60,7 +60,7 @@ export function setAxiosToken(token: string): void {
 }
 
 export function decodeToken(token: string): any {
-  return jwtDecode(token);
+  return JwtDecode(token);
 }
 
 async function completeAuthentication(token: string, dispatch: IAppDispatch): Promise<void> {

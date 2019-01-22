@@ -15,14 +15,13 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { Dispatch } from 'redux';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { IUserModel } from '../../models';
 import { getMyUserId } from '../auth';
 import { listSystemUsers } from '../platform/dataService';
-import { IAppStateRecord } from './index';
+import { IAppDispatch, IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'users'];
 const USERS_DATA = [...STATE_ROOT, 'humans'];
@@ -112,7 +111,7 @@ const reducer = handleActions<IUsersStateRecord, List<IUserModel> | ILoadSystemU
 
 export { reducer };
 
-export async function loadSystemUsers(dispatch: Dispatch<IAppStateRecord>, type: string): Promise<void> {
+export async function loadSystemUsers(dispatch: IAppDispatch, type: string): Promise<void> {
   const result = await listSystemUsers(type);
 
   await dispatch(systemUsersLoaded({type, users: result}));
