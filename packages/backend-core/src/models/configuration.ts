@@ -14,6 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/**
+ * This model is used to store the generic configuration for OSMod, e.g.,
+ * - Global configuration
+ * - The secret used for token generation
+ * - API keys for remote services
+ * Note that if there can be multiple copies of the configuration items
+ * (e.g., access keys for service being moderated.) then it is probably better
+ * served via a custom service user type (e.g, youtube service users.)
+ */
+
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 
