@@ -28,49 +28,69 @@ import {
 
 export const globalUpdate: any = {
   data: null,
-
   gotUpdate: false,
-  gotCategories: false,
-  gotArticles: false,
-  gotUsers: false,
+
+  usersOk: false,
+  countUsers: 0,
+
+  countCategories: 0,
+  categoriesOk: true,
+
+  countArticles: 0,
+  articlesOk: true,
+
   gotDeferred: false,
 
   notificationHandler(data: IGlobalSummary) {
     console.log('Received global update message');
     globalUpdate.gotUpdate = true;
-    globalUpdate.gotCategories = true;
-    globalUpdate.gotArticles = true;
-    globalUpdate.gotUsers = data.users.toArray().length > 0;
+    globalUpdate.countUsers = data.users.size;
+    globalUpdate.usersOk =  globalUpdate.countUsers > 0; // We assume there must be some users
+
+    globalUpdate.countCategories = data.categories.size;
+    globalUpdate.countArticles = data.articles.size;
+
     globalUpdate.gotDeferred = check.number(data.deferred);
     globalUpdate.data = data;
   },
 
   dataCheck() {
+    console.log('* check users');
     for (const u of globalUpdate.data.users.toArray()) {
-      globalUpdate.gotUsers = globalUpdate.gotUsers && checkUser(u);
+      globalUpdate.usersOk = globalUpdate.usersOk && checkUser(u);
     }
+    console.log('* check categories');
     for (const c of globalUpdate.data.categories.toArray()) {
-      globalUpdate.gotCategories = globalUpdate.gotCategories && checkCategory(c);
+      globalUpdate.categoriesOk = globalUpdate.categoriesOk && checkCategory(c);
     }
+    console.log('* check articles');
     for (const a of globalUpdate.data.articles.toArray()) {
-      globalUpdate.gotArticles = globalUpdate.gotArticles && checkArticle(a);
+      globalUpdate.articlesOk = globalUpdate.articlesOk && checkArticle(a);
     }
   },
 
   stateCheck() {
+    console.log('* Results');
     if (!globalUpdate.gotUpdate) {
       console.log('ERROR: Didn\'t get global update message');
       return;
     }
-    if (!globalUpdate.gotCategories) {
-      console.log('ERROR: Issue with categories');
-    }
-    if (!globalUpdate.gotArticles) {
-      console.log('ERROR: Issue with articles');
-    }
-    if (!globalUpdate.gotUsers) {
+
+    console.log(`Received ${globalUpdate.countUsers} users`);
+    if (!globalUpdate.usersOk) {
       console.log('ERROR: Issue with users or no users fetched');
     }
+
+    console.log(`Received ${globalUpdate.countCategories} categories`);
+    if (!globalUpdate.categoriesOk) {
+      console.log('ERROR: Issue with categories');
+    }
+
+    console.log(`Received ${globalUpdate.countArticles} articles`);
+    if (!globalUpdate.articlesOk) {
+      console.log('ERROR: Issue with articles');
+    }
+
     if (!globalUpdate.gotDeferred) {
       console.log('ERROR: Didn\'t get deferred count');
     }

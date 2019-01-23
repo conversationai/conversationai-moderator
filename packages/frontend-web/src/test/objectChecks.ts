@@ -108,7 +108,20 @@ function array_of_users(val: any) {
   if (!check.array(val)) {
     return false;
   }
-  return true;
+
+  let ret = true;
+  for (const u of val) {
+    if (!check.string(u)) {
+      console.log(`Bad user ID ${u}`);
+      ret = false;
+    }
+    if (!userIds.has(u)) {
+      console.log(`User check: no user with ID ${u}`);
+      console.log(` Known IDs ${userIds}`);
+      ret = false;
+    }
+  }
+  return ret;
 }
 
 function action(val: any) {
