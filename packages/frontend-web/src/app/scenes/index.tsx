@@ -26,11 +26,6 @@ import {
   TagSelector,
   ThreadedCommentDetail,
 } from './Comments';
-import {
-  Dashboard,
-  DashboardArticles,
-  reducer as dashboardReducer,
-} from './Dashboard';
 import { Root } from './Root';
 import { reducer as rootReducer } from './Root';
 import * as routes from './routes';
@@ -40,7 +35,6 @@ import { Settings } from './Settings';
 import { ArticleTable, TableFrame } from './Tables';
 
 export const reducer: any = combineReducers({
-  dashboard: dashboardReducer,
   commentsIndex: commentsIndexReducer,
   search: searchReducer,
   root: rootReducer,
@@ -71,10 +65,6 @@ export const scenes = (history: any) => (
         <Route path={routes.dashboardBase} component={ArticleTable}/>
         <Route path={`${routes.dashboardBase}/:filter/:sort`} component={ArticleTable}/>
         <Route path={`${routes.dashboardBase}/:filter`} component={ArticleTable}/>
-      </Route>
-      <Route path={routes.oldDashboardBase} component={Dashboard}>
-        <IndexRedirect to="all" />
-        <Route path=":categoryId" component={DashboardArticles} />
       </Route>
       <Route path={routes.searchBase} component={Search}>
         <IndexRoute component={SearchResults} />

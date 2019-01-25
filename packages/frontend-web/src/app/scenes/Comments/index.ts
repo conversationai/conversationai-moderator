@@ -25,7 +25,7 @@ import { ICategoryModel, IUserModel } from '../../../models';
 import { IRedialLocals } from '../../../types';
 import { IAppState, IAppStateRecord } from '../../stores';
 import { getArticleModerators, loadArticleModerators } from '../../stores/articleModerators';
-import { getCategories } from '../../stores/categories';
+import { getCategories, getCategory } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin } from '../../stores/users';
 import { withLoader } from '../../utilx';
 import { Comments as PureComments } from './Comments';
@@ -69,11 +69,6 @@ export const reducer: any = combineReducers({
   commentDetail: commentDetailReducer,
   threadedCommentDetail: threadedCommentDetailReducer,
 });
-
-function getCategory(state: IAppStateRecord, id: string): ICategoryModel {
-
-  return getCategories(state).find((c: ICategoryModel) => c.id === id);
-}
 
 export const Comments = compose(
   withRouter,

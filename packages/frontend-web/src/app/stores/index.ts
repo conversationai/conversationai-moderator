@@ -24,11 +24,11 @@ import { connectNotifier, STATUS_RESET, STATUS_UP } from '../platform/websocketS
 import { IArticleModeratorsStateRecord, reducer as articleModeratorsReducer } from './articleModerators';
 import { articlesUpdated, IArticlesState, reducer as articleReducer } from './articles';
 import { categoriesUpdated, ICategoriesState, reducer as categoriesReducer } from './categories';
-import { assignmentCountUpdated, deferredCountUpdated } from './categories';
 import { ICategoryModeratorsStateRecord , reducer as categoryModeratorsReducer } from './categoryModerators';
 import { IColumnSortStateRecord, reducer as columnSortsReducer } from './columnSorts';
 import { IState as ICommentsState, reducer as commentsReducer } from './comments';
 import { ICommentSummaryScoresStateRecord, reducer as commentSummaryScoresReducer } from './commentSummaryScores';
+import { assignmentCountUpdated, deferredCountUpdated } from './counts';
 import { IFocusStateRecord, reducer as focusReducer } from './focus';
 import { IModeratorsStateRecord, reducer as moderatorsReducer } from './moderators';
 import { IPreselectsStateRecord, preselectsUpdated, reducer as preselectsReducer } from './preselects';
