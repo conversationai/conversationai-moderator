@@ -15,7 +15,7 @@
     "test:watch": "npm run compile:lib && npm run compile:lib:watch | jest --watch",
     "storybook": "npm run compile && npm run compile:watch | start-storybook -p 9001 -c tooling/storybook -s public",
     "storybook:build": "build-storybook -c tooling/storybook -s public -o build/storybook",
-    "storybook:test": "jest tooling/storybook/Storyshots.test.js",
+    "storybook:test": "jest -c tooling/storybook/jest.config.json tooling/storybook/Storyshots.test.js",
     "compile": "npm run compile:web | npm run compile:lib",
     "compile:web": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --importHelpers",
     "compile:lib": "rm -rf dist-commonjs && ../../node_modules/.bin/tsc --sourceMap --outDir dist-commonjs --declaration --module commonjs && npm run compile:lib:cleanup",
