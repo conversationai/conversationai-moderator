@@ -17,8 +17,10 @@ limitations under the License.
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 
+import { ModelId } from './common';
+
 export interface IUserAttributes {
-  id: string;
+  id: ModelId;
   name: string;
   key?: string;
   email?: string;

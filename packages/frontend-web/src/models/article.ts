@@ -16,10 +16,12 @@ limitations under the License.
 
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
+
 import { CategoryModel, ICategoryModel } from './category';
+import { ModelId } from './common';
 
 export interface IArticleAttributes {
-  id: string;
+  id: ModelId;
   sourceCreatedAt: string;
   updatedAt: string;
   title: string;
