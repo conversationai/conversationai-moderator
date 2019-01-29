@@ -55,7 +55,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IToastMessageProps extends React.Props<any> {
+export interface IToastMessageProps {
   buttonLabel?: string;
   onClick?(e: React.MouseEvent<any>): any;
   icon?: JSX.Element;

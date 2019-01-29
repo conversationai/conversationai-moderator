@@ -192,7 +192,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IArticlePreviewProps extends React.Props<any> {
+export interface IArticlePreviewProps {
   article: IArticleModel;
   moderators?: List<IUserModel>;
   onClose(e: React.MouseEvent<any>): any;

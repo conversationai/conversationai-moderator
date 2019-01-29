@@ -19,6 +19,7 @@ import FocusTrap from 'focus-trap-react';
 import { List } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
+import { WithRouterProps } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
 import {
@@ -106,11 +107,10 @@ const makeTab = (router: any, url: string, label: string, count: number) => (
   </Link>
 );
 
-export interface ICommentsProps extends React.Props<any> {
+export interface ICommentsProps extends WithRouterProps {
   dispatch?: IAppDispatch;
   article?: IArticleModel;
   category?: ICategoryModel;
-  router: any;
   moderators?: List<IUserModel>;
   isArticleDetail: boolean;
   isCommentDetail: boolean;

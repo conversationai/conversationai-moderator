@@ -14,19 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { ReactNode } from 'react';
+
 import { css } from '../../utilx';
 
 const defaultSize = '24';
 
-export interface IIconBaseProps extends React.Props<any> {
-  size: string | number;
+export interface IIconBaseProps {
+  size?: string | number;
   style: any;
 }
 
-const IconBase: React.StatelessComponent<any> = (
-  props: IIconBaseProps,
+const IconBase: React.FunctionComponent<any> = (
+  props: IIconBaseProps & { children?: ReactNode },
   { reactIconBase },
 ) => {
   const { children, size, style, ...remainingProps } = props;

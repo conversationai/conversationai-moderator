@@ -16,9 +16,9 @@ limitations under the License.
 
 import React from 'react';
 import { ICommentModel } from '../../../../../models';
-import { Checkbox } from '../../../../components';
 import { maybeCallback, partial } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
+import { Checkbox } from '../../../Checkbox';
 
 import {
   ARTICLE_CATEGORY_TYPE,
@@ -57,7 +57,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ICheckboxColumnProps extends React.Props<any> {
+export interface ICheckboxColumnProps {
   comment?: ICommentModel;
   isSelected?: boolean;
   onCheck?(comment: ICommentModel): void;
