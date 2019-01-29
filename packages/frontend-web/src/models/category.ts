@@ -17,8 +17,10 @@ limitations under the License.
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 
+import { ModelId } from './common';
+
 export interface ICategoryAttributes {
-  id: string | 'all' | 'deferred' | 'assignments';
+  id: ModelId;
   label: string;
   updatedAt: string;
   allCount: number;
@@ -32,7 +34,7 @@ export interface ICategoryAttributes {
   flaggedCount: number;
   recommendedCount: number;
   batchedCount: number;
-  assignedModerators: Array<string>;
+  assignedModerators: Array<ModelId>;
 }
 
 export interface ICategoryModel extends TypedRecord<ICategoryModel>, ICategoryAttributes {}

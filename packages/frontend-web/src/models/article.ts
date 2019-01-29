@@ -41,7 +41,7 @@ export interface IArticleAttributes {
   batchedCount: number;
   automatedCount: number;
   lastModeratedAt: string;
-  assignedModerators: Array<string>;
+  assignedModerators: Array<ModelId>;
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
 }

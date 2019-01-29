@@ -17,7 +17,7 @@ limitations under the License.
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
-import { ICategoryModel } from '../../models';
+import { ICategoryModel, ModelId } from '../../models';
 import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'categories'];
@@ -29,7 +29,7 @@ export function getCategories(state: IAppStateRecord): List<ICategoryModel> {
   return state.getIn(CATEGORIES_DATA);
 }
 
-export function getCategory(state: IAppStateRecord, id: string): ICategoryModel {
+export function getCategory(state: IAppStateRecord, id: ModelId): ICategoryModel {
   return getCategories(state).find((c: ICategoryModel) => c.id === id);
 }
 

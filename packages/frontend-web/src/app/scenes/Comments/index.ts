@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import { createStructuredSelector } from 'reselect';
 import { ICategoryModel, IUserModel } from '../../../models';
 import { IRedialLocals } from '../../../types';
 import { IAppState, IAppStateRecord } from '../../stores';
-import { getArticleModerators, loadArticleModerators } from '../../stores/articleModerators';
+import { getArticleFromId } from '../../stores/articles';
 import { getCategories, getCategory } from '../../stores/categories';
-import { getCurrentUser, getCurrentUserIsAdmin } from '../../stores/users';
+import { getCurrentUser, getCurrentUserIsAdmin, getUserMap } from '../../stores/users';
 import { withLoader } from '../../utilx';
 import { Comments as PureComments } from './Comments';
 
@@ -88,7 +88,7 @@ export const Comments = compose(
       let count;
 
       if (isArticleDetail) {
-        const article = getArticle(state);
+        const article = getArticleFromId(state, params.articleId);
         count = article ? article.unmoderatedCount : 0;
       } else {
         if (params.categoryId !== 'all') {
@@ -108,7 +108,7 @@ export const Comments = compose(
       let count;
 
       if (isArticleDetail) {
-        const article = getArticle(state);
+        const article = getArticleFromId(state, params.articleId);
         count = article ? article.moderatedCount : 0;
       } else {
         if (params.categoryId !== 'all') {
@@ -125,10 +125,9 @@ export const Comments = compose(
     moderators: (state: IAppStateRecord, { params }: any) => {
       if (!params.articleId) { return List<IUserModel>(); }
 
-      const allModerators = getArticleModerators(state);
-      const articleModerators = allModerators && allModerators.get(params.articleId);
-
-      return articleModerators ? articleModerators : List<IUserModel>();
+      const article = getArticleFromId(state, params.articleId);
+      const usersMap = getUserMap(state);
+      return List<IUserModel>(article.assignedModerators.map((userId) => usersMap.get(userId)));
     },
 
     isArticleDetail: (_: any, { params }: any) => !!params.articleId,
@@ -150,10 +149,6 @@ export const Comments = compose(
       return Promise.all([
         isArticleDetail
             ? dispatch(loadArticle(articleId))
-            : Promise.resolve(),
-
-        isArticleDetail
-            ? dispatch(loadArticleModerators(articleId))
             : Promise.resolve(),
       ]);
     },

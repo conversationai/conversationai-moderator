@@ -21,10 +21,8 @@ import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { logout } from '../auth';
 import { connectNotifier, STATUS_RESET, STATUS_UP } from '../platform/websocketService';
-import { IArticleModeratorsStateRecord, reducer as articleModeratorsReducer } from './articleModerators';
 import { articlesUpdated, IArticlesState, reducer as articleReducer } from './articles';
 import { categoriesUpdated, ICategoriesState, reducer as categoriesReducer } from './categories';
-import { ICategoryModeratorsStateRecord , reducer as categoryModeratorsReducer } from './categoryModerators';
 import { IColumnSortStateRecord, reducer as columnSortsReducer } from './columnSorts';
 import { IState as ICommentsState, reducer as commentsReducer } from './comments';
 import { ICommentSummaryScoresStateRecord, reducer as commentSummaryScoresReducer } from './commentSummaryScores';
@@ -57,8 +55,6 @@ export interface IAppState {
   commentSummaryScores: ICommentSummaryScoresStateRecord;
   users: IUsersState;
   moderators: IModeratorsStateRecord;
-  articleModerators: IArticleModeratorsStateRecord;
-  categoryModerators: ICategoryModeratorsStateRecord;
   tags: ITagsStateRecord;
   rules: IRulesStateRecord;
   preselects: IPreselectsStateRecord;
@@ -110,8 +106,6 @@ export const reducer: any = combineReducers<IAppStateRecord>({
   commentSummaryScores: commentSummaryScoresReducer,
   users: usersReducer,
   moderators: moderatorsReducer,
-  articleModerators: articleModeratorsReducer,
-  categoryModerators: categoryModeratorsReducer,
   tags: tagsReducer,
   rules: rulesReducer,
   preselects: preselectsReducer,

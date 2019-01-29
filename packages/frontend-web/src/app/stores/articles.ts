@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {List} from 'immutable';
+import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import {makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
-import { IArticleModel } from '../../models';
+import { IArticleModel, ModelId } from '../../models';
 import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'articles'];
@@ -32,7 +32,7 @@ export function getArticles(state: IAppStateRecord): List<IArticleModel> {
   return state.getIn(ARTICLES_ROOT);
 }
 
-export function getArticleFromId(state: IAppStateRecord, articleId: string): IArticleModel {
+export function getArticleFromId(state: IAppStateRecord, articleId: ModelId): IArticleModel {
   return state.getIn(ARTICLES_ROOT).find((article: IArticleModel) => article.id === articleId);
 }
 
