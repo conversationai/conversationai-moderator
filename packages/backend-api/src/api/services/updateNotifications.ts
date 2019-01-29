@@ -42,6 +42,7 @@ const articleFields = [...commonFields, 'title', 'url', 'categoryId', 'sourceCre
   'isCommentingEnabled', 'isAutoModerated', 'text'];
 
 interface ISystemSummary {
+  users: any;
   tags: any;
   taggingSensitivities: any;
   rules: any;
@@ -49,7 +50,6 @@ interface ISystemSummary {
 }
 
 interface IGlobalSummary {
-  users: any;
   categories: any;
   articles: any;
   deferred: number;
@@ -65,6 +65,11 @@ interface IMessage {
 }
 
 async function getSystemSummary() {
+  const users = await User.findAll({where: {group: ['admin', 'general']}});
+  const userdata = users.map((u: IUserInstance) => {
+    return pick(u.toJSON(), userFields);
+  });
+
   const tags = await Tag.findAll({});
   const tagdata = tags.map((t: ITagInstance) => {
     return pick(t.toJSON(), tagFields);
@@ -88,6 +93,7 @@ async function getSystemSummary() {
   return {
     type: 'system',
     data: {
+      users: userdata,
       tags: tagdata,
       taggingSensitivities: tsdata,
       rules: ruledata,
@@ -97,11 +103,6 @@ async function getSystemSummary() {
 }
 
 async function getGlobalSummary() {
-  const users = await User.findAll({where: {group: ['admin', 'general']}});
-  const userdata = users.map((u: IUserInstance) => {
-    return pick(u.toJSON(), userFields);
-  });
-
   const categories = await Category.findAll({
     where: {isActive: true},
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
@@ -125,7 +126,6 @@ async function getGlobalSummary() {
   return {
     type: 'global',
     data: {
-      users: userdata,
       categories: categorydata,
       articles: articledata,
       deferred: deferred['count'],

@@ -112,12 +112,12 @@ function array_of_users(val: any) {
   let ret = true;
   for (const u of val) {
     if (!check.string(u)) {
-      console.log(`Bad user ID ${u}`);
+      console.log('Bad user ID', u);
       ret = false;
     }
     if (!userIds.has(u)) {
-      console.log(`User check: no user with ID ${u}`);
-      console.log(` Known IDs ${userIds}`);
+      console.log('User check: no user with ID', u);
+      console.log(' Known IDs', userIds);
       ret = false;
     }
   }

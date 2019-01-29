@@ -131,6 +131,7 @@ export async function initialiseClientModel(dispatch: IAppDispatch) {
       }
     },
     (data) => {
+      dispatch(usersUpdated(data.users));
       dispatch(tagsUpdated(data.tags));
       dispatch(taggingSensitivitiesUpdated(data.taggingSensitivities));
       dispatch(rulesUpdated(data.rules));
@@ -138,7 +139,6 @@ export async function initialiseClientModel(dispatch: IAppDispatch) {
     },
     (data) => {
       dispatch(deferredCountUpdated(data.deferred));
-      dispatch(usersUpdated(data.users));
       dispatch(categoriesUpdated(data.categories));
       dispatch(articlesUpdated(data.articles));
     },

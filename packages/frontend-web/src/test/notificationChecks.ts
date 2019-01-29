@@ -30,9 +30,6 @@ export const globalUpdate: any = {
   data: null,
   gotUpdate: false,
 
-  usersOk: false,
-  countUsers: 0,
-
   countCategories: 0,
   categoriesOk: true,
 
@@ -44,8 +41,6 @@ export const globalUpdate: any = {
   notificationHandler(data: IGlobalSummary) {
     console.log('Received global update message');
     globalUpdate.gotUpdate = true;
-    globalUpdate.countUsers = data.users.size;
-    globalUpdate.usersOk =  globalUpdate.countUsers > 0; // We assume there must be some users
 
     globalUpdate.countCategories = data.categories.size;
     globalUpdate.countArticles = data.articles.size;
@@ -55,10 +50,6 @@ export const globalUpdate: any = {
   },
 
   dataCheck() {
-    console.log('* check users');
-    for (const u of globalUpdate.data.users.toArray()) {
-      globalUpdate.usersOk = globalUpdate.usersOk && checkUser(u);
-    }
     console.log('* check categories');
     for (const c of globalUpdate.data.categories.toArray()) {
       globalUpdate.categoriesOk = globalUpdate.categoriesOk && checkCategory(c);
@@ -70,15 +61,9 @@ export const globalUpdate: any = {
   },
 
   stateCheck() {
-    console.log('* Results');
     if (!globalUpdate.gotUpdate) {
       console.log('ERROR: Didn\'t get global update message');
       return;
-    }
-
-    console.log(`Received ${globalUpdate.countUsers} users`);
-    if (!globalUpdate.usersOk) {
-      console.log('ERROR: Issue with users or no users fetched');
     }
 
     console.log(`Received ${globalUpdate.countCategories} categories`);
@@ -100,6 +85,10 @@ export const globalUpdate: any = {
 export const systemUpdate: any = {
   data: null,
   gotUpdate: false,
+
+  usersOk: false,
+  countUsers: 0,
+
   gotTags: false,
   gotTaggingSensitivities: false,
   gotRules: false,
@@ -108,6 +97,8 @@ export const systemUpdate: any = {
   notificationHandler(data: ISystemSummary) {
     console.log('Received system update message');
     systemUpdate.gotUpdate = true;
+    systemUpdate.countUsers = data.users.size;
+    systemUpdate.usersOk =  systemUpdate.countUsers > 0; // We assume there must be some users
     systemUpdate.gotTags = data.tags.toArray().length > 0;
     systemUpdate.gotTaggingSensitivities = true;
     systemUpdate.gotRules = true;
@@ -115,7 +106,15 @@ export const systemUpdate: any = {
     systemUpdate.data = data;
   },
 
-  dataCheck() {
+  usersCheck() {
+    console.log('* check users');
+    for (const u of systemUpdate.data.users.toArray()) {
+      systemUpdate.usersOk = systemUpdate.usersOk && checkUser(u);
+    }
+  },
+
+  tagsCheck() {
+    console.log('* check tags');
     for (const t of systemUpdate.data.tags.toArray()) {
       systemUpdate.gotTags = systemUpdate.gotTags && checkTag(t);
     }
@@ -135,6 +134,12 @@ export const systemUpdate: any = {
       console.log('ERROR: Didn\'t get system update message');
       return;
     }
+
+    console.log(`Received ${systemUpdate.countUsers} users`);
+    if (!systemUpdate.usersOk) {
+      console.log('ERROR: Issue with users or no users fetched');
+    }
+
     if (!systemUpdate.gotTags) {
       console.log('ERROR: Issue with tags or no tags fetched');
     }

@@ -56,6 +56,7 @@ export const STATUS_UP = 'up';
 export const STATUS_RESET = 'reset';
 
 export interface ISystemSummary {
+  users: List<IUserModel>;
   tags: List<ITagModel>;
   taggingSensitivities: List<ITaggingSensitivityModel>;
   rules: List<IRuleModel>;
@@ -63,7 +64,6 @@ export interface ISystemSummary {
 }
 
 export interface IGlobalSummary {
-  users: List<IUserModel>;
   categories: List<ICategoryModel>;
   articles: List<IArticleModel>;
   deferred: number;
@@ -79,6 +79,10 @@ export interface IUserSummary {
 //       Convert for now.  But at some point need to refactor to use numbers.
 function packSystemData(data: any): ISystemSummary {
   return {
+    users: List<IUserModel>(data.users.map((u: any) => {
+      u.id = u.id.toString();
+      return UserModel(u);
+    })),
     tags: List<ITagModel>(data.tags.map((t: any) => {
       t.id = t.id.toString();
       return TagModel(t);
@@ -97,11 +101,6 @@ function packSystemData(data: any): ISystemSummary {
 
 function packGlobalData(data: any): IGlobalSummary {
   const catMap: {[key: number]: ICategoryModel} = {};
-
-  const users = List<IUserModel>(data.users.map((u: any) => {
-    u.id = u.id.toString();
-    return UserModel(u);
-  }));
 
   const categories = List<ICategoryModel>(data.categories.map((c: any) => {
     const id = c.id;
@@ -122,12 +121,8 @@ function packGlobalData(data: any): IGlobalSummary {
   }));
 
   return {
-    users: users,
-
     categories: categories,
-
     articles: articles,
-
     deferred: data.deferred,
   };
 }
