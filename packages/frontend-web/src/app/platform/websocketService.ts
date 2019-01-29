@@ -105,7 +105,6 @@ function packGlobalData(data: any): IGlobalSummary {
   const categories = List<ICategoryModel>(data.categories.map((c: any) => {
     const id = c.id;
     c.id = c.id.toString();
-    c.assignedModerators = c.assignedModerators.map((i: any) => i.user_category_assignment.userId.toString());
     const model = CategoryModel(c);
     catMap[id] = model;
     return model;
@@ -116,7 +115,6 @@ function packGlobalData(data: any): IGlobalSummary {
     if (a.categoryId) {
       a.category = catMap[a.categoryId];
     }
-    a.assignedModerators = a.assignedModerators.map((i: any) => i.moderator_assignment.userId.toString());
     return ArticleModel(a);
   }));
 

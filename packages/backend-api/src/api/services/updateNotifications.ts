@@ -110,7 +110,9 @@ async function getGlobalSummary() {
   const categoryIds: Array<number> = [];
   const categorydata = categories.map((c: ICategoryInstance) => {
     categoryIds.push(c.id);
-    return pick(c.toJSON(), categoryFields);
+    const category: any = c.toJSON();
+    category.assignedModerators = category.assignedModerators.map((i: any) => i.user_category_assignment.userId.toString());
+    return pick(category, categoryFields);
   });
 
   const articles = await Article.findAll({
@@ -118,7 +120,9 @@ async function getGlobalSummary() {
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
   const articledata = articles.map((a: IArticleInstance) => {
-    return pick(a.toJSON(), articleFields);
+    const article: any = a.toJSON();
+    article.assignedModerators = article.assignedModerators.map((i: any) => i.moderator_assignment.userId.toString());
+    return pick(article, articleFields);
   });
 
   const deferred = await Comment.findAndCountAll({where: { isDeferred: true }, limit: 0});
