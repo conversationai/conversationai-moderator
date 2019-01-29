@@ -18,15 +18,10 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { IUserModel } from '../../../../../models';
 import { getMyUserId } from '../../../../auth';
-import { IAppDispatch, IAppStateRecord } from '../../../../stores';
+import { IAppStateRecord } from '../../../../stores';
 import {
-  addModeratorToArticle,
-  addModeratorToCategory,
   getArticleModeratorIds,
   getCategoryModeratorIds,
-  getIsReady,
-  removeModeratorFromArticle,
-  removeModeratorFromCategory,
 } from '../../../../stores/moderators';
 import { getUsers } from '../../../../stores/users';
 import {
@@ -45,9 +40,11 @@ function getIsModeratedUser(state: IAppStateRecord, userId: string): boolean {
 
 type IAssignModeratorsOwnProps = Pick<
   IAssignModeratorsProps,
-  'article' |
-  'category' |
   'label' |
+  'moderatorIds' |
+  'superModeratorIds' |
+  'onAddModerator' |
+  'onRemoveModerator' |
   'onClickDone' |
   'onClickClose'
 >;
@@ -55,14 +52,7 @@ type IAssignModeratorsOwnProps = Pick<
 type IAssignModeratorsStateProps = Pick<
   IAssignModeratorsProps,
   'users' |
-  'moderatorIds' |
   'isReady'
->;
-
-type IAssignModeratorsDispatchProps = Pick<
-  IAssignModeratorsProps,
-  'onAddModerator' |
-  'onRemoveModerator'
 >;
 
 function getSortedUsers (state: IAppStateRecord): Array<IUserModel> {
@@ -90,50 +80,11 @@ function getSortedUsers (state: IAppStateRecord): Array<IUserModel> {
   return [...currentUser, ...assignedUsersSorted, ...unassignedUsersSorted];
 }
 
-const mapStateToProps = createStructuredSelector({
-  users: getSortedUsers,
-
-  moderatorIds: (state: IAppStateRecord, { article }: any) => (
-    article
-      ? getArticleModeratorIds(state)
-      : getCategoryModeratorIds(state)
-  ),
-
-  isReady: getIsReady,
-}) as (state: IAppStateRecord, ownProps: IAssignModeratorsOwnProps) => IAssignModeratorsStateProps;
-
-function mapDispatchToProps(dispatch: IAppDispatch, { article, category }: IAssignModeratorsOwnProps): IAssignModeratorsDispatchProps {
-  return {
-    onAddModerator: (userId: string) => {
-      if (article) {
-        dispatch(addModeratorToArticle({ userId }));
-      }
-      if (category) {
-        dispatch(addModeratorToCategory({ userId }));
-      }
-    },
-
-    onRemoveModerator: (userId: string) => {
-      if (article) {
-        dispatch(removeModeratorFromArticle({ userId }));
-      }
-      if (category) {
-        dispatch(removeModeratorFromCategory({ userId }));
-      }
-    },
-  };
-}
-
-export const AssignModerators: React.ComponentClass<IAssignModeratorsProps> = connect<IAssignModeratorsStateProps, IAssignModeratorsDispatchProps, IAssignModeratorsOwnProps>(
-  mapStateToProps,
-  mapDispatchToProps,
-)(PureAssignModerators);
-
 const mapStateToPropsSimple = createStructuredSelector({
   users: getSortedUsers,
   isReady: () => true,
 }) as (state: IAppStateRecord, ownProps: IAssignModeratorsOwnProps) => IAssignModeratorsStateProps;
 
-export const AssignModeratorsSimple: React.ComponentClass<IAssignModeratorsProps> = connect<IAssignModeratorsStateProps, IAssignModeratorsDispatchProps, IAssignModeratorsOwnProps>(
+export const AssignModerators: React.ComponentClass<IAssignModeratorsOwnProps> = connect(
   mapStateToPropsSimple,
 )(PureAssignModerators);

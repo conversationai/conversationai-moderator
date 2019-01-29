@@ -163,6 +163,7 @@ const categoryFields = {
 const articleFields = {
   ...commonFields,
   title: check.string,
+  text: check.maybe.string,
   url: check.string,
   category: category,
   sourceCreatedAt: date_string,

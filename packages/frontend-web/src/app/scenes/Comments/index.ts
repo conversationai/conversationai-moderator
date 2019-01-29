@@ -53,7 +53,6 @@ export { ThreadedCommentDetail } from './components/ThreadedCommentDetail';
 
 import {
   articleReducer,
-  getArticle,
   getArticleIsLoading,
   getTabCountAdjustments,
   loadArticle,
@@ -75,7 +74,7 @@ export const Comments = compose(
   connect(createStructuredSelector({
     user: getCurrentUser,
     isAdmin: getCurrentUserIsAdmin,
-    article: getArticle,
+    article: (state: IAppStateRecord, { params: { articleId }}: any) => getArticleFromId(state, articleId),
     category: (state: IAppStateRecord, { params }: any) => {
       if (params.categoryId && params.categoryId !== 'all') {
         return getCategory(state, params.categoryId);

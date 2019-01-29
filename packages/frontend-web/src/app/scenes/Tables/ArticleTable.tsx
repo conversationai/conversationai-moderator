@@ -21,11 +21,10 @@ import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
-import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
+import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
-import { updateModel, updateRelationshipModels } from '../../platform/dataService';
-import { ModelId } from '../../stores/moderators';
+import { updateModel, updateArticleModerators } from '../../platform/dataService';
 import {
   HEADER_HEIGHT,
   NICE_LIGHTEST_BLUE,
@@ -33,7 +32,7 @@ import {
   SCRIM_STYLE,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import { AssignModeratorsSimple } from '../Root/components/AssignModerators';
+import { AssignModerators } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
 import { ArticleControlPopup } from './ArticleControlPopup';
 import { ControlFlag, MagicTimestamp, ModeratorsWidget } from './components';
@@ -427,26 +426,17 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   @autobind
   saveModerators() {
     const articleId = this.state.selectedArticle.id;
-    const moderatorIds = this.state.moderatorIds.toArray() as Array<string>;
+    const moderatorIds = this.state.moderatorIds.toArray();
     this.setState({
       popupToShow: POPUP_SAVING,
       selectedArticle: null,
       moderatorIds: null,
     });
 
-    updateRelationshipModels(
-      'articles',
-      articleId,
-      'assignedModerators',
-      moderatorIds,
-    ).then(() => {
-      this.clearPopups();
-    });
+    updateArticleModerators(articleId, moderatorIds).then(this.clearPopups);
   }
 
   renderSetModerators() {
-    const article = this.state.selectedArticle;
-
     if (this.state.popupToShow === POPUP_SAVING) {
       return (
         <Scrim isVisible onBackgroundClick={this.clearPopups} scrimStyles={STYLES.scrimPopup}>
@@ -470,11 +460,10 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       <Scrim isVisible onBackgroundClick={this.clearPopups} scrimStyles={STYLES.scrimPopup}>
         <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}}>
           <div tabIndex={0} {...css(SCRIM_STYLE.popup, {position: 'relative'})}>
-            <AssignModeratorsSimple
+            <AssignModerators
               label="Assign a moderator"
-              article={article}
               moderatorIds={this.state.moderatorIds}
-              categoryModeratorIds={categoryModeratorIds}
+              superModeratorIds={categoryModeratorIds}
               onAddModerator={this.onAddModerator}
               onRemoveModerator={this.onRemoveModerator}
               onClickDone={this.saveModerators}

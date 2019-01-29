@@ -39,7 +39,7 @@ const commonFields = ['id', 'updatedAt', 'allCount', 'unprocessedCount', 'unmode
   'batchedCount', 'recommendedCount', 'assignedModerators', ];
 const categoryFields = [...commonFields, 'label'];
 const articleFields = [...commonFields, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
-  'isCommentingEnabled', 'isAutoModerated'];
+  'isCommentingEnabled', 'isAutoModerated', 'text'];
 
 interface ISystemSummary {
   tags: any;
