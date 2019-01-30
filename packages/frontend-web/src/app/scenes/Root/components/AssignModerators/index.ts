@@ -19,24 +19,11 @@ import { createStructuredSelector } from 'reselect';
 import { IUserModel } from '../../../../../models';
 import { getMyUserId } from '../../../../auth';
 import { IAppStateRecord } from '../../../../stores';
-import {
-  getArticleModeratorIds,
-  getCategoryModeratorIds,
-} from '../../../../stores/moderators';
 import { getUsers } from '../../../../stores/users';
 import {
   AssignModerators as PureAssignModerators,
   IAssignModeratorsProps,
 } from './AssignModerators';
-
-function getIsModeratedUser(state: IAppStateRecord, userId: string): boolean {
-  if (getArticleModeratorIds(state)) {
-    return getArticleModeratorIds(state).includes(userId);
-  }
-  if (getArticleModeratorIds(state)) {
-    return getCategoryModeratorIds(state).includes(userId);
-  }
-}
 
 type IAssignModeratorsOwnProps = Pick<
   IAssignModeratorsProps,
@@ -55,7 +42,7 @@ type IAssignModeratorsStateProps = Pick<
   'isReady'
 >;
 
-function getSortedUsers (state: IAppStateRecord): Array<IUserModel> {
+function getSortedUsers (state: IAppStateRecord, props: IAssignModeratorsOwnProps): Array<IUserModel> {
   const userId = getMyUserId(state);
   const allUsers = getUsers(state);
   const currentUser = [];
@@ -66,7 +53,10 @@ function getSortedUsers (state: IAppStateRecord): Array<IUserModel> {
     if (u.id === userId) {
       currentUser.push(u);
     }
-    else if (getIsModeratedUser(state, u.id)) {
+    else if (props.moderatorIds.has(u.id)) {
+      assignedUsers.push(u);
+    }
+    else if (props.superModeratorIds.has(u.id)) {
       assignedUsers.push(u);
     }
     else {
@@ -80,11 +70,11 @@ function getSortedUsers (state: IAppStateRecord): Array<IUserModel> {
   return [...currentUser, ...assignedUsersSorted, ...unassignedUsersSorted];
 }
 
-const mapStateToPropsSimple = createStructuredSelector({
+const mapStateToProps = createStructuredSelector({
   users: getSortedUsers,
   isReady: () => true,
 }) as (state: IAppStateRecord, ownProps: IAssignModeratorsOwnProps) => IAssignModeratorsStateProps;
 
 export const AssignModerators: React.ComponentClass<IAssignModeratorsOwnProps> = connect(
-  mapStateToPropsSimple,
+  mapStateToProps,
 )(PureAssignModerators);

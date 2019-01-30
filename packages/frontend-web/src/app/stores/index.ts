@@ -28,7 +28,6 @@ import { IState as ICommentsState, reducer as commentsReducer } from './comments
 import { ICommentSummaryScoresStateRecord, reducer as commentSummaryScoresReducer } from './commentSummaryScores';
 import { assignmentCountUpdated, deferredCountUpdated } from './counts';
 import { IFocusStateRecord, reducer as focusReducer } from './focus';
-import { IModeratorsStateRecord, reducer as moderatorsReducer } from './moderators';
 import { IPreselectsStateRecord, preselectsUpdated, reducer as preselectsReducer } from './preselects';
 import { IRulesStateRecord, reducer as rulesReducer, rulesUpdated } from './rules';
 import {
@@ -54,7 +53,6 @@ export interface IAppState {
   comments: ICommentsState;
   commentSummaryScores: ICommentSummaryScoresStateRecord;
   users: IUsersState;
-  moderators: IModeratorsStateRecord;
   tags: ITagsStateRecord;
   rules: IRulesStateRecord;
   preselects: IPreselectsStateRecord;
@@ -105,7 +103,6 @@ export const reducer: any = combineReducers<IAppStateRecord>({
   comments: commentsReducer,
   commentSummaryScores: commentSummaryScoresReducer,
   users: usersReducer,
-  moderators: moderatorsReducer,
   tags: tagsReducer,
   rules: rulesReducer,
   preselects: preselectsReducer,
