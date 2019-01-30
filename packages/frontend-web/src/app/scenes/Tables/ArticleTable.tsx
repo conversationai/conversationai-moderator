@@ -24,13 +24,14 @@ import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
-import { updateModel, updateArticleModerators } from '../../platform/dataService';
+import { updateArticleModerators, updateCategoryModerators, updateModel } from '../../platform/dataService';
 import {
   HEADER_HEIGHT,
   NICE_LIGHTEST_BLUE,
   NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
 } from '../../styles';
+import { partial } from '../../util/partial';
 import { css, stylesheet } from '../../utilx';
 import { AssignModerators } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
@@ -109,9 +110,40 @@ export interface IIArticleTableState {
 
   popupToShow?: string;
 
-  // Fields used by article control popup and set moderators popup
+  // Fields used by article control popup
   selectedArticle?: IArticleModel;
+
+  // Fields used by set moderators popup
+  targetIsCategory?: boolean;
+  targetId?: ModelId;
   moderatorIds?: Set<ModelId>;
+  superModeratorIds?: Set<ModelId>;
+}
+
+const clearPopupsState: Pick<IIArticleTableState,
+  'popupToShow' | 'selectedArticle' | 'targetIsCategory' | 'targetId' | 'moderatorIds' | 'superModeratorIds'
+  > = {
+  popupToShow: null,
+  selectedArticle: null,
+  targetIsCategory: null,
+  targetId: null,
+  moderatorIds: null,
+  superModeratorIds: null,
+};
+
+function getCategory(
+  props: Readonly<IIArticleTableProps>) {
+  let category: ICategoryModel | null = null;
+  const m = /category=(\d+)/.exec(location.pathname);
+  if (m) {
+    for (const c of props.categories.toArray()) {
+      if (c.id === m[1]) {
+        category = c;
+      }
+    }
+  }
+
+  return category;
 }
 
 function processArticles(
@@ -156,17 +188,11 @@ function processArticles(
   }
 
   summary['id'] = 'summary';
-  summary['title'] = ` ${count} Title` + (count !== 1 ? 's' : '');
 
-  let category: ICategoryModel | null = null;
-  const m = /category=(\d+)/.exec(location.pathname);
-  if (m) {
-    for (const c of props.categories.toArray()) {
-      if (c.id === m[1]) {
-        category = c;
-      }
-    }
-  }
+  const category = getCategory(props);
+  summary['category'] = category;
+
+  summary['title'] = ` ${count} Title` + (count !== 1 ? 's' : '');
 
   if (category) {
     summary['title'] += ` in section ${category.label}`;
@@ -175,8 +201,6 @@ function processArticles(
   if (filter.length > 1 || (filter.length === 1 && filter[0].key !== 'category')) {
     summary['title'] += ' matching filter';
   }
-  summary['category'] = category;
-  summary['assignedModerators'] = category ? category.assignedModerators : [];
 
   const page_size = Math.floor(window.innerHeight / HEADER_HEIGHT) - 5;
   const pages = Math.ceil(processedArticles.length / page_size);
@@ -198,6 +222,8 @@ function processArticles(
 
 function updateArticles(state: IIArticleTableState, props: IIArticleTableProps) {
   const newVisible = [...state.visibleArticles];
+  const newSummary = {...state.summary};
+
   const indexMap: { [key: string]: number; } = {};
   newVisible.map((a, i) => { indexMap[a.id] = i; });
 
@@ -207,7 +233,13 @@ function updateArticles(state: IIArticleTableState, props: IIArticleTableProps) 
     }
   }
 
-  return {visibleArticles: newVisible};
+  const category = getCategory(props);
+  newSummary['category'] = category;
+
+  return {
+    visibleArticles: newVisible,
+    summary: newSummary,
+  };
 }
 
 export class ArticleTable extends React.Component<IIArticleTableProps, IIArticleTableState> {
@@ -276,25 +308,29 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   }
 
   @autobind
-  openSetModerators(article: IArticleModel) {
+  openSetModerators(targetId: ModelId, moderatorIds: Array<ModelId>, superModeratorIds: Array<ModelId>, isCategory: boolean) {
     this.setState({
+      ...clearPopupsState,
       popupToShow: POPUP_MODERATORS,
-      selectedArticle: article,
-      moderatorIds: Set<ModelId>(article.assignedModerators),
+      targetIsCategory: isCategory,
+      targetId: targetId,
+      moderatorIds: Set<ModelId>(moderatorIds),
+      superModeratorIds: Set<ModelId>(superModeratorIds),
     });
   }
 
   @autobind
   openFilters() {
     this.setState({
+      ...clearPopupsState,
       popupToShow: POPUP_FILTERS,
-      selectedArticle: null,
     });
   }
 
   @autobind
   openControls(article: IArticleModel) {
     this.setState({
+      ...clearPopupsState,
       popupToShow: POPUP_CONTROLS,
       selectedArticle: article,
     });
@@ -302,11 +338,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
   @autobind
   clearPopups() {
-    this.setState({
-      popupToShow: null,
-      selectedArticle: null,
-      moderatorIds: null,
-    });
+    this.setState(clearPopupsState);
   }
 
   componentWillMount() {
@@ -343,6 +375,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean) {
     const articleId = this.state.selectedArticle.id;
     this.setState({
+      ...clearPopupsState,
       popupToShow: POPUP_SAVING,
     });
 
@@ -350,9 +383,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       'articles',
       articleId,
       {isCommentingEnabled, isAutoModerated} as any,
-    ).then(() => {
-      this.clearPopups();
-    });
+    ).then(this.clearPopups);
   }
 
   renderControlPopup(article: IArticleModel) {
@@ -364,7 +395,6 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     return (
       <ArticleControlPopup
         article={this.state.selectedArticle}
-
         saveControls={this.saveControls}
         clearPopups={this.clearPopups}
       />
@@ -372,10 +402,6 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   }
 
   renderFlags(article: IArticleModel) {
-    if (article.id === 'summary') {
-      return null;
-    }
-
     const that = this;
     const imOpen = that.state.selectedArticle && that.state.selectedArticle.id === article.id;
 
@@ -399,16 +425,13 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   }
 
   @autobind
-  renderModerators(article: IArticleModel) {
-    if (article.id === 'summary') {
-      return null;
-    }
-
+  renderModerators(targetId: ModelId, moderatorIds: Array<ModelId>, superModeratorIds: Array<ModelId>, isCategory: boolean) {
     return (
       <ModeratorsWidget
         users={this.state.usersMap}
-        article={article}
-        openSetModerators={this.openSetModerators}
+        moderatorIds={moderatorIds}
+        superModeratorIds={superModeratorIds}
+        openSetModerators={partial(this.openSetModerators, targetId, moderatorIds, superModeratorIds, isCategory)}
       />
     );
   }
@@ -425,15 +448,20 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
   @autobind
   saveModerators() {
-    const articleId = this.state.selectedArticle.id;
     const moderatorIds = this.state.moderatorIds.toArray();
+    const targetIsCategory = this.state.targetIsCategory;
+    const targetId = this.state.targetId;
     this.setState({
+      ...clearPopupsState,
       popupToShow: POPUP_SAVING,
-      selectedArticle: null,
-      moderatorIds: null,
     });
 
-    updateArticleModerators(articleId, moderatorIds).then(this.clearPopups);
+    if (targetIsCategory) {
+      updateCategoryModerators(targetId, moderatorIds).then(this.clearPopups);
+    }
+    else {
+      updateArticleModerators(targetId, moderatorIds).then(this.clearPopups);
+    }
   }
 
   renderSetModerators() {
@@ -451,19 +479,14 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       return null;
     }
 
-    let categoryModeratorIds = null;
-    if (this.state.selectedArticle.category) {
-      categoryModeratorIds = Set<ModelId>(this.state.selectedArticle.category.assignedModerators);
-    }
-
     return (
       <Scrim isVisible onBackgroundClick={this.clearPopups} scrimStyles={STYLES.scrimPopup}>
         <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}}>
           <div tabIndex={0} {...css(SCRIM_STYLE.popup, {position: 'relative'})}>
             <AssignModerators
-              label="Assign a moderator"
+              label={this.state.targetIsCategory ? 'Assign a category moderator' : 'Assign a moderator'}
               moderatorIds={this.state.moderatorIds}
-              superModeratorIds={categoryModeratorIds}
+              superModeratorIds={this.state.superModeratorIds}
               onAddModerator={this.onAddModerator}
               onRemoveModerator={this.onRemoveModerator}
               onClickDone={this.saveModerators}
@@ -476,10 +499,6 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   }
 
   static renderSupertext(article: IArticleModel) {
-    if (article.id === 'summary') {
-      return null;
-    }
-
     const supertext = [];
     if (article.category) {
       supertext.push(<span key="label" {...css(ARTICLE_TABLE_STYLES.categoryLabel)}>{article.category.label}</span>);
@@ -498,11 +517,11 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     return <p style={{margin: '7px 0'}}>{supertext}</p>;
   }
 
-  static renderTitle(article: IArticleModel) {
+  static renderTitle(article: IArticleModel, isSummary: boolean) {
     if (article.url) {
       return (
         <div>
-          {ArticleTable.renderSupertext(article)}
+          {!isSummary && ArticleTable.renderSupertext(article)}
           <p style={{margin: '7px 0'}}>
             <a href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
               {article.title}
@@ -513,7 +532,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
     return (
       <div>
-        {ArticleTable.renderSupertext(article)}
+        {!isSummary && ArticleTable.renderSupertext(article)}
         <p style={{margin: '7px 0'}}>
           {article.title}
         </p>
@@ -528,14 +547,11 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     return <MagicTimestamp timestamp={time} inFuture={false}/>;
   }
 
-  renderRow(article: IArticleModel) {
-    let lastModerated: any = '';
-    if (article.id !== 'summary') {
-      lastModerated = ArticleTable.renderTime(article.lastModeratedAt);
-    }
+  renderRow(article: IArticleModel, isSummary: boolean) {
+    const lastModerated: any = (!isSummary) ? ArticleTable.renderTime(article.lastModeratedAt) : '';
 
     function getLink(tag: string) {
-      if (article.id === 'summary') {
+      if (isSummary) {
         if (article.category) {
           return categoriesLink(article.category.id, tag);
         }
@@ -544,10 +560,27 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       return articlesLink(article.id, tag);
     }
 
+    let targetId: ModelId | null = null;
+    let moderatorIds: Array<ModelId> | null = null;
+    let superModeratorIds: Array<ModelId> | null = null;
+    if (isSummary) {
+      if (article.category) {
+        targetId = article.category.id;
+        moderatorIds = article.category.assignedModerators;
+      }
+    }
+    else {
+      targetId = article.id;
+      moderatorIds = article.assignedModerators;
+      if (article.category) {
+        superModeratorIds = article.category.assignedModerators;
+      }
+    }
+
     return (
       <tr key={article.id} {...css(ARTICLE_TABLE_STYLES.dataBody)}>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
-          {ArticleTable.renderTitle(article)}
+          {ArticleTable.renderTitle(article, isSummary)}
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
           <Link to={getLink('new')} {...css(COMMON_STYLES.cellLink)}>
@@ -580,18 +613,18 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           </Link>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.timeCell)}>
-          {article.id === 'summary' ? '' : <MagicTimestamp timestamp={article.updatedAt} inFuture={false}/>}
+          {!isSummary && <MagicTimestamp timestamp={article.updatedAt} inFuture={false}/>}
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.timeCell)}>
           {lastModerated}
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.iconCell)}>
           <div {...css({display: 'inline-block'})}>
-            {this.renderFlags(article)}
+            {!isSummary && this.renderFlags(article)}
           </div>
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.iconCell)}>
-          {this.renderModerators(article)}
+          {targetId && this.renderModerators(targetId, moderatorIds, superModeratorIds, isSummary)}
         </td>
       </tr>
     );
@@ -727,8 +760,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             </tr>
           </thead>
           <tbody>
-            {this.renderRow(summary)}
-            {visibleArticles.map((article: IArticleModel) => this.renderRow(article))}
+            {this.renderRow(summary, true)}
+            {visibleArticles.map((article: IArticleModel) => this.renderRow(article, false))}
           </tbody>
         </table>
         {this.renderPaging()}

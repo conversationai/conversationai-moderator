@@ -19,7 +19,7 @@ import { Set } from 'immutable';
 import React from 'react';
 import Timer = NodeJS.Timer;
 
-import { IArticleModel, IUserModel } from '../../../models';
+import { IUserModel, ModelId } from '../../../models';
 import * as icons from '../../components/Icons';
 import { GREY_COLOR, NICE_CONTROL_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
 import { css } from '../../utilx';
@@ -184,22 +184,23 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
 
 interface IIModeratorsWidgetProps {
   users: Map<string, IUserModel>;
-  article: IArticleModel;
-  openSetModerators(article: IArticleModel): void;
+  moderatorIds: Array<ModelId>;
+  superModeratorIds: Array<ModelId>;
+  openSetModerators(): void;
 }
 
 export class ModeratorsWidget extends React.Component<IIModeratorsWidgetProps> {
   @autobind
   openModeratorsDlg() {
-    this.props.openSetModerators(this.props.article);
+    this.props.openSetModerators();
   }
 
   render() {
-    const { article, users }  = this.props;
+    const { users, moderatorIds, superModeratorIds }  = this.props;
 
-    let s = Set(article.assignedModerators);
-    if (article.category) {
-      s = s.merge(article.category.assignedModerators);
+    let s = Set(moderatorIds);
+    if (superModeratorIds) {
+      s = s.merge(superModeratorIds);
     }
 
     const moderators = s.toArray().map((uid: string) => users.get(uid));
