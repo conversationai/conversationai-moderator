@@ -517,24 +517,19 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     return <p style={{margin: '7px 0'}}>{supertext}</p>;
   }
 
-  static renderTitle(article: IArticleModel, isSummary: boolean) {
-    if (article.url) {
-      return (
-        <div>
-          {!isSummary && ArticleTable.renderSupertext(article)}
-          <p style={{margin: '7px 0'}}>
-            <a href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
-              {article.title}
-            </a>
-          </p>
-        </div>
-      );
-    }
+  static renderTitle(article: IArticleModel, link: string, isSummary: boolean) {
     return (
       <div>
         {!isSummary && ArticleTable.renderSupertext(article)}
         <p style={{margin: '7px 0'}}>
-          {article.title}
+          <Link to={link}>
+            {article.title}
+          </Link>&nbsp;
+          {article.url &&
+          <a href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
+            <icons.OpenIcon {...css({ fill: 'black' })} size={20} />
+          </a>
+          }
         </p>
       </div>
     );
@@ -580,7 +575,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     return (
       <tr key={article.id} {...css(ARTICLE_TABLE_STYLES.dataBody)}>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
-          {ArticleTable.renderTitle(article, isSummary)}
+          {ArticleTable.renderTitle(article, getLink('new'), isSummary)}
         </td>
         <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
           <Link to={getLink('new')} {...css(COMMON_STYLES.cellLink)}>
