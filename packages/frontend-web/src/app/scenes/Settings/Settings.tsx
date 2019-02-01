@@ -29,14 +29,14 @@ import {
   CategoryModel,
   ICategoryModel,
   IPreselectModel,
-  IRuleAction,
   IRuleModel,
+  IServerAction,
   ITaggingSensitivityModel,
   ITagModel,
   IUserModel,
   PreselectModel,
-  RULE_ACTION_ACCEPT,
   RuleModel,
+  SERVER_ACTION_ACCEPT,
   TaggingSensitivityModel,
   TagModel,
 } from '../../../models';
@@ -339,7 +339,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         tagId: '1',
         lowerThreshold: .8,
         upperThreshold: 1,
-        action: RULE_ACTION_ACCEPT,
+        action: SERVER_ACTION_ACCEPT,
       },
     );
 
@@ -521,7 +521,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleModerateButtonClick(rule: IRuleModel, action: IRuleAction) {
+  handleModerateButtonClick(rule: IRuleModel, action: IServerAction) {
     const updatedRules = this.state.rules.update(
         this.state.rules.findIndex(((r) => r.equals(rule))),
         (r) => r.set('action', action));

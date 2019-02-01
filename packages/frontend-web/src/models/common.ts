@@ -14,4 +14,39 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { IModerationAction } from '../types';
+
 export type ModelId = string;
+
+export const SERVER_ACTION_ACCEPT = 'Accept';
+export const SERVER_ACTION_REJECT = 'Reject';
+export const SERVER_ACTION_DEFER = 'Defer';
+export const SERVER_ACTION_HIGHLIGHT = 'Highlight';
+
+export type IServerAction = 'Accept' | 'Reject' | 'Defer' | 'Highlight';
+
+export function convertServerAction(saction: IServerAction): IModerationAction {
+  switch (saction) {
+    case SERVER_ACTION_ACCEPT:
+      return 'approve';
+    case SERVER_ACTION_REJECT:
+      return 'reject';
+    case SERVER_ACTION_DEFER:
+      return 'defer';
+    case SERVER_ACTION_HIGHLIGHT:
+      return 'highlight';
+  }
+}
+
+export function convertClientAction(action: IModerationAction): IServerAction {
+  switch (action) {
+    case 'approve':
+      return SERVER_ACTION_ACCEPT;
+    case 'reject':
+      return SERVER_ACTION_REJECT;
+    case 'defer':
+      return SERVER_ACTION_DEFER;
+    case 'highlight':
+      return SERVER_ACTION_HIGHLIGHT;
+  }
+}

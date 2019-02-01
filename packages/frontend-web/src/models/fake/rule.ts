@@ -17,12 +17,14 @@ limitations under the License.
 import faker from 'faker';
 
 import {
+  SERVER_ACTION_ACCEPT,
+  SERVER_ACTION_DEFER,
+  SERVER_ACTION_HIGHLIGHT,
+  SERVER_ACTION_REJECT,
+} from '../common';
+import {
   IRuleAttributes,
   IRuleModel,
-  RULE_ACTION_ACCEPT,
-  RULE_ACTION_DEFER,
-  RULE_ACTION_HIGHLIGHT,
-  RULE_ACTION_REJECT,
   RuleModel,
 } from '../rule';
 
@@ -30,10 +32,10 @@ export function fakeRuleModel(overrides: Partial<IRuleAttributes> = {}): IRuleMo
   return RuleModel({
     id: faker.random.number().toString(),
     action: faker.random.arrayElement([
-      RULE_ACTION_ACCEPT,
-      RULE_ACTION_REJECT,
-      RULE_ACTION_DEFER,
-      RULE_ACTION_HIGHLIGHT,
+      SERVER_ACTION_ACCEPT,
+      SERVER_ACTION_REJECT,
+      SERVER_ACTION_DEFER,
+      SERVER_ACTION_HIGHLIGHT,
     ]),
     lowerThreshold: faker.random.number({ min: 0, max: 1, precision: 0.01 }),
     upperThreshold: faker.random.number({ min: 0, max: 1, precision: 0.01 }),

@@ -24,9 +24,9 @@ import {
   IArticleModel,
   ICommentDatedModel,
   ICommentModel,
-  ICommentScoredModel, IRuleAction,
+  ICommentScoredModel, IServerAction,
   IRuleModel,
-  ITagModel, RULE_ACTION_ACCEPT, RULE_ACTION_DEFER, RULE_ACTION_HIGHLIGHT, RULE_ACTION_REJECT,
+  ITagModel, SERVER_ACTION_ACCEPT, SERVER_ACTION_DEFER, SERVER_ACTION_HIGHLIGHT, SERVER_ACTION_REJECT,
   TagModel,
 } from '../../../../../models';
 import { ICommentAction } from '../../../../../types';
@@ -301,7 +301,7 @@ export interface INewCommentsState {
   isNavStuck?: boolean;
   isConfirmationModalVisible?: boolean;
   isRuleInfoVisible?: boolean;
-  confirmationAction?: IRuleAction;
+  confirmationAction?: IServerAction;
   actionCount?: number;
   actionText?: string;
   toastButtonLabel?: 'Undo';
@@ -945,16 +945,16 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     }
   }
 
-  matchAction(action: IRuleAction) {
+  matchAction(action: IServerAction) {
     let showActionIcon;
 
-    if (action === RULE_ACTION_ACCEPT) {
+    if (action === SERVER_ACTION_ACCEPT) {
       showActionIcon = <ApproveIcon {...css({ fill: DARK_COLOR })} />;
-    } else if (action === RULE_ACTION_REJECT) {
+    } else if (action === SERVER_ACTION_REJECT) {
       showActionIcon = <RejectIcon {...css({ fill: DARK_COLOR })} />;
-    } else if (action === RULE_ACTION_HIGHLIGHT) {
+    } else if (action === SERVER_ACTION_HIGHLIGHT) {
       showActionIcon = <HighlightIcon {...css({ fill: DARK_COLOR })} />;
-    } else if (action === RULE_ACTION_DEFER) {
+    } else if (action === SERVER_ACTION_DEFER) {
       showActionIcon = <DeferIcon {...css({ fill: DARK_COLOR })} />;
     }
 
@@ -962,7 +962,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind
-  triggerActionToast(action: IRuleAction, count: number, callback: (action?: IRuleAction) => any) {
+  triggerActionToast(action: IServerAction, count: number, callback: (action?: IServerAction) => any) {
     this.setState({
       isConfirmationModalVisible: true,
       confirmationAction: action,

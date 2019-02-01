@@ -102,6 +102,8 @@ async function getSystemSummary() {
   } as IMessage;
 }
 
+// TODO: Can't find a good way to get rid of the any types below
+//       Revisit when sequelize has been updated
 async function getGlobalSummary() {
   const categories = await Category.findAll({
     where: {isActive: true},
@@ -110,9 +112,9 @@ async function getGlobalSummary() {
   const categoryIds: Array<number> = [];
   const categorydata = categories.map((c: ICategoryInstance) => {
     categoryIds.push(c.id);
-    const category: any = c.toJSON();
+    const category: any = pick(c.toJSON(), categoryFields);
     category.assignedModerators = category.assignedModerators.map((i: any) => i.user_category_assignment.userId.toString());
-    return pick(category, categoryFields);
+    return category;
   });
 
   const articles = await Article.findAll({
@@ -120,9 +122,9 @@ async function getGlobalSummary() {
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
   const articledata = articles.map((a: IArticleInstance) => {
-    const article: any = a.toJSON();
+    const article: any = pick(a.toJSON(), articleFields);
     article.assignedModerators = article.assignedModerators.map((i: any) => i.moderator_assignment.userId.toString());
-    return pick(article, articleFields);
+    return article;
   });
 
   const deferred = await Comment.findAndCountAll({where: { isDeferred: true }, limit: 0});

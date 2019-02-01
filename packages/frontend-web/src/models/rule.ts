@@ -17,16 +17,11 @@ limitations under the License.
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 
-export const RULE_ACTION_ACCEPT = 'Accept';
-export const RULE_ACTION_REJECT = 'Reject';
-export const RULE_ACTION_DEFER = 'Defer';
-export const RULE_ACTION_HIGHLIGHT = 'Highlight';
-
-export type IRuleAction = 'Accept' | 'Reject' | 'Defer' | 'Highlight';
+import { IServerAction } from './common';
 
 export interface IRuleAttributes {
   id: string;
-  action: IRuleAction | null;
+  action: IServerAction | null;
   categoryId: string | null;
   createdBy: string | null;
   lowerThreshold: number;

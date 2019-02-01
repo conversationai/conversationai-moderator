@@ -18,16 +18,14 @@ import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
 import {
+  convertClientAction,
+  convertServerAction,
   ICategoryModel,
   IPreselectModel,
-  IRuleAction,
   IRuleModel,
+  IServerAction,
   ITaggingSensitivityModel,
   ITagModel,
-  RULE_ACTION_ACCEPT,
-  RULE_ACTION_DEFER,
-  RULE_ACTION_HIGHLIGHT,
-  RULE_ACTION_REJECT,
 } from '../../../../../models';
 import { IModerationAction } from '../../../../../types';
 import { ModerateButtons } from '../../../../components';
@@ -103,11 +101,11 @@ export interface IRuleRowProps {
   tags: List<ITagModel>;
   rangeBottom: number;
   rangeTop: number;
-  selectedAction?: IRuleAction;
+  selectedAction?: IServerAction;
   hasTagging?: boolean;
   onModerateButtonClick?(
     rule: IRuleModel,
-    action: IRuleAction,
+    action: IServerAction,
   ): any;
   buttons?: JSX.Element;
   selectedCategory: string;
@@ -140,24 +138,10 @@ export class RuleRow extends React.Component<IRuleRowProps> {
       onModerateButtonClick,
       rule,
     } = this.props;
-    let raction: IRuleAction;
-    switch (action) {
-      case 'approve':
-        raction = RULE_ACTION_ACCEPT;
-        break;
-      case 'reject':
-        raction = RULE_ACTION_REJECT;
-        break;
-      case 'defer':
-        raction = RULE_ACTION_DEFER;
-        break;
-      case 'highlight':
-        raction = RULE_ACTION_HIGHLIGHT;
-        break;
-    }
+    const saction = convertClientAction(action);
 
     if (onModerateButtonClick) {
-      onModerateButtonClick(rule as IRuleModel, raction);
+      onModerateButtonClick(rule as IRuleModel, saction);
     }
   }
   render() {
@@ -181,18 +165,6 @@ export class RuleRow extends React.Component<IRuleRowProps> {
     const sortedCategories = sortByLabel(categories);
     const sortedTags = sortByLabel(tags);
 
-    function convertRuleAction(a: IRuleAction) {
-      switch (a) {
-        case RULE_ACTION_ACCEPT:
-          return 'approve';
-        case RULE_ACTION_REJECT:
-          return 'reject';
-        case RULE_ACTION_DEFER:
-          return 'defer';
-        case RULE_ACTION_HIGHLIGHT:
-          return 'highlight';
-      }
-    }
     return (
       <div {...css(STYLES.base, SETTINGS_STYLES.row)}>
         <div {...css(STYLES.selectContainer)}>
@@ -250,7 +222,7 @@ export class RuleRow extends React.Component<IRuleRowProps> {
             <ModerateButtons
               darkOnLight
               hideLabel
-              activeButtons={List<IModerationAction>().push(convertRuleAction(selectedAction))}
+              activeButtons={List<IModerationAction>().push(convertServerAction(selectedAction))}
               containerSize={36}
               onClick={this.notifyWrapperOfActionChange}
             />

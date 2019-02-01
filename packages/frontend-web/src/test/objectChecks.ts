@@ -16,10 +16,10 @@ limitations under the License.
 
 import check from 'check-types';
 import {
-  RULE_ACTION_ACCEPT,
-  RULE_ACTION_DEFER,
-  RULE_ACTION_HIGHLIGHT,
-  RULE_ACTION_REJECT,
+  SERVER_ACTION_ACCEPT,
+  SERVER_ACTION_DEFER,
+  SERVER_ACTION_HIGHLIGHT,
+  SERVER_ACTION_REJECT,
 } from '../models';
 
 const loggedBad: any = {};
@@ -130,10 +130,10 @@ function action(val: any) {
   }
 
   return [
-    RULE_ACTION_ACCEPT,
-    RULE_ACTION_REJECT,
-    RULE_ACTION_HIGHLIGHT,
-    RULE_ACTION_DEFER,
+    SERVER_ACTION_ACCEPT,
+    SERVER_ACTION_REJECT,
+    SERVER_ACTION_HIGHLIGHT,
+    SERVER_ACTION_DEFER,
   ].indexOf(val) >= 0;
 }
 

@@ -26,11 +26,16 @@ export interface IRedialLocals {
   dispatch(payload: any): any;
 }
 
-export type IConfirmationAction = 'approve' | 'defer' | 'highlight' | 'reject'| 'tag' | 'reset';
-
-export type ICommentAction = 'highlight' | 'approve' | 'defer' | 'reject' | 'tag';
-
+// These are our representation of the core moderator actions,
+// i.e., the things a moderator can do to a comment via one of the action buttons
+// They map onto the IRu
 export type IModerationAction = 'approve' | 'defer' | 'highlight' | 'reject';
+
+// These are the broader set of actions that can be applied to a comment
+export type ICommentAction = IModerationAction | 'tag';
+
+// These are the actions we can do to a comment within the interface
+export type IConfirmationAction = ICommentAction | 'reset';
 
 export interface ITopScore {
   start: number;
