@@ -21,12 +21,13 @@ import keyboardJS from 'keyboardjs';
 import React from 'react';
 
 import {
+  convertServerAction,
   IArticleModel,
   ICommentDatedModel,
   ICommentModel,
-  ICommentScoredModel, IServerAction,
+  ICommentScoredModel,
   IRuleModel,
-  ITagModel, SERVER_ACTION_ACCEPT, SERVER_ACTION_DEFER, SERVER_ACTION_HIGHLIGHT, SERVER_ACTION_REJECT,
+  ITagModel,
   TagModel,
 } from '../../../../../models';
 import { ICommentAction } from '../../../../../types';
@@ -301,7 +302,7 @@ export interface INewCommentsState {
   isNavStuck?: boolean;
   isConfirmationModalVisible?: boolean;
   isRuleInfoVisible?: boolean;
-  confirmationAction?: IServerAction;
+  confirmationAction?: ICommentAction;
   actionCount?: number;
   actionText?: string;
   toastButtonLabel?: 'Undo';
@@ -945,16 +946,16 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     }
   }
 
-  matchAction(action: IServerAction) {
+  matchAction(action: ICommentAction) {
     let showActionIcon;
 
-    if (action === SERVER_ACTION_ACCEPT) {
+    if (action === 'approve') {
       showActionIcon = <ApproveIcon {...css({ fill: DARK_COLOR })} />;
-    } else if (action === SERVER_ACTION_REJECT) {
+    } else if (action === 'reject') {
       showActionIcon = <RejectIcon {...css({ fill: DARK_COLOR })} />;
-    } else if (action === SERVER_ACTION_HIGHLIGHT) {
+    } else if (action === 'highlight') {
       showActionIcon = <HighlightIcon {...css({ fill: DARK_COLOR })} />;
-    } else if (action === SERVER_ACTION_DEFER) {
+    } else if (action === 'defer') {
       showActionIcon = <DeferIcon {...css({ fill: DARK_COLOR })} />;
     }
 
@@ -962,7 +963,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind
-  triggerActionToast(action: IServerAction, count: number, callback: (action?: IServerAction) => any) {
+  triggerActionToast(action: ICommentAction, count: number, callback: (action?: ICommentAction) => any) {
     this.setState({
       isConfirmationModalVisible: true,
       confirmationAction: action,
@@ -989,7 +990,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind handleRemoveAutomatedRule(rule: IRuleModel) {
-    const icon = this.matchAction(rule.action);
+    const icon = this.matchAction(convertServerAction(rule.action));
 
     this.setState({
       isRuleInfoVisible: true,
@@ -1017,7 +1018,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   @autobind
   onTagButtonClick(tagId: string) {
     const ids = this.getSelectedIDs();
-    this.triggerActionToast('Accept', ids.length, () => this.props.tagComments(ids, tagId));
+    this.triggerActionToast('tag', ids.length, () => this.props.tagComments(ids, tagId));
     this.toggleTaggingToolTip();
   }
 
