@@ -22,7 +22,7 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { IReturnURL, setCSRF, setReturnURL } from '../../util';
+import { IReturnURL, setCSRF, setReturnURL } from '../../../../util';
 import { Login as PureLogin } from './Login';
 
 export const Login = compose(

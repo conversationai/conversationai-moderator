@@ -2711,6 +2711,157 @@ exports[`Storyshots DotChart Narrow 1`] = `
 </div>
 `;
 
+exports[`Storyshots Errors Error page 1`] = `
+Array [
+  <div
+    className="landing_headerTag"
+  >
+    Moderator
+  </div>,
+  <div
+    className="landing_centerOnPage"
+  >
+    <div
+      className="landing_bubbleSet"
+    >
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div />
+      <div />
+      <div />
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div />
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+    </div>
+  </div>,
+  <div
+    className="landing_footerTag"
+  >
+    <a
+      className="landing_link"
+      href="https://conversationai.github.io/"
+      target="_blank"
+    >
+      Learn more
+    </a>
+     
+    <span
+      className="landing_extratext"
+    >
+      about Modereator.
+    </span>
+  </div>,
+  <div
+    className="errors_9h093d-o_O-fadeIn_167dsx7"
+  >
+    <p>
+      Hello there
+    </p>
+  </div>,
+]
+`;
+
 exports[`Storyshots Header article header 1`] = `
 <header
   role="banner"
@@ -3154,28 +3305,28 @@ exports[`Storyshots LabelSettings spam 1`] = `
 `;
 
 exports[`Storyshots Login Login failed 1`] = `
-<div
-  className="container_b6c8rj"
->
-  <h1
-    className="h1_dhpkqj"
+<div>
+  <div
+    className="header2Tag_2gbvxm-o_O-fadeIn_167dsx7"
   >
-    Moderator
-  </h1>
-  <div>
-    <p
-      className="error_rsx96z"
+    <a
+      className="link_vdmqoc"
+      href="/auth/login/google?&referrer=http%3A%2F%2Flocalhost%2F"
     >
-      🤔
-    </p>
-    <p
-      className="copy_601nkn"
-    >
+      Sign in
+    </a>
+  </div>
+  <div
+    className="errors_9h093d-o_O-fadeIn_167dsx7"
+  >
+    <p>
       There was an error.
     </p>
-    <p>
+    <p
+      className="errorsTryAgain_qf6k2g"
+    >
       <a
-        className="button_wn0jtn"
+        className="link_vdmqoc"
         href="/auth/login/google?&referrer=http%3A%2F%2Flocalhost%2F"
       >
         Try Again
@@ -3186,32 +3337,16 @@ exports[`Storyshots Login Login failed 1`] = `
 `;
 
 exports[`Storyshots Login Login page 1`] = `
-<div
-  className="container_b6c8rj"
->
-  <h1
-    className="h1_dhpkqj"
+<div>
+  <div
+    className="header2Tag_2gbvxm-o_O-fadeIn_167dsx7"
   >
-    Moderator
-  </h1>
-  <div>
-    <p>
-      <a
-        className="button_wn0jtn"
-        href="/auth/login/google?&referrer=http%3A%2F%2Flocalhost%2F"
-      >
-        Login
-      </a>
-    </p>
-    <p>
-      <a
-        className="link_iyz8i2"
-        href="https://github.com/Jigsaw-Code/moderator"
-        target="_blank"
-      >
-        Learn more
-      </a>
-    </p>
+    <a
+      className="link_vdmqoc"
+      href="/auth/login/google?&referrer=http%3A%2F%2Flocalhost%2F"
+    >
+      Sign in
+    </a>
   </div>
 </div>
 `;
@@ -5453,6 +5588,150 @@ exports[`Storyshots OverflowContainer No Header 1`] = `
     </h2>
   </div>
 </div>
+`;
+
+exports[`Storyshots Root Splash page 1`] = `
+Array [
+  <div
+    className="landing_headerTag"
+  >
+    Moderator
+  </div>,
+  <div
+    className="landing_centerOnPage"
+  >
+    <div
+      className="landing_bubbleSet"
+    >
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div />
+      <div />
+      <div />
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div />
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+    </div>
+  </div>,
+  <div
+    className="landing_footerTag"
+  >
+    <a
+      className="landing_link"
+      href="https://conversationai.github.io/"
+      target="_blank"
+    >
+      Learn more
+    </a>
+     
+    <span
+      className="landing_extratext"
+    >
+      about Modereator.
+    </span>
+  </div>,
+]
 `;
 
 exports[`Storyshots RuleRow Rule Row 1`] = `

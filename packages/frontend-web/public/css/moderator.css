@@ -1,0 +1,78 @@
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: sans-serif;
+  height: 100%;
+  overflow: hidden; /* prevent the scroll bounce */
+
+  /* AKA "NICE_MIDDLE_BLUE" from app/styles/colors */
+  background: #185bac;
+}
+
+#app {
+  height: 100%;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  text-decoration: none;
+}
+
+.landing_headerTag {
+  position: absolute;
+  top: 2vh;
+  left: 2vh;
+  height: 3vh;
+  font-size: 3vh;
+  font-weight: 800;
+  color: white;
+}
+
+.landing_centerOnPage {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing_bubbleSet {
+  display: grid;
+  grid-template-columns: repeat(5, 1.8vh);
+  grid-template-rows: repeat(5, 1.8vh);
+  grid-gap: 1.8vh;
+}
+
+.landing_bubble {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: white;
+}
+
+.landing_footerTag {
+  position: absolute;
+  bottom: 2vh;
+  left: 2vh;
+  font-size: 2vh;
+  color: white;
+}
+
+.landing_link {
+  color: white;
+}
+
+.landing_link:hover {
+  text-decoration: underline;
+}
+
+.landing_extratext {
+  opacity: 0.6;
+}

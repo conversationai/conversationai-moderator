@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,22 +20,42 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { DispatchProp } from 'react-redux';
 
+import {
+  createMuiTheme,
+  CssBaseline,
+  MuiThemeProvider,
+} from '@material-ui/core';
+
 import { FOCUS_DATA_ATTR } from '../../config';
 import { focusedElement } from '../../stores/focus';
-import { css, stylesheet } from '../../utilx';
-import { Login } from '../Login';
+import { NICE_MIDDLE_BLUE } from '../../styles';
+import { css } from '../../utilx';
+import { Login } from './components/Login';
+import { SplashRoot } from './components/SplashRoot';
+import { ROOT_STYLES } from './components/styles';
 
-const STYLE = stylesheet({
-  base: { height: '100%' },
-
-  placeholder: {
-    fontSize: '40px',
-    color: 'white',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+const theme = createMuiTheme({
+  typography: {
+    useNextVariants: true,
+    fontFamily: 'Libre Franklin',
+  },
+  palette: {
+    background: {
+      default: NICE_MIDDLE_BLUE,
+    },
   },
 });
+
+export class ThemeRoot extends React.Component {
+  render() {
+    return (
+      <MuiThemeProvider key="root" theme={theme}>
+        <CssBaseline key="baseline"/>
+        {this.props.children}
+      </MuiThemeProvider>
+    );
+  }
+}
 
 export interface IRootProps extends DispatchProp<any> {
   isAuthenticated: boolean;
@@ -50,27 +70,31 @@ export class Root extends React.Component<IRootProps> {
     const {isAuthenticated, isConnected, isAdmin, location} = this.props;
 
     if (!isAuthenticated) {
-      return (<Login/>);
+      return (
+        <SplashRoot>
+          <Login/>
+        </SplashRoot>
+      );
     }
 
     if (!isConnected) {
       return (
-        <div {...css(STYLE.base, STYLE.placeholder)}>
-          Connecting....
-        </div>
+        <SplashRoot>
+          <div key="connecting" {...css(ROOT_STYLES.header2Tag, ROOT_STYLES.fadeIn)}>Connecting...</div>
+        </SplashRoot>
       );
     }
 
     if (location.pathname.startsWith('/settings') && !isAdmin) {
       return (
-        <div {...css(STYLE.base, STYLE.placeholder)}>
+        <div {...css(ROOT_STYLES.base, ROOT_STYLES.placeholder)}>
           Settings only available to admins....
         </div>
       );
     }
 
     return (
-      <div {...css(STYLE.base)}>
+      <div {...css(ROOT_STYLES.base)}>
         {this.props.children}
       </div>
     );

@@ -8,37 +8,47 @@
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/fixed-data-table-base.css">
   <link rel="stylesheet" href="/css/fonts/fonts.css">
-  <style>
-    html {
-      height: 100%;
-      overflow: hidden;
-    }
-
-    body {
-      font-family: sans-serif;
-      height: 100%;
-      overflow: hidden; /* prevent the scroll bounce */
-
-      /* AKA "DARK_COLOR" from app/styles/colors */
-      background: #255271;
-    }
-
-    #app {
-      height: 100%;
-    }
-
-  a {
-      text-decoration: none;
-    }
-
-    a:hover,
-    a:focus {
-      text-decoration: none;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/moderator.css">
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <div class="landing_headerTag">Moderator</div>
+    <div class="landing_centerOnPage">
+      <div class="landing_bubbleSet">
+        <div><div class="landing_bubble"></div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div><div class="landing_bubble"></div></div>
+
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+        <div></div>
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+        <div><div class="landing_bubble"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="landing_footerTag">
+    <a href="https://conversationai.github.io/" target="_blank" class="landing_link">Learn more</a> <span class="landing_extratext">about Modereator.</span></div>
   <script>
     window.osmod_config = window.osmod_config || {};
     window.osmod_config.API_URL = '{{API_URL}}';
