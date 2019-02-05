@@ -22,7 +22,6 @@ import React from 'react';
 import { WithRouterProps } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
-import { updateArticleModerators } from '../../platform/dataService';
 import {
   Header,
   HomeIcon,
@@ -30,6 +29,7 @@ import {
   NavigationTab,
   Scrim,
 } from '../../components';
+import { updateArticleModerators } from '../../platform/dataService';
 import { IAppDispatch } from '../../stores';
 import {
   clearReturnSavedCommentRow,
@@ -87,25 +87,26 @@ const STYLES = stylesheet({
   },
 });
 
-const makeTab = (router: any, url: string, label: string, count: number) => (
-  <Link
-    to={url}
-    {...css(
-      ARTICLE_HEADER.link,
-      router.isActive(url) ? STYLES.articleLinkActive : STYLES.articleLink,
-    )}
-    key={label}
-  >
-    <NavigationTab
-      label={label}
-      count={count}
+function makeTab(router: any, url: string, label: string, count: number) {
+  const style = router.isActive(url) ? { backgroundColor: MEDIUM_COLOR } : {};
+  return (
+    <Link
+      to={url}
       {...css(
-        ARTICLE_HEADER.tab,
-        (router.isActive(url) && { backgroundColor: MEDIUM_COLOR }),
+        ARTICLE_HEADER.link,
+        router.isActive(url) ? STYLES.articleLinkActive : STYLES.articleLink,
       )}
-    />
-  </Link>
-);
+      key={label}
+    >
+      <NavigationTab
+        label={label}
+        count={count}
+        style={{...ARTICLE_HEADER.tab, ...style}}
+      />
+    </Link>
+
+  );
+}
 
 export interface ICommentsProps extends WithRouterProps {
   dispatch?: IAppDispatch;

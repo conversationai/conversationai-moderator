@@ -18,7 +18,7 @@ import React from 'react';
 import {
   SCRIM_Z_INDEX,
 } from '../../styles';
-import { css, stylesheet } from '../../utilx';
+import { css, IStyle, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   background: {
@@ -39,8 +39,8 @@ const STYLES = stylesheet({
 export interface IScrimProps extends React.HTMLProps<any> {
   isVisible?: boolean;
   onBackgroundClick?(e: React.MouseEvent<any>): any;
-  scrimStyles?: object;
-  wrapperStyles?: object;
+  scrimStyles?: IStyle;
+  wrapperStyles?: IStyle;
 }
 
 export class Scrim extends React.PureComponent<IScrimProps> {

@@ -20,9 +20,12 @@ import {
 } from 'aphrodite';
 import { Map } from 'immutable';
 import { isEmpty } from 'lodash';
-import { memoize } from '../util/partial';
+import { CSSProperties } from 'react';
+
 const Prefixer = require('inline-style-prefixer');
+
 import { DEVELOPMENT } from '../config';
+import { memoize } from '../util/partial';
 
 const prefixer = new Prefixer({ userAgent: navigator.userAgent });
 
@@ -32,7 +35,7 @@ function prefixStyles(obj: object): object {
 
 export interface IStyleProps {
   className?: string;
-  style?: object;
+  style?: CSSProperties;
 }
 
 let knownStylesheets = Map();
@@ -52,7 +55,8 @@ function knownStyle(obj: object) {
   return knownStylesheets.get(obj);
 }
 
-export type IPossibleStyle = object | string | null | undefined | false;
+export interface IStyle { [key: string]: IStyle | string | number; }
+export type IPossibleStyle = IStyle | null | undefined;
 
 function flattenStyleReducer(sum: object, style: object): object {
   if (!style) { return sum; }
@@ -65,9 +69,8 @@ function flattenStyles(styles: Array<object>): object {
 }
 
 export function originalCSS(...styles: Array<IPossibleStyle>): IStyleProps {
-  const fromStylesheet: Array<object> = styles.filter((style: IPossibleStyle) => style && typeof style !== 'string' && knownStyle(style)) as Array<object>;
-  const notFromStylesheet = styles.filter((style: IPossibleStyle) => style && typeof style !== 'string' && !knownStyle(style)) as Array<object>;
-  const fromClassName = styles.filter((style: IPossibleStyle) => style && typeof style === 'string');
+  const fromStylesheet: Array<object> = styles.filter((style: IPossibleStyle) => style && knownStyle(style));
+  const notFromStylesheet = styles.filter((style: IPossibleStyle) => style && !knownStyle(style));
 
   const prefixedInline = notFromStylesheet.map(prefixStyles);
 
@@ -79,11 +82,12 @@ export function originalCSS(...styles: Array<IPossibleStyle>): IStyleProps {
         continue;
       }
 
-      if (typeof style === 'string' || knownStyle(style)) {
+      if (knownStyle(style)) {
         if (gotInlineStyle) {
           throw new Error('Tried to add a class-based style AFTER an inline style. Precedence will be confusing. Please refactor');
         }
-      } else {
+      }
+      else {
         gotInlineStyle = true;
       }
     }
@@ -99,15 +103,10 @@ export function originalCSS(...styles: Array<IPossibleStyle>): IStyleProps {
       output.style = outputStyles;
     }
 
-    if (fromClassName.length > 0) {
-      output.className = fromClassName.join(' ');
-    }
-
     return output;
-  } else {
-    const classNames = fromClassName.concat([
-      stylesheetToClassNames(fromStylesheet.map(knownStyle)),
-    ]).join(' ');
+  }
+  else {
+    const classNames = stylesheetToClassNames(fromStylesheet.map(knownStyle));
 
     const output: IStyleProps = {};
 

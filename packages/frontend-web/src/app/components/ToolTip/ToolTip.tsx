@@ -20,7 +20,7 @@ import {
   BODY_TEXT_TYPE,
   TOOLTIP_Z_INDEX,
 } from '../../styles';
-import { css, stylesheet } from '../../utilx';
+import { css, IStyle, stylesheet } from '../../utilx';
 
 const BUFFER = 16;
 
@@ -30,7 +30,7 @@ const base = {
   position: 'absolute',
 };
 
-function makeArrowStyles(direction: string, color: string, size: number): any {
+function makeArrowStyles(direction: string, color: string, size: number): IStyle {
   let arrowStyles;
 
   if (direction === 'topLeft') {
@@ -168,7 +168,7 @@ function makeArrowStyles(direction: string, color: string, size: number): any {
   return arrowStyles;
 }
 
-const makeArrow = (direction: string, color: string, size: number): React.CSSProperties => {
+const makeArrow = (direction: string, color: string, size: number): IStyle => {
   return {
     ...base,
     ...makeArrowStyles(direction, color, size),

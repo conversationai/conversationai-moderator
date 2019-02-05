@@ -19,10 +19,10 @@ import { ICommentModel, ITagModel } from '../../../../../models';
 import {
   DARK_SECONDARY_TEXT_COLOR,
 } from '../../../../styles';
-import { css } from '../../../../utilx';
+import { css, IStyle } from '../../../../utilx';
 
 export interface ISortColumnProps extends React.HTMLProps<any> {
-  style?: object;
+  style?: IStyle;
   comment?: ICommentModel;
   sortContent?: Array<string>;
   selectedTag?: ITagModel;

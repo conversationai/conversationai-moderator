@@ -25,7 +25,7 @@ import {
   WHITE_COLOR,
 } from '../../styles';
 import { maybeCallback, partial } from '../../util';
-import { css, stylesheet } from '../../utilx';
+import { css, IStyle, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   input: {
@@ -83,7 +83,7 @@ export interface IToggleProps {
   isReadonly?: boolean;
   isSelected?: boolean;
   value?: string;
-  style?: object;
+  style?: IStyle;
 }
 
 export interface IToggleState {

@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import React from 'react';
-import { css, stylesheet } from '../../utilx';
+import { css, IStyle, stylesheet } from '../../utilx';
 
 import {
   BUTTON_LINK_TYPE,
@@ -82,7 +82,7 @@ const STYLES = stylesheet({
 });
 
 export interface ICommentActionProps {
-  style?: object;
+  style?: IStyle;
   label: string;
   disabled?: boolean;
   icon: JSX.Element;

@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import { storiesOf } from '@storybook/react';
 
 import {
   DARK_PRIMARY_TEXT_COLOR,
@@ -62,9 +62,7 @@ storiesOf('NavigationTab', module)
         aria-label="New"
       >
         <NavigationTab
-          {...css({
-            padding: `0 ${GUTTER_DEFAULT_SPACING}px`,
-          })}
+          style={{ padding: `0 ${GUTTER_DEFAULT_SPACING}px`}}
           label="New"
           count={542}
         />
@@ -75,9 +73,7 @@ storiesOf('NavigationTab', module)
         aria-label="Moderated"
       >
         <NavigationTab
-          {...css({
-            padding: `0 ${GUTTER_DEFAULT_SPACING}px`,
-          })}
+          style={{ padding: `0 ${GUTTER_DEFAULT_SPACING}px`}}
           label="Moderated"
           count={923}
         />

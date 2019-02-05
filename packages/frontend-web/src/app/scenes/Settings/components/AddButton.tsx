@@ -22,7 +22,7 @@ import {
   OFFSCREEN,
   PALE_COLOR,
 } from '../../../styles';
-import { css, stylesheet } from '../../../utilx';
+import { css, IStyle, stylesheet } from '../../../utilx';
 
 const STYLES = stylesheet({
   button: {
@@ -43,7 +43,7 @@ export interface IAddButtonProps {
   width: number;
   onClick(e: React.MouseEvent<any>): any;
   label?: string;
-  buttonStyles?: object;
+  buttonStyles?: IStyle;
 }
 
 export class AddButton extends React.Component<IAddButtonProps> {
@@ -77,7 +77,7 @@ export interface IEditButtonProps {
   onClick(e: React.MouseEvent<any>): any;
   value?: any;
   label?: string;
-  buttonStyles?: object;
+  buttonStyles?: IStyle;
 }
 
 export class EditButton extends React.Component<IEditButtonProps> {

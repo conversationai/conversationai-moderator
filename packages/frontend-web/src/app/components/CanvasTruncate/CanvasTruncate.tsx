@@ -17,13 +17,13 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { fromJS, Map } from 'immutable';
 import React from 'react';
-import { ITypeDefinition } from '../../styles';
-import { css } from '../../utilx';
+import { ITypeStyle } from '../../styles';
 import { getTextHeight, measureLine, wordWrap } from '../../util/measureText';
+import { css } from '../../utilx';
 
 const canvas = document.createElement('canvas');
 
-function clampLines(text: string, width: number, fontStyles: ITypeDefinition, lines: number): Array<string> {
+function clampLines(text: string, width: number, fontStyles: ITypeStyle, lines: number): Array<string> {
   if (!width) { return []; }
 
   const wrappedLines = wordWrap(canvas, text, width, fontStyles);
@@ -47,7 +47,7 @@ function clampLines(text: string, width: number, fontStyles: ITypeDefinition, li
 }
 
 let cache = Map<any, Array<string>>();
-function memoizedClampLines(text: string, width: number, fontStyles: ITypeDefinition, lines: number): Array<string> {
+function memoizedClampLines(text: string, width: number, fontStyles: ITypeStyle, lines: number): Array<string> {
   const params = fromJS({ text, width, fontStyles, lines });
 
   if (!cache.get(params)) {
@@ -60,7 +60,7 @@ function memoizedClampLines(text: string, width: number, fontStyles: ITypeDefini
 export interface ICanvasTruncateProps {
   text: string;
   lines: number;
-  fontStyles: ITypeDefinition;
+  fontStyles: ITypeStyle;
   id?: string;
 }
 

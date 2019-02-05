@@ -648,6 +648,9 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
     const { author } = comment;
     const SUBMITTED_AT = formatDate(comment.sourceCreatedAt, DATE_FORMAT_LONG);
 
+    const bodyStyling = css(COMMENT_STYLES.body);
+    const className = bodyStyling.className ? bodyStyling.className + ' comment-body' : 'comment-body';
+
     return (
       <div {...css(isThreadedComment && isReply && STYLES.threaded)}>
         <div
@@ -850,7 +853,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
             </div>
           </div>
           <style>{COMMENT_BODY_STYLES}</style>
-          <div {...css(COMMENT_STYLES.body, 'comment-body')}>
+          <div className={className} style={bodyStyling.style}>
             {inEditMode ? (
               <div>
                 <div

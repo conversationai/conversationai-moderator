@@ -17,8 +17,8 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { clamp } from 'lodash';
 import React from 'react';
-import { css, stylesheet } from '../../utilx';
 const Draggable = require('react-draggable');
+
 import {
   HANDLE_LABEL_TYPE,
   LIGHT_COLOR,
@@ -33,6 +33,7 @@ import {
   RIGHT_ARROW_KEY,
   UP_ARROW_KEY,
 } from '../../utilx';
+import { css, IStyle, stylesheet } from '../../utilx';
 
 const HANDLE_SIZE = 22;
 const HANDLE_HIT_CONTAINER_SIZE = 44;
@@ -92,6 +93,7 @@ const HANDLE_STYLES = stylesheet({
 });
 
 export interface IHandleProps extends React.HTMLProps<any> {
+  style?: IStyle;
   label?: string;
   positionOnRight?: boolean;
   keyUp?(e: React.KeyboardEvent<any>): any;
