@@ -21,15 +21,7 @@ import {
 import { Map } from 'immutable';
 import { CSSProperties } from 'react';
 
-const Prefixer = require('inline-style-prefixer');
-
 import { memoize } from '../util/partial';
-
-const prefixer = new Prefixer({ userAgent: navigator.userAgent });
-
-function prefixStyles(obj: object): object {
-  return prefixer.prefix(obj);
-}
 
 export interface IStyleProps {
   className?: string;
@@ -72,12 +64,11 @@ export function originalCSS(...styles: Array<IPossibleStyle>): IStyleProps {
   const fromStylesheet: Array<object> = styles.filter((style: IPossibleStyle) => style && knownStyle(style));
   const notFromStylesheet = styles.filter((style: IPossibleStyle) => style && !knownStyle(style));
 
-  const prefixedInline = notFromStylesheet.map(prefixStyles);
   const classNames = stylesheetToClassNames(fromStylesheet.map(knownStyle));
   const output: IStyleProps = {};
 
-  if (prefixedInline.length > 0) {
-    output.style = flattenStyles(prefixedInline);
+  if (notFromStylesheet.length > 0) {
+    output.style = flattenStyles(notFromStylesheet);
   }
 
   if (classNames.length > 0) {
