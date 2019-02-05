@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import check from 'check-types';
+import { autobind } from 'core-decorators';
 
 import { IGlobalSummary, ISystemSummary, IUserSummary } from '../app/platform/websocketService';
 import {
@@ -26,110 +27,161 @@ import {
   checkUser,
 } from './objectChecks';
 
-export const globalUpdate = {
-  gotUpdate: false,
-  gotCategories: false,
-  gotArticles: false,
-  gotUsers: false,
-  gotDeferred: false,
+class GlobalUpdate {
+  data: any = null;
+  gotUpdate = false;
+
+  countCategories = 0;
+  categoriesOk = true;
+
+  countArticles = 0;
+  articlesOk = true;
+
+  gotDeferred = false;
+
+  @autobind
   notificationHandler(data: IGlobalSummary) {
     console.log('Received global update message');
-    globalUpdate.gotUpdate = true;
-    globalUpdate.gotCategories = true;
-    globalUpdate.gotArticles = true;
-    globalUpdate.gotUsers = data.users.toArray().length > 0;
-    globalUpdate.gotDeferred = check.number(data.deferred);
-    for (const u of data.users.toArray()) {
-      globalUpdate.gotUsers = globalUpdate.gotUsers && checkUser(u);
+    this.gotUpdate = true;
+
+    this.countCategories = data.categories.size;
+    this.countArticles = data.articles.size;
+
+    this.gotDeferred = check.number(data.deferred);
+    this.data = data;
+  }
+
+  dataCheck() {
+    console.log('* check categories');
+    for (const c of this.data.categories.toArray()) {
+      this.categoriesOk = this.categoriesOk && checkCategory(c);
     }
-    for (const c of data.categories.toArray()) {
-      globalUpdate.gotCategories = globalUpdate.gotCategories && checkCategory(c);
+    console.log('* check articles');
+    for (const a of this.data.articles.toArray()) {
+      this.articlesOk = this.articlesOk && checkArticle(a);
     }
-    for (const a of data.articles.toArray()) {
-      globalUpdate.gotArticles = globalUpdate.gotArticles && checkArticle(a);
-    }
-  },
+  }
+
   stateCheck() {
-    if (!globalUpdate.gotUpdate) {
+    if (!this.gotUpdate) {
       console.log('ERROR: Didn\'t get global update message');
       return;
     }
-    if (!globalUpdate.gotCategories) {
+
+    console.log(`Received ${this.countCategories} categories`);
+    if (!this.categoriesOk) {
       console.log('ERROR: Issue with categories');
     }
-    if (!globalUpdate.gotArticles) {
+
+    console.log(`Received ${this.countArticles} articles`);
+    if (!this.articlesOk) {
       console.log('ERROR: Issue with articles');
     }
-    if (!globalUpdate.gotUsers) {
-      console.log('ERROR: Issue with users or no users fetched');
-    }
-    if (!globalUpdate.gotDeferred) {
+
+    if (!this.gotDeferred) {
       console.log('ERROR: Didn\'t get deferred count');
     }
-  },
-};
+  }
+}
 
-export const systemUpdate = {
-  gotUpdate: false,
-  gotTags: false,
-  gotTaggingSensitivities: false,
-  gotRules: false,
-  gotPreselects: false,
+export const globalUpdate = new GlobalUpdate();
+
+class SystemUpdate {
+  data: any = null;
+  gotUpdate = false;
+
+  usersOk = false;
+  countUsers = 0;
+
+  gotTags = false;
+  gotTaggingSensitivities = false;
+  gotRules = false;
+  gotPreselects = false;
+
+  @autobind
   notificationHandler(data: ISystemSummary) {
     console.log('Received system update message');
-    systemUpdate.gotUpdate = true;
-    systemUpdate.gotTags = data.tags.toArray().length > 0;
-    systemUpdate.gotTaggingSensitivities = true;
-    systemUpdate.gotRules = true;
-    systemUpdate.gotPreselects = true;
-    for (const t of data.tags.toArray()) {
-      systemUpdate.gotTags = systemUpdate.gotTags && checkTag(t);
+    this.gotUpdate = true;
+    this.countUsers = data.users.size;
+    this.usersOk =  this.countUsers > 0; // We assume there must be some users
+    this.gotTags = data.tags.toArray().length > 0;
+    this.gotTaggingSensitivities = true;
+    this.gotRules = true;
+    this.gotPreselects = true;
+    this.data = data;
+  }
+
+  usersCheck() {
+    console.log('* check users');
+    for (const u of this.data.users.toArray()) {
+      this.usersOk = this.usersOk && checkUser(u);
     }
-    for (const t of data.taggingSensitivities.toArray()) {
-      systemUpdate.gotTaggingSensitivities = systemUpdate.gotTaggingSensitivities && checkTaggingSensitivity(t);
+  }
+
+  tagsCheck() {
+    console.log('* check tags');
+    for (const t of this.data.tags.toArray()) {
+      this.gotTags = this.gotTags && checkTag(t);
     }
-    for (const r of data.rules.toArray()) {
-      systemUpdate.gotRules = systemUpdate.gotRules && checkRule(r);
+    for (const t of this.data.taggingSensitivities.toArray()) {
+      this.gotTaggingSensitivities = this.gotTaggingSensitivities && checkTaggingSensitivity(t);
     }
-    for (const s of data.preselects.toArray()) {
-      systemUpdate.gotPreselects = systemUpdate.gotPreselects && checkPreselect(s);
+    for (const r of this.data.rules.toArray()) {
+      this.gotRules = this.gotRules && checkRule(r);
     }
-  },
+    for (const s of this.data.preselects.toArray()) {
+      this.gotPreselects = this.gotPreselects && checkPreselect(s);
+    }
+  }
+
   stateCheck() {
-    if (!systemUpdate.gotUpdate) {
+    if (!this.gotUpdate) {
       console.log('ERROR: Didn\'t get system update message');
       return;
     }
-    if (!systemUpdate.gotTags) {
+
+    console.log(`Received ${this.countUsers} users`);
+    if (!this.usersOk) {
+      console.log('ERROR: Issue with users or no users fetched');
+    }
+
+    if (!this.gotTags) {
       console.log('ERROR: Issue with tags or no tags fetched');
     }
-    if (!systemUpdate.gotTaggingSensitivities) {
+    if (!this.gotTaggingSensitivities) {
       console.log('ERROR: Issue with tagging sensitivities');
     }
-    if (!systemUpdate.gotRules) {
+    if (!this.gotRules) {
       console.log('ERROR: Issue with rules');
     }
-    if (!systemUpdate.gotPreselects) {
+    if (!this.gotPreselects) {
       console.log('ERROR: Issue with preselects');
     }
-  },
-};
+  }
+}
 
-export const userUpdate = {
-  gotUpdate: false,
-  gotAssigned: false,
+export const systemUpdate = new SystemUpdate();
+
+class UserUpdate {
+  gotUpdate = false;
+  gotAssigned = false;
+
+  @autobind
   notificationHandler(data: IUserSummary) {
     console.log('Received user update message');
-    userUpdate.gotUpdate = true;
-    userUpdate.gotAssigned = check.number(data.assignments);
-  },
+    this.gotUpdate = true;
+    this.gotAssigned = check.number(data.assignments);
+  }
+
   stateCheck() {
-    if (!userUpdate.gotUpdate) {
+    if (!this.gotUpdate) {
       console.log('ERROR: Didn\'t get system update message');
       return;
     }
-    if (!userUpdate.gotAssigned) {
+    if (!this.gotAssigned) {
       console.log('ERROR: Didn\'t get assigned count');
     }
-  },
-};
+  }
+}
+
+export const userUpdate = new UserUpdate();

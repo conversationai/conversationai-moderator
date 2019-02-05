@@ -17,8 +17,17 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
-import { ICategoryModel, IPreselectModel, IRuleModel, ITaggingSensitivityModel, ITagModel } from '../../../../../models';
-import { IConfirmationAction } from '../../../../../types';
+import {
+  convertClientAction,
+  convertServerAction,
+  ICategoryModel,
+  IPreselectModel,
+  IRuleModel,
+  IServerAction,
+  ITaggingSensitivityModel,
+  ITagModel,
+} from '../../../../../models';
+import { IModerationAction } from '../../../../../types';
 import { ModerateButtons } from '../../../../components';
 import {
   ARTICLE_CATEGORY_TYPE,
@@ -30,8 +39,8 @@ import {
   PALE_COLOR,
 } from '../../../../styles';
 import { maybeCallback, partial } from '../../../../util';
-import { css, stylesheet } from '../../../../utilx';
 import { sortByLabel } from '../../../../util';
+import { css, stylesheet } from '../../../../utilx';
 import { SETTINGS_STYLES } from '../../settingsStyles';
 
 const INPUT_HEIGHT = 36;
@@ -92,11 +101,11 @@ export interface IRuleRowProps {
   tags: List<ITagModel>;
   rangeBottom: number;
   rangeTop: number;
-  selectedAction?: string;
+  selectedAction?: IServerAction;
   hasTagging?: boolean;
   onModerateButtonClick?(
-    rule: IRuleModel | ITaggingSensitivityModel | IPreselectModel,
-    action: IConfirmationAction,
+    rule: IRuleModel,
+    action: IServerAction,
   ): any;
   buttons?: JSX.Element;
   selectedCategory: string;
@@ -123,6 +132,18 @@ export class RuleRow extends React.Component<IRuleRowProps> {
     callback(e.target.value);
   }
 
+  @autobind
+  notifyWrapperOfActionChange(action: IModerationAction) {
+    const {
+      onModerateButtonClick,
+      rule,
+    } = this.props;
+    const saction = convertClientAction(action);
+
+    if (onModerateButtonClick) {
+      onModerateButtonClick(rule as IRuleModel, saction);
+    }
+  }
   render() {
     const {
       categories,
@@ -130,7 +151,6 @@ export class RuleRow extends React.Component<IRuleRowProps> {
       rangeBottom,
       rangeTop,
       hasTagging,
-      onModerateButtonClick,
       selectedCategory,
       selectedTag,
       selectedAction,
@@ -202,10 +222,9 @@ export class RuleRow extends React.Component<IRuleRowProps> {
             <ModerateButtons
               darkOnLight
               hideLabel
-              activeButtons={selectedAction
-                  && List.of(selectedAction.toLowerCase()) as List<IConfirmationAction>}
+              activeButtons={List<IModerationAction>().push(convertServerAction(selectedAction))}
               containerSize={36}
-              onClick={partial(maybeCallback(onModerateButtonClick), rule)}
+              onClick={this.notifyWrapperOfActionChange}
             />
           )}
         <button

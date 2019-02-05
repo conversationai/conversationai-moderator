@@ -16,11 +16,12 @@ limitations under the License.
 
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
+
 import { CategoryModel, ICategoryModel } from './category';
-import { IUserModel, UserModel } from './user';
+import { ModelId } from './common';
 
 export interface IArticleAttributes {
-  id: string;
+  id: ModelId;
   sourceCreatedAt: string;
   updatedAt: string;
   title: string;
@@ -40,7 +41,7 @@ export interface IArticleAttributes {
   batchedCount: number;
   automatedCount: number;
   lastModeratedAt: string;
-  assignedModerators: Array<IUserModel>;
+  assignedModerators: Array<ModelId>;
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
 }
@@ -77,10 +78,6 @@ export function ArticleModel(keyValuePairs?: IArticleAttributes): IArticleModel 
 
   if (article.category) {
     article = article.update('category', CategoryModel);
-  }
-
-  if (article.assignedModerators) {
-    article = article.update('assignedModerators', (m) => m.map(UserModel));
   }
 
   // Sanitize URLs for security.

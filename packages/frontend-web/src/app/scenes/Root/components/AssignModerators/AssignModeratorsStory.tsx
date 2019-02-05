@@ -16,10 +16,8 @@ limitations under the License.
 
 import { storiesOf } from '@storybook/react';
 import { List, Set } from 'immutable';
-import { fakeArticleModel, fakeUserModel } from '../../../../../models/fake';
+import { fakeUserModel } from '../../../../../models/fake';
 import { AssignModerators } from './AssignModerators';
-
-const article = fakeArticleModel();
 
 const users = List([
   fakeUserModel({
@@ -42,7 +40,6 @@ storiesOf('AssignModerators', module)
     .add('Default', () => (
       <AssignModerators
         users={users}
-        article={article}
         moderatorIds={moderatorIds}
         isReady
         label="Add a moderator"

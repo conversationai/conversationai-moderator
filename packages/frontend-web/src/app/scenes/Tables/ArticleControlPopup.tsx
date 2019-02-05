@@ -1,5 +1,5 @@
 /*
-Copyright 2018 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,9 +19,8 @@ import FocusTrap from 'focus-trap-react';
 import { Set } from 'immutable';
 import React from 'react';
 
-import { IArticleModel } from '../../../models';
+import { IArticleModel, ModelId } from '../../../models';
 import { Toggle } from '../../components/Toggle';
-import { ModelId } from '../../stores/moderators';
 import { NICE_CONTROL_BLUE, SCRIM_STYLE } from '../../styles';
 import { css } from '../../utilx';
 import { ControlFlag } from './components';

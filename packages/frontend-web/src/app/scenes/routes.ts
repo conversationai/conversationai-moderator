@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -53,13 +53,4 @@ export function articlesLink(id: string, type: string) {
 }
 export function categoriesLink(id: string, type: string) {
   return _commentLink(categoriesBase, id, type);
-}
-
-export const oldDashboardBase = 'dashboard-old';
-export function oldDashboardLink(slug?: string) {
-  let ret = `/${oldDashboardBase}`;
-  if (slug) {
-    ret = `${ret}/${slug}`;
-  }
-  return ret;
 }

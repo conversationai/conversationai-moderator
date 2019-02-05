@@ -32,6 +32,7 @@ import {
   ICommentScoredModel,
   ICommentSummaryScoreModel,
   IUserModel,
+  ModelId,
 } from '../../models';
 import {
   CommentDatedModel,
@@ -42,8 +43,6 @@ import { ITopScore } from '../../types';
 import { API_URL } from '../config';
 import { convertArrayFromJSONAPI } from '../util';
 import { convertFromJSONAPI } from '../util';
-
-  // const WebSocket = (typeof window === null) require('ws');
 
 export type IValidModelNames =
     'articles' |
@@ -518,9 +517,18 @@ export async function editAndRescoreComment(
 /**
  * Update article assignment when users are assigned to categories
  */
-export async function updateCategoryAssignments(categoryId: string, userIds: Array<string>): Promise<void> {
+export async function updateCategoryModerators(categoryId: ModelId, moderatorIds: Array<ModelId>): Promise<void> {
   const url = serviceURL('assignments', `/categories/${parseInt(categoryId, 10)}`);
-  await axios.post(url, { data: userIds });
+  await axios.post(url, { data: moderatorIds });
+}
+
+export function updateArticleModerators(articleId: ModelId, moderatorIds: Array<ModelId>): Promise<void> {
+  return updateRelationshipModels(
+    'articles',
+    articleId as string,
+    'assignedModerators',
+    moderatorIds as Array<string>,
+  );
 }
 
 /**

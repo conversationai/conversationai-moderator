@@ -16,10 +16,11 @@ limitations under the License.
 
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
-import { IUserModel, UserModel } from './user';
+
+import { ModelId } from './common';
 
 export interface ICategoryAttributes {
-  id: string | 'all' | 'deferred' | 'assignments';
+  id: ModelId;
   label: string;
   updatedAt: string;
   allCount: number;
@@ -33,7 +34,7 @@ export interface ICategoryAttributes {
   flaggedCount: number;
   recommendedCount: number;
   batchedCount: number;
-  assignedModerators: Array<IUserModel>;
+  assignedModerators: Array<ModelId>;
 }
 
 export interface ICategoryModel extends TypedRecord<ICategoryModel>, ICategoryAttributes {}
@@ -57,11 +58,5 @@ const CategoryModelRecord = Record({
 });
 
 export function CategoryModel(keyValuePairs?: Partial<ICategoryAttributes>): ICategoryModel {
-  let category = new CategoryModelRecord(keyValuePairs) as ICategoryModel;
-
-  if (category.assignedModerators) {
-    category = category.update('assignedModerators', (m) => m.map(UserModel));
-  }
-
-  return category;
+  return new CategoryModelRecord(keyValuePairs) as ICategoryModel;
 }

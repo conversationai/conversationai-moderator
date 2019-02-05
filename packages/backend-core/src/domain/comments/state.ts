@@ -26,15 +26,17 @@ import {
   ICommentScoreInstance,
   ICommentScoreRequestInstance,
   IModerationRuleInstance,
+  IResolution,
   ITagInstance,
   IUserInstance,
+  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_DEFER,
+  MODERATION_ACTION_REJECT,
   User,
 } from '../../models';
 import {denormalizeCommentCountsForArticle} from '../articles';
 import {denormalizeCountsForComment} from '../comments';
 import { recordDecision } from './pipeline';
-
-export type IResolution = 'Accept' | 'Reject' | 'Defer';
 
 export interface IDecision {
   resolution: IResolution;
@@ -206,7 +208,7 @@ export async function approve(
 ): Promise<ICommentInstance> {
   const updated = await setCommentState(comment, source, getApproveStateData(), data);
 
-  await recordDecision(updated, 'Accept', source, autoConfirm);
+  await recordDecision(updated, MODERATION_ACTION_ACCEPT, source, autoConfirm);
 
   return updated;
 }
@@ -223,7 +225,7 @@ export async function reject(
 ): Promise<ICommentInstance> {
   const updated = await setCommentState(comment, source, getRejectStateData(), data);
 
-  await recordDecision(updated, 'Reject', source, autoConfirm);
+  await recordDecision(updated, MODERATION_ACTION_REJECT, source, autoConfirm);
 
   return updated;
 }
@@ -240,7 +242,7 @@ export async function defer(
 ): Promise<ICommentInstance> {
   const updated = await setCommentState(comment, source, getDeferStateData(), data);
 
-  await recordDecision(updated, 'Defer', source, autoConfirm);
+  await recordDecision(updated, MODERATION_ACTION_DEFER, source, autoConfirm);
 
   return updated;
 }

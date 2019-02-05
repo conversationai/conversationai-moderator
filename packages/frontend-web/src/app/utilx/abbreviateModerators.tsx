@@ -21,23 +21,25 @@ function firstName(name: string): string {
   return name.split(' ')[0];
 }
 
+function abbreviateModerator(user: IUserModel) {
+  return <span title={user.name}>{firstName(user.name)}</span>;
+}
+
 export const abbreviateModerators = (moderators?: List<IUserModel>): JSX.Element | null => {
   if (!moderators || moderators.size === 0 || moderators.get(0) === undefined) {
-    return null;
+    return <span>No assignments yet</span>;
   }
 
   if (moderators.size === 1) {
-    return (
-      <span title={moderators.get(0).name}>{firstName(moderators.get(0).name)}</span>
-    );
+    return abbreviateModerator(moderators.get(0));
   }
 
   if (moderators.size === 2) {
     return (
       <span>
-        <span title={moderators.get(0).name}>{firstName(moderators.get(0).name)}</span>
+        {abbreviateModerator(moderators.get(0))}
         <span> and </span>
-        <span title={moderators.get(1).name}>{firstName(moderators.get(1).name)}</span>
+        {abbreviateModerator(moderators.get(1))}
       </span>
     );
   }
@@ -49,9 +51,9 @@ export const abbreviateModerators = (moderators?: List<IUserModel>): JSX.Element
 
   return (
     <span>
-      <span title={moderators.get(0).name}>{firstName(moderators.get(0).name)}</span>
+      {abbreviateModerator(moderators.get(0))}
       <span>, </span>
-      <span title={moderators.get(1).name}>{firstName(moderators.get(1).name)}</span>
+      {abbreviateModerator(moderators.get(1))}
       <span> and </span>
       <span title={moderatorNames}>
         {moderators.size - 2} other{moderators.size > 3 && 's'}

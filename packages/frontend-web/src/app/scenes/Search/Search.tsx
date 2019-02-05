@@ -17,8 +17,11 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
+import { WithRouterProps } from 'react-router';
+
 import {
   IArticleModel,
+  ModelId,
 } from '../../../models';
 import {
   Header,
@@ -79,16 +82,15 @@ const HEADER_STYLES = stylesheet({
   },
 });
 
-export interface ISearchProps {
+export interface ISearchProps extends WithRouterProps {
   searchTerm: string;
   totalCommentCount?: number;
-  router?: any;
-  location?: any;
   allCommentIds?: List<number>;
   onSearch?(newScope: ISearchScope): any;
   onCancelSearch?(): any;
-  articleId?: number;
-  article: IArticleModel;
+  userId: ModelId;
+  articleId?: ModelId;
+  article?: IArticleModel;
   resetCommentIds?(): void;
   searchByAuthor?: boolean;
 }

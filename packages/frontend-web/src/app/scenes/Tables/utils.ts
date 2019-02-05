@@ -89,14 +89,14 @@ export const FILTER_DATE_SINCE = 'since-';
 export const FILTER_DATE_PRIOR = 'prior-';
 
 function articleHasModerator(article: IArticleModel, moderatorId: string) {
-  for (const m of article.assignedModerators) {
-    if (moderatorId === m.id) {
+  for (const mId of article.assignedModerators) {
+    if (moderatorId === mId) {
       return true;
     }
   }
   if (article.category) {
-    for (const m of article.category.assignedModerators) {
-      if (moderatorId === m.id) {
+    for (const mId of article.category.assignedModerators) {
+      if (moderatorId === mId) {
         return true;
       }
     }
@@ -105,14 +105,14 @@ function articleHasModerator(article: IArticleModel, moderatorId: string) {
 }
 
 function articleMatchesModerators(article: IArticleModel, moderatorIds: Set<string>) {
-  for (const m of article.assignedModerators) {
-    if (moderatorIds.has(m.id)) {
+  for (const mId of article.assignedModerators) {
+    if (moderatorIds.has(mId)) {
       return true;
     }
   }
   if (article.category) {
-    for (const m of article.category.assignedModerators) {
-      if (moderatorIds.has(m.id)) {
+    for (const mId of article.category.assignedModerators) {
+      if (moderatorIds.has(mId)) {
         return true;
       }
     }
@@ -315,26 +315,40 @@ export function sortString(sl: Array<string>) {
   return sl.join(',');
 }
 
+export const SORT_TITLE = 'title';
+export const SORT_CATEGORY = 'category';
+export const SORT_NEW = 'new';
+export const SORT_APPROVED = 'approved';
+export const SORT_REJECTED = 'rejected';
+export const SORT_DEFERRED = 'deferred';
+export const SORT_HIGHLIGHTED = 'highlighted';
+export const SORT_FLAGGED = 'flagged';
+export const SORT_SOURCE_CREATED = 'sourceCreatedAt';
+export const SORT_UPDATED = 'updatedAt';
+export const SORT_LAST_MODERATED = 'lastModeratedAt';
+
 export function executeSort(sortList: Array<string>) {
   function compareItem(a: IArticleModel, b: IArticleModel, comparator: string) {
     switch (comparator) {
-      case 'title':
+      case SORT_TITLE:
         return ('' + a.title).localeCompare(b.title);
-      case 'category':
+      case SORT_CATEGORY:
         return ('' + a.category.label).localeCompare(b.category.label);
-      case 'new':
+      case SORT_NEW:
         return b.unmoderatedCount - a.unmoderatedCount;
-      case 'approved':
+      case SORT_APPROVED:
         return b.approvedCount - a.approvedCount;
-      case 'rejected':
+      case SORT_REJECTED:
         return b.rejectedCount - a.rejectedCount;
-      case 'deferred':
+      case SORT_DEFERRED:
         return b.deferredCount - a.deferredCount;
-      case 'flagged':
+      case SORT_HIGHLIGHTED:
         return b.flaggedCount - a.flaggedCount;
-      case 'lastModeratedAt':
-      case 'sourceCreatedAt':
-      case 'updatedAt':
+      case SORT_FLAGGED:
+        return b.flaggedCount - a.flaggedCount;
+      case SORT_LAST_MODERATED:
+      case SORT_SOURCE_CREATED:
+      case SORT_UPDATED:
         const lma = a[comparator];
         const lmb = b[comparator];
         if (!lma && !lmb) {

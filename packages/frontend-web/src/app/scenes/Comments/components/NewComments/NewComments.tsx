@@ -21,6 +21,7 @@ import keyboardJS from 'keyboardjs';
 import React from 'react';
 
 import {
+  convertServerAction,
   IArticleModel,
   ICommentDatedModel,
   ICommentModel,
@@ -989,7 +990,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind handleRemoveAutomatedRule(rule: IRuleModel) {
-    const icon = this.matchAction(rule.action);
+    const icon = this.matchAction(convertServerAction(rule.action));
 
     this.setState({
       isRuleInfoVisible: true,

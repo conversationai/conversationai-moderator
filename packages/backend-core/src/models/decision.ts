@@ -17,6 +17,12 @@ limitations under the License.
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 import { ICommentInstance } from './comment';
+import {
+  IResolution,
+  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_DEFER,
+  MODERATION_ACTION_REJECT,
+} from './constants';
 
 export interface IDecisionAttributes {
   id?: number;
@@ -24,7 +30,7 @@ export interface IDecisionAttributes {
   userId?: number;
   moderationRuleId?: number;
   isCurrentDecision?: boolean;
-  status?: 'Accept' | 'Reject' | 'Defer';
+  status?: IResolution;
   source?: 'User' | 'Rule';
   sentBackToPublisher?: Date | string | Sequelize.fn;
 }
@@ -52,7 +58,7 @@ export const Decision = sequelize.define<
   },
 
   status: {
-    type: Sequelize.ENUM(['Accept', 'Reject', 'Defer']),
+    type: Sequelize.ENUM([MODERATION_ACTION_ACCEPT, MODERATION_ACTION_REJECT, MODERATION_ACTION_DEFER]),
     allowNull: false,
   },
 

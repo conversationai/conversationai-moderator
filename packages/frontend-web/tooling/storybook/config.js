@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 import { configure } from '@storybook/react';
-import React from 'react';
 
 const req = require.context('../../dist/app', true, /Story\.jsx?$/)
 

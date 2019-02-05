@@ -38,6 +38,7 @@ import {
   ICommentSummaryScoreAttributes,
   IDecisionInstance,
   IModerationRuleInstance,
+  IResolution,
   ITagAttributes,
   ITagInstance,
   IUserInstance,
@@ -51,7 +52,7 @@ import { denormalizeCommentCountsForArticle } from '../articles';
 import { cacheCommentTopScores } from '../commentScores';
 import { denormalizeCountsForComment } from './countDenormalization';
 import { processRulesForComment } from './rules';
-import { getIsDoneScoring, IResolution } from './state';
+import { getIsDoneScoring } from './state';
 import { cacheTextSize } from './textSizes';
 
 import {IScoreData, IScores, IShim, ISummaryScores} from './shim';

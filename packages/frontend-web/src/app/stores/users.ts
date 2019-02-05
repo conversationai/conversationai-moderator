@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
-import { IUserModel } from '../../models';
+import { IUserModel, ModelId } from '../../models';
 import { getMyUserId } from '../auth';
 import { listSystemUsers } from '../platform/dataService';
 import { IAppDispatch, IAppStateRecord } from './index';
@@ -44,6 +44,10 @@ const systemUsersLoaded = createAction<ILoadSystemUsers>(
 
 export function getUsers(state: IAppStateRecord): List<IUserModel> {
   return state.getIn(USERS_DATA);
+}
+
+export function getUserMap(state: IAppStateRecord): Map<ModelId, IUserModel> {
+  return Map(getUsers(state).map((u) => [u.id, u]));
 }
 
 export function getUser(state: IAppStateRecord, id: string): IUserModel | null {

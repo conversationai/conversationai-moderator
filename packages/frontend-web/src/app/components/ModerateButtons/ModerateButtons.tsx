@@ -17,7 +17,7 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
-import { IConfirmationAction } from '../../../types';
+import { IModerationAction } from '../../../types';
 import {
   GUTTER_DEFAULT_SPACING,
   LIGHT_PRIMARY_TEXT_COLOR,
@@ -84,16 +84,12 @@ export interface IModerateButtonsProps {
   hideLabel?: boolean;
   vertical?: boolean;
   darkOnLight?: boolean;
-  onClick?(action: IConfirmationAction): any;
+  onClick?(action: IModerationAction): any;
   containerSize?: number;
-  activeButtons?: List<IConfirmationAction>;
+  activeButtons?: List<IModerationAction>;
   disabled?: boolean;
   requireReasonForReject?: boolean;
   onRejectWithTag?(): any;
-}
-
-export interface IModerateButtonsState {
-  tooltipVisible: boolean;
 }
 
 export class ModerateButtons

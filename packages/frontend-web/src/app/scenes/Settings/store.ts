@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 import { List, Map } from 'immutable';
-import { IThunkAction } from '../../stores';
-const slug = require('slugify');
+import slugify from 'slugify';
+
 import {
   IPreselectModel,
   IRuleModel,
@@ -29,6 +29,7 @@ import {
   destroyModel,
   updateModel,
 } from '../../platform/dataService';
+import { IThunkAction } from '../../stores';
 import {
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
@@ -55,9 +56,13 @@ function diff<T extends Map<string, any>>(original: List<T>, current: List<T>): 
 export async function addUser(user: IUserModel): Promise<void> {
   await createModel<IUserModel>(
     'users',
-    user.set('key', slug(user.get('name'), '_').toUpperCase()) as any,
+    user.set('key', slugify(user.get('name'), '_').toUpperCase()) as any,
   );
 }
+
+// TODO: the typing in this module looks wrong - note the many casts to 'any' when calling createModel, updateModel etc.
+//  But it works. Which leads me to suspect the interface defined by these functions does not match the actual
+//  interface used by the generic JSON API...
 
 export async function modifyUser(user: IUserModel): Promise<void> {
   // Strip out the extra field for most categories of user
@@ -75,7 +80,7 @@ export async function modifyUser(user: IUserModel): Promise<void> {
 async function addTag(tag: ITagModel): Promise<void> {
   await createModel<ITagModel>(
     'tags',
-    tag.set('key', slug(tag.get('label'), '_').toUpperCase()) as any,
+    tag.set('key', slugify(tag.get('label'), '_').toUpperCase()) as any,
   );
 }
 
@@ -108,7 +113,7 @@ export function updateTags(oldTags: List<ITagModel>, newTags: List<ITagModel>): 
 async function addRule(rule: IRuleModel): Promise<void> {
   await createModel<IRuleModel>(
     'moderation_rules',
-    rule.set('action', rule.action.toLowerCase() === 'approve' ? 'Accept' : rule.action) as any,
+    rule as any,
   );
 }
 
@@ -116,7 +121,7 @@ async function modifyRule(rule: IRuleModel): Promise<void> {
   await updateModel<IRuleModel>(
     'moderation_rules',
     rule.id,
-    rule.set('action', rule.action.toLowerCase() === 'approve' ? 'Accept' : rule.action) as any,
+    rule as any,
   );
 }
 

@@ -16,11 +16,13 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { List } from 'immutable';
+import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
+import { WithRouterProps } from 'react-router';
 
-import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
+import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
+import { updateArticleModerators } from '../../platform/dataService';
 import {
   Header,
   HomeIcon,
@@ -29,7 +31,6 @@ import {
   Scrim,
 } from '../../components';
 import { IAppDispatch } from '../../stores';
-import { loadArticleModerators, updateArticleModerators } from '../../stores/moderators';
 import {
   clearReturnSavedCommentRow,
 } from '../../util';
@@ -106,11 +107,10 @@ const makeTab = (router: any, url: string, label: string, count: number) => (
   </Link>
 );
 
-export interface ICommentsProps extends React.Props<any> {
+export interface ICommentsProps extends WithRouterProps {
   dispatch?: IAppDispatch;
   article?: IArticleModel;
   category?: ICategoryModel;
-  router: any;
   moderators?: List<IUserModel>;
   isArticleDetail: boolean;
   isCommentDetail: boolean;
@@ -123,6 +123,7 @@ export interface ICommentsState {
   isPreviewModalVisible?: boolean;
   isModeratorModalVisible?: boolean;
   homeIsFocused?: boolean;
+  moderatorIds?: Set<ModelId>;
 }
 
 export class Comments extends React.Component<ICommentsProps, ICommentsState> {
@@ -227,11 +228,12 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
                     SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0},
                   )}
                 >
-
-                  {/* moderatorAssignmentArticle */}
                   <AssignModerators
                     label="Assign a moderator"
-                    article={article}
+                    moderatorIds={this.state.moderatorIds}
+                    superModeratorIds={this.props.article.category ? Set<ModelId>(this.props.article.category.assignedModerators) : null}
+                    onAddModerator={this.onAddModerator}
+                    onRemoveModerator={this.onRemoveModerator}
                     onClickDone={this.saveModeratorAssignmentModal}
                     onClickClose={this.closeModeratorAssignmentModal}
                   />
@@ -328,9 +330,20 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
 
   @autobind
   async onAddModeratorClick() {
-    await this.props.dispatch(loadArticleModerators(this.props.article));
+    this.setState({
+      isModeratorModalVisible: true,
+      moderatorIds: Set<ModelId>(this.props.article.assignedModerators),
+    });
+  }
 
-    this.setState({ isModeratorModalVisible: true });
+  @autobind
+  onAddModerator(userId: string) {
+    this.setState({moderatorIds: this.state.moderatorIds.add(userId)});
+  }
+
+  @autobind
+  onRemoveModerator(userId: string) {
+    this.setState({moderatorIds: this.state.moderatorIds.remove(userId)});
   }
 
   @autobind
@@ -339,9 +352,9 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
   }
 
   @autobind
-  saveModeratorAssignmentModal(article: IArticleModel, moderators: Array<IUserModel>) {
-    this.props.dispatch(updateArticleModerators(article, moderators));
-
+  saveModeratorAssignmentModal() {
+    const moderatorIds = this.state.moderatorIds.toArray();
+    updateArticleModerators(this.props.article.id, moderatorIds);
     this.closeModeratorAssignmentModal();
   }
 

@@ -255,7 +255,7 @@ export type ArrowPosition = 'topLeft' | 'topCenter' | 'topRight' | 'rightTop' |
   'rightCenter' | 'rightBottom' | 'bottomRight' | 'bottomCenter' |
   'bottomLeft' | 'leftBottom' | 'leftCenter' | 'leftTop';
 
-export interface IToolTipProps extends React.Props<any> {
+export interface IToolTipProps {
   arrowPosition?: ArrowPosition;
   backgroundColor: string;
   hasDropShadow?: boolean;

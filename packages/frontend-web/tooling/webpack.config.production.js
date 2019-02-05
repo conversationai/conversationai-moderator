@@ -19,6 +19,8 @@ const webpack = require('webpack');
 const publicPath = "/_assets/";
 
 module.exports = {
+  mode: 'production',
+
   target: 'web',
 
   entry: {moderator: ['@babel/polyfill', './dist/app/main']},
@@ -50,12 +52,12 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx"],
     alias: {
-      'aphrodite': 'aphrodite/no-important'
+      'aphrodite': 'aphrodite/no-important',
+      'ws': 'slugify', // Not a real alias.  But stops webpack from including ws library in bundle
     }
   },
   plugins: [
     new webpack.PrefetchPlugin("react"),
-    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
       __DEVELOPMENT__: false,
       __DEVPANEL__: false,
@@ -65,9 +67,6 @@ module.exports = {
       ENV_RESTRICT_TO_SESSION: (process.env['RESTRICT_TO_SESSION'] || true),
       ENV_MODERATOR_GUIDELINES_URL: "'" + (process.env['MODERATOR_GUIDELINES_URL'] || '') + "'",
       ENV_SUBMIT_FEEDBACK_URL: "'" + (process.env['SUBMIT_FEEDBACK_URL'] || '') + "'",
-      "process.env": {
-        NODE_ENV: JSON.stringify("production")
-      }
     }),
   ]
 };

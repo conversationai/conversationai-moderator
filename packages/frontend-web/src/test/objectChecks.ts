@@ -16,10 +16,10 @@ limitations under the License.
 
 import check from 'check-types';
 import {
-  MODERATION_RULE_ACTION_ACCEPT,
-  MODERATION_RULE_ACTION_DEFER,
-  MODERATION_RULE_ACTION_HIGHLIGHT,
-  MODERATION_RULE_ACTION_REJECT,
+  SERVER_ACTION_ACCEPT,
+  SERVER_ACTION_DEFER,
+  SERVER_ACTION_HIGHLIGHT,
+  SERVER_ACTION_REJECT,
 } from '../models';
 
 const loggedBad: any = {};
@@ -91,7 +91,8 @@ function category_id_or_null(val: any) {
     return true;
   }
 
-  return categoryIds.has(val);
+  // TODO: Don't like this inconsistency between categoryIds.  We really need to pin down ids into a single type.
+  return categoryIds.has(val.toString());
 }
 
 function tag_id_or_null(val: any) {
@@ -107,7 +108,20 @@ function array_of_users(val: any) {
   if (!check.array(val)) {
     return false;
   }
-  return true;
+
+  let ret = true;
+  for (const u of val) {
+    if (!check.string(u)) {
+      console.log('Bad user ID', u);
+      ret = false;
+    }
+    if (!userIds.has(u)) {
+      console.log('User check: no user with ID', u);
+      console.log(' Known IDs', userIds);
+      ret = false;
+    }
+  }
+  return ret;
 }
 
 function action(val: any) {
@@ -116,10 +130,10 @@ function action(val: any) {
   }
 
   return [
-    MODERATION_RULE_ACTION_ACCEPT,
-    MODERATION_RULE_ACTION_REJECT,
-    MODERATION_RULE_ACTION_HIGHLIGHT,
-    MODERATION_RULE_ACTION_DEFER,
+    SERVER_ACTION_ACCEPT,
+    SERVER_ACTION_REJECT,
+    SERVER_ACTION_HIGHLIGHT,
+    SERVER_ACTION_DEFER,
   ].indexOf(val) >= 0;
 }
 
@@ -149,6 +163,7 @@ const categoryFields = {
 const articleFields = {
   ...commonFields,
   title: check.string,
+  text: check.maybe.string,
   url: check.string,
   category: category,
   sourceCreatedAt: date_string,
@@ -219,6 +234,7 @@ export function checkCategory(o: any) {
   if (!checkObject(o, 'category', categoryFields)) {
     return false;
   }
+
   categoryIds.add(o.id);
   return true;
 }

@@ -20,6 +20,7 @@ export * from './comment';
 export * from './commentDated';
 export * from './commentScore';
 export * from './commentSummaryScore';
+export * from './common';
 export * from './preselect';
 export * from './rule';
 export * from './tag';

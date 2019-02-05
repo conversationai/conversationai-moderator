@@ -17,7 +17,7 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
 import React from 'react';
-import { IArticleModel, ICategoryModel, IUserModel } from '../../../../../models';
+import { IUserModel } from '../../../../../models';
 import { Button, CheckboxRow, OverflowContainer, RejectIcon } from '../../../../components';
 import { partial } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
@@ -147,14 +147,12 @@ class ContainerFooter extends React.Component<IContainerFooterProps> {
 }
 
 export interface IAssignModeratorsProps {
-  article?: IArticleModel;
-  category?: ICategoryModel;
   users?: List<IUserModel>;
   moderatorIds?: Set<ModelId>;
-  categoryModeratorIds?: Set<ModelId>;
+  superModeratorIds?: Set<ModelId>;
   isReady?: boolean;
   label: string;
-  onClickDone?(assignment: ICategoryModel | IArticleModel,  moderators: Array<IUserModel>): void;
+  onClickDone?(): void;
   onClickClose?(): void;
   onAddModerator?(userId: string): any;
   onRemoveModerator?(userId: string): any;
@@ -183,7 +181,7 @@ export class AssignModerators
     const {
       label,
       moderatorIds,
-      categoryModeratorIds,
+      superModeratorIds,
       isReady,
     } = this.props;
 
@@ -199,7 +197,7 @@ export class AssignModerators
             <ModeratorList
               users={this.state.users}
               moderatorIds={moderatorIds}
-              categoryModeratorIds={categoryModeratorIds}
+              categoryModeratorIds={superModeratorIds}
               onModeratorStatusChange={this.onModeratorStatusChange}
             />
           </div>
@@ -225,11 +223,6 @@ export class AssignModerators
 
   @autobind
   onClickDone() {
-    const { article, category, users, moderatorIds, onClickDone} = this.props;
-    onClickDone(
-      category ? category : article,
-      moderatorIds
-          .map((id) => users.find((u) => u.id === id)).toArray(),
-    );
+    this.props.onClickDone();
   }
 }

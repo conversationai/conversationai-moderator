@@ -39,9 +39,10 @@ const commonFields = ['id', 'updatedAt', 'allCount', 'unprocessedCount', 'unmode
   'batchedCount', 'recommendedCount', 'assignedModerators', ];
 const categoryFields = [...commonFields, 'label'];
 const articleFields = [...commonFields, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
-  'isCommentingEnabled', 'isAutoModerated'];
+  'isCommentingEnabled', 'isAutoModerated', 'text'];
 
 interface ISystemSummary {
+  users: any;
   tags: any;
   taggingSensitivities: any;
   rules: any;
@@ -49,7 +50,6 @@ interface ISystemSummary {
 }
 
 interface IGlobalSummary {
-  users: any;
   categories: any;
   articles: any;
   deferred: number;
@@ -65,6 +65,11 @@ interface IMessage {
 }
 
 async function getSystemSummary() {
+  const users = await User.findAll({where: {group: ['admin', 'general']}});
+  const userdata = users.map((u: IUserInstance) => {
+    return pick(u.toJSON(), userFields);
+  });
+
   const tags = await Tag.findAll({});
   const tagdata = tags.map((t: ITagInstance) => {
     return pick(t.toJSON(), tagFields);
@@ -88,6 +93,7 @@ async function getSystemSummary() {
   return {
     type: 'system',
     data: {
+      users: userdata,
       tags: tagdata,
       taggingSensitivities: tsdata,
       rules: ruledata,
@@ -96,12 +102,9 @@ async function getSystemSummary() {
   } as IMessage;
 }
 
+// TODO: Can't find a good way to get rid of the any types below
+//       Revisit when sequelize has been updated
 async function getGlobalSummary() {
-  const users = await User.findAll({where: {group: ['admin', 'general']}});
-  const userdata = users.map((u: IUserInstance) => {
-    return pick(u.toJSON(), userFields);
-  });
-
   const categories = await Category.findAll({
     where: {isActive: true},
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
@@ -109,7 +112,9 @@ async function getGlobalSummary() {
   const categoryIds: Array<number> = [];
   const categorydata = categories.map((c: ICategoryInstance) => {
     categoryIds.push(c.id);
-    return pick(c.toJSON(), categoryFields);
+    const category: any = pick(c.toJSON(), categoryFields);
+    category.assignedModerators = category.assignedModerators.map((i: any) => i.user_category_assignment.userId.toString());
+    return category;
   });
 
   const articles = await Article.findAll({
@@ -117,7 +122,9 @@ async function getGlobalSummary() {
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
   const articledata = articles.map((a: IArticleInstance) => {
-    return pick(a.toJSON(), articleFields);
+    const article: any = pick(a.toJSON(), articleFields);
+    article.assignedModerators = article.assignedModerators.map((i: any) => i.moderator_assignment.userId.toString());
+    return article;
   });
 
   const deferred = await Comment.findAndCountAll({where: { isDeferred: true }, limit: 0});
@@ -125,7 +132,6 @@ async function getGlobalSummary() {
   return {
     type: 'global',
     data: {
-      users: userdata,
       categories: categorydata,
       articles: articledata,
       deferred: deferred['count'],

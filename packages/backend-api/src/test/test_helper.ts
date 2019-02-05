@@ -18,7 +18,7 @@ import * as chai from 'chai';
 
 import {
   logger,
-  MODERATION_RULE_ACTION_ACCEPT,
+  MODERATION_ACTION_ACCEPT,
   sequelize,
 } from '@conversationai/moderator-backend-core';
 import {
@@ -40,7 +40,8 @@ import {
   Comment,
   CommentScore,
   CommentSummaryScore,
-  ModerationRule, Preselect,
+  ModerationRule,
+  Preselect,
   Tag,
   TaggingSensitivity,
   User,
@@ -183,7 +184,7 @@ export async function makeRule(tag: ITagInstance, obj = {}): Promise<IModeration
     tagId: tag.id,
     lowerThreshold: 0,
     upperThreshold: 1,
-    action: MODERATION_RULE_ACTION_ACCEPT,
+    action: MODERATION_ACTION_ACCEPT,
     ...obj,
   });
 }

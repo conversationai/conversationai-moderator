@@ -16,11 +16,9 @@ limitations under the License.
 
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { provideHooks } from 'redial';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { ICommentModel } from '../../../models';
-import { IRedialLocals } from '../../../types';
+import { ICommentModel, ModelId } from '../../../models';
 import { getMyUserId } from '../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../stores';
 import { getTextSizes } from '../../stores/textSizes';
@@ -41,6 +39,7 @@ import {
 } from './store';
 export const reducer: any = searchReducer;
 import { ICommentAction } from '../../../types';
+import { getArticleFromId } from '../../stores/articles';
 import {
   approveComments,
   deferComments,
@@ -58,13 +57,12 @@ import {
 } from '../../stores/comments';
 import { loadCommentSummaryScores } from '../../stores/commentSummaryScores';
 import { getTaggableTags } from '../../stores/tags';
-import { getArticle, loadArticle } from '../Comments/store';
-import { Search as PureSearch } from './Search';
+import { ISearchProps, Search as PureSearch } from './Search';
 
 export { SearchResults } from './components/SearchResults';
 
 export interface IActionMap {
-  [key: string]: (ids: Array<string>, userId: string, tagId?: string) => () => Promise<void>;
+  [key: string]: (ids: Array<string>, userId: ModelId, tagId?: string) => () => Promise<void>;
 }
 
 const updateCommentStateAction: {
@@ -86,20 +84,32 @@ const actionMap: IActionMap = {
   reset: resetComments,
 };
 
+type ISearchStateProps = Pick<
+  ISearchProps,
+  'articleId' |
+  'article' |
+  'userId'
+  >;
+
+type ISearchOwnProps = Pick<
+  ISearchProps,
+  'location'
+  >;
+
 const mapStateToProps = createStructuredSelector({
-  totalCommentCount: (state: any) => getAllCommentIds(state).size,
-  isLoading: (state: any) => getCommentListIsLoading(state) || !getCommentListHasLoaded(state),
-  isItemChecked: (state: any) => (id: string) => getIsItemChecked(state, id),
+  totalCommentCount: (state: IAppStateRecord) => getAllCommentIds(state).size,
+  isLoading: (state: IAppStateRecord) => getCommentListIsLoading(state) || !getCommentListHasLoaded(state),
+  isItemChecked: (state: IAppStateRecord) => (id: string) => getIsItemChecked(state, id),
   areNoneSelected: getAreAnyCommentsSelected,
   areAllSelected: getAreAllSelected,
   selectedCount: getSelectedCount,
   allCommentIds: getAllCommentIds,
   tags: getTaggableTags,
-  searchTerm: (_state: any, ownProps: any) => ownProps.location.query.term,
-  articleId: (_state: any, ownProps: any) => parseInt(ownProps.location.query.articleId, 10),
-  article: (state: any) => getArticle(state),
+  searchTerm: (_state: IAppStateRecord, { location }: ISearchOwnProps) => location.query.term,
+  articleId: (_: IAppStateRecord, { location }: ISearchOwnProps) => location.query.articleId,
+  article: (state: IAppStateRecord, { location }: ISearchOwnProps) => location.query.articleId && getArticleFromId(state, location.query.articleId),
   textSizes: getTextSizes,
-  getLinkTarget: (state: any, { location }: any) => {
+  getLinkTarget: (state: IAppStateRecord, { location }: ISearchOwnProps) => {
     const identifier = getCurrentPagingIdentifier(state);
 
     return (comment: ICommentModel): string => {
@@ -121,7 +131,7 @@ const mapStateToProps = createStructuredSelector({
     };
   },
   userId: (state: IAppStateRecord) => getMyUserId(state),
-  searchByAuthor: (_: any, { location }: any) => {
+  searchByAuthor: (_: IAppStateRecord, { location }: ISearchOwnProps) => {
     return location.query.searchByAuthor === 'true';
   },
 });
@@ -162,7 +172,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
   };
 }
 
-const mergeProps = (stateProps: any, dispatchProps: any, ownProps: any) => {
+const mergeProps = (stateProps: ISearchStateProps, dispatchProps: any, ownProps: ISearchOwnProps) => {
   return {
       ...ownProps,
       ...stateProps,
@@ -177,16 +187,6 @@ const mergeProps = (stateProps: any, dispatchProps: any, ownProps: any) => {
 export const Search: React.ComponentClass = compose(
   withRouter,
   connect(mapStateToProps, mapDispatchToProps, mergeProps),
-  provideHooks<IRedialLocals>({
-    fetch: async ({
-      dispatch,
-      query: { articleId },
-    }) => {
-      if (articleId) {
-        await dispatch(loadArticle(articleId));
-      }
-    },
-  }),
 )(PureSearch);
 
 export * from './store';

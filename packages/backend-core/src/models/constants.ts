@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,4 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export { NewColumn } from './NewColumn';
+export const MODERATION_ACTION_ACCEPT = 'Accept';
+export const MODERATION_ACTION_REJECT = 'Reject';
+export const MODERATION_ACTION_DEFER = 'Defer';
+export const MODERATION_ACTION_HIGHLIGHT = 'Highlight';
+
+export type IResolution = 'Accept' | 'Reject' | 'Defer';
+
+export type IAction = 'Accept' | 'Reject' | 'Defer' | 'Highlight';

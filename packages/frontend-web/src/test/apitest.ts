@@ -73,6 +73,11 @@ setAxiosToken(token);
 
   await readyPromise;
 
+  systemUpdate.usersCheck();
+  globalUpdate.dataCheck();
+  systemUpdate.tagsCheck();
+
+  console.log('* Results');
   systemUpdate.stateCheck();
   globalUpdate.stateCheck();
   userUpdate.stateCheck();

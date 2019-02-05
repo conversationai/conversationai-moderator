@@ -43,7 +43,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IToastProps extends React.Props<any> {
+export interface IToastProps {
   backgroundColor: string;
   size?: number;
 }

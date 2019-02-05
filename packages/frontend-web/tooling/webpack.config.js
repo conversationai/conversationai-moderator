@@ -19,6 +19,8 @@ const webpack = require('webpack');
 const config = require('@conversationai/moderator-config').config;
 
 module.exports = {
+  mode: 'development',
+
   target: 'web',
 
   entry: {
@@ -56,14 +58,14 @@ module.exports = {
   resolve: {
     extensions: [".web.js", ".js", ".jsx"],
     alias: {
-      'aphrodite': 'aphrodite/no-important'
+      'aphrodite': 'aphrodite/no-important',
+      'ws': 'slugify', // Not a real alias.  But stops webpack from including ws library in bundle
     }
   },
 
   plugins: [
     new webpack.PrefetchPlugin("react"),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
       __DEVELOPMENT__: false,
       __DEVPANEL__: true,

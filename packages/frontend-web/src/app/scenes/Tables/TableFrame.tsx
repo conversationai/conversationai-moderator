@@ -35,7 +35,7 @@ import {
 } from '../../styles';
 import { NICE_DARK_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import { dashboardLink, oldDashboardLink, searchLink, settingsLink } from '../routes';
+import { dashboardLink, searchLink, settingsLink } from '../routes';
 import { COMMON_STYLES } from './styles';
 import {FILTER_CATEGORY, FILTER_MODERATORS, FILTER_MODERATORS_ME} from './utils';
 
@@ -302,7 +302,6 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
           <div key="appName"  onClick={this.showSidebar}>
             <span key="icon" {...css(STYLES.menuIcon)}><icons.MenuIcon/></span> <span key="cat" {...css(STYLES.title)}>{categoryStr}</span>
           </div>
-          {renderHeaderItem(<icons.ListIcon/>, 'Categories', oldDashboardLink(), false)}
           {renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}
           {renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}
           <div key="spacer" style={{flexGrow: 1}}/>

@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,15 +15,22 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+
 import { sequelize } from '../sequelize';
+import {
+  IAction,
+  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_DEFER,
+  MODERATION_ACTION_HIGHLIGHT,
+  MODERATION_ACTION_REJECT,
+} from './constants';
 import { updateHappened } from './last_update';
 
-export const MODERATION_RULE_ACTION_ACCEPT = 'Accept';
 export const MODERATION_RULE_ACTION_TYPES = [
-  MODERATION_RULE_ACTION_ACCEPT,
-  'Reject',
-  'Defer',
-  'Highlight',
+  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_REJECT,
+  MODERATION_ACTION_DEFER,
+  MODERATION_ACTION_HIGHLIGHT,
 ];
 
 export interface IModerationRuleAttributes {
@@ -32,7 +39,7 @@ export interface IModerationRuleAttributes {
   createdBy?: number;
   lowerThreshold: number;
   upperThreshold: number;
-  action: string;
+  action: IAction;
 }
 
 export interface IModerationRuleInstance

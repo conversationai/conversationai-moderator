@@ -192,7 +192,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IArticlePreviewProps extends React.Props<any> {
+export interface IArticlePreviewProps {
   article: IArticleModel;
   moderators?: List<IUserModel>;
   onClose(e: React.MouseEvent<any>): any;
@@ -231,6 +231,7 @@ export class ArticlePreview
 
     const { closeIsFocused } = this.state;
 
+    const articleText = article.text ? article.text : '';
     return(
       <div>
         <div {...css(STYLES.base)}>
@@ -270,11 +271,10 @@ export class ArticlePreview
             </div>
 
             <div {...css(STYLES.body)}>
-              <div {...css(STYLES.bodyCopy)}>{article.text.substring(0, 400)}{article.text.length > 400 && <span>...</span>}</div>
+              <div {...css(STYLES.bodyCopy)}>{articleText.substring(0, 400)}{articleText.length > 400 && <span>...</span>}</div>
               <div {...css(STYLES.moderation)}>
                 <div {...css(STYLES.moderation)}>
                   <p {...css(STYLES.moderators)}>
-                    {moderators.size <= 0 && <div>No assignments yet</div>}
                     {abbreviateModerators(moderators)}
                   </p>
                 </div>

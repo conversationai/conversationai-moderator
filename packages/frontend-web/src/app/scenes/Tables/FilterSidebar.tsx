@@ -22,10 +22,9 @@ import React, { KeyboardEvent, SyntheticEvent } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
-import { IUserModel } from '../../../models';
+import { IUserModel, ModelId } from '../../../models';
 import { Checkbox } from '../../components/Checkbox';
 import * as icons from '../../components/Icons';
-import { ModelId } from '../../stores/moderators';
 import { SCRIM_STYLE } from '../../styles';
 import {css, stylesheet} from '../../utilx';
 import { SETTINGS_STYLES } from '../Settings/settingsStyles';

@@ -25,6 +25,10 @@ import {
   Category,
   Comment,
   CommentSummaryScore,
+  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_DEFER,
+  MODERATION_ACTION_HIGHLIGHT,
+  MODERATION_ACTION_REJECT,
   ModerationRule,
   Tag,
 } from '../../../models';
@@ -116,7 +120,7 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 1,
           lowerThreshold: 0.4,
           upperThreshold: 0.6,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
       ];
 
@@ -157,7 +161,7 @@ describe('Comment Domain Rules Tests', () => {
           tagId: summaryTag.id,
           lowerThreshold: 0,
           upperThreshold: 1,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
       ];
 
@@ -192,14 +196,14 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 3,
           lowerThreshold: 0.7,
           upperThreshold: 0.9,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
 
         ModerationRule.build({
           tagId: 3,
           lowerThreshold: 0.7,
           upperThreshold: 0.8,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
 
         // This should be ignored
@@ -208,7 +212,7 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 3,
           lowerThreshold: 0.5,
           upperThreshold: 0.7,
-          action: 'Reject',
+          action: MODERATION_ACTION_REJECT,
         }),
       ];
 
@@ -249,14 +253,14 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 1,
           lowerThreshold: 0.7,
           upperThreshold: 1,
-          action: 'Highlight',
+          action: MODERATION_ACTION_HIGHLIGHT,
         }),
 
         ModerationRule.build({
           tagId: 3,
           lowerThreshold: 0.7,
           upperThreshold: 0.8,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
       ];
 
@@ -297,14 +301,14 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 1,
           lowerThreshold: 0.8,
           upperThreshold: 0.9,
-          action: 'Reject',
+          action: MODERATION_ACTION_REJECT,
         }),
 
         ModerationRule.build({
           tagId: 2,
           lowerThreshold: 0.7,
           upperThreshold: 0.8,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
       ];
 
@@ -339,7 +343,7 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 29,
           lowerThreshold: 0.5,
           upperThreshold: 1,
-          action: 'Reject',
+          action: MODERATION_ACTION_REJECT,
         }),
       ];
 
@@ -380,14 +384,14 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 46,
           lowerThreshold: 0.9,
           upperThreshold: 1,
-          action: 'Reject',
+          action: MODERATION_ACTION_REJECT,
         }),
 
         ModerationRule.build({
           tagId: 83,
           lowerThreshold: 0.5,
           upperThreshold: 1,
-          action: 'Reject',
+          action: MODERATION_ACTION_REJECT,
         }),
       ];
 
@@ -422,7 +426,7 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 15,
           lowerThreshold: 0.5,
           upperThreshold: 1,
-          action: 'Defer',
+          action: MODERATION_ACTION_DEFER,
         }),
       ];
 
@@ -463,14 +467,14 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 217,
           lowerThreshold: 0.4,
           upperThreshold: 0.9,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
 
         ModerationRule.build({
           tagId: 415,
           lowerThreshold: 0.5,
           upperThreshold: 0.7,
-          action: 'Defer',
+          action: MODERATION_ACTION_DEFER,
         }),
 
         // Should be ignored...
@@ -479,7 +483,7 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 415,
           lowerThreshold: 0.7,
           upperThreshold: 0.9,
-          action: 'Reject',
+          action: MODERATION_ACTION_REJECT,
         }),
       ];
 
@@ -526,21 +530,21 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 91,
           lowerThreshold: 0.8,
           upperThreshold: 0.9,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
 
         ModerationRule.build({
           tagId: 294,
           lowerThreshold: 0.7,
           upperThreshold: 0.8,
-          action: 'Reject',
+          action: MODERATION_ACTION_REJECT,
         }),
 
         ModerationRule.build({
           tagId: 19,
           lowerThreshold: 0.8,
           upperThreshold: 1,
-          action: 'Defer',
+          action: MODERATION_ACTION_DEFER,
         }),
       ];
 
@@ -581,14 +585,14 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 901,
           lowerThreshold: 0.1,
           upperThreshold: 0.9,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
 
         ModerationRule.build({
           tagId: 81,
           lowerThreshold: 0.3,
           upperThreshold: 0.4,
-          action: 'Highlight',
+          action: MODERATION_ACTION_HIGHLIGHT,
         }),
       ];
 
@@ -635,14 +639,14 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 2,
           lowerThreshold: 0.8,
           upperThreshold: 0.9,
-          action: 'Reject',
+          action: MODERATION_ACTION_REJECT,
         }),
 
         ModerationRule.build({
           tagId: 4,
           lowerThreshold: 0.3,
           upperThreshold: 0.5,
-          action: 'Highlight',
+          action: MODERATION_ACTION_HIGHLIGHT,
         }),
       ];
 
@@ -689,14 +693,14 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 15,
           lowerThreshold: 0.2,
           upperThreshold: 0.3,
-          action: 'Defer',
+          action: MODERATION_ACTION_DEFER,
         }),
 
         ModerationRule.build({
           tagId: 10,
           lowerThreshold: 0.9,
           upperThreshold: 1,
-          action: 'Highlight',
+          action: MODERATION_ACTION_HIGHLIGHT,
         }),
 
         // Should be ignored
@@ -705,7 +709,7 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 5,
           lowerThreshold: 0.3,
           upperThreshold: 0.5,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
       ];
 
@@ -746,14 +750,14 @@ describe('Comment Domain Rules Tests', () => {
           tagId: 12,
           lowerThreshold: 0.2,
           upperThreshold: 0.3,
-          action: 'Reject',
+          action: MODERATION_ACTION_REJECT,
         }),
 
         ModerationRule.build({
           tagId: 4,
           lowerThreshold: 0.9,
           upperThreshold: 1,
-          action: 'Highlight',
+          action: MODERATION_ACTION_HIGHLIGHT,
         }),
       ];
 
@@ -842,14 +846,14 @@ describe('Comment Domain Rules Tests', () => {
           tagId: tag1.id,
           lowerThreshold: 0.5,
           upperThreshold: 1,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
 
         createModerationRule({
           tagId: tag2.id,
           lowerThreshold: 0.25,
           upperThreshold: 0.75,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
       ]);
 
@@ -899,13 +903,13 @@ describe('Comment Domain Rules Tests', () => {
           tagId: tag1.id,
           lowerThreshold: 0.5,
           upperThreshold: 1,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
         createModerationRule({
           tagId: tag2.id,
           lowerThreshold: 0.25,
           upperThreshold: 0.75,
-          action: 'Accept',
+          action: MODERATION_ACTION_ACCEPT,
         }),
       ]);
 

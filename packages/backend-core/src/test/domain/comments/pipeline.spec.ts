@@ -40,6 +40,8 @@ import {
   CommentScoreRequest,
   CommentSummaryScore,
   Decision,
+  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_REJECT,
   Tag,
 } from '../../../models';
 import { ITagInstance } from '../../../models';
@@ -421,7 +423,7 @@ describe('Comments Domain Pipeline Tests', () => {
       });
 
       await createModerationRule({
-        action: 'Reject',
+        action: MODERATION_ACTION_REJECT,
         tagId: tag.id,
         lowerThreshold: 0.0,
         upperThreshold: 1.0,
@@ -458,7 +460,7 @@ describe('Comments Domain Pipeline Tests', () => {
       });
 
       const rule = await createModerationRule({
-        action: 'Reject',
+        action: MODERATION_ACTION_REJECT,
         tagId: tag.id,
         lowerThreshold: 0.0,
         upperThreshold: 1.0,
@@ -472,7 +474,7 @@ describe('Comments Domain Pipeline Tests', () => {
         },
       }))!;
 
-      assert.equal(decision.get('status'), 'Reject');
+      assert.equal(decision.get('status'), MODERATION_ACTION_REJECT);
       assert.equal(decision.get('source'), 'Rule');
       assert.equal(decision.get('moderationRuleId'), rule.id);
     });
@@ -666,7 +668,7 @@ describe('Comments Domain Pipeline Tests', () => {
     it('should record the descision to accept', async () => {
       const comment = await createComment();
       const user = await createUser();
-      await recordDecision(comment, 'Accept', user, false);
+      await recordDecision(comment, MODERATION_ACTION_ACCEPT, user, false);
 
       const foundDecisions = await Decision.findAll({
         where: {
@@ -681,7 +683,7 @@ describe('Comments Domain Pipeline Tests', () => {
       assert.equal(firstDecision.get('commentId'), comment.id);
       assert.equal(firstDecision.get('source'), 'User');
       assert.equal(firstDecision.get('userId'), user.id);
-      assert.equal(firstDecision.get('status'), 'Accept');
+      assert.equal(firstDecision.get('status'), MODERATION_ACTION_ACCEPT);
       assert.isTrue(firstDecision.get('isCurrentDecision'));
     });
 
@@ -689,7 +691,7 @@ describe('Comments Domain Pipeline Tests', () => {
       const user = await createUser();
       const tag = await createTag();
       const rule = await createModerationRule({
-        action: 'Reject',
+        action: MODERATION_ACTION_REJECT,
         tagId: tag.id,
         lowerThreshold: 0.0,
         upperThreshold: 1.0,
@@ -697,8 +699,8 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const comment = await createComment();
 
-      await recordDecision(comment, 'Accept', user, false);
-      await recordDecision(comment, 'Reject', rule, false);
+      await recordDecision(comment, MODERATION_ACTION_ACCEPT, user, false);
+      await recordDecision(comment, MODERATION_ACTION_REJECT, rule, false);
 
       const foundDecisions = await Decision.findAll({
         where: {
@@ -722,7 +724,7 @@ describe('Comments Domain Pipeline Tests', () => {
       assert.equal(firstDecision.get('commentId'), comment.id);
       assert.equal(firstDecision.get('source'), 'Rule');
       assert.equal(firstDecision.get('moderationRuleId'), rule.id);
-      assert.equal(firstDecision.get('status'), 'Reject');
+      assert.equal(firstDecision.get('status'), MODERATION_ACTION_REJECT);
       assert.isTrue(firstDecision.get('isCurrentDecision'));
     });
   });
