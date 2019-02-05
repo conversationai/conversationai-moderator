@@ -19,12 +19,10 @@ import {
   StyleSheet,
 } from 'aphrodite';
 import { Map } from 'immutable';
-import { isEmpty } from 'lodash';
 import { CSSProperties } from 'react';
 
 const Prefixer = require('inline-style-prefixer');
 
-import { DEVELOPMENT } from '../config';
 import { memoize } from '../util/partial';
 
 const prefixer = new Prefixer({ userAgent: navigator.userAgent });
@@ -44,8 +42,10 @@ export function stylesheet<T>(styles: T): T {
   const sheet = StyleSheet.create(styles as any);
 
   for (const key in sheet) {
-    const originalObject = (styles as any)[key];
-    knownStylesheets = knownStylesheets.set(originalObject, sheet[key]);
+    if (sheet.hasOwnProperty(key)) {
+      const originalObject = (styles as any)[key];
+      knownStylesheets = knownStylesheets.set(originalObject, sheet[key]);
+    }
   }
 
   return styles;
@@ -73,53 +73,18 @@ export function originalCSS(...styles: Array<IPossibleStyle>): IStyleProps {
   const notFromStylesheet = styles.filter((style: IPossibleStyle) => style && !knownStyle(style));
 
   const prefixedInline = notFromStylesheet.map(prefixStyles);
+  const classNames = stylesheetToClassNames(fromStylesheet.map(knownStyle));
+  const output: IStyleProps = {};
 
-  if (DEVELOPMENT) {
-    let gotInlineStyle = false;
-
-    for (const style of styles) {
-      if (!style) {
-        continue;
-      }
-
-      if (knownStyle(style)) {
-        if (gotInlineStyle) {
-          throw new Error('Tried to add a class-based style AFTER an inline style. Precedence will be confusing. Please refactor');
-        }
-      }
-      else {
-        gotInlineStyle = true;
-      }
-    }
-
-    const output: IStyleProps = {};
-
-    const outputStyles = {
-      ...flattenStyles(fromStylesheet),
-      ...flattenStyles(prefixedInline),
-    };
-
-    if (!isEmpty(outputStyles)) {
-      output.style = outputStyles;
-    }
-
-    return output;
+  if (prefixedInline.length > 0) {
+    output.style = flattenStyles(prefixedInline);
   }
-  else {
-    const classNames = stylesheetToClassNames(fromStylesheet.map(knownStyle));
 
-    const output: IStyleProps = {};
-
-    if (prefixedInline.length > 0) {
-      output.style = flattenStyles(prefixedInline);
-    }
-
-    if (classNames.length > 0) {
-      output.className = classNames;
-    }
-
-    return output;
+  if (classNames.length > 0) {
+    output.className = classNames;
   }
+
+  return output;
 }
 
 export const css = memoize(originalCSS, true);
