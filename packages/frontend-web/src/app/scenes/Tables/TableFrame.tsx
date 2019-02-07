@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,23 +23,19 @@ import { Link, WithRouterProps } from 'react-router';
 import { ICategoryModel, IUserModel } from '../../../models';
 import { logout } from '../../auth';
 import * as icons from '../../components/Icons';
-import {Scrim} from '../../components/Scrim';
+import { Scrim } from '../../components/Scrim';
 import {
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
   HEADLINE_TYPE,
   LIGHT_PRIMARY_TEXT_COLOR,
-  NICE_LIGHT_BLUE,
-  NICE_LIGHT_HIGHLIGHT_BLUE,
   SIDEBAR_BLUE,
 } from '../../styles';
 import { NICE_DARK_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
 import { css, stylesheet } from '../../utilx';
 import { dashboardLink, searchLink, settingsLink } from '../routes';
-import { COMMON_STYLES } from './styles';
-import {FILTER_CATEGORY, FILTER_MODERATORS, FILTER_MODERATORS_ME} from './utils';
-
-const SIDEBAR_XPAD = 15;
+import { CategorySidebar} from './CategorySidebar';
+import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
 
 const STYLES = stylesheet({
   header: {
@@ -107,50 +103,7 @@ const STYLES = stylesheet({
     opacity: '1',
     zIndex: 30,
   },
-
-  sidebarHeader: {
-    height: `${HEADER_HEIGHT * 1.5}px`,
-    lineHeight: `${HEADER_HEIGHT * 1.5}px`,
-    borderBottom: `1px solid ${NICE_LIGHT_BLUE}`,
-    padding: `0 ${SIDEBAR_XPAD}px`,
-    marginBottom: '10px',
-  },
-
-  sidebarHeaderIcon: {
-    marginRight: '30px',
-    position: 'relative',
-    top: '13px',
-  },
-
-  sidebarRow: {
-    width: '100%',
-    padding: `15px ${SIDEBAR_XPAD}px`,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    boxSizing: 'border-box',
-  },
-
-  sidebarRowSelected: {
-    backgroundColor: NICE_MIDDLE_BLUE,
-    borderLeft: `5px solid ${NICE_LIGHT_HIGHLIGHT_BLUE}`,
-    paddingLeft: `${SIDEBAR_XPAD - 5}px`,
-  },
-
-  sidebarRowHeader: {
-    fontSize: '12px',
-    color: NICE_LIGHT_BLUE,
-  },
-
-  sidebarSection: {
-  },
-
-  sidebarCount: {
-    marginLeft: `${SIDEBAR_XPAD}px`,
-  },
 });
-
-const MODS_ME = `${FILTER_MODERATORS}=${FILTER_MODERATORS_ME}`;
 
 export interface IITableFrameProps extends WithRouterProps {
   dispatch: Function;
@@ -195,7 +148,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     keyboardJS.unbind('escape', this.hideSidebar);
   }
 
-  renderSidebar(isMe: boolean, category?: ICategoryModel) {
+  renderSidebar(selectMine: boolean, category?: ICategoryModel) {
     if (!this.state.sidebarVisible) {
       return '';
     }
@@ -205,44 +158,16 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
       categories,
     } = this.props;
 
-    const isMeSuffix = isMe ? `+${MODS_ME}` : '';
-    const allLink = isMe ? dashboardLink(MODS_ME) : dashboardLink();
-    const allUnmoderated = categories.reduce((r: number, v: ICategoryModel) => (r + v.unmoderatedCount), 0);
-
     return (
       <Scrim isVisible onBackgroundClick={this.hideSidebar} scrimStyles={{background: 'rgba(0, 0, 0, 0.4)'}}>
         <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}}>
-          <div key="sidebar" {...css(STYLES.sidebar)}>
-            <div key="header" {...css(STYLES.sidebarHeader)} onClick={this.hideSidebar}>
-              {user.avatarURL ?
-                <img src={user.avatarURL} {...css(COMMON_STYLES.smallImage, STYLES.sidebarHeaderIcon)}/> :
-                <icons.UserIcon {...css(COMMON_STYLES.smallIcon, STYLES.sidebarHeaderIcon, {color: NICE_MIDDLE_BLUE})}/>
-              }
-              {user.name}
-            </div>
-            <div key="labels" {...css(STYLES.sidebarRow, STYLES.sidebarRowHeader)}>
-              <div key="label" {...css(STYLES.sidebarSection)}>Section</div>
-              <div key="count" {...css(STYLES.sidebarCount)}>New comments</div>
-            </div>
-            <div key="all" {...css(STYLES.sidebarRow, category ? {} : STYLES.sidebarRowSelected)}>
-              <div key="label" {...css(STYLES.sidebarSection)}>
-                <Link to={allLink} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>All</Link>
-              </div>
-              <div key="count" {...css(STYLES.sidebarCount)}>{allUnmoderated}</div>
-            </div>
-            <div {...css({maxHeight: '80vh', overflowY: 'auto'})}>
-              {categories.map((c: ICategoryModel) => (
-                <div key={c.id} {...css(STYLES.sidebarRow, category && category.id === c.id ? STYLES.sidebarRowSelected : {})}>
-                  <div key="label" {...css(STYLES.sidebarSection)}>
-                    <Link to={dashboardLink(`${FILTER_CATEGORY}=${c.id}${isMeSuffix}`)} onClick={this.hideSidebar} {...css(COMMON_STYLES.cellLink)}>
-                      {c.label}
-                    </Link>
-                  </div>
-                  <div key="count" {...css(STYLES.sidebarCount)}>{c.unmoderatedCount}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <CategorySidebar
+            user={user}
+            categories={categories}
+            selectedCategory={category}
+            hideSidebar={this.hideSidebar}
+            selectMine={selectMine}
+          />
         </FocusTrap>
       </Scrim>
     );
@@ -255,7 +180,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
       location,
     } = this.props;
 
-    const isMe = location.pathname.indexOf(MODS_ME) >= 0;
+    const isMe = location.pathname.indexOf(FILTER_MODERATOR_ISME) >= 0;
 
     function renderHeaderItem(icon: any, text: string, link: string, selected?: boolean) {
       let styles = {...css(STYLES.headerItem)};
@@ -290,7 +215,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     }
 
     let allArticles = dashboardLink();
-    let myArticles = dashboardLink(MODS_ME);
+    let myArticles = dashboardLink(FILTER_MODERATOR_ISME);
     if (categoryFilter) {
       allArticles += `/${categoryFilter}`;
       myArticles += `+${categoryFilter}`;

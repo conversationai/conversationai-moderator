@@ -7714,6 +7714,723 @@ exports[`Storyshots Slider base 1`] = `
 </div>
 `;
 
+exports[`Storyshots TableFrame Category sidebar 1`] = `
+<div
+  className="sidebar_1wq87s1"
+>
+  <div
+    className="sidebarHeader_sd2vav"
+  >
+    <svg
+      aria-hidden="true"
+      className="MuiSvgIcon-root-1 sidebarHeaderIcon_14cmr06"
+      focusable="false"
+      role="presentation"
+      style={
+        Object {
+          "fontSize": 36,
+        }
+      }
+      viewBox="0 0 24 24"
+    >
+      <path
+        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"
+      />
+      <path
+        d="M0 0h24v24H0z"
+        fill="none"
+      />
+    </svg>
+    <span
+      className="verticalCenterText_1szrqxt"
+    >
+      Algernon Bullwinkle the Third
+    </span>
+  </div>
+  <div
+    className="sidebarBar_1jf9hx7"
+  />
+  <div
+    className="sidebarRow_1ucwgiw-o_O-sidebarRowHeader_1u2qebd"
+  >
+    <div
+      className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+    >
+      Section
+    </div>
+    <div
+      className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+    >
+      New comments
+    </div>
+  </div>
+  <div
+    className="sidebarRow_1ucwgiw"
+    style={Object {}}
+  >
+    <div
+      className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+    >
+      <a
+        className="cellLink_bnmhji"
+        onClick={[Function]}
+        style={Object {}}
+      >
+        All
+      </a>
+    </div>
+    <div
+      className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+    >
+      4128
+    </div>
+  </div>
+  <div
+    style={
+      Object {
+        "maxHeight": "80vh",
+        "overflowY": "auto",
+      }
+    }
+  >
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          eligendi rerum
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        10
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          et laudantium
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        2
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          N.Y.C. Events Guide
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        15
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw-o_O-sidebarRowSelected_odsq2k"
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          ChuChu TV Nursery Rhymes & Kids Songs
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        2
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          ChuChu TV Nursery Rhymes & Kids Songs
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        2999
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          voluptatem dolores
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        1000
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          nobis et
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        100
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
+<div
+  className="sidebar_1wq87s1"
+>
+  <div
+    className="sidebarHeader_sd2vav"
+    onClick={[Function]}
+  >
+    <img
+      alt="Your image"
+      className="sidebarHeaderIcon_14cmr06"
+      src="https://s3.amazonaws.com/uifaces/faces/twitter/xtopherpaul/128.jpg"
+    />
+    <span
+      className="verticalCenterText_1szrqxt"
+    >
+      Edison Keebler
+    </span>
+  </div>
+  <div
+    className="sidebarBar_1jf9hx7"
+  />
+  <div
+    className="sidebarRow_1ucwgiw-o_O-sidebarRowHeader_1u2qebd"
+  >
+    <div
+      className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+    >
+      Section
+    </div>
+    <div
+      className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+    >
+      New comments
+    </div>
+  </div>
+  <div
+    className="sidebarRow_1ucwgiw"
+    style={Object {}}
+  >
+    <div
+      className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+    >
+      <a
+        className="cellLink_bnmhji"
+        onClick={[Function]}
+        style={Object {}}
+      >
+        All
+      </a>
+    </div>
+    <div
+      className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+    >
+      1333
+    </div>
+  </div>
+  <div
+    style={
+      Object {
+        "maxHeight": "80vh",
+        "overflowY": "auto",
+      }
+    }
+  >
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          in nisi
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        10
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          qui quia
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        2
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw-o_O-sidebarRowSelected_odsq2k"
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          N.Y.C. Events Guide
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        15
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          ChuChu TV Nursery Rhymes & Kids Songs
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        2
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          eligendi in
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        1000
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          id harum
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        100
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          odio quia
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        10
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          provident quo
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        12
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          molestiae harum
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        13
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          pariatur quos
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        14
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          quod laborum
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        15
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          quisquam esse
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        16
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          expedita commodi
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        17
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          tempora ut
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        18
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          doloribus harum
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        19
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          sunt omnis
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        12
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          accusantium et
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        22
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          quos sequi
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        11
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          beatae enim
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        15
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1ucwgiw"
+      style={Object {}}
+    >
+      <div
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      >
+        <a
+          className="cellLink_bnmhji"
+          onClick={[Function]}
+          style={Object {}}
+        >
+          molestiae placeat
+        </a>
+      </div>
+      <div
+        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      >
+        10
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots TagLabelRow Default 1`] = `
 <div>
   <button
