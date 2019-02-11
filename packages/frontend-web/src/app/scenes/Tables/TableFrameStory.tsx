@@ -15,8 +15,9 @@ limitations under the License.
 */
 
 import { storiesOf } from '@storybook/react';
-import { List } from 'immutable';
 import faker from 'faker';
+import { List } from 'immutable';
+import React from 'react';
 
 import { ICategoryModel } from '../../../models';
 import { fakeCategoryModel, fakeUserModel } from '../../../models/fake';

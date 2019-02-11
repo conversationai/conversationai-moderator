@@ -151,7 +151,6 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
 
   @autobind
   updateWindowDimensions() {
-    console.log('got here');
     this.setState({fixedSidebar: fixedSidebar()});
   }
 

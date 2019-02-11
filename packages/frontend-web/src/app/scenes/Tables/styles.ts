@@ -18,14 +18,13 @@ import {
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
   INPUT_DROP_SHADOW,
-  NICE_BLUE_GREY,
-  NICE_LIGHT_BLUE,
   NICE_MIDDLE_BLUE,
   PALE_COLOR,
 } from '../../styles';
 import { stylesheet } from '../../utilx';
 
 export const IMAGE_BASE = 40;
+export const CELL_HEIGHT = 96;
 
 export const big = {
   width: `${IMAGE_BASE}px`,
@@ -54,9 +53,10 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
     width: '100%',
   },
   dataHeader: {
-    color: NICE_LIGHT_BLUE,
+    color: 'rgba(255,255,255,0.54)',
     backgroundColor: NICE_MIDDLE_BLUE,
-    fontSize: 'smaller',
+    fontSize: '12px',
+    fontWeight: 500,
   },
   dataBody: {
     background: 'white',
@@ -65,9 +65,17 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
     height: `${HEADER_HEIGHT}px`,
   },
   dataCell: {
-    borderBottom: `1px solid ${NICE_BLUE_GREY}`,
+    borderBottom: '1px solid rgba(38,50,56,0.12)',
+    height: `${CELL_HEIGHT}px`,
+    fontSize: '14px',
+    fontWeight: '500',
+  },
+  summaryCell: {
+    borderBottom: '1px solid rgba(38,50,56,0.12)',
     height: `${HEADER_HEIGHT}px`,
-    fontSize: '18px',
+    fontSize: '14px',
+    fontWeight: '500',
+    backgroundColor: '#FAFAFA',
   },
   iconCell: {
     width: `${HEADER_HEIGHT}px`,
@@ -88,16 +96,6 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
     width: '100px',
     paddingRight: '20px',
   },
-  categoryLabel: {
-    textTransform: 'uppercase',
-    fontSize: '12px',
-    marginRight: '8px',
-  },
-  dateLabel: {
-    opacity: '0.5',
-    fontSize: '12px',
-  },
-
   select: {
     width: 'auto',
     height: '36px',
@@ -109,11 +107,11 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
     backgroundColor: PALE_COLOR,
     fontSize: '16px',
   },
-
 });
 
 export const COMMON_STYLES = stylesheet({
   cellLink: {
+    fontWeight: '500',
     color: 'inherit',
     ':hover': {
       textDecoration: 'underline',

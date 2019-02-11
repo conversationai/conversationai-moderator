@@ -7714,6 +7714,225 @@ exports[`Storyshots Slider base 1`] = `
 </div>
 `;
 
+exports[`Storyshots TableComponents Title cell 1`] = `
+<table
+  className="dataTable_qnb40"
+  style={
+    Object {
+      "maxWidth": "500px",
+    }
+  }
+>
+  <tr
+    className="dataBody_p6cyk0"
+  >
+    <td
+      className="summaryCell_wodt4a-o_O-textCell_14spq3r"
+    >
+      <div
+        className="titleCell_zbyw3b"
+      >
+        <div
+          className="mainText_ls0c6d"
+        >
+          <div>
+            <a
+              className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
+              onClick={[Function]}
+              style={Object {}}
+            >
+              Iste consectetur earum in sequi aut.
+            </a>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+  <tr
+    className="dataBody_p6cyk0"
+  >
+    <td
+      className="dataCell_cwydnq-o_O-textCell_14spq3r"
+    >
+      <div
+        className="titleCell_zbyw3b"
+      >
+        <div
+          className="superText_1yx6vp7"
+        >
+          <span
+            className="categoryLabel_1tey719"
+          >
+            ChuChu TV Nursery Rhymes & Kids Songs
+          </span>
+          <span>
+            <span>
+              3 h ago
+            </span>
+          </span>
+        </div>
+        <div
+          className="mainText_ls0c6d"
+        >
+          <div>
+            <a
+              className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
+              onClick={[Function]}
+              style={Object {}}
+            >
+              IMF chief Christine Lagarde warns Britain on Brexit: ‘It will never be as good as it is now’
+            </a>
+          </div>
+          <div
+            className="mainTextLink_d909a"
+          >
+            <a
+              className="cellLink_18xp2pq"
+              href="https://sebastian.name"
+              target="_blank"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root-1 MuiSvgIcon-fontSizeSmall-8"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+                <path
+                  d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+  <tr
+    className="dataBody_p6cyk0"
+  >
+    <td
+      className="dataCell_cwydnq-o_O-textCell_14spq3r"
+    >
+      <div
+        className="titleCell_zbyw3b"
+      >
+        <div
+          className="superText_1yx6vp7"
+        >
+          <span>
+            <span>
+              17 h ago
+            </span>
+          </span>
+        </div>
+        <div
+          className="mainText_ls0c6d"
+        >
+          <div>
+            <a
+              className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
+              onClick={[Function]}
+              style={Object {}}
+            >
+              Iste consectetur earum in sequi aut.
+            </a>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+  <tr
+    className="dataBody_p6cyk0"
+  >
+    <td
+      className="dataCell_cwydnq-o_O-textCell_14spq3r"
+    >
+      <div
+        className="titleCell_zbyw3b"
+      >
+        <div
+          className="superText_1yx6vp7"
+        >
+          <span
+            className="categoryLabel_1tey719"
+          >
+            World
+          </span>
+        </div>
+        <div
+          className="mainText_ls0c6d"
+        >
+          <div>
+            <a
+              className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
+              onClick={[Function]}
+              style={Object {}}
+            >
+              Qui eos modi et autem qui porro deleniti atque.
+            </a>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+  <tr
+    className="dataBody_p6cyk0"
+  >
+    <td
+      className="dataCell_cwydnq-o_O-textCell_14spq3r"
+    >
+      <div
+        className="titleCell_zbyw3b"
+      >
+        <div
+          className="mainText_ls0c6d"
+        >
+          <div>
+            <a
+              className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
+              onClick={[Function]}
+              style={Object {}}
+            >
+              Accusantium esse quidem dolores debitis id dolorem.
+            </a>
+          </div>
+          <div
+            className="mainTextLink_d909a"
+          >
+            <a
+              className="cellLink_18xp2pq"
+              href="https://heather.info"
+              target="_blank"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root-1 MuiSvgIcon-fontSizeSmall-8"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+                <path
+                  d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
+`;
+
 exports[`Storyshots TableFrame Category sidebar 1`] = `
 <div
   className="sidebar_6dxlxl"
@@ -7723,7 +7942,7 @@ exports[`Storyshots TableFrame Category sidebar 1`] = `
   >
     <svg
       aria-hidden="true"
-      className="MuiSvgIcon-root-1 sidebarHeaderIcon_14cmr06"
+      className="MuiSvgIcon-root-10 sidebarHeaderIcon_14cmr06"
       focusable="false"
       role="presentation"
       style={
@@ -7772,7 +7991,7 @@ exports[`Storyshots TableFrame Category sidebar 1`] = `
       className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
     >
       <a
-        className="cellLink_bnmhji"
+        className="cellLink_18xp2pq"
         onClick={[Function]}
         style={Object {}}
       >
@@ -7801,7 +8020,7 @@ exports[`Storyshots TableFrame Category sidebar 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -7822,7 +8041,7 @@ exports[`Storyshots TableFrame Category sidebar 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -7843,7 +8062,7 @@ exports[`Storyshots TableFrame Category sidebar 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -7863,7 +8082,7 @@ exports[`Storyshots TableFrame Category sidebar 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -7884,7 +8103,7 @@ exports[`Storyshots TableFrame Category sidebar 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -7905,7 +8124,7 @@ exports[`Storyshots TableFrame Category sidebar 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -7926,7 +8145,7 @@ exports[`Storyshots TableFrame Category sidebar 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -7987,7 +8206,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
       className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
     >
       <a
-        className="cellLink_bnmhji"
+        className="cellLink_18xp2pq"
         onClick={[Function]}
         style={Object {}}
       >
@@ -8016,7 +8235,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8037,7 +8256,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8057,7 +8276,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8078,7 +8297,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8099,7 +8318,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8120,7 +8339,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8141,7 +8360,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8162,7 +8381,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8183,7 +8402,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8204,7 +8423,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8225,7 +8444,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8246,7 +8465,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8267,7 +8486,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8288,7 +8507,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8309,7 +8528,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8330,7 +8549,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8351,7 +8570,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8372,7 +8591,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8393,7 +8612,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8414,7 +8633,7 @@ exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
         className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
       >
         <a
-          className="cellLink_bnmhji"
+          className="cellLink_18xp2pq"
           onClick={[Function]}
           style={Object {}}
         >
@@ -8460,7 +8679,7 @@ exports[`Storyshots TableFrame Header bar for admin 1`] = `
       <div>
         <svg
           aria-hidden="true"
-          className="MuiSvgIcon-root-19"
+          className="MuiSvgIcon-root-28"
           focusable="false"
           role="presentation"
           viewBox="0 0 24 24"
@@ -8493,7 +8712,7 @@ exports[`Storyshots TableFrame Header bar for admin 1`] = `
       <div>
         <svg
           aria-hidden="true"
-          className="MuiSvgIcon-root-19"
+          className="MuiSvgIcon-root-28"
           focusable="false"
           role="presentation"
           viewBox="0 0 24 24"
@@ -8527,7 +8746,7 @@ exports[`Storyshots TableFrame Header bar for admin 1`] = `
       <div>
         <svg
           aria-hidden="true"
-          className="MuiSvgIcon-root-19"
+          className="MuiSvgIcon-root-28"
           focusable="false"
           role="presentation"
           viewBox="0 0 24 24"
@@ -8564,7 +8783,7 @@ exports[`Storyshots TableFrame Header bar with show sidebar 1`] = `
     >
       <svg
         aria-hidden="true"
-        className="MuiSvgIcon-root-10"
+        className="MuiSvgIcon-root-19"
         focusable="false"
         role="presentation"
         style={
@@ -8608,7 +8827,7 @@ exports[`Storyshots TableFrame Header bar with show sidebar 1`] = `
       <div>
         <svg
           aria-hidden="true"
-          className="MuiSvgIcon-root-10"
+          className="MuiSvgIcon-root-19"
           focusable="false"
           role="presentation"
           viewBox="0 0 24 24"
@@ -8640,7 +8859,7 @@ exports[`Storyshots TableFrame Header bar with show sidebar 1`] = `
       <div>
         <svg
           aria-hidden="true"
-          className="MuiSvgIcon-root-10"
+          className="MuiSvgIcon-root-19"
           focusable="false"
           role="presentation"
           viewBox="0 0 24 24"
