@@ -19,8 +19,9 @@ import { List } from 'immutable';
 import faker from 'faker';
 
 import { ICategoryModel } from '../../../models';
-import {fakeCategoryModel, fakeUserModel} from '../../../models/fake';
+import { fakeCategoryModel, fakeUserModel } from '../../../models/fake';
 import { CategorySidebar } from './CategorySidebar';
+import { HeaderBar } from './HeaderBar';
 
 faker.seed(123);
 
@@ -64,6 +65,8 @@ const categoriesShort = List<ICategoryModel>([
   fakeCategoryModel({unmoderatedCount: 100}),
 ]);
 
+const singleCategory = fakeCategoryModel({label: 'ChuChu TV Nursery Rhymes & Kids Songs', unmoderatedCount: 2999});
+
 storiesOf('TableFrame', module)
   .add('Category sidebar overlay', () => {
     function hide() { console.log('hide clicked'); }
@@ -84,6 +87,26 @@ storiesOf('TableFrame', module)
         categories={categoriesShort}
         selectMine={false}
         selectedCategory={categoriesShort.get(3)}
+      />
+    );
+  })
+  .add('Header bar with show sidebar', () => {
+    function show() { console.log('show clicked'); }
+    function logout() { console.log('logout clicked'); }
+    return (
+      <HeaderBar
+        showSidebar={show}
+        logout={logout}
+      />
+    );
+  })
+  .add('Header bar for admin', () => {
+    function logout() { console.log('logout clicked'); }
+    return (
+      <HeaderBar
+        isAdmin
+        logout={logout}
+        category={singleCategory}
       />
     );
   });
