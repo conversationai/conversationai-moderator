@@ -7716,7 +7716,7 @@ exports[`Storyshots Slider base 1`] = `
 
 exports[`Storyshots TableFrame Category sidebar 1`] = `
 <div
-  className="sidebar_1wq87s1"
+  className="sidebar_6dxlxl"
 >
   <div
     className="sidebarHeader_sd2vav"
@@ -7945,7 +7945,7 @@ exports[`Storyshots TableFrame Category sidebar 1`] = `
 
 exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
 <div
-  className="sidebar_1wq87s1"
+  className="sidebar_6dxlxl"
 >
   <div
     className="sidebarHeader_sd2vav"

@@ -23,9 +23,79 @@ import { WithRouterProps } from 'react-router';
 import { ICategoryModel, IUserModel } from '../../../models';
 import { logout } from '../../auth';
 import { Scrim } from '../../components/Scrim';
-import { CategorySidebar} from './CategorySidebar';
+import { css, stylesheet } from '../../utilx';
+import { CategorySidebar, SIDEBAR_WIDTH } from './CategorySidebar';
 import { HeaderBar } from './HeaderBar';
 import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
+
+const STYLES = stylesheet({
+  categorybar: {
+    position: 'absolute',
+    top: '0',
+    bottom: '0',
+    left: `-${SIDEBAR_WIDTH}px`,
+    zIndex: 50,
+  },
+
+  slideout: {
+    left: 0,
+    animationName: {
+      from: {
+        left: `-${SIDEBAR_WIDTH}px`,
+      },
+      to: {
+        left: 0,
+      },
+    },
+    animationDuration: '0.3s',
+    animationTimingFunction: 'ease',
+    animationIterationCount: 1,
+  },
+
+  slidein: {
+    animationName: {
+      from: {
+        left: 0,
+      },
+      to: {
+        left: `-${SIDEBAR_WIDTH}px`,
+      },
+    },
+    animationDuration: '0.3s',
+    animationTimingFunction: 'ease',
+    animationIterationCount: 1,
+  },
+
+  fadeIn: {
+    background: 'rgba(0, 0, 0, 0.4)',
+    animationName: {
+      from: {
+        background: 'rgba(0, 0, 0, 0)',
+      },
+      to: {
+        background: 'rgba(0, 0, 0, 0.4)',
+      },
+    },
+    animationDuration: '0.3s',
+    animationTimingFunction: 'ease',
+    animationIterationCount: 1,
+  },
+
+  fadeOut: {
+    background: 'rgba(0, 0, 0, 0)',
+    animationName: {
+      from: {
+        background: 'rgba(0, 0, 0, 0.4)',
+      },
+      to: {
+        background: 'rgba(0, 0, 0, 0)',
+      },
+    },
+    animationDuration: '0.3s',
+    animationTimingFunction: 'ease',
+    animationIterationCount: 1,
+  },
+});
 
 export interface IITableFrameProps extends WithRouterProps {
   dispatch: Function;
@@ -35,7 +105,12 @@ export interface IITableFrameProps extends WithRouterProps {
 }
 
 export interface IITableFrameState {
-  sidebarVisible: boolean;
+  sidebarState: 'open' | 'closing' | 'closed';
+  fixedSidebar: boolean;
+}
+
+function fixedSidebar() {
+  return SIDEBAR_WIDTH / window.innerWidth < 0.17;
 }
 
 export class TableFrame extends React.Component<IITableFrameProps, IITableFrameState> {
@@ -43,7 +118,8 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     super(props);
 
     this.state = {
-      sidebarVisible: false,
+      sidebarState: 'closed',
+      fixedSidebar: fixedSidebar(),
     };
   }
 
@@ -54,24 +130,34 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
 
   @autobind
   showSidebar() {
-    this.setState({sidebarVisible: true});
+    this.setState({sidebarState: 'open'});
   }
 
   @autobind
   hideSidebar() {
-    this.setState({sidebarVisible: false});
+    this.setState({sidebarState: 'closing'});
+    setTimeout(() => this.setState({sidebarState: 'closed'}), 300);
   }
 
   componentWillMount() {
     keyboardJS.bind('escape', this.hideSidebar);
+    window.addEventListener('resize', this.updateWindowDimensions);
   }
 
   componentWillUnmount() {
     keyboardJS.unbind('escape', this.hideSidebar);
+    window.removeEventListener('resize', this.updateWindowDimensions);
   }
 
-  renderSidebar(selectMine: boolean, category?: ICategoryModel) {
-    if (!this.state.sidebarVisible) {
+  @autobind
+  updateWindowDimensions() {
+    console.log('got here');
+    this.setState({fixedSidebar: fixedSidebar()});
+  }
+
+  renderSidebarPopup(selectMine: boolean, category?: ICategoryModel) {
+    const state = this.state.sidebarState;
+    if (state === 'closed') {
       return '';
     }
 
@@ -81,15 +167,17 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     } = this.props;
 
     return (
-      <Scrim isVisible onBackgroundClick={this.hideSidebar} scrimStyles={{background: 'rgba(0, 0, 0, 0.4)'}}>
+      <Scrim isVisible onBackgroundClick={this.hideSidebar} scrimStyles={state === 'open' ? STYLES.fadeIn : STYLES.fadeOut}>
         <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}}>
-          <CategorySidebar
-            user={user}
-            categories={categories}
-            selectedCategory={category}
-            hideSidebar={this.hideSidebar}
-            selectMine={selectMine}
-          />
+          <div {...css(STYLES.categorybar, state === 'open' ? STYLES.slideout : STYLES.slidein)}>
+            <CategorySidebar
+              user={user}
+              categories={categories}
+              selectedCategory={category}
+              hideSidebar={this.hideSidebar}
+              selectMine={selectMine}
+            />
+          </div>
         </FocusTrap>
       </Scrim>
     );
@@ -97,6 +185,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
 
   render() {
     const {
+      user,
       isAdmin,
       categories,
       location,
@@ -111,9 +200,34 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
       for (const c of categories.toArray()) {
         if (c.id === m[1]) {
           category = c;
-          // categoryFilter = `${FILTER_CATEGORY}=${c.id}`;
         }
       }
+    }
+
+    if (this.state.fixedSidebar) {
+      return (
+        <div style={{width: '100vw', height: '100vh'}}>
+          <div style={{float: 'left', width: `${SIDEBAR_WIDTH}px`}}>
+            <CategorySidebar
+              user={user}
+              categories={categories}
+              selectedCategory={category}
+              selectMine={isMe}
+            />
+          </div>
+          <div style={{marginLeft: `${SIDEBAR_WIDTH}px`}}>
+            <HeaderBar
+              isAdmin={isAdmin}
+              isMe={isMe}
+              category={category}
+              logout={this.logout}
+            />
+            <div key="content">
+              {this.props.children}
+            </div>
+          </div>
+        </div>
+      );
     }
 
     return (
@@ -125,7 +239,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
           showSidebar={this.showSidebar}
           logout={this.logout}
         />
-        {this.renderSidebar(isMe, category)}
+        {this.renderSidebarPopup(isMe, category)}
         <div key="content">
           {this.props.children}
         </div>

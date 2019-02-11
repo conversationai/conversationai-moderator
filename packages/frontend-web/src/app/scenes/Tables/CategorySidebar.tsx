@@ -38,15 +38,10 @@ export const SIDEBAR_WIDTH = 280;
 
 const STYLES = stylesheet({
   sidebar: {
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    bottom: '0',
     width: `${SIDEBAR_WIDTH}px`,
+    height: '100vh',
     backgroundColor: SIDEBAR_BLUE,
     color: 'white',
-    opacity: '1',
-    zIndex: 30,
   },
 
   sidebarHeader: {
