@@ -834,9 +834,9 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               ) : (
                 <span key="submittedAt">{SUBMITTED_AT} </span>
               )}
-              {comment.flaggedCount > 0 && (
+              {comment.unresolvedFlagsCount > 0 && (
                 <span key="flaggedCount">
-                  &bull; {comment.flaggedCount} Flag{comment.flaggedCount > 1 ? 's' : null}
+                  &bull; {comment.unresolvedFlagsCount} unresolved {comment.unresolvedFlagsCount > 1 ? 'flags' : 'flag'}
                 </span>
               )}
             </div>

@@ -63,7 +63,7 @@ export async function createArticleIfNonExistant(item: IArticleData): Promise<IA
       approvedCount: 0,
       rejectedCount: 0,
       deferredCount: 0,
-      flaggedCount: 0,
+      // flaggedCount: 0,
       batchedCount: 0,
     },
   });
@@ -129,7 +129,7 @@ async function createCategory(categoryLabel: string): Promise<number> {
       approvedCount: 0,
       rejectedCount: 0,
       deferredCount: 0,
-      flaggedCount: 0,
+      // flaggedCount: 0,
       batchedCount: 0,
       extra: {},
     },

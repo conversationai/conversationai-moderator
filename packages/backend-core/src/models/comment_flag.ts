@@ -19,8 +19,12 @@ import { sequelize } from '../sequelize';
 
 export interface ICommentFlagAttributes {
   id?: number;
+  label: string;
+  detail?: string;
   commentId: number;
   sourceId?: string;
+  authorSourceId?: string;
+  isResolved: boolean;
   extra?: any;
 }
 
@@ -40,9 +44,36 @@ export const CommentFlag = sequelize.define<ICommentFlagInstance, ICommentFlagAt
     autoIncrement: true,
   },
 
+  label: {
+    type: Sequelize.CHAR(80),
+    allowNull: false,
+  },
+
+  detail: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+
+  commentId: {
+    type: Sequelize.BIGINT.UNSIGNED,
+    references: { model: 'comments', key: 'id' },
+    onDelete: 'cascade',
+    onUpdate: 'cascade',
+  },
+
   sourceId: {
     type: Sequelize.CHAR(255),
     allowNull: true,
+  },
+
+  authorSourceId: {
+    type: Sequelize.CHAR(255),
+    allowNull: true,
+  },
+
+  isResolved: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
   },
 
   extra: {
@@ -50,6 +81,7 @@ export const CommentFlag = sequelize.define<ICommentFlagInstance, ICommentFlagAt
     allowNull: true,
   },
 }, {
+  charset: 'utf8',
   classMethods: {
     associate(models: any) {
       CommentFlag.belongsTo(models.Comment, {

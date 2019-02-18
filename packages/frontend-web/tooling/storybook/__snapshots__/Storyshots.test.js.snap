@@ -1602,7 +1602,8 @@ exports[`Storyshots CommentBody Basic 1`] = `
         >
           • 
           1
-           Flag
+           unresolved 
+          flag
            
         </span>
       </div>
@@ -1807,7 +1808,8 @@ exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
         >
           • 
           1
-           Flag
+           unresolved 
+          flag
            
         </span>
       </div>
@@ -1985,7 +1987,8 @@ exports[`Storyshots CommentBody Linked 1`] = `
           >
             • 
             1
-             Flag
+             unresolved 
+            flag
              
           </span>
         </div>
@@ -6565,8 +6568,8 @@ exports[`Storyshots SingleComment base 1`] = `
             <span>
               • 
               2
-               Flag
-              s
+               unresolved 
+              flags
             </span>
           </div>
         </div>
@@ -6872,8 +6875,8 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
             <span>
               • 
               2
-               Flag
-              s
+               unresolved 
+              flags
             </span>
           </div>
         </div>
@@ -7156,8 +7159,8 @@ exports[`Storyshots SingleComment has url 1`] = `
             <span>
               • 
               2
-               Flag
-              s
+               unresolved 
+              flags
             </span>
           </div>
         </div>
@@ -7481,8 +7484,8 @@ exports[`Storyshots SingleComment tags to add 1`] = `
             <span>
               • 
               2
-               Flag
-              s
+               unresolved 
+              flags
             </span>
           </div>
         </div>
@@ -9052,7 +9055,8 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                 >
                   • 
                   1
-                   Flag
+                   unresolved 
+                  flag
                    
                 </span>
               </div>
@@ -9251,8 +9255,8 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                   >
                     • 
                     2
-                     Flag
-                    s
+                     unresolved 
+                    flags
                      
                   </span>
                 </div>
@@ -9455,7 +9459,8 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                   >
                     • 
                     1
-                     Flag
+                     unresolved 
+                    flag
                      
                   </span>
                 </div>
@@ -9655,8 +9660,8 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                   >
                     • 
                     20
-                     Flag
-                    s
+                     unresolved 
+                    flags
                      
                   </span>
                 </div>

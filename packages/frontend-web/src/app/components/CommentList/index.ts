@@ -49,7 +49,7 @@ function getSortContentByType(commentSortType: string, comment: ICommentModel, c
     case 'updated':
       return [formatDate(comment.updatedAt, DATE_FORMAT_MDY), formatDate(comment.updatedAt, DATE_FORMAT_HM)];
     case 'flagged':
-      return [comment.flaggedCount.toString()];
+      return [comment.unresolvedFlagsCount.toString()];
     default:
       const score = commentScores && commentScores.find((s) => s.commentId === comment.id);
 

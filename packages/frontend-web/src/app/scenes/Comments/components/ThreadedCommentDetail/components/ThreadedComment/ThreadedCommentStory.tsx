@@ -35,7 +35,8 @@ const comment = fakeCommentModel({
   sourceCreatedAt: null,
   authorSourceId: 'author1',
   author,
-  flaggedCount: 1,
+  flagsCount: 3,
+  unresolvedFlagsCount: 1,
   text: 'Orginating comment text is here',
 });
 const replies = [
@@ -47,7 +48,8 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author2',
     author,
-    flaggedCount: 2,
+    flagsCount: 3,
+    unresolvedFlagsCount: 2,
     text: 'First reply comment text is here. This comment is marked Deferred.',
   }),
   fakeCommentModel({
@@ -58,7 +60,8 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author3',
     author,
-    flaggedCount: 1,
+    flagsCount: 3,
+    unresolvedFlagsCount: 1 ,
     text: 'Second reply comment text is here. This comment is marked Highlighted.',
   }),
   fakeCommentModel({
@@ -69,7 +72,8 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author4',
     author,
-    flaggedCount: 20,
+    flagsCount: 30,
+    unresolvedFlagsCount: 20,
     text: 'Third reply comment text is here. This comment is marked Rejected.',
   }),
   fakeCommentModel({
@@ -80,7 +84,8 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author5',
     author,
-    flaggedCount: 0,
+    flagsCount: 0,
+    unresolvedFlagsCount: 0,
     text: 'Fourth reply comment text is here. This comment has not yet been moderated.',
   }),
 ];

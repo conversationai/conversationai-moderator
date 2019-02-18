@@ -20,15 +20,33 @@ import {
 } from '../../models';
 
 export async function denormalizeCountsForComment(comment: ICommentInstance) {
-  const [
-    flaggedCount,
-  ] = await Promise.all([
-    CommentFlag.count({ where: { commentId: comment.id } }),
-  ]);
+  let flagsCount = 0;
+  let unresolvedFlagsCount = 0;
+  const flagsSummary: {[key: string]: Array<number>} = {};
+
+  const flags = await CommentFlag.findAll({ where: { commentId: comment.id } });
+
+  for (const f of flags) {
+    const flag = f.get();
+
+    if (!flagsSummary[flag.label]) {
+      flagsSummary[flag.label] = [0, 0];
+    }
+
+    flagsCount += 1;
+    flagsSummary[flag.label][0] += 1;
+
+    if (!flag.isResolved) {
+      unresolvedFlagsCount += 1;
+      flagsSummary[flag.label][1] += 1;
+    }
+  }
 
   const updatedComment = await comment.update({
-    flaggedCount,
+    flagsCount,
+    unresolvedFlagsCount,
+    flagsSummary,
   });
 
-  return Promise.resolve(updatedComment);
+  return updatedComment;
 }

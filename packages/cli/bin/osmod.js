@@ -38,6 +38,7 @@ yargs
   .command(require(path.join(__dirname, '..', 'dist', 'comments', 'send_to_scorer')))
   .command(require(path.join(__dirname, '..', 'dist', 'comments', 'delete')))
   .command(require(path.join(__dirname, '..', 'dist', 'comments', 'generate')))
+  .command(require(path.join(__dirname, '..', 'dist', 'comments', 'flag')))
   .demand(1)
   .usage('Usage: $0')
   .help()

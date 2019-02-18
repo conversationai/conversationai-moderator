@@ -282,10 +282,9 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               <span>from {comment.author.location}&nbsp;</span>
             )}
             <span {...css({textDecoration: 'none'})}> &bull; {distanceInWordsToNow(new Date(comment.sourceCreatedAt))} ago&nbsp;</span>
-            {comment.flaggedCount > 0 && (
+            {comment.unresolvedFlagsCount > 0 && (
               <span {...css({textDecoration: 'none'})}>
-                &bull; {comment.flaggedCount} Flag{comment.flaggedCount > 1 ? 's' : null}
-                &nbsp;
+                &bull; {comment.unresolvedFlagsCount} unresolved {comment.unresolvedFlagsCount > 1 ? 'flags' : 'flag'}&nbsp;
               </span>
             )}
             {actionsAreVisible && (

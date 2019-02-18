@@ -436,7 +436,8 @@ describe('Comments Domain Pipeline Tests', () => {
       const updatedComment = (await Comment.findById(comment.id))!;
 
       assert.isTrue(updatedComment.get('isAutoResolved'), 'comment isAutoResolved');
-      assert.equal(updatedComment.get('flaggedCount'), 0, 'comment flaggedCount');
+      assert.equal(updatedComment.get('flagsCount'), 0, 'comment flagsCount');
+      assert.equal(updatedComment.get('unresolvedFlagsCount'), 0, 'comment unresolvedFlagsCount');
 
       assert.equal(updatedCategory.get('moderatedCount'), 1, 'category moderatedCount');
       assert.equal(updatedCategory.get('rejectedCount'), 1, 'category rejectedCount');

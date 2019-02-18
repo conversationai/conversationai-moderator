@@ -68,7 +68,7 @@ async function getModeratedCounts(model: any, sortQuery: string, getWhere: (mode
     getWhere(model, { isModerated: true, isDeferred: true }),
 
     // flagged
-    getWhere(model, { isModerated: true, flaggedCount: { $gt: 0 } }),
+    getWhere(model, { unresolvedFlagsCount: {$gt: 0} }),
 
     // batched
     getWhere(model, { isModerated: true, isBatchResolved: true }),

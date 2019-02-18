@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,97 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import formatDate from 'date-fns/format';
-import { ICommentModel } from '../../models';
-import { DATE_FORMAT_LONG } from '../config';
-
-export interface IColumnStortDefinition {
+export interface IColumnSortDefinition {
   label: string;
   sortInfo: Array<string>;
   sortName?: string;
 }
 
-export const articleSortDefinitions: {
-  [key: string]: IColumnStortDefinition;
-} = {
-  newCount: {
-    label: 'New Count',
-    sortInfo: ['-unmoderatedCount'],
-    sortName: 'unmoderatedCount',
-  },
-  newCountReversed: {
-    label: 'New Count Reversed',
-    sortInfo: ['unmoderatedCount'],
-    sortName: 'unmoderatedCountReversed',
-  },
-  moderated: {
-    label: 'Moderated Count',
-    sortInfo: ['-moderatedCount'],
-    sortName: 'moderatedCount',
-  },
-  unmoderated: {
-    label: 'Unmoderated Count',
-    sortInfo: ['-unmoderatedCount'],
-  },
-  approved: {
-    label: 'Approved Count',
-    sortInfo: ['-approvedCount'],
-    sortName: 'approvedCount',
-  },
-  highlighted: {
-    label: 'Highlighted Count',
-    sortInfo: ['-highlightedCount'],
-    sortName: 'highlightedCount',
-  },
-  rejected: {
-    label: 'Rejected Count',
-    sortInfo: ['-rejectedCount'],
-    sortName: 'rejectedCount',
-  },
-  deferred: {
-    label: 'Deferred Count',
-    sortInfo: ['-deferredCount'],
-    sortName: 'deferredCount',
-  },
-  flagged: {
-    label: 'Flagged Count',
-    sortInfo: ['-flaggedCount'],
-    sortName: 'flaggedCount',
-  },
-  batched: {
-    label: 'Batched Count',
-    sortInfo: ['-batchedCount'],
-    sortName: 'batchedCount',
-  },
-  automated: {
-    label: 'Automated',
-    sortInfo: ['-isAutoModerated'],
-    sortName: 'isAutoModerated',
-  },
-  updated: {
-    label: 'Last Updated',
-    sortInfo: ['-updatedAt'],
-    sortName: 'updatedAt',
-  },
-  oldest: {
-    label: 'Least Recently Published',
-    sortInfo: ['sourceCreatedAt'],
-    sortName: 'sourceCreatedAt',
-  },
-  newest: {
-    label: 'Most Recently Published',
-    sortInfo: ['-sourceCreatedAt'],
-    sortName: 'sourceCreatedAt',
-  },
-  tag: {
-    label: 'Tag',
-    sortInfo: ['-sourceCreatedAt'],
-    sortName: 'sourceCreatedAt',
-  },
-};
-
 export const commentSortDefinitions: {
-  [key: string]: IColumnStortDefinition;
+  [key: string]: IColumnSortDefinition;
 }  = {
   approved: {
     label: 'Approved',
@@ -128,8 +45,8 @@ export const commentSortDefinitions: {
   },
   flagged: {
     label: 'Flagged Count',
-    sortInfo: ['-flaggedCount'],
-    sortName: 'flaggedCount',
+    sortInfo: ['-unresolvedFlagsCount'],
+    sortName: 'unresolvedFlagsCount',
   },
   batched: {
     label: 'Batched',
@@ -179,16 +96,5 @@ export function getSortDefault(actionLabel: string): string {
       return 'flagged';
     default:
       return 'updated';
-  }
-}
-
-export function getSortContentByType(commentSortType: string, comment: ICommentModel) {
-  switch (commentSortType) {
-    case 'updated':
-      return formatDate(comment.updatedAt, DATE_FORMAT_LONG);
-    case 'flagged':
-      return comment.flaggedCount.toString();
-    default:
-      return formatDate(comment.sourceCreatedAt, DATE_FORMAT_LONG);
   }
 }

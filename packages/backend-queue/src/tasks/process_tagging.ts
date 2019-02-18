@@ -61,7 +61,7 @@ function lookUpCommentBySourceId(sid: string ) {
  *
  */
 export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = handler<IProcessTagAdditionData>(async (data, logger) => {
-  const { sourceCommentId, sourceUserId, extra } = data;
+  const { type, sourceCommentId, sourceUserId, extra } = data;
 
   logger.info('Process Tag Addition', JSON.stringify(data));
 
@@ -78,8 +78,10 @@ export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = ha
         sourceId: sourceUserId,
       },
       defaults: {
+        label: type,
         commentId: comment.id,
         sourceId: sourceUserId,
+        isResolved: false,
         extra: extra || null,
       },
     };
