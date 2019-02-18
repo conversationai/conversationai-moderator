@@ -71,11 +71,6 @@ export const articleSortDefinitions: {
     sortInfo: ['-flaggedCount'],
     sortName: 'flaggedCount',
   },
-  recommended: {
-    label: 'Recommended Count',
-    sortInfo: ['-recommendedCount'],
-    sortName: 'recommendedCount',
-  },
   batched: {
     label: 'Batched Count',
     sortInfo: ['-batchedCount'],
@@ -136,11 +131,6 @@ export const commentSortDefinitions: {
     sortInfo: ['-flaggedCount'],
     sortName: 'flaggedCount',
   },
-  recommended: {
-    label: 'Recommended',
-    sortInfo: ['-recommendedCount'],
-    sortName: 'recommendedCount',
-  },
   batched: {
     label: 'Batched',
     sortInfo: ['-updatedAt'],
@@ -187,8 +177,6 @@ export function getSortDefault(actionLabel: string): string {
   switch (actionLabel) {
     case 'flagged':
       return 'flagged';
-    case 'recommended':
-      return 'recommended';
     default:
       return 'updated';
   }
@@ -198,8 +186,6 @@ export function getSortContentByType(commentSortType: string, comment: ICommentM
   switch (commentSortType) {
     case 'updated':
       return formatDate(comment.updatedAt, DATE_FORMAT_LONG);
-    case 'recommended':
-      return comment.recommendedCount.toString();
     case 'flagged':
       return comment.flaggedCount.toString();
     default:

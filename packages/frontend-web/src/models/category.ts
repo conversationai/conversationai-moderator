@@ -32,7 +32,6 @@ export interface ICategoryAttributes {
   highlightedCount: number;
   rejectedCount: number;
   flaggedCount: number;
-  recommendedCount: number;
   batchedCount: number;
   assignedModerators: Array<ModelId>;
 }
@@ -52,7 +51,6 @@ const CategoryModelRecord = Record({
   highlightedCount: null,
   rejectedCount: null,
   flaggedCount: null,
-  recommendedCount: null,
   batchedCount: null,
   assignedModerators: null,
 });

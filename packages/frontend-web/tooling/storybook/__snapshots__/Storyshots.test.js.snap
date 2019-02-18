@@ -1605,19 +1605,6 @@ exports[`Storyshots CommentBody Basic 1`] = `
            Flag
            
         </span>
-        <span
-          style={
-            Object {
-              "textDecoration": "none",
-            }
-          }
-        >
-          • 
-          20
-           Recommendation
-          s
-           
-        </span>
       </div>
       <div
         className="actionContainer_11iv8a4"
@@ -1823,19 +1810,6 @@ exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
            Flag
            
         </span>
-        <span
-          style={
-            Object {
-              "textDecoration": "none",
-            }
-          }
-        >
-          • 
-          20
-           Recommendation
-          s
-           
-        </span>
       </div>
       <div
         className="actionContainer_11iv8a4"
@@ -2012,19 +1986,6 @@ exports[`Storyshots CommentBody Linked 1`] = `
             • 
             1
              Flag
-             
-          </span>
-          <span
-            style={
-              Object {
-                "textDecoration": "none",
-              }
-            }
-          >
-            • 
-            20
-             Recommendation
-            s
              
           </span>
         </div>
@@ -6607,12 +6568,6 @@ exports[`Storyshots SingleComment base 1`] = `
                Flag
               s
             </span>
-            <span>
-              • 
-              5
-               Recommendation
-              s
-            </span>
           </div>
         </div>
         <style>
@@ -6920,12 +6875,6 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
                Flag
               s
             </span>
-            <span>
-              • 
-              5
-               Recommendation
-              s
-            </span>
           </div>
         </div>
         <style>
@@ -7208,12 +7157,6 @@ exports[`Storyshots SingleComment has url 1`] = `
               • 
               2
                Flag
-              s
-            </span>
-            <span>
-              • 
-              5
-               Recommendation
               s
             </span>
           </div>
@@ -7541,12 +7484,6 @@ exports[`Storyshots SingleComment tags to add 1`] = `
                Flag
               s
             </span>
-            <span>
-              • 
-              5
-               Recommendation
-              s
-            </span>
           </div>
         </div>
         <style>
@@ -7741,7 +7678,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
               onClick={[Function]}
               style={Object {}}
             >
-              Iste consectetur earum in sequi aut.
+              Qui iste consectetur earum in sequi aut eveniet.
             </a>
           </div>
         </div>
@@ -7826,7 +7763,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
         >
           <span>
             <span>
-              17 h ago
+              21 h ago
             </span>
           </span>
         </div>
@@ -7839,7 +7776,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
               onClick={[Function]}
               style={Object {}}
             >
-              Iste consectetur earum in sequi aut.
+              Qui iste consectetur earum in sequi aut eveniet.
             </a>
           </div>
         </div>
@@ -7873,7 +7810,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
               onClick={[Function]}
               style={Object {}}
             >
-              Qui eos modi et autem qui porro deleniti atque.
+              Possimus qui eos modi et autem.
             </a>
           </div>
         </div>
@@ -7898,7 +7835,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
               onClick={[Function]}
               style={Object {}}
             >
-              Accusantium esse quidem dolores debitis id dolorem.
+              Id accusantium esse quidem dolores debitis id dolorem.
             </a>
           </div>
           <div
@@ -9118,19 +9055,6 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                    Flag
                    
                 </span>
-                <span
-                  style={
-                    Object {
-                      "textDecoration": "none",
-                    }
-                  }
-                >
-                  • 
-                  20
-                   Recommendation
-                  s
-                   
-                </span>
               </div>
               <div
                 className="actionContainer_11iv8a4"
@@ -9328,19 +9252,6 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                     • 
                     2
                      Flag
-                    s
-                     
-                  </span>
-                  <span
-                    style={
-                      Object {
-                        "textDecoration": "none",
-                      }
-                    }
-                  >
-                    • 
-                    5
-                     Recommendation
                     s
                      
                   </span>
@@ -9545,18 +9456,6 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                     • 
                     1
                      Flag
-                     
-                  </span>
-                  <span
-                    style={
-                      Object {
-                        "textDecoration": "none",
-                      }
-                    }
-                  >
-                    • 
-                    1
-                     Recommendation
                      
                   </span>
                 </div>

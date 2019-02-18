@@ -36,7 +36,6 @@ export interface ICategoryAttributes {
   deferredCount?: number;
   flaggedCount?: number;
   batchedCount?: number;
-  recommendedCount?: number;
 }
 
 export interface ICategoryInstance
@@ -135,12 +134,6 @@ export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>
   },
 
   batchedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
-    allowNull: false,
-    defaultValue: 0,
-  },
-
-  recommendedCount: {
     type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,

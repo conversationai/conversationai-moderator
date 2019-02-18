@@ -18,7 +18,6 @@ import {
   Article,
   Comment,
   CommentFlag,
-  CommentRecommendation,
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
 } from '@conversationai/moderator-backend-core';
@@ -62,7 +61,7 @@ function lookUpCommentBySourceId(sid: string ) {
  *
  */
 export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = handler<IProcessTagAdditionData>(async (data, logger) => {
-  const { type, sourceCommentId, sourceUserId, extra } = data;
+  const { sourceCommentId, sourceUserId, extra } = data;
 
   logger.info('Process Tag Addition', JSON.stringify(data));
 
@@ -85,8 +84,7 @@ export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = ha
       },
     };
 
-    const [instance, created] =  (type === 'recommendation') ? await CommentRecommendation.findOrCreate(options) :
-                                                               await CommentFlag.findOrCreate(options);
+    const [instance, created] = await CommentFlag.findOrCreate(options);
 
     if (!created) {
       instance.set('extra', extra).save();
@@ -117,11 +115,9 @@ export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = ha
  *
  */
 export const processTagRevocationTask = handler<IProcessTagRevocationData>(async (data, logger) => {
-  const { type, sourceCommentId, sourceUserId } = data;
+  const { sourceCommentId, sourceUserId } = data;
 
   logger.info('Process Tag Revocation', JSON.stringify(data));
-
-  const model = type === 'recommendation' ? CommentRecommendation : CommentFlag;
 
   try {
     const comment = await lookUpCommentBySourceId(sourceCommentId);
@@ -130,7 +126,7 @@ export const processTagRevocationTask = handler<IProcessTagRevocationData>(async
       throw new Error(`Comment not found: sourceId = ${sourceCommentId}`);
     }
 
-    await model.destroy({
+    await CommentFlag.destroy({
       where: {
         commentId: comment.id,
         sourceId: sourceUserId,
@@ -139,7 +135,8 @@ export const processTagRevocationTask = handler<IProcessTagRevocationData>(async
 
     await denormalizeCountsForComment(comment);
     await denormalizeCommentCountsForArticle(await comment.getArticle(), false);
-  } catch (err) { // Catching just for logging purposes
+  }
+  catch (err) { // Catching just for logging purposes
     logger.error('Catch Tag Revocation', err);
     throw err;
   }

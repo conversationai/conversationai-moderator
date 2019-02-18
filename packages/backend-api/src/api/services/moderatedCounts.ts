@@ -27,7 +27,6 @@ interface IModeratedCounts {
   rejected: Array<number>;
   deferred: Array<number>;
   flagged: Array<number>;
-  recommended: Array<number>;
   batched: Array<number>;
   automated: Array<number>;
 }
@@ -38,7 +37,6 @@ interface IModeratedCountsAsStrings {
   rejected: Array<string>;
   deferred: Array<string>;
   flagged: Array<string>;
-  recommended: Array<string>;
   batched: Array<string>;
   automated: Array<string>;
 }
@@ -50,7 +48,6 @@ const validateCountsAndSendResponse = validateAndSendResponse<IModeratedCountsAs
     rejected: Joi.array().items(Joi.string()).required(),
     deferred: Joi.array().items(Joi.string()).required(),
     flagged: Joi.array().items(Joi.string()).required(),
-    recommended: Joi.array().items(Joi.string()).required(),
     batched: Joi.array().items(Joi.string()).required(),
     automated: Joi.array().items(Joi.string()).required(),
   }).required(),
@@ -72,9 +69,6 @@ async function getModeratedCounts(model: any, sortQuery: string, getWhere: (mode
 
     // flagged
     getWhere(model, { isModerated: true, flaggedCount: { $gt: 0 } }),
-
-    // recommended
-    getWhere(model, { isModerated: true, recommendedCount: { $gt: 0 } }),
 
     // batched
     getWhere(model, { isModerated: true, isBatchResolved: true }),
@@ -107,9 +101,8 @@ async function getModeratedCounts(model: any, sortQuery: string, getWhere: (mode
     rejected: output[2],
     deferred: output[3],
     flagged: output[4],
-    recommended: output[5],
-    batched: output[6],
-    automated: output[7],
+    batched: output[5],
+    automated: output[6],
   };
 }
 

@@ -557,7 +557,6 @@ export interface IModeratedComments {
   rejected: Array<number>;
   deferred: Array<number>;
   flagged: Array<number>;
-  recommended: Array<number>;
   batched: Array<number>;
   automated: Array<number>;
 }

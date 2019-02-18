@@ -394,12 +394,6 @@ const COMMENT_STYLES = stylesheet({
     textTransform: 'uppercase',
   },
 
-  recommendations: {
-    ...ARTICLE_CATEGORY_TYPE,
-    color: DARK_TERTIARY_TEXT_COLOR,
-    textTransform: 'uppercase',
-  },
-
   body: {
     ...COMMENT_DETAIL_BODY_TEXT_TYPE,
     color: DARK_PRIMARY_TEXT_COLOR,
@@ -843,11 +837,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               {comment.flaggedCount > 0 && (
                 <span key="flaggedCount">
                   &bull; {comment.flaggedCount} Flag{comment.flaggedCount > 1 ? 's' : null}
-                </span>
-              )}
-              {comment.recommendedCount > 0 && (
-                <span key="recommendedCount">
-                  &bull; {comment.recommendedCount} Recommendation{comment.recommendedCount > 1 ? 's' : null}
                 </span>
               )}
             </div>

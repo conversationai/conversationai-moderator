@@ -48,7 +48,6 @@ export interface ICommentAttributes {
   isBatchResolved?: boolean | null;
   isAutoResolved?: boolean | null;
   flaggedCount?: number;
-  recommendedCount?: number;
   sourceCreatedAt: Date | string | null | Sequelize.fn;
   sentForScoring?: string | null | Sequelize.fn;
   sentBackToPublisher?: Date | null | Sequelize.fn;
@@ -161,12 +160,6 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
   },
 
   flaggedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
-    allowNull: false,
-    defaultValue: 0,
-  },
-
-  recommendedCount: {
     type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,

@@ -885,20 +885,14 @@ export class ModeratedComments
   @autobind
   getSortOptions(): List<ITagModel> {
     const { actionLabel } = this.props;
-    // Flagged and Recommended are special cases that can have a count associated with them
+    // Flagged is a special cases that can have a count associated with it
     // as opposed to things like Approve and Reject which are binary.
-    // Here we're adding additional sort options for just those two tabs.
+    // Here we're adding additional sort options for just that tab.
 
     if (actionLabel === 'flagged') {
       return sortOptions.unshift(TagModel({
         key: `${actionLabel}`,
         label: 'Flags',
-        color: null,
-      }));
-    } else if (actionLabel === 'recommended') {
-      return sortOptions.unshift(TagModel({
-        key: `${actionLabel}`,
-        label: 'Recommendations',
         color: null,
       }));
     }

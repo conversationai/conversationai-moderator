@@ -68,7 +68,6 @@ highlightedCount = 0,
 approvedCount = 0,
 rejectedCount = 0,
 deferedCount = 0,
-recommendedCount = 0,
 batchedCount = 0;
 
 -- Reset category counts
@@ -78,5 +77,4 @@ highlightedCount = 0,
 approvedCount = 0,
 rejectedCount = 0,
 deferedCount = 0,
-recommendedCount = 0,
 batchedCount = 0;

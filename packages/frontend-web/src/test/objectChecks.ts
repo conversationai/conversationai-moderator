@@ -151,7 +151,6 @@ const commonFields = {
   deferredCount: check.number,
   flaggedCount: check.number,
   batchedCount: check.number,
-  recommendedCount: check.number,
   assignedModerators: array_of_users,
 };
 

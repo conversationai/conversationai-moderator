@@ -26,7 +26,6 @@ import {
   HighlightIcon,
   RejectIcon,
   RoboIcon,
-  ThumbUpIcon,
 } from '../../../../../../components/Icons';
 import {
   LIGHT_COLOR,
@@ -92,12 +91,6 @@ const navigationTabs = [
     linkPath: 'flagged',
     icon: FlagIcon,
     count: 51,
-  },
-  {
-    label: 'Recommended',
-    linkPath: 'recommended',
-    icon: ThumbUpIcon,
-    count: 0,
   },
   {
     label: 'Batched',

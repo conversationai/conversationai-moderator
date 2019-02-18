@@ -40,7 +40,6 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     deferredCount,
     flaggedCount,
     batchedCount,
-    recommendedCount,
   ] = await Promise.all([
     Comment.count({ where: { articleId: article.id } }),
     Comment.count({ where: { articleId: article.id, isScored: false } }),
@@ -53,7 +52,6 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     Comment.count({ where: { articleId: article.id, isDeferred: true } }),
     Comment.count({ where: { articleId: article.id, flaggedCount: { $gt: 0 } } }),
     Comment.count({ where: { articleId: article.id, isModerated: true, isBatchResolved: true } }),
-    Comment.count({ where: { articleId: article.id, recommendedCount: { $gt: 0 } } }),
   ]);
 
   const update: Partial<IArticleAttributes> = {
@@ -67,7 +65,6 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     deferredCount,
     flaggedCount,
     batchedCount,
-    recommendedCount,
   };
 
   if (isModeratorAction) {

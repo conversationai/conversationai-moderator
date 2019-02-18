@@ -36,7 +36,6 @@ const comment = fakeCommentModel({
   authorSourceId: 'author1',
   author,
   flaggedCount: 1,
-  recommendedCount: 20,
   text: 'Orginating comment text is here',
 });
 const replies = [
@@ -49,7 +48,6 @@ const replies = [
     authorSourceId: 'author2',
     author,
     flaggedCount: 2,
-    recommendedCount: 5,
     text: 'First reply comment text is here. This comment is marked Deferred.',
   }),
   fakeCommentModel({
@@ -61,7 +59,6 @@ const replies = [
     authorSourceId: 'author3',
     author,
     flaggedCount: 1,
-    recommendedCount: 1,
     text: 'Second reply comment text is here. This comment is marked Highlighted.',
   }),
   fakeCommentModel({
@@ -73,7 +70,6 @@ const replies = [
     authorSourceId: 'author4',
     author,
     flaggedCount: 20,
-    recommendedCount: 0,
     text: 'Third reply comment text is here. This comment is marked Rejected.',
   }),
   fakeCommentModel({
@@ -85,7 +81,6 @@ const replies = [
     authorSourceId: 'author5',
     author,
     flaggedCount: 0,
-    recommendedCount: 0,
     text: 'Fourth reply comment text is here. This comment has not yet been moderated.',
   }),
 ];

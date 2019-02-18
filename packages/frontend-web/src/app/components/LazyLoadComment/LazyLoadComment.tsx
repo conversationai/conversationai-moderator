@@ -288,12 +288,6 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                 &nbsp;
               </span>
             )}
-            {comment.recommendedCount > 0 && (
-              <span {...css({textDecoration: 'none'})}>
-                &bull; {comment.recommendedCount} Recommendation{comment.recommendedCount > 1 ? 's' : null}
-                &nbsp;
-              </span>
-            )}
             {actionsAreVisible && (
               <Link
                 {...css(ROW_STYLES.detailsButton)}

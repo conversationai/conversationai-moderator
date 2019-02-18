@@ -38,7 +38,6 @@ const comment = fakeCommentModel({
   authorSourceId: 'author1',
   author,
   flaggedCount: 1,
-  recommendedCount: 20,
   text: 'Founded in 1965 by Albert Griffiths, The Gladiators has released some of the most mythical songs of Jamaican reggae. Their first hit, the single Hello Carol, was released in 1968. In 1976, thanks to their signature at Virgin, the trilogy Trenchtown Mix Up, Proverbial Reggae and Naturality has been distributed all around the world and some of the songs of these albums have become classics of the reggae as Mix Up and Roots Natty Roots.',
 });
 

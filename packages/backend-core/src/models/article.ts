@@ -41,7 +41,6 @@ export interface IArticleAttributes {
   deferredCount?: number;
   flaggedCount?: number;
   batchedCount?: number;
-  recommendedCount?: number;
   lastModeratedAt?: string | Date;
 }
 
@@ -175,12 +174,6 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
   lastModeratedAt: {
     type: Sequelize.DATE,
     allowNull: true,
-  },
-
-  recommendedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
-    allowNull: false,
-    defaultValue: 0,
   },
 
   extra: {

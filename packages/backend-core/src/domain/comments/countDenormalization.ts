@@ -16,22 +16,18 @@ limitations under the License.
 
 import {
   CommentFlag,
-  CommentRecommendation,
   ICommentInstance,
 } from '../../models';
 
 export async function denormalizeCountsForComment(comment: ICommentInstance) {
   const [
     flaggedCount,
-    recommendedCount,
   ] = await Promise.all([
     CommentFlag.count({ where: { commentId: comment.id } }),
-    CommentRecommendation.count({ where: { commentId: comment.id } }),
   ]);
 
   const updatedComment = await comment.update({
     flaggedCount,
-    recommendedCount,
   });
 
   return Promise.resolve(updatedComment);

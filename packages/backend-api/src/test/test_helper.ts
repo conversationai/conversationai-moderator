@@ -95,7 +95,6 @@ export async function makeArticle(obj = {}): Promise<IArticleInstance> {
     deferredCount: 0,
     flaggedCount: 0,
     batchedCount: 0,
-    recommendedCount: 0,
     ...obj,
   });
 }
@@ -136,7 +135,6 @@ export async function makeComment(obj = {}): Promise<ICommentInstance> {
       name: 'Joe Bloggs',
     },
     flaggedCount: 0,
-    recommendedCount: 0,
     sourceCreatedAt: '2012-10-29T21:54:07.609Z',
     isScored: true,
     ...obj,
@@ -174,7 +172,6 @@ export async function makeCategory(obj = {}): Promise<ICategoryInstance> {
     deferredCount: 0,
     flaggedCount: 0,
     batchedCount: 0,
-    recommendedCount: 0,
     ...obj,
   });
 }

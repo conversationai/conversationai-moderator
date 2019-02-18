@@ -37,7 +37,6 @@ export interface IArticleAttributes {
   highlightedCount: number;
   rejectedCount: number;
   flaggedCount: number;
-  recommendedCount: number;
   batchedCount: number;
   automatedCount: number;
   lastModeratedAt: string;
@@ -66,7 +65,6 @@ const ArticleModelRecord = Record({
   deferredCount: null,
   flaggedCount: null,
   batchedCount: null,
-  recommendedCount: null,
   lastModeratedAt: null,
   assignedModerators: null,
   isCommentingEnabled: null,

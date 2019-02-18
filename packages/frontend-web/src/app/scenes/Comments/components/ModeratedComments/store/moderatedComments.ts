@@ -164,14 +164,14 @@ export const moderatedCommentsReducer = handleActions<
     const { articleId, moderatedComments } = payload;
     return state
       .set('isLoading', false)
-      .setIn(['articles', articleId], fromJS(moderatedComments))
+      .setIn(['articles', articleId], fromJS(moderatedComments));
   },
 
   [loadModeratedCommentsForCategoryComplete.toString()]: (state, { payload }: Action<ILoadModeratedCommentsForCategoriesCompletePayload>) => {
     const { category, moderatedComments } = payload;
     return state
       .set('isLoading', false)
-      .setIn(['categories', category.toString()], fromJS(moderatedComments))
+      .setIn(['categories', category.toString()], fromJS(moderatedComments));
   },
 
   [setCommentsModerationForArticlesAction.toString()]: (state, { payload }: Action<ISetCommentsModerationForArticlesPayload>) => {
@@ -179,7 +179,6 @@ export const moderatedCommentsReducer = handleActions<
     let newState = state;
     commentIds.forEach((commentId: string) => {
       const shouldRemoveFromList = currentModeration !== 'flagged' &&
-          currentModeration !== 'recommended' &&
           currentModeration !== 'batched' &&
           currentModeration !== 'automated' &&
           ((currentModeration === 'highlighted' && moderationAction === 'highlight') ||
@@ -228,7 +227,6 @@ export const moderatedCommentsReducer = handleActions<
     let newState = state;
     commentIds.forEach((commentId: string) => {
       const shouldRemoveFromList = currentModeration !== 'flagged' &&
-          currentModeration !== 'recommended' &&
           currentModeration !== 'batched' &&
           currentModeration !== 'automated' &&
           ((currentModeration === 'highlighted' && moderationAction === 'highlight') ||
@@ -305,7 +303,6 @@ export function getModeratedComments(state: IAppStateRecord, params: any): Map<s
     rejected: List<string>(),
     deferred: List<string>(),
     flagged: List<string>(),
-    recommended: List<string>(),
     batched: List<string>(),
     automated: List<string>(),
   });

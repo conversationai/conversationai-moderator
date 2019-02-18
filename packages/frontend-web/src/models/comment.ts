@@ -52,7 +52,6 @@ export interface ICommentAttributes {
   isAutoResolved: boolean;
   sourceCreatedAt: string;
   updatedAt: string;
-  recommendedCount: number;
   flaggedCount: number;
   sentForScoring: boolean;
   articleId: string;
@@ -81,7 +80,6 @@ const CommentModelRecord = Record({
   isBatchResolved: null,
   isAutoResolved: null,
   flaggedCount: null,
-  recommendedCount: null,
   sourceCreatedAt: null,
   updatedAt: null,
   sentForScoring: null,
