@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,16 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './article';
-export * from './category';
-export * from './comment';
-export * from './commentDated';
-export * from './commentFlag';
-export * from './commentScore';
-export * from './commentSummaryScore';
-export * from './common';
-export * from './preselect';
-export * from './rule';
-export * from './tag';
-export * from './taggingSensitivity';
-export * from './user';
+import { Serializer } from '@conversationai/moderator-jsonapi';
+
+export class CommentFlagSerializer extends Serializer {
+  constructor(prefix: string) {
+    super('comment_flags', prefix, null, [], ['updatedAt']);
+  }
+}

@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { List, Set } from 'immutable';
@@ -23,6 +24,7 @@ import { Link, WithRouterProps } from 'react-router';
 import {
   CommentScoreModel,
   IAuthorCountsModel,
+  ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
   ICommentSummaryScoreModel,
@@ -285,6 +287,7 @@ export interface ICommentDetailProps extends WithRouterProps {
   allScoresAboveThreshold: List<ICommentScoreModel>;
   reducedScoresAboveThreshold: List<ICommentScoreModel>;
   reducedScoresBelowThreshold: List<ICommentScoreModel>;
+  flags?: List<ICommentFlagModel>;
   getThresholdForTag(score: ICommentScoreModel): any;
   currentCommentIndex?: number;
   nextCommentId?: string;
@@ -489,6 +492,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       allScoresAboveThreshold,
       reducedScoresAboveThreshold,
       reducedScoresBelowThreshold,
+      flags,
       currentCommentIndex,
       nextCommentId,
       previousCommentId,
@@ -660,6 +664,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                   reducedScoresBelowThreshold={reducedScoresBelowThreshold}
                   summaryScoresAboveThreshold={summaryScoresAboveThreshold}
                   summaryScoresBelowThreshold={summaryScoresBelowThreshold}
+                  flags={flags}
                   allTags={allTags}
                   availableTags={availableTags}
                   loadScores={loadScores}

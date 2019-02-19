@@ -16,6 +16,7 @@ limitations under the License.
 
 import { ArticleSerializer } from './ArticleSerializer';
 import { CategorySerializer } from './CategorySerializer';
+import { CommentFlagSerializer } from './CommentFlagSerializer';
 import { CommentScoreSerializer } from './CommentScoreSerializer';
 import { CommentSerializer } from './CommentSerializer';
 import { CommentSummaryScoreSerializer } from './CommentSummaryScoreSerializer';
@@ -50,6 +51,7 @@ export const byType: {
   articles: ArticleSerializer,
   categories: CategorySerializer,
   comments: CommentSerializer,
+  comment_flags: CommentFlagSerializer,
   comment_scores: CommentScoreSerializer,
   comment_summary_scores: CommentSummaryScoreSerializer,
   decisions: DecisionSerializer,

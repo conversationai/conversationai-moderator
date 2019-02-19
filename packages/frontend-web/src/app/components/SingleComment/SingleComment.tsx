@@ -20,6 +20,7 @@ import { List } from 'immutable';
 import React from 'react';
 import {
   IAuthorCountsModel,
+  ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
   ICommentSummaryScoreModel,
@@ -454,6 +455,7 @@ export interface ISingleCommentProps {
   allScoresAboveThreshold?: List<ICommentScoreModel>;
   reducedScoresAboveThreshold?: List<ICommentScoreModel>;
   reducedScoresBelowThreshold?: List<ICommentScoreModel>;
+  flags?: List<ICommentFlagModel>;
   isThreadedComment?: boolean;
   isReply?: boolean;
   allTags?: List<ITagModel>;
@@ -607,6 +609,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       allScoresAboveThreshold,
       reducedScoresAboveThreshold,
       reducedScoresBelowThreshold,
+      flags,
       availableTags,
       allTags,
       onTagButtonClick,
@@ -943,6 +946,19 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               {scoresBelowThresholdVisible ? 'Hide tags' : 'View all tags'}
             </button>
           )}
+          {flags && flags.size > 0 && (
+            <div>
+              <h2>Flags</h2>
+              {flags.map((f) => (
+                <div>
+                  <div>{f.label}</div>
+                  {f.detail}
+                  {f.isResolved}
+                </div>
+              ))}
+            </div>
+          )}
+
         </div>
       </div>
     );

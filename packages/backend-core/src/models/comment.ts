@@ -273,6 +273,10 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
       Comment.belongsTo(models.User, {as: 'owner'});
       Comment.belongsTo(models.Article);
 
+      Comment.hasMany(models.CommentFlag, {
+        as: 'commentFlags',
+      });
+
       Comment.hasMany(models.CommentScore, {
         as: 'commentScores',
       });

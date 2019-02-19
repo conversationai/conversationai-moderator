@@ -593,7 +593,7 @@ export async function destroyModel(
 /**
  * List (and filter) a model relationship.
  */
-export async function listRelationshipModels<T>(
+async function listRelationshipModels<T>(
   type: IValidModelNames,
   id: string,
   relationship: string,
@@ -609,6 +609,14 @@ export async function listRelationshipModels<T>(
     models: convertArrayFromJSONAPI<T>(data),
     response: data,
   };
+}
+
+export function getCommentScores(commentId: string) {
+  return listRelationshipModels('comments', commentId, 'commentScores', {page: {offset: 0, limit: -1}});
+}
+
+export function getCommentFlags(commentId: string) {
+  return listRelationshipModels('comments', commentId, 'commentFlags', {page: {offset: 0, limit: -1}});
 }
 
 /**

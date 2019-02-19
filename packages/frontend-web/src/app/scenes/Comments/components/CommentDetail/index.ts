@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { provideHooks } from 'redial';
 import { createStructuredSelector } from 'reselect';
+
 import {
   ICommentModel,
   ICommentScoreModel,
@@ -62,6 +63,7 @@ import {
   getAuthorCountsById,
   getComment,
   getCurrentCommentIndex,
+  getFlags,
   getIsLoading,
   getNextCommentId,
   getPagingIsFromBatch,
@@ -75,6 +77,7 @@ import {
   getTaggingSensitivitiesInCategory,
   getTaggingSensitivityForTag,
   loadComment,
+  loadFlags,
   loadScores,
   removeCommentScore,
   updateComment,
@@ -169,6 +172,8 @@ const mapStateToProps = createStructuredSelector({
 
   reducedScoresBelowThreshold: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) =>
       getReducedScoresBelowThreshold(getTaggingSensitivitiesInCategory(state, ownProps.categoryId), getScores(state)),
+
+  flags: (state: IAppState) => getFlags(state),
 
   getThresholdForTag: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => (score: ICommentScoreModel) =>
       getTaggingSensitivityForTag(getTaggingSensitivitiesInCategory(state, ownProps.categoryId), score),
@@ -360,6 +365,7 @@ const HookedCommentDetail = provideHooks<IRedialLocals>({
     return Promise.all([
       dispatch(loadComment(commentId)),
       dispatch(loadScores(commentId)),
+      dispatch(loadFlags(commentId)),
       dispatch(loadCommentSummaryScores(commentId)),
     ]);
   },

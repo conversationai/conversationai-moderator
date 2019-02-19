@@ -21,6 +21,7 @@ import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import {
   ArticleModel,
   CategoryModel,
+  CommentFlagModel,
   CommentModel,
   CommentScoreModel,
   CommentSummaryScoreModel,
@@ -42,6 +43,7 @@ export function findModel(name: string): (Model: any) => any {
   if (name === 'moderation_rules') { return RuleModel; }
   if (name === 'preselects') { return RuleModel; }
   if (name === 'tagging_sensitivities') { return RuleModel; }
+  if (name === 'comment_flags') { return CommentFlagModel; }
   if (name === 'comment_scores') { return CommentScoreModel; }
   if (name === 'comment_summary_scores') { return CommentSummaryScoreModel; }
 

@@ -21,14 +21,16 @@ import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import {
   IAuthorCountsModel,
+  ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
   ITaggingSensitivityModel,
 } from '../../../../../models';
 import {
+  getCommentFlags,
+  getCommentScores,
   getModel,
   listAuthorCounts,
-  listRelationshipModels,
 } from '../../../../platform/dataService';
 import { IThunkAction } from '../../../../stores';
 import {
@@ -45,6 +47,8 @@ const COMMENT_DATA = [...COMMENT_DATA_PREFIX, 'item'];
 const LOADING_STATUS = [...COMMENT_DATA_PREFIX, 'isFetching'];
 const COMMENT_SCORES_DATA_PREFIX = ['scenes', 'commentsIndex', 'commentDetail', 'scores'];
 const COMMENT_SCORES_DATA = [...COMMENT_SCORES_DATA_PREFIX, 'items'];
+const COMMENT_FLAGS_DATA_PREFIX = ['scenes', 'commentsIndex', 'commentDetail', 'flags'];
+const COMMENT_FLAGS_DATA = [...COMMENT_FLAGS_DATA_PREFIX, 'items'];
 const COMMENT_PAGING_PREFIX = ['scenes', 'commentsIndex', 'commentDetail', 'paging'];
 const COMMENT_PAGING_SOURCE = [...COMMENT_PAGING_PREFIX, 'source'];
 const COMMENT_PAGING_LINK = [...COMMENT_PAGING_PREFIX, 'link'];
@@ -63,6 +67,10 @@ const loadCommentScoresStart =
   createAction('comment-detail/LOAD_COMMENT_SCORE_START');
 const loadCommentScoresComplete =
   createAction<object>('comment-detail/LOAD_COMMENT_SCORE_COMPLETE');
+const loadCommentFlagsStart =
+  createAction('comment-detail/LOAD_COMMENT_FLAG_START');
+const loadCommentFlagsComplete =
+  createAction<object>('comment-detail/LOAD_COMMENT_FLAG_COMPLETE');
 export const clearCommentPagingOptions: () => Action<void> =
   createAction('comment-detail/CLEAR_COMMENT_PAGING_OPTIONS');
 const internalStoreCommentPagingOptions =
@@ -94,9 +102,17 @@ export function loadComment(id: string): IThunkAction<Promise<void>> {
 
 export function loadScores(id: string): IThunkAction<Promise<void>> {
   return makeAJAXAction(
-    () => listRelationshipModels('comments', id, 'commentScores', {page: {offset: 0, limit: -1}}),
+    () => getCommentScores(id),
     loadCommentScoresStart,
     loadCommentScoresComplete,
+  );
+}
+
+export function loadFlags(id: string): IThunkAction<Promise<void>> {
+  return makeAJAXAction(
+    () => getCommentFlags(id),
+    loadCommentFlagsStart,
+    loadCommentFlagsComplete,
   );
 }
 
@@ -112,12 +128,19 @@ export const updateComment: (payload: ICommentModel) => Action<ICommentModel> = 
 
 const {
   reducer: commentScoresReducer,
-  addRecord,
+  addRecord: addCommentScoreRecord,
   updateRecord: updateCommentScoreRecord,
-  removeRecord,
+  removeRecord: removeCommentScoreRecord,
 } = makeRecordListReducer<ICommentScoreModel>(
   loadCommentScoresStart.toString(),
   loadCommentScoresComplete.toString(),
+);
+
+const {
+  reducer: commentFlagsReducer,
+} = makeRecordListReducer<ICommentFlagModel>(
+  loadCommentFlagsStart.toString(),
+  loadCommentFlagsComplete.toString(),
 );
 
 export interface ICommentPagingState {
@@ -285,15 +308,16 @@ export const authorCountsReducer = handleActions<
 export const reducer: any = combineReducers({
   comment: commentReducer,
   scores: commentScoresReducer,
+  flags: commentFlagsReducer,
   paging: commentPagingReducer,
   authorCounts: authorCountsReducer,
 });
 
 /* Set or delete items in the comment detail store created by makeRecordListReducer */
 
-export const addCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = addRecord;
+export const addCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = addCommentScoreRecord;
 export const updateCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = updateCommentScoreRecord;
-export const removeCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = removeRecord;
+export const removeCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = removeCommentScoreRecord;
 
 export function getComment(state: any): ICommentModel {
   return state.getIn(COMMENT_DATA);
@@ -301,6 +325,10 @@ export function getComment(state: any): ICommentModel {
 
 export function getScores(state: any): List<ICommentScoreModel> {
   return state.getIn(COMMENT_SCORES_DATA);
+}
+
+export function getFlags(state: any): List<ICommentFlagModel> {
+  return state.getIn(COMMENT_FLAGS_DATA);
 }
 
 export function getIsLoading(state: any): boolean {
