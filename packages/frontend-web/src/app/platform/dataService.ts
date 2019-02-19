@@ -25,7 +25,6 @@ import {
 } from '@conversationai/moderator-jsonapi/src/types';
 
 import {
-  IArticleModel,
   IAuthorCountsModel,
   ICommentDatedModel,
   ICommentModel,
@@ -432,23 +431,6 @@ export async function loadTopScoresForSummaryScores(
 }
 
 /**
- * List (and filter) a model.
- */
-export async function listModels<T>(
-  type: IValidModelNames,
-  params?: Partial<IParams>,
-): Promise<IMultipleResponse<T>> {
-  validateModelName(type);
-
-  const { data } = await axios.get(listURL(type, params));
-
-  return {
-    models: convertArrayFromJSONAPI<T>(data),
-    response: data,
-  };
-}
-
-/**
  * Search comment models.
  */
 export async function search(
@@ -463,29 +445,6 @@ export async function search(
   const { data }: any = await axios.get(serviceURL('search', null, requestParams));
 
   return data.data;
-}
-
-/**
- * List (and filter) assigned articles for a user.
- */
-export async function listAssignedArticles(
-  userId: string,
-  params?: Partial<IParams>,
-): Promise<IMultipleResponse<IArticleModel>> {
-  validateID(userId, `userId`);
-
-  const { data } = await axios.get(
-    serviceURL(
-      'assignments',
-      `/users/${parseInt(userId, 10)}`,
-      params,
-    ),
-  );
-
-  return {
-    models: convertArrayFromJSONAPI<IArticleModel>(data),
-    response: data,
-  };
 }
 
 /**
@@ -529,26 +488,6 @@ export function updateArticleModerators(articleId: ModelId, moderatorIds: Array<
     'assignedModerators',
     moderatorIds as Array<string>,
   );
-}
-
-/**
- * List deferred articles. Doing this in lieu of having an actual service that can return
- * a list of articles that contains at least 1 comment that is 'deferred'
- */
-export async function listDeferredArticles(
-  params?: Partial<IParams>,
-): Promise<IMultipleResponse<IArticleModel>> {
-  const requestParams = {
-    filters: {
-      comments: {
-        isDeferred: true,
-      },
-    },
-
-    ...params,
-  };
-
-  return listModels<IArticleModel>('articles', requestParams);
 }
 
 export interface IModeratedComments {
@@ -673,40 +612,6 @@ export async function listRelationshipModels<T>(
 }
 
 /**
- * Get a single has-one model relationship.
- */
-export async function getRelationshipModel<T>(
-  type: IValidModelNames,
-  id: string,
-  relationship: string,
-): Promise<ISingleResponse<T>> {
-  validateModelName(type);
-
-  const { data } = await axios.get(relatedURL(type, id, relationship));
-
-  return {
-    model: convertFromJSONAPI<T>(data),
-    response: data,
-  };
-}
-
-/**
- * Append 1 or more items to a has-many model relationship.
- */
-export async function addRelationshipModels(
-  type: IValidModelNames,
-  id: string,
-  relationship: string,
-  relatedIds: Array<string>,
-): Promise<void> {
-  validateModelName(type);
-
-  await axios.post(relationURL(type, id, relationship), {
-    data: relatedIds.map((relatedId) => ({ id: relatedId })),
-  });
-}
-
-/**
  * Update a model relationship.
  */
 export async function updateRelationshipModels(
@@ -718,22 +623,6 @@ export async function updateRelationshipModels(
   validateModelName(type);
 
   await axios.patch(relationURL(type, id, relationship), {
-    data: relatedIds.map((relatedId) => ({ id: relatedId })),
-  });
-}
-
-/**
- * Destroy 1 or more items from a has-many model relationship.
- */
-export async function destroyRelationshipModels(
-  type: IValidModelNames,
-  id: string,
-  relationship: string,
-  relatedIds: Array<string>,
-): Promise<void> {
-  validateModelName(type);
-
-  await axios.delete(relationURL(type, id, relationship), {
     data: relatedIds.map((relatedId) => ({ id: relatedId })),
   });
 }
