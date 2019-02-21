@@ -25,7 +25,7 @@ import {
   LIGHT_SECONDARY_TEXT_COLOR,
   SHORT_SCREEN_QUERY,
 } from '../../styles';
-import { css, stylesheet } from '../../utilx';
+import { css, IStyle, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   base: {
@@ -90,7 +90,7 @@ const STYLES = stylesheet({
 });
 
 export interface INavigationTabProps {
-  style?: object;
+  style?: IStyle;
   label: string;
   count: number;
   icon?: JSX.Element;

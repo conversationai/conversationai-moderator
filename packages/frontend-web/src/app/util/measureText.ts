@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ITypeDefinition } from '../styles/typography';
+import { ITypeStyle } from '../styles';
 
-function getFontStyle({ fontWeight, fontSize, fontFamily }: ITypeDefinition): string {
+function getFontStyle({ fontWeight, fontSize, fontFamily }: ITypeStyle): string {
   return `normal normal ${fontWeight} ${fontSize}px ${fontFamily}`;
 }
 
-export function setupContext(canvas: any, styles: ITypeDefinition): void {
+export function setupContext(canvas: any, styles: ITypeStyle): void {
   const ctx = canvas.getContext('2d');
 
   ctx.font = getFontStyle(styles);
@@ -31,20 +31,20 @@ export function setupContext(canvas: any, styles: ITypeDefinition): void {
   ctx.miterLimit = 10;
 }
 
-export function measureLine(canvas: any, text: string, styles: ITypeDefinition): number {
+export function measureLine(canvas: any, text: string, styles: ITypeStyle): number {
   const ctx = canvas.getContext('2d');
   setupContext(canvas, styles);
 
   return ctx.measureText(text).width;
 }
 
-export function getTextHeight(lines: Array<string>, _wordWrapWidth: number, styles: ITypeDefinition): number {
+export function getTextHeight(lines: Array<string>, _wordWrapWidth: number, styles: ITypeStyle): number {
   const lineHeight = styles.fontSize * styles.lineHeight;
 
   return lineHeight + ((lines.length - 1) * lineHeight);
 }
 
-export function wordWrap(canvas: any, text: string, wordWrapWidth: number, styles: ITypeDefinition): Array<string> {
+export function wordWrap(canvas: any, text: string, wordWrapWidth: number, styles: ITypeStyle): Array<string> {
   const ctx = canvas.getContext('2d');
   setupContext(canvas, styles);
 

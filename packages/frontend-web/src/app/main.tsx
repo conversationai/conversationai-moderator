@@ -38,7 +38,7 @@ import {
 import { APP_NAME } from './config';
 import { validateID } from './platform/dataService';
 import { reducer as scenesReducer, scenes as makeRoutes } from './scenes';
-import { Login } from './scenes/Login';
+import { ErrorRoot } from './scenes/Root/components/ErrorRoot';
 import { reducer as globalReducer } from './stores';
 import { clearReturnURL, getReturnURL } from './util';
 
@@ -119,15 +119,8 @@ function render(elem: HTMLElement) {
   );
 }
 
-function renderLogin(elem: HTMLElement, errorMessage: string) {
-  ReactDOM.render(
-    (
-      <Provider store={store}>
-        <Login errorMessage={errorMessage} />
-      </Provider>
-    ),
-    elem,
-  );
+function renderError(elem: HTMLElement, errorMessage: string) {
+  ReactDOM.render(<ErrorRoot errorMessage={errorMessage}/>, elem);
 }
 
 // Set window title.
@@ -156,7 +149,7 @@ if (queryString && queryString['token']) {
       }
     } catch (e) {
       console.error(e);
-      renderLogin(document.getElementById('app'), e.message);
+      renderError(document.getElementById('app'), e.message);
     }
   })();
 } else {

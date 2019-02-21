@@ -17,10 +17,6 @@ limitations under the License.
 import { storiesOf } from '@storybook/react';
 import { Login } from './Login';
 
-export interface ILoginProps {
-  hasFailure?: boolean;
-}
-
 storiesOf('Login', module)
   .add('Login page', () => {
     return <Login />;

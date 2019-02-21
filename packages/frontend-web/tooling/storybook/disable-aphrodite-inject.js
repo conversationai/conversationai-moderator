@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,18 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import * as Aphrodite from 'aphrodite';
+import * as AphroditeNoImportant from 'aphrodite/no-important';
 
-export const withContext = (WrappedComponent: any, contextTypes: React.ValidationMap<any>): React.ComponentClass<any> => {
-  return class extends React.Component<any> {
-    static childContextTypes = contextTypes;
-
-    getChildContext() {
-      return this.props.context;
-    }
-
-    render() {
-      return <WrappedComponent {...this.props} />;
-    }
-  };
-};
+Aphrodite.StyleSheetTestUtils.suppressStyleInjection();
+AphroditeNoImportant.StyleSheetTestUtils.suppressStyleInjection();

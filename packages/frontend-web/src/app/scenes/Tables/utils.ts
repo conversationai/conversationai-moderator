@@ -87,6 +87,7 @@ export const FILTER_DATE_updatedAt = 'updatedAt';
 export const FILTER_DATE_lastModeratedAt = 'lastModeratedAt';
 export const FILTER_DATE_SINCE = 'since-';
 export const FILTER_DATE_PRIOR = 'prior-';
+export const FILTER_MODERATOR_ISME = `${FILTER_MODERATORS}=${FILTER_MODERATORS_ME}`;
 
 function articleHasModerator(article: IArticleModel, moderatorId: string) {
   for (const mId of article.assignedModerators) {

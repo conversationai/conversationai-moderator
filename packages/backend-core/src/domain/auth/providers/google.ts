@@ -92,11 +92,11 @@ export async function verifyGoogleToken(accessToken: string, refreshToken: strin
   });
 
   if (!user) {
-    throw new AuthError(`User with email ${userData.email} tried to log in, but they were not in the database`);
+    throw new AuthError(`User ${userData.email} is not yet registered with Moderator.`);
   }
 
   if (!user.get('isActive')) {
-    throw new AuthError(`User with email ${userData.email} has been deactivated.`);
+    throw new AuthError(`User ${userData.email} has been deactivated.`);
   }
 
   const userSocialAuthData = mapAuthDataToUserSocialAuth(accessToken, refreshToken, profile);

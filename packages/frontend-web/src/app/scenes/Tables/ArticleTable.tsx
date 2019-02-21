@@ -1,5 +1,5 @@
 /*
-Copyright 2018 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -36,9 +36,9 @@ import { css, stylesheet } from '../../utilx';
 import { AssignModerators } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
 import { ArticleControlPopup } from './ArticleControlPopup';
-import { ControlFlag, MagicTimestamp, ModeratorsWidget } from './components';
+import { ControlFlag, MagicTimestamp, ModeratorsWidget, SimpleTitleCell, TitleCell } from './components';
 import { FilterSidebar } from './FilterSidebar';
-import { ARTICLE_TABLE_STYLES, COMMON_STYLES, ICON_STYLES } from './styles';
+import { ARTICLE_TABLE_STYLES, CELL_HEIGHT, COMMON_STYLES, ICON_STYLES } from './styles';
 import { big, flexCenter, medium } from './styles';
 import {
   NOT_SET,
@@ -49,8 +49,7 @@ import {
   SORT_LAST_MODERATED,
   SORT_NEW,
   SORT_REJECTED,
-  SORT_SOURCE_CREATED,
-  SORT_TITLE,
+    SORT_TITLE,
   SORT_UPDATED,
 } from './utils';
 import {
@@ -202,7 +201,7 @@ function processArticles(
     summary['title'] += ' matching filter';
   }
 
-  const page_size = Math.floor(window.innerHeight / HEADER_HEIGHT) - 5;
+  const page_size = Math.floor(window.innerHeight / CELL_HEIGHT) - 3;
   const pages = Math.ceil(processedArticles.length / page_size);
   if (pages > 1) {
     const start = current_page * page_size;
@@ -233,8 +232,7 @@ function updateArticles(state: IIArticleTableState, props: IIArticleTableProps) 
     }
   }
 
-  const category = getCategory(props);
-  newSummary['category'] = category;
+  newSummary['category'] = getCategory(props);
 
   return {
     visibleArticles: newVisible,
@@ -498,48 +496,6 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     );
   }
 
-  static renderSupertext(article: IArticleModel) {
-    const supertext = [];
-    if (article.category) {
-      supertext.push(<span key="label" {...css(ARTICLE_TABLE_STYLES.categoryLabel)}>{article.category.label}</span>);
-    }
-    if (article.sourceCreatedAt) {
-      supertext.push(
-        <span key="timestamp" {...css(ARTICLE_TABLE_STYLES.dateLabel)}>
-          <MagicTimestamp timestamp={article.sourceCreatedAt} inFuture={false}/>
-        </span>,
-      );
-    }
-
-    if (supertext.length === 0) {
-      return '';
-    }
-    return <p style={{margin: '7px 0'}}>{supertext}</p>;
-  }
-
-  static renderTitle(article: IArticleModel, isSummary: boolean) {
-    if (article.url) {
-      return (
-        <div>
-          {!isSummary && ArticleTable.renderSupertext(article)}
-          <p style={{margin: '7px 0'}}>
-            <a href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
-              {article.title}
-            </a>
-          </p>
-        </div>
-      );
-    }
-    return (
-      <div>
-        {!isSummary && ArticleTable.renderSupertext(article)}
-        <p style={{margin: '7px 0'}}>
-          {article.title}
-        </p>
-      </div>
-    );
-  }
-
   static renderTime(time: string | null) {
     if (!time) {
       return 'Never';
@@ -577,53 +533,59 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       }
     }
 
+    const cellStyle = isSummary ? ARTICLE_TABLE_STYLES.summaryCell : ARTICLE_TABLE_STYLES.dataCell;
+
     return (
-      <tr key={article.id} {...css(ARTICLE_TABLE_STYLES.dataBody)}>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
-          {ArticleTable.renderTitle(article, isSummary)}
+      <tr key={article.id} {...css(cellStyle, ARTICLE_TABLE_STYLES.dataBody)}>
+        <td {...css(cellStyle)}>
+          {isSummary ?
+            <SimpleTitleCell article={article} link={getLink('new')}/>
+            :
+            <TitleCell article={article} link={getLink('new')}/>
+          }
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
           <Link to={getLink('new')} {...css(COMMON_STYLES.cellLink)}>
             {article.unmoderatedCount}
           </Link>
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
           <Link to={getLink('approved')} {...css(COMMON_STYLES.cellLink)}>
             {article.approvedCount}
           </Link>
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
           <Link to={getLink('rejected')} {...css(COMMON_STYLES.cellLink)}>
             {article.rejectedCount}
           </Link>
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
           <Link to={getLink('deferred')} {...css(COMMON_STYLES.cellLink)}>
             {article.deferredCount}
           </Link>
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
           <Link to={getLink('highlighted')} {...css(COMMON_STYLES.cellLink)}>
             {article.highlightedCount}
           </Link>
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.numberCell)}>
+        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
           <Link to={getLink('flagged')} {...css(COMMON_STYLES.cellLink)}>
             {article.flaggedCount}
           </Link>
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.timeCell)}>
+        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}>
           {!isSummary && <MagicTimestamp timestamp={article.updatedAt} inFuture={false}/>}
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.timeCell)}>
+        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}>
           {lastModerated}
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.iconCell)}>
+        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
           <div {...css({display: 'inline-block'})}>
             {!isSummary && this.renderFlags(article)}
           </div>
         </td>
-        <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.iconCell)}>
+        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
           {targetId && this.renderModerators(targetId, moderatorIds, superModeratorIds, isSummary)}
         </td>
       </tr>
@@ -722,9 +684,9 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             <tr>
               <th key="title" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.textCell)}>
                 {renderHeaderItem('Title', SORT_TITLE)}
-                <div {...css({float: 'right'})}>
-                  {renderHeaderItem(<icons.ClockIcon/>, SORT_SOURCE_CREATED)}
-                </div>
+                {/*<div {...css({float: 'right'})}>*/}
+                  {/*{renderHeaderItem(<icons.ClockIcon/>, SORT_SOURCE_CREATED)}*/}
+                {/*</div>*/}
               </th>
               <th key="new" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
                 {renderHeaderItem('New', SORT_NEW)}

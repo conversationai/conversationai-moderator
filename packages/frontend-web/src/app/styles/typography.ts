@@ -14,19 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export interface ITypeDefinition {
+export type ITypeStyle = {
   fontFamily: string;
   fontSize: number;
   fontWeight: number;
   lineHeight: number;
-}
+};
 
 function makeTypeStyle(
   fontFamily: string,
   fontSize: number,
   fontWeight = 400,
   lineHeight = 1.5,
-): ITypeDefinition {
+): ITypeStyle {
   return {
     fontFamily,
     fontSize,

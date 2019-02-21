@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import React from 'react';
+
 import {
   BUTTON_LINK_TYPE,
   GREY_COLOR,
@@ -23,7 +24,7 @@ import {
   MEDIUM_COLOR,
   WHITE_COLOR,
 } from '../../styles';
-import { css, stylesheet } from '../../utilx';
+import { css, IStyle, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   button: {
@@ -50,7 +51,7 @@ export interface IButtonProps {
   label: string;
   onClick?(e: React.MouseEvent<any>): any;
   disabled?: boolean;
-  buttonStyles?: object;
+  buttonStyles?: IStyle;
 }
 
 export class Button extends React.PureComponent<IButtonProps> {

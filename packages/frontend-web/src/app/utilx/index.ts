@@ -16,9 +16,7 @@ limitations under the License.
 
 export * from './cssInJs';
 export * from './abbreviateModerators';
-export * from './autoFocus';
 export * from './sortDefinitions';
 export * from './highlightText';
 export * from './keyCodes';
-export * from './withContext';
 export * from './withLoader';

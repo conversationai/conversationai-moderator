@@ -17,12 +17,16 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { Set } from 'immutable';
 import React from 'react';
+import { Link } from 'react-router';
+
 import Timer = NodeJS.Timer;
 
-import { IUserModel, ModelId } from '../../../models';
+import { OpenInNew } from '@material-ui/icons/';
+
+import { IArticleModel, IUserModel, ModelId } from '../../../models';
 import * as icons from '../../components/Icons';
 import { GREY_COLOR, NICE_CONTROL_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
-import { css } from '../../utilx';
+import { css, stylesheet } from '../../utilx';
 import { COMMON_STYLES, ICON_STYLES } from './styles';
 
 export interface IMagicTimestampProps {
@@ -264,6 +268,101 @@ export class ModeratorsWidget extends React.Component<IIModeratorsWidgetProps> {
     return (
       <div onClick={this.openModeratorsDlg} {...css({display: 'flex', flexWrap: 'wrap', justifyContent: 'center'})}>
         {ret}
+      </div>
+    );
+  }
+}
+
+export const TITLE_CELL_STYLES = stylesheet({
+  titleCell: {
+    paddingLeft: '10px',
+    paddingRight: '20px',
+  },
+  superText: {
+    fontSize: '10px',
+    fontWeight: '600',
+    color: 'rgba(0,0,0,0.54)',
+    margin: '10px 0',
+  },
+  categoryLabel: {
+    textTransform: 'uppercase',
+    marginRight: '12px',
+  },
+  mainText: {
+    display: 'flex',
+    margin: '10px 0',
+  },
+  mainTextText: {
+    lineHeight: '20px',
+  },
+  mainTextLink: {
+    padding: '0 10px',
+    color: 'rgba(0,0,0,0.54)',
+  },
+});
+
+interface ITitleCellProps {
+  article: IArticleModel;
+  link: string;
+}
+
+export class TitleCell extends React.Component<ITitleCellProps> {
+  render() {
+    const {
+      article,
+      link,
+    } = this.props;
+
+    const supertext = [];
+    if (article.category) {
+      supertext.push(<span key="label" {...css(TITLE_CELL_STYLES.categoryLabel)}>{article.category.label}</span>);
+    }
+    if (article.sourceCreatedAt) {
+      supertext.push(
+        <span key="timestamp">
+          <MagicTimestamp timestamp={article.sourceCreatedAt} inFuture={false}/>
+        </span>,
+      );
+    }
+
+    return (
+      <div {...css(TITLE_CELL_STYLES.titleCell)}>
+        {supertext.length > 0 && <div {...css(TITLE_CELL_STYLES.superText)}>{supertext}</div>}
+        <div {...css(TITLE_CELL_STYLES.mainText)}>
+          <div>
+            <Link to={link} {...css(COMMON_STYLES.cellLink, TITLE_CELL_STYLES.mainTextText)}>
+              {article.title}
+            </Link>
+          </div>
+          {article.url &&
+          <div {...css(TITLE_CELL_STYLES.mainTextLink)}>
+            <a key="link" href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
+              <OpenInNew fontSize="small" />
+            </a>
+          </div>
+          }
+        </div>
+      </div>
+    );
+  }
+}
+
+export class SimpleTitleCell extends React.Component<ITitleCellProps> {
+  render() {
+    const {
+      article,
+      link,
+    } = this.props;
+
+    return (
+      <div {...css(TITLE_CELL_STYLES.titleCell)}>
+        <div {...css(TITLE_CELL_STYLES.mainText)}>
+          <div>
+            <Link to={link} {...css(COMMON_STYLES.cellLink, TITLE_CELL_STYLES.mainTextText)}>
+              {article.title}
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }

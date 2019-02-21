@@ -19,20 +19,13 @@ import {
   StyleSheet,
 } from 'aphrodite';
 import { Map } from 'immutable';
-import { isEmpty } from 'lodash';
+import { CSSProperties } from 'react';
+
 import { memoize } from '../util/partial';
-const Prefixer = require('inline-style-prefixer');
-import { DEVELOPMENT } from '../config';
-
-const prefixer = new Prefixer({ userAgent: navigator.userAgent });
-
-function prefixStyles(obj: object): object {
-  return prefixer.prefix(obj);
-}
 
 export interface IStyleProps {
   className?: string;
-  style?: object;
+  style?: CSSProperties;
 }
 
 let knownStylesheets = Map();
@@ -41,8 +34,10 @@ export function stylesheet<T>(styles: T): T {
   const sheet = StyleSheet.create(styles as any);
 
   for (const key in sheet) {
-    const originalObject = (styles as any)[key];
-    knownStylesheets = knownStylesheets.set(originalObject, sheet[key]);
+    if (sheet.hasOwnProperty(key)) {
+      const originalObject = (styles as any)[key];
+      knownStylesheets = knownStylesheets.set(originalObject, sheet[key]);
+    }
   }
 
   return styles;
@@ -52,7 +47,8 @@ function knownStyle(obj: object) {
   return knownStylesheets.get(obj);
 }
 
-export type IPossibleStyle = object | string | null | undefined | false;
+export interface IStyle { [key: string]: IStyle | string | number; }
+export type IPossibleStyle = IStyle | null | undefined;
 
 function flattenStyleReducer(sum: object, style: object): object {
   if (!style) { return sum; }
@@ -65,62 +61,21 @@ function flattenStyles(styles: Array<object>): object {
 }
 
 export function originalCSS(...styles: Array<IPossibleStyle>): IStyleProps {
-  const fromStylesheet: Array<object> = styles.filter((style: IPossibleStyle) => style && typeof style !== 'string' && knownStyle(style)) as Array<object>;
-  const notFromStylesheet = styles.filter((style: IPossibleStyle) => style && typeof style !== 'string' && !knownStyle(style)) as Array<object>;
-  const fromClassName = styles.filter((style: IPossibleStyle) => style && typeof style === 'string');
+  const fromStylesheet: Array<object> = styles.filter((style: IPossibleStyle) => style && knownStyle(style));
+  const notFromStylesheet = styles.filter((style: IPossibleStyle) => style && !knownStyle(style));
 
-  const prefixedInline = notFromStylesheet.map(prefixStyles);
+  const classNames = stylesheetToClassNames(fromStylesheet.map(knownStyle));
+  const output: IStyleProps = {};
 
-  if (DEVELOPMENT) {
-    let gotInlineStyle = false;
-
-    for (const style of styles) {
-      if (!style) {
-        continue;
-      }
-
-      if (typeof style === 'string' || knownStyle(style)) {
-        if (gotInlineStyle) {
-          throw new Error('Tried to add a class-based style AFTER an inline style. Precedence will be confusing. Please refactor');
-        }
-      } else {
-        gotInlineStyle = true;
-      }
-    }
-
-    const output: IStyleProps = {};
-
-    const outputStyles = {
-      ...flattenStyles(fromStylesheet),
-      ...flattenStyles(prefixedInline),
-    };
-
-    if (!isEmpty(outputStyles)) {
-      output.style = outputStyles;
-    }
-
-    if (fromClassName.length > 0) {
-      output.className = fromClassName.join(' ');
-    }
-
-    return output;
-  } else {
-    const classNames = fromClassName.concat([
-      stylesheetToClassNames(fromStylesheet.map(knownStyle)),
-    ]).join(' ');
-
-    const output: IStyleProps = {};
-
-    if (prefixedInline.length > 0) {
-      output.style = flattenStyles(prefixedInline);
-    }
-
-    if (classNames.length > 0) {
-      output.className = classNames;
-    }
-
-    return output;
+  if (notFromStylesheet.length > 0) {
+    output.style = flattenStyles(notFromStylesheet);
   }
+
+  if (classNames.length > 0) {
+    output.className = classNames;
+  }
+
+  return output;
 }
 
 export const css = memoize(originalCSS, true);
