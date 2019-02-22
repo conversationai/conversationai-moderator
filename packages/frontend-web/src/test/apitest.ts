@@ -43,6 +43,7 @@ import { decodeToken, setAxiosToken } from '../app/auth/store';
 import { saveToken } from '../app/platform/localStore';
 import { connectNotifier } from '../app/platform/websocketService';
 import { globalUpdate, systemUpdate, userUpdate } from './notificationChecks';
+import { commentDetailsPage,  listModeratedCommentsPage } from './pageTests';
 
 try {
   const data = decodeToken(token);
@@ -77,10 +78,25 @@ setAxiosToken(token);
   globalUpdate.dataCheck();
   systemUpdate.tagsCheck();
 
-  console.log('* Results');
+  console.log('* WebSocket State');
   systemUpdate.stateCheck();
   globalUpdate.stateCheck();
   userUpdate.stateCheck();
+
+  if (globalUpdate.articlesWithFlags.length > 0 ) {
+    console.log('* Doing a flagged comment fetch');
+    await listModeratedCommentsPage('flagged', 'all');
+    console.log('  Checked all');
+    const articlesWithCategory = globalUpdate.articlesWithFlags.filter((a) => (!!a.category));
+    if (articlesWithCategory.length > 0) {
+      await listModeratedCommentsPage('flagged', 'category', articlesWithCategory[0].category.id);
+      console.log(`  Checked category ${articlesWithCategory[0].category.id}`);
+    }
+    const comments = await listModeratedCommentsPage('flagged', 'article', globalUpdate.articlesWithFlags[0].id);
+    console.log(`  Checked article ${globalUpdate.articlesWithFlags[0].id}`);
+    console.log(`  Found ${comments.length} flagged comments.  Doing a fetch of one of them`);
+    await commentDetailsPage(comments[0]);
+  }
 
   console.log('shutting down.');
   process.exit(0);

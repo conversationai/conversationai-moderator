@@ -15,6 +15,8 @@ limitations under the License.
 */
 
 import check from 'check-types';
+import { List, Map } from 'immutable';
+
 import {
   SERVER_ACTION_ACCEPT,
   SERVER_ACTION_DEFER,
@@ -137,6 +139,39 @@ function action(val: any) {
   ].indexOf(val) >= 0;
 }
 
+function checkListNumber(o: any) {
+  if (!List.isList(o)) {
+    console.log(`Number list is not a list`);
+    return false;
+  }
+
+  for (const n of o.toArray()) {
+    if (!check.number(n)) {
+      console.log(`Number list contains non number ${n}`);
+      return false;
+    }
+  }
+  return true;
+}
+
+function checkMap(o: any, type: string, keyType: (o: any) => boolean, valueType: (o: any) => boolean) {
+  if (!Map.isMap(o)) {
+    console.log(`Got a bad ${type}: Not a map`);
+    return false;
+  }
+
+  for (const k of o.keys()) {
+    if (!keyType(k)) {
+      console.log(`Got a bad ${type}: key ${k} not a ${keyType.name}`);
+      return false;
+    }
+    if (!valueType(o.get(k))) {
+      console.log(`Got a bad ${type}: key ${k} has bad value: ${o.get(k)}: not a ${keyType.name}`);
+      return false;
+    }
+  }
+}
+
 // These attribute lists should duplicate those in updateNotifications.ts.
 const commonFields = {
   id: check.string,
@@ -205,6 +240,51 @@ const ruleFields = {
   createdBy: check.maybe.string,
 };
 
+// TODO: not all fields here
+const commentFields = {
+  id: check.string,
+  sourceId: check.string,
+  authorSourceId: check.string,
+  text: check.string,
+  isScored: check.boolean,
+  isModerated: check.boolean,
+  isAccepted: check.maybe.boolean,
+  isDeferred: check.boolean,
+  isHighlighted: check.boolean,
+  isBatchResolved: check.boolean,
+  isAutoResolved: check.boolean,
+  flagsCount: check.number,
+  unresolvedFlagsCount: check.number,
+  flagsSummary: (o: any) => (!o || checkMap(o, 'comment:flagsSummary', check.string, checkListNumber)),
+  };
+
+const commentScoreFields = {
+  id: check.string,
+  commentId: check.string,
+  tagId: check.string,
+  score: check.number,
+  sourceType: check.string,
+};
+const commentFlagFields = {
+  id: check.string,
+  commentId: check.string,
+  label: check.string,
+  detail: check.maybe.string,
+  sourceId: check.maybe.string,
+  authorSourceId: check.maybe.string,
+  isResolved: check.boolean,
+};
+
+const moderatedCommentsFields = {
+  approved: check.array.of.string,
+  highlighted: check.array.of.string,
+  rejected: check.array.of.string,
+  deferred: check.array.of.string,
+  flagged: check.array.of.string,
+  batched: check.array.of.string,
+  automated: check.array.of.string,
+};
+
 function checkObject(o: any, type: string, fields: any): boolean {
   const res = check.map(o, fields);
   if (check.all(res)) {
@@ -269,4 +349,59 @@ export function checkRule(o: any) {
 
 export function checkPreselect(o: any) {
   return checkObject(o, 'preselect', rangeFields);
+}
+
+export function checkModeratedComments(o: any) {
+  return checkObject(o, 'ModeratedComments', moderatedCommentsFields);
+}
+
+export function checkTextSizes(o: any) {
+  return checkMap(o, 'textSizes', check.string, check.number);
+}
+
+function checkComment(o: any) {
+  return checkObject(o, 'comment', commentFields);
+}
+
+export function checkListComments(o: any) {
+  if (!List.isList(o)) {
+    console.log(`Got a bad listComments: Not a list`);
+    return false;
+  }
+  for (const c of o.toArray()) {
+    if (!checkComment(c)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function checkSingleComment(o: any) {
+  checkComment(o.model);
+}
+
+export function checkCommentFlags(o: any) {
+  if (!List.isList(o.models)) {
+    console.log(`Got a bad commentFlags: Not a list`);
+    return false;
+  }
+  for (const f of o.models.toArray()) {
+    if (!checkObject(f, 'commentFlag', commentFlagFields)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function checkCommentScores(o: any) {
+  if (!List.isList(o.models)) {
+    console.log(`Got a bad commentFlags: Not a list`);
+    return false;
+  }
+  for (const s of o.models.toArray()) {
+    if (!checkObject(s, 'commentScore', commentScoreFields)) {
+      return false;
+    }
+  }
+  return true;
 }

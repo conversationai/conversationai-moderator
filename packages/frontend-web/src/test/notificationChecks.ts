@@ -26,6 +26,7 @@ import {
   checkTaggingSensitivity,
   checkUser,
 } from './objectChecks';
+import {IArticleModel} from '../models';
 
 class GlobalUpdate {
   data: any = null;
@@ -39,9 +40,11 @@ class GlobalUpdate {
 
   gotDeferred = false;
 
+  articlesWithFlags: Array<IArticleModel> = [];
+
   @autobind
   notificationHandler(data: IGlobalSummary) {
-    console.log('Received global update message');
+    console.log('  Received global update message');
     this.gotUpdate = true;
 
     this.countCategories = data.categories.size;
@@ -59,6 +62,9 @@ class GlobalUpdate {
     console.log('* check articles');
     for (const a of this.data.articles.toArray()) {
       this.articlesOk = this.articlesOk && checkArticle(a);
+      if (a.flaggedCount > 0) {
+        this.articlesWithFlags.push(a);
+      }
     }
   }
 
@@ -68,12 +74,12 @@ class GlobalUpdate {
       return;
     }
 
-    console.log(`Received ${this.countCategories} categories`);
+    console.log(`  Received ${this.countCategories} categories`);
     if (!this.categoriesOk) {
       console.log('ERROR: Issue with categories');
     }
 
-    console.log(`Received ${this.countArticles} articles`);
+    console.log(`  Received ${this.countArticles} articles: ${this.articlesWithFlags.length} with flagged comments`);
     if (!this.articlesOk) {
       console.log('ERROR: Issue with articles');
     }
@@ -100,7 +106,7 @@ class SystemUpdate {
 
   @autobind
   notificationHandler(data: ISystemSummary) {
-    console.log('Received system update message');
+    console.log('  Received system update message');
     this.gotUpdate = true;
     this.countUsers = data.users.size;
     this.usersOk =  this.countUsers > 0; // We assume there must be some users
@@ -140,7 +146,7 @@ class SystemUpdate {
       return;
     }
 
-    console.log(`Received ${this.countUsers} users`);
+    console.log(`  Received ${this.countUsers} users`);
     if (!this.usersOk) {
       console.log('ERROR: Issue with users or no users fetched');
     }
@@ -168,7 +174,7 @@ class UserUpdate {
 
   @autobind
   notificationHandler(data: IUserSummary) {
-    console.log('Received user update message');
+    console.log('  Received user update message');
     this.gotUpdate = true;
     this.gotAssigned = check.number(data.assignments);
   }

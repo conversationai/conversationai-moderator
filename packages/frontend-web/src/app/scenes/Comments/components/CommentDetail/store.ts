@@ -27,9 +27,9 @@ import {
   ITaggingSensitivityModel,
 } from '../../../../../models';
 import {
+  getComment as getCommentSvc,
   getCommentFlags,
   getCommentScores,
-  getModel,
   listAuthorCounts,
 } from '../../../../platform/dataService';
 import { IThunkAction } from '../../../../stores';
@@ -85,7 +85,7 @@ const storeAuthorCounts =
 export function loadComment(id: string): IThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
     await dispatch(makeAJAXAction(
-      () => getModel('comments', id, { include: ['replyTo'] }),
+      () => getCommentSvc(id),
       loadCommentStart,
       loadCommentComplete,
     ));

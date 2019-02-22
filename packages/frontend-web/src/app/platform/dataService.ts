@@ -341,7 +341,6 @@ export async function listHistogramScoresByCategoryByDate(
 
 export async function listCommentsById(
   commentIds: List<string>,
-  params?: Partial<IParams>,
 ): Promise<List<ICommentModel>> {
   commentIds.forEach((commentId, index) => validateID(commentId, `comment Id ${index}`));
 
@@ -349,7 +348,7 @@ export async function listCommentsById(
     serviceURL(
       'commentsById',
       null,
-      params,
+      null,
     ),
     {
       data: commentIds.toArray(),
@@ -491,13 +490,13 @@ export function updateArticleModerators(articleId: ModelId, moderatorIds: Array<
 }
 
 export interface IModeratedComments {
-  approved: Array<number>;
-  highlighted: Array<number>;
-  rejected: Array<number>;
-  deferred: Array<number>;
-  flagged: Array<number>;
-  batched: Array<number>;
-  automated: Array<number>;
+  approved: Array<ModelId>;
+  highlighted: Array<ModelId>;
+  rejected: Array<ModelId>;
+  deferred: Array<ModelId>;
+  flagged: Array<ModelId>;
+  batched: Array<ModelId>;
+  automated: Array<ModelId>;
 }
 
 export async function getModeratedCommentIdsForArticle(
@@ -545,6 +544,10 @@ export async function getModel<T>(
     model: convertFromJSONAPI<T>(data),
     response: data,
   };
+}
+
+export async function getComment(id: string) {
+  return await getModel('comments', id, { include: ['replyTo'] });
 }
 
 /**
