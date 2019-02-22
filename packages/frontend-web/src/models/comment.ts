@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { fromJS, Record } from 'immutable';
+import { fromJS, List, Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 import { IArticleModel } from './article';
 
@@ -54,7 +54,7 @@ export interface ICommentAttributes {
   updatedAt: string;
   flagsCount: number;
   unresolvedFlagsCount: number;
-  flagsSummary?: any;
+  flagsSummary?: Map<string, List<number>>;
   sentForScoring: boolean;
   articleId: string;
   article: IArticleModel;

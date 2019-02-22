@@ -39,6 +39,7 @@ const comment = fakeCommentModel({
   sourceCreatedAt: date.toString(),
   flagsCount: 3,
   unresolvedFlagsCount: 2,
+  flagsSummary: new Map([['red', List([0, 1])], ['green', List([2, 2])]]),
 });
 
 const availableTags = List<ITagModel>().push(fakeTagModel({}), fakeTagModel({}));

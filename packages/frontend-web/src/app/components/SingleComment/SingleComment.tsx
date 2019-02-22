@@ -29,6 +29,7 @@ import {
 } from '../../../models';
 import { DATE_FORMAT_LONG } from '../../config';
 import { editAndRescoreComment } from '../../platform/dataService';
+import { FlagsSummary } from '../../scenes/Comments/components/FlagsSummary';
 import { ICommentSummaryScore } from '../../stores/commentSummaryScores';
 import {
   ARTICLE_CATEGORY_TYPE,
@@ -837,11 +838,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               ) : (
                 <span key="submittedAt">{SUBMITTED_AT} </span>
               )}
-              {comment.unresolvedFlagsCount > 0 && (
-                <span key="flaggedCount">
-                  &bull; {comment.unresolvedFlagsCount} unresolved {comment.unresolvedFlagsCount > 1 ? 'flags' : 'flag'}
-                </span>
-              )}
+              <FlagsSummary comment={comment}/>
             </div>
           </div>
           <style>{COMMENT_BODY_STYLES}</style>

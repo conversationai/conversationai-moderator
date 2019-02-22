@@ -20,6 +20,7 @@ import { AuthorModelRecord, IAuthorModel } from '../../../../../../../models';
 import { fakeCommentModel } from '../../../../../../../models/fake';
 import { css } from '../../../../../../utilx';
 import { ThreadedComment } from './ThreadedComment';
+import {List} from 'immutable';
 
 const author = AuthorModelRecord({
   email: 'name@email.com',
@@ -37,6 +38,7 @@ const comment = fakeCommentModel({
   author,
   flagsCount: 3,
   unresolvedFlagsCount: 1,
+  flagsSummary: new Map([['red', List([0, 1])], ['green', List([1, 2])]]),
   text: 'Orginating comment text is here',
 });
 const replies = [
@@ -50,6 +52,7 @@ const replies = [
     author,
     flagsCount: 3,
     unresolvedFlagsCount: 2,
+    flagsSummary: new Map([['red', List([0, 1])], ['green', List([2, 2])]]),
     text: 'First reply comment text is here. This comment is marked Deferred.',
   }),
   fakeCommentModel({
@@ -62,6 +65,7 @@ const replies = [
     author,
     flagsCount: 3,
     unresolvedFlagsCount: 1 ,
+    flagsSummary: new Map([['red', List([0, 1])], ['green', List([1, 2])]]),
     text: 'Second reply comment text is here. This comment is marked Highlighted.',
   }),
   fakeCommentModel({
@@ -74,6 +78,11 @@ const replies = [
     author,
     flagsCount: 30,
     unresolvedFlagsCount: 20,
+    flagsSummary: new Map([
+      ['red', List([3, 5])],
+      ['green', List([10, 15])],
+      ['blue', List([7, 10])],
+    ]),
     text: 'Third reply comment text is here. This comment is marked Rejected.',
   }),
   fakeCommentModel({

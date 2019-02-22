@@ -34,7 +34,7 @@ export type IModelID = string | number;
 
 let singleRecordStores = 0;
 
-export function findModel(name: string): (Model: any) => any {
+function findModel(name: string): (Model: any) => any {
   if (name === 'articles') { return ArticleModel; }
   if (name === 'comments') { return CommentModel; }
   if (name === 'categories') { return CategoryModel; }
