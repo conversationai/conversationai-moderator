@@ -22,6 +22,9 @@ interface IFlagsSummaryProps {
   comment: ICommentModel;
 }
 
+const TOTAL = 0;
+const UNRESOLVED = 1;
+
 export class FlagsSummary extends React.PureComponent<IFlagsSummaryProps> {
   render() {
     const {
@@ -44,10 +47,10 @@ export class FlagsSummary extends React.PureComponent<IFlagsSummaryProps> {
     }
 
     const summary = comment.flagsSummary;
-    const flags =  Array.from(summary.keys()).sort((a, b) => summary.get(b).get(0) - summary.get(a).get(0));
+    const flags =  Array.from(summary.keys()).sort((a, b) => summary.get(b).get(UNRESOLVED) - summary.get(a).get(UNRESOLVED));
     return (
       <span>
-        &bull;{countsText()}:&nbsp;({flags.map((f) => <span key={f}>{f}: {summary.get(f).get(0)}/{summary.get(f).get(1)}</span>)})
+        &bull;{countsText()}:&nbsp;({flags.map((f) => <span key={f}>{f}: {summary.get(f).get(UNRESOLVED)}/{summary.get(f).get(TOTAL)}</span>)})
       </span>
     );
   }

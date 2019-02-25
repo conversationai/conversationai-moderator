@@ -38,7 +38,7 @@ const comment = fakeCommentModel({
   author,
   flagsCount: 3,
   unresolvedFlagsCount: 1,
-  flagsSummary: new Map([['red', List([0, 1])], ['green', List([1, 2])]]),
+  flagsSummary: new Map([['red', List([1, 0])], ['green', List([2, 1])]]),
   text: 'Orginating comment text is here',
 });
 const replies = [
@@ -52,7 +52,7 @@ const replies = [
     author,
     flagsCount: 3,
     unresolvedFlagsCount: 2,
-    flagsSummary: new Map([['red', List([0, 1])], ['green', List([2, 2])]]),
+    flagsSummary: new Map([['red', List([1, 0])], ['green', List([2, 2])]]),
     text: 'First reply comment text is here. This comment is marked Deferred.',
   }),
   fakeCommentModel({
@@ -65,7 +65,7 @@ const replies = [
     author,
     flagsCount: 3,
     unresolvedFlagsCount: 1 ,
-    flagsSummary: new Map([['red', List([0, 1])], ['green', List([1, 2])]]),
+    flagsSummary: new Map([['red', List([1, 0])], ['green', List([2, 1])]]),
     text: 'Second reply comment text is here. This comment is marked Highlighted.',
   }),
   fakeCommentModel({
@@ -79,9 +79,9 @@ const replies = [
     flagsCount: 30,
     unresolvedFlagsCount: 20,
     flagsSummary: new Map([
-      ['red', List([3, 5])],
-      ['green', List([10, 15])],
-      ['blue', List([7, 10])],
+      ['red', List([5, 3])],
+      ['green', List([15, 10])],
+      ['blue', List([10, 7])],
     ]),
     text: 'Third reply comment text is here. This comment is marked Rejected.',
   }),
