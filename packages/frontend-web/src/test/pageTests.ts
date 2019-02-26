@@ -25,12 +25,15 @@ import {
   IModeratedComments,
   listCommentsById,
   listCommentSummaryScoresById,
+  listMaxHistogramScoresByCategory,
+  listMaxSummaryScoreByArticle,
   listTextSizesByIds,
 } from '../app/platform/dataService';
-import { ModelId } from '../models';
+import { ICommentScoredModel, ModelId } from '../models';
 import {
   checkCommentFlags,
   checkCommentScores,
+  checkHistogramScores,
   checkListComments,
   checkModeratedComments,
   checkSingleComment,
@@ -44,12 +47,36 @@ export async function listCommentsPage(comments: Array<ModelId>) {
   checkListComments(data);
 }
 
+export async function listNewCommentsPage_SUMMARY_SCORE(
+  type: 'all' | 'category' | 'article',
+  id?: ModelId,
+) {
+  const sort = ['-score'];
+
+  if (type === 'all') {
+    id = 'all';
+  }
+
+  let scores: List<ICommentScoredModel>;
+  if (type === 'article') {
+    scores = await listMaxSummaryScoreByArticle(id, sort);
+  }
+  else {
+    scores = await listMaxHistogramScoresByCategory(id, sort);
+  }
+
+  checkHistogramScores(scores);
+
+  // not working yet.  Data in wrong format?
+  // await loadTopScoresForSummaryScores(scores.toArray().slice(0, 5));
+  return scores.map((s) => s.commentId);
+}
+
 export async function listModeratedCommentsPage(
   tab: 'approved' | 'highlighted' | 'flagged',
   type: 'all' | 'category' | 'article',
   id?: ModelId,
 ) {
-
   let sort: Array<string>;
   if (tab === 'flagged') {
     sort = ['-unresolvedFlagsCount'];

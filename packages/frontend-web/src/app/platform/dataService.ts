@@ -676,6 +676,8 @@ export async function deleteCommentTagRequest(commentId: string, commentScoreId:
   await axios.delete(url);
 }
 
+// TODO: This is a terrible API.  We should not trust client to tell us the userID.  We should
+//       get it from the session on the server.
 export function highlightCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 

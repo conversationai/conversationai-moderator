@@ -42,12 +42,19 @@ if (!token) {
 import { decodeToken, setAxiosToken } from '../app/auth/store';
 import { saveToken } from '../app/platform/localStore';
 import { connectNotifier } from '../app/platform/websocketService';
+import { approveComment } from './actions';
 import { articleData, systemData, userData } from './notificationChecks';
-import { commentDetailsPage,  listModeratedCommentsPage } from './pageTests';
+import {
+  commentDetailsPage,
+  listModeratedCommentsPage,
+  listNewCommentsPage_SUMMARY_SCORE,
+} from './pageTests';
 
+let userId: string;
 try {
   const data = decodeToken(token);
   console.log(`Accessing osmod backend as user ${data.user}`);
+  userId = data.user.toString();
 }
 catch (e) {
   console.log(`Couldn't parse token ${token}.`);
@@ -85,18 +92,34 @@ setAxiosToken(token);
   userData.stateCheck();
 
   if (articleData.articlesWithFlags.length > 0 ) {
+    const articles = articleData.articlesWithFlags;
     console.log('* Doing a flagged comment fetch');
     await listModeratedCommentsPage('flagged', 'all');
     console.log('  Checked all');
-    const articlesWithCategory = articleData.articlesWithFlags.filter((a) => (!!a.category));
+    const articlesWithCategory = articles.filter((a) => (!!a.category));
     if (articlesWithCategory.length > 0) {
       await listModeratedCommentsPage('flagged', 'category', articlesWithCategory[0].category.id);
       console.log(`  Checked category ${articlesWithCategory[0].category.id}`);
     }
-    const comments = await listModeratedCommentsPage('flagged', 'article', articleData.articlesWithFlags[0].id);
-    console.log(`  Checked article ${articleData.articlesWithFlags[0].id}`);
+    const comments = await listModeratedCommentsPage('flagged', 'article', articles[0].id);
+    console.log(`  Checked article ${articles[0].id}`);
     console.log(`  Found ${comments.length} flagged comments.  Doing a fetch of one of them`);
     await commentDetailsPage(comments[0]);
+  }
+
+  if (articleData.articlesWithNew.length > 0) {
+    const articles = articleData.articlesWithNew;
+    console.log('* Doing a new comment fetch');
+    await listNewCommentsPage_SUMMARY_SCORE('all');
+    console.log('  Checked all');
+    const articlesWithCategory = articles.filter((a) => (!!a.category));
+    if (articlesWithCategory.length > 0) {
+      await listNewCommentsPage_SUMMARY_SCORE('category', articlesWithCategory[0].category.id);
+      console.log(`  Checked category ${articlesWithCategory[0].category.id}`);
+    }
+    const comments = await listNewCommentsPage_SUMMARY_SCORE('article', articles[0].id);
+    console.log(`* Approving comment ${comments.last()} and waiting for notification.`);
+    await approveComment(comments.last(), userId);
   }
 
   console.log('shutting down.');

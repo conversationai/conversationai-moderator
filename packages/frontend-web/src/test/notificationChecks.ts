@@ -38,7 +38,10 @@ class ArticleMessages {
   countArticles = 0;
   articlesOk = true;
 
+  articlesWithNew: Array<IArticleModel> = [];
   articlesWithFlags: Array<IArticleModel> = [];
+
+  updateHappened?(): void ;
 
   @autobind
   notificationHandler(data: IAllArticlesData) {
@@ -52,9 +55,12 @@ class ArticleMessages {
 
   @autobind
   updateHandler(data: IArticleUpdate) {
-    console.log('+ Received all articles message');
+    console.log('+ Received singe article update message');
     checkCategory(data.category);
     checkArticle(data.article);
+    if (this.updateHappened) {
+      this.updateHappened();
+    }
   }
 
   dataCheck() {
@@ -65,6 +71,9 @@ class ArticleMessages {
     console.log('* check articles');
     for (const a of this.data.articles.toArray()) {
       this.articlesOk = this.articlesOk && checkArticle(a);
+      if (a.unmoderatedCount > 0) {
+        this.articlesWithNew.push(a);
+      }
       if (a.flaggedCount > 0) {
         this.articlesWithFlags.push(a);
       }

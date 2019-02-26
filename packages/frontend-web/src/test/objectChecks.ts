@@ -265,6 +265,7 @@ const commentScoreFields = {
   score: check.number,
   sourceType: check.string,
 };
+
 const commentFlagFields = {
   id: check.string,
   commentId: check.string,
@@ -284,6 +285,11 @@ const moderatedCommentsFields = {
   batched: check.array.of.string,
   automated: check.array.of.string,
 };
+
+const histogramScoreFields = {
+  score: check.number,
+  commentId: check.string,
+}
 
 function checkObject(o: any, type: string, fields: any): boolean {
   const res = check.map(o, fields);
@@ -395,11 +401,24 @@ export function checkCommentFlags(o: any) {
 
 export function checkCommentScores(o: any) {
   if (!List.isList(o.models)) {
-    console.log(`Got a bad commentFlags: Not a list`);
+    console.log(`Got a bad commentScores: Not a list`);
     return false;
   }
   for (const s of o.models.toArray()) {
     if (!checkObject(s, 'commentScore', commentScoreFields)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function checkHistogramScores(o: any) {
+  if (!List.isList(o)) {
+    console.log(`Got a bad histogram scores: Not a list`);
+    return false;
+  }
+  for (const s of o.toArray()) {
+    if (!checkObject(s, 'commentScore', histogramScoreFields)) {
       return false;
     }
   }
