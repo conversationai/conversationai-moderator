@@ -17,7 +17,7 @@ limitations under the License.
 import {
   Category,
   Comment,
-  updateHappened,
+  partialUpdateHappened,
 } from '../../models';
 import { IArticleAttributes, IArticleInstance } from '../../models';
 import {
@@ -77,7 +77,6 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     const category = (await Category.findById(article.get('categoryId')))!;
     await denormalizeCommentCountsForCategory(category);
   }
-  else {
-    updateHappened();
-  }
+
+  partialUpdateHappened(article.id);
 }

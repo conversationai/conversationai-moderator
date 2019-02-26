@@ -68,6 +68,7 @@ setAxiosToken(token);
       websocketStateHandler,
       systemData.notificationHandler,
       articleData.notificationHandler,
+      articleData.updateHandler,
       userData.notificationHandler,
     );
   });

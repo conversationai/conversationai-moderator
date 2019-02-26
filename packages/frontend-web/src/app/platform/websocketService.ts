@@ -68,6 +68,11 @@ export interface IAllArticlesData {
   articles: List<IArticleModel>;
 }
 
+export interface IArticleUpdate {
+  category?: ICategoryModel;
+  article: IArticleModel;
+}
+
 export interface IPerUserData {
   assignments: number;
 }
@@ -123,6 +128,24 @@ function packArticleData(data: any): IAllArticlesData {
   };
 }
 
+function packArticleUpdate(data: any): IArticleUpdate {
+  const cdata = data.category;
+  let cmodel;
+  if (cdata) {
+    cdata.id = cdata.id.toString();
+    cmodel = CategoryModel(cdata);
+  }
+
+  const adata = data.article;
+  adata.id = adata.id.toString();
+  adata.category = cmodel;
+  const amodel = ArticleModel(adata);
+  return {
+    category: cmodel,
+    article: amodel,
+  };
+}
+
 let gotSystem = false;
 let gotArticles = false;
 let gotUser = false;
@@ -132,6 +155,7 @@ export function connectNotifier(
   websocketStateHandler: (status: string) => void,
   systemDataHandler: (data: ISystemData) => void,
   allArticlesDataHandler: (data: IAllArticlesData) => void,
+  articleUpdateHandler: (data: IArticleUpdate) => void,
   perUserDataHandler: (data: IPerUserData) => void) {
   function checkSocketAlive() {
     if (!ws || ws.readyState !== myws.OPEN) {
@@ -172,7 +196,9 @@ export function connectNotifier(
           perUserDataHandler(body.data as IPerUserData);
           gotUser = true;
         }
-
+        else if (body.type === 'article-update') {
+          articleUpdateHandler(packArticleUpdate(body.data));
+        }
         if (gotSystem && gotArticles && gotUser && !socketUp) {
           websocketStateHandler(STATUS_UP);
           socketUp = true;

@@ -16,7 +16,7 @@ limitations under the License.
 import check from 'check-types';
 import { autobind } from 'core-decorators';
 
-import { IAllArticlesData, IPerUserData, ISystemData } from '../app/platform/websocketService';
+import {IAllArticlesData, IArticleUpdate, IPerUserData, ISystemData} from '../app/platform/websocketService';
 import { IArticleModel } from '../models';
 import {
   checkArticle,
@@ -48,6 +48,13 @@ class ArticleMessages {
     this.countCategories = data.categories.size;
     this.countArticles = data.articles.size;
     this.data = data;
+  }
+
+  @autobind
+  updateHandler(data: IArticleUpdate) {
+    console.log('+ Received all articles message');
+    checkCategory(data.category);
+    checkArticle(data.article);
   }
 
   dataCheck() {

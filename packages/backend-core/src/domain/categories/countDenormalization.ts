@@ -16,7 +16,6 @@ limitations under the License.
 
 import {
   Article,
-  updateHappened,
 } from '../../models';
 import { ICategoryInstance } from '../../models';
 
@@ -59,7 +58,5 @@ export async function denormalizeCommentCountsForCategory(category: ICategoryIns
     flaggedCount,
     batchedCount,
   });
-
-  updateHappened();
   return c;
 }

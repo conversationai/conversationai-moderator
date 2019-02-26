@@ -54,13 +54,18 @@ interface IAllArticlesData {
   articles: any;
 }
 
+interface IArticleUpdateData {
+  category: any;
+  article: any;
+}
+
 interface IPerUserData {
   assignments: number;
 }
 
 interface IMessage {
-  type: 'system' | 'global' | 'user';
-  data: ISystemData | IAllArticlesData | IPerUserData;
+  type: 'system' | 'global' | 'article-update' | 'user';
+  data: ISystemData | IAllArticlesData | IArticleUpdateData | IPerUserData;
 }
 
 async function getSystemData() {
@@ -131,6 +136,30 @@ async function getAllArticlesData() {
     data: {
       categories: categorydata,
       articles: articledata,
+    },
+  } as IMessage;
+}
+
+async function getArticleUpdate(articleId: number) {
+  const article = await Article.findById(
+    articleId,
+    {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
+  );
+  const aData: any = pick(article.toJSON(), articleFields);
+  aData.assignedModerators = aData.assignedModerators.map((i: any) => i.moderator_assignment.userId.toString());
+
+  const category = await Category.findById(
+    aData.categoryId,
+    {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]}
+  );
+  const cData: any = pick(category.toJSON(), categoryFields);
+  cData.assignedModerators = cData.assignedModerators.map((i: any) => i.user_category_assignment.userId.toString());
+
+  return {
+    type: 'article-update',
+    data: {
+      category: cData,
+      article: aData,
     },
   } as IMessage;
 }
@@ -212,17 +241,17 @@ async function maybeSendUpdateToUser(si: ISocketItem,
   for (const ws of si.ws) {
     try {
       if (sendSystem) {
-        logger.info(`Sending system summary to user ${si.userId}`);
+        logger.info(`Sending system data to user ${si.userId}`);
         await ws.send(JSON.stringify(lastSystemMessage));
       }
 
       if (sendAllArticles) {
-        logger.info(`Sending global summary to user ${si.userId}`);
+        logger.info(`Sending all articles data to user ${si.userId}`);
         await ws.send(JSON.stringify(lastAllArticlesMessage));
       }
 
       if (sendUser) {
-        logger.info(`Sending user summary to user ${si.userId}`);
+        logger.info(`Sending per user data to user ${si.userId}`);
         await ws.send(JSON.stringify(userSummaryMessage));
       }
     }
@@ -239,7 +268,18 @@ async function maybeSendUpdateToUser(si: ISocketItem,
 async function maybeSendUpdates() {
   for (const si of socketItems.values()) {
     const updateFlags = await refreshMessages(false);
-    maybeSendUpdateToUser(si, updateFlags);
+    await maybeSendUpdateToUser(si, updateFlags);
+  }
+}
+
+async function sendPartialUpdate(articleId: number) {
+  lastAllArticlesMessage = await getAllArticlesData();
+  const update = await getArticleUpdate(articleId);
+  for (const si of socketItems.values()) {
+    for (const ws of si.ws) {
+      logger.info(`Sending article update to user ${si.userId}`);
+      await ws.send(JSON.stringify(update));
+    }
   }
 }
 
@@ -267,7 +307,9 @@ export function createUpdateNotificationService(): express.Router {
 
     if (lastAllArticlesMessage === null) {
       logger.info(`Setting up notifications`);
-      registerInterest(maybeSendUpdates);
+      registerInterest({
+        updateHappened: maybeSendUpdates,
+        partialUpdateHappened: sendPartialUpdate});
     }
 
     ws.on('close', () => {
