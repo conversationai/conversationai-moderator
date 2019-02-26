@@ -22,18 +22,16 @@ import { IArticleModel, ModelId } from '../../models';
 import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'articles'];
-const ARTICLES_ROOT = [...STATE_ROOT, 'items'];
+const DATA = [...STATE_ROOT, 'items'];
 
-export const articlesUpdated = createAction<List<IArticleModel>>(
-  'global/ARTICLES_UPDATED',
-);
+export const articlesLoaded = createAction<List<IArticleModel>>('global/ARTICLES_LOADED');
 
 export function getArticles(state: IAppStateRecord): List<IArticleModel> {
-  return state.getIn(ARTICLES_ROOT);
+  return state.getIn(DATA);
 }
 
 export function getArticleFromId(state: IAppStateRecord, articleId: ModelId): IArticleModel {
-  return state.getIn(ARTICLES_ROOT).find((article: IArticleModel) => article.id === articleId);
+  return state.getIn(DATA).find((article: IArticleModel) => article.id === articleId);
 }
 
 export interface IArticlesState {
@@ -47,7 +45,7 @@ const StateFactory = makeTypedFactory<IArticlesState, IArticlesStateRecord>({
 });
 
 const reducer = handleActions<IArticlesStateRecord, List<IArticleModel>>( {
-  [articlesUpdated.toString()]: (state: IArticlesStateRecord, { payload }: Action<List<IArticleModel>>) => {
+  [articlesLoaded.toString()]: (state: IArticlesStateRecord, { payload }: Action<List<IArticleModel>>) => {
     return state.set('items', payload);
   },
 }, StateFactory());

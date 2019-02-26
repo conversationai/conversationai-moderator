@@ -16,7 +16,8 @@ limitations under the License.
 import check from 'check-types';
 import { autobind } from 'core-decorators';
 
-import { IGlobalSummary, ISystemSummary, IUserSummary } from '../app/platform/websocketService';
+import { IAllArticlesData, IPerUserData, ISystemData } from '../app/platform/websocketService';
+import { IArticleModel } from '../models';
 import {
   checkArticle,
   checkCategory,
@@ -26,9 +27,8 @@ import {
   checkTaggingSensitivity,
   checkUser,
 } from './objectChecks';
-import {IArticleModel} from '../models';
 
-class GlobalUpdate {
+class ArticleMessages {
   data: any = null;
   gotUpdate = false;
 
@@ -38,19 +38,15 @@ class GlobalUpdate {
   countArticles = 0;
   articlesOk = true;
 
-  gotDeferred = false;
-
   articlesWithFlags: Array<IArticleModel> = [];
 
   @autobind
-  notificationHandler(data: IGlobalSummary) {
-    console.log('  Received global update message');
+  notificationHandler(data: IAllArticlesData) {
+    console.log('+ Received all articles message');
     this.gotUpdate = true;
 
     this.countCategories = data.categories.size;
     this.countArticles = data.articles.size;
-
-    this.gotDeferred = check.number(data.deferred);
     this.data = data;
   }
 
@@ -70,7 +66,7 @@ class GlobalUpdate {
 
   stateCheck() {
     if (!this.gotUpdate) {
-      console.log('ERROR: Didn\'t get global update message');
+      console.log('ERROR: Didn\'t get article update message');
       return;
     }
 
@@ -83,16 +79,12 @@ class GlobalUpdate {
     if (!this.articlesOk) {
       console.log('ERROR: Issue with articles');
     }
-
-    if (!this.gotDeferred) {
-      console.log('ERROR: Didn\'t get deferred count');
-    }
   }
 }
 
-export const globalUpdate = new GlobalUpdate();
+export const articleData = new ArticleMessages();
 
-class SystemUpdate {
+class SystemData {
   data: any = null;
   gotUpdate = false;
 
@@ -105,8 +97,8 @@ class SystemUpdate {
   gotPreselects = false;
 
   @autobind
-  notificationHandler(data: ISystemSummary) {
-    console.log('  Received system update message');
+  notificationHandler(data: ISystemData) {
+    console.log('+ Received system update message');
     this.gotUpdate = true;
     this.countUsers = data.users.size;
     this.usersOk =  this.countUsers > 0; // We assume there must be some users
@@ -166,15 +158,15 @@ class SystemUpdate {
   }
 }
 
-export const systemUpdate = new SystemUpdate();
+export const systemData = new SystemData();
 
-class UserUpdate {
+class UserData {
   gotUpdate = false;
   gotAssigned = false;
 
   @autobind
-  notificationHandler(data: IUserSummary) {
-    console.log('  Received user update message');
+  notificationHandler(data: IPerUserData) {
+    console.log('+ Received user update message');
     this.gotUpdate = true;
     this.gotAssigned = check.number(data.assignments);
   }
@@ -190,4 +182,4 @@ class UserUpdate {
   }
 }
 
-export const userUpdate = new UserUpdate();
+export const userData = new UserData();

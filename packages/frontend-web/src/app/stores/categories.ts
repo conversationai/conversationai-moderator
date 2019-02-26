@@ -21,12 +21,12 @@ import { ICategoryModel, ModelId } from '../../models';
 import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'categories'];
-const CATEGORIES_DATA = [...STATE_ROOT, 'items'];
+const DATA = [...STATE_ROOT, 'items'];
 
-export const categoriesUpdated = createAction<List<ICategoryModel>>('global/CATEGORIES_UPDATED');
+export const categoriesLoaded = createAction<List<ICategoryModel>>('global/CATEGORIES_LOADED');
 
 export function getCategories(state: IAppStateRecord): List<ICategoryModel> {
-  return state.getIn(CATEGORIES_DATA);
+  return state.getIn(DATA);
 }
 
 export function getCategory(state: IAppStateRecord, id: ModelId): ICategoryModel {
@@ -44,7 +44,7 @@ const CategoriesStateFactory = makeTypedFactory<ICategoriesState, ICategoriesSta
 });
 
 export const reducer = handleActions<ICategoriesStateRecord, List<ICategoryModel>>( {
-  [categoriesUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<List<ICategoryModel>>) => {
+  [categoriesLoaded.toString()]: (state: ICategoriesStateRecord, { payload }: Action<List<ICategoryModel>>) => {
     return state.set('items', payload);
   },
 }, CategoriesStateFactory());

@@ -19,7 +19,7 @@ import { isEqual, pick } from 'lodash';
 import * as WebSocket from 'ws';
 
 import {
-  Article, Category, Comment, ModerationRule, Preselect, Tag, TaggingSensitivity, User,
+  Article, Category, ModerationRule, Preselect, Tag, TaggingSensitivity, User,
 } from '@conversationai/moderator-backend-core';
 import {
   IArticleInstance, ICategoryInstance, IModerationRuleInstance, IPreselectInstance,
@@ -41,7 +41,7 @@ const categoryFields = [...commonFields, 'label'];
 const articleFields = [...commonFields, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
   'isCommentingEnabled', 'isAutoModerated', 'text'];
 
-interface ISystemSummary {
+interface ISystemData {
   users: any;
   tags: any;
   taggingSensitivities: any;
@@ -49,22 +49,21 @@ interface ISystemSummary {
   preselects: any;
 }
 
-interface IGlobalSummary {
+interface IAllArticlesData {
   categories: any;
   articles: any;
-  deferred: number;
 }
 
-interface IUserSummary {
+interface IPerUserData {
   assignments: number;
 }
 
 interface IMessage {
   type: 'system' | 'global' | 'user';
-  data: ISystemSummary | IGlobalSummary | IUserSummary;
+  data: ISystemData | IAllArticlesData | IPerUserData;
 }
 
-async function getSystemSummary() {
+async function getSystemData() {
   const users = await User.findAll({where: {group: ['admin', 'general']}});
   const userdata = users.map((u: IUserInstance) => {
     return pick(u.toJSON(), userFields);
@@ -104,7 +103,7 @@ async function getSystemSummary() {
 
 // TODO: Can't find a good way to get rid of the any types below
 //       Revisit when sequelize has been updated
-async function getGlobalSummary() {
+async function getAllArticlesData() {
   const categories = await Category.findAll({
     where: {isActive: true},
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
@@ -127,19 +126,16 @@ async function getGlobalSummary() {
     return article;
   });
 
-  const deferred = await Comment.findAndCountAll({where: { isDeferred: true }, limit: 0});
-
   return {
     type: 'global',
     data: {
       categories: categorydata,
       articles: articledata,
-      deferred: deferred['count'],
     },
   } as IMessage;
 }
 
-async function getUserSummary(userId: number) {
+async function getPerUserData(userId: number) {
   const user = (await User.findById(userId))!;
   const assignments = await user.countAssignments();
 
@@ -154,12 +150,42 @@ async function getUserSummary(userId: number) {
 interface ISocketItem {
   userId: number;
   ws: Array<WebSocket>;
-  lastUserSummary: IUserSummary | null;
+  lastPerUserMessage: IPerUserData | null;
 }
 
-let lastGlobalSummaryMessage: IMessage | null = null;
-let lastSystemSummaryMessage: IMessage | null = null;
+let lastSystemMessage: IMessage | null = null;
+let lastAllArticlesMessage: IMessage | null = null;
 const socketItems = new Map<number, ISocketItem>();
+
+async function refreshSystemMessage(): Promise<boolean> {
+  const newMessage = await getSystemData();
+  if (!lastSystemMessage) {
+    lastSystemMessage = newMessage;
+    return true;
+  }
+
+  const send = !isEqual(newMessage.data, lastSystemMessage.data);
+  if (send) {
+    lastSystemMessage = newMessage;
+  }
+
+  return send;
+}
+
+async function refreshAllArticlesMessage(): Promise<boolean> {
+  const newMessage = await getAllArticlesData();
+  if (!lastAllArticlesMessage) {
+    lastAllArticlesMessage = newMessage;
+    return true;
+  }
+
+  const send = !isEqual(newMessage.data, lastAllArticlesMessage.data);
+  if (send) {
+    lastAllArticlesMessage = newMessage;
+  }
+
+  return send;
+}
 
 function removeSocket(si: ISocketItem, ws: WebSocket) {
   const index = si.ws.indexOf(ws);
@@ -171,51 +197,28 @@ function removeSocket(si: ISocketItem, ws: WebSocket) {
   }
 }
 
-async function refreshGlobalMessages(alwaysSend: boolean) {
-  let sendSystem = alwaysSend;
-  if (!lastSystemSummaryMessage) {
-    lastSystemSummaryMessage = await getSystemSummary();
-    sendSystem = true;
-  }
-  else if (!alwaysSend) {
-    const newMessage = await getSystemSummary();
-    sendSystem = !isEqual(newMessage.data, lastSystemSummaryMessage.data);
-    if (sendSystem) {
-      lastSystemSummaryMessage = newMessage;
-    }
-  }
-
-  let sendGlobal = alwaysSend;
-  if (!lastGlobalSummaryMessage) {
-    lastGlobalSummaryMessage = await getGlobalSummary();
-    sendGlobal = true;
-  }
-  else if (!alwaysSend) {
-    const newMessage = await getGlobalSummary();
-    sendGlobal = !isEqual(newMessage.data, lastGlobalSummaryMessage.data);
-    if (sendGlobal) {
-      lastGlobalSummaryMessage = newMessage;
-    }
-  }
-
-  return {sendSystem, sendGlobal, sendUser: alwaysSend};
+async function refreshMessages(alwaysSend: boolean) {
+  const sendSystem = (await refreshSystemMessage() || alwaysSend);
+  const sendAllArticles = (await refreshAllArticlesMessage() || alwaysSend);
+  return {sendSystem, sendAllArticles, sendUser: alwaysSend};
 }
 
 async function maybeSendUpdateToUser(si: ISocketItem,
-                                     {sendSystem, sendGlobal, sendUser}: {sendSystem: boolean, sendGlobal: boolean, sendUser: boolean}) {
-  const userSummaryMessage = await getUserSummary(si.userId);
-  sendUser = sendUser || !si.lastUserSummary || !isEqual(userSummaryMessage.data, si.lastUserSummary);
+                                     {sendSystem, sendAllArticles, sendUser}:
+                                       {sendSystem: boolean, sendAllArticles: boolean, sendUser: boolean}) {
+  const userSummaryMessage = await getPerUserData(si.userId);
+  sendUser = sendUser || !si.lastPerUserMessage || !isEqual(userSummaryMessage.data, si.lastPerUserMessage);
 
   for (const ws of si.ws) {
     try {
       if (sendSystem) {
         logger.info(`Sending system summary to user ${si.userId}`);
-        await ws.send(JSON.stringify(lastSystemSummaryMessage));
+        await ws.send(JSON.stringify(lastSystemMessage));
       }
 
-      if (sendGlobal) {
+      if (sendAllArticles) {
         logger.info(`Sending global summary to user ${si.userId}`);
-        await ws.send(JSON.stringify(lastGlobalSummaryMessage));
+        await ws.send(JSON.stringify(lastAllArticlesMessage));
       }
 
       if (sendUser) {
@@ -230,12 +233,13 @@ async function maybeSendUpdateToUser(si: ISocketItem,
     }
   }
 
-  si.lastUserSummary = userSummaryMessage.data as IUserSummary;
+  si.lastPerUserMessage = userSummaryMessage.data as IPerUserData;
 }
 
 async function maybeSendUpdates() {
   for (const si of socketItems.values()) {
-    maybeSendUpdateToUser(si, await refreshGlobalMessages(false));
+    const updateFlags = await refreshMessages(false);
+    maybeSendUpdateToUser(si, updateFlags);
   }
 }
 
@@ -255,13 +259,13 @@ export function createUpdateNotificationService(): express.Router {
     const userId = req.user.id;
     let si = socketItems.get(userId);
     if (!si) {
-      si = {userId, ws: [], lastUserSummary: null};
+      si = {userId, ws: [], lastPerUserMessage: null};
       socketItems.set(userId, si);
     }
 
     si.ws.push(ws);
 
-    if (lastGlobalSummaryMessage === null) {
+    if (lastAllArticlesMessage === null) {
       logger.info(`Setting up notifications`);
       registerInterest(maybeSendUpdates);
     }
@@ -271,7 +275,8 @@ export function createUpdateNotificationService(): express.Router {
     });
 
     logger.info(`Websocket opened to ${req.user.email}`);
-    maybeSendUpdateToUser(si, await refreshGlobalMessages(true));
+    const updateFlags = await refreshMessages(true)
+    maybeSendUpdateToUser(si, updateFlags);
   });
 
   return router;
@@ -279,7 +284,7 @@ export function createUpdateNotificationService(): express.Router {
 
 // Used in testing
 export function destroyUpdateNotificationService() {
-  lastGlobalSummaryMessage = null;
+  lastAllArticlesMessage = null;
   for (const si of socketItems.values()) {
     for (const ws of si.ws) {
       ws.close();

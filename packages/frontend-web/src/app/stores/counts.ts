@@ -20,29 +20,21 @@ import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'counts'];
 const ASSIGNMENTS = [...STATE_ROOT, 'assignments'];
-const DEFERRED = [...STATE_ROOT, 'deferred'];
 
 export const assignmentCountUpdated = createAction<number>('global/ASSIGNMENT_COUNT_UPDATED');
-export const deferredCountUpdated = createAction<number>('global/DEFERRED_COUNT_UPDATED');
 
 export function getAssignments(state: IAppStateRecord): any {
   return state.getIn(ASSIGNMENTS);
 }
 
-export function getDeferred(state: IAppStateRecord): any {
-  return state.getIn(DEFERRED);
-}
-
 export interface ICountsState {
   assignments: number;
-  deferred: number;
 }
 
 export interface ICountsStateRecord extends TypedRecord<ICountsStateRecord>, ICountsState {}
 
 const StateFactory = makeTypedFactory<ICountsState, ICountsStateRecord>({
   assignments: 0,
-  deferred: 0,
 });
 
 export const reducer = handleActions<
@@ -52,13 +44,6 @@ export const reducer = handleActions<
   [assignmentCountUpdated.toString()]: (state, { payload }: Action<number>) => {
     return state.setIn(
       ['assignments'],
-      payload,
-    );
-  },
-
-  [deferredCountUpdated.toString()]: (state, { payload }: Action<number>) => {
-    return state.setIn(
-      ['deferred'],
       payload,
     );
   },

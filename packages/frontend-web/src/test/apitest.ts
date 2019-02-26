@@ -42,7 +42,7 @@ if (!token) {
 import { decodeToken, setAxiosToken } from '../app/auth/store';
 import { saveToken } from '../app/platform/localStore';
 import { connectNotifier } from '../app/platform/websocketService';
-import { globalUpdate, systemUpdate, userUpdate } from './notificationChecks';
+import { articleData, systemData, userData } from './notificationChecks';
 import { commentDetailsPage,  listModeratedCommentsPage } from './pageTests';
 
 try {
@@ -66,34 +66,34 @@ setAxiosToken(token);
 
     connectNotifier(
       websocketStateHandler,
-      systemUpdate.notificationHandler,
-      globalUpdate.notificationHandler,
-      userUpdate.notificationHandler,
+      systemData.notificationHandler,
+      articleData.notificationHandler,
+      userData.notificationHandler,
     );
   });
 
   await readyPromise;
 
-  systemUpdate.usersCheck();
-  globalUpdate.dataCheck();
-  systemUpdate.tagsCheck();
+  systemData.usersCheck();
+  articleData.dataCheck();
+  systemData.tagsCheck();
 
   console.log('* WebSocket State');
-  systemUpdate.stateCheck();
-  globalUpdate.stateCheck();
-  userUpdate.stateCheck();
+  systemData.stateCheck();
+  articleData.stateCheck();
+  userData.stateCheck();
 
-  if (globalUpdate.articlesWithFlags.length > 0 ) {
+  if (articleData.articlesWithFlags.length > 0 ) {
     console.log('* Doing a flagged comment fetch');
     await listModeratedCommentsPage('flagged', 'all');
     console.log('  Checked all');
-    const articlesWithCategory = globalUpdate.articlesWithFlags.filter((a) => (!!a.category));
+    const articlesWithCategory = articleData.articlesWithFlags.filter((a) => (!!a.category));
     if (articlesWithCategory.length > 0) {
       await listModeratedCommentsPage('flagged', 'category', articlesWithCategory[0].category.id);
       console.log(`  Checked category ${articlesWithCategory[0].category.id}`);
     }
-    const comments = await listModeratedCommentsPage('flagged', 'article', globalUpdate.articlesWithFlags[0].id);
-    console.log(`  Checked article ${globalUpdate.articlesWithFlags[0].id}`);
+    const comments = await listModeratedCommentsPage('flagged', 'article', articleData.articlesWithFlags[0].id);
+    console.log(`  Checked article ${articleData.articlesWithFlags[0].id}`);
     console.log(`  Found ${comments.length} flagged comments.  Doing a fetch of one of them`);
     await commentDetailsPage(comments[0]);
   }
