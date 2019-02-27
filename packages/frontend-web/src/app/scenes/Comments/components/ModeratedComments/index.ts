@@ -24,6 +24,7 @@ import { IRedialLocals } from '../../../../../types';
 import { ICommentAction } from '../../../../../types';
 import { getMyUserId } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
+import { getArticleFromId } from '../../../../stores/articles';
 import {
   changeColumnSortGroupDefault,
   getCurrentColumnSort,
@@ -36,7 +37,6 @@ import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
 import {
   adjustTabCount,
-  getArticle,
   getSummaryScoresAboveThreshold,
   getTaggingSensitivitiesInCategory,
 } from '../../store';
@@ -141,7 +141,11 @@ const mapStateToProps = createStructuredSelector({
 
   isLoading: (state: IAppStateRecord) => getCommentListIsLoading(state) || !getCommentListHasLoaded(state),
 
-  article: getArticle,
+  article: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => {
+    if (params.articleId) {
+      return getArticleFromId(state, params.articleId);
+    }
+  },
 
   areNoneSelected: getAreAnyCommentsSelected,
 
@@ -163,13 +167,13 @@ const mapStateToProps = createStructuredSelector({
 
   tags: getTaggableTags,
 
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, ownProps: any) => (id: string): Set<string> => {
+  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => (id: string): Set<string> => {
     if (!id) {
       return;
     }
 
     const scores = getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, ownProps.categoryId),
+      getTaggingSensitivitiesInCategory(state, params.categoryId, params.articleId),
       getSummaryScoresById(state, id),
     );
 
@@ -209,7 +213,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
   const {
     isArticleDetail,
     articleId,
-    category,
+    categoryId,
     tag,
   } = parseRoute(ownProps.params);
 
@@ -230,7 +234,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
         dispatch(setCommentsModerationForArticle(articleId, commentIds, moderationAction, currentModeration)),
 
     setCommentModerationStatusForCategory: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
-        dispatch(setCommentsModerationForCategory(category.toString(), commentIds, moderationAction, currentModeration)),
+        dispatch(setCommentsModerationForCategory(categoryId, commentIds, moderationAction, currentModeration)),
 
     loadScoresForCommentId: async (id: string) => {
       await dispatch(loadCommentSummaryScores(id));
@@ -245,7 +249,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
       await dispatch(executeCommentListLoader(
         isArticleDetail,
         articleId,
-        category,
+        categoryId,
         tag,
       ));
     },
@@ -276,14 +280,14 @@ const HookedModeratedComments = provideHooks<IRedialLocals>({
     const {
       isArticleDetail,
       articleId,
-      category,
+      categoryId,
       tag,
     } = parseRoute(params);
 
     await dispatch(executeCommentListLoader(
       isArticleDetail,
       articleId,
-      category,
+      categoryId,
       tag,
     ));
   },

@@ -16,94 +16,22 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import {
   IArticleAttributes,
   IArticleModel,
   ITaggingSensitivityModel,
 } from '../../../models';
 import {
-  getModel,
   ISingleResponse,
   updateModel,
 } from '../../platform/dataService';
-import { IAppStateRecord, IThunkAction } from '../../stores';
+import { IAppStateRecord } from '../../stores';
+import { getArticleFromId } from '../../stores/articles';
 import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
-import {
-  makeAJAXAction,
-  makeSingleRecordReducer,
-} from '../../util';
 
 const DATA_PREFIX = ['scenes', 'commentsIndex'];
-
-export interface ITabCount {
-  field: string;
-  amount: number;
-}
-
-function makeRootModelStore<T>(name: string, getter: any): any {
-  const HAS_DATA = [...DATA_PREFIX, name, 'hasData'];
-  const DATA = [...DATA_PREFIX, name, 'item'];
-  const LOADING_STATUS = [...DATA_PREFIX, name, 'shouldWait'];
-
-  const loadModelStart =
-    createAction(`comments/ROOT_LOAD_${name.toUpperCase()}_START`);
-
-  const loadModelComplete =
-    createAction<object>(`comments/ROOT_LOAD_${name.toUpperCase()}_COMPLETE`);
-
-  function loadModel(id: string): IThunkAction<void> {
-    return makeAJAXAction(
-      () => getter(id),
-      loadModelStart,
-      loadModelComplete,
-      (state: IAppStateRecord) => (
-        state.getIn(HAS_DATA) && id === state.getIn([...DATA, 'id'])
-      ),
-    );
-  }
-
-  const { reducer, updateRecord } = makeSingleRecordReducer<T>(
-    loadModelStart.toString(),
-    loadModelComplete.toString(),
-  );
-
-  function getModelFromState(state: IAppStateRecord): T {
-    return state.getIn(DATA);
-  }
-
-  function getIsLoading(state: IAppStateRecord): boolean {
-    return state.getIn(LOADING_STATUS);
-  }
-
-  return {
-    reducer,
-    updateRecord,
-    loadModel,
-    getModel: getModelFromState,
-    getIsLoading,
-  };
-}
-
-const {
-  reducer: articleReducer,
-  updateRecord: updateArticleRecord,
-  loadModel: loadArticle,
-  getModel: getArticle,
-  getIsLoading: getArticleIsLoading,
-} = makeRootModelStore<IArticleModel>(
-  'article',
-  (id: string) => getModel('articles', id, { include: ['category']}),
-);
-
-export {
-  articleReducer,
-  updateArticleRecord,
-  loadArticle,
-  getArticle,
-  getArticleIsLoading,
-};
 
 export function updateArticleStatus(article: Partial<IArticleAttributes>): Promise<ISingleResponse<IArticleModel>> {
   return updateModel<IArticleModel>(
@@ -186,7 +114,9 @@ function aboveThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, sc
   });
 }
 
-export function getSummaryScoresAboveThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, scores: List<ICommentSummaryScoreStateRecord>): List<ICommentSummaryScoreStateRecord> {
+export function getSummaryScoresAboveThreshold(
+  taggingSensitivities: List<ITaggingSensitivityModel>,
+  scores: List<ICommentSummaryScoreStateRecord>): List<ICommentSummaryScoreStateRecord> {
   if (!scores) {
     return;
   }
@@ -196,7 +126,9 @@ export function getSummaryScoresAboveThreshold(taggingSensitivities: List<ITaggi
       .sort((a, b) => b.score - a.score) as List<ICommentSummaryScoreStateRecord>;
 }
 
-export function getSummaryScoresBelowThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, scores: List<ICommentSummaryScoreStateRecord>): List<ICommentSummaryScoreStateRecord> {
+export function getSummaryScoresBelowThreshold(
+  taggingSensitivities: List<ITaggingSensitivityModel>,
+  scores: List<ICommentSummaryScoreStateRecord>): List<ICommentSummaryScoreStateRecord> {
   if (!scores) {
     return;
   }
@@ -209,17 +141,22 @@ export function getSummaryScoresBelowThreshold(taggingSensitivities: List<ITaggi
       .sort((a, b) => b.score - a.score) as List<ICommentSummaryScoreStateRecord>;
 }
 
-export function getTaggingSensitivitiesInCategory(state: any, catId?: string): List<ITaggingSensitivityModel> {
-  const article = getArticle(state);
-  let categoryId = catId;
-  if (article) {
-    categoryId = article.category.id;
+export function getTaggingSensitivitiesInCategory(
+  state: IAppStateRecord,
+  categoryId?: string,
+  articleId?: string): List<ITaggingSensitivityModel> {
+  if (articleId) {
+    const article = getArticleFromId(state, articleId);
+    if (article) {
+      categoryId = article.category.id;
+    }
   }
 
   const taggingSensitivities = getTaggingSensitivities(state);
 
-  return taggingSensitivities
-      .filter((ts: ITaggingSensitivityModel) => ts.categoryId === categoryId || ts.categoryId === null) as List<ITaggingSensitivityModel>;
+  return taggingSensitivities.filter((ts: ITaggingSensitivityModel) => (
+    ts.categoryId === categoryId || ts.categoryId === null
+  )) as List<ITaggingSensitivityModel>;
 }
 
 const {

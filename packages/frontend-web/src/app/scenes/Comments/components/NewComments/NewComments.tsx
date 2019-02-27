@@ -19,6 +19,7 @@ import FocusTrap from 'focus-trap-react';
 import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
+import { WithRouterProps } from 'react-router';
 
 import {
   convertServerAction,
@@ -255,7 +256,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface INewCommentsProps {
+export interface INewCommentsProps extends WithRouterProps {
   article?: IArticleModel;
   isArticleDetail: boolean;
   commentIds: List<string>;
@@ -267,10 +268,7 @@ export interface INewCommentsProps {
   isItemChecked(id: string): boolean;
   tags: List<ITagModel>;
   rulesInCategory?: Array<IRuleModel>;
-  router?: any;
-  location?: any; // IInjectedProps.location ?
   getCurrentColumnSort?(key: string): string;
-  params?: any;
   pos1?: number;
   pos2?: number;
   getLinkTarget(comment: ICommentModel): string;

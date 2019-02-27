@@ -22,7 +22,7 @@ export function parseRoute(
   return {
     isArticleDetail,
     articleId,
-    category: categoryId,
+    categoryId,
     tag,
   };
 }

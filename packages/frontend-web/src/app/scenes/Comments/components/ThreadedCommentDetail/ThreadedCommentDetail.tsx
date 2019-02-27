@@ -19,6 +19,7 @@ import FocusTrap from 'focus-trap-react';
 import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
+import { WithRouterProps } from 'react-router';
 
 import { ICommentModel, ITagModel } from '../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../types';
@@ -90,7 +91,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IThreadedCommentDetailProps {
+export interface IThreadedCommentDetailProps extends WithRouterProps {
   comment: ICommentModel;
   isLoading?: boolean;
   userId: string;

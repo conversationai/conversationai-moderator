@@ -68,7 +68,10 @@ const actionMap: {
   reset: resetComments,
 };
 
-type IThreadedCommentDetailOwnProps = {};
+type IThreadedCommentDetailOwnProps =  Pick<
+  IThreadedCommentDetailProps,
+  'params'
+  >;
 
 type IThreadedCommentDetailStateProps = Pick<
   IThreadedCommentDetailProps,
@@ -76,7 +79,7 @@ type IThreadedCommentDetailStateProps = Pick<
   'isLoading' |
   'originatingCommentId' |
   'userId'
->;
+  >;
 
 type IThreadedCommentDetailDispatchWithoutOverwriteProps = Pick<
   IThreadedCommentDetailProps,
@@ -119,25 +122,25 @@ const mapStateToProps = createStructuredSelector({
 
   isLoading: getIsLoading,
 
-  originatingCommentId: (_: any, { params }: any) => params.originatingCommentId,
+  originatingCommentId: (_: IAppStateRecord, { params }: IThreadedCommentDetailOwnProps) => params.originatingCommentId,
 
   userId: (state: IAppStateRecord) => getMyUserId(state),
 
   tags: (state: IAppStateRecord) => getTaggableTags(state),
 
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, ownProps: any) => (id: string): Set<string> => {
+  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: IThreadedCommentDetailOwnProps) => (id: string): Set<string> => {
     if (!id || !getSummaryScoresById(state, id)) {
       return;
     }
 
     return getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, ownProps.categoryId),
+      getTaggingSensitivitiesInCategory(state, params.categoryId, params.articleId),
       getSummaryScoresById(state, id),
     ).map((score) => score.tagId).toSet();
   },
 }) as (state: IAppState, ownProps: IThreadedCommentDetailOwnProps) => IThreadedCommentDetailStateProps;
 
-function mapDispatchToProps(dispatch: IAppDispatch, _ownProps: IThreadedCommentDetailProps): any {
+function mapDispatchToProps(dispatch: IAppDispatch): any {
   return {
     dispatchAction: (action: IConfirmationAction, idsToDispatch: Array<string>, userId: string) =>
         dispatch(actionMap[action](idsToDispatch, userId)),

@@ -41,7 +41,7 @@ const LOADING_DATA = [...DATA_PREFIX, 'commentListLoader'];
 function loadCommentList(
   isArticleDetail: boolean,
   articleId: string,
-  category: string,
+  categoryId: string,
   tag: string,
   pos1: number,
   pos2: number,
@@ -72,7 +72,7 @@ function loadCommentList(
       setDefaultDragHandlesIfScopeChange(
         pos1,
         pos2,
-        Map({ articleId, category, tagId: scopeTagId }),
+        Map({ articleId, categoryId, tagId: scopeTagId }),
       ),
     );
 
@@ -88,7 +88,7 @@ function loadCommentList(
       ));
     } else {
       await dispatch(loadCommentScoresForCategory(
-        category,
+        categoryId,
         tagId,
         sortDef,
       ));
@@ -101,7 +101,7 @@ function loadCommentList(
 
     const commentsLink = `new/${currentTagModel.key}?pos1=${rangeStart}&pos2=${rangeEnd}`;
 
-    const link = isArticleDetail ? `/articles/${articleId}/${commentsLink}` : `/categories/${category}/${commentsLink}`;
+    const link = isArticleDetail ? `/articles/${articleId}/${commentsLink}` : `/categories/${categoryId}/${commentsLink}`;
 
     const currentPagingIdentifier = await dispatch(storeCommentPagingOptions({
       commentIds: commentIDsInRange.toList(),
@@ -121,13 +121,13 @@ function loadCommentList(
 const loadingReducer = makeLoadingReducer(LOADING_DATA);
 
 const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingReducer.reducer;
-const getCommentListIsLoading: (state:IAppStateRecord) => boolean = loadingReducer.getIsLoading;
-const getCommentListHasLoaded: (state:IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
+const getCommentListIsLoading: (state: IAppStateRecord) => boolean = loadingReducer.getIsLoading;
+const getCommentListHasLoaded: (state: IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
 
 function executeCommentListLoader(
   isArticleDetail: boolean,
   articleId: string,
-  category: string,
+  categoryId: string,
   tag: string,
   pos1: number,
   pos2: number,
@@ -135,7 +135,7 @@ function executeCommentListLoader(
   return loadingReducer.execute(loadCommentList(
     isArticleDetail,
     articleId,
-    category,
+    categoryId,
     tag,
     pos1,
     pos2,

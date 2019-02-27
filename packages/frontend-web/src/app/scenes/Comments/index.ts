@@ -27,7 +27,6 @@ import { IAppState, IAppStateRecord } from '../../stores';
 import { getArticleFromId } from '../../stores/articles';
 import { getCategories, getCategory } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUserMap } from '../../stores/users';
-import { withLoader } from '../../utilx';
 import { Comments as PureComments } from './Comments';
 
 import {
@@ -52,16 +51,12 @@ export { CommentDetail } from './components/CommentDetail';
 export { ThreadedCommentDetail } from './components/ThreadedCommentDetail';
 
 import {
-  articleReducer,
-  getArticleIsLoading,
   getTabCountAdjustments,
-  loadArticle,
   resetTabCountAdjuster,
   tabCountAdjustmentsReducer,
 } from './store';
 
 export const reducer: any = combineReducers({
-  article: articleReducer,
   tabCountAdjustments: tabCountAdjustmentsReducer,
   newComments: newCommentsReducer,
   moderatedComments: moderatedCommentsReducer,
@@ -120,7 +115,6 @@ export const Comments = compose(
 
       return count + adjustment;
     },
-    isLoading: (state: IAppStateRecord, { params }: any) => params.articleId && getArticleIsLoading(state),
     moderators: (state: IAppStateRecord, { params }: any) => {
       if (!params.articleId) { return List<IUserModel>(); }
 
@@ -144,13 +138,6 @@ export const Comments = compose(
       dispatch(resetTabCountAdjuster({
         uid: isArticleDetail ? articleId : categoryId,
       }));
-
-      return Promise.all([
-        isArticleDetail
-            ? dispatch(loadArticle(articleId))
-            : Promise.resolve(),
-      ]);
     },
   }),
-  (c: any) => withLoader(c, 'isLoading'),
 )(PureComments) as any;
