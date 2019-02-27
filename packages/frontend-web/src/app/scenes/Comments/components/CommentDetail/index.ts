@@ -51,10 +51,8 @@ import { getTaggableTags, getTags } from '../../../../stores/tags';
 import { getCurrentUser, getUser } from '../../../../stores/users';
 import {
   adjustTabCount,
-  getArticle,
   getSummaryScoresAboveThreshold,
   getSummaryScoresBelowThreshold,
-  loadArticle,
 } from '../../store';
 import { updateCommentStateAction } from '../ModeratedComments/store';
 import { CommentDetail as PureCommentDetail, ICommentDetailProps } from './CommentDetail';
@@ -164,72 +162,58 @@ const mapStateToProps = createStructuredSelector({
 
   allScores: (state: IAppState) => getScores(state),
 
-  allScoresAboveThreshold: (state: IAppState, ownProps: ICommentDetailOwnProps) => (
-      getScoresAboveThreshold(getTaggingSensitivitiesInCategory(state, ownProps.categoryId), getScores(state))),
+  allScoresAboveThreshold: (state: IAppState) => (
+      getScoresAboveThreshold(getTaggingSensitivitiesInCategory(state), getScores(state))),
 
-  reducedScoresAboveThreshold: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) =>
-      getReducedScoresAboveThreshold(getTaggingSensitivitiesInCategory(state, ownProps.categoryId), getScores(state)),
+  reducedScoresAboveThreshold: (state: IAppStateRecord) =>
+      getReducedScoresAboveThreshold(getTaggingSensitivitiesInCategory(state), getScores(state)),
 
-  reducedScoresBelowThreshold: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) =>
-      getReducedScoresBelowThreshold(getTaggingSensitivitiesInCategory(state, ownProps.categoryId), getScores(state)),
+  reducedScoresBelowThreshold: (state: IAppStateRecord) =>
+      getReducedScoresBelowThreshold(getTaggingSensitivitiesInCategory(state), getScores(state)),
 
   flags: (state: IAppState) => getFlags(state),
 
-  getThresholdForTag: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => (score: ICommentScoreModel) =>
-      getTaggingSensitivityForTag(getTaggingSensitivitiesInCategory(state, ownProps.categoryId), score),
+  getThresholdForTag: (state: IAppStateRecord) => (score: ICommentScoreModel) =>
+      getTaggingSensitivityForTag(getTaggingSensitivitiesInCategory(state), score),
 
   summaryScoresAboveThreshold: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => {
-    const article = getArticle(state);
-
     return getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, article.getIn(['category', 'id'])),
+      getTaggingSensitivitiesInCategory(state),
       getSummaryScoresById(state, ownProps.params.commentId),
     );
   },
 
   summaryScoresBelowThreshold: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => {
-    const article = getArticle(state);
-
     return getSummaryScoresBelowThreshold(
-      getTaggingSensitivitiesInCategory(state, article.getIn(['category', 'id'])),
+      getTaggingSensitivitiesInCategory(state),
       getSummaryScoresById(state, ownProps.params.commentId),
     );
   },
 
   summaryScores: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => {
-    if (!ownProps.params.commentId) {
-      return;
-    }
-
     return getSummaryScoresById(state, ownProps.params.commentId);
   },
 
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => (id: string): Set<string> => {
+  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord) => (id: string): Set<string> => {
     if (!id || !getSummaryScoresById(state, id)) {
       return;
     }
 
     return getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, ownProps.categoryId),
+      getTaggingSensitivitiesInCategory(state),
       getSummaryScoresById(state, id),
     ).map((score) => score.tagId).toSet();
   },
 
   currentCommentIndex: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: any) => {
-    // const parsedCommentId = parseInt(commentId, 10);
-
     return getCurrentCommentIndex(state, pagingIdentifier, commentId);
   },
 
   nextCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: any) => {
-    // const parsedCommentId = parseInt(commentId, 10);
-
     return getNextCommentId(state, pagingIdentifier, commentId);
   },
 
   previousCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: any) => {
-    // const parsedCommentId = parseInt(commentId, 10);
-
     return getPreviousCommentId(state, pagingIdentifier, commentId);
   },
 
@@ -355,13 +339,7 @@ function mergeProps(
 
 // Add Route Change hook.
 const HookedCommentDetail = provideHooks<IRedialLocals>({
-  fetch: ({ dispatch, params: { articleId, commentId } }) => {
-    if (articleId) {
-      dispatch(loadArticle(articleId));
-    }
-
-    // const parsedCommentId = parseInt(commentId, 10);
-
+  fetch: ({ dispatch, params: { commentId } }) => {
     return Promise.all([
       dispatch(loadComment(commentId)),
       dispatch(loadScores(commentId)),

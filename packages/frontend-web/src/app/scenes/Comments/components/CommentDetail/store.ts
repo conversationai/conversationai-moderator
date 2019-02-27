@@ -33,6 +33,7 @@ import {
   listAuthorCounts,
 } from '../../../../platform/dataService';
 import { IThunkAction } from '../../../../stores';
+import { getArticleFromId } from '../../../../stores/articles';
 import {
   makeAJAXAction,
   makeRecordListReducer,
@@ -40,7 +41,6 @@ import {
 } from '../../../../util';
 
 import { getTaggingSensitivities } from '../../../../stores/taggingSensitivities';
-import { getArticle } from '../../store';
 
 const COMMENT_DATA_PREFIX = ['scenes', 'commentsIndex', 'commentDetail', 'comment'];
 const COMMENT_DATA = [...COMMENT_DATA_PREFIX, 'item'];
@@ -335,17 +335,20 @@ export function getIsLoading(state: any): boolean {
   return state.getIn(LOADING_STATUS);
 }
 
-export function getTaggingSensitivitiesInCategory(state: any, catId?: string): List<ITaggingSensitivityModel> {
-  const article = getArticle(state);
-  let categoryId = catId;
-  if (article) {
-    categoryId = article.category.id;
+export function getTaggingSensitivitiesInCategory(state: any): List<ITaggingSensitivityModel> {
+  let categoryId = 'na';
+  const comment = getComment(state);
+  if (comment) {
+    const article = getArticleFromId(state, comment.articleId);
+    if (article.category) {
+      categoryId = article.category.id;
+    }
   }
 
   const taggingSensitivities = getTaggingSensitivities(state);
-
-  return taggingSensitivities
-      .filter((ts: ITaggingSensitivityModel) => ts.categoryId === categoryId || ts.categoryId === null) as List<ITaggingSensitivityModel>;
+  return taggingSensitivities.filter((ts: ITaggingSensitivityModel) => (
+    ts.categoryId === categoryId || ts.categoryId === null
+  )) as List<ITaggingSensitivityModel>;
 }
 
 export function getTaggingSensitivityForTag(taggingSensitivities: List<ITaggingSensitivityModel>, score: ICommentScoreModel) {
