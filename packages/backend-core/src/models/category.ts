@@ -16,7 +16,6 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
-import { updateHappened } from './last_update';
 import { IUserInstance } from './user';
 
 export interface ICategoryAttributes {
@@ -175,10 +174,5 @@ export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>
         as: 'assignedModerators',
       });
     },
-  },
-
-  hooks: {
-    afterCreate: updateHappened,
-    afterBulkCreate: updateHappened,
   },
 });

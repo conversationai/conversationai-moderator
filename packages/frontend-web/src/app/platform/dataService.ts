@@ -472,21 +472,14 @@ export async function editAndRescoreComment(
   });
 }
 
-/**
- * Update article assignment when users are assigned to categories
- */
 export async function updateCategoryModerators(categoryId: ModelId, moderatorIds: Array<ModelId>): Promise<void> {
   const url = serviceURL('assignments', `/categories/${parseInt(categoryId, 10)}`);
   await axios.post(url, { data: moderatorIds });
 }
 
-export function updateArticleModerators(articleId: ModelId, moderatorIds: Array<ModelId>): Promise<void> {
-  return updateRelationshipModels(
-    'articles',
-    articleId as string,
-    'assignedModerators',
-    moderatorIds as Array<string>,
-  );
+export async function updateArticleModerators(articleId: ModelId, moderatorIds: Array<ModelId>): Promise<void> {
+  const url = serviceURL('assignments', `/article/${parseInt(articleId, 10)}`);
+  await axios.post(url, { data: moderatorIds });
 }
 
 export interface IModeratedComments {
@@ -620,22 +613,6 @@ export function getCommentScores(commentId: string) {
 
 export function getCommentFlags(commentId: string) {
   return listRelationshipModels('comments', commentId, 'commentFlags', {page: {offset: 0, limit: -1}});
-}
-
-/**
- * Update a model relationship.
- */
-export async function updateRelationshipModels(
-  type: IValidModelNames,
-  id: string,
-  relationship: string,
-  relatedIds: Array<string>,
-): Promise<void> {
-  validateModelName(type);
-
-  await axios.patch(relationURL(type, id, relationship), {
-    data: relatedIds.map((relatedId) => ({ id: relatedId })),
-  });
 }
 
 /**

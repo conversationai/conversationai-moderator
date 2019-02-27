@@ -16,7 +16,6 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
-import {updateHappened} from './last_update';
 
 export interface IUserCategoryAssignmentAttributes {
   categoryId: number;
@@ -48,12 +47,6 @@ export const UserCategoryAssignment = sequelize.define<
       type: Sequelize.INTEGER.UNSIGNED,
       allowNull: false,
       primaryKey: true,
-    },
-  },
-  {
-    hooks: {
-      afterBulkCreate: updateHappened,
-      afterBulkDestroy: updateHappened,
     },
   },
 );

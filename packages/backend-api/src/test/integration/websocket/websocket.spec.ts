@@ -21,17 +21,18 @@ import { clearInterested, makeServer } from '@conversationai/moderator-backend-c
 
 import {mountAPI} from '../../../index';
 import {
-  expect,
+  assertAllArticlesMessage,
+  assertSystemMessage, assertUserMessage,
+  expect, listenForMessages,
   makeUser,
   sleep,
 } from '../../test_helper';
+import {destroyUpdateNotificationService} from '../../../api/services/updateNotifications';
 
 describe('websocket tests', () => {
   beforeEach(async () => {
     await User.destroy({where: {}});
   });
-
-  afterEach(clearInterested);
 
   it('Test what we get when connect without authentication', async () => {
     const serverStuff = makeServer(true);
@@ -42,8 +43,6 @@ describe('websocket tests', () => {
     try {
       let gotClose = false;
       let gotMessage = false;
-      await sleep(500);
-
       const socket = new WebSocket('ws://localhost:3000/services/updates/summary');
 
       socket.onclose = () => {
@@ -54,7 +53,7 @@ describe('websocket tests', () => {
         gotMessage = true;
       };
 
-      await sleep(500);
+      await sleep(100);
 
       expect(gotMessage).is.false;
       expect(gotClose).is.true;
@@ -77,27 +76,19 @@ describe('websocket tests', () => {
     const server = serverStuff.start(3000);
 
     try {
-      let gotClose = false;
-      let gotMessage = 0;
-      await sleep(500);
-
-      const socket = new WebSocket('ws://localhost:3000/services/updates/summary');
-
-      socket.onclose = () => {
-        gotClose = true;
-      };
-
-      socket.onmessage = () => {
-        gotMessage += 1;
-      };
-
-      await sleep(500);
-      socket.close();
-      expect(gotMessage).is.equal(3);
-      expect(gotClose).is.false;
+      await listenForMessages(async () => {
+          await sleep(10);
+        },
+        [
+          (m: any) => { assertSystemMessage(m); },
+          (m: any) => { assertAllArticlesMessage(m); },
+          (m: any) => { assertUserMessage(m); },
+        ]);
     }
     finally {
       server.close();
+      await clearInterested();
+      destroyUpdateNotificationService();
     }
   });
 });

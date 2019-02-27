@@ -21,6 +21,8 @@ import {
   IUserCategoryAssignmentAttributes,
   IUserCategoryAssignmentInstance,
   ModeratorAssignment,
+  partialUpdateHappened,
+  updateHappened,
   User,
   UserCategoryAssignment,
 } from '@conversationai/moderator-backend-core';
@@ -183,6 +185,39 @@ export function createAssignmentsService(): express.Router {
 
     res.json({ status: 'success' });
 
+    updateHappened();
+    next();
+  });
+
+  // POST to articles/id who's body.data contains userId[]
+  router.post('/article/:id', async (req, res, next) => {
+    const articleId = parseInt(req.params.id, 10);
+    const userIds: Set<number> = new Set(req.body.data.map((s: any) => parseInt(s, 10)));
+
+    // Get assignments for the category
+    const assignments = await ModeratorAssignment.findAll({
+      where: {
+        articleId,
+      },
+    });
+
+    const toRemove = new Array<number>();
+
+    for (const a of assignments) {
+      const id = a.get('userId');
+      if (userIds.has(id)) {
+        userIds.delete(id);
+      }
+      else {
+        toRemove.push(a.id);
+      }
+    }
+
+    await ModeratorAssignment.bulkCreate(getArticleAssignmentArray(Array.from(userIds), [articleId]));
+    await ModeratorAssignment.destroy({where: {id: {$in: toRemove }}});
+
+    res.json({ status: 'success' });
+    partialUpdateHappened(articleId);
     next();
   });
 

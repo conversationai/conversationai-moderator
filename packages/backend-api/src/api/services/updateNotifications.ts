@@ -150,7 +150,7 @@ async function getArticleUpdate(articleId: number) {
 
   const category = await Category.findById(
     aData.categoryId,
-    {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]}
+    {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
   );
   const cData: any = pick(category.toJSON(), categoryFields);
   cData.assignedModerators = cData.assignedModerators.map((i: any) => i.user_category_assignment.userId.toString());
@@ -317,7 +317,7 @@ export function createUpdateNotificationService(): express.Router {
     });
 
     logger.info(`Websocket opened to ${req.user.email}`);
-    const updateFlags = await refreshMessages(true)
+    const updateFlags = await refreshMessages(true);
     maybeSendUpdateToUser(si, updateFlags);
   });
 
