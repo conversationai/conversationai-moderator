@@ -42,10 +42,10 @@ if (!token) {
 import { decodeToken, setAxiosToken } from '../app/auth/store';
 import { saveToken } from '../app/platform/localStore';
 import { connectNotifier } from '../app/platform/websocketService';
-import { approveComment } from './actions';
+import {approveComment, setArticleModerators, setArticleState} from './actions';
 import { articleData, systemData, userData } from './notificationChecks';
 import {
-  commentDetailsPage,
+  commentDetailsPage, fetchArticleText,
   listModeratedCommentsPage,
   listNewCommentsPage_SUMMARY_SCORE,
 } from './pageTests';
@@ -91,9 +91,23 @@ setAxiosToken(token);
   articleData.stateCheck();
   userData.stateCheck();
 
+  if (articleData.articleFullyEnabled) {
+    console.log('\n* Checking set article state');
+    await setArticleState(articleData.articleFullyEnabled.id, true, false);
+    await setArticleState(articleData.articleFullyEnabled.id, false, false);
+    await setArticleState(articleData.articleFullyEnabled.id, true, true);
+  }
+
+  if (articleData.articleWithNoModerators) {
+    console.log('\n* Checking set article moderators');
+    await setArticleModerators(articleData.articleWithNoModerators.id, [systemData.users[0].id]);
+    await setArticleModerators(articleData.articleWithNoModerators.id, systemData.users.map((u) => u.id));
+    await setArticleModerators(articleData.articleWithNoModerators.id, []);
+  }
+
   if (articleData.articlesWithFlags.length > 0 ) {
     const articles = articleData.articlesWithFlags;
-    console.log('* Doing a flagged comment fetch');
+    console.log('\n* Doing a flagged comment fetch');
     await listModeratedCommentsPage('flagged', 'all');
     console.log('  Checked all');
     const articlesWithCategory = articles.filter((a) => (!!a.category));
@@ -109,7 +123,7 @@ setAxiosToken(token);
 
   if (articleData.articlesWithNew.length > 0) {
     const articles = articleData.articlesWithNew;
-    console.log('* Doing a new comment fetch');
+    console.log('\n* Doing a new comment fetch');
     await listNewCommentsPage_SUMMARY_SCORE('all');
     console.log('  Checked all');
     const articlesWithCategory = articles.filter((a) => (!!a.category));
@@ -117,9 +131,13 @@ setAxiosToken(token);
       await listNewCommentsPage_SUMMARY_SCORE('category', articlesWithCategory[0].category.id);
       console.log(`  Checked category ${articlesWithCategory[0].category.id}`);
     }
-    const comments = await listNewCommentsPage_SUMMARY_SCORE('article', articles[0].id);
-    console.log(`* Approving comment ${comments.last()} and waiting for notification.`);
-    await approveComment(comments.last(), userId);
+    const article = articles[0];
+    const comments = await listNewCommentsPage_SUMMARY_SCORE('article', article.id);
+    console.log(`  Checked article ${article.id}`);
+    console.log('  Doing an article text fetch');
+    await fetchArticleText(article.id);
+    console.log(`\n* Approving comment ${comments.last()} and waiting for notification.`);
+    await approveComment(comments.last(), userId, article.category.approvedCount, article.approvedCount);
   }
 
   console.log('shutting down.');

@@ -16,8 +16,13 @@ limitations under the License.
 import check from 'check-types';
 import { autobind } from 'core-decorators';
 
-import {IAllArticlesData, IArticleUpdate, IPerUserData, ISystemData} from '../app/platform/websocketService';
-import { IArticleModel } from '../models';
+import {
+  IAllArticlesData,
+  IArticleUpdate,
+  IPerUserData,
+  ISystemData,
+} from '../app/platform/websocketService';
+import { IArticleModel, IUserModel } from '../models';
 import {
   checkArticle,
   checkCategory,
@@ -40,8 +45,10 @@ class ArticleMessages {
 
   articlesWithNew: Array<IArticleModel> = [];
   articlesWithFlags: Array<IArticleModel> = [];
+  articleFullyEnabled?: IArticleModel;
+  articleWithNoModerators?: IArticleModel;
 
-  updateHappened?(): void ;
+  updateHappened?(type: string, message: any): void ;
 
   @autobind
   notificationHandler(data: IAllArticlesData) {
@@ -51,6 +58,9 @@ class ArticleMessages {
     this.countCategories = data.categories.size;
     this.countArticles = data.articles.size;
     this.data = data;
+    if (this.updateHappened) {
+      this.updateHappened('global', data);
+    }
   }
 
   @autobind
@@ -59,7 +69,7 @@ class ArticleMessages {
     checkCategory(data.category);
     checkArticle(data.article);
     if (this.updateHappened) {
-      this.updateHappened();
+      this.updateHappened('article-update', data);
     }
   }
 
@@ -76,6 +86,12 @@ class ArticleMessages {
       }
       if (a.flaggedCount > 0) {
         this.articlesWithFlags.push(a);
+      }
+      if (a.isCommentingEnabled && a.isAutoModerated) {
+        this.articleFullyEnabled = a;
+      }
+      if (a.assignedModerators.length === 0) {
+        this.articleWithNoModerators = a;
       }
     }
   }
@@ -112,6 +128,8 @@ class SystemData {
   gotRules = false;
   gotPreselects = false;
 
+  users: Array<IUserModel> = [];
+
   @autobind
   notificationHandler(data: ISystemData) {
     console.log('+ Received system update message');
@@ -129,6 +147,7 @@ class SystemData {
     console.log('* check users');
     for (const u of this.data.users.toArray()) {
       this.usersOk = this.usersOk && checkUser(u);
+      this.users.push(u);
     }
   }
 

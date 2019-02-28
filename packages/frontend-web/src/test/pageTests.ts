@@ -14,9 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import check from 'check-types';
 import { List } from 'immutable';
 
 import {
+  getArticleText,
   getComment,
   getCommentFlags,
   getCommentScores,
@@ -39,6 +41,11 @@ import {
   checkSingleComment,
   checkTextSizes,
 } from './objectChecks';
+
+export async function fetchArticleText(articleId: ModelId) {
+  const text = await getArticleText(articleId);
+  check.string(text);
+}
 
 export async function listCommentsPage(comments: Array<ModelId>) {
   const sizes =  await listTextSizesByIds(comments, 696);
