@@ -539,6 +539,12 @@ export async function getModel<T>(
   };
 }
 
+export async function getArticleText(id: string) {
+  const url = serviceURL('simple', `/article/${id}/text`);
+  const response = await axios.get(url);
+  return response.data.text;
+}
+
 export async function getComment(id: string) {
   return await getModel('comments', id, { include: ['replyTo'] });
 }

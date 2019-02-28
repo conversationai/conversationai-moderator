@@ -67,7 +67,6 @@ export function createSimpleRESTService(): express.Router {
 
   router.post('/article/update/:id', async (req, res, next) => {
     const articleId = parseInt(req.params.id, 10);
-
     const a = await Article.findById(articleId);
     a.set('isCommentingEnabled', req.body.isCommentingEnabled);
     a.set('isAutoModerated', req.body.isAutoModerated);
@@ -77,5 +76,14 @@ export function createSimpleRESTService(): express.Router {
     partialUpdateHappened(articleId);
     next();
   });
+
+  router.get('/article/:id/text', async (req, res, next) => {
+    const articleId = parseInt(req.params.id, 10);
+    const a = await Article.findById(articleId);
+    const text = a.get('text');
+    res.json({text: text});
+    next();
+  });
+
   return router;
 }
