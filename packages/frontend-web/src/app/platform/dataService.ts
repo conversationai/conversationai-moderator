@@ -574,6 +574,11 @@ export async function updateModel<T>(
   };
 }
 
+export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean) {
+  const url = serviceURL('simple', `/article/update/${id}`);
+  await axios.post(url, {isCommentingEnabled, isAutoModerated});
+}
+
 /**
  * Destroy a model.
  */

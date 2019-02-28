@@ -24,7 +24,11 @@ import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
-import { updateArticleModerators, updateCategoryModerators, updateModel } from '../../platform/dataService';
+import {
+  updateArticle,
+  updateArticleModerators,
+  updateCategoryModerators,
+} from '../../platform/dataService';
 import {
   HEADER_HEIGHT,
   NICE_LIGHTEST_BLUE,
@@ -377,11 +381,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       popupToShow: POPUP_SAVING,
     });
 
-    updateModel<IArticleModel>(
-      'articles',
-      articleId,
-      {isCommentingEnabled, isAutoModerated} as any,
-    ).then(this.clearPopups);
+    updateArticle(articleId, isCommentingEnabled, isAutoModerated)
+      .then(this.clearPopups);
   }
 
   renderControlPopup(article: IArticleModel) {

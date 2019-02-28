@@ -18,28 +18,14 @@ import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import {
-  IArticleAttributes,
-  IArticleModel,
   ITaggingSensitivityModel,
 } from '../../../models';
-import {
-  ISingleResponse,
-  updateModel,
-} from '../../platform/dataService';
 import { IAppStateRecord } from '../../stores';
 import { getArticleFromId } from '../../stores/articles';
 import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
 
 const DATA_PREFIX = ['scenes', 'commentsIndex'];
-
-export function updateArticleStatus(article: Partial<IArticleAttributes>): Promise<ISingleResponse<IArticleModel>> {
-  return updateModel<IArticleModel>(
-    'articles',
-    article.id,
-    article as any,
-  );
-}
 
 function makeTabCountAdjusterStore(): any {
   type IResetTabCountAdjusterPayload = {

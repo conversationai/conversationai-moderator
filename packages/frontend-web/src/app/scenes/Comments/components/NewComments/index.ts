@@ -41,7 +41,6 @@ import {
   adjustTabCount,
   getSummaryScoresAboveThreshold,
   getTaggingSensitivitiesInCategory,
-  updateArticleStatus,
 } from '../../store';
 import {
   INewCommentsProps,
@@ -144,8 +143,6 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: any): any {
     toggleSelectAll: () => dispatch(toggleSelectAll()),
 
     toggleSingleItem: ({ id }: { id: string }) => dispatch(toggleSingleItem({ id })),
-
-    updateArticleStatus: updateArticleStatus,
 
     loadScoresForCommentId: async (id: string) => {
       await dispatch(loadCommentSummaryScores(id));

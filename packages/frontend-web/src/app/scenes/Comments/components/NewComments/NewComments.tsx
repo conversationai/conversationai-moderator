@@ -53,6 +53,7 @@ import {
   DEFAULT_DRAG_HANDLE_POS2,
   REQUIRE_REASON_TO_REJECT,
 } from '../../../../config';
+import { updateArticle } from '../../../../platform/dataService';
 import {
   ARTICLE_CATEGORY_TYPE,
   BASE_Z_INDEX,
@@ -287,7 +288,6 @@ export interface INewCommentsProps extends WithRouterProps {
     commentIds: Array<string>,
     action: string,
   ): any;
-  updateArticleStatus?(newArticle: IArticleModel): void;
   loadScoresForCommentId?(id: string): void;
   getTagIdsAboveThresholdByCommentId?(commentId: string): Set<string>;
   confirmCommentSummaryScore?(id: string, tagId: string): void;
@@ -1148,7 +1148,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   @autobind
   async handleRulesAppliedClick(e: React.MouseEvent<any>) {
     e.preventDefault();
-    const newArticle = this.props.article.set('isAutoModerated', !this.props.article.isAutoModerated);
-    await this.props.updateArticleStatus(newArticle);
+    await updateArticle(this.props.article.id, this.props.article.isCommentingEnabled, !this.props.article.isAutoModerated);
   }
 }
