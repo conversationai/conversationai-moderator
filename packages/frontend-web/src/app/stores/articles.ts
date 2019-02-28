@@ -32,7 +32,7 @@ export function getArticles(state: IAppStateRecord): List<IArticleModel> {
   return state.getIn(DATA);
 }
 
-export function getArticleFromId(state: IAppStateRecord, articleId: ModelId): IArticleModel {
+export function getArticle(state: IAppStateRecord, articleId: ModelId): IArticleModel {
   const articles: List<IArticleModel> = state.getIn(DATA);
   const index: Map<ModelId, number> = state.getIn(INDEX);
   return articles.get(index.get(articleId));

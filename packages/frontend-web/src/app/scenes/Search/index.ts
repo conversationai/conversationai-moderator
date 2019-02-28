@@ -39,7 +39,7 @@ import {
 } from './store';
 export const reducer: any = searchReducer;
 import { ICommentAction } from '../../../types';
-import { getArticleFromId } from '../../stores/articles';
+import { getArticle } from '../../stores/articles';
 import {
   approveComments,
   deferComments,
@@ -107,7 +107,7 @@ const mapStateToProps = createStructuredSelector({
   tags: getTaggableTags,
   searchTerm: (_state: IAppStateRecord, { location }: ISearchOwnProps) => location.query.term,
   articleId: (_: IAppStateRecord, { location }: ISearchOwnProps) => location.query.articleId,
-  article: (state: IAppStateRecord, { location }: ISearchOwnProps) => location.query.articleId && getArticleFromId(state, location.query.articleId),
+  article: (state: IAppStateRecord, { location }: ISearchOwnProps) => location.query.articleId && getArticle(state, location.query.articleId),
   textSizes: getTextSizes,
   getLinkTarget: (state: IAppStateRecord, { location }: ISearchOwnProps) => {
     const identifier = getCurrentPagingIdentifier(state);

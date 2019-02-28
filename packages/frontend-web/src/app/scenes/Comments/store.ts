@@ -21,7 +21,7 @@ import {
   ITaggingSensitivityModel,
 } from '../../../models';
 import { IAppStateRecord } from '../../stores';
-import { getArticleFromId } from '../../stores/articles';
+import { getArticle } from '../../stores/articles';
 import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
 
@@ -132,7 +132,7 @@ export function getTaggingSensitivitiesInCategory(
   categoryId?: string,
   articleId?: string): List<ITaggingSensitivityModel> {
   if (articleId) {
-    const article = getArticleFromId(state, articleId);
+    const article = getArticle(state, articleId);
     if (article) {
       categoryId = article.category.id;
     }

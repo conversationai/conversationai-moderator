@@ -24,7 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import { ICategoryModel, IUserModel } from '../../../models';
 import { IRedialLocals } from '../../../types';
 import { IAppState, IAppStateRecord } from '../../stores';
-import { getArticleFromId } from '../../stores/articles';
+import { getArticle } from '../../stores/articles';
 import { getCategories, getCategory } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUserMap } from '../../stores/users';
 import { Comments as PureComments } from './Comments';
@@ -69,7 +69,7 @@ export const Comments = compose(
   connect(createStructuredSelector({
     user: getCurrentUser,
     isAdmin: getCurrentUserIsAdmin,
-    article: (state: IAppStateRecord, { params: { articleId }}: any) => getArticleFromId(state, articleId),
+    article: (state: IAppStateRecord, { params: { articleId }}: any) => getArticle(state, articleId),
     category: (state: IAppStateRecord, { params }: any) => {
       if (params.categoryId && params.categoryId !== 'all') {
         return getCategory(state, params.categoryId);
@@ -82,7 +82,7 @@ export const Comments = compose(
       let count;
 
       if (isArticleDetail) {
-        const article = getArticleFromId(state, params.articleId);
+        const article = getArticle(state, params.articleId);
         count = article ? article.unmoderatedCount : 0;
       } else {
         if (params.categoryId !== 'all') {
@@ -102,7 +102,7 @@ export const Comments = compose(
       let count;
 
       if (isArticleDetail) {
-        const article = getArticleFromId(state, params.articleId);
+        const article = getArticle(state, params.articleId);
         count = article ? article.moderatedCount : 0;
       } else {
         if (params.categoryId !== 'all') {
@@ -118,7 +118,7 @@ export const Comments = compose(
     moderators: (state: IAppStateRecord, { params }: any) => {
       if (!params.articleId) { return List<IUserModel>(); }
 
-      const article = getArticleFromId(state, params.articleId);
+      const article = getArticle(state, params.articleId);
       const usersMap = getUserMap(state);
       return List<IUserModel>(article.assignedModerators.map((userId) => usersMap.get(userId)));
     },

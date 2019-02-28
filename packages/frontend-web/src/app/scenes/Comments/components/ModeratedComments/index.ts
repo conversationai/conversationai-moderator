@@ -24,7 +24,7 @@ import { IRedialLocals } from '../../../../../types';
 import { ICommentAction } from '../../../../../types';
 import { getMyUserId } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
-import { getArticleFromId } from '../../../../stores/articles';
+import { getArticle } from '../../../../stores/articles';
 import {
   changeColumnSortGroupDefault,
   getCurrentColumnSort,
@@ -143,7 +143,7 @@ const mapStateToProps = createStructuredSelector({
 
   article: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => {
     if (params.articleId) {
-      return getArticleFromId(state, params.articleId);
+      return getArticle(state, params.articleId);
     }
   },
 

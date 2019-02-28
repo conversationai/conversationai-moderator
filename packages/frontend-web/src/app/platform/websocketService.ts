@@ -116,6 +116,8 @@ function packArticleData(data: any): IAllArticlesData {
 
   const articles = List<IArticleModel>(data.articles.map((a: any) => {
     a.id = a.id.toString();
+    // TODO: We need to break this coupling between articles and categories
+    //       It doesn't work well in presence of incremental updates.
     if (a.categoryId) {
       a.category = catMap[a.categoryId];
     }

@@ -17,22 +17,21 @@ limitations under the License.
 import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { TypedRecord } from 'typed-immutable-record';
-import { IAppStateRecord, IThunkAction } from '../../../../../stores';
-import { getPreselects } from '../../../../../stores/preselects';
-import { getRules } from '../../../../../stores/rules';
-import { DATA_PREFIX } from './reduxPrefix';
 
 import {
   IArticleModel,
   IPreselectModel,
   IRuleModel,
 } from '../../../../../../models';
-
 import {
   DEFAULT_DRAG_HANDLE_POS1,
   DEFAULT_DRAG_HANDLE_POS2,
 } from '../../../../../config';
-import {getArticleFromId} from '../../../../../stores/articles';
+import { IAppStateRecord, IThunkAction } from '../../../../../stores';
+import { getArticle } from '../../../../../stores/articles';
+import { getPreselects } from '../../../../../stores/preselects';
+import { getRules } from '../../../../../stores/rules';
+import { DATA_PREFIX } from './reduxPrefix';
 
 const DRAG_HANDLE_POSITIONS_DATA = [...DATA_PREFIX, 'dragHandlePositions'];
 
@@ -91,7 +90,7 @@ function setDefaultDragHandlesIfScopeChange(pos1: number, pos2: number, scope: M
       return { pos1, pos2 };
     }
 
-    const article = scope.get('articleId') ? getArticleFromId(state, scope.get('articleId')) : null;
+    const article = scope.get('articleId') ? getArticle(state, scope.get('articleId')) : null;
     const preselects = getPreselectForCategory(article, getPreselects(state), scope.get('tagId'));
     const preselectPos1 = preselects ? preselects.lowerThreshold : DEFAULT_DRAG_HANDLE_POS1;
     const preselectPos2 = preselects ? preselects.upperThreshold : DEFAULT_DRAG_HANDLE_POS2;
@@ -155,7 +154,7 @@ export function getRulesInCategory(state: IAppStateRecord, categoryId?: string, 
     }
   }
   else {
-    const article = getArticleFromId(state, articleId);
+    const article = getArticle(state, articleId);
     categoryId = article.category.id;
   }
 

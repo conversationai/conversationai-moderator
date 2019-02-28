@@ -33,7 +33,7 @@ import {
   listAuthorCounts,
 } from '../../../../platform/dataService';
 import { IThunkAction } from '../../../../stores';
-import { getArticleFromId } from '../../../../stores/articles';
+import { getArticle } from '../../../../stores/articles';
 import {
   makeAJAXAction,
   makeRecordListReducer,
@@ -339,7 +339,7 @@ export function getTaggingSensitivitiesInCategory(state: any): List<ITaggingSens
   let categoryId = 'na';
   const comment = getComment(state);
   if (comment) {
-    const article = getArticleFromId(state, comment.articleId);
+    const article = getArticle(state, comment.articleId);
     if (article.category) {
       categoryId = article.category.id;
     }
