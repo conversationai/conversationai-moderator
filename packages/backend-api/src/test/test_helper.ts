@@ -135,7 +135,6 @@ export async function makeComment(obj = {}): Promise<ICommentInstance> {
     author: {
       name: 'Joe Bloggs',
     },
-    flagsCount: 0,
     unresolvedFlagsCount: 0,
     sourceCreatedAt: '2012-10-29T21:54:07.609Z',
     isScored: true,

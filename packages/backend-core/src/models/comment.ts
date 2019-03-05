@@ -47,7 +47,6 @@ export interface ICommentAttributes {
   isHighlighted?: boolean | null;
   isBatchResolved?: boolean | null;
   isAutoResolved?: boolean | null;
-  flagsCount?: number;
   unresolvedFlagsCount?: number;
   flagsSummary?: any;
   sourceCreatedAt: Date | string | null | Sequelize.fn;
@@ -159,12 +158,6 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
     type: Sequelize.BOOLEAN,
     allowNull: true,
     defaultValue: false,
-  },
-
-  flagsCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
-    allowNull: false,
-    defaultValue: 0,
   },
 
   unresolvedFlagsCount: {
