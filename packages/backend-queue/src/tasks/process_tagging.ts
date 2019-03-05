@@ -79,6 +79,7 @@ export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = ha
       },
       defaults: {
         label: type,
+        isRecommendation: type === 'recommendation',
         commentId: comment.id,
         sourceId: sourceUserId,
         isResolved: false,

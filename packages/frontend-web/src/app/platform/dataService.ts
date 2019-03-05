@@ -166,18 +166,6 @@ function modelURL(type: IValidModelNames, id: string, params?: Partial<IParams>)
 }
 
 /**
- * The URL of a model relationship.
- */
-export function relationURL(type: IValidModelNames, id: string, relationship: string, params?: Partial<IParams>): string {
-  validateModelName(type);
-
-  // We allow articleIds to be alphanumeric
-  const parsedArticleId = type === 'articles' ? id : parseInt(id, 10);
-
-  return `${API_URL}${REST_URL}/${type}/${parsedArticleId}/relationships/${relationship}${serializeParams(params)}`;
-}
-
-/**
  * The URL of a model related.
  */
 export function relatedURL(type: IValidModelNames, id: string, relationship: string, params?: Partial<IParams>): string {
@@ -684,6 +672,12 @@ export function approveCommentsRequest(ids: Array<string>, userId: string): Prom
   return makeCommentAction('/approve', ids, userId);
 }
 
+export function approveFlagsAndCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
+  ids.forEach((id) => validateID(id, `commentId`));
+
+  return makeCommentAction('/approve-flags', ids, userId);
+}
+
 export function deferCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
@@ -694,6 +688,12 @@ export function rejectCommentsRequest(ids: Array<string>, userId: string): Promi
   ids.forEach((id) => validateID(id, `commentId`));
 
   return makeCommentAction('/reject', ids, userId);
+}
+
+export function rejectFlagsAndCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
+  ids.forEach((id) => validateID(id, `commentId`));
+
+  return makeCommentAction('/reject-flags', ids, userId);
 }
 
 export function tagCommentsRequest(ids: Array<string>, tagId: string, userId: string): Promise<void> {

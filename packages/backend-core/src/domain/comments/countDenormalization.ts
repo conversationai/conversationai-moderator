@@ -29,7 +29,7 @@ export async function denormalizeCountsForComment(comment: ICommentInstance) {
     const flag = f.get();
 
     if (!flagsSummary[flag.label]) {
-      flagsSummary[flag.label] = [0, 0];
+      flagsSummary[flag.label] = [0, 0, 0];
     }
 
     flagsSummary[flag.label][0] += 1;
@@ -38,12 +38,13 @@ export async function denormalizeCountsForComment(comment: ICommentInstance) {
       unresolvedFlagsCount += 1;
       flagsSummary[flag.label][1] += 1;
     }
+    if (flag.isRecommendation) {
+      flagsSummary[flag.label][2] += 1;
+    }
   }
 
-  const updatedComment = await comment.update({
+  return await comment.update({
     unresolvedFlagsCount,
     flagsSummary,
   });
-
-  return updatedComment;
 }

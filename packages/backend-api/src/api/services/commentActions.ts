@@ -29,9 +29,6 @@ import * as express from 'express';
 import * as Joi from 'joi';
 import { dataSchema, validateRequest } from '../util/validation';
 
-export const STATUS_ACCEPTED = 'accepted';
-export const STATUS_REJECTED = 'rejected';
-
 export const detailAddTagSchema = Joi.object({
   tagId: Joi.string().required(),
   annotationStart: Joi.number().required(),
@@ -177,6 +174,17 @@ export function createCommentActionsService(): express.Router {
     queueMainAction('acceptComments'),
   );
 
+  router.post('/approve-flags',
+    validateCommentActionRequest,
+    queueMainAction('acceptCommentsAndFlags'),
+  );
+
+  router.post('/resolve-flags',
+    validateCommentActionRequest,
+    queueMainAction('resolveFlags'),
+  );
+
+
   router.post('/highlight',
     validateCommentActionRequest,
     queueMainAction('highlightComments'),
@@ -185,6 +193,11 @@ export function createCommentActionsService(): express.Router {
   router.post('/reject',
     validateCommentActionRequest,
     queueMainAction('rejectComments'),
+  );
+
+  router.post('/reject-flags',
+    validateCommentActionRequest,
+    queueMainAction('rejectCommentsAndFlags'),
   );
 
   router.post('/defer',

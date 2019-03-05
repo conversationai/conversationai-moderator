@@ -50,7 +50,9 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     Comment.count({ where: { articleId: article.id, isAccepted: true } }),
     Comment.count({ where: { articleId: article.id, isAccepted: false, isHighlighted: false } }),
     Comment.count({ where: { articleId: article.id, isDeferred: true } }),
-    Comment.count({ where: { articleId: article.id, unresolvedFlagsCount: { $gt: 0 } } }),
+    Comment.count({ where: { articleId: article.id,
+        $or: [{ isModerated: false }, { isAccepted: true }],
+        unresolvedFlagsCount: { $gt: 0 } } }),
     Comment.count({ where: { articleId: article.id, isModerated: true, isBatchResolved: true } }),
   ]);
 

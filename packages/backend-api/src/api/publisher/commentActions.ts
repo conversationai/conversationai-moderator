@@ -23,9 +23,6 @@ import * as express from 'express';
 import { commentActionSchema } from '../services/commentActions';
 import { dataSchema, validateRequest } from '../util/validation';
 
-export const STATUS_ACCEPTED = 'accepted';
-export const STATUS_REJECTED = 'rejected';
-
 const validateCommentActionRequest = validateRequest(dataSchema(commentActionSchema));
 
 /**

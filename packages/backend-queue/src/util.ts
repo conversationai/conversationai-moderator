@@ -29,7 +29,10 @@ export type IKnownTasks = (
   'tagComments' |
   'tagCommentSummaryScores' |
   'acceptComments' |
+  'acceptCommentsAndFlags' |
   'rejectComments' |
+  'rejectCommentsAndFlags' |
+  'resolveFlags' |
   'resetTag' |
   'resetComments' |
   'confirmTag' |

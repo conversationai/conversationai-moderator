@@ -28,12 +28,14 @@ export const describe = 'Flag comments.';
 
 export function builder(args: yargs.Argv) {
   return args
-    .usage('Usage: node $0 comments:flag --label <label> [ --description <description> ] commentIds...')
+    .usage('Usage: node $0 comments:flag --label <label> [ --description <description> ] [ --recommendation ] commentIds...')
     .demandOption('label')
     .string('label')
     .describe('label', `Label to apply.`)
     .string('detail')
     .describe('detail', `Description to use.`)
+    .boolean('recommendation')
+    .describe('recommendation', `Flag is a recommendation`)
     .demandCommand(1);
 }
 
@@ -45,6 +47,7 @@ export async function handler(argv: any) {
       commentId: c.id,
       label: argv.label.toString(),
       detail: argv.detail ? argv.detail.toString() : undefined,
+      isRecommendation: argv.recommendation,
       isResolved: false,
       sourceId: 'osmod-cli',
       authorSourceId: 'osmod-cli',

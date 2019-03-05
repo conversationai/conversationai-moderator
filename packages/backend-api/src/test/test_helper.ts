@@ -25,6 +25,7 @@ import {
 import {
   IArticleInstance,
   ICategoryInstance,
+  ICommentFlagInstance,
   ICommentInstance,
   ICommentScoreInstance,
   ICommentSummaryScoreAttributes,
@@ -39,6 +40,7 @@ import {
   Article,
   Category,
   Comment,
+  CommentFlag,
   CommentScore,
   CommentSummaryScore,
   ModerationRule,
@@ -193,6 +195,14 @@ export async function makePreselect(obj = {}): Promise<IPreselectInstance> {
     upperThreshold: 1,
     ...obj,
   });
+}
+
+export async function makeFlag(obj: {}): Promise<ICommentFlagInstance> {
+  return await CommentFlag.create({
+    label: 'test flag',
+    isResolved: false,
+    ...obj,
+  } as any);
 }
 
 export async function sleep(ms: number) {
