@@ -15,12 +15,12 @@ limitations under the License.
 */
 
 import { storiesOf } from '@storybook/react';
+import { List } from 'immutable';
 
 import { AuthorModelRecord, IAuthorModel } from '../../../../../../../models';
 import { fakeCommentModel } from '../../../../../../../models/fake';
 import { css } from '../../../../../../utilx';
 import { ThreadedComment } from './ThreadedComment';
-import {List} from 'immutable';
 
 const author = AuthorModelRecord({
   email: 'name@email.com',
@@ -36,9 +36,8 @@ const comment = fakeCommentModel({
   sourceCreatedAt: null,
   authorSourceId: 'author1',
   author,
-  flagsCount: 3,
   unresolvedFlagsCount: 1,
-  flagsSummary: new Map([['red', List([1, 0])], ['green', List([2, 1])]]),
+  flagsSummary: new Map([['red', List([1, 0, 0])], ['green', List([2, 1, 2])]]),
   text: 'Orginating comment text is here',
 });
 const replies = [
@@ -50,9 +49,8 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author2',
     author,
-    flagsCount: 3,
     unresolvedFlagsCount: 2,
-    flagsSummary: new Map([['red', List([1, 0])], ['green', List([2, 2])]]),
+    flagsSummary: new Map([['red', List([1, 0, 1])], ['green', List([2, 2, 0])]]),
     text: 'First reply comment text is here. This comment is marked Deferred.',
   }),
   fakeCommentModel({
@@ -63,9 +61,8 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author3',
     author,
-    flagsCount: 3,
     unresolvedFlagsCount: 1 ,
-    flagsSummary: new Map([['red', List([1, 0])], ['green', List([2, 1])]]),
+    flagsSummary: new Map([['red', List([1, 0, 0])], ['green', List([2, 1, 0])]]),
     text: 'Second reply comment text is here. This comment is marked Highlighted.',
   }),
   fakeCommentModel({
@@ -76,12 +73,11 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author4',
     author,
-    flagsCount: 30,
     unresolvedFlagsCount: 20,
     flagsSummary: new Map([
-      ['red', List([5, 3])],
-      ['green', List([15, 10])],
-      ['blue', List([10, 7])],
+      ['red', List([5, 3, 5])],
+      ['green', List([15, 10, 15])],
+      ['blue', List([10, 7, 10])],
     ]),
     text: 'Third reply comment text is here. This comment is marked Rejected.',
   }),
@@ -93,7 +89,6 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author5',
     author,
-    flagsCount: 0,
     unresolvedFlagsCount: 0,
     text: 'Fourth reply comment text is here. This comment has not yet been moderated.',
   }),

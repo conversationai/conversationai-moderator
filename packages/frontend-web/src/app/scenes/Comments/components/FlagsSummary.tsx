@@ -23,7 +23,8 @@ interface IFlagsSummaryProps {
 }
 
 const TOTAL = 0;
-const UNRESOLVED = 1;
+// const UNRESOLVED = 1;
+const APPROVES = 2;
 
 export class FlagsSummary extends React.PureComponent<IFlagsSummaryProps> {
   render() {
@@ -31,26 +32,32 @@ export class FlagsSummary extends React.PureComponent<IFlagsSummaryProps> {
       comment,
     } = this.props;
 
-    if (comment.flagsCount === 0 || !comment.flagsSummary) {
+    if (!comment.flagsSummary || comment.flagsSummary.size === 0) {
       return null;
     }
 
-    function flag(count: number): string {
-      return (count > 1) ? 'flags' : 'flag';
-    }
-
-    function countsText(): string {
-      if (comment.unresolvedFlagsCount === 0) {
-        return `${comment.flagsCount} ${flag(comment.flagsCount)}`;
-      }
-      return `${comment.unresolvedFlagsCount} unresolved ${flag(comment.unresolvedFlagsCount)} of ${comment.flagsCount}`;
-    }
-
     const summary = comment.flagsSummary;
-    const flags =  Array.from(summary.keys()).sort((a, b) => summary.get(b).get(UNRESOLVED) - summary.get(a).get(UNRESOLVED));
+    const flags = Array.from(summary.keys())
+      .sort((a, b) => summary.get(b).get(TOTAL) - summary.get(a).get(TOTAL))
+      .filter((a) => summary.get(a).get(APPROVES) === 0);
+    const approves = Array.from(summary.keys())
+      .sort((a, b) => summary.get(b).get(TOTAL) - summary.get(a).get(TOTAL))
+      .filter((a) => summary.get(a).get(APPROVES) > 0);
+
+    function oneFlag(label: string) {
+      const f = summary.get(label);
+      return (<span key={label}>{label}: {f.get(TOTAL)}</span>);
+    }
+
+    const unresolved = comment.unresolvedFlagsCount > 0 ?
+      <span key="__unresolved">unresolved: {comment.unresolvedFlagsCount}</span> : '';
+    const topFlag = flags.length > 0 ? oneFlag(flags[0]) : '';
+    const topApprove = approves.length > 0 ? oneFlag(approves[0]) : '';
+    const theresMore = (flags.length > 1 || approves.length > 1) ? '...' : '';
+
     return (
       <span>
-        &bull;{countsText()}:&nbsp;({flags.map((f) => <span key={f}>{f}: {summary.get(f).get(UNRESOLVED)}/{summary.get(f).get(TOTAL)}</span>)})
+        &bull; Flags:  {unresolved} {topFlag} {topApprove} {theresMore}
       </span>
     );
   }

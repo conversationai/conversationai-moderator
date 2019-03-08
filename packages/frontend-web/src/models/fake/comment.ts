@@ -42,7 +42,6 @@ export function fakeCommentModel(overrides: Partial<ICommentAttributes> = {}): I
     isHighlighted: faker.random.boolean(),
     isBatchResolved: faker.random.boolean(),
     isAutoResolved: faker.random.boolean(),
-    flagsCount: faker.random.number(),
     unresolvedFlagsCount: faker.random.number(),
     sourceCreatedAt: faker.date.recent().toISOString(),
     sentForScoring: faker.random.boolean(),

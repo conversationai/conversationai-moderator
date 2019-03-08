@@ -892,7 +892,7 @@ export class ModeratedComments
     if (actionLabel === 'flagged') {
       return sortOptions.unshift(TagModel({
         key: `${actionLabel}`,
-        label: 'Flags',
+        label: 'Unresolved flags',
         color: null,
       }));
     }

@@ -252,7 +252,6 @@ const commentFields = {
   isHighlighted: check.boolean,
   isBatchResolved: check.boolean,
   isAutoResolved: check.boolean,
-  flagsCount: check.number,
   unresolvedFlagsCount: check.number,
   flagsSummary: (o: any) => (!o || checkMap(o, 'comment:flagsSummary', check.string, checkListNumber)),
   };

@@ -1594,17 +1594,21 @@ exports[`Storyshots CommentBody Basic 1`] = `
            ago 
         </span>
         <span>
-          •
-          1 unresolved flag of 1
-          : (
+          • Flags:  
+          <span>
+            unresolved: 
+            1
+          </span>
+           
           <span>
             red
             : 
             1
-            /
-            1
           </span>
-          )
+           
+          
+           
+          
         </span>
       </div>
       <div
@@ -1800,17 +1804,21 @@ exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
            ago 
         </span>
         <span>
-          •
-          1 unresolved flag of 1
-          : (
+          • Flags:  
+          <span>
+            unresolved: 
+            1
+          </span>
+           
           <span>
             red
             : 
             1
-            /
-            1
           </span>
-          )
+           
+          
+           
+          
         </span>
       </div>
       <div
@@ -1979,17 +1987,21 @@ exports[`Storyshots CommentBody Linked 1`] = `
              ago 
           </span>
           <span>
-            •
-            1 unresolved flag of 1
-            : (
+            • Flags:  
+            <span>
+              unresolved: 
+              1
+            </span>
+             
             <span>
               red
               : 
               1
-              /
-              1
             </span>
-            )
+             
+            
+             
+            
           </span>
         </div>
         <div
@@ -6566,24 +6578,25 @@ exports[`Storyshots SingleComment base 1`] = `
                
             </span>
             <span>
-              •
-              2 unresolved flags of 3
-              : (
+              • Flags:  
+              <span>
+                unresolved: 
+                2
+              </span>
+               
+              <span>
+                red
+                : 
+                1
+              </span>
+               
               <span>
                 green
                 : 
                 2
-                /
-                2
               </span>
-              <span>
-                red
-                : 
-                0
-                /
-                1
-              </span>
-              )
+               
+              
             </span>
           </div>
         </div>
@@ -6887,24 +6900,25 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
                
             </span>
             <span>
-              •
-              2 unresolved flags of 3
-              : (
+              • Flags:  
+              <span>
+                unresolved: 
+                2
+              </span>
+               
+              <span>
+                red
+                : 
+                1
+              </span>
+               
               <span>
                 green
                 : 
                 2
-                /
-                2
               </span>
-              <span>
-                red
-                : 
-                0
-                /
-                1
-              </span>
-              )
+               
+              
             </span>
           </div>
         </div>
@@ -7185,24 +7199,25 @@ exports[`Storyshots SingleComment has url 1`] = `
                
             </a>
             <span>
-              •
-              2 unresolved flags of 3
-              : (
+              • Flags:  
+              <span>
+                unresolved: 
+                2
+              </span>
+               
+              <span>
+                red
+                : 
+                1
+              </span>
+               
               <span>
                 green
                 : 
                 2
-                /
-                2
               </span>
-              <span>
-                red
-                : 
-                0
-                /
-                1
-              </span>
-              )
+               
+              
             </span>
           </div>
         </div>
@@ -7524,24 +7539,25 @@ exports[`Storyshots SingleComment tags to add 1`] = `
                
             </span>
             <span>
-              •
-              2 unresolved flags of 3
-              : (
+              • Flags:  
+              <span>
+                unresolved: 
+                2
+              </span>
+               
+              <span>
+                red
+                : 
+                1
+              </span>
+               
               <span>
                 green
                 : 
                 2
-                /
-                2
               </span>
-              <span>
-                red
-                : 
-                0
-                /
-                1
-              </span>
-              )
+               
+              
             </span>
           </div>
         </div>
@@ -9103,24 +9119,25 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                    ago 
                 </span>
                 <span>
-                  •
-                  1 unresolved flag of 3
-                  : (
+                  • Flags:  
                   <span>
-                    green
-                    : 
+                    unresolved: 
                     1
-                    /
-                    2
                   </span>
+                   
                   <span>
                     red
                     : 
-                    0
-                    /
                     1
                   </span>
-                  )
+                   
+                  <span>
+                    green
+                    : 
+                    2
+                  </span>
+                   
+                  
                 </span>
               </div>
               <div
@@ -9310,24 +9327,25 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                      ago 
                   </span>
                   <span>
-                    •
-                    2 unresolved flags of 3
-                    : (
+                    • Flags:  
+                    <span>
+                      unresolved: 
+                      2
+                    </span>
+                     
                     <span>
                       green
                       : 
                       2
-                      /
-                      2
                     </span>
+                     
                     <span>
                       red
                       : 
-                      0
-                      /
                       1
                     </span>
-                    )
+                     
+                    
                   </span>
                 </div>
                 <div
@@ -9521,24 +9539,21 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                      ago 
                   </span>
                   <span>
-                    •
-                    1 unresolved flag of 3
-                    : (
+                    • Flags:  
+                    <span>
+                      unresolved: 
+                      1
+                    </span>
+                     
                     <span>
                       green
                       : 
-                      1
-                      /
                       2
                     </span>
-                    <span>
-                      red
-                      : 
-                      0
-                      /
-                      1
-                    </span>
-                    )
+                     
+                    
+                     
+                    ...
                   </span>
                 </div>
                 <div
@@ -9729,31 +9744,21 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                      ago 
                   </span>
                   <span>
-                    •
-                    20 unresolved flags of 30
-                    : (
+                    • Flags:  
+                    <span>
+                      unresolved: 
+                      20
+                    </span>
+                     
+                    
+                     
                     <span>
                       green
                       : 
-                      10
-                      /
                       15
                     </span>
-                    <span>
-                      blue
-                      : 
-                      7
-                      /
-                      10
-                    </span>
-                    <span>
-                      red
-                      : 
-                      3
-                      /
-                      5
-                    </span>
-                    )
+                     
+                    ...
                   </span>
                 </div>
                 <div
