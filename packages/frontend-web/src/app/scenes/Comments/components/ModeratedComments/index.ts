@@ -59,23 +59,14 @@ import {
 
 import {
   approveComments,
+  approveFlagsAndComments,
   deferComments,
   highlightComments,
   rejectComments,
+  rejectFlagsAndComments,
   resetComments,
   tagCommentSummaryScores,
 } from '../../../../stores/commentActions';
-
-const actionMap: {
-  [key: string]: (ids: Array<string>, userId: string, tagId?: string) => any;
-} = {
-  highlight: highlightComments,
-  approve: approveComments,
-  defer: deferComments,
-  reject: rejectComments,
-  tag: tagCommentSummaryScores,
-  reset: resetComments,
-};
 
 type IModeratedCommentsRouterProps = Pick<
   IModeratedCommentsProps,
@@ -216,6 +207,17 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
     categoryId,
     tag,
   } = parseRoute(ownProps.params);
+
+  const actionMap: {
+    [key: string]: (ids: Array<string>, userId: string, tagId?: string) => any;
+  } = {
+    highlight: highlightComments,
+    approve: tag === 'flagged' ? approveFlagsAndComments : approveComments,
+    defer: deferComments,
+    reject: tag === 'flagged' ? rejectFlagsAndComments : rejectComments,
+    tag: tagCommentSummaryScores,
+    reset: resetComments,
+  };
 
   return {
     tagComments: (ids: Array<string>, tagId: string, userId: string) =>

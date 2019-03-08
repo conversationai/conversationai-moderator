@@ -678,6 +678,12 @@ export function approveFlagsAndCommentsRequest(ids: Array<string>, userId: strin
   return makeCommentAction('/approve-flags', ids, userId);
 }
 
+export function resolveFlagsRequest(ids: Array<string>, userId: string): Promise<void> {
+  ids.forEach((id) => validateID(id, `commentId`));
+
+  return makeCommentAction('/resolve-flags', ids, userId);
+}
+
 export function deferCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 

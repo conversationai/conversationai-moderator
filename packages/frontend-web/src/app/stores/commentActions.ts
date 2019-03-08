@@ -16,6 +16,7 @@ limitations under the License.
 
 import {
   approveCommentsRequest,
+  approveFlagsAndCommentsRequest,
   confirmCommentScoreRequest,
   confirmCommentSummaryScoreRequest,
   deferCommentsRequest,
@@ -24,8 +25,10 @@ import {
   rejectCommentScoreRequest,
   rejectCommentsRequest,
   rejectCommentSummaryScoreRequest,
+  rejectFlagsAndCommentsRequest,
   resetCommentScoreRequest,
   resetCommentsRequest,
+  resolveFlagsRequest,
   tagCommentsAnnotationRequest,
   tagCommentsRequest,
   tagCommentSummaryScoresRequest,
@@ -52,12 +55,24 @@ export function approveComments(ids: Array<string>, userId: string) {
   return (): Promise<void> => approveCommentsRequest(ids, userId);
 }
 
+export function approveFlagsAndComments(ids: Array<string>, userId: string) {
+  return (): Promise<void> => approveFlagsAndCommentsRequest(ids, userId);
+}
+
+export function resolveFlags(ids: Array<string>, userId: string) {
+  return (): Promise<void> => resolveFlagsRequest(ids, userId);
+}
+
 export function deferComments(ids: Array<string>, userId: string) {
   return (): Promise<void> => deferCommentsRequest(ids, userId);
 }
 
 export function rejectComments(ids: Array<string>, userId: string) {
   return (): Promise<void> => rejectCommentsRequest(ids, userId);
+}
+
+export function rejectFlagsAndComments(ids: Array<string>, userId: string) {
+  return (): Promise<void> => rejectFlagsAndCommentsRequest(ids, userId);
 }
 
 export function tagComments(ids: Array<string>, tagId: string, userId: string) {
