@@ -42,7 +42,7 @@ if (!token) {
 import { decodeToken, setAxiosToken } from '../app/auth/store';
 import { saveToken } from '../app/platform/localStore';
 import { connectNotifier } from '../app/platform/websocketService';
-import {approveComment, setArticleModerators, setArticleState} from './actions';
+import {approveComment, rejectComment, setArticleModerators, setArticleState} from './actions';
 import { articleData, systemData, userData } from './notificationChecks';
 import {
   commentDetailsPage, fetchArticleText,
@@ -115,10 +115,43 @@ setAxiosToken(token);
       await listModeratedCommentsPage('flagged', 'category', articlesWithCategory[0].category.id);
       console.log(`  Checked category ${articlesWithCategory[0].category.id}`);
     }
-    const comments = await listModeratedCommentsPage('flagged', 'article', articles[0].id);
-    console.log(`  Checked article ${articles[0].id}`);
-    console.log(`  Found ${comments.length} flagged comments.  Doing a fetch of one of them`);
-    await commentDetailsPage(comments[0]);
+    const article = articles[0];
+    const comments = await listModeratedCommentsPage('flagged', 'article', article.id);
+    console.log(`  Checked article ${article.id}`);
+    console.log(`  Found ${comments.length} flagged comments`);
+    if (comments.length > 0) {
+      const comment = comments[0];
+      console.log(`  Doing a fetch of comment ${comment}`);
+      await commentDetailsPage(comment);
+      console.log(`  Doing comment action tests. `);
+      await rejectComment(comment, userId, false, {
+        rejectedCount: article.category.rejectedCount + 1,
+        flaggedCount: article.category.flaggedCount - 1,
+      }, {
+        rejectedCount: article.rejectedCount + 1,
+        flaggedCount: article.flaggedCount - 1,
+      });
+      await approveComment(comment, userId, false,
+        {
+          rejectedCount: article.category.rejectedCount,
+          flaggedCount: article.category.flaggedCount,
+        }, {
+          rejectedCount: article.rejectedCount,
+          flaggedCount: article.flaggedCount,
+        });
+      await approveComment(comment, userId, true,
+        {
+          flaggedCount: article.category.flaggedCount - 1,
+        }, {
+          flaggedCount: article.flaggedCount - 1,
+        });
+      await rejectComment(comment, userId, true,
+        {
+          flaggedCount: article.category.flaggedCount - 1,
+        }, {
+          flaggedCount: article.flaggedCount - 1,
+        });
+    }
   }
 
   if (articleData.articlesWithNew.length > 0) {
@@ -137,7 +170,12 @@ setAxiosToken(token);
     console.log('  Doing an article text fetch');
     await fetchArticleText(article.id);
     console.log(`\n* Approving comment ${comments.last()} and waiting for notification.`);
-    await approveComment(comments.last(), userId, article.category.approvedCount, article.approvedCount);
+    await approveComment(comments.last(), userId, false,
+      {
+        approvedCount: article.category.approvedCount + 1,
+      }, {
+        approvedCount: article.approvedCount + 1,
+      });
   }
 
   console.log('shutting down.');

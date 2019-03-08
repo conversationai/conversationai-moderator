@@ -16,7 +16,11 @@ limitations under the License.
 
 import {
   approveCommentsRequest,
-  updateArticle, updateArticleModerators,
+  approveFlagsAndCommentsRequest,
+  rejectCommentsRequest,
+  rejectFlagsAndCommentsRequest,
+  updateArticle,
+  updateArticleModerators,
 } from '../app/platform/dataService';
 import { ModelId } from '../models';
 import { articleData } from './notificationChecks';
@@ -58,22 +62,50 @@ function checkTypeIsUpdate(type: string) {
   }
 }
 
+function checkExpectations(
+  message: any,
+  categoryExpectations: {[key: string]: number},
+  articleExpectations: {[key: string]: number},
+) {
+  for (const k of Object.keys(categoryExpectations)) {
+    if (message.category[k] !== categoryExpectations[k]) {
+      console.log(`ERROR: category ${k} not updated correctly: ${message.category[k]} should be ${categoryExpectations[k]}`);
+    }
+  }
+  for (const k of Object.keys(articleExpectations)) {
+    if (message.article[k] !== articleExpectations[k]) {
+      console.log(`ERROR: article ${k} not updated correctly: ${message.article[k]} should be ${articleExpectations[k]}`);
+    }
+  }
+}
+
 export async function approveComment(
   commentId: ModelId,
   userId: ModelId,
-  oldApprovedCategory: number,
-  oldApprovedArticle: number,
+  resolveFlags: boolean,
+  categoryExpectations: {[key: string]: number},
+  articleExpectations: {[key: string]: number},
 ) {
   await listenForMessages(
-    () => approveCommentsRequest([commentId], userId),
+    () => (resolveFlags ? approveFlagsAndCommentsRequest : approveCommentsRequest)([commentId], userId),
     (type, message) => {
       checkTypeIsUpdate(type);
-      if (message.category.approvedCount - oldApprovedCategory !== 1) {
-        console.log(`ERROR: category approved count not updated correctly: ${oldApprovedCategory} -> ${message.category.approvedCount}`);
-      }
-      if (message.article.approvedCount - oldApprovedArticle !== 1) {
-        console.log(`ERROR: article approved count not updated correctly: ${oldApprovedArticle} -> ${message.article.approvedCount}`);
-      }
+      checkExpectations(message, categoryExpectations, articleExpectations);
+    });
+}
+
+export async function rejectComment(
+  commentId: ModelId,
+  userId: ModelId,
+  resolveFlags: boolean,
+  categoryExpectations: {[key: string]: number},
+  articleExpectations: {[key: string]: number},
+) {
+  await listenForMessages(
+    () => (resolveFlags ? rejectFlagsAndCommentsRequest : rejectCommentsRequest)([commentId], userId),
+    (type, message) => {
+      checkTypeIsUpdate(type);
+      checkExpectations(message, categoryExpectations, articleExpectations);
     });
 }
 
