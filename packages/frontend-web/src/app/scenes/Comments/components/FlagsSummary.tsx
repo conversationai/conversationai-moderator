@@ -20,16 +20,18 @@ import { ICommentModel } from '../../../../models';
 
 interface IFlagsSummaryProps {
   comment: ICommentModel;
+  full?: boolean;
 }
 
 const TOTAL = 0;
-// const UNRESOLVED = 1;
+const UNRESOLVED = 1;
 const APPROVES = 2;
 
 export class FlagsSummary extends React.PureComponent<IFlagsSummaryProps> {
   render() {
     const {
       comment,
+      full,
     } = this.props;
 
     if (!comment.flagsSummary || comment.flagsSummary.size === 0) {
@@ -46,18 +48,32 @@ export class FlagsSummary extends React.PureComponent<IFlagsSummaryProps> {
 
     function oneFlag(label: string) {
       const f = summary.get(label);
-      return (<span key={label}>{label}: {f.get(TOTAL)}</span>);
+      const total = f.get(TOTAL);
+      if (full) {
+        const un = f.get(UNRESOLVED);
+        const unresolvedStr = (un > 0) ? `(${un})` : '';
+        return (<span key={label}>&bull; {label}: {total} {unresolvedStr}</span>);
+      }
+      return (<span key={label}>{label}: {total}</span>);
     }
 
     const unresolved = comment.unresolvedFlagsCount > 0 ?
       <span key="__unresolved">unresolved: {comment.unresolvedFlagsCount}</span> : '';
+
+    if (full) {
+      return (
+        <span>
+          &bull; Flags: {unresolved} {flags.map(oneFlag)} {approves.map(oneFlag)}
+        </span>
+      );
+    }
+
     const topFlag = flags.length > 0 ? oneFlag(flags[0]) : '';
     const topApprove = approves.length > 0 ? oneFlag(approves[0]) : '';
     const theresMore = (flags.length > 1 || approves.length > 1) ? '...' : '';
-
     return (
       <span>
-        &bull; Flags:  {unresolved} {topFlag} {topApprove} {theresMore}
+        &bull; Flags: {unresolved} {topFlag} {topApprove} {theresMore}
       </span>
     );
   }

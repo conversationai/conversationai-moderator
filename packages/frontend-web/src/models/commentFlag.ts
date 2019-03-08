@@ -21,11 +21,13 @@ export interface ICommentFlagAttributes {
   id: string;
   label: string;
   detail?: string;
+  isRecommendation: boolean;
   commentId: string;
   sourceId?: string;
   authorSourceId?: string;
   isResolved: boolean;
-
+  resolvedById?: string;
+  resolvedAt?: string;
 }
 
 export interface ICommentFlagModel extends TypedRecord<ICommentFlagModel>, ICommentFlagAttributes {}
@@ -35,6 +37,7 @@ const CommentFlagModelRecord = Record({
   commentId: null,
   label: null,
   detail: null,
+  isRecommendation: false,
   sourceId: null,
   authorSourceId: null,
   isResolved: false,

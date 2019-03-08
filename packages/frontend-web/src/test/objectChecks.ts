@@ -36,7 +36,7 @@ function date_string(val: any) {
 }
 
 function date_string_or_null(val: any) {
-  if (val === null) {
+  if (!val) {
     return true;
   }
   return date_string(val);
@@ -106,6 +106,26 @@ function tag_id_or_null(val: any) {
   return tagIds.has(val.toString());
 }
 
+function is_user(u: any) {
+  if (!check.string(u)) {
+    console.log('Bad user ID', u);
+    return false;
+  }
+  if (!userIds.has(u)) {
+    console.log('User check: no user with ID', u);
+    console.log(' Known IDs', userIds);
+    return false;
+  }
+  return true;
+}
+
+function is_user_or_null(u: any) {
+  if (!u) {
+    return true;
+  }
+  return is_user(u);
+}
+
 function array_of_users(val: any) {
   if (!check.array(val)) {
     return false;
@@ -113,15 +133,7 @@ function array_of_users(val: any) {
 
   let ret = true;
   for (const u of val) {
-    if (!check.string(u)) {
-      console.log('Bad user ID', u);
-      ret = false;
-    }
-    if (!userIds.has(u)) {
-      console.log('User check: no user with ID', u);
-      console.log(' Known IDs', userIds);
-      ret = false;
-    }
+    ret = ret && is_user(u);
   }
   return ret;
 }
@@ -269,9 +281,12 @@ const commentFlagFields = {
   commentId: check.string,
   label: check.string,
   detail: check.maybe.string,
+  isRecommendation: check.boolean,
   sourceId: check.maybe.string,
   authorSourceId: check.maybe.string,
   isResolved: check.boolean,
+  resolvedById: is_user_or_null,
+  resolvedAt: date_string_or_null,
 };
 
 const moderatedCommentsFields = {
@@ -287,7 +302,7 @@ const moderatedCommentsFields = {
 const histogramScoreFields = {
   score: check.number,
   commentId: check.string,
-}
+};
 
 function checkObject(o: any, type: string, fields: any): boolean {
   const res = check.map(o, fields);

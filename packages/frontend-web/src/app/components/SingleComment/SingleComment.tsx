@@ -450,6 +450,30 @@ const COMMENT_STYLES = stylesheet({
   },
 });
 
+const FLAGS_STYLES = stylesheet({
+  title: {
+    ...CAPTION_TYPE,
+    color: DARK_SECONDARY_TEXT_COLOR,
+    fontSize: '20px',
+  },
+  entry: {
+    padding: '10px',
+    margin: '10px 0',
+    backgroundColor: '#eee',
+  },
+  label: {
+    fontSize: '24px',
+  },
+  resolvedText: {
+    color: DARK_TERTIARY_TEXT_COLOR,
+    fontSize: '16px',
+    float: 'right',
+  },
+  detail: {
+    fontSize: '14px',
+  },
+});
+
 export interface ISingleCommentProps {
   comment: ICommentModel;
   allScores?: List<ICommentScoreModel>;
@@ -649,6 +673,25 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
     const bodyStyling = css(COMMENT_STYLES.body);
     const className = bodyStyling.className ? bodyStyling.className + ' comment-body' : 'comment-body';
 
+    function renderFlag(f: ICommentFlagModel) {
+      let resolvedText = '';
+      if (f.isResolved) {
+        resolvedText += 'Resolved';
+        if (f.resolvedAt) {
+          resolvedText += ' on ' + (new Date(f.resolvedAt)).toLocaleDateString();
+        }
+      }
+      else {
+        resolvedText += 'Unresolved';
+      }
+      return (
+        <div key={f.id} {...css(FLAGS_STYLES.entry)}>{resolvedText}
+          <div key="label" {...css(FLAGS_STYLES.label)}>{f.label} <span {...css(FLAGS_STYLES.resolvedText)}>{resolvedText}</span></div>
+          {f.detail && <div key="description" {...css(FLAGS_STYLES.detail)}>{f.detail}</div>}
+        </div>
+      );
+    }
+
     return (
       <div {...css(isThreadedComment && isReply && STYLES.threaded)}>
         <div
@@ -838,7 +881,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               ) : (
                 <span key="submittedAt">{SUBMITTED_AT} </span>
               )}
-              <FlagsSummary comment={comment}/>
+              <FlagsSummary comment={comment} full/>
             </div>
           </div>
           <style>{COMMENT_BODY_STYLES}</style>
@@ -944,18 +987,11 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
             </button>
           )}
           {flags && flags.size > 0 && (
-            <div>
-              <h2>Flags</h2>
-              {flags.map((f) => (
-                <div>
-                  <div>{f.label}</div>
-                  {f.detail}
-                  {f.isResolved}
-                </div>
-              ))}
+            <div key="flags">
+              <div key="__flags-title" {...css(FLAGS_STYLES.title)}>Flags</div>
+              {flags.map((f) => renderFlag(f))}
             </div>
           )}
-
         </div>
       </div>
     );
