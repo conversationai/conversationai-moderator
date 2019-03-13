@@ -8022,6 +8022,38 @@ exports[`Storyshots Slider base 1`] = `
 </div>
 `;
 
+exports[`Storyshots TableComponents Magic timestamps 1`] = `
+<div>
+  <span>
+    a few seconds ago
+  </span>
+  <span>
+    1 minute ago
+  </span>
+  <span>
+    30 minutes ago
+  </span>
+  <span>
+    1 hour ago
+  </span>
+  <span>
+    12 hours ago
+  </span>
+  <span>
+    1 day ago
+  </span>
+  <span>
+    2 days ago
+  </span>
+  <span>
+    Jan 1
+  </span>
+  <span>
+    June 24, 2017
+  </span>
+</div>
+`;
+
 exports[`Storyshots TableComponents Title cell 1`] = `
 <table
   className="dataTable_qnb40"
@@ -8075,7 +8107,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
           </span>
           <span>
             <span>
-              3 h ago
+              3 hours ago
             </span>
           </span>
         </div>
@@ -8134,7 +8166,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
         >
           <span>
             <span>
-              21 h ago
+              21 hours ago
             </span>
           </span>
         </div>
