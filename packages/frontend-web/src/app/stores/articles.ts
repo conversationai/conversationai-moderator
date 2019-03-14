@@ -59,11 +59,11 @@ const reducer = handleActions<IArticlesStateRecord, List<IArticleModel>| IArticl
   },
   [articleUpdated.toString()]: (state: IArticlesStateRecord, { payload }: Action<IArticleModel>) => {
     const index = state.get('index').get(payload.id);
-    if (index) {
+    if (typeof index !== 'undefined') {
       return state.set('items', state.get('items').set(index, payload));
     }
     return state
-      .set('items', state.get('items').append(payload))
+      .set('items', state.get('items').push(payload))
       .set('index', state.get('index').set(payload.id, payload));
   },
 }, StateFactory());
