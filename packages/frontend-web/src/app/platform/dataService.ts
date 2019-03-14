@@ -466,7 +466,7 @@ export async function updateCategoryModerators(categoryId: ModelId, moderatorIds
 }
 
 export async function updateArticleModerators(articleId: ModelId, moderatorIds: Array<ModelId>): Promise<void> {
-  const url = serviceURL('assignments', `/article/${parseInt(articleId, 10)}`);
+  const url = serviceURL('assignments', `/article/${articleId}`);
   await axios.post(url, { data: moderatorIds });
 }
 
