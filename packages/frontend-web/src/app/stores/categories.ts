@@ -58,11 +58,11 @@ export const reducer = handleActions<ICategoriesStateRecord, List<ICategoryModel
   },
   [categoryUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<ICategoryModel>) => {
     const index = state.get('index').get(payload.id);
-    if (index) {
+    if (typeof index !== 'undefined') {
       return state.set('items', state.get('items').set(index, payload));
     }
     return state
-      .set('items', state.get('items').append(payload))
+      .set('items', state.get('items').push(payload))
       .set('index', state.get('index').set(payload.id, payload));
   },
 }, CategoriesStateFactory());
