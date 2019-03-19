@@ -163,7 +163,7 @@ export function connectNotifier(
     if (!ws || ws.readyState !== myws.OPEN) {
       const token = getToken();
       const baseurl = serviceURL(`updates/summary/?token=${token}`);
-      const url = 'ws:' + baseurl.substr(baseurl.indexOf(':') + 1);
+      const url = baseurl.replace(/^http/, 'ws');
 
       ws = new myws(url);
       ws.onopen = () => {
