@@ -24,10 +24,7 @@ const compression = require('compression');
 const helmet = require('helmet');
 import { logger } from './logger';
 
-export function makeServer(testMode?: boolean): {
-  app: express.Application;
-  start(port: number): Server;
-} {
+export function makeAppPart1(testMode?: boolean) {
   const app = express();
   expressWs(app);
 
@@ -48,32 +45,44 @@ export function makeServer(testMode?: boolean): {
     app.use(logger.requestLogger);
   }
 
+  return app;
+}
+
+export function makeAppPart2(app: express.Application, testMode?: boolean) {
+  if (!testMode) {
+    // Add the error logger after all middleware and routes so that
+    // it can log errors from the whole application. Any custom error
+    // handlers should go after this.
+    app.use(logger.errorLogger);
+
+    // Basic 404 handler
+    app.use((_req: express.Request, res: express.Response) => {
+      if (!res.headersSent) {
+        res.status(404).send('Not Found');
+      }
+    });
+
+    // Basic error handler
+    app.use((_err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+      // If our routes specified a specific response, then send that. Otherwise,
+      // send a generic message so as not to leak anything.
+
+      if (!res.headersSent) {
+        res.status(500).json({error: 'Internal Server Error'});
+      }
+    });
+  }
+}
+
+export function makeServer(testMode?: boolean): {
+  app: express.Application;
+  start(port: number): Server;
+} {
+  const app = makeAppPart1(testMode);
   return {
     app,
     start(port: number) {
-      if (!testMode) {
-        // Add the error logger after all middleware and routes so that
-        // it can log errors from the whole application. Any custom error
-        // handlers should go after this.
-        app.use(logger.errorLogger);
-
-        // Basic 404 handler
-        app.use((_req, res) => {
-          if (!res.headersSent) {
-            res.status(404).send('Not Found');
-          }
-        });
-
-        // Basic error handler
-        app.use((_err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-          // If our routes specified a specific response, then send that. Otherwise,
-          // send a generic message so as not to leak anything.
-
-          if (!res.headersSent) {
-            res.status(500).json({ error: 'Internal Server Error' });
-          }
-        });
-      }
+      makeAppPart2(app, testMode);
 
       return app.listen(port, () => {
         console.log('OSMod listening on port', port);
