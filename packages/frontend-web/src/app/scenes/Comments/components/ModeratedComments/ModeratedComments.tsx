@@ -264,6 +264,7 @@ export interface IModeratedCommentsProps extends WithRouterProps {
   getLinkTarget(comment: ICommentModel): string;
   urlPrefix: string;
   article?: IArticleModel;
+  loadData?(categoryId: string, articleId: string, tag: string): void;
   tagComments?(ids: Array<string>, tagId: string): any;
   dispatchAction?(action: IConfirmationAction, idsToDispatch: Array<string>): any;
   toggleSelectAll?(): any;
@@ -309,6 +310,10 @@ export interface IModeratedCommentsState {
   taggingTooltipVisible?: boolean;
   taggingToolTipArrowPosition?: ArrowPosition;
   moderateButtonsRef?: HTMLDivElement;
+  loadedActionLabel?: string;
+  loadedCategoryId?: string;
+  loadedArticleId?: string;
+  loadedTag?: string;
 }
 
 export class ModeratedComments
@@ -350,10 +355,21 @@ export class ModeratedComments
     keyboardJS.unbind('escape', this.onPressEscape);
   }
 
-  componentDidUpdate(prevProps: IModeratedCommentsProps) {
-    if (this.props.actionLabel !== prevProps.actionLabel) {
-      this.props.changeSort(getSortDefault(this.props.actionLabel));
+  static getDerivedStateFromProps(nextProps: IModeratedCommentsProps, prevState: IModeratedCommentsState) {
+    if (prevState.loadedCategoryId !== nextProps.params.categoryId ||
+        prevState.loadedArticleId !== nextProps.params.articleId ||
+        prevState.loadedTag !== nextProps.params.tag) {
+      nextProps.loadData(nextProps.params.categoryId, nextProps.params.articleId, nextProps.params.tag);
     }
+    if (prevState.loadedActionLabel !== nextProps.actionLabel) {
+      nextProps.changeSort(getSortDefault(nextProps.actionLabel));
+    }
+    return {
+      loadedActionLabel: nextProps.actionLabel,
+      loadedCategoryId: nextProps.params.categoryId,
+      loadedArticleId: nextProps.params.articleId,
+      loadedTag: nextProps.params.tag,
+    };
   }
 
   render() {

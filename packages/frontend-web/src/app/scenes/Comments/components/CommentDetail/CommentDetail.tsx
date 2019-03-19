@@ -302,6 +302,7 @@ export interface ICommentDetailProps extends WithRouterProps {
   onUpdateComment?(comment: ICommentModel): void;
   onAddCommentScore?(commentScore: ICommentScoreModel): void;
   onRemoveCommentScore?(commentScore: ICommentScoreModel): void;
+  loadData?(commentId: string): void;
   loadScores?(commentId: string): void;
   onCommentAction?(action: IConfirmationAction, idsToDispatch: Array<string>, userId: string): void;
   onTagComment?(ids: Array<string>, tagId: string, userId: string): void;
@@ -322,6 +323,7 @@ export interface ICommentDetailProps extends WithRouterProps {
 }
 
 export interface ICommentDetailState {
+  loadedCommentId?: string;
   isKeyboardModalVisible?: boolean;
   isConfirmationModalVisible?: boolean;
   isScoresModalVisible?: boolean;
@@ -385,12 +387,13 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     this.detachEvents();
   }
 
-  componentWillUpdate(nextProps: ICommentDetailProps) {
-    if (this.props.comment !== nextProps.comment) {
-      this.setState({
-        activeButtons: this.getActiveButtons(nextProps),
-      });
+  static getDerivedStateFromProps(nextProps: ICommentDetailProps, prevState: ICommentDetailState) {
+    if (prevState.loadedCommentId !== nextProps.params.commentId) {
+      nextProps.loadData(nextProps.params.commentId);
     }
+    return {
+      loadedCommentId: nextProps.params.commentId,
+    };
   }
 
   @autobind

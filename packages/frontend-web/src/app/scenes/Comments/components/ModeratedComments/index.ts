@@ -17,10 +17,8 @@ limitations under the License.
 import { Set } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { provideHooks } from 'redial';
 import { createStructuredSelector } from 'reselect';
 import { ICommentModel } from '../../../../../models';
-import { IRedialLocals } from '../../../../../types';
 import { ICommentAction } from '../../../../../types';
 import { getMyUserId } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
@@ -87,12 +85,14 @@ type IModeratedCommentsDispatchWithoutOverwriteProps = Pick<
 >;
 
 type IModeratedCommentsDispatchWithOverwriteProps = IModeratedCommentsDispatchWithoutOverwriteProps & {
+  loadData?(categoryId: string, articleId: string, tag: string): void;
   tagComments(ids: Array<string>, tagId: string, userId: string): any;
   dispatchAction(action: ICommentAction, idsToDispatch: Array<string>, userId: string): any;
 };
 
 type IModeratedCommentsDispatchProps = IModeratedCommentsDispatchWithoutOverwriteProps & Pick<
   IModeratedCommentsProps,
+  'loadData' |
   'tagComments' |
   'dispatchAction'
 >;
@@ -220,6 +220,10 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
   };
 
   return {
+    loadData: (cId: string, aId: string, t: string) => {
+      dispatch(executeCommentListLoader(!!aId, aId, cId, t));
+    },
+
     tagComments: (ids: Array<string>, tagId: string, userId: string) =>
         dispatch(tagCommentSummaryScores(ids, userId, tagId)),
 
@@ -274,33 +278,12 @@ function mergeProps(
   };
 }
 
-// Manually wrapping without `compose` so types stay correct.
-
-// Add Route Change hook.
-const HookedModeratedComments = provideHooks<IRedialLocals>({
-  fetch: async ({ params, dispatch }: any) => {
-    const {
-      isArticleDetail,
-      articleId,
-      categoryId,
-      tag,
-    } = parseRoute(params);
-
-    await dispatch(executeCommentListLoader(
-      isArticleDetail,
-      articleId,
-      categoryId,
-      tag,
-    ));
-  },
-})(PureModeratedComments);
-
 // Add Redux data.
 const ConnectedModeratedComments = connect<IModeratedCommentsStateProps , IModeratedCommentsDispatchProps | IModeratedCommentsDispatchWithOverwriteProps, IModeratedCommentsOwnProps>(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps,
-)(HookedModeratedComments);
+)(PureModeratedComments);
 
 // Add `router` prop.
 export const ModeratedComments: React.ComponentClass = withRouter(ConnectedModeratedComments);

@@ -17,14 +17,13 @@ limitations under the License.
 import { Set } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { provideHooks } from 'redial';
 import { createStructuredSelector } from 'reselect';
 
 import {
   ICommentModel,
   ICommentScoreModel,
 } from '../../../../../models';
-import { IConfirmationAction, IRedialLocals } from '../../../../../types';
+import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState, IAppStateRecord } from '../../../../stores';
 import {
   approveComments,
@@ -123,6 +122,7 @@ type ICommentDetailStateProps = Pick<
 
 type ICommentDetailDispatchProps = Pick<
   ICommentDetailProps,
+  'loadData' |
   'loadScores' |
   'onUpdateComment' |
   'onUpdateCommentScore' |
@@ -236,6 +236,15 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps {
   return {
+    loadData: (commentId: string) => {
+      return Promise.all([
+        dispatch(loadComment(commentId)),
+        dispatch(loadScores(commentId)),
+        dispatch(loadFlags(commentId)),
+        dispatch(loadCommentSummaryScores(commentId)),
+      ]);
+    },
+
     loadScores: (commentId: string) => (
       dispatch(loadScores(commentId))
     ),
@@ -335,26 +344,12 @@ function mergeProps(
   };
 }
 
-// Manually wrapping without `compose` so types stay correct.
-
-// Add Route Change hook.
-const HookedCommentDetail = provideHooks<IRedialLocals>({
-  fetch: ({ dispatch, params: { commentId } }) => {
-    return Promise.all([
-      dispatch(loadComment(commentId)),
-      dispatch(loadScores(commentId)),
-      dispatch(loadFlags(commentId)),
-      dispatch(loadCommentSummaryScores(commentId)),
-    ]);
-  },
-})(PureCommentDetail);
-
 // Add Redux data.
 const ConnectedCommentDetail = connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps,
-)(HookedCommentDetail);
+)(PureCommentDetail);
 
 // Add `router` prop.
 export const CommentDetail: React.ComponentClass = withRouter(ConnectedCommentDetail);
