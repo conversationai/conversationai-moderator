@@ -25,7 +25,7 @@ import {
   HEADER_HEIGHT,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import { dashboardLink, settingsLink } from '../routes';
+import { categoriesLink, dashboardLink, settingsLink } from '../routes';
 import { COMMON_STYLES } from './styles';
 import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
 
@@ -204,7 +204,9 @@ export class CategorySidebar extends React.Component<ICategorySidebarProps> {
               <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}>
                 <Link to={allLink} onClick={hideSidebar} {...css(COMMON_STYLES.cellLink)}>Home / All</Link>
               </div>
-              <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>{allUnmoderated}</div>
+              <Link to={categoriesLink('all', 'new')} {...css(COMMON_STYLES.cellLink)}>
+                <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>{allUnmoderated}</div>
+              </Link>
             </div>
           </div>
           {categories.map((c: ICategoryModel) => (
@@ -215,7 +217,11 @@ export class CategorySidebar extends React.Component<ICategorySidebarProps> {
                     {c.label}
                   </Link>
                 </div>
-                <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>{c.unmoderatedCount}</div>
+                <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>
+                  <Link to={categoriesLink(c.id, 'new')} {...css(COMMON_STYLES.cellLink)}>
+                    {c.unmoderatedCount}
+                  </Link>
+                </div>
               </div>
             </div>
           ))}

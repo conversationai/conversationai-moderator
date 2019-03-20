@@ -46,7 +46,7 @@ export function _commentLink(base: string, id: string, type: string) {
   else {
     suffix = 'moderated/' + type;
   }
-  return `${base}/${id}/${suffix}`;
+  return `/${base}/${id}/${suffix}`;
 }
 export function articlesLink(id: string, type: string) {
   return _commentLink(articlesBase, id, type);
