@@ -17,13 +17,10 @@ limitations under the License.
 import { List, Set } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { provideHooks } from 'redial';
-import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { ICommentModel } from '../../../../../models';
-import { IConfirmationAction, IRedialLocals } from '../../../../../types';
+import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState, IAppStateRecord } from '../../../../stores';
-import { withLoader } from '../../../../utilx';
 import { getComment, getIsLoading, loadComment, updateComment } from './store';
 import { IThreadedCommentDetailProps, ThreadedCommentDetail as PureThreadedCommentDetail } from './ThreadedCommentDetail';
 export { reducer } from './store';
@@ -70,26 +67,31 @@ const actionMap: {
 
 type IThreadedCommentDetailOwnProps =  Pick<
   IThreadedCommentDetailProps,
-  'params'
+  'params' |
+  'location' |
+  'router' |
+  'routes'
   >;
 
 type IThreadedCommentDetailStateProps = Pick<
   IThreadedCommentDetailProps,
   'comment' |
+  'tags' |
   'isLoading' |
   'originatingCommentId' |
   'userId'
   >;
 
-type IThreadedCommentDetailDispatchWithoutOverwriteProps = Pick<
+type IThreadedCommentDetailDispatchProps = Pick<
   IThreadedCommentDetailProps,
+  'loadData' |
   'dispatchAction' |
   'onUpdateComment' |
   'onUpdateCommentState' |
   'tagComments'
 >;
 
-type IThreadedCommentDetailDispatchWithOverwriteProps = IThreadedCommentDetailDispatchWithoutOverwriteProps & {
+type IThreadedCommentDetailDispatchWithOverwriteProps = IThreadedCommentDetailDispatchProps & {
   dispatchAction(action: IConfirmationAction, idsToDispatch: Array<string>, userId: string): any;
 };
 
@@ -142,6 +144,10 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch: IAppDispatch): any {
   return {
+    loadData: (commentId: string) => {
+      dispatch(loadComment(commentId));
+    },
+
     dispatchAction: (action: IConfirmationAction, idsToDispatch: Array<string>, userId: string) =>
         dispatch(actionMap[action](idsToDispatch, userId)),
 
@@ -191,20 +197,5 @@ const mergeProps = (
   };
 };
 
-export const ThreadedCommentDetail: React.ComponentClass = compose(
-  withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    mergeProps,
-  ) as any,
-  provideHooks<IRedialLocals>({
-    fetch: async ({ dispatch, params: { commentId } }) => {
-
-      await Promise.all([
-        dispatch(loadComment(commentId)),
-      ]);
-    },
-  }),
-  (c: any) => withLoader(c, 'isLoading'),
-)(PureThreadedCommentDetail);
+const connectedComponent = connect(mapStateToProps, mapDispatchToProps, mergeProps)(PureThreadedCommentDetail as any) ;
+export const ThreadedCommentDetail: React.ComponentClass = withRouter(connectedComponent);

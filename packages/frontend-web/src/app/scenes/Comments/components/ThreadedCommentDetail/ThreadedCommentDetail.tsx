@@ -100,6 +100,7 @@ export interface IThreadedCommentDetailProps extends WithRouterProps {
   onUpdateComment(comment: ICommentModel): any;
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
   onUpdateCommentState?(comment: ICommentModel, action: IConfirmationAction): any;
+  loadData?(commentId: string): void;
   dispatchAction?(action: ICommentAction, idsToDispatch: Array<string>): any;
   tags: List<ITagModel>;
   tagComments?(ids: Array<string>, tagId: string): any;
@@ -108,6 +109,7 @@ export interface IThreadedCommentDetailProps extends WithRouterProps {
 }
 
 export interface IThreadedCommentDetailState {
+  loadedCommentId?: string;
   isTaggingToolTipMetaVisible?: boolean;
   taggingToolTipMetaPosition?: {
     top: number;
@@ -133,6 +135,15 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
     taggingCommentId: null,
     moderateButtonsRef: null,
   };
+
+  static getDerivedStateFromProps(nextProps: IThreadedCommentDetailProps, prevState: IThreadedCommentDetailState) {
+    if (!prevState.loadedCommentId) {
+      nextProps.loadData(nextProps.params.commentId);
+    }
+    return {
+      loadedCommentId: nextProps.params.commentId,
+    };
+  }
 
   componentDidMount() {
     keyboardJS.bind('escape', this.onPressEscape);
@@ -258,18 +269,19 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
 
     return (
       <div>
-        <div {...css(STYLES.header)}>
-          Replies to comment #{comment.sourceId} from {comment.author.name}
+        <div key="buttons" {...css(STYLES.header)}>
+          Replies to comment #{comment && comment.sourceId} from {comment && comment.author.name}
           <button
             type="button"
             onClick={this.onCloseClick}
             {...css(STYLES.closeButton)}
             aria-label="Go back"
           >
-              <RejectIcon {...css({ fill: DARK_COLOR })} />
+            <RejectIcon {...css({ fill: DARK_COLOR })} />
           </button>
         </div>
-        <div {...css(STYLES.body)} onScroll={this.handleScroll}>
+        <div key="comments" {...css(STYLES.body)} onScroll={this.handleScroll}>
+          {comment &&
           <ThreadedComment
             onRejectWithTag={this.handleRejectWithTag}
             tagRejectionModalVisible={{
@@ -283,9 +295,11 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
             comment={comment}
             replies={comment.replies}
           />
+          }
         </div>
           {tags && taggingTooltipVisible && (
             <FocusTrap
+              key="assignTags"
               focusTrapOptions={{
                 clickOutsideDeactivates: true,
               }}
