@@ -15,7 +15,10 @@ limitations under the License.
 */
 import { List } from 'immutable';
 import React from 'react';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Link } from 'react-router';
+
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 import { AccountCircle, Settings } from '@material-ui/icons';
 
@@ -89,14 +92,14 @@ const STYLES = stylesheet({
   },
 
   sidebarRow: {
-    width: '100%',
+    width: `${SIDEBAR_WIDTH - 16}px`,
     padding: `8px`,
   },
 
   sidebarRowInner: {
-    width: '100%',
+    width: `${SIDEBAR_WIDTH - 16}px`,
     height: `${SIDEBAR_ROW_HEIGHT - 16}px`,
-    paddingLeft: `${SIDEBAR_XPAD}px`,
+    padding: `0 ${SIDEBAR_XPAD}px`,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -126,14 +129,8 @@ const STYLES = stylesheet({
 
   sidebarCount: {
     marginLeft: `${SIDEBAR_XPAD}px`,
-    marginRight: `${SIDEBAR_XPAD}px`,
     minWidth: '50px',
     textAlign: 'right',
-  },
-
-  sidebarScrollArea: {
-    flex: '1 1 auto',
-    overflowY: 'auto',
   },
 
   sidebarLink: {
@@ -159,6 +156,16 @@ export interface ICategorySidebarProps {
 }
 
 export class CategorySidebar extends React.Component<ICategorySidebarProps> {
+  _scrollBarRef: PerfectScrollbar = null;
+
+  componentDidMount(): void {
+    // For some reason, we have to give the perfect scrollbar a kick once the sizes of everything is known.
+    // This is probably because we are in a flexbox.
+    setTimeout(() => {
+      (this._scrollBarRef as any).updateScroll();
+    }, 50);
+  }
+
   render() {
     const {
       user,
@@ -198,7 +205,7 @@ export class CategorySidebar extends React.Component<ICategorySidebarProps> {
             <span key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>New comments</span>
           </div>
         </div>
-        <div {...css(STYLES.sidebarScrollArea)}>
+        <PerfectScrollbar key="scrollbarArea" ref={(ref) => { this._scrollBarRef = ref; }}>
           <div key="all" {...css(STYLES.sidebarRow)}>
             <div {...css(STYLES.sidebarRowInner, selectedCategory ? {} : STYLES.sidebarRowSelected)}>
               <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}>
@@ -225,7 +232,7 @@ export class CategorySidebar extends React.Component<ICategorySidebarProps> {
               </div>
             </div>
           ))}
-        </div>
+        </PerfectScrollbar>
         {isAdmin && <div key="bar3" {...css(STYLES.sidebarBar)}/>}
         <div key="footer" {...css(STYLES.sidebarFooter)}/>
       </div>

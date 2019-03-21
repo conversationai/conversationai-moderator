@@ -44,7 +44,11 @@ module.exports = {
         use: 'babel-loader',
         exclude: /node_modules/,
         enforce: 'post'
-      }
+      },
+      {
+        test:/\.css$/,
+        use:['style-loader','css-loader']
+      },
     ]
   },
 

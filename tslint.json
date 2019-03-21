@@ -100,7 +100,6 @@
     "no-misused-new": true,
     "prefer-method-signature": true,
     "newline-before-return": false,
-    "no-import-side-effect": true,
     "ban-types": {
       "options": [
         ["Object", "Avoid using the `Object` type. Did you mean `object`?"],
