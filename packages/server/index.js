@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 const url = process.argv.length >= 3 ? process.argv[2] : "http://localhost:8080";
 
 process.env.FRONTEND_URL = url;
@@ -28,12 +27,12 @@ const fs = require('fs');
 const https = require('https');
 const http = require('http');
 
-const { makeAppPart1, makeAppPart2 } = require('@conversationai/moderator-backend-core');
+const { applyCommonPostprocessors, getExpressAppWithPreprocessors } = require('@conversationai/moderator-backend-core');
 const { mountWebFrontend } = require('@conversationai/moderator-frontend-web');
 const { mountAPI } = require('@conversationai/moderator-backend-api');
 
 async function init() {
-  const app = makeAppPart1(false);
+  const app = getExpressAppWithPreprocessors(false);
   let server;
 
   if (pUrl.protocol === 'https:') {
@@ -51,7 +50,7 @@ async function init() {
   app.use('/api', await mountAPI());
   app.use('/', mountWebFrontend());
 
-  makeAppPart2(app);
+  applyCommonPostprocessors(app);
 
   console.log(`Binding to ${pUrl.protocol} ${pUrl.hostname} : ${port}`);
   await server.listen(port);

@@ -24,7 +24,7 @@ const compression = require('compression');
 const helmet = require('helmet');
 import { logger } from './logger';
 
-export function makeAppPart1(testMode?: boolean) {
+export function getExpressAppWithPreprocessors(testMode?: boolean) {
   const app = express();
   expressWs(app);
 
@@ -48,7 +48,7 @@ export function makeAppPart1(testMode?: boolean) {
   return app;
 }
 
-export function makeAppPart2(app: express.Application, testMode?: boolean) {
+export function applyCommonPostprocessors(app: express.Application, testMode?: boolean) {
   if (!testMode) {
     // Add the error logger after all middleware and routes so that
     // it can log errors from the whole application. Any custom error
@@ -78,11 +78,11 @@ export function makeServer(testMode?: boolean): {
   app: express.Application;
   start(port: number): Server;
 } {
-  const app = makeAppPart1(testMode);
+  const app = getExpressAppWithPreprocessors(testMode);
   return {
     app,
     start(port: number) {
-      makeAppPart2(app, testMode);
+      applyCommonPostprocessors(app, testMode);
 
       return app.listen(port, () => {
         console.log('OSMod listening on port', port);
