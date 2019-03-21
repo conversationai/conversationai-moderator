@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,11 +19,24 @@ import { isEqual, pick } from 'lodash';
 import * as WebSocket from 'ws';
 
 import {
-  Article, Category, ModerationRule, Preselect, Tag, TaggingSensitivity, User,
+  Article,
+  Category,
+  ModerationRule,
+  Preselect,
+  Tag,
+  TaggingSensitivity,
+  User,
 } from '@conversationai/moderator-backend-core';
 import {
-  IArticleInstance, ICategoryInstance, IModerationRuleInstance, IPreselectInstance,
-  ITaggingSensitivityInstance, ITagInstance, IUserInstance,
+  IArticleInstance,
+  ICategoryInstance,
+  IModerationRuleInstance,
+  IModeratorAssignmentAttributes,
+  IPreselectInstance,
+  ITaggingSensitivityInstance,
+  ITagInstance,
+  IUserCategoryAssignmentAttributes,
+  IUserInstance,
 } from '@conversationai/moderator-backend-core';
 import { logger, registerInterest } from '@conversationai/moderator-backend-core';
 
@@ -117,7 +130,10 @@ async function getAllArticlesData() {
   const categorydata = categories.map((c: ICategoryInstance) => {
     categoryIds.push(c.id);
     const category: any = pick(c.toJSON(), categoryFields);
-    category.assignedModerators = category.assignedModerators.map((i: any) => i.user_category_assignment.userId.toString());
+    category.assignedModerators = category.assignedModerators.map(
+      (i: {user_category_assignment: IUserCategoryAssignmentAttributes}) =>
+        i.user_category_assignment.userId.toString(),
+    );
     return category;
   });
 
@@ -127,7 +143,10 @@ async function getAllArticlesData() {
   });
   const articledata = articles.map((a: IArticleInstance) => {
     const article: any = pick(a.toJSON(), articleFields);
-    article.assignedModerators = article.assignedModerators.map((i: any) => i.moderator_assignment.userId.toString());
+    article.assignedModerators = article.assignedModerators.map(
+      (i: {moderator_assignment: IModeratorAssignmentAttributes}) =>
+        i.moderator_assignment.userId.toString()
+    );
     return article;
   });
 
