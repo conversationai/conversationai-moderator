@@ -25,12 +25,14 @@ import { pick } from 'lodash';
 import {
   Article,
   User,
-  USER_GROUP_SERVICE
+  USER_GROUP_SERVICE,
 } from '@conversationai/moderator-backend-core';
 import {
   createToken,
   partialUpdateHappened,
 } from '@conversationai/moderator-backend-core';
+
+import { REPLY_SUCCESS } from '../constants';
 
 const userFields = ['id', 'name', 'email', 'group', 'isActive', 'extra'];
 
@@ -72,7 +74,7 @@ export function createSimpleRESTService(): express.Router {
     a.set('isAutoModerated', req.body.isAutoModerated);
     a.save();
 
-    res.json({status: 'success'});
+    res.json(REPLY_SUCCESS);
     partialUpdateHappened(articleId);
     next();
   });

@@ -27,6 +27,8 @@ import {
 } from '@conversationai/moderator-backend-queue';
 import * as express from 'express';
 import * as Joi from 'joi';
+
+import { REPLY_SUCCESS } from '../constants';
 import { dataSchema, validateRequest } from '../util/validation';
 
 export const detailAddTagSchema = Joi.object({
@@ -64,7 +66,7 @@ export function queueMainAction(name: IKnownTasks): express.RequestHandler {
       }, body.runImmediately || false);
     }
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
     next();
   };
 }
@@ -91,7 +93,7 @@ export function queueTagAction(): express.RequestHandler {
       }, body.runImmediately || false);
     }
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
     next();
   };
 }
@@ -114,7 +116,7 @@ export function queueTagCommentSummaryAction(): express.RequestHandler {
       }, body.runImmediately || false);
     }
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
     next();
   };
 }
@@ -131,7 +133,7 @@ export function queueScoreCommentSummaryAction(name: IKnownTasks): express.Reque
       tagId: params.tagid,
     }, body.runImmediately || false);
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
     next();
   };
 }
@@ -153,7 +155,7 @@ export function queueScoreAction(name: IKnownTasks): express.RequestHandler {
       annotationEnd: body.data ? body.data.annotationEnd : undefined,
     }, body.runImmediately || false);
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
     next();
   };
 }

@@ -28,6 +28,8 @@ import {
 import * as JSONAPI from '@conversationai/moderator-jsonapi';
 import * as express from 'express';
 import * as Joi from 'joi';
+
+import { REPLY_SUCCESS } from '../constants';
 import { list } from '../util/SequelizeHandler';
 import {
   articleSchema,
@@ -96,7 +98,7 @@ export function createPublisherService(): express.Router {
       if (article) {
         await article.update(body.data.attributes);
 
-        res.json({ status: 'success' });
+        res.json(REPLY_SUCCESS);
         next();
       } else {
         res.status(400).json({
@@ -156,7 +158,7 @@ export function createPublisherService(): express.Router {
         await enqueue<IProcessTagAdditionData>('processTagAddition', data, req.body.runImmediately || false);
       }
 
-      res.json({ status: 'success' });
+      res.json(REPLY_SUCCESS);
       next();
     },
   );
@@ -172,7 +174,7 @@ export function createPublisherService(): express.Router {
         await enqueue<IProcessTagRevocationData>('processTagRevocation', data, req.body.runImmediately || false);
       }
 
-      res.json({ status: 'success' });
+      res.json(REPLY_SUCCESS);
       next();
     },
   );
@@ -223,7 +225,7 @@ export function createPublisherService(): express.Router {
           },
         });
 
-        res.json({ status: 'success' });
+        res.json(REPLY_SUCCESS);
         next();
       } catch (e) {
         if (e instanceof JSONAPI.NotFoundError) {

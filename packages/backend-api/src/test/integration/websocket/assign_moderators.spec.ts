@@ -20,6 +20,7 @@ import { Article, Category, User } from '@conversationai/moderator-backend-core'
 import { IArticleInstance, ICategoryInstance, IUserInstance } from '@conversationai/moderator-backend-core';
 import { clearInterested, makeServer } from '@conversationai/moderator-backend-core';
 
+import { REPLY_SUCCESS_VALUE } from '../../../api/constants';
 import { destroyUpdateNotificationService } from '../../../api/services/updateNotifications';
 import { mountAPI} from '../../../index';
 import {
@@ -78,7 +79,7 @@ describe('websocket tests: assign moderators', () => {
       const apiClient = chai.request(app);
       const {status, body} = await apiClient.post(`/services/assignments/categories/${category.id}`).send({data});
       expect(status).is.equal(200);
-      expect(body.status).is.equal('success');
+      expect(body.status).is.equal(REPLY_SUCCESS_VALUE);
     }
 
     await listenForMessages(async () => {

@@ -28,6 +28,8 @@ import {
 } from '@conversationai/moderator-backend-core';
 import * as JSONAPI from '@conversationai/moderator-jsonapi';
 import * as express from 'express';
+
+import { REPLY_SUCCESS } from '../constants';
 import { list } from '../util/SequelizeHandler';
 
 export function createAssignmentsService(): express.Router {
@@ -183,7 +185,7 @@ export function createAssignmentsService(): express.Router {
     }
     await UserCategoryAssignment.bulkCreate(getUserCategoryAssignment(newUserIds, categoryId));
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
 
     updateHappened();
     next();
@@ -216,7 +218,7 @@ export function createAssignmentsService(): express.Router {
     await ModeratorAssignment.bulkCreate(getArticleAssignmentArray(Array.from(userIds), [articleId]));
     await ModeratorAssignment.destroy({where: {id: {$in: toRemove }}});
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
     partialUpdateHappened(articleId);
     next();
   });
