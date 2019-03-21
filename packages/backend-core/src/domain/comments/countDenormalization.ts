@@ -16,7 +16,10 @@ limitations under the License.
 
 import {
   CommentFlag,
+  FLAGS_COUNT,
   ICommentInstance,
+  RECOMMENDATIONS_COUNT,
+  UNRESOLVED_FLAGS_COUNT,
 } from '../../models';
 
 export async function denormalizeCountsForComment(comment: ICommentInstance) {
@@ -32,14 +35,14 @@ export async function denormalizeCountsForComment(comment: ICommentInstance) {
       flagsSummary[flag.label] = [0, 0, 0];
     }
 
-    flagsSummary[flag.label][0] += 1;
+    flagsSummary[flag.label][FLAGS_COUNT] += 1;
 
     if (!flag.isResolved) {
       unresolvedFlagsCount += 1;
-      flagsSummary[flag.label][1] += 1;
+      flagsSummary[flag.label][UNRESOLVED_FLAGS_COUNT] += 1;
     }
     if (flag.isRecommendation) {
-      flagsSummary[flag.label][2] += 1;
+      flagsSummary[flag.label][RECOMMENDATIONS_COUNT] += 1;
     }
   }
 

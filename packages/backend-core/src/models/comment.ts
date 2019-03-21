@@ -27,6 +27,14 @@ export interface IAuthorAttributes {
   avatar?: string;
 }
 
+export const FLAGS_COUNT = 0;
+export const UNRESOLVED_FLAGS_COUNT = 1;
+export const RECOMMENDATIONS_COUNT = 2;
+
+export interface IFlagSummary {
+  [key: string]: Array<number>;
+}
+
 export interface ICommentAttributes {
   id?: number;
   ownerId?: number;
@@ -48,7 +56,7 @@ export interface ICommentAttributes {
   isBatchResolved?: boolean | null;
   isAutoResolved?: boolean | null;
   unresolvedFlagsCount?: number;
-  flagsSummary?: any;
+  flagsSummary?: string | IFlagSummary;
   sourceCreatedAt: Date | string | null | Sequelize.fn;
   sentForScoring?: string | null | Sequelize.fn;
   sentBackToPublisher?: Date | null | Sequelize.fn;
