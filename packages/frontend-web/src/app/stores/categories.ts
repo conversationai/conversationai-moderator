@@ -14,37 +14,55 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import { ICategoryModel, ModelId } from '../../models';
 import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'categories'];
-const CATEGORIES_DATA = [...STATE_ROOT, 'items'];
+const DATA = [...STATE_ROOT, 'items'];
+const INDEX = [...STATE_ROOT, 'index'];
 
-export const categoriesUpdated = createAction<List<ICategoryModel>>('global/CATEGORIES_UPDATED');
+export const categoriesLoaded = createAction<List<ICategoryModel>>('global/CATEGORIES_LOADED');
+export const categoryUpdated = createAction<ICategoryModel>('global/CATEGORY_UPDATED');
 
 export function getCategories(state: IAppStateRecord): List<ICategoryModel> {
-  return state.getIn(CATEGORIES_DATA);
+  return state.getIn(DATA);
 }
 
-export function getCategory(state: IAppStateRecord, id: ModelId): ICategoryModel {
-  return getCategories(state).find((c: ICategoryModel) => c.id === id);
+export function getCategory(state: IAppStateRecord, categoryId: ModelId): ICategoryModel {
+  const categories: List<ICategoryModel> = state.getIn(DATA);
+  const index: Map<ModelId, number> = state.getIn(INDEX);
+  return categories.get(index.get(categoryId));
 }
 
 export interface ICategoriesState {
   items: List<ICategoryModel>;
+  index: Map<ModelId, number>;
 }
 
 export interface ICategoriesStateRecord extends TypedRecord<ICategoriesStateRecord>, ICategoriesState {}
 
 const CategoriesStateFactory = makeTypedFactory<ICategoriesState, ICategoriesStateRecord>({
   items: List<ICategoryModel>(),
+  index: Map<ModelId, number>(),
 });
 
-export const reducer = handleActions<ICategoriesStateRecord, List<ICategoryModel>>( {
-  [categoriesUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<List<ICategoryModel>>) => {
-    return state.set('items', payload);
+export const reducer = handleActions<ICategoriesStateRecord, List<ICategoryModel>| ICategoryModel>( {
+  [categoriesLoaded.toString()]: (state: ICategoriesStateRecord, { payload }: Action<List<ICategoryModel>>) => {
+    const index = payload.map((v, i) => ([v.id, i]));
+    return state
+      .set('items', payload)
+      .set('index', index);
+  },
+  [categoryUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<ICategoryModel>) => {
+    const index = state.get('index').get(payload.id);
+    if (typeof index !== 'undefined') {
+      return state.set('items', state.get('items').set(index, payload));
+    }
+    return state
+      .set('items', state.get('items').push(payload))
+      .set('index', state.get('index').set(payload.id, payload));
   },
 }, CategoriesStateFactory());

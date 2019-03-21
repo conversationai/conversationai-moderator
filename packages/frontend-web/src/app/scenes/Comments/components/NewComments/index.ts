@@ -20,11 +20,12 @@ import { withRouter } from 'react-router';
 import { provideHooks } from 'redial';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { IArticleModel, ICommentModel } from '../../../../../models';
+import { ICommentModel } from '../../../../../models';
 import { IRedialLocals } from '../../../../../types';
 import { ICommentAction } from '../../../../../types';
 import { getMyUserId } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
+import { getArticle } from '../../../../stores/articles';
 import {
   changeColumnSortGroupDefault,
   getCurrentColumnSort,
@@ -38,13 +39,13 @@ import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
 import {
   adjustTabCount,
-  getArticle,
   getSummaryScoresAboveThreshold,
   getTaggingSensitivitiesInCategory,
-  updateArticleRecord,
-  updateArticleStatus,
 } from '../../store';
-import { NewComments as PureNewComments } from './NewComments';
+import {
+  INewCommentsProps,
+  NewComments as PureNewComments,
+} from './NewComments';
 import {
   executeCommentListLoader,
   getAreAllSelected,
@@ -82,6 +83,11 @@ import {
   highlightComment,
   rejectComment,
 } from '../../../../stores/comments';
+
+type INewCommentsRouterProps = Pick<
+  INewCommentsProps,
+  'params'
+  >;
 
 const actionMap: {
   [key: string]: (ids: Array<string>, userId: string, tagId?: string) => any;
@@ -138,11 +144,6 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: any): any {
 
     toggleSingleItem: ({ id }: { id: string }) => dispatch(toggleSingleItem({ id })),
 
-    updateArticleStatus: (newArticle: IArticleModel) => {
-      dispatch(updateArticleRecord(newArticle));
-      updateArticleStatus(newArticle);
-    },
-
     loadScoresForCommentId: async (id: string) => {
       await dispatch(loadCommentSummaryScores(id));
     },
@@ -166,16 +167,20 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: any): any {
 }
 
 const mapStateToProps = createStructuredSelector({
-  article: (state: IAppStateRecord) => getArticle(state),
+  article: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => {
+    if (params.articleId) {
+      return getArticle(state, params.articleId);
+    }
+  },
 
-  isArticleDetail: (_: any, { params: { articleId } }: any) => !!articleId,
+  isArticleDetail: (_: IAppStateRecord, { params }: INewCommentsRouterProps) => !!params.articleId,
 
-  commentIds: (state: IAppStateRecord, { params: { tag }}: any) => (
+  commentIds: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => (
     getCommentIDsInRange(
       getCommentScores(state),
       getDragHandlePosition1(state),
       getDragHandlePosition2(state),
-      tag === 'DATE',
+      params.tag === 'DATE',
     )
   ),
 
@@ -195,22 +200,24 @@ const mapStateToProps = createStructuredSelector({
 
   tags: getTaggableTags,
 
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, ownProps: any) => (id: string): Set<string> => {
+  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => (id: string): Set<string> => {
     if (!id) {
       return;
     }
 
     return getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, ownProps.categoryId),
+      getTaggingSensitivitiesInCategory(state, params.categoryId, params.articleId),
       getSummaryScoresById(state, id),
     ).map((score) => score.tagId).toSet();
   },
 
-  selectedTag: (state: IAppStateRecord, { params: { tag }}: any) => {
-    return getSelectedTag(state, tag);
+  selectedTag: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => {
+    return getSelectedTag(state, params.tag);
   },
 
-  rulesInCategory: (state: IAppStateRecord, { params }: any) => getRulesInCategory(state, params.categoryId).toArray(),
+  rulesInCategory: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => {
+    return getRulesInCategory(state, params.categoryId, params.articleId).toArray();
+  },
 
   pos1: getDragHandlePosition1,
 
@@ -240,10 +247,13 @@ const mapStateToProps = createStructuredSelector({
     };
   },
 
-  areAutomatedRulesApplied: (state: IAppStateRecord) => {
-    const article = getArticle(state);
+  areAutomatedRulesApplied: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => {
+    if (!params.articleId) {
+      return false;
+    }
 
-    return article && article.isAutoModerated;
+    const article = getArticle(state, params.articleId);
+    return article.isAutoModerated;
   },
   userId: (state: IAppStateRecord) => getMyUserId(state),
 });

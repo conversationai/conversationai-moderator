@@ -27,6 +27,14 @@ export interface IAuthorAttributes {
   avatar?: string;
 }
 
+export const FLAGS_COUNT = 0;
+export const UNRESOLVED_FLAGS_COUNT = 1;
+export const RECOMMENDATIONS_COUNT = 2;
+
+export interface IFlagSummary {
+  [key: string]: Array<number>;
+}
+
 export interface ICommentAttributes {
   id?: number;
   ownerId?: number;
@@ -47,8 +55,8 @@ export interface ICommentAttributes {
   isHighlighted?: boolean | null;
   isBatchResolved?: boolean | null;
   isAutoResolved?: boolean | null;
-  flaggedCount?: number;
-  recommendedCount?: number;
+  unresolvedFlagsCount?: number;
+  flagsSummary?: string | IFlagSummary;
   sourceCreatedAt: Date | string | null | Sequelize.fn;
   sentForScoring?: string | null | Sequelize.fn;
   sentBackToPublisher?: Date | null | Sequelize.fn;
@@ -160,16 +168,15 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
     defaultValue: false,
   },
 
-  flaggedCount: {
+  unresolvedFlagsCount: {
     type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
-  recommendedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
-    allowNull: false,
-    defaultValue: 0,
+  flagsSummary: {
+    type: Sequelize.JSON,
+    allowNull: true,
   },
 
   sourceCreatedAt: {
@@ -266,6 +273,10 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
     associate(models: any) {
       Comment.belongsTo(models.User, {as: 'owner'});
       Comment.belongsTo(models.Article);
+
+      Comment.hasMany(models.CommentFlag, {
+        as: 'commentFlags',
+      });
 
       Comment.hasMany(models.CommentScore, {
         as: 'commentScores',

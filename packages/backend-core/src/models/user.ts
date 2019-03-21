@@ -35,7 +35,7 @@ export const USER_GROUPS = [
   USER_GROUP_MODERATOR,
 ];
 
-// Configuration constants for serevice users
+// Configuration constants for moderator service users
 export const ENDPOINT_TYPE_PROXY = 'perspective-proxy';
 export const ENDPOINT_TYPE_API = 'perspective-api';
 
@@ -44,7 +44,6 @@ export interface IUserAttributes {
   group: string;
   email?: string;
   name: string;
-  endpoint?: string;
   isActive?: boolean;
   extra?: any;
 }
@@ -80,14 +79,6 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
   },
 
   email: {
-    type: Sequelize.CHAR(255),
-    allowNull: true,
-  },
-
-  // TODO: Create database migration to remove endpoint.
-  // Endpoint is now stored in the extra data.  But leaving this here to facilitate migrations
-  // Remove when everyone has settled on the new database structure.
-  endpoint: {
     type: Sequelize.CHAR(255),
     allowNull: true,
   },
@@ -133,32 +124,6 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
         const validEmail = Joi.validate(this.get('email'), Joi.string().email().required(), { convert: false });
         if (validEmail.error) {
           throw new Error('Email address required for human users');
-        }
-      }
-    },
-
-    /**
-     * If `endpoint` is set, make sure it's a valid URL
-     */
-    requireValidURLForEndpoint() {
-      if (this.get('group') === USER_GROUP_MODERATOR) {
-        const extra: any = this.get('extra');
-
-        if (extra) {
-          if (extra.endpointType === ENDPOINT_TYPE_PROXY || extra.endpointType === ENDPOINT_TYPE_API) {
-            const validURL = Joi.validate(extra.endpoint, Joi.string().uri({
-              scheme: ['http', 'https'],
-            }).required(), { convert: false });
-            if (validURL.error) {
-              throw new Error('Moderator user validation: `endpoint` must be a valid URL');
-            }
-          }
-          else {
-            throw new Error('Moderator user validation: Unknown modereator endpoint type ' + extra.endpointType);
-          }
-        }
-        else {
-          throw new Error('Moderator user validation: No endpoint configuration');
         }
       }
     },

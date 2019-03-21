@@ -41,7 +41,6 @@ export interface IArticleAttributes {
   deferredCount?: number;
   flaggedCount?: number;
   batchedCount?: number;
-  recommendedCount?: number;
   lastModeratedAt?: string | Date;
 }
 
@@ -177,12 +176,6 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     allowNull: true,
   },
 
-  recommendedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
-    allowNull: false,
-    defaultValue: 0,
-  },
-
   extra: {
     type: Sequelize.JSON,
     allowNull: true,
@@ -220,6 +213,5 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
   hooks: {
     afterCreate: updateHappened,
     afterBulkCreate: updateHappened,
-    afterUpdate: updateHappened,
   },
 });

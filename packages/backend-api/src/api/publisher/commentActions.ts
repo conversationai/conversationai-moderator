@@ -20,11 +20,10 @@ import {
   IKnownTasks,
 } from '@conversationai/moderator-backend-queue';
 import * as express from 'express';
+
+import { REPLY_SUCCESS } from '../constants';
 import { commentActionSchema } from '../services/commentActions';
 import { dataSchema, validateRequest } from '../util/validation';
-
-export const STATUS_ACCEPTED = 'accepted';
-export const STATUS_REJECTED = 'rejected';
 
 const validateCommentActionRequest = validateRequest(dataSchema(commentActionSchema));
 
@@ -50,7 +49,7 @@ export function queueMainAction(name: IKnownTasks): express.RequestHandler {
         }, body.runImmediately || false);
       }
 
-      res.json({ status: 'success' });
+      res.json(REPLY_SUCCESS);
       next();
     } catch (e) {
       logger.error(e);

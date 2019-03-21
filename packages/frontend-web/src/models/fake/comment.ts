@@ -16,6 +16,7 @@ limitations under the License.
 
 import faker from 'faker';
 import { AuthorModelRecord, CommentModel, IAuthorModel, ICommentAttributes, ICommentModel } from '../comment';
+import { CommentFlagModel, ICommentFlagAttributes, ICommentFlagModel } from '../commentFlag';
 import { fakeArticleModel } from './article';
 
 export function fakeCommentModel(overrides: Partial<ICommentAttributes> = {}): ICommentModel {
@@ -42,13 +43,25 @@ export function fakeCommentModel(overrides: Partial<ICommentAttributes> = {}): I
     isHighlighted: faker.random.boolean(),
     isBatchResolved: faker.random.boolean(),
     isAutoResolved: faker.random.boolean(),
-    flaggedCount: faker.random.number(),
-    recommendedCount: faker.random.number(),
+    unresolvedFlagsCount: faker.random.number(),
     sourceCreatedAt: faker.date.recent().toISOString(),
     sentForScoring: faker.random.boolean(),
     articleId: article.get('id') && undefined,
     article,
     updatedAt: faker.date.recent().toISOString(),
+    ...overrides,
+  });
+}
+
+export function fakeCommentFlagModel(overrides: Partial<ICommentFlagAttributes> = {}): ICommentFlagModel {
+  return CommentFlagModel({
+    id: faker.random.number().toString(),
+    commentId: '1',
+    label: faker.lorem.words(3),
+    detail: faker.lorem.paragraph(1),
+    isRecommendation: faker.random.boolean(),
+    isResolved: faker.random.boolean(),
+    resolvedAt: faker.date.recent(10).toISOString(),
     ...overrides,
   });
 }

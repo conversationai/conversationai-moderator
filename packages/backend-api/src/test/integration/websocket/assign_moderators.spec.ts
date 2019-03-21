@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,15 +15,21 @@ limitations under the License.
 */
 
 import * as chai from 'chai';
-import * as WebSocket from 'ws';
 
-import {Article, Category, User} from '@conversationai/moderator-backend-core';
-import {clearInterested, makeServer} from '@conversationai/moderator-backend-core';
+import { Article, Category, User } from '@conversationai/moderator-backend-core';
+import { IArticleInstance, ICategoryInstance, IUserInstance } from '@conversationai/moderator-backend-core';
+import { clearInterested, makeServer } from '@conversationai/moderator-backend-core';
 
-import {destroyUpdateNotificationService} from '../../../api/services/updateNotifications';
-import {mountAPI} from '../../../index';
+import { REPLY_SUCCESS_VALUE } from '../../../api/constants';
+import { destroyUpdateNotificationService } from '../../../api/services/updateNotifications';
+import { mountAPI} from '../../../index';
 import {
+  assertAllArticlesMessage,
+  assertArticleUpdateMessage,
+  assertSystemMessage,
+  assertUserMessage,
   expect,
+  listenForMessages,
   makeArticle,
   makeCategory,
   makeUser,
@@ -33,21 +39,15 @@ import {
 const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
-// TODO: Eliminate use of sleeps throughout this code.
-//       We should be able to replace them with promises.
-
 describe('websocket tests: assign moderators', () => {
   let app: any;
   let server: any;
-  let socket: any;
-  let gotClose = false;
-  let gotMessage = 0;
 
-  let user: any;
-  let category: any;
-  let article: any;
+  let user: IUserInstance;
+  let category: ICategoryInstance;
+  let article: IArticleInstance;
 
-  beforeEach(async () => {
+  before(async () => {
     await Article.destroy({where: {}});
     await Category.destroy({where: {}});
     await User.destroy({where: {}});
@@ -66,77 +66,77 @@ describe('websocket tests: assign moderators', () => {
 
     app.use('/', await mountAPI(true));
     server = serverStuff.start(3000);
-    socket = new WebSocket('ws://localhost:3000/services/updates/summary');
-    socket.onclose = () => {
-      gotClose = true;
-    };
-
-    socket.onmessage = () => {
-      gotMessage += 1;
-    };
-    await sleep(500);
-    expect(gotClose).is.false;
-    expect(gotMessage).is.equal(3);
-    gotMessage = 0;
   });
 
-  afterEach(async () => {
-    await socket.close();
+  after(async () => {
     await server.close();
     await clearInterested();
-    await sleep(500);
-    gotClose = false;
-    gotMessage = 0;
     destroyUpdateNotificationService();
   });
 
   it('Test we get notifications when moderators assigned to categories', async () => {
-    // Assign a moderator to the category
-    gotMessage = 0;
-    {
+    async function assignCategoryModerator(data: Array<number>) {
       const apiClient = chai.request(app);
-      const {status, body} = await apiClient.post(`/services/assignments/categories/${category.id}`).send({data: [user.id]});
+      const {status, body} = await apiClient.post(`/services/assignments/categories/${category.id}`).send({data});
       expect(status).is.equal(200);
-      expect(body.status).is.equal('success');
+      expect(body.status).is.equal(REPLY_SUCCESS_VALUE);
     }
 
-    await sleep(500);
-    expect(gotMessage).is.not.equal(0);
-
-    // Remove moderator from the category
-    gotMessage = 0;
-    {
-      const apiClient = chai.request(app);
-      const {status, body} = await apiClient.post(`/services/assignments/categories/${category.id}`).send({data: []});
-      expect(status).is.equal(200);
-      expect(body.status).is.equal('success');
-    }
-
-    await sleep(500);
-    expect(gotMessage).is.not.equal(0);
+    await listenForMessages(async () => {
+      await assignCategoryModerator([user.id]);
+      await sleep(100);
+      await assignCategoryModerator([]);
+    },
+    [
+      (m: any) => { assertSystemMessage(m); },
+      (m: any) => { assertAllArticlesMessage(m); },
+      (m: any) => { assertUserMessage(m); },
+      (m: any) => {
+        assertAllArticlesMessage(m);
+        expect(m.data.categories.length).eq(1);
+        expect(m.data.categories[0].assignedModerators.length).eq(1);
+        expect(m.data.categories[0].assignedModerators[0]).eq(user.id.toString());
+        expect(m.data.articles.length).eq(1);
+        expect(m.data.articles[0].assignedModerators.length).eq(1);
+        expect(m.data.articles[0].assignedModerators[0]).eq(user.id.toString());
+      },
+      (m: any) => {
+        assertAllArticlesMessage(m);
+        expect(m.data.categories.length).eq(1);
+        expect(m.data.categories[0].assignedModerators.length).eq(0);
+        expect(m.data.articles.length).eq(1);
+        expect(m.data.articles[0].assignedModerators.length).eq(0);
+      },
+    ]);
   });
 
   it('Test we get notifications when moderators assigned to articles', async () => {
-    // Assign a moderator to the article
-    gotMessage = 0;
-    {
+    async function assignArticleModerator(data: Array<number>) {
       const apiClient = chai.request(app);
-      const {status} = await apiClient.patch(`/rest/articles/${article.id}/relationships/assignedModerators`).send({data: [{id: user.id}]});
-      expect(status).is.equal(204);
+      const {status} = await apiClient.post(`/services/assignments/article/${article.id}`).send({data});
+      expect(status).is.equal(200);
     }
 
-    await sleep(500);
-    expect(gotMessage).is.not.equal(0);
-
-    // Remove moderator assignment
-    gotMessage = 0;
-    {
-      const apiClient = chai.request(app);
-      const {status} = await apiClient.patch(`/rest/articles/${article.id}/relationships/assignedModerators`).send({data: []});
-      expect(status).is.equal(204);
-    }
-
-    await sleep(500);
-    expect(gotMessage).is.not.equal(0);
+    await listenForMessages(async () => {
+      await assignArticleModerator([user.id]);
+      await sleep(100);
+      await assignArticleModerator([]);
+    },
+    [
+      (m: any) => { assertSystemMessage(m); },
+      (m: any) => { assertAllArticlesMessage(m); },
+      (m: any) => { assertUserMessage(m); },
+      (m: any) => {
+        assertArticleUpdateMessage(m);
+        expect(m.data.category.assignedModerators.length).eq(0);
+        expect(m.data.article.assignedModerators.length).eq(1);
+        expect(m.data.article.assignedModerators[0]).eq(user.id.toString());
+      },
+      (m: any) => {
+        assertArticleUpdateMessage(m);
+        expect(m.data.category.assignedModerators.length).eq(0);
+        expect(m.data.article.assignedModerators.length).eq(0);
+      },
+    ]);
   });
 });

@@ -19,6 +19,7 @@ import FocusTrap from 'focus-trap-react';
 import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
+import { WithRouterProps } from 'react-router';
 
 import {
   convertServerAction,
@@ -52,6 +53,7 @@ import {
   DEFAULT_DRAG_HANDLE_POS2,
   REQUIRE_REASON_TO_REJECT,
 } from '../../../../config';
+import { updateArticle } from '../../../../platform/dataService';
 import {
   ARTICLE_CATEGORY_TYPE,
   BASE_Z_INDEX,
@@ -255,7 +257,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface INewCommentsProps {
+export interface INewCommentsProps extends WithRouterProps {
   article?: IArticleModel;
   isArticleDetail: boolean;
   commentIds: List<string>;
@@ -267,10 +269,7 @@ export interface INewCommentsProps {
   isItemChecked(id: string): boolean;
   tags: List<ITagModel>;
   rulesInCategory?: Array<IRuleModel>;
-  router?: any;
-  location?: any; // IInjectedProps.location ?
   getCurrentColumnSort?(key: string): string;
-  params?: any;
   pos1?: number;
   pos2?: number;
   getLinkTarget(comment: ICommentModel): string;
@@ -289,7 +288,6 @@ export interface INewCommentsProps {
     commentIds: Array<string>,
     action: string,
   ): any;
-  updateArticleStatus?(newArticle: IArticleModel): void;
   loadScoresForCommentId?(id: string): void;
   getTagIdsAboveThresholdByCommentId?(commentId: string): Set<string>;
   confirmCommentSummaryScore?(id: string, tagId: string): void;
@@ -1150,7 +1148,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   @autobind
   async handleRulesAppliedClick(e: React.MouseEvent<any>) {
     e.preventDefault();
-    const newArticle = this.props.article.set('isAutoModerated', !this.props.article.isAutoModerated);
-    await this.props.updateArticleStatus(newArticle);
+    await updateArticle(this.props.article.id, this.props.article.isCommentingEnabled, !this.props.article.isAutoModerated);
   }
 }

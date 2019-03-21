@@ -17,22 +17,21 @@ limitations under the License.
 import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { TypedRecord } from 'typed-immutable-record';
-import { IAppStateRecord, IThunkAction } from '../../../../../stores';
-import { getPreselects } from '../../../../../stores/preselects';
-import { getRules } from '../../../../../stores/rules';
-import { getArticle } from '../../../store';
-import { DATA_PREFIX } from './reduxPrefix';
 
 import {
   IArticleModel,
   IPreselectModel,
   IRuleModel,
 } from '../../../../../../models';
-
 import {
   DEFAULT_DRAG_HANDLE_POS1,
   DEFAULT_DRAG_HANDLE_POS2,
 } from '../../../../../config';
+import { IAppStateRecord, IThunkAction } from '../../../../../stores';
+import { getArticle } from '../../../../../stores/articles';
+import { getPreselects } from '../../../../../stores/preselects';
+import { getRules } from '../../../../../stores/rules';
+import { DATA_PREFIX } from './reduxPrefix';
 
 const DRAG_HANDLE_POSITIONS_DATA = [...DATA_PREFIX, 'dragHandlePositions'];
 
@@ -81,12 +80,6 @@ const dragHandlePositionsReducer = handleActions<
   [resetDragHandleScope.toString()]: () => initialDragHandleState,
 }, initialDragHandleState);
 
-function updateDragHandleQueryString(pos1: number, pos2: number): IThunkAction<void> {
-  return (dispatch): void => {
-    dispatch(setDragHandlePositions({pos1, pos2}));
-  };
-}
-
 function setDefaultDragHandlesIfScopeChange(pos1: number, pos2: number, scope: Map<string, any>): IThunkAction<{ pos1: number, pos2: number }> {
   return (dispatch, getState): { pos1: number, pos2: number } => {
     const state = getState();
@@ -97,7 +90,8 @@ function setDefaultDragHandlesIfScopeChange(pos1: number, pos2: number, scope: M
       return { pos1, pos2 };
     }
 
-    const preselects = getPreselectForCategory(getArticle(state), getPreselects(state), scope.get('tagId'));
+    const article = scope.get('articleId') ? getArticle(state, scope.get('articleId')) : null;
+    const preselects = getPreselectForCategory(article, getPreselects(state), scope.get('tagId'));
     const preselectPos1 = preselects ? preselects.lowerThreshold : DEFAULT_DRAG_HANDLE_POS1;
     const preselectPos2 = preselects ? preselects.upperThreshold : DEFAULT_DRAG_HANDLE_POS2;
     dispatch(setDragHandlePositions({pos1: preselectPos1, pos2: preselectPos2}));
@@ -149,27 +143,18 @@ function getPreselectForCategory(article: IArticleModel | null, preselects: List
   return preselectsByTag.first();
 }
 
-export function getSelectionPosition(state: IAppStateRecord, tag: string): { pos1: number, pos2: number } {
-  const preselects = getPreselectForCategory(getArticle(state), getPreselects(state), tag);
-  const pos1 = preselects ? preselects.lowerThreshold : DEFAULT_DRAG_HANDLE_POS1;
-  const pos2 = preselects ? preselects.upperThreshold : DEFAULT_DRAG_HANDLE_POS2;
-
-  return { pos1, pos2 };
-}
-
-export function getRulesInCategory(state: IAppStateRecord, category?: string): List<IRuleModel> {
+export function getRulesInCategory(state: IAppStateRecord, categoryId?: string, articleId?: string): List<IRuleModel> {
   const rules = getRules(state);
 
-  let categoryId: string;
-
-  if (category) {
-    if (category === 'all') {
+  if (categoryId) {
+    if (categoryId === 'all') {
       return rules.filter((rule: IRuleModel) => rule.categoryId === null) as List<IRuleModel>;
     } else {
-      categoryId = category;
+      categoryId = categoryId;
     }
-  } else {
-    const article = getArticle(state);
+  }
+  else {
+    const article = getArticle(state, articleId);
     categoryId = article.category.id;
   }
 
@@ -179,7 +164,6 @@ export function getRulesInCategory(state: IAppStateRecord, category?: string): L
 
 export {
   dragHandlePositionsReducer,
-  updateDragHandleQueryString,
   setDefaultDragHandlesIfScopeChange,
   getDragHandlePositions,
   getDragHandlePosition1,

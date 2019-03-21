@@ -55,7 +55,7 @@ export const STATUS_DOWN = 'down';
 export const STATUS_UP = 'up';
 export const STATUS_RESET = 'reset';
 
-export interface ISystemSummary {
+export interface ISystemData {
   users: List<IUserModel>;
   tags: List<ITagModel>;
   taggingSensitivities: List<ITaggingSensitivityModel>;
@@ -63,13 +63,17 @@ export interface ISystemSummary {
   preselects: List<IPreselectModel>;
 }
 
-export interface IGlobalSummary {
+export interface IAllArticlesData {
   categories: List<ICategoryModel>;
   articles: List<IArticleModel>;
-  deferred: number;
 }
 
-export interface IUserSummary {
+export interface IArticleUpdate {
+  category?: ICategoryModel;
+  article: IArticleModel;
+}
+
+export interface IPerUserData {
   assignments: number;
 }
 
@@ -77,7 +81,7 @@ export interface IUserSummary {
 //       When this is availabe, replace the "any" types in the code below.
 // TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
 //       Convert for now.  But at some point need to refactor to use numbers.
-function packSystemData(data: any): ISystemSummary {
+function packSystemData(data: any): ISystemData {
   return {
     users: List<IUserModel>(data.users.map((u: any) => {
       u.id = u.id.toString();
@@ -99,7 +103,7 @@ function packSystemData(data: any): ISystemSummary {
   };
 }
 
-function packGlobalData(data: any): IGlobalSummary {
+function packArticleData(data: any): IAllArticlesData {
   const catMap: {[key: number]: ICategoryModel} = {};
 
   const categories = List<ICategoryModel>(data.categories.map((c: any) => {
@@ -112,6 +116,8 @@ function packGlobalData(data: any): IGlobalSummary {
 
   const articles = List<IArticleModel>(data.articles.map((a: any) => {
     a.id = a.id.toString();
+    // TODO: We need to break this coupling between articles and categories
+    //       It doesn't work well in presence of incremental updates.
     if (a.categoryId) {
       a.category = catMap[a.categoryId];
     }
@@ -121,25 +127,43 @@ function packGlobalData(data: any): IGlobalSummary {
   return {
     categories: categories,
     articles: articles,
-    deferred: data.deferred,
+  };
+}
+
+function packArticleUpdate(data: any): IArticleUpdate {
+  const cdata = data.category;
+  let cmodel;
+  if (cdata) {
+    cdata.id = cdata.id.toString();
+    cmodel = CategoryModel(cdata);
+  }
+
+  const adata = data.article;
+  adata.id = adata.id.toString();
+  adata.category = cmodel;
+  const amodel = ArticleModel(adata);
+  return {
+    category: cmodel,
+    article: amodel,
   };
 }
 
 let gotSystem = false;
-let gotGlobal = false;
+let gotArticles = false;
 let gotUser = false;
 let socketUp = false;
 
 export function connectNotifier(
   websocketStateHandler: (status: string) => void,
-  systemNotificationHandler: (data: ISystemSummary) => void,
-  globalNotificationHandler: (data: IGlobalSummary) => void,
-  userNotificationHandler: (data: IUserSummary) => void) {
+  systemDataHandler: (data: ISystemData) => void,
+  allArticlesDataHandler: (data: IAllArticlesData) => void,
+  articleUpdateHandler: (data: IArticleUpdate) => void,
+  perUserDataHandler: (data: IPerUserData) => void) {
   function checkSocketAlive() {
     if (!ws || ws.readyState !== myws.OPEN) {
       const token = getToken();
       const baseurl = serviceURL(`updates/summary/?token=${token}`);
-      const url = 'ws:' + baseurl.substr(baseurl.indexOf(':') + 1);
+      const url = baseurl.replace(/^http/, 'ws');
 
       ws = new myws(url);
       ws.onopen = () => {
@@ -148,7 +172,7 @@ export function connectNotifier(
         ws.onclose = (e: {code: number}) => {
           console.log('websocket closed', e.code);
           socketUp = false;
-          if (!gotSystem && !gotGlobal && !gotUser) {
+          if (!gotSystem && !gotArticles && !gotUser) {
             // Never got a message.  Server is rejecting our advances.  Log out and try logging in again.
             websocketStateHandler(STATUS_RESET);
           }
@@ -163,19 +187,21 @@ export function connectNotifier(
         const body: any = JSON.parse(message.data);
 
         if (body.type === 'system') {
-          systemNotificationHandler(packSystemData(body.data));
+          systemDataHandler(packSystemData(body.data));
           gotSystem = true;
         }
         else if (body.type === 'global') {
-          globalNotificationHandler(packGlobalData(body.data));
-          gotGlobal = true;
+          allArticlesDataHandler(packArticleData(body.data));
+          gotArticles = true;
         }
         else if (body.type === 'user') {
-          userNotificationHandler(body.data as IUserSummary);
+          perUserDataHandler(body.data as IPerUserData);
           gotUser = true;
         }
-
-        if (gotSystem && gotGlobal && gotUser && !socketUp) {
+        else if (body.type === 'article-update') {
+          articleUpdateHandler(packArticleUpdate(body.data));
+        }
+        if (gotSystem && gotArticles && gotUser && !socketUp) {
           websocketStateHandler(STATUS_UP);
           socketUp = true;
         }

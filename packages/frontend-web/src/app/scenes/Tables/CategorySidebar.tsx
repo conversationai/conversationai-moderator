@@ -17,44 +17,61 @@ import { List } from 'immutable';
 import React from 'react';
 import { Link } from 'react-router';
 
-import { AccountCircle } from '@material-ui/icons';
+import { AccountCircle, Settings } from '@material-ui/icons';
 
 import { ICategoryModel, IUserModel } from '../../../models';
 import {
-  NICE_LIGHT_BLUE,
-  NICE_LIGHT_HIGHLIGHT_BLUE,
-  NICE_MIDDLE_BLUE,
-  SIDEBAR_BLUE,
+  ALMOST_WHITE,
+  HEADER_HEIGHT,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import { dashboardLink } from '../routes';
+import { dashboardLink, settingsLink } from '../routes';
 import { COMMON_STYLES } from './styles';
 import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
 
-const SIDEBAR_HEADER_HEIGHT = 96;
+const SIDEBAR_HEADER_HEIGHT = 159;
+const SIDEBAR_ROW_HEIGHT = 55;
 const SIDEBAR_ICON_SIZE = 36;
-const SIDEBAR_XPAD = 25;
+const SIDEBAR_XPAD = 17;
 export const SIDEBAR_WIDTH = 280;
 
 const STYLES = stylesheet({
   sidebar: {
     width: `${SIDEBAR_WIDTH}px`,
-    height: '100vh',
-    backgroundColor: SIDEBAR_BLUE,
-    color: 'white',
+    backgroundColor: ALMOST_WHITE,
+    color: 'black',
+    display: 'flex',
+    flexFlow: 'column',
+  },
+
+  sidebarFixed: {
+    height: `${window.innerHeight - HEADER_HEIGHT}px`,
+  },
+
+  sidebarFloating: {
+    height: '100%',
+  },
+
+  sidebarChunk: {
+    flex: `0 0 auto`,
   },
 
   sidebarHeader: {
-    height: `${SIDEBAR_HEADER_HEIGHT}px`,
+    flex: `0 0 ${SIDEBAR_HEADER_HEIGHT}px`,
     fontSize: '14px',
     display: 'flex',
+  },
+
+  sidebarFooter: {
+    flex: `0 0 ${30}px`,
   },
 
   sidebarBar: {
     width: '100%',
     height: '0px',
-    borderBottom: `1px solid ${NICE_LIGHT_BLUE}`,
-    opacity: '0.12',
+    borderBottom: `1px solid black`,
+    opacity: '0.08',
+    flex: `0 0 ${1}px`,
   },
 
   sidebarHeaderIcon: {
@@ -66,14 +83,19 @@ const STYLES = stylesheet({
 
   verticalCenterText: {
     height: '100%',
-    display: 'flex',
+    display: 'inline-flex',
     flexDirection: 'column',
     justifyContent: 'center',
   },
 
   sidebarRow: {
     width: '100%',
-    height: `${SIDEBAR_HEADER_HEIGHT / 2}px`,
+    padding: `8px`,
+  },
+
+  sidebarRowInner: {
+    width: '100%',
+    height: `${SIDEBAR_ROW_HEIGHT - 16}px`,
     paddingLeft: `${SIDEBAR_XPAD}px`,
     display: 'flex',
     flexDirection: 'row',
@@ -83,14 +105,20 @@ const STYLES = stylesheet({
   },
 
   sidebarRowSelected: {
-    backgroundColor: NICE_MIDDLE_BLUE,
-    borderLeft: `5px solid ${NICE_LIGHT_HIGHLIGHT_BLUE}`,
-    paddingLeft: `${SIDEBAR_XPAD - 5}px`,
+    backgroundColor: 'rgba(46,131,237,0.12)',
+    borderRadius: '4px',
+    boxShadow: `0 2px 4px 0 rgba(0,0,0,0.25)`,
+  },
+
+  sidebarSettings: {
+    fontSize: '14px',
+    color: 'rgba(0,0,0,0.56)',
+    height: `${SIDEBAR_ROW_HEIGHT - 16}px`,
   },
 
   sidebarRowHeader: {
     fontSize: '12px',
-    color: 'rgba(255,255,255,0.54)',
+    color: 'rgba(0,0,0,0.54)',
   },
 
   sidebarSection: {
@@ -102,6 +130,22 @@ const STYLES = stylesheet({
     minWidth: '50px',
     textAlign: 'right',
   },
+
+  sidebarScrollArea: {
+    flex: '1 1 auto',
+    overflowY: 'auto',
+  },
+
+  sidebarLink: {
+    color: 'inherit',
+    textDecoration: 'none',
+    ':hover': {
+      textDecoration: 'underline',
+    },
+    ':focus': {
+      outline: 'none',
+    },
+  },
 });
 
 export interface ICategorySidebarProps {
@@ -109,6 +153,8 @@ export interface ICategorySidebarProps {
   categories: List<ICategoryModel>;
   selectedCategory?: ICategoryModel;
   selectMine: boolean;
+  isAdmin?: boolean;
+  isFixed?: boolean;
   hideSidebar?(): void;
 }
 
@@ -120,6 +166,8 @@ export class CategorySidebar extends React.Component<ICategorySidebarProps> {
       selectedCategory,
       hideSidebar,
       selectMine,
+      isAdmin,
+      isFixed,
     } = this.props;
 
     const isMeSuffix = selectMine ? `+${FILTER_MODERATOR_ISME}` : '';
@@ -127,7 +175,7 @@ export class CategorySidebar extends React.Component<ICategorySidebarProps> {
     const allUnmoderated = categories.reduce((r: number, v: ICategoryModel) => (r + v.unmoderatedCount), 0);
 
     return(
-      <div key="sidebar" {...css(STYLES.sidebar)}>
+      <div key="sidebar" {...css(STYLES.sidebar, isFixed ? STYLES.sidebarFixed : STYLES.sidebarFloating)}>
         <div key="header" {...css(STYLES.sidebarHeader)} onClick={hideSidebar}>
           {user.avatarURL ?
             <img src={user.avatarURL} {...css(STYLES.sidebarHeaderIcon)} alt="Your image"/> :
@@ -136,28 +184,44 @@ export class CategorySidebar extends React.Component<ICategorySidebarProps> {
           <span {...css(STYLES.verticalCenterText)}>{user.name}</span>
         </div>
         <div key="bar" {...css(STYLES.sidebarBar)}/>
-        <div key="labels" {...css(STYLES.sidebarRow, STYLES.sidebarRowHeader)}>
-          <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}>Section</div>
-          <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>New comments</div>
-        </div>
-        <div key="all" {...css(STYLES.sidebarRow, selectedCategory ? {} : STYLES.sidebarRowSelected)}>
-          <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}>
-            <Link to={allLink} onClick={hideSidebar} {...css(COMMON_STYLES.cellLink)}>All</Link>
+        {isAdmin &&
+          <div key="settings" {...css(STYLES.sidebarRow, STYLES.sidebarSettings, STYLES.sidebarChunk, {paddingLeft: `${SIDEBAR_XPAD + 8}px`})}>
+            <Link to={settingsLink()} aria-label="Settings" {...css(STYLES.sidebarLink)}>
+              <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}><Settings/></div>
+              <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText, {marginLeft: '46px', verticalAlign: 'bottom'})}>Settings</div>
+            </Link>
+          </div>}
+        {isAdmin && <div key="bar2" {...css(STYLES.sidebarBar)}/>}
+        <div key="labels" {...css(STYLES.sidebarRow, STYLES.sidebarRowHeader, STYLES.sidebarChunk)}>
+          <div {...css(STYLES.sidebarRowInner)}>
+            <span key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}>Section</span>
+            <span key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>New comments</span>
           </div>
-          <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>{allUnmoderated}</div>
         </div>
-        <div {...css({maxHeight: '80vh', overflowY: 'auto'})}>
-          {categories.map((c: ICategoryModel) => (
-            <div key={c.id} {...css(STYLES.sidebarRow, selectedCategory && selectedCategory.id === c.id ? STYLES.sidebarRowSelected : {})}>
+        <div {...css(STYLES.sidebarScrollArea)}>
+          <div key="all" {...css(STYLES.sidebarRow)}>
+            <div {...css(STYLES.sidebarRowInner, selectedCategory ? {} : STYLES.sidebarRowSelected)}>
               <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}>
-                <Link to={dashboardLink(`${FILTER_CATEGORY}=${c.id}${isMeSuffix}`)} onClick={hideSidebar} {...css(COMMON_STYLES.cellLink)}>
-                  {c.label}
-                </Link>
+                <Link to={allLink} onClick={hideSidebar} {...css(COMMON_STYLES.cellLink)}>Home / All</Link>
               </div>
-              <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>{c.unmoderatedCount}</div>
+              <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>{allUnmoderated}</div>
+            </div>
+          </div>
+          {categories.map((c: ICategoryModel) => (
+            <div key={c.id} {...css(STYLES.sidebarRow)}>
+              <div {...css(STYLES.sidebarRowInner, selectedCategory && selectedCategory.id === c.id ? STYLES.sidebarRowSelected : {})}>
+                <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}>
+                  <Link to={dashboardLink(`${FILTER_CATEGORY}=${c.id}${isMeSuffix}`)} onClick={hideSidebar} {...css(COMMON_STYLES.cellLink)}>
+                    {c.label}
+                  </Link>
+                </div>
+                <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>{c.unmoderatedCount}</div>
+              </div>
             </div>
           ))}
         </div>
+        {isAdmin && <div key="bar3" {...css(STYLES.sidebarBar)}/>}
+        <div key="footer" {...css(STYLES.sidebarFooter)}/>
       </div>
     );
   }

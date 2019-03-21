@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import { storiesOf } from '@storybook/react';
+import { List } from 'immutable';
 
 import { AuthorModelRecord, IAuthorModel } from '../../../../../../../models';
 import { fakeCommentModel } from '../../../../../../../models/fake';
@@ -35,8 +36,8 @@ const comment = fakeCommentModel({
   sourceCreatedAt: null,
   authorSourceId: 'author1',
   author,
-  flaggedCount: 1,
-  recommendedCount: 20,
+  unresolvedFlagsCount: 1,
+  flagsSummary: new Map([['red', List([1, 0, 0])], ['green', List([2, 1, 2])]]),
   text: 'Orginating comment text is here',
 });
 const replies = [
@@ -48,8 +49,8 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author2',
     author,
-    flaggedCount: 2,
-    recommendedCount: 5,
+    unresolvedFlagsCount: 2,
+    flagsSummary: new Map([['red', List([1, 0, 1])], ['green', List([2, 2, 0])]]),
     text: 'First reply comment text is here. This comment is marked Deferred.',
   }),
   fakeCommentModel({
@@ -60,8 +61,8 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author3',
     author,
-    flaggedCount: 1,
-    recommendedCount: 1,
+    unresolvedFlagsCount: 1 ,
+    flagsSummary: new Map([['red', List([1, 0, 0])], ['green', List([2, 1, 0])]]),
     text: 'Second reply comment text is here. This comment is marked Highlighted.',
   }),
   fakeCommentModel({
@@ -72,8 +73,12 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author4',
     author,
-    flaggedCount: 20,
-    recommendedCount: 0,
+    unresolvedFlagsCount: 20,
+    flagsSummary: new Map([
+      ['red', List([5, 3, 5])],
+      ['green', List([15, 10, 15])],
+      ['blue', List([10, 7, 10])],
+    ]),
     text: 'Third reply comment text is here. This comment is marked Rejected.',
   }),
   fakeCommentModel({
@@ -84,8 +89,7 @@ const replies = [
     sourceCreatedAt: null,
     authorSourceId: 'author5',
     author,
-    flaggedCount: 0,
-    recommendedCount: 0,
+    unresolvedFlagsCount: 0,
     text: 'Fourth reply comment text is here. This comment has not yet been moderated.',
   }),
 ];

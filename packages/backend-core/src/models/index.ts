@@ -18,7 +18,6 @@ import { Article } from './article';
 import { Category } from './category';
 import { Comment } from './comment';
 import { CommentFlag } from './comment_flag';
-import { CommentRecommendation } from './comment_recommendation';
 import { CommentScore } from './comment_score';
 import { CommentScoreRequest } from './comment_score_request';
 import { CommentSize } from './comment_size';
@@ -41,7 +40,6 @@ export const byName: any = {
   Comment,
   CommentScore,
   CommentSummaryScore,
-  CommentRecommendation,
   CommentFlag,
   CommentScoreRequest,
   CommentSize,
@@ -74,7 +72,6 @@ export const byType: any = {
   comments: Comment,
   comment_scores: CommentScore,
   comment_summary_scores: CommentSummaryScore,
-  comment_recommendations: CommentRecommendation,
   comment_flags: CommentFlag,
   comment_score_requests: CommentScoreRequest,
   comment_sizes: CommentSize,
@@ -96,7 +93,6 @@ export * from './category';
 export * from './comment';
 export * from './comment_score';
 export * from './comment_summary_score';
-export * from './comment_recommendation';
 export * from './comment_flag';
 export * from './comment_score_request';
 export * from './comment_size';

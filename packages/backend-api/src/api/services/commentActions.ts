@@ -27,10 +27,9 @@ import {
 } from '@conversationai/moderator-backend-queue';
 import * as express from 'express';
 import * as Joi from 'joi';
-import { dataSchema, validateRequest } from '../util/validation';
 
-export const STATUS_ACCEPTED = 'accepted';
-export const STATUS_REJECTED = 'rejected';
+import { REPLY_SUCCESS } from '../constants';
+import { dataSchema, validateRequest } from '../util/validation';
 
 export const detailAddTagSchema = Joi.object({
   tagId: Joi.string().required(),
@@ -67,7 +66,7 @@ export function queueMainAction(name: IKnownTasks): express.RequestHandler {
       }, body.runImmediately || false);
     }
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
     next();
   };
 }
@@ -94,7 +93,7 @@ export function queueTagAction(): express.RequestHandler {
       }, body.runImmediately || false);
     }
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
     next();
   };
 }
@@ -117,7 +116,7 @@ export function queueTagCommentSummaryAction(): express.RequestHandler {
       }, body.runImmediately || false);
     }
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
     next();
   };
 }
@@ -134,7 +133,7 @@ export function queueScoreCommentSummaryAction(name: IKnownTasks): express.Reque
       tagId: params.tagid,
     }, body.runImmediately || false);
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
     next();
   };
 }
@@ -156,7 +155,7 @@ export function queueScoreAction(name: IKnownTasks): express.RequestHandler {
       annotationEnd: body.data ? body.data.annotationEnd : undefined,
     }, body.runImmediately || false);
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
     next();
   };
 }
@@ -177,6 +176,17 @@ export function createCommentActionsService(): express.Router {
     queueMainAction('acceptComments'),
   );
 
+  router.post('/approve-flags',
+    validateCommentActionRequest,
+    queueMainAction('acceptCommentsAndFlags'),
+  );
+
+  router.post('/resolve-flags',
+    validateCommentActionRequest,
+    queueMainAction('resolveFlags'),
+  );
+
+
   router.post('/highlight',
     validateCommentActionRequest,
     queueMainAction('highlightComments'),
@@ -185,6 +195,11 @@ export function createCommentActionsService(): express.Router {
   router.post('/reject',
     validateCommentActionRequest,
     queueMainAction('rejectComments'),
+  );
+
+  router.post('/reject-flags',
+    validateCommentActionRequest,
+    queueMainAction('rejectCommentsAndFlags'),
   );
 
   router.post('/defer',

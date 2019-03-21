@@ -38,6 +38,7 @@ import {
 import {
   clearInterested,
   denormalizeCommentCountsForArticle,
+  partialUpdateHappened,
   registerInterest,
   updateHappened,
 } from '@conversationai/moderator-backend-core';
@@ -52,8 +53,9 @@ import {
 
 const assert = chai.assert;
 
-async function awaitNotification(action: () => Promise<void>): Promise<boolean> {
+async function awaitNotification(action: () => Promise<void>): Promise<Array<boolean>> {
   let notifyHappened = false;
+  let notifyPartialHappened = false;
   let id: NodeJS.Timer;
 
   const timeout = new Promise((_, reject) => {
@@ -63,9 +65,15 @@ async function awaitNotification(action: () => Promise<void>): Promise<boolean> 
   });
 
   const notification = new Promise((resolve, _) => {
-    registerInterest(() => {
-      notifyHappened = true;
-      resolve();
+    registerInterest({
+      updateHappened: async () => {
+        notifyHappened = true;
+        resolve();
+      },
+      partialUpdateHappened: async (_articleId: number) => {
+        notifyPartialHappened = true;
+        resolve();
+      },
     });
   });
 
@@ -77,7 +85,7 @@ async function awaitNotification(action: () => Promise<void>): Promise<boolean> 
   ]);
   clearTimeout(id!);
   clearInterested();
-  return notifyHappened;
+  return [notifyHappened, notifyPartialHappened];
 }
 
 describe('Notification tests', () => {
@@ -94,116 +102,162 @@ describe('Notification tests', () => {
   afterEach(clearInterested);
 
   it('Test notifier directly', async () => {
-    assert.isTrue(await awaitNotification(async () => {
+    const res = await awaitNotification(async () => {
       await updateHappened();
-    }));
+    });
+    assert.isTrue(res[0]);
+    assert.isFalse(res[1]);
+  });
+
+  it('Test partial notifier directly', async () => {
+    const res = await awaitNotification(async () => {
+      await partialUpdateHappened(0);
+    });
+    assert.isFalse(res[0]);
+    assert.isTrue(res[1]);
   });
 
   it('Test notifier when denormalisation happens', async () => {
     const article = await makeArticle();
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res = await awaitNotification(async () => {
       await denormalizeCommentCountsForArticle(article, false);
-    }));
+    });
+
+    assert.isFalse(res[0]);
+    assert.isTrue(res[1]);
   });
 
   it('Test notifier when denormalisation happens (this time with a category)', async () => {
     const category = await makeCategory();
     const article = await makeArticle({categoryId: category.id} );
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res = await awaitNotification(async () => {
       await denormalizeCommentCountsForArticle(article, false);
-    }));
+    });
+
+    assert.isFalse(res[0]);
+    assert.isTrue(res[1]);
   });
 
   it('Test notifies when user updated', async () => {
     let user: IUserInstance;
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res = await awaitNotification(async () => {
       user = await makeUser();
-    }));
+    });
+    assert.isTrue(res[0]);
+    assert.isFalse(res[1]);
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res2 = await awaitNotification(async () => {
       user.update({
         name: 'newname',
       });
-    }));
+    });
+    assert.isTrue(res2[0]);
+    assert.isFalse(res2[1]);
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res3 = await awaitNotification(async () => {
       user.destroy();
-    }));
+    });
+    assert.isTrue(res3[0]);
+    assert.isFalse(res3[1]);
   });
 
   it('Test notifies when tag updated', async () => {
     let tag: ITagInstance;
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res = await awaitNotification(async () => {
       tag = await makeTag();
-    }));
+    });
+    assert.isTrue(res[0]);
+    assert.isFalse(res[1]);
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res2 = await awaitNotification(async () => {
       tag.update({
         label: 'newname',
       });
-    }));
+    });
+    assert.isTrue(res2[0]);
+    assert.isFalse(res2[1]);
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res3 = await awaitNotification(async () => {
       tag.destroy();
-    }));
+    });
+    assert.isTrue(res3[0]);
+    assert.isFalse(res3[1]);
   });
 
   it('Test notifies when taggingSensitivity updated', async () => {
     let ts: ITaggingSensitivityInstance;
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res = await awaitNotification(async () => {
       ts = await makeTaggingSensitivity();
-    }));
+    });
+    assert.isTrue(res[0]);
+    assert.isFalse(res[1]);
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res2 = await awaitNotification(async () => {
       ts.update({
         lowerThreshold: 0.5,
       });
-    }));
+    });
+    assert.isTrue(res2[0]);
+    assert.isFalse(res2[1]);
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res3 = await awaitNotification(async () => {
       ts.destroy();
-    }));
+    });
+    assert.isTrue(res3[0]);
+    assert.isFalse(res3[1]);
   });
 
   it('Test notifies when rule updated', async () => {
     let mr: IModerationRuleInstance;
     const t = await makeTag();
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res = await awaitNotification(async () => {
       mr = await makeRule(t);
-    }));
+    });
+    assert.isTrue(res[0]);
+    assert.isFalse(res[1]);
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res2 = await awaitNotification(async () => {
       mr.update({
         lowerThreshold: 0.5,
       });
-    }));
+    });
+    assert.isTrue(res2[0]);
+    assert.isFalse(res2[1]);
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res3 = await awaitNotification(async () => {
       mr.destroy();
-    }));
+    });
+    assert.isTrue(res3[0]);
+    assert.isFalse(res3[1]);
   });
 
   it('Test notifies when preselect updated', async () => {
     let ps: IPreselectInstance;
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res = await awaitNotification(async () => {
       ps = await makePreselect();
-    }));
+    });
+    assert.isTrue(res[0]);
+    assert.isFalse(res[1]);
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res2 = await awaitNotification(async () => {
       ps.update({
         lowerThreshold: 0.5,
       });
-    }));
+    });
+    assert.isTrue(res2[0]);
+    assert.isFalse(res2[1]);
 
-    assert.isTrue(await awaitNotification(async () => {
+    const res3 = await awaitNotification(async () => {
       ps.destroy();
-    }));
+    });
+    assert.isTrue(res3[0]);
+    assert.isFalse(res3[1]);
   });
 });

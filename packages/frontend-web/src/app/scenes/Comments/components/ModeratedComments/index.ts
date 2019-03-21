@@ -17,13 +17,12 @@ limitations under the License.
 import { Set } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { provideHooks } from 'redial';
 import { createStructuredSelector } from 'reselect';
 import { ICommentModel } from '../../../../../models';
-import { IRedialLocals } from '../../../../../types';
 import { ICommentAction } from '../../../../../types';
 import { getMyUserId } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
+import { getArticle } from '../../../../stores/articles';
 import {
   changeColumnSortGroupDefault,
   getCurrentColumnSort,
@@ -36,7 +35,6 @@ import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
 import {
   adjustTabCount,
-  getArticle,
   getSummaryScoresAboveThreshold,
   getTaggingSensitivitiesInCategory,
 } from '../../store';
@@ -59,23 +57,14 @@ import {
 
 import {
   approveComments,
+  approveFlagsAndComments,
   deferComments,
   highlightComments,
   rejectComments,
+  rejectFlagsAndComments,
   resetComments,
   tagCommentSummaryScores,
 } from '../../../../stores/commentActions';
-
-const actionMap: {
-  [key: string]: (ids: Array<string>, userId: string, tagId?: string) => any;
-} = {
-  highlight: highlightComments,
-  approve: approveComments,
-  defer: deferComments,
-  reject: rejectComments,
-  tag: tagCommentSummaryScores,
-  reset: resetComments,
-};
 
 type IModeratedCommentsRouterProps = Pick<
   IModeratedCommentsProps,
@@ -96,12 +85,14 @@ type IModeratedCommentsDispatchWithoutOverwriteProps = Pick<
 >;
 
 type IModeratedCommentsDispatchWithOverwriteProps = IModeratedCommentsDispatchWithoutOverwriteProps & {
+  loadData?(categoryId: string, articleId: string, tag: string): void;
   tagComments(ids: Array<string>, tagId: string, userId: string): any;
   dispatchAction(action: ICommentAction, idsToDispatch: Array<string>, userId: string): any;
 };
 
 type IModeratedCommentsDispatchProps = IModeratedCommentsDispatchWithoutOverwriteProps & Pick<
   IModeratedCommentsProps,
+  'loadData' |
   'tagComments' |
   'dispatchAction'
 >;
@@ -141,7 +132,11 @@ const mapStateToProps = createStructuredSelector({
 
   isLoading: (state: IAppStateRecord) => getCommentListIsLoading(state) || !getCommentListHasLoaded(state),
 
-  article: getArticle,
+  article: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => {
+    if (params.articleId) {
+      return getArticle(state, params.articleId);
+    }
+  },
 
   areNoneSelected: getAreAnyCommentsSelected,
 
@@ -163,13 +158,13 @@ const mapStateToProps = createStructuredSelector({
 
   tags: getTaggableTags,
 
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, ownProps: any) => (id: string): Set<string> => {
+  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => (id: string): Set<string> => {
     if (!id) {
       return;
     }
 
     const scores = getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, ownProps.categoryId),
+      getTaggingSensitivitiesInCategory(state, params.categoryId, params.articleId),
       getSummaryScoresById(state, id),
     );
 
@@ -209,11 +204,26 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
   const {
     isArticleDetail,
     articleId,
-    category,
+    categoryId,
     tag,
   } = parseRoute(ownProps.params);
 
+  const actionMap: {
+    [key: string]: (ids: Array<string>, userId: string, tagId?: string) => any;
+  } = {
+    highlight: highlightComments,
+    approve: tag === 'flagged' ? approveFlagsAndComments : approveComments,
+    defer: deferComments,
+    reject: tag === 'flagged' ? rejectFlagsAndComments : rejectComments,
+    tag: tagCommentSummaryScores,
+    reset: resetComments,
+  };
+
   return {
+    loadData: (cId: string, aId: string, t: string) => {
+      dispatch(executeCommentListLoader(!!aId, aId, cId, t));
+    },
+
     tagComments: (ids: Array<string>, tagId: string, userId: string) =>
         dispatch(tagCommentSummaryScores(ids, userId, tagId)),
 
@@ -230,7 +240,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
         dispatch(setCommentsModerationForArticle(articleId, commentIds, moderationAction, currentModeration)),
 
     setCommentModerationStatusForCategory: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
-        dispatch(setCommentsModerationForCategory(category.toString(), commentIds, moderationAction, currentModeration)),
+        dispatch(setCommentsModerationForCategory(categoryId, commentIds, moderationAction, currentModeration)),
 
     loadScoresForCommentId: async (id: string) => {
       await dispatch(loadCommentSummaryScores(id));
@@ -245,7 +255,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
       await dispatch(executeCommentListLoader(
         isArticleDetail,
         articleId,
-        category,
+        categoryId,
         tag,
       ));
     },
@@ -268,33 +278,12 @@ function mergeProps(
   };
 }
 
-// Manually wrapping without `compose` so types stay correct.
-
-// Add Route Change hook.
-const HookedModeratedComments = provideHooks<IRedialLocals>({
-  fetch: async ({ params, dispatch }: any) => {
-    const {
-      isArticleDetail,
-      articleId,
-      category,
-      tag,
-    } = parseRoute(params);
-
-    await dispatch(executeCommentListLoader(
-      isArticleDetail,
-      articleId,
-      category,
-      tag,
-    ));
-  },
-})(PureModeratedComments);
-
 // Add Redux data.
 const ConnectedModeratedComments = connect<IModeratedCommentsStateProps , IModeratedCommentsDispatchProps | IModeratedCommentsDispatchWithOverwriteProps, IModeratedCommentsOwnProps>(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps,
-)(HookedModeratedComments);
+)(PureModeratedComments);
 
 // Add `router` prop.
 export const ModeratedComments: React.ComponentClass = withRouter(ConnectedModeratedComments);

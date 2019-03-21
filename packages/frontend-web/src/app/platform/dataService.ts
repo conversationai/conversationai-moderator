@@ -25,7 +25,6 @@ import {
 } from '@conversationai/moderator-jsonapi/src/types';
 
 import {
-  IArticleModel,
   IAuthorCountsModel,
   ICommentDatedModel,
   ICommentModel,
@@ -164,18 +163,6 @@ function modelURL(type: IValidModelNames, id: string, params?: Partial<IParams>)
 
   return `${listURL(type)}/${id}${serializeParams(params)}`;
 
-}
-
-/**
- * The URL of a model relationship.
- */
-export function relationURL(type: IValidModelNames, id: string, relationship: string, params?: Partial<IParams>): string {
-  validateModelName(type);
-
-  // We allow articleIds to be alphanumeric
-  const parsedArticleId = type === 'articles' ? id : parseInt(id, 10);
-
-  return `${API_URL}${REST_URL}/${type}/${parsedArticleId}/relationships/${relationship}${serializeParams(params)}`;
 }
 
 /**
@@ -342,7 +329,6 @@ export async function listHistogramScoresByCategoryByDate(
 
 export async function listCommentsById(
   commentIds: List<string>,
-  params?: Partial<IParams>,
 ): Promise<List<ICommentModel>> {
   commentIds.forEach((commentId, index) => validateID(commentId, `comment Id ${index}`));
 
@@ -350,7 +336,7 @@ export async function listCommentsById(
     serviceURL(
       'commentsById',
       null,
-      params,
+      null,
     ),
     {
       data: commentIds.toArray(),
@@ -432,23 +418,6 @@ export async function loadTopScoresForSummaryScores(
 }
 
 /**
- * List (and filter) a model.
- */
-export async function listModels<T>(
-  type: IValidModelNames,
-  params?: Partial<IParams>,
-): Promise<IMultipleResponse<T>> {
-  validateModelName(type);
-
-  const { data } = await axios.get(listURL(type, params));
-
-  return {
-    models: convertArrayFromJSONAPI<T>(data),
-    response: data,
-  };
-}
-
-/**
  * Search comment models.
  */
 export async function search(
@@ -463,29 +432,6 @@ export async function search(
   const { data }: any = await axios.get(serviceURL('search', null, requestParams));
 
   return data.data;
-}
-
-/**
- * List (and filter) assigned articles for a user.
- */
-export async function listAssignedArticles(
-  userId: string,
-  params?: Partial<IParams>,
-): Promise<IMultipleResponse<IArticleModel>> {
-  validateID(userId, `userId`);
-
-  const { data } = await axios.get(
-    serviceURL(
-      'assignments',
-      `/users/${parseInt(userId, 10)}`,
-      params,
-    ),
-  );
-
-  return {
-    models: convertArrayFromJSONAPI<IArticleModel>(data),
-    response: data,
-  };
 }
 
 /**
@@ -514,52 +460,24 @@ export async function editAndRescoreComment(
   });
 }
 
-/**
- * Update article assignment when users are assigned to categories
- */
 export async function updateCategoryModerators(categoryId: ModelId, moderatorIds: Array<ModelId>): Promise<void> {
   const url = serviceURL('assignments', `/categories/${parseInt(categoryId, 10)}`);
   await axios.post(url, { data: moderatorIds });
 }
 
-export function updateArticleModerators(articleId: ModelId, moderatorIds: Array<ModelId>): Promise<void> {
-  return updateRelationshipModels(
-    'articles',
-    articleId as string,
-    'assignedModerators',
-    moderatorIds as Array<string>,
-  );
-}
-
-/**
- * List deferred articles. Doing this in lieu of having an actual service that can return
- * a list of articles that contains at least 1 comment that is 'deferred'
- */
-export async function listDeferredArticles(
-  params?: Partial<IParams>,
-): Promise<IMultipleResponse<IArticleModel>> {
-  const requestParams = {
-    filters: {
-      comments: {
-        isDeferred: true,
-      },
-    },
-
-    ...params,
-  };
-
-  return listModels<IArticleModel>('articles', requestParams);
+export async function updateArticleModerators(articleId: ModelId, moderatorIds: Array<ModelId>): Promise<void> {
+  const url = serviceURL('assignments', `/article/${articleId}`);
+  await axios.post(url, { data: moderatorIds });
 }
 
 export interface IModeratedComments {
-  approved: Array<number>;
-  highlighted: Array<number>;
-  rejected: Array<number>;
-  deferred: Array<number>;
-  flagged: Array<number>;
-  recommended: Array<number>;
-  batched: Array<number>;
-  automated: Array<number>;
+  approved: Array<ModelId>;
+  highlighted: Array<ModelId>;
+  rejected: Array<ModelId>;
+  deferred: Array<ModelId>;
+  flagged: Array<ModelId>;
+  batched: Array<ModelId>;
+  automated: Array<ModelId>;
 }
 
 export async function getModeratedCommentIdsForArticle(
@@ -609,6 +527,16 @@ export async function getModel<T>(
   };
 }
 
+export async function getArticleText(id: string) {
+  const url = serviceURL('simple', `/article/${id}/text`);
+  const response = await axios.get(url);
+  return response.data.text;
+}
+
+export async function getComment(id: string) {
+  return await getModel('comments', id, { include: ['replyTo'] });
+}
+
 /**
  * Update a model.
  */
@@ -640,6 +568,11 @@ export async function updateModel<T>(
   };
 }
 
+export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean) {
+  const url = serviceURL('simple', `/article/update/${id}`);
+  await axios.post(url, {isCommentingEnabled, isAutoModerated});
+}
+
 /**
  * Destroy a model.
  */
@@ -655,7 +588,7 @@ export async function destroyModel(
 /**
  * List (and filter) a model relationship.
  */
-export async function listRelationshipModels<T>(
+async function listRelationshipModels<T>(
   type: IValidModelNames,
   id: string,
   relationship: string,
@@ -673,70 +606,12 @@ export async function listRelationshipModels<T>(
   };
 }
 
-/**
- * Get a single has-one model relationship.
- */
-export async function getRelationshipModel<T>(
-  type: IValidModelNames,
-  id: string,
-  relationship: string,
-): Promise<ISingleResponse<T>> {
-  validateModelName(type);
-
-  const { data } = await axios.get(relatedURL(type, id, relationship));
-
-  return {
-    model: convertFromJSONAPI<T>(data),
-    response: data,
-  };
+export function getCommentScores(commentId: string) {
+  return listRelationshipModels('comments', commentId, 'commentScores', {page: {offset: 0, limit: -1}});
 }
 
-/**
- * Append 1 or more items to a has-many model relationship.
- */
-export async function addRelationshipModels(
-  type: IValidModelNames,
-  id: string,
-  relationship: string,
-  relatedIds: Array<string>,
-): Promise<void> {
-  validateModelName(type);
-
-  await axios.post(relationURL(type, id, relationship), {
-    data: relatedIds.map((relatedId) => ({ id: relatedId })),
-  });
-}
-
-/**
- * Update a model relationship.
- */
-export async function updateRelationshipModels(
-  type: IValidModelNames,
-  id: string,
-  relationship: string,
-  relatedIds: Array<string>,
-): Promise<void> {
-  validateModelName(type);
-
-  await axios.patch(relationURL(type, id, relationship), {
-    data: relatedIds.map((relatedId) => ({ id: relatedId })),
-  });
-}
-
-/**
- * Destroy 1 or more items from a has-many model relationship.
- */
-export async function destroyRelationshipModels(
-  type: IValidModelNames,
-  id: string,
-  relationship: string,
-  relatedIds: Array<string>,
-): Promise<void> {
-  validateModelName(type);
-
-  await axios.delete(relationURL(type, id, relationship), {
-    data: relatedIds.map((relatedId) => ({ id: relatedId })),
-  });
+export function getCommentFlags(commentId: string) {
+  return listRelationshipModels('comments', commentId, 'commentFlags', {page: {offset: 0, limit: -1}});
 }
 
 /**
@@ -777,6 +652,8 @@ export async function deleteCommentTagRequest(commentId: string, commentScoreId:
   await axios.delete(url);
 }
 
+// TODO: This is a terrible API.  We should not trust client to tell us the userID.  We should
+//       get it from the session on the server.
 export function highlightCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
@@ -795,6 +672,18 @@ export function approveCommentsRequest(ids: Array<string>, userId: string): Prom
   return makeCommentAction('/approve', ids, userId);
 }
 
+export function approveFlagsAndCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
+  ids.forEach((id) => validateID(id, `commentId`));
+
+  return makeCommentAction('/approve-flags', ids, userId);
+}
+
+export function resolveFlagsRequest(ids: Array<string>, userId: string): Promise<void> {
+  ids.forEach((id) => validateID(id, `commentId`));
+
+  return makeCommentAction('/resolve-flags', ids, userId);
+}
+
 export function deferCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
@@ -805,6 +694,12 @@ export function rejectCommentsRequest(ids: Array<string>, userId: string): Promi
   ids.forEach((id) => validateID(id, `commentId`));
 
   return makeCommentAction('/reject', ids, userId);
+}
+
+export function rejectFlagsAndCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
+  ids.forEach((id) => validateID(id, `commentId`));
+
+  return makeCommentAction('/reject-flags', ids, userId);
 }
 
 export function tagCommentsRequest(ids: Array<string>, tagId: string, userId: string): Promise<void> {

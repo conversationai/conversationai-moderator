@@ -22,6 +22,8 @@ import {
 import { enqueue, ISendCommentForScoringTaskData } from '@conversationai/moderator-backend-queue';
 import * as express from 'express';
 import * as Joi from 'joi';
+
+import { REPLY_SUCCESS } from '../constants';
 import { validateRequest } from '../util/validation';
 
 const validateEditCommentRequest = validateRequest(Joi.object({
@@ -84,7 +86,7 @@ export function createEditCommentTextService(): express.Router {
         return;
       }
 
-      res.status(200).json({ status: 'success'});
+      res.status(200).json(REPLY_SUCCESS);
     },
   );
 

@@ -17,7 +17,7 @@ limitations under the License.
 import {
   Category,
   Comment,
-  updateHappened,
+  partialUpdateHappened,
 } from '../../models';
 import { IArticleAttributes, IArticleInstance } from '../../models';
 import {
@@ -40,7 +40,6 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     deferredCount,
     flaggedCount,
     batchedCount,
-    recommendedCount,
   ] = await Promise.all([
     Comment.count({ where: { articleId: article.id } }),
     Comment.count({ where: { articleId: article.id, isScored: false } }),
@@ -51,9 +50,10 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     Comment.count({ where: { articleId: article.id, isAccepted: true } }),
     Comment.count({ where: { articleId: article.id, isAccepted: false, isHighlighted: false } }),
     Comment.count({ where: { articleId: article.id, isDeferred: true } }),
-    Comment.count({ where: { articleId: article.id, flaggedCount: { $gt: 0 } } }),
+    Comment.count({ where: { articleId: article.id,
+        $or: [{ isModerated: false }, { isAccepted: true }],
+        unresolvedFlagsCount: { $gt: 0 } } }),
     Comment.count({ where: { articleId: article.id, isModerated: true, isBatchResolved: true } }),
-    Comment.count({ where: { articleId: article.id, recommendedCount: { $gt: 0 } } }),
   ]);
 
   const update: Partial<IArticleAttributes> = {
@@ -67,7 +67,6 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     deferredCount,
     flaggedCount,
     batchedCount,
-    recommendedCount,
   };
 
   if (isModeratorAction) {
@@ -80,7 +79,6 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     const category = (await Category.findById(article.get('categoryId')))!;
     await denormalizeCommentCountsForCategory(category);
   }
-  else {
-    updateHappened();
-  }
+
+  partialUpdateHappened(article.id);
 }

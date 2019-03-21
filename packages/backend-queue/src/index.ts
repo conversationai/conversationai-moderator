@@ -16,18 +16,19 @@ limitations under the License.
 
 import { registerTask } from './util';
 
-import { heartbeatTask } from './tasks/heartbeat';
+import {heartbeatTask, ICommentActionData} from './tasks';
 import {
   IProcessMachineScoreData,
   processMachineScoreTask,
-} from './tasks/process_machine_score';
+} from './tasks';
 
 import {
   ISendCommentForScoringTaskData,
   sendCommentForScoringTask,
-} from './tasks/send_comment_for_scoring';
+} from './tasks';
 
 import {
+  acceptCommentsAndFlagsTask,
   acceptCommentsTask,
   addTagTask,
   confirmCommentSummaryScoreTask,
@@ -47,22 +48,24 @@ import {
   IResetCommentsData,
   IResetTagData,
   ITagCommentsData,
+  rejectCommentsAndFlagsTask,
   rejectCommentsTask,
   rejectCommentSummaryScoreTask,
   rejectTagTask,
   removeTagTask,
   resetCommentsTask,
   resetTagTask,
+  resolveFlagsTask,
   tagCommentsTask,
   tagCommentSummaryScoresTask,
-} from './tasks/comment_actions';
+} from './tasks';
 
 import {
   IProcessTagAdditionData,
   IProcessTagRevocationData,
   processTagAdditionTask,
   processTagRevocationTask,
-} from './tasks/process_tagging';
+} from './tasks';
 
 registerTask<void>('heartbeat', heartbeatTask);
 registerTask<IProcessMachineScoreData>('processMachineScore', processMachineScoreTask);
@@ -74,7 +77,10 @@ registerTask<IHighlightCommentsData>('highlightComments', highlightCommentsTask)
 registerTask<ITagCommentsData>('tagComments', tagCommentsTask);
 registerTask<ITagCommentsData>('tagCommentSummaryScores', tagCommentSummaryScoresTask);
 registerTask<IAcceptCommentsData>('acceptComments', acceptCommentsTask);
+registerTask<ICommentActionData>('acceptCommentsAndFlags', acceptCommentsAndFlagsTask);
 registerTask<IRejectCommentsData>('rejectComments', rejectCommentsTask);
+registerTask<ICommentActionData>('rejectCommentsAndFlags', rejectCommentsAndFlagsTask);
+registerTask<ICommentActionData>('resolveFlags', resolveFlagsTask);
 registerTask<IResetCommentsData>('resetComments', resetCommentsTask);
 registerTask<IResetTagData>('resetTag', resetTagTask);
 registerTask<IConfirmTagData>('confirmTag', confirmTagTask);

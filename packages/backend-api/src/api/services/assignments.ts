@@ -21,11 +21,15 @@ import {
   IUserCategoryAssignmentAttributes,
   IUserCategoryAssignmentInstance,
   ModeratorAssignment,
+  partialUpdateHappened,
+  updateHappened,
   User,
   UserCategoryAssignment,
 } from '@conversationai/moderator-backend-core';
 import * as JSONAPI from '@conversationai/moderator-jsonapi';
 import * as express from 'express';
+
+import { REPLY_SUCCESS } from '../constants';
 import { list } from '../util/SequelizeHandler';
 
 export function createAssignmentsService(): express.Router {
@@ -181,8 +185,41 @@ export function createAssignmentsService(): express.Router {
     }
     await UserCategoryAssignment.bulkCreate(getUserCategoryAssignment(newUserIds, categoryId));
 
-    res.json({ status: 'success' });
+    res.json(REPLY_SUCCESS);
 
+    updateHappened();
+    next();
+  });
+
+  // POST to articles/id who's body.data contains userId[]
+  router.post('/article/:id', async (req, res, next) => {
+    const articleId = parseInt(req.params.id, 10);
+    const userIds: Set<number> = new Set(req.body.data.map((s: any) => parseInt(s, 10)));
+
+    // Get assignments for the category
+    const assignments = await ModeratorAssignment.findAll({
+      where: {
+        articleId,
+      },
+    });
+
+    const toRemove = new Array<number>();
+
+    for (const a of assignments) {
+      const id = a.get('userId');
+      if (userIds.has(id)) {
+        userIds.delete(id);
+      }
+      else {
+        toRemove.push(a.id);
+      }
+    }
+
+    await ModeratorAssignment.bulkCreate(getArticleAssignmentArray(Array.from(userIds), [articleId]));
+    await ModeratorAssignment.destroy({where: {id: {$in: toRemove }}});
+
+    res.json(REPLY_SUCCESS);
+    partialUpdateHappened(articleId);
     next();
   });
 

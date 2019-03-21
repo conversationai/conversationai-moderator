@@ -16,7 +16,13 @@ limitations under the License.
 import check from 'check-types';
 import { autobind } from 'core-decorators';
 
-import { IGlobalSummary, ISystemSummary, IUserSummary } from '../app/platform/websocketService';
+import {
+  IAllArticlesData,
+  IArticleUpdate,
+  IPerUserData,
+  ISystemData,
+} from '../app/platform/websocketService';
+import { IArticleModel, IUserModel } from '../models';
 import {
   checkArticle,
   checkCategory,
@@ -27,7 +33,7 @@ import {
   checkUser,
 } from './objectChecks';
 
-class GlobalUpdate {
+class ArticleMessages {
   data: any = null;
   gotUpdate = false;
 
@@ -37,18 +43,34 @@ class GlobalUpdate {
   countArticles = 0;
   articlesOk = true;
 
-  gotDeferred = false;
+  articlesWithNew: Array<IArticleModel> = [];
+  articlesWithFlags: Array<IArticleModel> = [];
+  articleFullyEnabled?: IArticleModel;
+  articleWithNoModerators?: IArticleModel;
+
+  updateHappened?(type: string, message: any): void ;
 
   @autobind
-  notificationHandler(data: IGlobalSummary) {
-    console.log('Received global update message');
+  notificationHandler(data: IAllArticlesData) {
+    console.log('+ Received all articles message');
     this.gotUpdate = true;
 
     this.countCategories = data.categories.size;
     this.countArticles = data.articles.size;
-
-    this.gotDeferred = check.number(data.deferred);
     this.data = data;
+    if (this.updateHappened) {
+      this.updateHappened('global', data);
+    }
+  }
+
+  @autobind
+  updateHandler(data: IArticleUpdate) {
+    console.log('+ Received singe article update message');
+    checkCategory(data.category);
+    checkArticle(data.article);
+    if (this.updateHappened) {
+      this.updateHappened('article-update', data);
+    }
   }
 
   dataCheck() {
@@ -59,34 +81,42 @@ class GlobalUpdate {
     console.log('* check articles');
     for (const a of this.data.articles.toArray()) {
       this.articlesOk = this.articlesOk && checkArticle(a);
+      if (a.unmoderatedCount > 0) {
+        this.articlesWithNew.push(a);
+      }
+      if (a.flaggedCount > 0) {
+        this.articlesWithFlags.push(a);
+      }
+      if (a.isCommentingEnabled && a.isAutoModerated) {
+        this.articleFullyEnabled = a;
+      }
+      if (a.assignedModerators.length === 0) {
+        this.articleWithNoModerators = a;
+      }
     }
   }
 
   stateCheck() {
     if (!this.gotUpdate) {
-      console.log('ERROR: Didn\'t get global update message');
+      console.log('ERROR: Didn\'t get article update message');
       return;
     }
 
-    console.log(`Received ${this.countCategories} categories`);
+    console.log(`  Received ${this.countCategories} categories`);
     if (!this.categoriesOk) {
       console.log('ERROR: Issue with categories');
     }
 
-    console.log(`Received ${this.countArticles} articles`);
+    console.log(`  Received ${this.countArticles} articles: ${this.articlesWithFlags.length} with flagged comments`);
     if (!this.articlesOk) {
       console.log('ERROR: Issue with articles');
-    }
-
-    if (!this.gotDeferred) {
-      console.log('ERROR: Didn\'t get deferred count');
     }
   }
 }
 
-export const globalUpdate = new GlobalUpdate();
+export const articleData = new ArticleMessages();
 
-class SystemUpdate {
+class SystemData {
   data: any = null;
   gotUpdate = false;
 
@@ -98,9 +128,11 @@ class SystemUpdate {
   gotRules = false;
   gotPreselects = false;
 
+  users: Array<IUserModel> = [];
+
   @autobind
-  notificationHandler(data: ISystemSummary) {
-    console.log('Received system update message');
+  notificationHandler(data: ISystemData) {
+    console.log('+ Received system update message');
     this.gotUpdate = true;
     this.countUsers = data.users.size;
     this.usersOk =  this.countUsers > 0; // We assume there must be some users
@@ -115,6 +147,7 @@ class SystemUpdate {
     console.log('* check users');
     for (const u of this.data.users.toArray()) {
       this.usersOk = this.usersOk && checkUser(u);
+      this.users.push(u);
     }
   }
 
@@ -140,7 +173,7 @@ class SystemUpdate {
       return;
     }
 
-    console.log(`Received ${this.countUsers} users`);
+    console.log(`  Received ${this.countUsers} users`);
     if (!this.usersOk) {
       console.log('ERROR: Issue with users or no users fetched');
     }
@@ -160,15 +193,15 @@ class SystemUpdate {
   }
 }
 
-export const systemUpdate = new SystemUpdate();
+export const systemData = new SystemData();
 
-class UserUpdate {
+class UserData {
   gotUpdate = false;
   gotAssigned = false;
 
   @autobind
-  notificationHandler(data: IUserSummary) {
-    console.log('Received user update message');
+  notificationHandler(data: IPerUserData) {
+    console.log('+ Received user update message');
     this.gotUpdate = true;
     this.gotAssigned = check.number(data.assignments);
   }
@@ -184,4 +217,4 @@ class UserUpdate {
   }
 }
 
-export const userUpdate = new UserUpdate();
+export const userData = new UserData();

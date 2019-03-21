@@ -17,13 +17,13 @@ limitations under the License.
 import { Set } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { provideHooks } from 'redial';
 import { createStructuredSelector } from 'reselect';
+
 import {
   ICommentModel,
   ICommentScoreModel,
 } from '../../../../../models';
-import { IConfirmationAction, IRedialLocals } from '../../../../../types';
+import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState, IAppStateRecord } from '../../../../stores';
 import {
   approveComments,
@@ -50,10 +50,8 @@ import { getTaggableTags, getTags } from '../../../../stores/tags';
 import { getCurrentUser, getUser } from '../../../../stores/users';
 import {
   adjustTabCount,
-  getArticle,
   getSummaryScoresAboveThreshold,
   getSummaryScoresBelowThreshold,
-  loadArticle,
 } from '../../store';
 import { updateCommentStateAction } from '../ModeratedComments/store';
 import { CommentDetail as PureCommentDetail, ICommentDetailProps } from './CommentDetail';
@@ -62,6 +60,7 @@ import {
   getAuthorCountsById,
   getComment,
   getCurrentCommentIndex,
+  getFlags,
   getIsLoading,
   getNextCommentId,
   getPagingIsFromBatch,
@@ -75,6 +74,7 @@ import {
   getTaggingSensitivitiesInCategory,
   getTaggingSensitivityForTag,
   loadComment,
+  loadFlags,
   loadScores,
   removeCommentScore,
   updateComment,
@@ -122,6 +122,7 @@ type ICommentDetailStateProps = Pick<
 
 type ICommentDetailDispatchProps = Pick<
   ICommentDetailProps,
+  'loadData' |
   'loadScores' |
   'onUpdateComment' |
   'onUpdateCommentScore' |
@@ -161,70 +162,58 @@ const mapStateToProps = createStructuredSelector({
 
   allScores: (state: IAppState) => getScores(state),
 
-  allScoresAboveThreshold: (state: IAppState, ownProps: ICommentDetailOwnProps) => (
-      getScoresAboveThreshold(getTaggingSensitivitiesInCategory(state, ownProps.categoryId), getScores(state))),
+  allScoresAboveThreshold: (state: IAppState) => (
+      getScoresAboveThreshold(getTaggingSensitivitiesInCategory(state), getScores(state))),
 
-  reducedScoresAboveThreshold: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) =>
-      getReducedScoresAboveThreshold(getTaggingSensitivitiesInCategory(state, ownProps.categoryId), getScores(state)),
+  reducedScoresAboveThreshold: (state: IAppStateRecord) =>
+      getReducedScoresAboveThreshold(getTaggingSensitivitiesInCategory(state), getScores(state)),
 
-  reducedScoresBelowThreshold: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) =>
-      getReducedScoresBelowThreshold(getTaggingSensitivitiesInCategory(state, ownProps.categoryId), getScores(state)),
+  reducedScoresBelowThreshold: (state: IAppStateRecord) =>
+      getReducedScoresBelowThreshold(getTaggingSensitivitiesInCategory(state), getScores(state)),
 
-  getThresholdForTag: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => (score: ICommentScoreModel) =>
-      getTaggingSensitivityForTag(getTaggingSensitivitiesInCategory(state, ownProps.categoryId), score),
+  flags: (state: IAppState) => getFlags(state),
+
+  getThresholdForTag: (state: IAppStateRecord) => (score: ICommentScoreModel) =>
+      getTaggingSensitivityForTag(getTaggingSensitivitiesInCategory(state), score),
 
   summaryScoresAboveThreshold: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => {
-    const article = getArticle(state);
-
     return getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, article.getIn(['category', 'id'])),
+      getTaggingSensitivitiesInCategory(state),
       getSummaryScoresById(state, ownProps.params.commentId),
     );
   },
 
   summaryScoresBelowThreshold: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => {
-    const article = getArticle(state);
-
     return getSummaryScoresBelowThreshold(
-      getTaggingSensitivitiesInCategory(state, article.getIn(['category', 'id'])),
+      getTaggingSensitivitiesInCategory(state),
       getSummaryScoresById(state, ownProps.params.commentId),
     );
   },
 
   summaryScores: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => {
-    if (!ownProps.params.commentId) {
-      return;
-    }
-
     return getSummaryScoresById(state, ownProps.params.commentId);
   },
 
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => (id: string): Set<string> => {
+  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord) => (id: string): Set<string> => {
     if (!id || !getSummaryScoresById(state, id)) {
       return;
     }
 
     return getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, ownProps.categoryId),
+      getTaggingSensitivitiesInCategory(state),
       getSummaryScoresById(state, id),
     ).map((score) => score.tagId).toSet();
   },
 
   currentCommentIndex: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: any) => {
-    // const parsedCommentId = parseInt(commentId, 10);
-
     return getCurrentCommentIndex(state, pagingIdentifier, commentId);
   },
 
   nextCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: any) => {
-    // const parsedCommentId = parseInt(commentId, 10);
-
     return getNextCommentId(state, pagingIdentifier, commentId);
   },
 
   previousCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: any) => {
-    // const parsedCommentId = parseInt(commentId, 10);
-
     return getPreviousCommentId(state, pagingIdentifier, commentId);
   },
 
@@ -247,6 +236,15 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps {
   return {
+    loadData: (commentId: string) => {
+      return Promise.all([
+        dispatch(loadComment(commentId)),
+        dispatch(loadScores(commentId)),
+        dispatch(loadFlags(commentId)),
+        dispatch(loadCommentSummaryScores(commentId)),
+      ]);
+    },
+
     loadScores: (commentId: string) => (
       dispatch(loadScores(commentId))
     ),
@@ -346,31 +344,12 @@ function mergeProps(
   };
 }
 
-// Manually wrapping without `compose` so types stay correct.
-
-// Add Route Change hook.
-const HookedCommentDetail = provideHooks<IRedialLocals>({
-  fetch: ({ dispatch, params: { articleId, commentId } }) => {
-    if (articleId) {
-      dispatch(loadArticle(articleId));
-    }
-
-    // const parsedCommentId = parseInt(commentId, 10);
-
-    return Promise.all([
-      dispatch(loadComment(commentId)),
-      dispatch(loadScores(commentId)),
-      dispatch(loadCommentSummaryScores(commentId)),
-    ]);
-  },
-})(PureCommentDetail);
-
 // Add Redux data.
 const ConnectedCommentDetail = connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps,
-)(HookedCommentDetail);
+)(PureCommentDetail);
 
 // Add `router` prop.
 export const CommentDetail: React.ComponentClass = withRouter(ConnectedCommentDetail);

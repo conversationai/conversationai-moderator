@@ -21,6 +21,7 @@ export const LIGHT_COLOR = '#46779c';
 export const DIVIDER_COLOR = '#ededed';
 export const PALE_COLOR = '#f4f7f9';
 export const WHITE_COLOR = '#ffffff';
+export const ALMOST_WHITE = '#fafafa';
 export const GREY_COLOR = '#999999';
 export const NICE_DARK_BLUE = '#0f4a92';
 export const NICE_MIDDLE_BLUE = '#185bac';

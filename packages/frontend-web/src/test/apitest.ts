@@ -42,11 +42,19 @@ if (!token) {
 import { decodeToken, setAxiosToken } from '../app/auth/store';
 import { saveToken } from '../app/platform/localStore';
 import { connectNotifier } from '../app/platform/websocketService';
-import { globalUpdate, systemUpdate, userUpdate } from './notificationChecks';
+import {approveComment, rejectComment, setArticleModerators, setArticleState} from './actions';
+import { articleData, systemData, userData } from './notificationChecks';
+import {
+  commentDetailsPage, fetchArticleText,
+  listModeratedCommentsPage,
+  listNewCommentsPage_SUMMARY_SCORE,
+} from './pageTests';
 
+let userId: string;
 try {
   const data = decodeToken(token);
   console.log(`Accessing osmod backend as user ${data.user}`);
+  userId = data.user.toString();
 }
 catch (e) {
   console.log(`Couldn't parse token ${token}.`);
@@ -65,22 +73,110 @@ setAxiosToken(token);
 
     connectNotifier(
       websocketStateHandler,
-      systemUpdate.notificationHandler,
-      globalUpdate.notificationHandler,
-      userUpdate.notificationHandler,
+      systemData.notificationHandler,
+      articleData.notificationHandler,
+      articleData.updateHandler,
+      userData.notificationHandler,
     );
   });
 
   await readyPromise;
 
-  systemUpdate.usersCheck();
-  globalUpdate.dataCheck();
-  systemUpdate.tagsCheck();
+  systemData.usersCheck();
+  articleData.dataCheck();
+  systemData.tagsCheck();
 
-  console.log('* Results');
-  systemUpdate.stateCheck();
-  globalUpdate.stateCheck();
-  userUpdate.stateCheck();
+  console.log('* WebSocket State');
+  systemData.stateCheck();
+  articleData.stateCheck();
+  userData.stateCheck();
+
+  if (articleData.articleFullyEnabled) {
+    console.log('\n* Checking set article state');
+    await setArticleState(articleData.articleFullyEnabled.id, true, false);
+    await setArticleState(articleData.articleFullyEnabled.id, false, false);
+    await setArticleState(articleData.articleFullyEnabled.id, true, true);
+  }
+
+  if (articleData.articleWithNoModerators) {
+    console.log('\n* Checking set article moderators');
+    await setArticleModerators(articleData.articleWithNoModerators.id, [systemData.users[0].id]);
+    await setArticleModerators(articleData.articleWithNoModerators.id, systemData.users.map((u) => u.id));
+    await setArticleModerators(articleData.articleWithNoModerators.id, []);
+  }
+
+  if (articleData.articlesWithFlags.length > 0 ) {
+    const articles = articleData.articlesWithFlags;
+    console.log('\n* Doing a flagged comment fetch');
+    await listModeratedCommentsPage('flagged', 'all');
+    console.log('  Checked all');
+    const articlesWithCategory = articles.filter((a) => (!!a.category));
+    if (articlesWithCategory.length > 0) {
+      await listModeratedCommentsPage('flagged', 'category', articlesWithCategory[0].category.id);
+      console.log(`  Checked category ${articlesWithCategory[0].category.id}`);
+    }
+    const article = articles[0];
+    const comments = await listModeratedCommentsPage('flagged', 'article', article.id);
+    console.log(`  Checked article ${article.id}`);
+    console.log(`  Found ${comments.length} flagged comments`);
+    if (comments.length > 0) {
+      const comment = comments[0];
+      console.log(`  Doing a fetch of comment ${comment}`);
+      await commentDetailsPage(comment);
+      console.log(`  Doing comment action tests. `);
+      await rejectComment(comment, userId, false, {
+        rejectedCount: article.category.rejectedCount + 1,
+        flaggedCount: article.category.flaggedCount - 1,
+      }, {
+        rejectedCount: article.rejectedCount + 1,
+        flaggedCount: article.flaggedCount - 1,
+      });
+      await approveComment(comment, userId, false,
+        {
+          rejectedCount: article.category.rejectedCount,
+          flaggedCount: article.category.flaggedCount,
+        }, {
+          rejectedCount: article.rejectedCount,
+          flaggedCount: article.flaggedCount,
+        });
+      await approveComment(comment, userId, true,
+        {
+          flaggedCount: article.category.flaggedCount - 1,
+        }, {
+          flaggedCount: article.flaggedCount - 1,
+        });
+      await rejectComment(comment, userId, true,
+        {
+          flaggedCount: article.category.flaggedCount - 1,
+        }, {
+          flaggedCount: article.flaggedCount - 1,
+        });
+    }
+  }
+
+  if (articleData.articlesWithNew.length > 0) {
+    const articles = articleData.articlesWithNew;
+    console.log('\n* Doing a new comment fetch');
+    await listNewCommentsPage_SUMMARY_SCORE('all');
+    console.log('  Checked all');
+    const articlesWithCategory = articles.filter((a) => (!!a.category));
+    if (articlesWithCategory.length > 0) {
+      await listNewCommentsPage_SUMMARY_SCORE('category', articlesWithCategory[0].category.id);
+      console.log(`  Checked category ${articlesWithCategory[0].category.id}`);
+    }
+    const article = articles[0];
+    const comments = await listNewCommentsPage_SUMMARY_SCORE('article', article.id);
+    console.log(`  Checked article ${article.id}`);
+    console.log('  Doing an article text fetch');
+    await fetchArticleText(article.id);
+    console.log(`\n* Approving comment ${comments.last()} and waiting for notification.`);
+    await approveComment(comments.last(), userId, false,
+      {
+        approvedCount: article.category.approvedCount + 1,
+      }, {
+        approvedCount: article.approvedCount + 1,
+      });
+  }
 
   console.log('shutting down.');
   process.exit(0);

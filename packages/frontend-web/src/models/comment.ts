@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { fromJS, Record } from 'immutable';
+import { fromJS, List, Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 import { IArticleModel } from './article';
 
@@ -52,8 +52,8 @@ export interface ICommentAttributes {
   isAutoResolved: boolean;
   sourceCreatedAt: string;
   updatedAt: string;
-  recommendedCount: number;
-  flaggedCount: number;
+  unresolvedFlagsCount: number;
+  flagsSummary?: Map<string, List<number>>;
   sentForScoring: boolean;
   articleId: string;
   article: IArticleModel;
@@ -80,8 +80,8 @@ const CommentModelRecord = Record({
   isHighlighted: null,
   isBatchResolved: null,
   isAutoResolved: null,
-  flaggedCount: null,
-  recommendedCount: null,
+  unresolvedFlagsCount: null,
+  flagsSummary: null,
   sourceCreatedAt: null,
   updatedAt: null,
   sentForScoring: null,

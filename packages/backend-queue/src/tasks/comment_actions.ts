@@ -15,9 +15,11 @@ limitations under the License.
 */
 
 import {
-  addScore, approve,
+  addScore,
+  approve,
   Article,
   Comment,
+  CommentFlag,
   CommentScore,
   CommentSummaryScore,
   defer,
@@ -502,6 +504,48 @@ async function resolveComment(
   await domainFn(comment, user, autoConfirm);
 }
 
+async function resolveFlags(
+  commentId: number,
+  userId?: number,
+): Promise<void> {
+  await CommentFlag.update(
+    {
+      isResolved: true,
+      resolvedById: userId,
+      resolvedAt: new Date(),
+    } as any,
+    { where: {
+        commentId: commentId,
+        isResolved: false,
+      }},
+  );
+}
+
+async function resolveFlagsAndDenormalize(
+  commentId: number,
+  userId?: number,
+): Promise<void> {
+  await resolveFlags(commentId, userId);
+  const comment = await Comment.findById(commentId);
+  const article = await comment.getArticle();
+  await denormalizeCountsForComment(comment);
+  await denormalizeCommentCountsForArticle(article, true);
+}
+
+async function resolveCommentAndFlags(
+  commentId: number,
+  userId: number | null,
+  logger: IJobLogger,
+  isBatchAction: boolean,
+  status: IResolution,
+  domainFn: (comment: ICommentInstance, source: any, autoConfirm: boolean) => Promise<ICommentInstance>,
+  autoConfirm: boolean,
+): Promise<void> {
+  // We update flags first as we do the denormalization in the resolveComment action.
+  await resolveFlags(commentId, userId ? userId : undefined);
+  await resolveComment(commentId, userId, logger, isBatchAction, status, domainFn, autoConfirm);
+}
+
 /**
  * Worker task wrapper for approving a comment. Fetches the comment by id and updates.
  *
@@ -531,6 +575,29 @@ export const acceptCommentsTask = handler<IAcceptCommentsData>((data, logger) =>
   );
 });
 
+export const acceptCommentsAndFlagsTask = handler<ICommentActionData>((data, logger) => {
+  const { commentId, userId, isBatchAction, autoConfirmDecision } = data;
+
+  return resolveCommentAndFlags(
+    commentId,
+    userId || null,
+    logger,
+    isBatchAction,
+    MODERATION_ACTION_ACCEPT,
+    approve,
+    !!autoConfirmDecision,
+  );
+});
+
+export const resolveFlagsTask = handler<ICommentActionData>((data, _logger) => {
+  const { commentId, userId } = data;
+
+  return resolveFlagsAndDenormalize(
+    commentId,
+    userId ? userId : undefined,
+  );
+});
+
 /**
  * Worker task wrapper for rejecting a comment. Fetches the comment by id and updates.
  *
@@ -550,6 +617,20 @@ export const rejectCommentsTask = handler<IRejectCommentsData>((data, logger) =>
   const { commentId, userId, isBatchAction, autoConfirmDecision } = data;
 
   return resolveComment(
+    commentId,
+    userId || null,
+    logger,
+    isBatchAction,
+    MODERATION_ACTION_REJECT,
+    reject,
+    !!autoConfirmDecision,
+  );
+});
+
+export const rejectCommentsAndFlagsTask = handler<ICommentActionData>((data, logger) => {
+  const { commentId, userId, isBatchAction, autoConfirmDecision } = data;
+
+  return resolveCommentAndFlags(
     commentId,
     userId || null,
     logger,
@@ -689,8 +770,8 @@ export const addTagTask = handler<IAddTagData>(async (data) => {
     score: 1,
   });
 
-  const comment = await (cs as any)['getComment']();
-  const article = await (comment as any)['getArticle']();
+  const comment = await cs.getComment();
+  const article = await comment.getArticle();
 
   await denormalizeCountsForComment(comment);
   await denormalizeCommentCountsForArticle(article, false);

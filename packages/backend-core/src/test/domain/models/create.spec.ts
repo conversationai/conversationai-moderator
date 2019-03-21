@@ -61,7 +61,6 @@ describe('Models domain create tests', function() {
         deferredCount: 0,
         flaggedCount: 0,
         batchedCount: 0,
-        recommendedCount: 0,
       };
 
       // Fake a successful article creation
@@ -108,7 +107,6 @@ describe('Models domain create tests', function() {
         deferredCount: 0,
         flaggedCount: 0,
         batchedCount: 0,
-        recommendedCount: 0,
       };
 
       // Fake an existing article
@@ -159,7 +157,6 @@ describe('Models domain create tests', function() {
         deferredCount: 0,
         flaggedCount: 0,
         batchedCount: 0,
-        recommendedCount: 0,
       };
 
       let article2Data = {
@@ -179,7 +176,6 @@ describe('Models domain create tests', function() {
         deferredCount: 0,
         flaggedCount: 0,
         batchedCount: 0,
-        recommendedCount: 0,
       };
 
       let articlesData = [article1Data, article2Data];
@@ -237,7 +233,6 @@ describe('Models domain create tests', function() {
         deferredCount: 0,
         flaggedCount: 0,
         batchedCount: 0,
-        recommendedCount: 0,
       };
 
       let article2Data: any = {
@@ -254,7 +249,6 @@ describe('Models domain create tests', function() {
         deferredCount: 0,
         flaggedCount: 0,
         batchedCount: 0,
-        recommendedCount: 0,
       };
 
       let articlesData = [article1Data, article2Data];

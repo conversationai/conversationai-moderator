@@ -89,7 +89,6 @@ const StateFactory = makeTypedFactory<IColumnSortState, IColumnSortStateRecord>(
       batched: 'updated',
       automated: 'updated',
       highlighted: 'highlighted',
-      recommended: 'recommended',
     }),
 
     customized: Map<string, string>(),

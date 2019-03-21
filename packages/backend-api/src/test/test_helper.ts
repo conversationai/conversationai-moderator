@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as chai from 'chai';
+import * as WebSocket from 'ws';
 
 import {
   logger,
@@ -24,6 +25,7 @@ import {
 import {
   IArticleInstance,
   ICategoryInstance,
+  ICommentFlagInstance,
   ICommentInstance,
   ICommentScoreInstance,
   ICommentSummaryScoreAttributes,
@@ -38,6 +40,7 @@ import {
   Article,
   Category,
   Comment,
+  CommentFlag,
   CommentScore,
   CommentSummaryScore,
   ModerationRule,
@@ -95,7 +98,6 @@ export async function makeArticle(obj = {}): Promise<IArticleInstance> {
     deferredCount: 0,
     flaggedCount: 0,
     batchedCount: 0,
-    recommendedCount: 0,
     ...obj,
   });
 }
@@ -135,8 +137,7 @@ export async function makeComment(obj = {}): Promise<ICommentInstance> {
     author: {
       name: 'Joe Bloggs',
     },
-    flaggedCount: 0,
-    recommendedCount: 0,
+    unresolvedFlagsCount: 0,
     sourceCreatedAt: '2012-10-29T21:54:07.609Z',
     isScored: true,
     ...obj,
@@ -174,7 +175,6 @@ export async function makeCategory(obj = {}): Promise<ICategoryInstance> {
     deferredCount: 0,
     flaggedCount: 0,
     batchedCount: 0,
-    recommendedCount: 0,
     ...obj,
   });
 }
@@ -197,6 +197,75 @@ export async function makePreselect(obj = {}): Promise<IPreselectInstance> {
   });
 }
 
+export async function makeFlag(obj: {}): Promise<ICommentFlagInstance> {
+  return await CommentFlag.create({
+    label: 'test flag',
+    isResolved: false,
+    ...obj,
+  } as any);
+}
+
 export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export function assertSystemMessage(body: any) {
+  expect(body.type).eq('system');
+}
+export function assertAllArticlesMessage(body: any) {
+  expect(body.type).eq('global');
+}
+export function assertArticleUpdateMessage(body: any) {
+  expect(body.type).eq('article-update');
+}
+export function assertUserMessage(body: any) {
+  expect(body.type).eq('user');
+}
+
+export async function listenForMessages(
+  action: () => Promise<void>,
+  results: Array<(message: any) => void>,
+): Promise<void> {
+  let id: NodeJS.Timer;
+
+  const timeout = new Promise((_, reject) => {
+    id = setTimeout(() => {
+      reject(new Error('Timed out while waiting for notification'));
+    }, 1000);
+  });
+
+  const p = new Promise((resolve, reject) => {
+    const socket = new WebSocket('ws://localhost:3000/services/updates/summary');
+
+    socket.onclose = () => {
+      if (results.length !== 0) {
+        reject('Not received enough messages');
+      }
+    };
+
+    socket.onmessage = (m: any) => {
+      try {
+        const body: any = JSON.parse(m.data as string);
+        const r = results.shift();
+        if (r) {
+          r(body);
+        }
+        if (results.length === 0) {
+          resolve();
+        }
+      }
+      catch (e) {
+        reject(e);
+      }
+    };
+  });
+
+  await sleep(100);
+  await action();
+
+  await Promise.race([
+    timeout,
+    p,
+  ]);
+  clearTimeout(id!);
 }

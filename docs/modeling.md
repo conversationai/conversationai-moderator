@@ -17,28 +17,28 @@ Default database name: `os_moderator`
 
 The tables:
 
-  Tables_in_os_moderator    | Description
-  --------------------------|-------------
-  SequelizeMeta             |
-  articles                  |
-  categories                |
-  comment_recommendations   |
-  comment_score_requests    |
-  comment_scores            |
-  comment_sizes             |
-  comment_summary_scores    |
-  comment_top_scores        |
-  comments                  |
-  csrfs                     |
-  decisions                 |
-  moderation_rules          |
-  moderator_assignments     |
-  preselects                |
-  tagging_sensitivities     |
-  tags                      |
-  user_category_assignments |
-  user_social_auths         |
-  users                     |
+  Object               | Tables_in_os_moderator    | Description
+-----------------------|---------------------------|-------------
+-                      | SequelizeMeta             | List of migrations that have been applied
+User                   | users                     | OSMod Administrators, moderators, and other user-like entities
+Category               | categories                | Categories from the moderated system (e.g., corresponds to channels for Youtube)
+Article                | articles                  | Articles from the moderated system (e.g., videos for YouTube)
+Comment                | comments                  | Comments from the moderated system
+CommentFlag            | comment_flag              |
+CommentScoreRequest    | comment_score_requests    |
+CommentScore           | comment_scores            |
+CommentSize            | comment_sizes             |
+CommentSummaryScore    | comment_summary_scores    |
+CommentTopScore        | comment_top_scores        |
+Decision               | decisions                 |
+ModerationRule         | moderation_rules          |
+Preselect              | preselects                |
+TaggingSensitivity     | tagging_sensitivities     |
+Tag                    | tags                      |
+ModeratorAssignment    | moderator_assignments     | (Join table) Moderators assigned to moderate comments for the given article
+UserCategoryAssignment | user_category_assignments | (Join table) Moderators assigned to moderate comments for the given category
+CSRF                   | csrfs                     |
+UserSocialAuth         | user_social_auths         |
 
 ### User
 
@@ -111,7 +111,6 @@ Moderation Rules are configured at the category level and apply to all articles 
 - deferredCount (int) Denormalize SUM of articles' deferredCount
 - flaggedCount (int) Denormalize SUM of articles' flaggedCount
 - batchedCount (int) Denormalize SUM of articles' batchedCount
-- recommendedCount (int) Denormalize SUM of articles' recommendedCount
 - extra (json)
 
 ### Article
@@ -138,7 +137,6 @@ This table holds the articles that can be commented on.
 - deferredCount (int) (Denormalize COUNT of comments with deferredCount > 0)
 - flaggedCount (int) (Denormalize COUNT of comments with flaggedCount > 0)
 - batchedCount (int) (Denormalize COUNT of comments with batchedCount > 0)
-- recommendedCount (int) (Denormalize COUNT of comments with recommendedCount > 0)
 - createdAt (datetime)
 - modifiedAt (datetime)
 - lastModeratedAt (datetime) Time when a moderation action was last done.
@@ -265,17 +263,6 @@ This table holds the comments, and the state of the comments.
 
 *Indexes*:
 - commentId/tagId
-
-### CommentRecommendation
-- id (bigint)
-- commentId (foreign key: Comment)
-- sourceId (string) (optional identifier so that scores can be retracted, like for publisher recommendations)
-- extra (json)
-- createdAt (datetime) (required)
-- updatedAt (datetime)
-
-*Indexes*:
-- commentId
 
 ### CommentFlag
 

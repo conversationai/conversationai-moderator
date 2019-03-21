@@ -18,6 +18,7 @@ import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
 import { IArticleModel, IUserModel } from '../../../../../models';
+import { getArticleText } from '../../../../platform/dataService';
 import { ARTICLE_HEADER,
   BASE_Z_INDEX,
   BODY_TEXT_TYPE,
@@ -202,14 +203,24 @@ export interface IArticlePreviewProps {
 
 export interface IArticlePreviewState {
   closeIsFocused?: boolean;
+  text: string;
 }
 
 export class ArticlePreview
     extends React.Component<IArticlePreviewProps, IArticlePreviewState> {
 
-  state = {
-    closeIsFocused: false,
-  };
+  constructor(props: Readonly<IArticlePreviewProps>) {
+    super(props);
+    getArticleText(props.article.id).then((text: string) => this.setState({text: text}));
+    this.state = {
+      closeIsFocused: false,
+      text: '',
+    };
+  }
+
+  componentWillReceiveProps(props: Readonly<IArticlePreviewProps>): void {
+    getArticleText(props.article.id).then((text: string) => this.setState({text: text}));
+  }
 
   @autobind
   onFocusCloseIcon() {
@@ -229,9 +240,8 @@ export class ArticlePreview
       onAddModeratorClick,
     } = this.props;
 
-    const { closeIsFocused } = this.state;
+    const { closeIsFocused, text } = this.state;
 
-    const articleText = article.text ? article.text : '';
     return(
       <div>
         <div {...css(STYLES.base)}>
@@ -271,7 +281,7 @@ export class ArticlePreview
             </div>
 
             <div {...css(STYLES.body)}>
-              <div {...css(STYLES.bodyCopy)}>{articleText.substring(0, 400)}{articleText.length > 400 && <span>...</span>}</div>
+              <div {...css(STYLES.bodyCopy)}>{text.substring(0, 400)}{text.length > 400 && <span>...</span>}</div>
               <div {...css(STYLES.moderation)}>
                 <div {...css(STYLES.moderation)}>
                   <p {...css(STYLES.moderators)}>

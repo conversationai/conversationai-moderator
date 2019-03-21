@@ -31,6 +31,13 @@ import {
   ModerateButtons,
   ReplyIcon,
 } from '../../components';
+import { FlagsSummary } from '../../scenes/Comments/components/FlagsSummary';
+import {
+  ARTICLE_HEADLINE_TYPE,
+  BODY_TEXT_BOLD_TYPE,
+  DARK_COLOR,
+  MEDIUM_COLOR,
+} from '../../styles';
 import { maybeCallback, partial } from '../../util';
 import { css } from '../../utilx';
 import {
@@ -39,17 +46,9 @@ import {
 import {
   MoreVerticalIcon,
 } from '../Icons';
-
-import {
-  ARTICLE_HEADLINE_TYPE,
-  BODY_TEXT_BOLD_TYPE,
-  DARK_COLOR,
-  MEDIUM_COLOR,
-} from '../../styles';
-
 import {
   ROW_STYLES,
-} from '../LazyCommentList/LazyCommentList';
+} from '../LazyCommentList';
 
 const LAZY_BOX_STYLE = {
   width: '100%',
@@ -282,18 +281,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               <span>from {comment.author.location}&nbsp;</span>
             )}
             <span {...css({textDecoration: 'none'})}> &bull; {distanceInWordsToNow(new Date(comment.sourceCreatedAt))} ago&nbsp;</span>
-            {comment.flaggedCount > 0 && (
-              <span {...css({textDecoration: 'none'})}>
-                &bull; {comment.flaggedCount} Flag{comment.flaggedCount > 1 ? 's' : null}
-                &nbsp;
-              </span>
-            )}
-            {comment.recommendedCount > 0 && (
-              <span {...css({textDecoration: 'none'})}>
-                &bull; {comment.recommendedCount} Recommendation{comment.recommendedCount > 1 ? 's' : null}
-                &nbsp;
-              </span>
-            )}
+            <FlagsSummary comment={comment}/>
             {actionsAreVisible && (
               <Link
                 {...css(ROW_STYLES.detailsButton)}

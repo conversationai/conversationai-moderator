@@ -15,6 +15,8 @@ limitations under the License.
 */
 
 import check from 'check-types';
+import { List, Map } from 'immutable';
+
 import {
   SERVER_ACTION_ACCEPT,
   SERVER_ACTION_DEFER,
@@ -34,7 +36,7 @@ function date_string(val: any) {
 }
 
 function date_string_or_null(val: any) {
-  if (val === null) {
+  if (!val) {
     return true;
   }
   return date_string(val);
@@ -104,6 +106,26 @@ function tag_id_or_null(val: any) {
   return tagIds.has(val.toString());
 }
 
+function is_user(u: any) {
+  if (!check.string(u)) {
+    console.log('Bad user ID', u);
+    return false;
+  }
+  if (!userIds.has(u)) {
+    console.log('User check: no user with ID', u);
+    console.log(' Known IDs', userIds);
+    return false;
+  }
+  return true;
+}
+
+function is_user_or_null(u: any) {
+  if (!u) {
+    return true;
+  }
+  return is_user(u);
+}
+
 function array_of_users(val: any) {
   if (!check.array(val)) {
     return false;
@@ -111,15 +133,7 @@ function array_of_users(val: any) {
 
   let ret = true;
   for (const u of val) {
-    if (!check.string(u)) {
-      console.log('Bad user ID', u);
-      ret = false;
-    }
-    if (!userIds.has(u)) {
-      console.log('User check: no user with ID', u);
-      console.log(' Known IDs', userIds);
-      ret = false;
-    }
+    ret = ret && is_user(u);
   }
   return ret;
 }
@@ -137,6 +151,39 @@ function action(val: any) {
   ].indexOf(val) >= 0;
 }
 
+function checkListNumber(o: any) {
+  if (!List.isList(o)) {
+    console.log(`Number list is not a list`);
+    return false;
+  }
+
+  for (const n of o.toArray()) {
+    if (!check.number(n)) {
+      console.log(`Number list contains non number ${n}`);
+      return false;
+    }
+  }
+  return true;
+}
+
+function checkMap(o: any, type: string, keyType: (o: any) => boolean, valueType: (o: any) => boolean) {
+  if (!Map.isMap(o)) {
+    console.log(`Got a bad ${type}: Not a map`);
+    return false;
+  }
+
+  for (const k of o.keys()) {
+    if (!keyType(k)) {
+      console.log(`Got a bad ${type}: key ${k} not a ${keyType.name}`);
+      return false;
+    }
+    if (!valueType(o.get(k))) {
+      console.log(`Got a bad ${type}: key ${k} has bad value: ${o.get(k)}: not a ${keyType.name}`);
+      return false;
+    }
+  }
+}
+
 // These attribute lists should duplicate those in updateNotifications.ts.
 const commonFields = {
   id: check.string,
@@ -151,7 +198,6 @@ const commonFields = {
   deferredCount: check.number,
   flaggedCount: check.number,
   batchedCount: check.number,
-  recommendedCount: check.number,
   assignedModerators: array_of_users,
 };
 
@@ -163,7 +209,6 @@ const categoryFields = {
 const articleFields = {
   ...commonFields,
   title: check.string,
-  text: check.maybe.string,
   url: check.string,
   category: category,
   sourceCreatedAt: date_string,
@@ -204,6 +249,59 @@ const ruleFields = {
   ...rangeFields,
   action: action,
   createdBy: check.maybe.string,
+};
+
+// TODO: not all fields here
+const commentFields = {
+  id: check.string,
+  sourceId: check.string,
+  authorSourceId: check.string,
+  text: check.string,
+  isScored: check.boolean,
+  isModerated: check.boolean,
+  isAccepted: check.maybe.boolean,
+  isDeferred: check.boolean,
+  isHighlighted: check.boolean,
+  isBatchResolved: check.boolean,
+  isAutoResolved: check.boolean,
+  unresolvedFlagsCount: check.number,
+  flagsSummary: (o: any) => (!o || checkMap(o, 'comment:flagsSummary', check.string, checkListNumber)),
+  };
+
+const commentScoreFields = {
+  id: check.string,
+  commentId: check.string,
+  tagId: check.string,
+  score: check.number,
+  sourceType: check.string,
+};
+
+const commentFlagFields = {
+  id: check.string,
+  commentId: check.string,
+  label: check.string,
+  detail: check.maybe.string,
+  isRecommendation: check.boolean,
+  sourceId: check.maybe.string,
+  authorSourceId: check.maybe.string,
+  isResolved: check.boolean,
+  resolvedById: is_user_or_null,
+  resolvedAt: date_string_or_null,
+};
+
+const moderatedCommentsFields = {
+  approved: check.array.of.string,
+  highlighted: check.array.of.string,
+  rejected: check.array.of.string,
+  deferred: check.array.of.string,
+  flagged: check.array.of.string,
+  batched: check.array.of.string,
+  automated: check.array.of.string,
+};
+
+const histogramScoreFields = {
+  score: check.number,
+  commentId: check.string,
 };
 
 function checkObject(o: any, type: string, fields: any): boolean {
@@ -270,4 +368,72 @@ export function checkRule(o: any) {
 
 export function checkPreselect(o: any) {
   return checkObject(o, 'preselect', rangeFields);
+}
+
+export function checkModeratedComments(o: any) {
+  return checkObject(o, 'ModeratedComments', moderatedCommentsFields);
+}
+
+export function checkTextSizes(o: any) {
+  return checkMap(o, 'textSizes', check.string, check.number);
+}
+
+function checkComment(o: any) {
+  return checkObject(o, 'comment', commentFields);
+}
+
+export function checkListComments(o: any) {
+  if (!List.isList(o)) {
+    console.log(`Got a bad listComments: Not a list`);
+    return false;
+  }
+  for (const c of o.toArray()) {
+    if (!checkComment(c)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function checkSingleComment(o: any) {
+  checkComment(o.model);
+}
+
+export function checkCommentFlags(o: any) {
+  if (!List.isList(o.models)) {
+    console.log(`Got a bad commentFlags: Not a list`);
+    return false;
+  }
+  for (const f of o.models.toArray()) {
+    if (!checkObject(f, 'commentFlag', commentFlagFields)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function checkCommentScores(o: any) {
+  if (!List.isList(o.models)) {
+    console.log(`Got a bad commentScores: Not a list`);
+    return false;
+  }
+  for (const s of o.models.toArray()) {
+    if (!checkObject(s, 'commentScore', commentScoreFields)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export function checkHistogramScores(o: any) {
+  if (!List.isList(o)) {
+    console.log(`Got a bad histogram scores: Not a list`);
+    return false;
+  }
+  for (const s of o.toArray()) {
+    if (!checkObject(s, 'commentScore', histogramScoreFields)) {
+      return false;
+    }
+  }
+  return true;
 }

@@ -14,6 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// TODO: Passport seems to be a dead project.  Keep an eye on what is happening
+//     And consider replacing it with passport-next or something else.
+
 import { config } from '@conversationai/moderator-config';
 import { ensureFirstUser, findOrCreateUserSocialAuth, isFirstUserInitialised } from '../users';
 const Strategy = require('passport-google-oauth20').Strategy;
@@ -33,7 +36,7 @@ export interface IGoogleProfile {
   };
   emails: Array<{
     value: string;
-    type: string
+    verified: string;
   }>;
   photos: Array<{
     value: string;
@@ -116,6 +119,7 @@ export const googleStrategy = new Strategy(
     clientID: config.get('google_client_id'),
     clientSecret: config.get('google_client_secret'),
     callbackURL: `${apiPrefix}/auth/callback/google`,
+    userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
   },
   async (accessToken: string, refreshToken: string, profile: IGoogleProfile, callback: (err: any, user?: IUserInstance | false, info?: any) => any) => {
     try {
@@ -127,10 +131,12 @@ export const googleStrategy = new Strategy(
       }
 
       callback(null, user);
-    } catch (e) {
+    }
+    catch (e) {
       if (e instanceof AuthError) {
         callback(null, false, { reason: e.message });
-      } else {
+      }
+      else {
         callback(e);
       }
     }

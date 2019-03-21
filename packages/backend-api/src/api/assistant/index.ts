@@ -24,6 +24,8 @@ import {
   IScoreData,
 } from '@conversationai/moderator-backend-queue';
 import * as express from 'express';
+
+import { REPLY_SUCCESS } from '../constants';
 import { onlyServices } from '../util/permissions';
 import { validateRequest } from '../util/validation';
 import { scoreSchema } from './schema';
@@ -60,7 +62,7 @@ export function createAssistant(): express.Router {
 
         await enqueue<IProcessMachineScoreData>('processMachineScore', taskData, runImmediately || false);
 
-        res.json({ status: 'success' });
+        res.json(REPLY_SUCCESS);
         next();
       } else {
         logger.error(`Score request not found for provided id: ${id}`);

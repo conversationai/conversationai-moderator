@@ -29,6 +29,7 @@ import {
   UserCategoryAssignment,
 } from '@conversationai/moderator-backend-core';
 
+import { REPLY_SUCCESS_VALUE } from '../../../api/constants';
 import {
   expect,
   makeArticle,
@@ -95,7 +96,7 @@ describe(BASE_URL, () => {
         const apiClient = chai.request(app);
         const {status, body} = await apiClient.post(url.replace(':id', this.category.id)).send({data: [this.user.id]});
         expect(status).to.be.equal(200);
-        expect(body.status).to.be.equal('success');
+        expect(body.status).to.be.equal(REPLY_SUCCESS_VALUE);
 
         const aca = await UserCategoryAssignment.findAndCountAll({where: {}});
         expect(aca.count).to.be.equal(1);
@@ -107,7 +108,7 @@ describe(BASE_URL, () => {
         const apiClient = chai.request(app);
         const {status, body} = await apiClient.post(url.replace(':id', this.category.id)).send({data: []});
         expect(status).to.be.equal(200);
-        expect(body.status).to.be.equal('success');
+        expect(body.status).to.be.equal(REPLY_SUCCESS_VALUE);
 
         const aca = await UserCategoryAssignment.findAndCountAll({where: {}});
         expect(aca.count).to.be.equal(0);

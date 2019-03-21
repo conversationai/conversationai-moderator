@@ -1593,30 +1593,22 @@ exports[`Storyshots CommentBody Basic 1`] = `
           over X years
            ago 
         </span>
-        <span
-          style={
-            Object {
-              "textDecoration": "none",
-            }
-          }
-        >
-          • 
-          1
-           Flag
-           
-        </span>
-        <span
-          style={
-            Object {
-              "textDecoration": "none",
-            }
-          }
-        >
-          • 
-          20
-           Recommendation
-          s
-           
+        <span>
+          • Flags: 
+          <span>
+            unresolved: 
+            1
+          </span>
+           
+          <span>
+            red
+            : 
+            1
+          </span>
+           
+          
+           
+          
         </span>
       </div>
       <div
@@ -1811,30 +1803,22 @@ exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
           over X years
            ago 
         </span>
-        <span
-          style={
-            Object {
-              "textDecoration": "none",
-            }
-          }
-        >
-          • 
-          1
-           Flag
-           
-        </span>
-        <span
-          style={
-            Object {
-              "textDecoration": "none",
-            }
-          }
-        >
-          • 
-          20
-           Recommendation
-          s
-           
+        <span>
+          • Flags: 
+          <span>
+            unresolved: 
+            1
+          </span>
+           
+          <span>
+            red
+            : 
+            1
+          </span>
+           
+          
+           
+          
         </span>
       </div>
       <div
@@ -2002,30 +1986,22 @@ exports[`Storyshots CommentBody Linked 1`] = `
             over X years
              ago 
           </span>
-          <span
-            style={
-              Object {
-                "textDecoration": "none",
-              }
-            }
-          >
-            • 
-            1
-             Flag
-             
-          </span>
-          <span
-            style={
-              Object {
-                "textDecoration": "none",
-              }
-            }
-          >
-            • 
-            20
-             Recommendation
-            s
-             
+          <span>
+            • Flags: 
+            <span>
+              unresolved: 
+              1
+            </span>
+             
+            <span>
+              red
+              : 
+              1
+            </span>
+             
+            
+             
+            
           </span>
         </div>
         <div
@@ -6602,16 +6578,29 @@ exports[`Storyshots SingleComment base 1`] = `
                
             </span>
             <span>
-              • 
-              2
-               Flag
-              s
-            </span>
-            <span>
-              • 
-              5
-               Recommendation
-              s
+              • Flags: 
+              <span>
+                unresolved: 
+                2
+              </span>
+               
+              <span>
+                • 
+                red
+                : 
+                1
+                 
+                
+              </span>
+               
+              <span>
+                • 
+                green
+                : 
+                2
+                 
+                (2)
+              </span>
             </span>
           </div>
         </div>
@@ -6681,6 +6670,76 @@ exports[`Storyshots SingleComment base 1`] = `
               onMouseDown={[Function]}
               onTouchStart={[Function]}
             />
+          </div>
+        </div>
+        <div>
+          <div
+            className="title_nqpgbv"
+          >
+            Flags
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Resolved
+            <div
+              className="label_1ab54ap"
+            >
+              red
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Resolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Ullam voluptatem maxime itaque tenetur. Voluptas est similique quibusdam molestiae est rerum odit quo unde.
+            </div>
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Unresolved
+            <div
+              className="label_1ab54ap"
+            >
+              green
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Unresolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Aspernatur rerum aut quis id nam consectetur. Harum necessitatibus autem aut qui qui aliquam.
+            </div>
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Unresolved
+            <div
+              className="label_1ab54ap"
+            >
+              green
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Unresolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Vero cupiditate unde veniam. Voluptas natus consequatur ea accusamus fugiat consequuntur. Laborum ducimus magni et facilis deleniti sint magni.
+            </div>
           </div>
         </div>
       </div>
@@ -6915,16 +6974,29 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
                
             </span>
             <span>
-              • 
-              2
-               Flag
-              s
-            </span>
-            <span>
-              • 
-              5
-               Recommendation
-              s
+              • Flags: 
+              <span>
+                unresolved: 
+                2
+              </span>
+               
+              <span>
+                • 
+                red
+                : 
+                1
+                 
+                
+              </span>
+               
+              <span>
+                • 
+                green
+                : 
+                2
+                 
+                (2)
+              </span>
             </span>
           </div>
         </div>
@@ -6994,6 +7066,76 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
               onMouseDown={[Function]}
               onTouchStart={[Function]}
             />
+          </div>
+        </div>
+        <div>
+          <div
+            className="title_nqpgbv"
+          >
+            Flags
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Resolved
+            <div
+              className="label_1ab54ap"
+            >
+              red
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Resolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Ullam voluptatem maxime itaque tenetur. Voluptas est similique quibusdam molestiae est rerum odit quo unde.
+            </div>
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Unresolved
+            <div
+              className="label_1ab54ap"
+            >
+              green
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Unresolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Aspernatur rerum aut quis id nam consectetur. Harum necessitatibus autem aut qui qui aliquam.
+            </div>
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Unresolved
+            <div
+              className="label_1ab54ap"
+            >
+              green
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Unresolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Vero cupiditate unde veniam. Voluptas natus consequatur ea accusamus fugiat consequuntur. Laborum ducimus magni et facilis deleniti sint magni.
+            </div>
           </div>
         </div>
       </div>
@@ -7205,16 +7347,29 @@ exports[`Storyshots SingleComment has url 1`] = `
                
             </a>
             <span>
-              • 
-              2
-               Flag
-              s
-            </span>
-            <span>
-              • 
-              5
-               Recommendation
-              s
+              • Flags: 
+              <span>
+                unresolved: 
+                2
+              </span>
+               
+              <span>
+                • 
+                red
+                : 
+                1
+                 
+                
+              </span>
+               
+              <span>
+                • 
+                green
+                : 
+                2
+                 
+                (2)
+              </span>
             </span>
           </div>
         </div>
@@ -7284,6 +7439,76 @@ exports[`Storyshots SingleComment has url 1`] = `
               onMouseDown={[Function]}
               onTouchStart={[Function]}
             />
+          </div>
+        </div>
+        <div>
+          <div
+            className="title_nqpgbv"
+          >
+            Flags
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Resolved
+            <div
+              className="label_1ab54ap"
+            >
+              red
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Resolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Ullam voluptatem maxime itaque tenetur. Voluptas est similique quibusdam molestiae est rerum odit quo unde.
+            </div>
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Unresolved
+            <div
+              className="label_1ab54ap"
+            >
+              green
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Unresolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Aspernatur rerum aut quis id nam consectetur. Harum necessitatibus autem aut qui qui aliquam.
+            </div>
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Unresolved
+            <div
+              className="label_1ab54ap"
+            >
+              green
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Unresolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Vero cupiditate unde veniam. Voluptas natus consequatur ea accusamus fugiat consequuntur. Laborum ducimus magni et facilis deleniti sint magni.
+            </div>
           </div>
         </div>
       </div>
@@ -7536,16 +7761,29 @@ exports[`Storyshots SingleComment tags to add 1`] = `
                
             </span>
             <span>
-              • 
-              2
-               Flag
-              s
-            </span>
-            <span>
-              • 
-              5
-               Recommendation
-              s
+              • Flags: 
+              <span>
+                unresolved: 
+                2
+              </span>
+               
+              <span>
+                • 
+                red
+                : 
+                1
+                 
+                
+              </span>
+               
+              <span>
+                • 
+                green
+                : 
+                2
+                 
+                (2)
+              </span>
             </span>
           </div>
         </div>
@@ -7615,6 +7853,76 @@ exports[`Storyshots SingleComment tags to add 1`] = `
               onMouseDown={[Function]}
               onTouchStart={[Function]}
             />
+          </div>
+        </div>
+        <div>
+          <div
+            className="title_nqpgbv"
+          >
+            Flags
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Resolved
+            <div
+              className="label_1ab54ap"
+            >
+              red
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Resolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Ullam voluptatem maxime itaque tenetur. Voluptas est similique quibusdam molestiae est rerum odit quo unde.
+            </div>
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Unresolved
+            <div
+              className="label_1ab54ap"
+            >
+              green
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Unresolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Aspernatur rerum aut quis id nam consectetur. Harum necessitatibus autem aut qui qui aliquam.
+            </div>
+          </div>
+          <div
+            className="entry_1uhx5sj"
+          >
+            Unresolved
+            <div
+              className="label_1ab54ap"
+            >
+              green
+               
+              <span
+                className="resolvedText_ylh4oj"
+              >
+                Unresolved
+              </span>
+            </div>
+            <div
+              className="detail_1b2af1e"
+            >
+              Vero cupiditate unde veniam. Voluptas natus consequatur ea accusamus fugiat consequuntur. Laborum ducimus magni et facilis deleniti sint magni.
+            </div>
           </div>
         </div>
       </div>
@@ -7714,6 +8022,38 @@ exports[`Storyshots Slider base 1`] = `
 </div>
 `;
 
+exports[`Storyshots TableComponents Magic timestamps 1`] = `
+<div>
+  <span>
+    a few seconds ago
+  </span>
+  <span>
+    1 minute ago
+  </span>
+  <span>
+    30 minutes ago
+  </span>
+  <span>
+    1 hour ago
+  </span>
+  <span>
+    12 hours ago
+  </span>
+  <span>
+    1 day ago
+  </span>
+  <span>
+    2 days ago
+  </span>
+  <span>
+    Jan 1
+  </span>
+  <span>
+    June 24, 2017
+  </span>
+</div>
+`;
+
 exports[`Storyshots TableComponents Title cell 1`] = `
 <table
   className="dataTable_qnb40"
@@ -7741,7 +8081,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
               onClick={[Function]}
               style={Object {}}
             >
-              Iste consectetur earum in sequi aut.
+              Qui iste consectetur earum in sequi aut eveniet.
             </a>
           </div>
         </div>
@@ -7767,7 +8107,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
           </span>
           <span>
             <span>
-              3 h ago
+              3 hours ago
             </span>
           </span>
         </div>
@@ -7826,7 +8166,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
         >
           <span>
             <span>
-              17 h ago
+              21 hours ago
             </span>
           </span>
         </div>
@@ -7839,7 +8179,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
               onClick={[Function]}
               style={Object {}}
             >
-              Iste consectetur earum in sequi aut.
+              Qui iste consectetur earum in sequi aut eveniet.
             </a>
           </div>
         </div>
@@ -7873,7 +8213,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
               onClick={[Function]}
               style={Object {}}
             >
-              Qui eos modi et autem qui porro deleniti atque.
+              Possimus qui eos modi et autem.
             </a>
           </div>
         </div>
@@ -7898,7 +8238,7 @@ exports[`Storyshots TableComponents Title cell 1`] = `
               onClick={[Function]}
               style={Object {}}
             >
-              Accusantium esse quidem dolores debitis id dolorem.
+              Id accusantium esse quidem dolores debitis id dolorem.
             </a>
           </div>
           <div
@@ -7935,14 +8275,14 @@ exports[`Storyshots TableComponents Title cell 1`] = `
 
 exports[`Storyshots TableFrame Category sidebar 1`] = `
 <div
-  className="sidebar_6dxlxl"
+  className="sidebar_1vvwbmm-o_O-sidebarFloating_1yfus1e"
 >
   <div
-    className="sidebarHeader_sd2vav"
+    className="sidebarHeader_1h0epkd"
   >
     <svg
       aria-hidden="true"
-      className="MuiSvgIcon-root-10 sidebarHeaderIcon_14cmr06"
+      className="MuiSvgIcon-root-10 sidebarHeaderIcon_b5h1me"
       focusable="false"
       role="presentation"
       style={
@@ -7961,692 +8301,812 @@ exports[`Storyshots TableFrame Category sidebar 1`] = `
       />
     </svg>
     <span
-      className="verticalCenterText_1szrqxt"
+      className="verticalCenterText_ltahgl"
     >
       Algernon Bullwinkle the Third
     </span>
   </div>
   <div
-    className="sidebarBar_1jf9hx7"
+    className="sidebarBar_wh3v8t"
   />
   <div
-    className="sidebarRow_1ucwgiw-o_O-sidebarRowHeader_1u2qebd"
+    className="sidebarRow_1e4ftmk-o_O-sidebarRowHeader_v9e76j-o_O-sidebarChunk_1eaes69"
   >
     <div
-      className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      className="sidebarRowInner_c9pnan"
     >
-      Section
-    </div>
-    <div
-      className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-    >
-      New comments
+      <span
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+      >
+        Section
+      </span>
+      <span
+        className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+      >
+        New comments
+      </span>
     </div>
   </div>
   <div
-    className="sidebarRow_1ucwgiw"
-    style={Object {}}
+    className="sidebarScrollArea_5pb9jx"
   >
     <div
-      className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      className="sidebarRow_1e4ftmk"
     >
-      <a
-        className="cellLink_18xp2pq"
-        onClick={[Function]}
+      <div
+        className="sidebarRowInner_c9pnan"
         style={Object {}}
       >
-        All
-      </a>
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            Home / All
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          4128
+        </div>
+      </div>
     </div>
     <div
-      className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      className="sidebarRow_1e4ftmk"
     >
-      4128
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            eligendi rerum
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          10
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            et laudantium
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          2
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            N.Y.C. Events Guide
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          15
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan-o_O-sidebarRowSelected_v8v2mc"
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            ChuChu TV Nursery Rhymes & Kids Songs
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          2
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            ChuChu TV Nursery Rhymes & Kids Songs
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          2999
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            voluptatem dolores
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          1000
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            nobis et
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          100
+        </div>
+      </div>
     </div>
   </div>
   <div
-    style={
-      Object {
-        "maxHeight": "80vh",
-        "overflowY": "auto",
-      }
-    }
-  >
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          eligendi rerum
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        10
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          et laudantium
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        2
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          N.Y.C. Events Guide
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        15
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw-o_O-sidebarRowSelected_odsq2k"
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          ChuChu TV Nursery Rhymes & Kids Songs
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        2
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          ChuChu TV Nursery Rhymes & Kids Songs
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        2999
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          voluptatem dolores
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        1000
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          nobis et
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        100
-      </div>
-    </div>
-  </div>
+    className="sidebarFooter_wx7mud"
+  />
 </div>
 `;
 
 exports[`Storyshots TableFrame Category sidebar overlay 1`] = `
 <div
-  className="sidebar_6dxlxl"
+  className="sidebar_1vvwbmm-o_O-sidebarFloating_1yfus1e"
 >
   <div
-    className="sidebarHeader_sd2vav"
+    className="sidebarHeader_1h0epkd"
     onClick={[Function]}
   >
     <img
       alt="Your image"
-      className="sidebarHeaderIcon_14cmr06"
+      className="sidebarHeaderIcon_b5h1me"
       src="https://s3.amazonaws.com/uifaces/faces/twitter/nvkznemo/128.jpg"
     />
     <span
-      className="verticalCenterText_1szrqxt"
+      className="verticalCenterText_ltahgl"
     >
       Edison Keebler
     </span>
   </div>
   <div
-    className="sidebarBar_1jf9hx7"
+    className="sidebarBar_wh3v8t"
   />
   <div
-    className="sidebarRow_1ucwgiw-o_O-sidebarRowHeader_1u2qebd"
+    className="sidebarRow_1e4ftmk-o_O-sidebarRowHeader_v9e76j-o_O-sidebarChunk_1eaes69"
   >
     <div
-      className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      className="sidebarRowInner_c9pnan"
     >
-      Section
-    </div>
-    <div
-      className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-    >
-      New comments
+      <span
+        className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+      >
+        Section
+      </span>
+      <span
+        className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+      >
+        New comments
+      </span>
     </div>
   </div>
   <div
-    className="sidebarRow_1ucwgiw"
-    style={Object {}}
+    className="sidebarScrollArea_5pb9jx"
   >
     <div
-      className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
+      className="sidebarRow_1e4ftmk"
     >
-      <a
-        className="cellLink_18xp2pq"
-        onClick={[Function]}
+      <div
+        className="sidebarRowInner_c9pnan"
         style={Object {}}
       >
-        All
-      </a>
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            Home / All
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          1333
+        </div>
+      </div>
     </div>
     <div
-      className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
+      className="sidebarRow_1e4ftmk"
     >
-      1333
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            in nisi
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          10
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            qui quia
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          2
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan-o_O-sidebarRowSelected_v8v2mc"
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            N.Y.C. Events Guide
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          15
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            ChuChu TV Nursery Rhymes & Kids Songs
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          2
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            eligendi in
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          1000
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            id harum
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          100
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            odio quia
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          10
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            provident quo
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          12
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            molestiae harum
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          13
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            pariatur quos
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          14
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            quod laborum
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          15
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            quisquam esse
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          16
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            expedita commodi
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          17
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            tempora ut
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          18
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            doloribus harum
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          19
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            sunt omnis
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          12
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            accusantium et
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          22
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            quos sequi
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          11
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            beatae enim
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          15
+        </div>
+      </div>
+    </div>
+    <div
+      className="sidebarRow_1e4ftmk"
+    >
+      <div
+        className="sidebarRowInner_c9pnan"
+        style={Object {}}
+      >
+        <div
+          className="sidebarSection_3hmsj-o_O-verticalCenterText_ltahgl"
+        >
+          <a
+            className="cellLink_18xp2pq"
+            onClick={[Function]}
+            style={Object {}}
+          >
+            molestiae placeat
+          </a>
+        </div>
+        <div
+          className="sidebarCount_1kf729x-o_O-verticalCenterText_ltahgl"
+        >
+          10
+        </div>
+      </div>
     </div>
   </div>
   <div
-    style={
-      Object {
-        "maxHeight": "80vh",
-        "overflowY": "auto",
-      }
-    }
-  >
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          in nisi
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        10
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          qui quia
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        2
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw-o_O-sidebarRowSelected_odsq2k"
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          N.Y.C. Events Guide
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        15
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          ChuChu TV Nursery Rhymes & Kids Songs
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        2
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          eligendi in
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        1000
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          id harum
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        100
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          odio quia
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        10
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          provident quo
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        12
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          molestiae harum
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        13
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          pariatur quos
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        14
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          quod laborum
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        15
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          quisquam esse
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        16
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          expedita commodi
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        17
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          tempora ut
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        18
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          doloribus harum
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        19
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          sunt omnis
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        12
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          accusantium et
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        22
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          quos sequi
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        11
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          beatae enim
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        15
-      </div>
-    </div>
-    <div
-      className="sidebarRow_1ucwgiw"
-      style={Object {}}
-    >
-      <div
-        className="sidebarSection_3hmsj-o_O-verticalCenterText_1szrqxt"
-      >
-        <a
-          className="cellLink_18xp2pq"
-          onClick={[Function]}
-          style={Object {}}
-        >
-          molestiae placeat
-        </a>
-      </div>
-      <div
-        className="sidebarCount_qnqyqt-o_O-verticalCenterText_1szrqxt"
-      >
-        10
-      </div>
-    </div>
-  </div>
+    className="sidebarFooter_wx7mud"
+  />
 </div>
 `;
 
@@ -8697,41 +9157,6 @@ exports[`Storyshots TableFrame Header bar for admin 1`] = `
         className="headerText_15rdwd1"
       >
         Search
-      </div>
-    </a>
-  </div>
-  <div
-    className="headerItem_1jbm8jy"
-  >
-    <a
-      aria-label="Settings"
-      className="headerLink_15571tc"
-      onClick={[Function]}
-      style={Object {}}
-    >
-      <div>
-        <svg
-          aria-hidden="true"
-          className="MuiSvgIcon-root-28"
-          focusable="false"
-          role="presentation"
-          viewBox="0 0 24 24"
-        >
-          <path
-            d="M0 0h20v20H0V0z"
-            fill="none"
-            transform="scale(1.2, 1.2)"
-          />
-          <path
-            d="M15.95 10.78c.03-.25.05-.51.05-.78s-.02-.53-.06-.78l1.69-1.32c.15-.12.19-.34.1-.51l-1.6-2.77c-.1-.18-.31-.24-.49-.18l-1.99.8c-.42-.32-.86-.58-1.35-.78L12 2.34c-.03-.2-.2-.34-.4-.34H8.4c-.2 0-.36.14-.39.34l-.3 2.12c-.49.2-.94.47-1.35.78l-1.99-.8c-.18-.07-.39 0-.49.18l-1.6 2.77c-.1.18-.06.39.1.51l1.69 1.32c-.04.25-.07.52-.07.78s.02.53.06.78L2.37 12.1c-.15.12-.19.34-.1.51l1.6 2.77c.1.18.31.24.49.18l1.99-.8c.42.32.86.58 1.35.78l.3 2.12c.04.2.2.34.4.34h3.2c.2 0 .37-.14.39-.34l.3-2.12c.49-.2.94-.47 1.35-.78l1.99.8c.18.07.39 0 .49-.18l1.6-2.77c.1-.18.06-.39-.1-.51l-1.67-1.32zM10 13c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"
-            transform="scale(1.2, 1.2)"
-          />
-        </svg>
-      </div>
-      <div
-        className="headerText_15rdwd1"
-      >
-        Settings
       </div>
     </a>
   </div>
@@ -9106,30 +9531,26 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                   over X years
                    ago 
                 </span>
-                <span
-                  style={
-                    Object {
-                      "textDecoration": "none",
-                    }
-                  }
-                >
-                  • 
-                  1
-                   Flag
-                   
-                </span>
-                <span
-                  style={
-                    Object {
-                      "textDecoration": "none",
-                    }
-                  }
-                >
-                  • 
-                  20
-                   Recommendation
-                  s
-                   
+                <span>
+                  • Flags: 
+                  <span>
+                    unresolved: 
+                    1
+                  </span>
+                   
+                  <span>
+                    red
+                    : 
+                    1
+                  </span>
+                   
+                  <span>
+                    green
+                    : 
+                    2
+                  </span>
+                   
+                  
                 </span>
               </div>
               <div
@@ -9318,31 +9739,26 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                     over X years
                      ago 
                   </span>
-                  <span
-                    style={
-                      Object {
-                        "textDecoration": "none",
-                      }
-                    }
-                  >
-                    • 
-                    2
-                     Flag
-                    s
-                     
-                  </span>
-                  <span
-                    style={
-                      Object {
-                        "textDecoration": "none",
-                      }
-                    }
-                  >
-                    • 
-                    5
-                     Recommendation
-                    s
-                     
+                  <span>
+                    • Flags: 
+                    <span>
+                      unresolved: 
+                      2
+                    </span>
+                     
+                    <span>
+                      green
+                      : 
+                      2
+                    </span>
+                     
+                    <span>
+                      red
+                      : 
+                      1
+                    </span>
+                     
+                    
                   </span>
                 </div>
                 <div
@@ -9535,29 +9951,22 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                     over X years
                      ago 
                   </span>
-                  <span
-                    style={
-                      Object {
-                        "textDecoration": "none",
-                      }
-                    }
-                  >
-                    • 
-                    1
-                     Flag
-                     
-                  </span>
-                  <span
-                    style={
-                      Object {
-                        "textDecoration": "none",
-                      }
-                    }
-                  >
-                    • 
-                    1
-                     Recommendation
-                     
+                  <span>
+                    • Flags: 
+                    <span>
+                      unresolved: 
+                      1
+                    </span>
+                     
+                    <span>
+                      green
+                      : 
+                      2
+                    </span>
+                     
+                    
+                     
+                    ...
                   </span>
                 </div>
                 <div
@@ -9747,18 +10156,22 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                     over X years
                      ago 
                   </span>
-                  <span
-                    style={
-                      Object {
-                        "textDecoration": "none",
-                      }
-                    }
-                  >
-                    • 
-                    20
-                     Flag
-                    s
-                     
+                  <span>
+                    • Flags: 
+                    <span>
+                      unresolved: 
+                      20
+                    </span>
+                     
+                    
+                     
+                    <span>
+                      green
+                      : 
+                      15
+                    </span>
+                     
+                    ...
                   </span>
                 </div>
                 <div

@@ -15,12 +15,22 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+
 import { sequelize } from '../sequelize';
+import { Comment } from './comment';
+import { User } from './user';
 
 export interface ICommentFlagAttributes {
   id?: number;
+  label: string;
+  detail?: string;
+  isRecommendation: boolean;
   commentId: number;
   sourceId?: string;
+  authorSourceId?: string;
+  isResolved: boolean;
+  resolvedById?: number;
+  resolvedAt?: Date | string;
   extra?: any;
 }
 
@@ -40,8 +50,52 @@ export const CommentFlag = sequelize.define<ICommentFlagInstance, ICommentFlagAt
     autoIncrement: true,
   },
 
+  label: {
+    type: Sequelize.CHAR(80),
+    allowNull: false,
+  },
+
+  detail: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
+
+  isRecommendation: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
+
+  commentId: {
+    type: Sequelize.BIGINT.UNSIGNED,
+    references: { model: Comment, key: 'id' },
+    onDelete: 'cascade',
+    onUpdate: 'cascade',
+  },
+
   sourceId: {
     type: Sequelize.CHAR(255),
+    allowNull: true,
+  },
+
+  authorSourceId: {
+    type: Sequelize.CHAR(255),
+    allowNull: true,
+  },
+
+  isResolved: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
+
+  resolvedById: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: true,
+    references: { model: User, key: 'id' },
+    onDelete: 'set null',
+  },
+
+  resolvedAt: {
+    type: Sequelize.DATE,
     allowNull: true,
   },
 
@@ -50,6 +104,7 @@ export const CommentFlag = sequelize.define<ICommentFlagInstance, ICommentFlagAt
     allowNull: true,
   },
 }, {
+  charset: 'utf8',
   classMethods: {
     associate(models: any) {
       CommentFlag.belongsTo(models.Comment, {

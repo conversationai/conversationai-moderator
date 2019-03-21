@@ -31,7 +31,11 @@ import { COMMON_STYLES, ICON_STYLES } from './styles';
 
 export interface IMagicTimestampProps {
   timestamp: string;
-  inFuture: boolean;
+  inFuture?: boolean;
+}
+
+function maybeS(val: number) {
+  return val > 1 ? 's' : '';
 }
 
 export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
@@ -51,7 +55,7 @@ export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
     let redrawIn = 0;
     let isRelative = true;
 
-    if (diff < 0 || diff > 60 * 60 * 24) {
+    if (diff < 0 || diff > 60 * 60 * 24 * 7) {
       // Just use the date
       const monthNames = [
         'Jan', 'Feb', 'March',
@@ -71,8 +75,8 @@ export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
       isRelative = false;
     }
     else if (diff < 60) {
-      text = `${diff} s`;
-      redrawIn = 1;
+      text = `a few seconds`;
+      redrawIn = 60 - diff;
     }
     else if (diff < 60 * 60) {
       const mins = Math.floor(diff / 60);
@@ -82,7 +86,7 @@ export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
       else {
         redrawIn = (mins + 1) * 60 - diff + 1;
       }
-      text = `${mins} m`;
+      text = `${mins} minute${maybeS(mins)}`;
     }
     else if (diff < 60 * 60 * 24) {
       const hours = Math.floor(diff / 60 / 60);
@@ -92,7 +96,7 @@ export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
       else {
         redrawIn = (hours + 1) * 60 * 60 - diff + 1;
       }
-      text = `${hours} h`;
+      text = `${hours} hour${maybeS(hours)}`;
     }
     else if (diff < 60 * 60 * 24 * 7) {
       const days = Math.floor(diff / 60 / 60 / 24);
@@ -102,7 +106,7 @@ export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
       else {
         redrawIn = (days + 1) * 60 * 60 - diff + 1;
       }
-      text = `${days} days`;
+      text = `${days} day${maybeS(days)}`;
     }
 
     if (redrawIn > 0 && !this.timeoutId) {

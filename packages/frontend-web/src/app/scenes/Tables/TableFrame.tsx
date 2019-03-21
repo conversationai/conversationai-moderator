@@ -163,6 +163,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     const {
       user,
       categories,
+      isAdmin,
     } = this.props;
 
     return (
@@ -175,6 +176,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
               selectedCategory={category}
               hideSidebar={this.hideSidebar}
               selectMine={selectMine}
+              isAdmin={isAdmin}
             />
           </div>
         </FocusTrap>
@@ -206,21 +208,24 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     if (this.state.fixedSidebar) {
       return (
         <div style={{width: '100vw', height: '100vh'}}>
-          <div style={{float: 'left', width: `${SIDEBAR_WIDTH}px`}}>
-            <CategorySidebar
-              user={user}
-              categories={categories}
-              selectedCategory={category}
-              selectMine={isMe}
-            />
+          <HeaderBar
+            isMe={isMe}
+            category={category}
+            logout={this.logout}
+          />
+          <div style={{float: 'left', width: `${SIDEBAR_WIDTH + 1}px`, backgroundColor: 'white'}}>
+            <div style={{width: `${SIDEBAR_WIDTH}px`, borderRight: '1px solid rgba(0,0,0,0.12)'}}>
+              <CategorySidebar
+                user={user}
+                categories={categories}
+                selectedCategory={category}
+                selectMine={isMe}
+                isAdmin={isAdmin}
+                isFixed
+              />
+            </div>
           </div>
-          <div style={{marginLeft: `${SIDEBAR_WIDTH}px`}}>
-            <HeaderBar
-              isAdmin={isAdmin}
-              isMe={isMe}
-              category={category}
-              logout={this.logout}
-            />
+          <div style={{marginLeft: `${SIDEBAR_WIDTH + 1}px`}}>
             <div key="content">
               {this.props.children}
             </div>
@@ -232,7 +237,6 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     return (
       <div>
         <HeaderBar
-          isAdmin={isAdmin}
           isMe={isMe}
           category={category}
           showSidebar={this.showSidebar}

@@ -42,8 +42,13 @@ const LastUpdate = sequelize.define<ILastUpdateInstance, ILastUpdateAttributes>(
   },
 });
 
+interface IInterestListener {
+  updateHappened(): Promise<void>;
+  partialUpdateHappened(articleId: number): Promise<void>;
+}
+
 let lastUpdateLocal = 0;
-let interested: Array<() => void> = [];
+let interested: Array<IInterestListener> = [];
 let intervalHandle: NodeJS.Timer|null = null;
 
 async function getInstance() {
@@ -54,27 +59,33 @@ async function getInstance() {
   return await LastUpdate.create({id: 1, lastUpdate: 1});
 }
 
-function notifyInterested() {
-  for (const i of interested) {
-    i();
-  }
-}
-
-export async function updateHappened() {
+async function updateLastUpdate() {
   const instance = await getInstance();
   lastUpdateLocal = instance.get('lastUpdate') + 1;
   instance.set('lastUpdate', lastUpdateLocal);
   await instance.save();
-  notifyInterested();
+}
+export async function partialUpdateHappened(articleId: number) {
+  await updateLastUpdate();
+  for (const i of interested) {
+    await i.partialUpdateHappened(articleId);
+  }
 }
 
-export function registerInterest(onChange: () => void, testing = false) {
+export async function updateHappened() {
+  await updateLastUpdate();
+  for (const i of interested) {
+    i.updateHappened();
+  }
+}
+
+export function registerInterest(interestListener: IInterestListener, testing = false) {
   if (!testing && !intervalHandle) {
     // Poll every minute
     intervalHandle = setInterval(maybeNotifyInterested, 60000);
   }
 
-  interested.push(onChange);
+  interested.push(interestListener);
 }
 
 // Exporting for test purposes, but should really be unexported
@@ -83,7 +94,9 @@ export async function maybeNotifyInterested() {
   const lastUpdate = instance.get('lastUpdate');
   if (lastUpdate !== lastUpdateLocal) {
     lastUpdateLocal = lastUpdate;
-    notifyInterested();
+    for (const i of interested) {
+      i.updateHappened();
+    }
   }
 }
 

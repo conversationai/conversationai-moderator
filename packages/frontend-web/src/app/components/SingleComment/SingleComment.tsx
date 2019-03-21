@@ -20,6 +20,7 @@ import { List } from 'immutable';
 import React from 'react';
 import {
   IAuthorCountsModel,
+  ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
   ICommentSummaryScoreModel,
@@ -28,6 +29,7 @@ import {
 } from '../../../models';
 import { DATE_FORMAT_LONG } from '../../config';
 import { editAndRescoreComment } from '../../platform/dataService';
+import { FlagsSummary } from '../../scenes/Comments/components/FlagsSummary';
 import { ICommentSummaryScore } from '../../stores/commentSummaryScores';
 import {
   ARTICLE_CATEGORY_TYPE,
@@ -394,12 +396,6 @@ const COMMENT_STYLES = stylesheet({
     textTransform: 'uppercase',
   },
 
-  recommendations: {
-    ...ARTICLE_CATEGORY_TYPE,
-    color: DARK_TERTIARY_TEXT_COLOR,
-    textTransform: 'uppercase',
-  },
-
   body: {
     ...COMMENT_DETAIL_BODY_TEXT_TYPE,
     color: DARK_PRIMARY_TEXT_COLOR,
@@ -454,12 +450,37 @@ const COMMENT_STYLES = stylesheet({
   },
 });
 
+const FLAGS_STYLES = stylesheet({
+  title: {
+    ...CAPTION_TYPE,
+    color: DARK_SECONDARY_TEXT_COLOR,
+    fontSize: '20px',
+  },
+  entry: {
+    padding: '10px',
+    margin: '10px 0',
+    backgroundColor: '#eee',
+  },
+  label: {
+    fontSize: '24px',
+  },
+  resolvedText: {
+    color: DARK_TERTIARY_TEXT_COLOR,
+    fontSize: '16px',
+    float: 'right',
+  },
+  detail: {
+    fontSize: '14px',
+  },
+});
+
 export interface ISingleCommentProps {
   comment: ICommentModel;
   allScores?: List<ICommentScoreModel>;
   allScoresAboveThreshold?: List<ICommentScoreModel>;
   reducedScoresAboveThreshold?: List<ICommentScoreModel>;
   reducedScoresBelowThreshold?: List<ICommentScoreModel>;
+  flags?: List<ICommentFlagModel>;
   isThreadedComment?: boolean;
   isReply?: boolean;
   allTags?: List<ITagModel>;
@@ -613,6 +634,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       allScoresAboveThreshold,
       reducedScoresAboveThreshold,
       reducedScoresBelowThreshold,
+      flags,
       availableTags,
       allTags,
       onTagButtonClick,
@@ -650,6 +672,25 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
 
     const bodyStyling = css(COMMENT_STYLES.body);
     const className = bodyStyling.className ? bodyStyling.className + ' comment-body' : 'comment-body';
+
+    function renderFlag(f: ICommentFlagModel) {
+      let resolvedText = '';
+      if (f.isResolved) {
+        resolvedText += 'Resolved';
+        if (f.resolvedAt) {
+          resolvedText += ' on ' + (new Date(f.resolvedAt)).toLocaleDateString();
+        }
+      }
+      else {
+        resolvedText += 'Unresolved';
+      }
+      return (
+        <div key={f.id} {...css(FLAGS_STYLES.entry)}>{resolvedText}
+          <div key="label" {...css(FLAGS_STYLES.label)}>{f.label} <span {...css(FLAGS_STYLES.resolvedText)}>{resolvedText}</span></div>
+          {f.detail && <div key="description" {...css(FLAGS_STYLES.detail)}>{f.detail}</div>}
+        </div>
+      );
+    }
 
     return (
       <div {...css(isThreadedComment && isReply && STYLES.threaded)}>
@@ -840,16 +881,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               ) : (
                 <span key="submittedAt">{SUBMITTED_AT} </span>
               )}
-              {comment.flaggedCount > 0 && (
-                <span key="flaggedCount">
-                  &bull; {comment.flaggedCount} Flag{comment.flaggedCount > 1 ? 's' : null}
-                </span>
-              )}
-              {comment.recommendedCount > 0 && (
-                <span key="recommendedCount">
-                  &bull; {comment.recommendedCount} Recommendation{comment.recommendedCount > 1 ? 's' : null}
-                </span>
-              )}
+              <FlagsSummary comment={comment} full/>
             </div>
           </div>
           <style>{COMMENT_BODY_STYLES}</style>
@@ -953,6 +985,12 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
             >
               {scoresBelowThresholdVisible ? 'Hide tags' : 'View all tags'}
             </button>
+          )}
+          {flags && flags.size > 0 && (
+            <div key="flags">
+              <div key="__flags-title" {...css(FLAGS_STYLES.title)}>Flags</div>
+              {flags.map((f) => renderFlag(f))}
+            </div>
           )}
         </div>
       </div>

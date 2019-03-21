@@ -17,7 +17,7 @@ limitations under the License.
 import React from 'react';
 import { Link } from 'react-router';
 
-import { Menu, Person, Search, Settings } from '@material-ui/icons';
+import { Menu, Person, Search } from '@material-ui/icons';
 
 import { ICategoryModel } from '../../../models';
 import {
@@ -26,7 +26,7 @@ import {
   NICE_MIDDLE_BLUE,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import { searchLink, settingsLink } from '../routes';
+import { searchLink } from '../routes';
 
 const STYLES = stylesheet({
   header: {
@@ -84,7 +84,6 @@ const STYLES = stylesheet({
 
 export interface IHeaderBarProps {
   category?: ICategoryModel;
-  isAdmin?: boolean;
   isMe?: boolean;
   showSidebar?(): void;
   logout(): void;
@@ -111,7 +110,6 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
 
     const {
       category,
-      isAdmin,
       showSidebar,
       logout,
     } = this.props;
@@ -138,7 +136,6 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
         {/*{renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}*/}
         <div key="spacer" style={{flexGrow: 1}}/>
         {renderHeaderItem(<Search/>, 'Search', searchLink())}
-        {isAdmin && renderHeaderItem(<Settings/>, 'Settings', settingsLink())}
         <div key="logout" {...css(STYLES.headerItem)}>
           <div {...css(STYLES.headerLink)} aria-label="Logout" onClick={logout}>
             <div><Person/></div>

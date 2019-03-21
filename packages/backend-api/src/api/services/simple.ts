@@ -22,8 +22,17 @@ limitations under the License.
 import * as express from 'express';
 import { pick } from 'lodash';
 
-import { User, USER_GROUP_SERVICE } from '@conversationai/moderator-backend-core';
-import { createToken } from '@conversationai/moderator-backend-core';
+import {
+  Article,
+  User,
+  USER_GROUP_SERVICE,
+} from '@conversationai/moderator-backend-core';
+import {
+  createToken,
+  partialUpdateHappened,
+} from '@conversationai/moderator-backend-core';
+
+import { REPLY_SUCCESS } from '../constants';
 
 const userFields = ['id', 'name', 'email', 'group', 'isActive', 'extra'];
 
@@ -55,6 +64,26 @@ export function createSimpleRESTService(): express.Router {
 
     res.json({ users: userdata });
 
+    next();
+  });
+
+  router.post('/article/update/:id', async (req, res, next) => {
+    const articleId = parseInt(req.params.id, 10);
+    const a = await Article.findById(articleId);
+    a.set('isCommentingEnabled', req.body.isCommentingEnabled);
+    a.set('isAutoModerated', req.body.isAutoModerated);
+    a.save();
+
+    res.json(REPLY_SUCCESS);
+    partialUpdateHappened(articleId);
+    next();
+  });
+
+  router.get('/article/:id/text', async (req, res, next) => {
+    const articleId = parseInt(req.params.id, 10);
+    const a = await Article.findById(articleId);
+    const text = a.get('text');
+    res.json({text: text});
     next();
   });
 

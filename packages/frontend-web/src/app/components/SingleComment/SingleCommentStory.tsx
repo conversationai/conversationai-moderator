@@ -13,18 +13,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-import { List } from 'immutable';
+import faker from 'faker';
+import { fromJS, List } from 'immutable';
 
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 
 import { AuthorModelRecord, IAuthorModel, ITagModel } from '../../../models';
-import { fakeCommentModel, fakeTagModel } from '../../../models/fake';
+import { fakeCommentFlagModel, fakeCommentModel, fakeTagModel } from '../../../models/fake';
 import { css } from '../../utilx';
 import { SingleComment } from './SingleComment';
 
 const date = new Date(2016, 10, 30);
+
+faker.seed(789);
 
 const author = AuthorModelRecord({
   email: 'name@email.com',
@@ -37,9 +39,15 @@ const comment = fakeCommentModel({
   authorSourceId: 'test',
   author,
   sourceCreatedAt: date.toString(),
-  flaggedCount: 2,
-  recommendedCount: 5,
+  unresolvedFlagsCount: 2,
+  flagsSummary: new Map([['red', List([1, 0, 0])], ['green', List([2, 2, 2])]]),
 });
+
+const flags = fromJS([
+  fakeCommentFlagModel({label: 'red', isResolved: true, isRecommendation: false}),
+  fakeCommentFlagModel({label: 'green', isResolved: false, isRecommendation: true}),
+  fakeCommentFlagModel({label: 'green', isResolved: false, isRecommendation: true}),
+]);
 
 const availableTags = List<ITagModel>().push(fakeTagModel({}), fakeTagModel({}));
 
@@ -64,6 +72,7 @@ storiesOf('SingleComment', module)
         <div {...css(STORY_STYLES.detail)}>
           <SingleComment
             comment={comment}
+            flags={flags}
           />
         </div>
       </div>
@@ -75,6 +84,7 @@ storiesOf('SingleComment', module)
         <div {...css(STORY_STYLES.detail)}>
           <SingleComment
             comment={comment}
+            flags={flags}
             url="http://www.example.com/"
           />
         </div>
@@ -87,6 +97,7 @@ storiesOf('SingleComment', module)
         <div {...css(STORY_STYLES.detail)}>
           <SingleComment
             comment={comment}
+            flags={flags}
             commentEditingEnabled
             onUpdateCommentText={action('Updating Comment')}
           />
@@ -100,11 +111,11 @@ storiesOf('SingleComment', module)
         <div {...css(STORY_STYLES.detail)}>
           <SingleComment
             comment={comment}
+            flags={flags}
             availableTags={availableTags}
           />
         </div>
       </div>
     );
   })
-
-  ;
+;

@@ -105,7 +105,6 @@ storiesOf('TableFrame', module)
     function logout() { console.log('logout clicked'); }
     return (
       <HeaderBar
-        isAdmin
         logout={logout}
         category={singleCategory}
       />

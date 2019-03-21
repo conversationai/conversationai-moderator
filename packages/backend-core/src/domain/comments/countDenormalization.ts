@@ -16,23 +16,38 @@ limitations under the License.
 
 import {
   CommentFlag,
-  CommentRecommendation,
+  FLAGS_COUNT,
   ICommentInstance,
+  RECOMMENDATIONS_COUNT,
+  UNRESOLVED_FLAGS_COUNT,
 } from '../../models';
 
 export async function denormalizeCountsForComment(comment: ICommentInstance) {
-  const [
-    flaggedCount,
-    recommendedCount,
-  ] = await Promise.all([
-    CommentFlag.count({ where: { commentId: comment.id } }),
-    CommentRecommendation.count({ where: { commentId: comment.id } }),
-  ]);
+  let unresolvedFlagsCount = 0;
+  const flagsSummary: {[key: string]: Array<number>} = {};
 
-  const updatedComment = await comment.update({
-    flaggedCount,
-    recommendedCount,
+  const flags = await CommentFlag.findAll({ where: { commentId: comment.id } });
+
+  for (const f of flags) {
+    const flag = f.get();
+
+    if (!flagsSummary[flag.label]) {
+      flagsSummary[flag.label] = [0, 0, 0];
+    }
+
+    flagsSummary[flag.label][FLAGS_COUNT] += 1;
+
+    if (!flag.isResolved) {
+      unresolvedFlagsCount += 1;
+      flagsSummary[flag.label][UNRESOLVED_FLAGS_COUNT] += 1;
+    }
+    if (flag.isRecommendation) {
+      flagsSummary[flag.label][RECOMMENDATIONS_COUNT] += 1;
+    }
+  }
+
+  return await comment.update({
+    unresolvedFlagsCount,
+    flagsSummary,
   });
-
-  return Promise.resolve(updatedComment);
 }
