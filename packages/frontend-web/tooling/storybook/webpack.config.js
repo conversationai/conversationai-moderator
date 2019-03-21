@@ -14,13 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const webpack = require('webpack');
+module.exports = async (config) => {
+  config.module.rules.push({
+      test:/\.css$/,
+      use:['style-loader','css-loader']
+    });
+  config.resolve.alias['aphrodite'] =  'aphrodite/no-important';
 
-module.exports = {
-  resolve: {
-    extensions: [".js", ".jsx"],
-    alias: {
-      'aphrodite': 'aphrodite/no-important'
-    }
-  },
+  return config;
 };

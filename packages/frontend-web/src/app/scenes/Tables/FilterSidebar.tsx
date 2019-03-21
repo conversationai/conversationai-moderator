@@ -17,6 +17,9 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
 import React, { KeyboardEvent, SyntheticEvent } from 'react';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
@@ -77,6 +80,13 @@ const STYLES = stylesheet({
   filterSection: {
     borderTop: '2px solid #eee',
     padding: '20px',
+  },
+  filterSectionModeratorsTitle: {
+    borderTop: '2px solid #eee',
+    padding: '20px 20px 10px 20px',
+  },
+  filterSectionModerators: {
+    padding: '0 0 20px 20px',
   },
   filterSectionTitle: {
     padding: '20px',
@@ -162,6 +172,16 @@ export interface IIFilterSidebarState {
 const DATE_FILTER_RANGE = 'custom';
 
 export class FilterSidebar extends React.Component<IIFilterSidebarProps, IIFilterSidebarState> {
+  _scrollBarRef: PerfectScrollbar = null;
+
+  componentDidMount(): void {
+    // For some reason, we have to give the perfect scrollbar a kick once the sizes of everything is known.
+    // This is probably because we are in a flexbox.
+    setTimeout(() => {
+      (this._scrollBarRef as any).updateScroll();
+    }, 50);
+  }
+
   static unpackState(props: Readonly<IIFilterSidebarProps>): IIFilterSidebarState {
     const filter = props.filter;
     const moderatorFilterString = getFilterValue(filter, FILTER_MODERATORS);
@@ -350,8 +370,8 @@ export class FilterSidebar extends React.Component<IIFilterSidebarProps, IIFilte
         <td key="text" {...css({textAlign: 'left'})}>
           {u.name}
         </td>
-        <td key="toggle" {...css({textAlign: 'right'})}>
-          <Checkbox isSelected={this.state.moderatorFilterUsers.has(u.id)} onCheck={null}/>
+        <td key="toggle" {...css({textAlign: 'right', paddingRight: '20px'})}>
+          <Checkbox isSelected={this.state.moderatorFilterUsers.has(u.id)} onCheck={null} style={{display: 'inline-block'}}/>
         </td>
       </tr>
     );
@@ -425,28 +445,32 @@ export class FilterSidebar extends React.Component<IIFilterSidebarProps, IIFilte
           </Button>
           }
         </h4>
-        {moderatorFilterString !== FILTER_MODERATORS_ME &&
-        <div key="moderators" {...css(STYLES.filterSection, STYLES.filterSectionFlexible)}>
-          <h5 key="header" {...css(STYLES.filterHeading)}>
-            Moderators
-          </h5>
-          <table key="main" {...css({width: '100%', marginTop: '10px'})}>
-            <tbody>
-            <tr key="unassigned" onClick={this.setModeratorUnassigned}>
-              <td key="icon"/>
-              <td key="text" {...css({textAlign: 'left'})}>
-                No moderator assigned.
-              </td>
-              <td key="toggle" {...css({textAlign: 'right'})}>
-                <Checkbox isSelected={moderatorFilterString === FILTER_MODERATORS_UNASSIGNED} onCheck={null}/>
-              </td>
-            </tr>
-            {this.renderModerator(me)}
-            {others.map((u: IUserModel) => this.renderModerator(u))}
-            </tbody>
-          </table>
-        </div>
-        }
+        {moderatorFilterString !== FILTER_MODERATORS_ME && [
+          (<div key="moderatorTitle" {...css(STYLES.filterSectionModeratorsTitle, STYLES.filterSectionFixed)}>
+            <h5 key="header" {...css(STYLES.filterHeading)}>
+              Moderators
+            </h5>
+          </div>),
+          (<div key="moderators" {...css(STYLES.filterSectionModerators, STYLES.filterSectionFlexible)}>
+            <PerfectScrollbar ref={(ref) => { this._scrollBarRef = ref; }}>
+              <table key="main" {...css({width: '100%'})}>
+                <tbody>
+                <tr key="unassigned" onClick={this.setModeratorUnassigned}>
+                  <td key="icon"/>
+                  <td key="text" {...css({textAlign: 'left'})}>
+                    No moderator assigned.
+                  </td>
+                  <td key="toggle" {...css({textAlign: 'right', paddingRight: '20px'})}>
+                    <Checkbox isSelected={moderatorFilterString === FILTER_MODERATORS_UNASSIGNED} onCheck={null} style={{display: 'inline-block'}}/>
+                  </td>
+                </tr>
+                {this.renderModerator(me)}
+                {others.map((u: IUserModel) => this.renderModerator(u))}
+                </tbody>
+              </table>
+            </PerfectScrollbar>
+          </div>),
+        ]}
         <div key="title" {...css(STYLES.filterSection, STYLES.filterSectionFixed)}>
           <TextField
             label="Articles with titles that contain..."
