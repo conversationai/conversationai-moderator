@@ -38,7 +38,6 @@ import {
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
 import {
-  adjustTabCount,
   getSummaryScoresAboveThreshold,
   getTaggingSensitivitiesInCategory,
 } from '../../store';
@@ -137,8 +136,6 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: any): any {
         dispatch(moderationStatusMap[moderationAction](commentIds)),
 
     removeCommentScore: (idsToDispatch: Array<string>) => dispatch(removeCommentScore(idsToDispatch)),
-
-    adjustTabCount: ({ field, amount }: { field: string, amount: number }) => dispatch(adjustTabCount({ field, amount })),
 
     toggleSelectAll: () => dispatch(toggleSelectAll()),
 

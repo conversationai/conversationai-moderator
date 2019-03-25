@@ -49,7 +49,6 @@ import {
 import { getTaggableTags, getTags } from '../../../../stores/tags';
 import { getCurrentUser, getUser } from '../../../../stores/users';
 import {
-  adjustTabCount,
   getSummaryScoresAboveThreshold,
   getSummaryScoresBelowThreshold,
 } from '../../store';
@@ -137,8 +136,7 @@ type ICommentDetailDispatchProps = Pick<
   'rejectCommentSummaryScore' |
   'onCommentAction' |
   'onAnnotateComment' |
-  'onDeleteCommentTag' |
-  'onModerateStatusChange'
+  'onDeleteCommentTag'
 >;
 
 const AVAILABLE_ACTIONS: {
@@ -304,19 +302,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
 
     onDeleteCommentTag: (id: string, commentScoreId: string) => (
       dispatch(deleteCommentTag(id, commentScoreId))
-    ),
-
-    onModerateStatusChange: (shouldResetStatus: boolean) => (
-      Promise.all([
-        dispatch(adjustTabCount({
-          field: 'unmoderated',
-          amount: shouldResetStatus ? 1 : -1,
-        })),
-        dispatch(adjustTabCount({
-          field: 'moderated',
-          amount: shouldResetStatus ? -1 : 1,
-        })),
-      ])
     ),
   };
 }

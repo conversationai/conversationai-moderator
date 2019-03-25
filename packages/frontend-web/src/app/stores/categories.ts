@@ -37,6 +37,24 @@ export function getCategory(state: IAppStateRecord, categoryId: ModelId): ICateg
   return categories.get(index.get(categoryId));
 }
 
+export interface IGlobalCounts {
+  unmoderatedCount: number;
+  moderatedCount: number;
+}
+
+export function getGlobalCounts(state: IAppStateRecord): IGlobalCounts {
+  const categories: List<ICategoryModel> = state.getIn(DATA);
+  const counts: IGlobalCounts = {
+    unmoderatedCount: 0,
+    moderatedCount: 0,
+  };
+  for (const c of categories.toArray()) {
+    counts.unmoderatedCount += c.unmoderatedCount;
+    counts.moderatedCount += c.moderatedCount;
+  }
+  return counts;
+}
+
 export interface ICategoriesState {
   items: List<ICategoryModel>;
   index: Map<ModelId, number>;
@@ -51,7 +69,7 @@ const CategoriesStateFactory = makeTypedFactory<ICategoriesState, ICategoriesSta
 
 export const reducer = handleActions<ICategoriesStateRecord, List<ICategoryModel>| ICategoryModel>( {
   [categoriesLoaded.toString()]: (state: ICategoriesStateRecord, { payload }: Action<List<ICategoryModel>>) => {
-    const index = payload.map((v, i) => ([v.id, i]));
+    const index = Map<ModelId, number>(payload.map((v, i) => ([v.id, i])));
     return state
       .set('items', payload)
       .set('index', index);

@@ -16,18 +16,16 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { connect } from 'react-redux';
-import { InjectedRouter, withRouter } from 'react-router';
-import { provideHooks } from 'redial';
+import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { combineReducers } from 'redux-immutable';
 import { createStructuredSelector } from 'reselect';
-import { ICategoryModel, IUserModel } from '../../../models';
-import { IRedialLocals } from '../../../types';
-import { IAppState, IAppStateRecord } from '../../stores';
+import { IUserModel } from '../../../models';
+import { IAppStateRecord } from '../../stores';
 import { getArticle } from '../../stores/articles';
-import { getCategories, getCategory } from '../../stores/categories';
+import { getCategory, getGlobalCounts } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUserMap } from '../../stores/users';
-import { Comments as PureComments } from './Comments';
+import { Comments as PureComments, ICommentsProps } from './Comments';
 
 import {
   newCommentsReducer,
@@ -50,14 +48,7 @@ import { reducer as threadedCommentDetailReducer } from './components/ThreadedCo
 export { CommentDetail } from './components/CommentDetail';
 export { ThreadedCommentDetail } from './components/ThreadedCommentDetail';
 
-import {
-  getTabCountAdjustments,
-  resetTabCountAdjuster,
-  tabCountAdjustmentsReducer,
-} from './store';
-
 export const reducer: any = combineReducers({
-  tabCountAdjustments: tabCountAdjustmentsReducer,
   newComments: newCommentsReducer,
   moderatedComments: moderatedCommentsReducer,
   commentDetail: commentDetailReducer,
@@ -69,75 +60,22 @@ export const Comments = compose(
   connect(createStructuredSelector({
     user: getCurrentUser,
     isAdmin: getCurrentUserIsAdmin,
-    article: (state: IAppStateRecord, { params: { articleId }}: any) => getArticle(state, articleId),
-    category: (state: IAppStateRecord, { params }: any) => {
-      if (params.categoryId && params.categoryId !== 'all') {
+    article: (state: IAppStateRecord, { params: { articleId }}: ICommentsProps) => getArticle(state, articleId),
+    category: (state: IAppStateRecord, { params }: ICommentsProps) => {
+      if (params.articleId) {
+        return getArticle(state, params.articleId).category;
+      }
+      else if (params.categoryId && params.categoryId !== 'all') {
         return getCategory(state, params.categoryId);
       }
     },
-    unmoderatedCount: (state: IAppStateRecord, { params }: any) => {
-      const isArticleDetail = !!params.articleId;
-      const adjustment = getTabCountAdjustments(state).get('unmoderated');
-
-      let count;
-
-      if (isArticleDetail) {
-        const article = getArticle(state, params.articleId);
-        count = article ? article.unmoderatedCount : 0;
-      } else {
-        if (params.categoryId !== 'all') {
-          const category = getCategory(state, params.categoryId);
-          count = category ? category.unmoderatedCount : 0;
-        } else {
-          count = getCategories(state).reduce((sum: number, c: ICategoryModel) => sum + c.unmoderatedCount, 0);
-        }
-      }
-
-      return count + adjustment;
-    },
-    moderatedCount: (state: IAppStateRecord, { params }: any) => {
-      const isArticleDetail = !!params.articleId;
-      const adjustment = getTabCountAdjustments(state).get('moderated');
-
-      let count;
-
-      if (isArticleDetail) {
-        const article = getArticle(state, params.articleId);
-        count = article ? article.moderatedCount : 0;
-      } else {
-        if (params.categoryId !== 'all') {
-          const category = getCategory(state, params.categoryId);
-          count = category ? category.moderatedCount : 0;
-        } else {
-          count = getCategories(state).reduce((sum: number, c: ICategoryModel) => sum + c.moderatedCount, 0);
-        }
-      }
-
-      return count + adjustment;
-    },
-    moderators: (state: IAppStateRecord, { params }: any) => {
+    moderators: (state: IAppStateRecord, { params }: ICommentsProps) => {
       if (!params.articleId) { return List<IUserModel>(); }
 
       const article = getArticle(state, params.articleId);
       const usersMap = getUserMap(state);
       return List<IUserModel>(article.assignedModerators.map((userId) => usersMap.get(userId)));
     },
-
-    isArticleDetail: (_: any, { params }: any) => !!params.articleId,
-    isCommentDetail: (_: any, { params }: any) => !!params.commentId,
-    hideCommentHeader: (_: any, { params, routes }: any) => !!params.originatingCommentId || routes[3].path === 'tagselector',
-    hasSearchHeader: (_: any, { routes }: any) => {
-      return routes[1].path === 'search';
-    },
-    onAuthorSearchClick: (_: IAppState, { router }: { router: InjectedRouter }) => () => router.push('/search?searchByAuthor=true'),
-  })) as any,
-  provideHooks<IRedialLocals>({
-    fetch: ({ dispatch, params: { articleId, categoryId } }) => {
-      const isArticleDetail = !!articleId;
-
-      dispatch(resetTabCountAdjuster({
-        uid: isArticleDetail ? articleId : categoryId,
-      }));
-    },
-  }),
-)(PureComments) as any;
+    globalCounts: (state: IAppStateRecord) => getGlobalCounts(state),
+  })),
+)(PureComments);
