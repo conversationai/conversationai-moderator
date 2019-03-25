@@ -68,7 +68,7 @@ import {
 const STYLES = stylesheet({
   filter: {
     position: 'absolute',
-    top: '0',
+    bottom: '0',
     right: '0',
     height: `${window.innerHeight - HEADER_HEIGHT}px`,
     color: 'black',
