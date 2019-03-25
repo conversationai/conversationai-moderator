@@ -89,6 +89,7 @@ const CommentModelRecord = Record({
   article: null,
   replies: null,
   commentScores: null,
+  commentFlags: null,
   maxSummaryScore: null,
   maxSummaryScoreTagId: null,
 });
