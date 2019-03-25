@@ -31,6 +31,7 @@ import {
 } from '../../components';
 import { updateArticleModerators } from '../../platform/dataService';
 import { IAppDispatch } from '../../stores';
+import { IGlobalCounts } from '../../stores/categories';
 import {
   clearReturnSavedCommentRow,
 } from '../../util';
@@ -104,7 +105,6 @@ function makeTab(router: any, url: string, label: string, count: number) {
         style={{...ARTICLE_HEADER.tab, ...style}}
       />
     </Link>
-
   );
 }
 
@@ -113,14 +113,14 @@ export interface ICommentsProps extends WithRouterProps {
   article?: IArticleModel;
   category?: ICategoryModel;
   moderators?: List<IUserModel>;
-  isArticleDetail: boolean;
-  isCommentDetail: boolean;
-  hideCommentHeader: boolean;
-  unmoderatedCount: number;
-  moderatedCount: number;
+  globalCounts: IGlobalCounts;
 }
 
 export interface ICommentsState {
+  isArticleDetail: boolean;
+  isCommentDetail: boolean;
+  hideCommentHeader: boolean;
+  counts?: IGlobalCounts;
   isPreviewModalVisible?: boolean;
   isModeratorModalVisible?: boolean;
   homeIsFocused?: boolean;
@@ -132,6 +132,9 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
     isPreviewModalVisible: false,
     isModeratorModalVisible: false,
     homeIsFocused: false,
+    isArticleDetail: false,
+    isCommentDetail: false,
+    hideCommentHeader: false,
   };
 
   componentDidMount() {
@@ -140,6 +143,26 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
 
   componentWillUnmount() {
     keyboardJS.unbind('escape', this.onCloseClick);
+  }
+
+  static getDerivedStateFromProps(nextProps: ICommentsProps,  _prevState: ICommentsState) {
+    const {
+      articleId,
+      commentId,
+      originatingCommentId,
+    } = nextProps.params;
+
+    const counts =
+      nextProps.article ? nextProps.article :
+      nextProps.category ? nextProps.category :
+      nextProps.globalCounts;
+
+    return {
+      isArticleDetail: !!articleId,
+      isCommentDetail: !!commentId,
+      hideCommentHeader: !!originatingCommentId || nextProps.routes[3].path === 'tagselector',
+      counts,
+    };
   }
 
   @autobind
@@ -156,17 +179,23 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
     const {
       article,
       category,
-      children,
-      router,
       moderators,
+      router,
+      children,
+    } = this.props;
+
+    const {
       isArticleDetail,
       isCommentDetail,
       hideCommentHeader,
-      unmoderatedCount,
-      moderatedCount,
-    } = this.props;
-
-    const { isPreviewModalVisible, isModeratorModalVisible, homeIsFocused } = this.state;
+      isPreviewModalVisible,
+      isModeratorModalVisible,
+      homeIsFocused,
+      counts: {
+        unmoderatedCount,
+        moderatedCount,
+      },
+    } = this.state;
 
     const links = isArticleDetail
         ? [
@@ -232,7 +261,7 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
                   <AssignModerators
                     label="Assign a moderator"
                     moderatorIds={this.state.moderatorIds}
-                    superModeratorIds={this.props.article.category ? Set<ModelId>(this.props.article.category.assignedModerators) : null}
+                    superModeratorIds={this.props.category ? Set<ModelId>(this.props.category.assignedModerators) : null}
                     onAddModerator={this.onAddModerator}
                     onRemoveModerator={this.onRemoveModerator}
                     onClickDone={this.saveModeratorAssignmentModal}
@@ -358,5 +387,4 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
     updateArticleModerators(this.props.article.id, moderatorIds);
     this.closeModeratorAssignmentModal();
   }
-
 }

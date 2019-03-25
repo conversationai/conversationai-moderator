@@ -307,7 +307,6 @@ export interface ICommentDetailProps extends WithRouterProps {
   onCommentAction?(action: IConfirmationAction, idsToDispatch: Array<string>, userId: string): void;
   onTagComment?(ids: Array<string>, tagId: string, userId: string): void;
   onAnnotateComment?(id: string, tagId: string, start: number, end: number): void;
-  onModerateStatusChange?(shouldResetStatus: boolean): Promise<any>;
   authorCountById?(id: string | number): IAuthorCountsModel;
   getUserById?(id: string | number): IUserModel;
   currentUser: IUserModel;
@@ -971,7 +970,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
   @autobind
   async moderateComment(action: IModerationAction) {
-    const isModerated = this.props.comment.isModerated;
     const shouldResetAction = this.state.activeButtons && this.state.activeButtons.includes(action);
     const commentAction: IConfirmationAction = shouldResetAction ? 'reset' : action;
     this.setState({
@@ -984,7 +982,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
     await Promise.all([
       this.props.onCommentAction && this.props.onCommentAction(commentAction, [this.props.comment.id], this.props.currentUser.id),
-      (!isModerated || isModerated && shouldResetAction) && this.props.onModerateStatusChange && this.props.onModerateStatusChange(shouldResetAction),
       timeout(2000),
     ]);
 

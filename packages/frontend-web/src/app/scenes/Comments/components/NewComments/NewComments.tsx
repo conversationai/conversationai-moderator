@@ -278,7 +278,6 @@ export interface INewCommentsProps extends WithRouterProps {
   resetDragHandleScope?(): any;
   tagComments?(ids: Array<string>, tagId: string): any;
   dispatchAction?(action: ICommentAction, idsToDispatch: Array<string>): any;
-  adjustTabCount?({ field, amount }: { field: string, amount: number }): any;
   removeCommentScore?(idsToDispatch: Array<string>): any;
   toggleSelectAll?(): any;
   toggleSingleItem({ id }: { id: string }): any;
@@ -1042,16 +1041,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
     // remove these from the ui because they are now 'moderated'
     this.props.removeCommentScore(idsToDispatch);
-
-    this.props.adjustTabCount({
-      field: 'unmoderated',
-      amount: -idsToDispatch.length,
-    });
-
-    this.props.adjustTabCount({
-      field: 'moderated',
-      amount: idsToDispatch.length,
-    });
   }
 
   @autobind

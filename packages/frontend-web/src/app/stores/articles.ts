@@ -52,10 +52,10 @@ const StateFactory = makeTypedFactory<IArticlesState, IArticlesStateRecord>({
 
 const reducer = handleActions<IArticlesStateRecord, List<IArticleModel>| IArticleModel>( {
   [articlesLoaded.toString()]: (state: IArticlesStateRecord, { payload }: Action<List<IArticleModel>>) => {
-    const index = payload.map((v, i) => ([v.id, i]));
+    const index = Map<ModelId, number>(payload.map((v, i) => ([v.id, i])));
     return state
       .set('items', payload)
-      .set('index', Map(index));
+      .set('index', index);
   },
   [articleUpdated.toString()]: (state: IArticlesStateRecord, { payload }: Action<IArticleModel>) => {
     const index = state.get('index').get(payload.id);

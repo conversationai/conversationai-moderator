@@ -249,7 +249,6 @@ const LOADING_COMMENTS_MESSAGING = 'Loading comments.';
 const NO_COMMENTS_MESSAGING = 'No matching comments found.';
 
 export interface IModeratedCommentsProps extends WithRouterProps {
-  adjustTabCount?({ field, amount }: { field: string, amount: number }): any;
   commentIds: List<string>;
   allModeratedCommentIds: List<string>;
   isLoading: boolean;
@@ -851,7 +850,8 @@ export class ModeratedComments
         action,
         this.props.actionLabel,
       );
-    } else {
+    }
+    else {
       this.props.setCommentModerationStatusForCategory(
         ids,
         action,
@@ -859,22 +859,8 @@ export class ModeratedComments
       );
     }
 
-    // update new/moderated tabs
-    if (action === 'reset') {
-      this.props.adjustTabCount({
-        field: 'unmoderated',
-        amount: ids.length,
-      });
-
-      this.props.adjustTabCount({
-        field: 'moderated',
-        amount: -ids.length,
-      });
-    }
-
     // Send event
     await this.props.dispatchAction(action, ids);
-
   }
 
   @autobind

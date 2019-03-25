@@ -34,7 +34,6 @@ import {
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
 import {
-  adjustTabCount,
   getSummaryScoresAboveThreshold,
   getTaggingSensitivitiesInCategory,
 } from '../../store';
@@ -75,7 +74,6 @@ type IModeratedCommentsOwnProps = {};
 
 type IModeratedCommentsDispatchWithoutOverwriteProps = Pick<
   IModeratedCommentsProps,
-  'adjustTabCount' |
   'toggleSelectAll' |
   'toggleSingleItem' |
   'setCommentModerationStatusForArticle' |
@@ -231,8 +229,6 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
         dispatch(actionMap[action](idsToDispatch, userId)),
 
     toggleSelectAll: () => dispatch(toggleSelectAll()),
-
-    adjustTabCount: ({ field, amount }: { field: string, amount: number }) => dispatch(adjustTabCount({ field, amount })),
 
     toggleSingleItem: ({ id }: { id: string }) => dispatch(toggleSingleItem({ id })),
 

@@ -15,8 +15,6 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import {
   ITaggingSensitivityModel,
 } from '../../../models';
@@ -24,68 +22,6 @@ import { IAppStateRecord } from '../../stores';
 import { getArticle } from '../../stores/articles';
 import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
-
-const DATA_PREFIX = ['scenes', 'commentsIndex'];
-
-function makeTabCountAdjusterStore(): any {
-  type IResetTabCountAdjusterPayload = {
-    uid: string | number;
-  };
-  const resetTabCountAdjusterAction =
-    createAction<IResetTabCountAdjusterPayload>(`comments/RESET_TAB_COUNT_ADJUSTER`);
-
-  type IAdjustTabCountPayload = {
-    field: string;
-    amount: number;
-  };
-  const adjustTabCountAction =
-    createAction<IAdjustTabCountPayload>(`comments/ADJUST_TAB_COUNT`);
-
-  interface ITabAdjusterState {
-    uid: string | number;
-    unmoderated: number;
-    moderated: number;
-  }
-
-  interface ITabAdjusterStateRecord extends TypedRecord<ITabAdjusterStateRecord>, ITabAdjusterState {}
-
-  const StateFactory = makeTypedFactory<ITabAdjusterState, ITabAdjusterStateRecord>({
-    uid: null,
-    unmoderated: 0,
-    moderated: 0,
-  });
-
-  const initialState = StateFactory();
-
-  const reducer = handleActions<
-    ITabAdjusterStateRecord,
-    IResetTabCountAdjusterPayload | // resetTabCountAdjuster
-    IAdjustTabCountPayload          // adjustTabCount
-  >({
-    [resetTabCountAdjusterAction.toString()]: (state, { payload: { uid } }: Action<IResetTabCountAdjusterPayload>) => {
-      if (state.get('uid') === uid) { return state; }
-
-      return initialState.set('uid', uid);
-    },
-
-    [adjustTabCountAction.toString()]: (state, { payload: { field, amount } }: Action<IAdjustTabCountPayload>) => (
-      state.update(field, (v: number) => v + amount)
-    ),
-  }, initialState);
-
-  const DATA = [...DATA_PREFIX, 'tabCountAdjustments'];
-
-  function getTabCountAdjustmentsFromState(state: IAppStateRecord): ITabAdjusterStateRecord {
-    return state.getIn(DATA);
-  }
-
-  return {
-    reducer,
-    getTabCountAdjustments: getTabCountAdjustmentsFromState,
-    resetTabCountAdjuster: resetTabCountAdjusterAction,
-    adjustTabCount: adjustTabCountAction,
-  };
-}
 
 function aboveThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, score: ICommentSummaryScoreStateRecord): boolean {
   if (score.tagId === null) {
@@ -144,17 +80,3 @@ export function getTaggingSensitivitiesInCategory(
     ts.categoryId === categoryId || ts.categoryId === null
   )) as List<ITaggingSensitivityModel>;
 }
-
-const {
-  reducer: tabCountAdjustmentsReducer,
-  getTabCountAdjustments,
-  resetTabCountAdjuster,
-  adjustTabCount,
-} = makeTabCountAdjusterStore();
-
-export {
-  tabCountAdjustmentsReducer,
-  getTabCountAdjustments,
-  resetTabCountAdjuster,
-  adjustTabCount,
-};
