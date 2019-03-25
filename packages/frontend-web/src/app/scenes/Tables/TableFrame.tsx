@@ -225,10 +225,8 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
               />
             </div>
           </div>
-          <div style={{marginLeft: `${SIDEBAR_WIDTH + 1}px`}}>
-            <div key="content">
-              {this.props.children}
-            </div>
+          <div style={{marginLeft: `${SIDEBAR_WIDTH + 1}px`, height: '100%'}}>
+            {this.props.children}
           </div>
         </div>
       );
