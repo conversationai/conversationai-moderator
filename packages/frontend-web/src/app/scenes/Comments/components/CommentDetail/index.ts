@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Set } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
@@ -48,10 +47,6 @@ import {
 } from '../../../../stores/commentSummaryScores';
 import { getTaggableTags, getTags } from '../../../../stores/tags';
 import { getCurrentUser, getUser } from '../../../../stores/users';
-import {
-  getSummaryScoresAboveThreshold,
-  getSummaryScoresBelowThreshold,
-} from '../../store';
 import { updateCommentStateAction } from '../ModeratedComments/store';
 import { CommentDetail as PureCommentDetail, ICommentDetailProps } from './CommentDetail';
 import {
@@ -66,12 +61,8 @@ import {
   getPagingLink,
   getPagingSource,
   getPreviousCommentId,
-  getReducedScoresAboveThreshold,
-  getReducedScoresBelowThreshold,
   getScores,
-  getScoresAboveThreshold,
   getTaggingSensitivitiesInCategory,
-  getTaggingSensitivityForTag,
   loadComment,
   loadFlags,
   loadScores,
@@ -81,12 +72,6 @@ import {
 } from './store';
 
 export { reducer, storeCommentPagingOptions } from './store';
-
-// In case we move the router-related actions into here.
-// type ICommentDetailRouterProps = Pick<
-//   ICommentDetailProps,
-//   'router' | 'params' | 'location'
-// >;
 
 type ICommentDetailOwnProps = {
   categoryId: string;
@@ -101,14 +86,8 @@ type ICommentDetailStateProps = Pick<
   'isLoading' |
   'availableTags' |
   'allScores' |
-  'allScoresAboveThreshold' |
-  'reducedScoresAboveThreshold' |
-  'reducedScoresBelowThreshold' |
+  'taggingSensitivitiesInCategory' |
   'summaryScores' |
-  'summaryScoresAboveThreshold' |
-  'summaryScoresBelowThreshold' |
-  'getTagIdsAboveThresholdByCommentId' |
-  'getThresholdForTag' |
   'currentCommentIndex' |
   'nextCommentId' |
   'previousCommentId' |
@@ -151,75 +130,34 @@ const AVAILABLE_ACTIONS: {
 
 const mapStateToProps = createStructuredSelector({
   comment: getComment,
-
   isLoading: getIsLoading,
-
   allTags: getTags,
-
   availableTags: getTaggableTags,
-
-  allScores: (state: IAppState) => getScores(state),
-
-  allScoresAboveThreshold: (state: IAppState) => (
-      getScoresAboveThreshold(getTaggingSensitivitiesInCategory(state), getScores(state))),
-
-  reducedScoresAboveThreshold: (state: IAppStateRecord) =>
-      getReducedScoresAboveThreshold(getTaggingSensitivitiesInCategory(state), getScores(state)),
-
-  reducedScoresBelowThreshold: (state: IAppStateRecord) =>
-      getReducedScoresBelowThreshold(getTaggingSensitivitiesInCategory(state), getScores(state)),
-
-  flags: (state: IAppState) => getFlags(state),
-
-  getThresholdForTag: (state: IAppStateRecord) => (score: ICommentScoreModel) =>
-      getTaggingSensitivityForTag(getTaggingSensitivitiesInCategory(state), score),
-
-  summaryScoresAboveThreshold: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => {
-    return getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state),
-      getSummaryScoresById(state, ownProps.params.commentId),
-    );
-  },
-
-  summaryScoresBelowThreshold: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => {
-    return getSummaryScoresBelowThreshold(
-      getTaggingSensitivitiesInCategory(state),
-      getSummaryScoresById(state, ownProps.params.commentId),
-    );
-  },
+  allScores: getScores,
+  taggingSensitivitiesInCategory: getTaggingSensitivitiesInCategory,
+  flags: getFlags,
 
   summaryScores: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => {
     return getSummaryScoresById(state, ownProps.params.commentId);
   },
 
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord) => (id: string): Set<string> => {
-    if (!id || !getSummaryScoresById(state, id)) {
-      return;
-    }
-
-    return getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state),
-      getSummaryScoresById(state, id),
-    ).map((score) => score.tagId).toSet();
-  },
-
-  currentCommentIndex: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: any) => {
+  currentCommentIndex: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
     return getCurrentCommentIndex(state, pagingIdentifier, commentId);
   },
 
-  nextCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: any) => {
+  nextCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
     return getNextCommentId(state, pagingIdentifier, commentId);
   },
 
-  previousCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: any) => {
+  previousCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
     return getPreviousCommentId(state, pagingIdentifier, commentId);
   },
 
-  detailSource: (state: IAppStateRecord, { location: { query: { pagingIdentifier } } }: any) => {
+  detailSource: (state: IAppStateRecord, { location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
     return getPagingSource(state, pagingIdentifier);
   },
 
-  linkBackToList: (state: IAppStateRecord, { location: { query: { pagingIdentifier } } }: any) => {
+  linkBackToList: (state: IAppStateRecord, { location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
     return getPagingLink(state, pagingIdentifier);
   },
 

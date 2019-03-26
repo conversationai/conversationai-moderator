@@ -249,19 +249,14 @@ const LOADING_COMMENTS_MESSAGING = 'Loading comments.';
 const NO_COMMENTS_MESSAGING = 'No matching comments found.';
 
 export interface IModeratedCommentsProps extends WithRouterProps {
-  commentIds: List<string>;
-  allModeratedCommentIds: List<string>;
   isLoading: boolean;
-  params: any;
   getCurrentColumnSort(key: string): string;
-  actionLabel: string;
   tags: List<ITagModel>;
   moderatedComments: Map<string, List<number>>;
   isItemChecked(id: string): boolean;
   areNoneSelected?: boolean;
   areAllSelected: boolean;
   getLinkTarget(comment: ICommentModel): string;
-  urlPrefix: string;
   article?: IArticleModel;
   loadData?(categoryId: string, articleId: string, tag: string): void;
   tagComments?(ids: Array<string>, tagId: string): any;
@@ -285,11 +280,14 @@ export interface IModeratedCommentsProps extends WithRouterProps {
 }
 
 export interface IModeratedCommentsState {
+  commentIds?: List<string>;
+  allModeratedCommentIds?: List<string>;
   isConfirmationModalVisible?: boolean;
   confirmationAction?: IConfirmationAction;
   selectedItems?: any;
   currentSelect?: string;
   updateCounter?: number;
+  actionLabel: string;
   actionText?: string;
   actionCount?: number;
   toastButtonLabel?: 'Undo' | 'Remove rule';
@@ -309,7 +307,6 @@ export interface IModeratedCommentsState {
   taggingTooltipVisible?: boolean;
   taggingToolTipArrowPosition?: ArrowPosition;
   moderateButtonsRef?: HTMLDivElement;
-  loadedActionLabel?: string;
   loadedCategoryId?: string;
   loadedArticleId?: string;
   loadedTag?: string;
@@ -326,6 +323,7 @@ export class ModeratedComments
     selectedItems: [],
     currentSelect: BATCH_SELECT_BY_STATUS,
     updateCounter: 0,
+    actionLabel: '',
     actionText: '',
     actionCount: 0,
     toastButtonLabel: null,
@@ -360,11 +358,20 @@ export class ModeratedComments
         prevState.loadedTag !== nextProps.params.tag) {
       nextProps.loadData(nextProps.params.categoryId, nextProps.params.articleId, nextProps.params.tag);
     }
-    if (prevState.loadedActionLabel !== nextProps.actionLabel) {
-      nextProps.changeSort(getSortDefault(nextProps.actionLabel));
+
+    const actionLabel = nextProps.params.tag;
+    if (prevState.actionLabel !== actionLabel) {
+      nextProps.changeSort(getSortDefault(actionLabel));
     }
+
+    const commentIds = nextProps.moderatedComments.get(nextProps.params.tag);
+    const allModeratedCommentIds = nextProps.moderatedComments.reduce((sum, tagList) =>
+      sum.union(tagList.toSet()), Set());
+
     return {
-      loadedActionLabel: nextProps.actionLabel,
+      actionLabel,
+      commentIds,
+      allModeratedCommentIds,
       loadedCategoryId: nextProps.params.categoryId,
       loadedArticleId: nextProps.params.articleId,
       loadedTag: nextProps.params.tag,
@@ -374,21 +381,20 @@ export class ModeratedComments
   render() {
     const {
       isLoading,
-      actionLabel,
       isItemChecked,
       areNoneSelected,
       areAllSelected,
       tags,
       moderatedComments,
-      urlPrefix,
       getLinkTarget,
       textSizes,
-      commentIds,
-      allModeratedCommentIds,
       getTagIdsAboveThresholdByCommentId,
     } = this.props;
 
     const {
+      actionLabel,
+      commentIds,
+      allModeratedCommentIds,
       isConfirmationModalVisible,
       isTaggingToolTipMetaVisible,
       taggingToolTipMetaPosition,
@@ -397,6 +403,10 @@ export class ModeratedComments
       taggingCommentId,
       taggingToolTipArrowPosition,
     } = this.state;
+
+    const urlPrefix = this.props.params.articleId
+      ? `/articles/${this.props.params.articleId}/moderated`
+      : `/categories/${this.props.params.categoryId}/moderated`;
 
     const selectedIdsLength = moderatedComments && this.getSelectedIDs().length;
 
@@ -694,7 +704,7 @@ export class ModeratedComments
 
   @autobind
   getSelectedIDs(): Array<string> {
-    const { commentIds } = this.props;
+    const { commentIds } = this.state;
     const selectedIds = commentIds && commentIds.filter((id) => this.props.isItemChecked(id));
 
     return selectedIds ? selectedIds.toArray() : [];
@@ -848,14 +858,14 @@ export class ModeratedComments
       this.props.setCommentModerationStatusForArticle(
         ids,
         action,
-        this.props.actionLabel,
+        this.state.actionLabel,
       );
     }
     else {
       this.props.setCommentModerationStatusForCategory(
         ids,
         action,
-        this.props.actionLabel,
+        this.state.actionLabel,
       );
     }
 
@@ -886,7 +896,7 @@ export class ModeratedComments
 
   @autobind
   getSortOptions(): List<ITagModel> {
-    const { actionLabel } = this.props;
+    const { actionLabel } = this.state;
     // Flagged is a special cases that can have a count associated with it
     // as opposed to things like Approve and Reject which are binary.
     // Here we're adding additional sort options for just that tab.

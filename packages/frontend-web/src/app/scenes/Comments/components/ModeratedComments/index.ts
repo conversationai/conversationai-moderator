@@ -97,16 +97,12 @@ type IModeratedCommentsDispatchProps = IModeratedCommentsDispatchWithoutOverwrit
 
 type IModeratedCommentsStateProps = Pick<
   IModeratedCommentsProps,
-  'commentIds' |
-  'allModeratedCommentIds' |
   'isLoading' |
   'article' |
   'areNoneSelected' |
   'areAllSelected' |
   'isItemChecked' |
   'moderatedComments' |
-  'urlPrefix' |
-  'actionLabel' |
   'tags' |
   'getCurrentColumnSort' |
   'getLinkTarget' |
@@ -118,16 +114,6 @@ type IModeratedCommentsStatePropsWithUser = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  commentIds: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => {
-    return getModeratedComments(state, params).get(params.tag);
-  },
-
-  allModeratedCommentIds: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => {
-    return getModeratedComments(state, params)
-      .reduce((sum, tagList) => sum.union(tagList.toSet()), Set())
-      .toList();
-  },
-
   isLoading: (state: IAppStateRecord) => getCommentListIsLoading(state) || !getCommentListHasLoaded(state),
 
   article: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => {
@@ -145,14 +131,6 @@ const mapStateToProps = createStructuredSelector({
   moderatedComments: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => (
     getModeratedComments(state, params)
   ),
-
-  urlPrefix: (_: any, { params }: IModeratedCommentsRouterProps) => {
-    return !!params.articleId
-        ? `/articles/${params.articleId}/moderated`
-        : `/categories/${params.categoryId}/moderated`;
-  },
-
-  actionLabel: (_: any, { params }: IModeratedCommentsRouterProps) => params.tag,
 
   tags: getTaggableTags,
 
