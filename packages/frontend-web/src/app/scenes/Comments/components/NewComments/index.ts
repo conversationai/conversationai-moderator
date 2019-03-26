@@ -170,8 +170,6 @@ const mapStateToProps = createStructuredSelector({
     }
   },
 
-  isArticleDetail: (_: IAppStateRecord, { params }: INewCommentsRouterProps) => !!params.articleId,
-
   commentIds: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => (
     getCommentIDsInRange(
       getCommentScores(state),

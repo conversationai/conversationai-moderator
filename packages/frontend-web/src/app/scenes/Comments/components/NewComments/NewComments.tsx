@@ -259,7 +259,6 @@ const STYLES = stylesheet({
 
 export interface INewCommentsProps extends WithRouterProps {
   article?: IArticleModel;
-  isArticleDetail: boolean;
   commentIds: List<string>;
   commentScores: Set<ICommentScoredModel | ICommentDatedModel>;
   isLoading: boolean;
@@ -507,7 +506,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
   render() {
     const {
-      isArticleDetail,
       commentScores,
       textSizes,
       getLinkTarget,
@@ -592,7 +590,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
           }));
     }
 
-    const tagLinkURL = isArticleDetail ?
+    const tagLinkURL = this.props.params.articleId ?
         `/articles/${this.props.params.articleId}/tagselector?tagId=${selectedTag && selectedTag.id}` :
         `/categories/${this.props.params.categoryId}/tagselector?tagId=${selectedTag && selectedTag.id}`;
 
@@ -630,7 +628,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               </Link>
               <span aria-hidden="true" {...css(STYLES.arrow)} />
             </div>
-            { isArticleDetail && (
+            { this.props.params.articleId && (
               <label htmlFor="automatedRulesToggle" onClick={this.handleRulesAppliedClick}  {...css(STYLES.toggleLabel)}>
                 Automated Rules
                 <Toggle
