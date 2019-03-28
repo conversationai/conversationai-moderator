@@ -14,12 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { autobind } from 'core-decorators';
-import FocusTrap from 'focus-trap-react';
 import { List } from 'immutable';
-import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
 
+import {
+  Drawer,
+} from '@material-ui/core';
 import {
   createMuiTheme,
   MuiThemeProvider,
@@ -27,9 +28,7 @@ import {
 
 import { ICategoryModel, IUserModel } from '../../../models';
 import { logout } from '../../auth';
-import { Scrim } from '../../components/Scrim';
 import { NICE_CONTROL_BLUE } from '../../styles';
-import { css, stylesheet } from '../../utilx';
 import { CategorySidebar, SIDEBAR_WIDTH } from './CategorySidebar';
 import { HeaderBar } from './HeaderBar';
 import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
@@ -42,75 +41,6 @@ const theme = createMuiTheme({
   },
 });
 
-const STYLES = stylesheet({
-  categorybar: {
-    position: 'absolute',
-    top: '0',
-    bottom: '0',
-    left: `-${SIDEBAR_WIDTH}px`,
-    zIndex: 50,
-  },
-
-  slideout: {
-    left: 0,
-    animationName: {
-      from: {
-        left: `-${SIDEBAR_WIDTH}px`,
-      },
-      to: {
-        left: 0,
-      },
-    },
-    animationDuration: '0.3s',
-    animationTimingFunction: 'ease',
-    animationIterationCount: 1,
-  },
-
-  slidein: {
-    animationName: {
-      from: {
-        left: 0,
-      },
-      to: {
-        left: `-${SIDEBAR_WIDTH}px`,
-      },
-    },
-    animationDuration: '0.3s',
-    animationTimingFunction: 'ease',
-    animationIterationCount: 1,
-  },
-
-  fadeIn: {
-    background: 'rgba(0, 0, 0, 0.4)',
-    animationName: {
-      from: {
-        background: 'rgba(0, 0, 0, 0)',
-      },
-      to: {
-        background: 'rgba(0, 0, 0, 0.4)',
-      },
-    },
-    animationDuration: '0.3s',
-    animationTimingFunction: 'ease',
-    animationIterationCount: 1,
-  },
-
-  fadeOut: {
-    background: 'rgba(0, 0, 0, 0)',
-    animationName: {
-      from: {
-        background: 'rgba(0, 0, 0, 0.4)',
-      },
-      to: {
-        background: 'rgba(0, 0, 0, 0)',
-      },
-    },
-    animationDuration: '0.3s',
-    animationTimingFunction: 'ease',
-    animationIterationCount: 1,
-  },
-});
-
 export interface IITableFrameProps extends WithRouterProps {
   dispatch: Function;
   user: IUserModel;
@@ -119,7 +49,7 @@ export interface IITableFrameProps extends WithRouterProps {
 }
 
 export interface IITableFrameState {
-  sidebarState: 'open' | 'closing' | 'closed';
+  sidebarOpen: boolean;
   fixedSidebar: boolean;
 }
 
@@ -132,7 +62,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     super(props);
 
     this.state = {
-      sidebarState: 'closed',
+      sidebarOpen: false,
       fixedSidebar: fixedSidebar(),
     };
   }
@@ -144,22 +74,19 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
 
   @autobind
   showSidebar() {
-    this.setState({sidebarState: 'open'});
+    this.setState({sidebarOpen: true});
   }
 
   @autobind
   hideSidebar() {
-    this.setState({sidebarState: 'closing'});
-    setTimeout(() => this.setState({sidebarState: 'closed'}), 300);
+    this.setState({sidebarOpen: false});
   }
 
   componentWillMount() {
-    keyboardJS.bind('escape', this.hideSidebar);
     window.addEventListener('resize', this.updateWindowDimensions);
   }
 
   componentWillUnmount() {
-    keyboardJS.unbind('escape', this.hideSidebar);
     window.removeEventListener('resize', this.updateWindowDimensions);
   }
 
@@ -169,9 +96,8 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
   }
 
   renderSidebarPopup(selectMine: boolean, category?: ICategoryModel) {
-    const state = this.state.sidebarState;
-    if (state === 'closed') {
-      return '';
+    if (this.state.fixedSidebar) {
+      return null;
     }
 
     const {
@@ -181,20 +107,16 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     } = this.props;
 
     return (
-      <Scrim isVisible onBackgroundClick={this.hideSidebar} scrimStyles={state === 'open' ? STYLES.fadeIn : STYLES.fadeOut}>
-        <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}}>
-          <div {...css(STYLES.categorybar, state === 'open' ? STYLES.slideout : STYLES.slidein)}>
-            <CategorySidebar
-              user={user}
-              categories={categories}
-              selectedCategory={category}
-              hideSidebar={this.hideSidebar}
-              selectMine={selectMine}
-              isAdmin={isAdmin}
-            />
-          </div>
-        </FocusTrap>
-      </Scrim>
+      <Drawer open={this.state.sidebarOpen} onClose={this.hideSidebar}>
+        <CategorySidebar
+          user={user}
+          categories={categories}
+          selectedCategory={category}
+          hideSidebar={this.hideSidebar}
+          selectMine={selectMine}
+          isAdmin={isAdmin}
+        />
+      </Drawer>
     );
   }
 

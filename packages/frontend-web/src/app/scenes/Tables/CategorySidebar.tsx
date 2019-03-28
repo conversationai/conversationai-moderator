@@ -116,6 +116,7 @@ const STYLES = stylesheet({
   sidebarSettings: {
     fontSize: '14px',
     color: 'rgba(0,0,0,0.56)',
+    width: `${SIDEBAR_WIDTH - 33}px`,
     height: `${SIDEBAR_ROW_HEIGHT - 16}px`,
   },
 
