@@ -57,6 +57,7 @@ import {
   SORT_TITLE,
   SORT_UPDATED,
 } from './utils';
+
 import {
   executeFilter,
   executeSort,
@@ -66,7 +67,6 @@ import {
   parseFilter,
   parseSort,
   sortString,
-  updateSort,
 } from './utils';
 
 const STYLES = stylesheet({

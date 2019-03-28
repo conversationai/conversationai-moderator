@@ -20,13 +20,27 @@ import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
 
+import {
+  createMuiTheme,
+  MuiThemeProvider,
+} from '@material-ui/core/styles';
+
 import { ICategoryModel, IUserModel } from '../../../models';
 import { logout } from '../../auth';
 import { Scrim } from '../../components/Scrim';
+import { NICE_CONTROL_BLUE } from '../../styles';
 import { css, stylesheet } from '../../utilx';
 import { CategorySidebar, SIDEBAR_WIDTH } from './CategorySidebar';
 import { HeaderBar } from './HeaderBar';
 import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: NICE_CONTROL_BLUE,
+    },
+  },
+});
 
 const STYLES = stylesheet({
   categorybar: {
@@ -233,7 +247,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
     }
 
     return (
-      <div>
+      <MuiThemeProvider theme={theme}>
         <HeaderBar
           isMe={isMe}
           category={category}
@@ -244,7 +258,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
         <div key="content">
           {this.props.children}
         </div>
-      </div>
+      </MuiThemeProvider>
     );
   }
 }
