@@ -15,20 +15,20 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import FocusTrap from 'focus-trap-react';
-import { Set } from 'immutable';
 import React from 'react';
 
-import { IArticleModel, ModelId } from '../../../models';
-import { Toggle } from '../../components/Toggle';
+import {
+  DialogTitle,
+  Switch,
+} from '@material-ui/core';
+
+import { IArticleModel } from '../../../models';
 import { NICE_CONTROL_BLUE, SCRIM_STYLE } from '../../styles';
 import { css } from '../../utilx';
 import { ControlFlag } from './components';
 
 export interface IIControlPopupProps {
   article: IArticleModel;
-  moderatorIds?: Set<ModelId>;
-
   clearPopups(): void;
   saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean): void;
 }
@@ -67,51 +67,42 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
 
   render() {
     return (
-      <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, {position: 'absolute', marginLeft: '-400px', marginTop: '-15px', width: '350px', padding: '20px'})}>
-        <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}} >
-          <h5 key="header" {...css(SCRIM_STYLE.popupTitle)}>Moderation settings</h5>
-          <table key="main" {...css({width: '100%'})}>
-            <tbody>
-            <tr key="comments" onClick={this.handleCommentingEnabledClicked}>
-              <td key="icon">
-                <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled}/>
-              </td>
-              <td key="text" {...css({textAlign: 'left', padding: '15px 20px'})}>
-                <label htmlFor="isCommentingEnabledToggle" {...css(SCRIM_STYLE.popupContent)}>
-                  Comments Enabled
-                </label>
-              </td>
-              <td key="toggle" {...css({textAlign: 'right'})}>
-                <Toggle
-                  inputId="isCommentingEnabledToggle"
-                  isSelected={this.state.isCommentingEnabled}
-                />
-              </td>
-            </tr>
-            <tr key="automod" onClick={this.handleAutoModeratedClicked} {...css(this.state.isCommentingEnabled ? {} : {opacity: 0.5})}>
-              <td key="icon">
-                <ControlFlag isAutoModerated={this.state.isAutoModerated}/>
-              </td>
-              <td key="text"  {...css({textAlign: 'left', padding: '15px 20px'})}>
-                <label htmlFor="isAutoModeratedToggle" {...css(SCRIM_STYLE.popupContent)}>
-                  Auto Moderation Enabled
-                </label>
-              </td>
-              <td key="toggle" {...css({textAlign: 'right'})}>
-                <Toggle
-                  inputId="isAutoModeratedToggle"
-                  isSelected={this.state.isAutoModerated}
-                  isDisabled={!this.state.isCommentingEnabled}
-                />
-              </td>
-            </tr>
-            </tbody>
-          </table>
-          <div key="footer" {...css({textAlign: 'right', paddingTop: '20px'})}>
-            <span onClick={this.props.clearPopups} {...css({marginRight: '30px', opacity: '0.5'})}>Cancel</span>
-            <span onClick={this.saveControls} {...css({color: NICE_CONTROL_BLUE})}>Save</span>
-          </div>
-        </FocusTrap>
+      <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, {position: 'absolute', marginLeft: '-400px', marginTop: '-15px', padding: '20px'})}>
+        <DialogTitle id="article-controls">Moderation settings</DialogTitle>
+        <table key="main" {...css({width: 'compute(100% - 50px)', margin: '4px 9px 4px 25px'})}>
+          <tbody>
+          <tr key="comments" onClick={this.handleCommentingEnabledClicked}>
+            <td key="icon">
+              <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled}/>
+            </td>
+            <td key="text" {...css({textAlign: 'left', padding: '15px 4px'})}>
+              <label {...css(SCRIM_STYLE.popupContent)}>
+                Comments Enabled
+              </label>
+            </td>
+            <td key="toggle" {...css({textAlign: 'right'})}>
+              <Switch checked={this.state.isCommentingEnabled} color="primary"/>
+            </td>
+          </tr>
+          <tr key="automod" onClick={this.handleAutoModeratedClicked} {...css(this.state.isCommentingEnabled ? {} : {opacity: 0.5})}>
+            <td key="icon">
+              <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled} isAutoModerated={this.state.isAutoModerated}/>
+            </td>
+            <td key="text"  {...css({textAlign: 'left', padding: '15px 4px'})}>
+              <label {...css(SCRIM_STYLE.popupContent)}>
+                Auto Moderation Enabled
+              </label>
+            </td>
+            <td key="toggle" {...css({textAlign: 'right'})}>
+              <Switch checked={this.state.isAutoModerated} disabled={!this.state.isCommentingEnabled} color="primary"/>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div key="footer" {...css({textAlign: 'right', margin: '35px 25px 30px 25px'})}>
+          <span onClick={this.props.clearPopups} {...css({marginRight: '30px', opacity: '0.5'})}>Cancel</span>
+          <span onClick={this.saveControls} {...css({color: NICE_CONTROL_BLUE})}>Save</span>
+        </div>
       </div>
     );
   }
