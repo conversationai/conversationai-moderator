@@ -359,10 +359,6 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   }
 
   renderFilterPopup(currentSort: string) {
-    if (this.state.popupToShow !== POPUP_FILTERS) {
-      return null;
-    }
-
     const router = this.props.router;
     function setFilter(newFilter: Array<IFilterItem>) {
       router.push(dashboardLink(filterString(newFilter), currentSort));
@@ -370,12 +366,13 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
     return (
       <FilterSidebar
+        open={this.state.popupToShow === POPUP_FILTERS}
         filterString={this.state.filterString}
         filter={this.state.filter}
         myUserId={this.props.myUserId}
         users={this.props.users}
         setFilter={setFilter}
-        clearPopup={this.clearPopups}
+        clearPopups={this.clearPopups}
       />
     );
   }
@@ -479,7 +476,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
   }
 
-  renderSetModerators() {
+  renderSaving() {
     if (this.state.popupToShow === POPUP_SAVING) {
       return (
         <Scrim isVisible onBackgroundClick={this.clearPopups} scrimStyles={STYLES.scrimPopup}>
@@ -490,6 +487,10 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       );
     }
 
+    return null;
+  }
+
+  renderSetModerators() {
     if (this.state.popupToShow !== POPUP_MODERATORS) {
       return null;
     }
@@ -728,6 +729,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           </PerfectScrollbar>
         </div>
         {this.renderFilterPopup(currentSort)}
+        {this.renderSaving()}
         {this.renderSetModerators()}
       </div>
     );
