@@ -182,11 +182,12 @@ function processArticles(
   if (Object.keys(filter).length > 0) {
     processedArticles = processedArticles.filter(executeFilter(filter, {myId: props.myUserId}));
   }
+
   if (sort.length > 0) {
     processedArticles = processedArticles.sort(executeSort(sort));
   }
   else {
-    processedArticles = processedArticles.sort(executeSort([`-${SORT_NEW}`]));
+    processedArticles = processedArticles.sort(executeSort([`+${SORT_NEW}`]));
   }
 
   const usersMap = new Map<string, IUserModel>();
@@ -653,7 +654,8 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           break;
         }
       }
-      const newSort = sortString(updateSort(sort, nextSortItem));
+      // const newSort = sortString(updateSort(sort, nextSortItem)); implements multi sort
+      const newSort = sortString([nextSortItem]);
       return (
         <Link to={dashboardLink(currentFilter, newSort)} {...css(COMMON_STYLES.cellLink)}>
           <span {...css({position: 'relative'})}>
