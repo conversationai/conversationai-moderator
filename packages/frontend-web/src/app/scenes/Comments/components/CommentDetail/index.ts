@@ -23,7 +23,7 @@ import {
   ICommentScoreModel,
 } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
-import { IAppDispatch, IAppState, IAppStateRecord } from '../../../../stores';
+import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import {
   approveComments,
   confirmCommentScore,
@@ -80,24 +80,6 @@ type ICommentDetailOwnProps = {
   };
 };
 
-type ICommentDetailStateProps = Pick<
-  ICommentDetailProps,
-  'comment' |
-  'isLoading' |
-  'availableTags' |
-  'allScores' |
-  'taggingSensitivitiesInCategory' |
-  'summaryScores' |
-  'currentCommentIndex' |
-  'nextCommentId' |
-  'previousCommentId' |
-  'detailSource' |
-  'isFromBatch' |
-  'authorCountById' |
-  'getUserById' |
-  'currentUser'
->;
-
 type ICommentDetailDispatchProps = Pick<
   ICommentDetailProps,
   'loadData' |
@@ -119,7 +101,7 @@ type ICommentDetailDispatchProps = Pick<
 >;
 
 const AVAILABLE_ACTIONS: {
-  [key: string]: (ids: Array<string>, userId: string) => any;
+  [key: string]: (ids: Array<string>) => any;
 } = {
   highlight: highlightComments,
   approve: approveComments,
@@ -168,7 +150,7 @@ const mapStateToProps = createStructuredSelector({
   getUserById: (state: IAppStateRecord) => (userId: string) => getUser(state, userId),
 
   currentUser: getCurrentUser,
-}) as (state: IAppState, ownProps: ICommentDetailOwnProps) => ICommentDetailStateProps;
+});
 
 function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps {
   return {
@@ -215,21 +197,21 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
       dispatch(removeCommentScore(commentScore))
     ),
 
-    onTagComment: (ids: Array<string>, tagId: string, userId: string) => (
-        dispatch(tagComments(ids, tagId, userId))
+    onTagComment: (ids: Array<string>, tagId: string) => (
+        dispatch(tagComments(ids, tagId))
     ),
 
-    tagCommentSummaryScore: (ids: Array<string>, tagId: string, userId: string) =>
-        dispatch(tagCommentSummaryScores(ids, tagId, userId)),
+    tagCommentSummaryScore: (ids: Array<string>, tagId: string) =>
+        dispatch(tagCommentSummaryScores(ids, tagId)),
 
-    confirmCommentSummaryScore: (id: string, tagId: string, userId: string) =>
-        dispatch(confirmCommentSummaryScore(id, tagId, userId)),
+    confirmCommentSummaryScore: (id: string, tagId: string) =>
+        dispatch(confirmCommentSummaryScore(id, tagId)),
 
-    rejectCommentSummaryScore: (id: string, tagId: string, userId: string) =>
-        dispatch(rejectCommentSummaryScore(id, tagId, userId)),
+    rejectCommentSummaryScore: (id: string, tagId: string) =>
+        dispatch(rejectCommentSummaryScore(id, tagId)),
 
-    onCommentAction: (action: IConfirmationAction, idsToDispatch: Array<string>, userId: string) => {
-        dispatch(AVAILABLE_ACTIONS[action](idsToDispatch, userId));
+    onCommentAction: (action: IConfirmationAction, idsToDispatch: Array<string>) => {
+        dispatch(AVAILABLE_ACTIONS[action](idsToDispatch));
         // Also update moderated state
         dispatch(updateCommentStateAction[action](idsToDispatch));
     },
@@ -244,34 +226,10 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
   };
 }
 
-// TODO (Issue#27): Fix type
-function mergeProps(
-  stateProps: ICommentDetailStateProps,
-  dispatchProps: ICommentDetailDispatchProps,
-  ownProps: ICommentDetailOwnProps,
-): any {
-  return {
-      ...ownProps,
-      ...stateProps,
-      ...dispatchProps,
-      onCommentAction: (action: IConfirmationAction, idsToDispatch: Array<string>) =>
-          dispatchProps.onCommentAction(action, idsToDispatch, stateProps.currentUser.id),
-      onTagComment: (ids: Array<string>, tagId: string) =>
-          dispatchProps.onTagComment(ids, tagId, stateProps.currentUser.id),
-      tagCommentSummaryScore: (ids: Array<string>, tagId: string) =>
-          dispatchProps.tagCommentSummaryScore(ids, tagId, stateProps.currentUser.id),
-      confirmCommentSummaryScore: (id: string, tagId: string) =>
-          dispatchProps.confirmCommentSummaryScore(id, tagId, stateProps.currentUser.id),
-      rejectCommentSummaryScore: (id: string, tagId: string) =>
-          dispatchProps.rejectCommentSummaryScore(id, tagId, stateProps.currentUser.id),
-  };
-}
-
 // Add Redux data.
 const ConnectedCommentDetail = connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps,
 )(PureCommentDetail);
 
 // Add `router` prop.

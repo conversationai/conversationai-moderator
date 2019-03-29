@@ -24,7 +24,6 @@ import { IAppDispatch, IAppState, IAppStateRecord } from '../../../../stores';
 import { getComment, getIsLoading, loadComment, updateComment } from './store';
 import { IThreadedCommentDetailProps, ThreadedCommentDetail as PureThreadedCommentDetail } from './ThreadedCommentDetail';
 export { reducer } from './store';
-import { getMyUserId } from '../../../../auth';
 import {
   approveComments,
   deferComments,
@@ -55,7 +54,7 @@ const updateCommentStateAction: {
 };
 
 const actionMap: {
-  [key: string]: (ids: Array<string>, userId: string, tagId?: string) => any;
+  [key: string]: (ids: Array<string>, tagId?: string) => any;
 } = {
   highlight: highlightComments,
   approve: approveComments,
@@ -78,8 +77,7 @@ type IThreadedCommentDetailStateProps = Pick<
   'comment' |
   'tags' |
   'isLoading' |
-  'originatingCommentId' |
-  'userId'
+  'originatingCommentId'
   >;
 
 type IThreadedCommentDetailDispatchProps = Pick<
@@ -92,7 +90,7 @@ type IThreadedCommentDetailDispatchProps = Pick<
 >;
 
 type IThreadedCommentDetailDispatchWithOverwriteProps = IThreadedCommentDetailDispatchProps & {
-  dispatchAction(action: IConfirmationAction, idsToDispatch: Array<string>, userId: string): any;
+  dispatchAction(action: IConfirmationAction, idsToDispatch: Array<string>): any;
 };
 
 function updateCommentState(comment: ICommentModel, action: IConfirmationAction): ICommentModel {
@@ -126,8 +124,6 @@ const mapStateToProps = createStructuredSelector({
 
   originatingCommentId: (_: IAppStateRecord, { params }: IThreadedCommentDetailOwnProps) => params.originatingCommentId,
 
-  userId: (state: IAppStateRecord) => getMyUserId(state),
-
   tags: (state: IAppStateRecord) => getTaggableTags(state),
 
   getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: IThreadedCommentDetailOwnProps) => (id: string): Set<string> => {
@@ -148,8 +144,8 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
       dispatch(loadComment(commentId));
     },
 
-    dispatchAction: (action: IConfirmationAction, idsToDispatch: Array<string>, userId: string) =>
-        dispatch(actionMap[action](idsToDispatch, userId)),
+    dispatchAction: (action: IConfirmationAction, idsToDispatch: Array<string>) =>
+        dispatch(actionMap[action](idsToDispatch)),
 
     onUpdateComment: (comment: ICommentModel) => (
       dispatch(updateComment(comment))
@@ -159,8 +155,8 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
         dispatch(updateCommentStateAction[action](comment))
     ),
 
-    tagComments: (ids: Array<string>, tagId: string, userId: string) =>
-        dispatch(tagCommentSummaryScores(ids, userId, tagId)),
+    tagComments: (ids: Array<string>, tagId: string) =>
+        dispatch(tagCommentSummaryScores(ids, tagId)),
 
     loadScoresForCommentId: async (id: string) => {
       await dispatch(loadCommentSummaryScores(id));
@@ -177,8 +173,6 @@ const mergeProps = (
     ...ownProps,
     ...stateProps,
     ...dispatchProps,
-    dispatchAction: (action: IConfirmationAction, idsToDispatch: Array<string>) =>
-        dispatchProps.dispatchAction(action, idsToDispatch, stateProps.userId),
 
     onUpdateReply: (action: IConfirmationAction, replyId: string) =>
       dispatchProps.onUpdateComment(stateProps.comment.updateIn(['replies'], (replies: List<ICommentModel>) => {

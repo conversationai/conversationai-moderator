@@ -20,7 +20,6 @@ import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
 import { ICommentModel } from '../../../../../models';
 import { ICommentAction } from '../../../../../types';
-import { getMyUserId } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
 import {
@@ -65,31 +64,14 @@ import {
   tagCommentSummaryScores,
 } from '../../../../stores/commentActions';
 
-type IModeratedCommentsRouterProps = Pick<
-  IModeratedCommentsProps,
-  'params'
->;
-
-type IModeratedCommentsOwnProps = {};
-
-type IModeratedCommentsDispatchWithoutOverwriteProps = Pick<
+type IModeratedCommentsDispatchProps = Pick<
   IModeratedCommentsProps,
   'toggleSelectAll' |
   'toggleSingleItem' |
   'setCommentModerationStatusForArticle' |
   'setCommentModerationStatusForCategory' |
   'loadScoresForCommentId' |
-  'changeSort'
->;
-
-type IModeratedCommentsDispatchWithOverwriteProps = IModeratedCommentsDispatchWithoutOverwriteProps & {
-  loadData?(categoryId: string, articleId: string, tag: string): void;
-  tagComments(ids: Array<string>, tagId: string, userId: string): any;
-  dispatchAction(action: ICommentAction, idsToDispatch: Array<string>, userId: string): any;
-};
-
-type IModeratedCommentsDispatchProps = IModeratedCommentsDispatchWithoutOverwriteProps & Pick<
-  IModeratedCommentsProps,
+  'changeSort' |
   'loadData' |
   'tagComments' |
   'dispatchAction'
@@ -109,14 +91,10 @@ type IModeratedCommentsStateProps = Pick<
   'textSizes'
 >;
 
-type IModeratedCommentsStatePropsWithUser = {
-  userId: string;
-};
-
 const mapStateToProps = createStructuredSelector({
   isLoading: (state: IAppStateRecord) => getCommentListIsLoading(state) || !getCommentListHasLoaded(state),
 
-  article: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => {
+  article: (state: IAppStateRecord, { params }: IModeratedCommentsProps) => {
     if (params.articleId) {
       return getArticle(state, params.articleId);
     }
@@ -128,13 +106,13 @@ const mapStateToProps = createStructuredSelector({
 
   isItemChecked: (state: IAppStateRecord) => (id: string) => getIsItemChecked(state, id),
 
-  moderatedComments: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => (
+  moderatedComments: (state: IAppStateRecord, { params }: IModeratedCommentsProps) => (
     getModeratedComments(state, params)
   ),
 
   tags: getTaggableTags,
 
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: IModeratedCommentsRouterProps) => (id: string): Set<string> => {
+  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: IModeratedCommentsProps) => (id: string): Set<string> => {
     if (!id) {
       return;
     }
@@ -151,7 +129,7 @@ const mapStateToProps = createStructuredSelector({
     return (key: string) => getCurrentColumnSort(state, 'commentsIndexModerated', key);
   },
 
-  getLinkTarget: (state: any, { params }: IModeratedCommentsRouterProps) => {
+  getLinkTarget: (state: any, { params }: IModeratedCommentsProps) => {
     const identifier = getCurrentPagingIdentifier(state);
 
     return (comment: ICommentModel): string => {
@@ -172,11 +150,9 @@ const mapStateToProps = createStructuredSelector({
   },
 
   textSizes: getTextSizes,
+});
 
-  userId: (state: IAppStateRecord) => getMyUserId(state),
-}) as (state: IAppStateRecord, ownProps: IModeratedCommentsOwnProps) => IModeratedCommentsStateProps & IModeratedCommentsStatePropsWithUser;
-
-function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedCommentsOwnProps & IModeratedCommentsRouterProps): IModeratedCommentsDispatchWithOverwriteProps {
+function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedCommentsProps): IModeratedCommentsDispatchProps {
   const {
     isArticleDetail,
     articleId,
@@ -185,7 +161,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
   } = parseRoute(ownProps.params);
 
   const actionMap: {
-    [key: string]: (ids: Array<string>, userId: string, tagId?: string) => any;
+    [key: string]: (ids: Array<string>, tagId?: string) => any;
   } = {
     highlight: highlightComments,
     approve: tag === 'flagged' ? approveFlagsAndComments : approveComments,
@@ -200,11 +176,11 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
       dispatch(executeCommentListLoader(!!aId, aId, cId, t));
     },
 
-    tagComments: (ids: Array<string>, tagId: string, userId: string) =>
-        dispatch(tagCommentSummaryScores(ids, userId, tagId)),
+    tagComments: (ids: Array<string>, tagId: string) =>
+        dispatch(tagCommentSummaryScores(ids, tagId)),
 
-    dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>, userId: string) =>
-        dispatch(actionMap[action](idsToDispatch, userId)),
+    dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>) =>
+        dispatch(actionMap[action](idsToDispatch)),
 
     toggleSelectAll: () => dispatch(toggleSelectAll()),
 
@@ -236,27 +212,10 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
   };
 }
 
-function mergeProps(
-  stateProps: IModeratedCommentsStateProps & IModeratedCommentsStatePropsWithUser,
-  dispatchProps: IModeratedCommentsDispatchWithOverwriteProps,
-  ownProps: IModeratedCommentsOwnProps,
-): IModeratedCommentsStateProps & IModeratedCommentsStatePropsWithUser & IModeratedCommentsDispatchProps {
-  return {
-    ...ownProps,
-    ...stateProps,
-    ...dispatchProps,
-    dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>) =>
-        dispatchProps.dispatchAction(action, idsToDispatch, stateProps.userId),
-    tagComments: (ids: Array<string>, tagId: string) =>
-        dispatchProps.tagComments(ids, tagId, stateProps.userId),
-  };
-}
-
 // Add Redux data.
-const ConnectedModeratedComments = connect<IModeratedCommentsStateProps , IModeratedCommentsDispatchProps | IModeratedCommentsDispatchWithOverwriteProps, IModeratedCommentsOwnProps>(
+const ConnectedModeratedComments = connect<IModeratedCommentsStateProps , IModeratedCommentsDispatchProps>(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps,
 )(PureModeratedComments);
 
 // Add `router` prop.
