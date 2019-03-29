@@ -70,7 +70,7 @@ export function getTaggingSensitivitiesInCategory(
   if (articleId) {
     const article = getArticle(state, articleId);
     if (article) {
-      categoryId = article.category.id;
+      categoryId = article.categoryId;
     }
   }
 

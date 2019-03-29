@@ -120,6 +120,7 @@ function packArticleData(data: any): IAllArticlesData {
     //       It doesn't work well in presence of incremental updates.
     if (a.categoryId) {
       a.category = catMap[a.categoryId];
+      a.categoryId = a.categoryId.toString();
     }
     return ArticleModel(a);
   }));
@@ -133,15 +134,21 @@ function packArticleData(data: any): IAllArticlesData {
 function packArticleUpdate(data: any): IArticleUpdate {
   const cdata = data.category;
   let cmodel;
+  let amodel;
+
   if (cdata) {
     cdata.id = cdata.id.toString();
     cmodel = CategoryModel(cdata);
   }
 
   const adata = data.article;
-  adata.id = adata.id.toString();
-  adata.category = cmodel;
-  const amodel = ArticleModel(adata);
+  if (adata) {
+    adata.id = adata.id.toString();
+    adata.categoryId = adata.categoryId && adata.categoryId.toString();
+    adata.category = cmodel;
+    amodel = ArticleModel(adata);
+  }
+
   return {
     category: cmodel,
     article: amodel,

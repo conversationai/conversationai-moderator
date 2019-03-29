@@ -14,6 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+// Set true to send test update packets
+const SEND_TEST_UPDATE_PACKETS = false;
+
 import * as express from 'express';
 import { isEqual, pick } from 'lodash';
 import * as WebSocket from 'ws';
@@ -145,7 +148,7 @@ async function getAllArticlesData() {
     const article: any = pick(a.toJSON(), articleFields);
     article.assignedModerators = article.assignedModerators.map(
       (i: {moderator_assignment: IModeratorAssignmentAttributes}) =>
-        i.moderator_assignment.userId.toString()
+        i.moderator_assignment.userId.toString(),
     );
     return article;
   });
@@ -164,6 +167,9 @@ async function getArticleUpdate(articleId: number) {
     articleId,
     {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
   );
+  if (!article) {
+    return null;
+  }
   const aData: any = pick(article.toJSON(), articleFields);
   aData.assignedModerators = aData.assignedModerators.map((i: any) => i.moderator_assignment.userId.toString());
 
@@ -302,6 +308,62 @@ async function sendPartialUpdate(articleId: number) {
   }
 }
 
+function sendTestUpdatePackets(si: ISocketItem) {
+  logger.info(`*** settng up fake update notifications for user ${si.userId}`);
+  let counter = 1;
+  setInterval(async () => {
+    const update = await getArticleUpdate(counter);
+    if (!update) {
+      logger.info(`no such article ${counter}`);
+      counter = 1;
+      return;
+    }
+    const data = update.data as IArticleUpdateData;
+    let msg = `fake update message ${counter}`;
+    if (counter % 3 === 1) {
+      // Just send the category
+      delete  data.article;
+      msg += ' category';
+    }
+    else if (counter % 3 === 2) {
+      // just send the article
+      delete  data.category;
+      msg += ' article';
+    }
+    else {
+      msg += ' both';
+    }
+
+    if (counter % 4 === 2) {
+      // pretend its a new object
+      msg += ' new';
+      if (data.article) {
+        data.article.id = data.article.id + 10000 + Math.floor(Math.random() * 1000);
+      }
+      if (data.category) {
+        data.category.id = data.category.id + 10000 + Math.floor(Math.random() * 1000);
+      }
+    }
+    if (counter % 4 === 3) {
+      msg += ' faked data';
+      // Mess with the data
+      if (data.article) {
+        data.article.unmoderatedCount = data.article.unmoderatedCount + Math.floor(Math.random() * 10000);
+      }
+      if (data.category) {
+        data.category.unmoderatedCount = data.category.unmoderatedCount + Math.floor(Math.random() * 10000);
+      }
+    }
+
+    logger.info(msg);
+    counter ++;
+    logger.info(`Sending **fake** article update to user ${si.userId} -- ${msg}`);
+    for (const ws of si.ws) {
+      await ws.send(JSON.stringify(update));
+    }
+  }, 1000);
+}
+
 export function createUpdateNotificationService(): express.Router {
   const router = express.Router({
     caseSensitive: true,
@@ -320,6 +382,10 @@ export function createUpdateNotificationService(): express.Router {
     if (!si) {
       si = {userId, ws: [], lastPerUserMessage: null};
       socketItems.set(userId, si);
+
+      if (SEND_TEST_UPDATE_PACKETS) {
+        sendTestUpdatePackets(si);
+      }
     }
 
     si.ws.push(ws);

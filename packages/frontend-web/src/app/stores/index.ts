@@ -142,7 +142,9 @@ export async function initialiseClientModel(dispatch: IAppDispatch) {
       if (data.category) {
         dispatch(categoryUpdated(data.category));
       }
-      dispatch(articleUpdated(data.article));
+      if (data.article) {
+        dispatch(articleUpdated(data.article));
+      }
     },
     (data) => {
       dispatch(assignmentCountUpdated(data.assignments));

@@ -553,7 +553,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     function getLink(tag: string) {
       if (isSummary) {
         if (article.category) {
-          return categoriesLink(article.category.id, tag);
+          return categoriesLink(article.categoryId, tag);
         }
         return categoriesLink('all', tag);
       }
@@ -565,7 +565,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     let superModeratorIds: Array<ModelId> | null = null;
     if (isSummary) {
       if (article.category) {
-        targetId = article.category.id;
+        targetId = article.categoryId;
         moderatorIds = article.category.assignedModerators;
       }
     }
