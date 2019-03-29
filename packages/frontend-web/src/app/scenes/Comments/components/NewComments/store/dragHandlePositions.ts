@@ -118,7 +118,7 @@ function getPreselectForCategory(article: IArticleModel | null, preselects: List
     return null;
   }
 
-  const categoryId = article ? article.category.id : null;
+  const categoryId = article ? article.categoryId : null;
 
   let preselectsByCategory;
   const byCategoryId = (preselect: IPreselectModel) => preselect.categoryId === categoryId;
@@ -155,7 +155,7 @@ export function getRulesInCategory(state: IAppStateRecord, categoryId?: string, 
   }
   else {
     const article = getArticle(state, articleId);
-    categoryId = article.category.id;
+    categoryId = article.categoryId;
   }
 
   return rules

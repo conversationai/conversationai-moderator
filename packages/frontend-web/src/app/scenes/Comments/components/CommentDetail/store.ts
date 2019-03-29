@@ -340,8 +340,8 @@ export function getTaggingSensitivitiesInCategory(state: any): List<ITaggingSens
   const comment = getComment(state);
   if (comment) {
     const article = getArticle(state, comment.articleId);
-    if (article.category) {
-      categoryId = article.category.id;
+    if (article.categoryId) {
+      categoryId = article.categoryId;
     }
   }
 

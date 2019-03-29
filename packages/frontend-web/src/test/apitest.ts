@@ -112,8 +112,8 @@ setAxiosToken(token);
     console.log('  Checked all');
     const articlesWithCategory = articles.filter((a) => (!!a.category));
     if (articlesWithCategory.length > 0) {
-      await listModeratedCommentsPage('flagged', 'category', articlesWithCategory[0].category.id);
-      console.log(`  Checked category ${articlesWithCategory[0].category.id}`);
+      await listModeratedCommentsPage('flagged', 'category', articlesWithCategory[0].categoryId);
+      console.log(`  Checked category ${articlesWithCategory[0].categoryId}`);
     }
     const article = articles[0];
     const comments = await listModeratedCommentsPage('flagged', 'article', article.id);
@@ -161,8 +161,8 @@ setAxiosToken(token);
     console.log('  Checked all');
     const articlesWithCategory = articles.filter((a) => (!!a.category));
     if (articlesWithCategory.length > 0) {
-      await listNewCommentsPage_SUMMARY_SCORE('category', articlesWithCategory[0].category.id);
-      console.log(`  Checked category ${articlesWithCategory[0].category.id}`);
+      await listNewCommentsPage_SUMMARY_SCORE('category', articlesWithCategory[0].categoryId);
+      console.log(`  Checked category ${articlesWithCategory[0].categoryId}`);
     }
     const article = articles[0];
     const comments = await listNewCommentsPage_SUMMARY_SCORE('article', article.id);

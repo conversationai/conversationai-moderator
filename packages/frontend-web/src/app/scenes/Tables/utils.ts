@@ -157,12 +157,12 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
 
         case FILTER_CATEGORY:
           if (i.value === FILTER_CATEGORY_NONE) {
-            if (article.category) {
+            if (article.categoryId) {
               return false;
             }
           }
           else {
-            if (!article.category || article.category.id !== i.value) {
+            if (article.categoryId !== i.value) {
               return false;
             }
           }
