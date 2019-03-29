@@ -80,6 +80,14 @@ function validateModelName(name: string): void {
   }
 }
 
+// TODO: API shouldn't rely on us telling it who we are.  It should get that information from the authentication request
+//   But API currently does rely on this.
+//   Until we fix this, store userId here.  It gets set during authentication.
+let userId: string;
+export function setUserId(id: string) {
+  userId = id;
+}
+
 export function validateID(id: any, valueName: string): void {
   // Article ids can be non-numeric to allow for flexibility with matching upstream publisher article ids
   if (valueName === 'articleId') {
@@ -623,9 +631,8 @@ export async function checkAuthorization(): Promise<void> {
   );
 }
 
-async function makeCommentAction(path: string, ids: Array<string>, userId: string): Promise<void> {
+async function makeCommentAction(path: string, ids: Array<string>): Promise<void> {
   if (ids.length <= 0) { return; }
-  // get userid/ or have that passed in?
   const idUserArray =  ids.map((commentId) => {
     validateID(parseInt(commentId, 10), `commentId`);
 
@@ -639,7 +646,7 @@ async function makeCommentAction(path: string, ids: Array<string>, userId: strin
   await axios.post(url, { data: idUserArray, runImmediately: true });
 }
 
-async function makeCommentActionForId(path: string, commentId: string, userId: string): Promise<void> {
+async function makeCommentActionForId(path: string, commentId: string): Promise<void> {
   const url = serviceURL('commentActions', path);
   await axios.post(url, { data: { commentId, userId } });
 }
@@ -652,83 +659,81 @@ export async function deleteCommentTagRequest(commentId: string, commentScoreId:
   await axios.delete(url);
 }
 
-// TODO: This is a terrible API.  We should not trust client to tell us the userID.  We should
-//       get it from the session on the server.
-export function highlightCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
+export function highlightCommentsRequest(ids: Array<string>): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
-  return makeCommentAction('/highlight', ids, userId);
+  return makeCommentAction('/highlight', ids);
 }
 
-export function resetCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
+export function resetCommentsRequest(ids: Array<string>): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
-  return makeCommentAction('/reset', ids, userId);
+  return makeCommentAction('/reset', ids);
 }
 
-export function approveCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
+export function approveCommentsRequest(ids: Array<string>): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
-  return makeCommentAction('/approve', ids, userId);
+  return makeCommentAction('/approve', ids);
 }
 
-export function approveFlagsAndCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
+export function approveFlagsAndCommentsRequest(ids: Array<string>): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
-  return makeCommentAction('/approve-flags', ids, userId);
+  return makeCommentAction('/approve-flags', ids);
 }
 
-export function resolveFlagsRequest(ids: Array<string>, userId: string): Promise<void> {
+export function resolveFlagsRequest(ids: Array<string>): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
-  return makeCommentAction('/resolve-flags', ids, userId);
+  return makeCommentAction('/resolve-flags', ids);
 }
 
-export function deferCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
+export function deferCommentsRequest(ids: Array<string>): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
-  return makeCommentAction('/defer', ids, userId);
+  return makeCommentAction('/defer', ids);
 }
 
-export function rejectCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
+export function rejectCommentsRequest(ids: Array<string>): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
-  return makeCommentAction('/reject', ids, userId);
+  return makeCommentAction('/reject', ids);
 }
 
-export function rejectFlagsAndCommentsRequest(ids: Array<string>, userId: string): Promise<void> {
+export function rejectFlagsAndCommentsRequest(ids: Array<string>): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
-  return makeCommentAction('/reject-flags', ids, userId);
+  return makeCommentAction('/reject-flags', ids);
 }
 
-export function tagCommentsRequest(ids: Array<string>, tagId: string, userId: string): Promise<void> {
+export function tagCommentsRequest(ids: Array<string>, tagId: string): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
-  return makeCommentAction(`/tag/${parseInt(tagId, 10)}`, ids, userId);
+  return makeCommentAction(`/tag/${parseInt(tagId, 10)}`, ids);
 }
 
-export function tagCommentSummaryScoresRequest(ids: Array<string>, tagId: string, userId: string): Promise<void> {
+export function tagCommentSummaryScoresRequest(ids: Array<string>, tagId: string): Promise<void> {
   ids.forEach((id) => validateID(id, `commentId`));
 
-  return makeCommentAction(`/tagCommentSummaryScores/${parseInt(tagId, 10)}`, ids, userId);
+  return makeCommentAction(`/tagCommentSummaryScores/${parseInt(tagId, 10)}`, ids);
 }
 
-export async function confirmCommentSummaryScoreRequest(commentId: string, tagId: string, userId: string): Promise<void> {
+export async function confirmCommentSummaryScoreRequest(commentId: string, tagId: string): Promise<void> {
   validateID(commentId, `commentId`);
   validateID(tagId, `tagId`);
   validateID(userId, `userId`);
 
   return makeCommentActionForId(
-    `/${parseInt(commentId, 10)}/tagCommentSummaryScores/${parseInt(tagId, 10)}/confirm`, commentId, userId);
+    `/${parseInt(commentId, 10)}/tagCommentSummaryScores/${parseInt(tagId, 10)}/confirm`, commentId);
 }
 
-export async function rejectCommentSummaryScoreRequest(commentId: string, tagId: string, userId: string): Promise<void> {
+export async function rejectCommentSummaryScoreRequest(commentId: string, tagId: string): Promise<void> {
   validateID(commentId, `commentId`);
   validateID(tagId, `tagId`);
   validateID(userId, `userId`);
 
-  return makeCommentActionForId(`/${parseInt(commentId, 10)}/tagCommentSummaryScores/${parseInt(tagId, 10)}/reject`, commentId, userId);
+  return makeCommentActionForId(`/${parseInt(commentId, 10)}/tagCommentSummaryScores/${parseInt(tagId, 10)}/reject`, commentId);
 }
 
 export async function tagCommentsAnnotationRequest(commentId: string, tagId: string, start: number, end: number): Promise<void> {

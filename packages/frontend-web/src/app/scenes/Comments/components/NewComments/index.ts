@@ -23,7 +23,6 @@ import { createStructuredSelector } from 'reselect';
 import { ICommentModel } from '../../../../../models';
 import { IRedialLocals } from '../../../../../types';
 import { ICommentAction } from '../../../../../types';
-import { getMyUserId } from '../../../../auth';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
 import {
@@ -89,7 +88,7 @@ type INewCommentsRouterProps = Pick<
   >;
 
 const actionMap: {
-  [key: string]: (ids: Array<string>, userId: string, tagId?: string) => any;
+  [key: string]: (ids: Array<string>, tagId?: string) => any;
 } = {
   highlight: highlightComments,
   approve: approveComments,
@@ -120,17 +119,17 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: any): any {
   return {
     resetDragHandleScope: () => dispatch(resetDragHandleScope()),
 
-    tagComments: (ids: Array<string>, tagId: string, userId: string) =>
-        dispatch(tagCommentSummaryScores(ids, tagId, userId)),
+    tagComments: (ids: Array<string>, tagId: string) =>
+        dispatch(tagCommentSummaryScores(ids, tagId)),
 
-    confirmCommentSummaryScore: (id: string, tagId: string, userId: string) =>
-        dispatch(confirmCommentSummaryScore(id, tagId, userId)),
+    confirmCommentSummaryScore: (id: string, tagId: string) =>
+        dispatch(confirmCommentSummaryScore(id, tagId)),
 
-    rejectCommentSummaryScore: (id: string, tagId: string, userId: string) =>
-        dispatch(rejectCommentSummaryScore(id, tagId, userId)),
+    rejectCommentSummaryScore: (id: string, tagId: string) =>
+        dispatch(rejectCommentSummaryScore(id, tagId)),
 
-    dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>, userId: string) =>
-        dispatch(actionMap[action](idsToDispatch, userId)),
+    dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>) =>
+        dispatch(actionMap[action](idsToDispatch)),
 
     setCommentModerationStatus: (commentIds: Array<string>, moderationAction: string) =>
         dispatch(moderationStatusMap[moderationAction](commentIds)),
@@ -250,28 +249,11 @@ const mapStateToProps = createStructuredSelector({
     const article = getArticle(state, params.articleId);
     return article.isAutoModerated;
   },
-  userId: (state: IAppStateRecord) => getMyUserId(state),
 });
-
-const mergeProps = (stateProps: any, dispatchProps: any, ownProps: any) => {
-  return {
-      ...ownProps,
-      ...stateProps,
-      ...dispatchProps,
-      dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>) =>
-          dispatchProps.dispatchAction(action, idsToDispatch, stateProps.userId),
-      tagComments: (ids: Array<string>, tagId: string) =>
-          dispatchProps.tagComments(ids, tagId, stateProps.userId),
-      confirmCommentSummaryScore: (id: string, tagId: string) =>
-          dispatchProps.confirmCommentSummaryScore(id, tagId, stateProps.userId),
-      rejectCommentSummaryScore: (id: string, tagId: string) =>
-          dispatchProps.rejectCommentSummaryScore(id, tagId, stateProps.userId),
-  };
-};
 
 export const NewComments = compose(
   withRouter,
-  connect(mapStateToProps, mapDispatchToProps, mergeProps) as any,
+  connect(mapStateToProps, mapDispatchToProps),
   provideHooks<IRedialLocals>({
     fetch: async ({ params, query, dispatch }) => {
       const {

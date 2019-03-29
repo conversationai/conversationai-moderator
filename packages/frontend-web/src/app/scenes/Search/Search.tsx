@@ -88,7 +88,6 @@ export interface ISearchProps extends WithRouterProps {
   allCommentIds?: List<number>;
   onSearch?(newScope: ISearchScope): any;
   onCancelSearch?(): any;
-  userId: ModelId;
   articleId?: ModelId;
   article?: IArticleModel;
   resetCommentIds?(): void;

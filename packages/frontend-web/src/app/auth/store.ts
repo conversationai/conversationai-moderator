@@ -19,7 +19,7 @@ import JwtDecode from 'jwt-decode';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
-import { checkAuthorization} from '../platform/dataService';
+import { checkAuthorization, setUserId } from '../platform/dataService';
 import { getToken, saveToken } from '../platform/localStore';
 import { disconnectNotifier } from '../platform/websocketService';
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
@@ -68,6 +68,7 @@ async function completeAuthentication(token: string, dispatch: IAppDispatch): Pr
   setAxiosToken(token);
 
   const data = decodeToken(token);
+  setUserId((data['user'] as number).toString());
   await dispatch(completedAuthentication(data['user'] as number));
   await initialiseClientModel(dispatch);
 }

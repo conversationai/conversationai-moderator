@@ -18,8 +18,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { ICommentModel, ModelId } from '../../../models';
-import { getMyUserId } from '../../auth';
+import { ICommentModel } from '../../../models';
 import { IAppDispatch, IAppStateRecord } from '../../stores';
 import { getTextSizes } from '../../stores/textSizes';
 import {
@@ -62,7 +61,7 @@ import { ISearchProps, Search as PureSearch } from './Search';
 export { SearchResults } from './components/SearchResults';
 
 export interface IActionMap {
-  [key: string]: (ids: Array<string>, userId: ModelId, tagId?: string) => () => Promise<void>;
+  [key: string]: (ids: Array<string>, tagId?: string) => () => Promise<void>;
 }
 
 const updateCommentStateAction: {
@@ -83,13 +82,6 @@ const actionMap: IActionMap = {
   tag: tagCommentSummaryScores,
   reset: resetComments,
 };
-
-type ISearchStateProps = Pick<
-  ISearchProps,
-  'articleId' |
-  'article' |
-  'userId'
-  >;
 
 type ISearchOwnProps = Pick<
   ISearchProps,
@@ -130,7 +122,6 @@ const mapStateToProps = createStructuredSelector({
       return url;
     };
   },
-  userId: (state: IAppStateRecord) => getMyUserId(state),
   searchByAuthor: (_: IAppStateRecord, { location }: ISearchOwnProps) => {
     return location.query.searchByAuthor === 'true';
   },
@@ -147,11 +138,11 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
       dispatch(executeCommentListLoader(newScope));
     },
 
-    tagComments: (ids: Array<string>, tagId: string, userId: string) =>
-        dispatch(tagCommentSummaryScores(ids, userId, tagId)),
+    tagComments: (ids: Array<string>, tagId: string) =>
+        dispatch(tagCommentSummaryScores(ids, tagId)),
 
-    dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>, userId: string) =>
-        dispatch(actionMap[action](idsToDispatch, userId)),
+    dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>) =>
+        dispatch(actionMap[action](idsToDispatch)),
 
     onToggleSelectAll: () => (
       dispatch(toggleSelectAll())
@@ -172,21 +163,9 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
   };
 }
 
-const mergeProps = (stateProps: ISearchStateProps, dispatchProps: any, ownProps: ISearchOwnProps) => {
-  return {
-      ...ownProps,
-      ...stateProps,
-      ...dispatchProps,
-      dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>) =>
-          dispatchProps.dispatchAction(action, idsToDispatch, stateProps.userId),
-      tagComments: (ids: Array<string>, tagId: string) =>
-          dispatchProps.tagComments(ids, tagId, stateProps.userId),
-  };
-};
-
 export const Search: React.ComponentClass = compose(
   withRouter,
-  connect(mapStateToProps, mapDispatchToProps, mergeProps),
+  connect(mapStateToProps, mapDispatchToProps),
 )(PureSearch);
 
 export * from './store';

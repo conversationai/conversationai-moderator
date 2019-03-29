@@ -81,13 +81,12 @@ function checkExpectations(
 
 export async function approveComment(
   commentId: ModelId,
-  userId: ModelId,
   resolveFlags: boolean,
   categoryExpectations: {[key: string]: number},
   articleExpectations: {[key: string]: number},
 ) {
   await listenForMessages(
-    () => (resolveFlags ? approveFlagsAndCommentsRequest : approveCommentsRequest)([commentId], userId),
+    () => (resolveFlags ? approveFlagsAndCommentsRequest : approveCommentsRequest)([commentId]),
     (type, message) => {
       checkTypeIsUpdate(type);
       checkExpectations(message, categoryExpectations, articleExpectations);
@@ -96,13 +95,12 @@ export async function approveComment(
 
 export async function rejectComment(
   commentId: ModelId,
-  userId: ModelId,
   resolveFlags: boolean,
   categoryExpectations: {[key: string]: number},
   articleExpectations: {[key: string]: number},
 ) {
   await listenForMessages(
-    () => (resolveFlags ? rejectFlagsAndCommentsRequest : rejectCommentsRequest)([commentId], userId),
+    () => (resolveFlags ? rejectFlagsAndCommentsRequest : rejectCommentsRequest)([commentId]),
     (type, message) => {
       checkTypeIsUpdate(type);
       checkExpectations(message, categoryExpectations, articleExpectations);

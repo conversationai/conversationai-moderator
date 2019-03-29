@@ -94,7 +94,6 @@ const STYLES = stylesheet({
 export interface IThreadedCommentDetailProps extends WithRouterProps {
   comment: ICommentModel;
   isLoading?: boolean;
-  userId: string;
   originatingCommentId: string;
   onUpdateReply?(action: ICommentAction, replyId: string): any;
   onUpdateComment(comment: ICommentModel): any;

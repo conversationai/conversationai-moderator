@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import {setUserId} from '../app/platform/dataService';
+
 function usage() {
   console.log(`usage: node ${process.argv[1]} <api_url> <token>`);
   console.log(`   where api_url is the URL for the API backend (e.g., http://localhost:8080)`);
@@ -63,6 +65,7 @@ catch (e) {
 
 saveToken(token);
 setAxiosToken(token);
+setUserId(userId);
 
 (async () => {
   const readyPromise = new Promise<void>((resolve) => {
@@ -124,14 +127,14 @@ setAxiosToken(token);
       console.log(`  Doing a fetch of comment ${comment}`);
       await commentDetailsPage(comment);
       console.log(`  Doing comment action tests. `);
-      await rejectComment(comment, userId, false, {
+      await rejectComment(comment, false, {
         rejectedCount: article.category.rejectedCount + 1,
         flaggedCount: article.category.flaggedCount - 1,
       }, {
         rejectedCount: article.rejectedCount + 1,
         flaggedCount: article.flaggedCount - 1,
       });
-      await approveComment(comment, userId, false,
+      await approveComment(comment, false,
         {
           rejectedCount: article.category.rejectedCount,
           flaggedCount: article.category.flaggedCount,
@@ -139,13 +142,13 @@ setAxiosToken(token);
           rejectedCount: article.rejectedCount,
           flaggedCount: article.flaggedCount,
         });
-      await approveComment(comment, userId, true,
+      await approveComment(comment, true,
         {
           flaggedCount: article.category.flaggedCount - 1,
         }, {
           flaggedCount: article.flaggedCount - 1,
         });
-      await rejectComment(comment, userId, true,
+      await rejectComment(comment, true,
         {
           flaggedCount: article.category.flaggedCount - 1,
         }, {
@@ -170,7 +173,7 @@ setAxiosToken(token);
     console.log('  Doing an article text fetch');
     await fetchArticleText(article.id);
     console.log(`\n* Approving comment ${comments.last()} and waiting for notification.`);
-    await approveComment(comments.last(), userId, false,
+    await approveComment(comments.last(), false,
       {
         approvedCount: article.category.approvedCount + 1,
       }, {

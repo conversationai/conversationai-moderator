@@ -311,8 +311,8 @@ export interface ICommentDetailProps extends WithRouterProps {
   onRemoveCommentScore?(commentScore: ICommentScoreModel): void;
   loadData?(commentId: string): void;
   loadScores?(commentId: string): void;
-  onCommentAction?(action: IConfirmationAction, idsToDispatch: Array<string>, userId: string): void;
-  onTagComment?(ids: Array<string>, tagId: string, userId: string): void;
+  onCommentAction?(action: IConfirmationAction, idsToDispatch: Array<string>): void;
+  onTagComment?(ids: Array<string>, tagId: string): void;
   onAnnotateComment?(id: string, tagId: string, start: number, end: number): void;
   authorCountById?(id: string | number): IAuthorCountsModel;
   getUserById?(id: string | number): IUserModel;
@@ -320,9 +320,9 @@ export interface ICommentDetailProps extends WithRouterProps {
   detailSource?: string;
   linkBackToList?: string;
   summaryScores?: List<ICommentSummaryScoreModel>;
-  tagCommentSummaryScore?(ids: Array<string>, tagId: string, userId?: string): void;
-  confirmCommentSummaryScore?(id: string, tagId: string, userId?: string): void;
-  rejectCommentSummaryScore?(id: string, tagId: string, userId?: string): void;
+  tagCommentSummaryScore?(ids: Array<string>, tagId: string): void;
+  confirmCommentSummaryScore?(id: string, tagId: string): void;
+  rejectCommentSummaryScore?(id: string, tagId: string): void;
 }
 
 export interface ICommentDetailState {
@@ -1003,7 +1003,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     }
 
     await Promise.all([
-      this.props.onCommentAction && this.props.onCommentAction(commentAction, [this.props.comment.id], this.props.currentUser.id),
+      this.props.onCommentAction && this.props.onCommentAction(commentAction, [this.props.comment.id]),
       timeout(2000),
     ]);
 
@@ -1076,7 +1076,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       await this.props.onAddCommentScore(localStatePayload);
     }
     if (this.props.onTagComment) {
-      await this.props.onTagComment([this.props.comment.id], tagId, this.props.currentUser.id);
+      await this.props.onTagComment([this.props.comment.id], tagId);
     }
     await this.props.loadScores(this.props.comment.id);
     this.closeToast();
