@@ -22,6 +22,10 @@ import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
+import {
+  Popper,
+} from '@material-ui/core';
+
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
@@ -85,6 +89,66 @@ const STYLES = stylesheet({
     color: 'white',
   },
 });
+
+interface IArticleControlIconProps {
+  article: IArticleModel;
+  open: boolean;
+
+  clearPopups(): void;
+  openControls(article: IArticleModel): void;
+  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean): void;
+}
+
+class ArticleControlIcon extends React.Component<IArticleControlIconProps> {
+  anchorElement: any;
+
+  @autobind
+  setOpen() {
+    const { article, open, clearPopups, openControls } = this.props;
+    if (open) {
+      clearPopups();
+    }
+    else {
+      openControls(article);
+    }
+  }
+
+  render() {
+    const { article, open, saveControls, clearPopups } = this.props;
+
+    return (
+      <div key="aci">
+        <div
+          key="icon"
+          {...css(open ? ICON_STYLES.iconBackgroundCircle : big)}
+          ref={(node) => { this.anchorElement = node; }}
+        >
+          <div onClick={this.setOpen} {...css(ICON_STYLES.iconCenter)}>
+            <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated}/>
+          </div>
+        </div>
+        <Popper
+          key="popper"
+          open={open}
+          anchorEl={this.anchorElement}
+          placement="left"
+          modifiers={{
+            preventOverflow: {
+              enabled: true,
+              boundariesElement: 'viewport',
+            },
+          }}
+        >
+          <ArticleControlPopup
+            article={article}
+            saveControls={saveControls}
+            clearPopups={clearPopups}
+          />
+        </Popper>
+      </div>
+    );
+  }
+}
 
 export interface IIArticleTableProps extends WithRouterProps {
   myUserId: string;
@@ -398,44 +462,6 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     }
   }
 
-  renderControlPopup(article: IArticleModel) {
-    const imOpen = this.state.selectedArticle && this.state.selectedArticle.id === article.id;
-    if (this.state.popupToShow !== POPUP_CONTROLS || !imOpen) {
-      return null;
-    }
-
-    return (
-      <ArticleControlPopup
-        article={this.state.selectedArticle}
-        saveControls={this.saveControls}
-        clearPopups={this.clearPopups}
-      />
-    );
-  }
-
-  renderFlags(article: IArticleModel) {
-    const that = this;
-    const imOpen = that.state.selectedArticle && that.state.selectedArticle.id === article.id;
-
-    function openDlg() {
-      if (imOpen) {
-        that.clearPopups();
-      }
-      else {
-        that.openControls(article);
-      }
-    }
-
-    return (
-      <div {...css(imOpen ? ICON_STYLES.iconBackgroundCircle : big)}>
-        {this.renderControlPopup(article)}
-        <div onClick={openDlg} {...css(ICON_STYLES.iconCenter)}>
-          <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated}/>
-        </div>
-      </div>
-    );
-  }
-
   @autobind
   renderModerators(targetId: ModelId, moderatorIds: Array<ModelId>, superModeratorIds: Array<ModelId>, isCategory: boolean) {
     return (
@@ -600,7 +626,14 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
         </td>
         <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
           <div {...css({display: 'inline-block'})}>
-            {!isSummary && this.renderFlags(article)}
+            {!isSummary &&
+            <ArticleControlIcon
+              article={article}
+              open={this.state.selectedArticle && this.state.selectedArticle.id === article.id}
+              clearPopups={this.clearPopups}
+              openControls={this.openControls}
+              saveControls={this.saveControls}
+            />}
           </div>
         </td>
         <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>

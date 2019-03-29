@@ -18,6 +18,7 @@ import { autobind } from 'core-decorators';
 import React from 'react';
 
 import {
+  ClickAwayListener,
   DialogTitle,
   Switch,
 } from '@material-ui/core';
@@ -67,43 +68,45 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
 
   render() {
     return (
-      <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, {position: 'absolute', marginLeft: '-400px', marginTop: '-15px', padding: '20px'})}>
-        <DialogTitle id="article-controls">Moderation settings</DialogTitle>
-        <table key="main" {...css({width: 'compute(100% - 50px)', margin: '4px 9px 4px 25px'})}>
-          <tbody>
-          <tr key="comments" onClick={this.handleCommentingEnabledClicked}>
-            <td key="icon">
-              <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled}/>
-            </td>
-            <td key="text" {...css({textAlign: 'left', padding: '15px 4px'})}>
-              <label {...css(SCRIM_STYLE.popupContent)}>
-                Comments Enabled
-              </label>
-            </td>
-            <td key="toggle" {...css({textAlign: 'right'})}>
-              <Switch checked={this.state.isCommentingEnabled} color="primary"/>
-            </td>
-          </tr>
-          <tr key="automod" onClick={this.handleAutoModeratedClicked} {...css(this.state.isCommentingEnabled ? {} : {opacity: 0.5})}>
-            <td key="icon">
-              <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled} isAutoModerated={this.state.isAutoModerated}/>
-            </td>
-            <td key="text"  {...css({textAlign: 'left', padding: '15px 4px'})}>
-              <label {...css(SCRIM_STYLE.popupContent)}>
-                Auto Moderation Enabled
-              </label>
-            </td>
-            <td key="toggle" {...css({textAlign: 'right'})}>
-              <Switch checked={this.state.isAutoModerated} disabled={!this.state.isCommentingEnabled} color="primary"/>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-        <div key="footer" {...css({textAlign: 'right', margin: '35px 25px 30px 25px'})}>
-          <span onClick={this.props.clearPopups} {...css({marginRight: '30px', opacity: '0.5'})}>Cancel</span>
-          <span onClick={this.saveControls} {...css({color: NICE_CONTROL_BLUE})}>Save</span>
+      <ClickAwayListener onClickAway={this.props.clearPopups}>
+        <div tabIndex={0} {...css(SCRIM_STYLE.popupMenu, {padding: '20px'})}>
+          <DialogTitle id="article-controls">Moderation settings</DialogTitle>
+          <table key="main" {...css({width: 'compute(100% - 50px)', margin: '4px 9px 4px 25px'})}>
+            <tbody>
+            <tr key="comments" onClick={this.handleCommentingEnabledClicked}>
+              <td key="icon">
+                <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled}/>
+              </td>
+              <td key="text" {...css({textAlign: 'left', padding: '15px 4px'})}>
+                <label {...css(SCRIM_STYLE.popupContent)}>
+                  Comments Enabled
+                </label>
+              </td>
+              <td key="toggle" {...css({textAlign: 'right'})}>
+                <Switch checked={this.state.isCommentingEnabled} color="primary"/>
+              </td>
+            </tr>
+            <tr key="automod" onClick={this.handleAutoModeratedClicked} {...css(this.state.isCommentingEnabled ? {} : {opacity: 0.5})}>
+              <td key="icon">
+                <ControlFlag isCommentingEnabled={this.state.isCommentingEnabled} isAutoModerated={this.state.isAutoModerated}/>
+              </td>
+              <td key="text"  {...css({textAlign: 'left', padding: '15px 4px'})}>
+                <label {...css(SCRIM_STYLE.popupContent)}>
+                  Auto Moderation Enabled
+                </label>
+              </td>
+              <td key="toggle" {...css({textAlign: 'right'})}>
+                <Switch checked={this.state.isAutoModerated} disabled={!this.state.isCommentingEnabled} color="primary"/>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <div key="footer" {...css({textAlign: 'right', margin: '35px 25px 30px 25px'})}>
+            <span onClick={this.props.clearPopups} {...css({marginRight: '30px', opacity: '0.5'})}>Cancel</span>
+            <span onClick={this.saveControls} {...css({color: NICE_CONTROL_BLUE})}>Save</span>
+          </div>
         </div>
-      </div>
+      </ClickAwayListener>
     );
   }
 }
