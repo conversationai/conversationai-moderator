@@ -15,19 +15,20 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
+import { Cell, Column, Table } from 'fixed-data-table-2';
 import { List } from 'immutable';
-import React from 'react';
-import { partial } from '../../util';
-import { css, stylesheet } from '../../utilx';
-const { Table, Column, Cell } = require('fixed-data-table-2');
 import { clamp } from 'lodash';
+import React from 'react';
+
 import { ICommentModel, ITagModel } from '../../../models';
 import { IConfirmationAction } from '../../../types';
-import { ICommentPropsForRow, LazyLoadComment } from '../../components/LazyLoadComment';
+import { partial } from '../../util';
+import { css, stylesheet } from '../../utilx';
+import { ICommentPropsForRow, LazyLoadComment } from '../LazyLoadComment';
 import {
   BasicBody,
   LinkedBasicBody,
-} from '../../components/LazyLoadComment';
+} from '../LazyLoadComment';
 import { CheckboxColumn } from './components/CheckboxColumn';
 import { SortColumn } from './components/SortColumn';
 
