@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { List } from 'immutable';
+import { Iterable } from 'immutable';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Link } from 'react-router';
@@ -148,7 +148,7 @@ const STYLES = stylesheet({
 
 export interface ICategorySidebarProps {
   user: IUserModel;
-  categories: List<ICategoryModel>;
+  categories: Iterable.Indexed<ICategoryModel>;
   selectedCategory?: ICategoryModel;
   selectMine: boolean;
   isAdmin?: boolean;
@@ -156,7 +156,7 @@ export interface ICategorySidebarProps {
   hideSidebar?(): void;
 }
 
-export class CategorySidebar extends React.Component<ICategorySidebarProps> {
+export class CategorySidebar extends React.PureComponent<ICategorySidebarProps> {
   _scrollBarRef: PerfectScrollbar = null;
 
   componentDidMount(): void {
@@ -181,6 +181,7 @@ export class CategorySidebar extends React.Component<ICategorySidebarProps> {
     const isMeSuffix = selectMine ? `+${FILTER_MODERATOR_ISME}` : '';
     const allLink = selectMine ? dashboardLink(FILTER_MODERATOR_ISME) : dashboardLink();
     const allUnmoderated = categories.reduce((r: number, v: ICategoryModel) => (r + v.unmoderatedCount), 0);
+    const sorted = categories.sort((a, b) => (b.unmoderatedCount - a.unmoderatedCount));
 
     return(
       <div key="sidebar" {...css(STYLES.sidebar, isFixed ? STYLES.sidebarFixed : STYLES.sidebarFloating)}>
@@ -217,7 +218,7 @@ export class CategorySidebar extends React.Component<ICategorySidebarProps> {
               </Link>
             </div>
           </div>
-          {categories.map((c: ICategoryModel) => (
+          {sorted.map((c: ICategoryModel) => (
             <div key={c.id} {...css(STYLES.sidebarRow)}>
               <div {...css(STYLES.sidebarRowInner, selectedCategory && selectedCategory.id === c.id ? STYLES.sidebarRowSelected : {})}>
                 <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}>

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { autobind } from 'core-decorators';
-import { List } from 'immutable';
+import { Iterable } from 'immutable';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
 
@@ -45,7 +45,7 @@ export interface IITableFrameProps extends WithRouterProps {
   dispatch: Function;
   user: IUserModel;
   isAdmin: boolean;
-  categories: List<ICategoryModel>;
+  categories: Iterable.Indexed<ICategoryModel>;
 }
 
 export interface IITableFrameState {
