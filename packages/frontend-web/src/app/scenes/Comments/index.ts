@@ -63,7 +63,8 @@ export const Comments = compose(
     article: (state: IAppStateRecord, { params: { articleId }}: ICommentsProps) => getArticle(state, articleId),
     category: (state: IAppStateRecord, { params }: ICommentsProps) => {
       if (params.articleId) {
-        return getArticle(state, params.articleId).category;
+        const article = getArticle(state, params.articleId);
+        return getCategory(state, article.categoryId);
       }
       else if (params.categoryId && params.categoryId !== 'all') {
         return getCategory(state, params.categoryId);
