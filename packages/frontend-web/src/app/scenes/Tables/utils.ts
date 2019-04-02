@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {IArticleModel} from '../../../models';
+import {IArticleModel, ICategoryModel, ModelId} from '../../../models';
 
 export interface IFilterItem {
   key: string;
@@ -66,6 +66,7 @@ export function getFilterValue(filterList: Array<IFilterItem>, key: string) {
 
 export interface IFilterContext {
   myId: string;
+  categories: Map<ModelId, ICategoryModel>;
 }
 
 export const FILTER_TITLE = 'title';
@@ -89,14 +90,15 @@ export const FILTER_DATE_SINCE = 'since-';
 export const FILTER_DATE_PRIOR = 'prior-';
 export const FILTER_MODERATOR_ISME = `${FILTER_MODERATORS}=${FILTER_MODERATORS_ME}`;
 
-function articleHasModerator(article: IArticleModel, moderatorId: string) {
+function articleHasModerator(context: IFilterContext, article: IArticleModel, moderatorId: string) {
   for (const mId of article.assignedModerators) {
     if (moderatorId === mId) {
       return true;
     }
   }
-  if (article.category) {
-    for (const mId of article.category.assignedModerators) {
+  if (article.categoryId) {
+    const category = context.categories.get(article.categoryId);
+    for (const mId of category.assignedModerators) {
       if (moderatorId === mId) {
         return true;
       }
@@ -105,14 +107,15 @@ function articleHasModerator(article: IArticleModel, moderatorId: string) {
   return false;
 }
 
-function articleMatchesModerators(article: IArticleModel, moderatorIds: Set<string>) {
+function articleMatchesModerators(context: IFilterContext, article: IArticleModel, moderatorIds: Set<string>) {
+  const category = context.categories.get(article.categoryId);
   for (const mId of article.assignedModerators) {
     if (moderatorIds.has(mId)) {
       return true;
     }
   }
-  if (article.category) {
-    for (const mId of article.category.assignedModerators) {
+  if (category) {
+    for (const mId of category.assignedModerators) {
       if (moderatorIds.has(mId)) {
         return true;
       }
@@ -131,27 +134,27 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
           break;
 
         case FILTER_MODERATORS:
-          let found = false;
           if (i.value === FILTER_MODERATORS_UNASSIGNED) {
-            if (article.assignedModerators.length === 0) {
-              found = true;
+            if (article.assignedModerators.length !== 0) {
+              return false;
             }
-            else if (article.category && article.category.assignedModerators.length === 0) {
-              found = true;
+            const category = context.categories.get(article.categoryId);
+            if (category && category.assignedModerators.length !== 0) {
+              return false;
             }
           }
-          else if (article.assignedModerators.length > 0 ||
-                   (article.category && article.category.assignedModerators.length > 0)) {
+          else {
+            let found = false;
             if (i.value === FILTER_MODERATORS_ME) {
-              found = articleHasModerator(article, context.myId);
+              found = articleHasModerator(context, article, context.myId);
             }
             else {
               const moderatorIds = new Set<string>(i.value.split(','));
-              found = articleMatchesModerators(article, moderatorIds);
+              found = articleMatchesModerators(context, article, moderatorIds);
             }
-          }
-          if (!found) {
-            return false;
+            if (!found) {
+              return false;
+            }
           }
           break;
 
@@ -317,7 +320,6 @@ export function sortString(sl: Array<string>) {
 }
 
 export const SORT_TITLE = 'title';
-export const SORT_CATEGORY = 'category';
 export const SORT_NEW = 'new';
 export const SORT_APPROVED = 'approved';
 export const SORT_REJECTED = 'rejected';
@@ -333,8 +335,6 @@ export function executeSort(sortList: Array<string>) {
     switch (comparator) {
       case SORT_TITLE:
         return ('' + a.title).localeCompare(b.title);
-      case SORT_CATEGORY:
-        return ('' + a.category.label).localeCompare(b.category.label);
       case SORT_NEW:
         return b.unmoderatedCount - a.unmoderatedCount;
       case SORT_APPROVED:

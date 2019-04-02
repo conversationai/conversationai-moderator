@@ -17,7 +17,6 @@ limitations under the License.
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 
-import { CategoryModel, ICategoryModel } from './category';
 import { ModelId } from './common';
 
 export interface IArticleAttributes {
@@ -28,7 +27,6 @@ export interface IArticleAttributes {
   text: string;
   url: string;
   categoryId: ModelId;
-  category: ICategoryModel;
   allCount: number;
   unprocessedCount: number;
   unmoderatedCount: number;
@@ -56,7 +54,6 @@ const ArticleModelRecord = Record({
   title: null,
   url: null,
   categoryId: null,
-  category: null,
   allCount: null,
   unprocessedCount: null,
   unmoderatedCount: null,
@@ -75,10 +72,6 @@ const ArticleModelRecord = Record({
 
 export function ArticleModel(keyValuePairs?: IArticleAttributes): IArticleModel {
   let article = ArticleModelRecord(keyValuePairs) as IArticleModel;
-
-  if (article.category) {
-    article = article.update('category', CategoryModel);
-  }
 
   // Sanitize URLs for security.
   if (article.url) {

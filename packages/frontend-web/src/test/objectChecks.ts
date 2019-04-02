@@ -74,20 +74,6 @@ const categoryIds = new Set();
 const tagIds = new Set();
 const userIds = new Set();
 
-function category(val: any) {
-  if (!check.object(val as any)) {
-    return false;
-  }
-  if (!val.id) {
-    console.log(`invalid category: ${val}`);
-    return false;
-  }
-  if (!categoryIds.has(val.id)) {
-    console.log(`invalid category: ${val.id}`);
-    return false;
-  }
-}
-
 function category_id_or_null(val: any) {
   if (val === null) {
     return true;
@@ -210,7 +196,7 @@ const articleFields = {
   ...commonFields,
   title: check.string,
   url: check.string,
-  category: category,
+  categoryId: category_id_or_null,
   sourceCreatedAt: date_string,
   lastModeratedAt: date_string_or_null,
   isCommentingEnabled: check.boolean,

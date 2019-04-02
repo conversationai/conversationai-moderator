@@ -104,24 +104,15 @@ function packSystemData(data: any): ISystemData {
 }
 
 function packArticleData(data: any): IAllArticlesData {
-  const catMap: {[key: number]: ICategoryModel} = {};
 
   const categories = List<ICategoryModel>(data.categories.map((c: any) => {
-    const id = c.id;
     c.id = c.id.toString();
-    const model = CategoryModel(c);
-    catMap[id] = model;
-    return model;
+    return CategoryModel(c);
   }));
 
   const articles = List<IArticleModel>(data.articles.map((a: any) => {
     a.id = a.id.toString();
-    // TODO: We need to break this coupling between articles and categories
-    //       It doesn't work well in presence of incremental updates.
-    if (a.categoryId) {
-      a.category = catMap[a.categoryId];
-      a.categoryId = a.categoryId.toString();
-    }
+    a.categoryId = a.categoryId && a.categoryId.toString();
     return ArticleModel(a);
   }));
 
@@ -145,7 +136,6 @@ function packArticleUpdate(data: any): IArticleUpdate {
   if (adata) {
     adata.id = adata.id.toString();
     adata.categoryId = adata.categoryId && adata.categoryId.toString();
-    adata.category = cmodel;
     amodel = ArticleModel(adata);
   }
 
