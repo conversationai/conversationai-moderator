@@ -22,7 +22,7 @@ import {
   IPerUserData,
   ISystemData,
 } from '../app/platform/websocketService';
-import { IArticleModel, IUserModel } from '../models';
+import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../models';
 import {
   checkArticle,
   checkCategory,
@@ -43,12 +43,13 @@ class ArticleMessages {
   countArticles = 0;
   articlesOk = true;
 
+  categories: Map<ModelId, ICategoryModel> = new Map();
   articlesWithNew: Array<IArticleModel> = [];
   articlesWithFlags: Array<IArticleModel> = [];
   articleFullyEnabled?: IArticleModel;
   articleWithNoModerators?: IArticleModel;
 
-  updateHappened?(type: string, message: any): void ;
+  updateHappened?(type: string, message: any): void;
 
   @autobind
   notificationHandler(data: IAllArticlesData) {
@@ -79,6 +80,9 @@ class ArticleMessages {
       this.categoriesOk = this.categoriesOk && checkCategory(c);
     }
     console.log('* check articles');
+    for (const c of this.data.categories.toArray()) {
+      this.categories.set(c.id, c);
+    }
     for (const a of this.data.articles.toArray()) {
       this.articlesOk = this.articlesOk && checkArticle(a);
       if (a.unmoderatedCount > 0) {

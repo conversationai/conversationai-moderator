@@ -30,19 +30,19 @@ const category2 = fakeCategoryModel({label: 'World', unmoderatedCount: 2});
 
 const article1 = fakeArticleModel({
   title: 'IMF chief Christine Lagarde warns Britain on Brexit: ‘It will never be as good as it is now’',
-  category: category,
+  categoryId: category.id,
 });
 const article2 = fakeArticleModel({
-  category: null,
+  categoryId: null,
   url: null,
 });
 const article3 = fakeArticleModel({
-  category: category2,
+  categoryId: category2.id,
   sourceCreatedAt: null,
   url: null,
 });
 const article4 = fakeArticleModel({
-  category: null,
+  categoryId: null,
   sourceCreatedAt: null,
 });
 
@@ -57,7 +57,7 @@ storiesOf('TableComponents', module)
         </tr>
         <tr {...css(ARTICLE_TABLE_STYLES.dataBody)}>
           <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
-            <TitleCell article={article1} link={'#'}/>
+            <TitleCell category={category} article={article1} link={'#'}/>
           </td>
         </tr>
         <tr {...css(ARTICLE_TABLE_STYLES.dataBody)}>
@@ -67,7 +67,7 @@ storiesOf('TableComponents', module)
         </tr>
         <tr {...css(ARTICLE_TABLE_STYLES.dataBody)}>
           <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
-            <TitleCell article={article3} link={'#'}/>
+            <TitleCell category={category2} article={article3} link={'#'}/>
           </td>
         </tr>
         <tr {...css(ARTICLE_TABLE_STYLES.dataBody)}>

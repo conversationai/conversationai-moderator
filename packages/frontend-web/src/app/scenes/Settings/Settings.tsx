@@ -17,7 +17,7 @@ limitations under the License.
 import * as copyToClipboard from 'copy-to-clipboard';
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { List } from 'immutable';
+import { Iterable, List } from 'immutable';
 import { generate } from 'randomstring';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
@@ -191,7 +191,7 @@ export interface ISettingsProps extends WithRouterProps {
   rules?: List<IRuleModel>;
   taggingSensitivities?:  List<ITaggingSensitivityModel>;
   preselects?: List<IPreselectModel>;
-  categories: List<ICategoryModel>;
+  categories: Iterable.Indexed<ICategoryModel>;
   dispatch: IAppDispatch;
   onCancel(): void;
   onSearchClick(): void;

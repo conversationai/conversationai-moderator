@@ -23,15 +23,23 @@ import { createStructuredSelector } from 'reselect';
 import { getMyUserId } from '../../auth';
 import { getWebsocketState, IAppStateRecord } from '../../stores';
 import { getArticles } from '../../stores/articles';
-import { getCategories } from '../../stores/categories';
+import { getCategories, getCategoryMap } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUsers } from '../../stores/users';
 import { withLoader } from '../../utilx';
-import { ArticleTable as PureArticleTable } from './ArticleTable';
+import { ArticleTable as PureArticleTable, IIArticleTableProps } from './ArticleTable';
 import { TableFrame as PureTableFrame } from './TableFrame';
 
 const baseSelector = createStructuredSelector({
   myUserId: getMyUserId,
-  categories: getCategories,
+  categories: getCategoryMap,
+  selectedCategory: (state: IAppStateRecord, { params }: IIArticleTableProps) => {
+    const m = /category=(\d+)/.exec(params.filter);
+    if (!m) {
+      return null;
+    }
+
+    return getCategoryMap(state).get(m[1]);
+  },
   articles: getArticles,
   users: getUsers,
 });

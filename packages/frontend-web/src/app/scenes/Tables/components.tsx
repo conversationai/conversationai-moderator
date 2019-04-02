@@ -23,7 +23,7 @@ import Timer = NodeJS.Timer;
 
 import { OpenInNew } from '@material-ui/icons/';
 
-import { IArticleModel, IUserModel, ModelId } from '../../../models';
+import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import * as icons from '../../components/Icons';
 import { GREY_COLOR, NICE_CONTROL_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
 import { css, stylesheet } from '../../utilx';
@@ -306,6 +306,7 @@ export const TITLE_CELL_STYLES = stylesheet({
 });
 
 interface ITitleCellProps {
+  category?: ICategoryModel;
   article: IArticleModel;
   link: string;
 }
@@ -313,13 +314,14 @@ interface ITitleCellProps {
 export class TitleCell extends React.Component<ITitleCellProps> {
   render() {
     const {
+      category,
       article,
       link,
     } = this.props;
 
     const supertext = [];
-    if (article.category) {
-      supertext.push(<span key="label" {...css(TITLE_CELL_STYLES.categoryLabel)}>{article.category.label}</span>);
+    if (category) {
+      supertext.push(<span key="label" {...css(TITLE_CELL_STYLES.categoryLabel)}>{category.label}</span>);
     }
     if (article.sourceCreatedAt) {
       supertext.push(

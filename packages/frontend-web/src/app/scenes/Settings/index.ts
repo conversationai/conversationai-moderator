@@ -36,7 +36,7 @@ import {
   loadSystemUsers,
   USER_GROUP_MODERATOR,
   USER_GROUP_SERVICE,
-  USER_GROUP_YOUTUBE
+  USER_GROUP_YOUTUBE,
 } from '../../stores/users';
 import { ISettingsProps, Settings as PureSettings } from './Settings';
 

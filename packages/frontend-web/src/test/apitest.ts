@@ -14,8 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {setUserId} from '../app/platform/dataService';
-
 function usage() {
   console.log(`usage: node ${process.argv[1]} <api_url> <token>`);
   console.log(`   where api_url is the URL for the API backend (e.g., http://localhost:8080)`);
@@ -42,6 +40,7 @@ if (!token) {
 };
 
 import { decodeToken, setAxiosToken } from '../app/auth/store';
+import {setUserId} from '../app/platform/dataService';
 import { saveToken } from '../app/platform/localStore';
 import { connectNotifier } from '../app/platform/websocketService';
 import {approveComment, rejectComment, setArticleModerators, setArticleState} from './actions';
@@ -113,7 +112,7 @@ setUserId(userId);
     console.log('\n* Doing a flagged comment fetch');
     await listModeratedCommentsPage('flagged', 'all');
     console.log('  Checked all');
-    const articlesWithCategory = articles.filter((a) => (!!a.category));
+    const articlesWithCategory = articles.filter((a) => (!!a.categoryId));
     if (articlesWithCategory.length > 0) {
       await listModeratedCommentsPage('flagged', 'category', articlesWithCategory[0].categoryId);
       console.log(`  Checked category ${articlesWithCategory[0].categoryId}`);
@@ -122,35 +121,41 @@ setUserId(userId);
     const comments = await listModeratedCommentsPage('flagged', 'article', article.id);
     console.log(`  Checked article ${article.id}`);
     console.log(`  Found ${comments.length} flagged comments`);
+
     if (comments.length > 0) {
       const comment = comments[0];
       console.log(`  Doing a fetch of comment ${comment}`);
       await commentDetailsPage(comment);
       console.log(`  Doing comment action tests. `);
+      const category = articleData.categories.get(article.categoryId);
+
       await rejectComment(comment, false, {
-        rejectedCount: article.category.rejectedCount + 1,
-        flaggedCount: article.category.flaggedCount - 1,
+        rejectedCount: category.rejectedCount + 1,
+        flaggedCount: category.flaggedCount - 1,
       }, {
         rejectedCount: article.rejectedCount + 1,
         flaggedCount: article.flaggedCount - 1,
       });
+
       await approveComment(comment, false,
         {
-          rejectedCount: article.category.rejectedCount,
-          flaggedCount: article.category.flaggedCount,
+          rejectedCount: category.rejectedCount,
+          flaggedCount: category.flaggedCount,
         }, {
           rejectedCount: article.rejectedCount,
           flaggedCount: article.flaggedCount,
         });
+
       await approveComment(comment, true,
         {
-          flaggedCount: article.category.flaggedCount - 1,
+          flaggedCount: category.flaggedCount - 1,
         }, {
           flaggedCount: article.flaggedCount - 1,
         });
+
       await rejectComment(comment, true,
         {
-          flaggedCount: article.category.flaggedCount - 1,
+          flaggedCount: category.flaggedCount - 1,
         }, {
           flaggedCount: article.flaggedCount - 1,
         });
@@ -162,20 +167,23 @@ setUserId(userId);
     console.log('\n* Doing a new comment fetch');
     await listNewCommentsPage_SUMMARY_SCORE('all');
     console.log('  Checked all');
-    const articlesWithCategory = articles.filter((a) => (!!a.category));
+    const articlesWithCategory = articles.filter((a) => (!!a.categoryId));
     if (articlesWithCategory.length > 0) {
       await listNewCommentsPage_SUMMARY_SCORE('category', articlesWithCategory[0].categoryId);
       console.log(`  Checked category ${articlesWithCategory[0].categoryId}`);
     }
+
     const article = articles[0];
     const comments = await listNewCommentsPage_SUMMARY_SCORE('article', article.id);
     console.log(`  Checked article ${article.id}`);
     console.log('  Doing an article text fetch');
     await fetchArticleText(article.id);
     console.log(`\n* Approving comment ${comments.last()} and waiting for notification.`);
+
+    const category = articleData.categories.get(article.categoryId);
     await approveComment(comments.last(), false,
       {
-        approvedCount: article.category.approvedCount + 1,
+        approvedCount: category.approvedCount + 1,
       }, {
         approvedCount: article.approvedCount + 1,
       });

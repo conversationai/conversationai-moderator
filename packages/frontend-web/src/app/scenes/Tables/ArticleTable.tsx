@@ -152,7 +152,8 @@ class ArticleControlIcon extends React.Component<IArticleControlIconProps> {
 
 export interface IIArticleTableProps extends WithRouterProps {
   myUserId: string;
-  categories: List<ICategoryModel>;
+  categories: Map<ModelId, ICategoryModel>;
+  selectedCategory: ICategoryModel;
   articles: List<IArticleModel>;
   users: List<IUserModel>;
   routeParams: {[key: string]: string};
@@ -199,21 +200,6 @@ const clearPopupsState: Pick<IIArticleTableState,
   superModeratorIds: null,
 };
 
-function getCategory(
-  props: Readonly<IIArticleTableProps>) {
-  let category: ICategoryModel | null = null;
-  const m = /category=(\d+)/.exec(location.pathname);
-  if (m) {
-    for (const c of props.categories.toArray()) {
-      if (c.id === m[1]) {
-        category = c;
-      }
-    }
-  }
-
-  return category;
-}
-
 function calculateSummaryCounts(processedArticles: Array<IArticleModel>) {
   const columns = [
     'unmoderatedCount',
@@ -244,7 +230,11 @@ function processArticles(
   let processedArticles: Array<IArticleModel> = props.articles.toArray();
 
   if (Object.keys(filter).length > 0) {
-    processedArticles = processedArticles.filter(executeFilter(filter, {myId: props.myUserId}));
+    processedArticles = processedArticles.filter(executeFilter(filter,
+      {
+        myId: props.myUserId,
+        categories: props.categories,
+      }));
   }
 
   if (sort.length > 0) {
@@ -262,7 +252,7 @@ function processArticles(
 
   summary['id'] = 'summary';
 
-  const category = getCategory(props);
+  const category = props.selectedCategory;
   summary['category'] = category;
 
   summary['title'] = ` ${count} Title` + (count !== 1 ? 's' : '');
@@ -297,7 +287,6 @@ function updateArticles(state: IIArticleTableState, props: IIArticleTableProps) 
   const newSummary = {
     ...state.summary,
     ...calculateSummaryCounts(newArticles),
-    category: getCategory(props),
   };
 
   return {
@@ -549,10 +538,10 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
 
   renderRow(article: IArticleModel, isSummary: boolean) {
     const lastModerated: any = (!isSummary) ? ArticleTable.renderTime(article.lastModeratedAt) : '';
-
+    const category = this.props.categories.get(article.categoryId);
     function getLink(tag: string) {
       if (isSummary) {
-        if (article.category) {
+        if (category) {
           return categoriesLink(article.categoryId, tag);
         }
         return categoriesLink('all', tag);
@@ -564,16 +553,16 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
     let moderatorIds: Array<ModelId> | null = null;
     let superModeratorIds: Array<ModelId> | null = null;
     if (isSummary) {
-      if (article.category) {
+      if (category) {
         targetId = article.categoryId;
-        moderatorIds = article.category.assignedModerators;
+        moderatorIds = category.assignedModerators;
       }
     }
     else {
       targetId = article.id;
       moderatorIds = article.assignedModerators;
-      if (article.category) {
-        superModeratorIds = article.category.assignedModerators;
+      if (category) {
+        superModeratorIds = category.assignedModerators;
       }
     }
 
@@ -585,7 +574,11 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
           {isSummary ?
             <SimpleTitleCell article={article} link={getLink('new')}/>
             :
-            <TitleCell article={article} link={getLink('new')}/>
+            <TitleCell
+              category={this.props.categories.get(article.categoryId)}
+              article={article}
+              link={getLink('new')}
+            />
           }
         </td>
         <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
