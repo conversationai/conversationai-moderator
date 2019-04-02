@@ -227,6 +227,8 @@ function processArticles(
   props: Readonly<IIArticleTableProps>,
   filter: Array<IFilterItem>,
   sort: Array<string>) {
+
+  // Articles would be better as an array.  We could then store array of indices instead of a full array.
   let processedArticles: Array<IArticleModel> = props.articles.toArray();
 
   if (Object.keys(filter).length > 0) {
@@ -244,6 +246,7 @@ function processArticles(
     processedArticles = processedArticles.sort(executeSort([`+${SORT_NEW}`]));
   }
 
+  // Use users map from store
   const usersMap = new Map<string, IUserModel>();
   props.users.map((u) => usersMap.set(u.id, u));
 
@@ -252,13 +255,11 @@ function processArticles(
 
   summary['id'] = 'summary';
 
-  const category = props.selectedCategory;
-  summary['category'] = category;
-
   summary['title'] = ` ${count} Title` + (count !== 1 ? 's' : '');
 
-  if (category) {
-    summary['title'] += ` in section ${category.label}`;
+  if (props.selectedCategory) {
+    summary['categoryId'] = props.selectedCategory.id;
+    summary['title'] += ` in section ${props.selectedCategory.label}`;
   }
 
   if (filter.length > 1 || (filter.length === 1 && filter[0].key !== 'category')) {
