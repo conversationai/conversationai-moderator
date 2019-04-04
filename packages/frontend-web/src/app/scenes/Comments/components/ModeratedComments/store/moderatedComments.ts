@@ -178,7 +178,7 @@ export const moderatedCommentsReducer = handleActions<
     const { articleId, commentIds, moderationAction, currentModeration } = payload;
     let newState = state;
     commentIds.forEach((commentId: string) => {
-      const shouldRemoveFromList = currentModeration !== 'flagged' &&
+      const shouldRemoveFromList =
           currentModeration !== 'batched' &&
           currentModeration !== 'automated' &&
           ((currentModeration === 'highlighted' && moderationAction === 'highlight') ||
@@ -226,7 +226,7 @@ export const moderatedCommentsReducer = handleActions<
     const { category, commentIds, moderationAction, currentModeration } = payload;
     let newState = state;
     commentIds.forEach((commentId: string) => {
-      const shouldRemoveFromList = currentModeration !== 'flagged' &&
+      const shouldRemoveFromList = 
           currentModeration !== 'batched' &&
           currentModeration !== 'automated' &&
           ((currentModeration === 'highlighted' && moderationAction === 'highlight') ||
