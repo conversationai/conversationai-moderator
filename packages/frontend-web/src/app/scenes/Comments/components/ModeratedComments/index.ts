@@ -168,7 +168,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
     defer: deferComments,
     reject: tag === 'flagged' ? rejectFlagsAndComments : rejectComments,
     tag: tagCommentSummaryScores,
-    reset: resetComments,
+    reset: tag === 'flagged' ? approveFlagsAndComments : resetComments,
   };
 
   return {
