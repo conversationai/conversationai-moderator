@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { List, Map, Set } from 'immutable';
+import { Map, Seq, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -154,7 +154,7 @@ export interface IIArticleTableProps extends WithRouterProps {
   myUserId: string;
   categories: Map<ModelId, ICategoryModel>;
   selectedCategory: ICategoryModel;
-  articles: List<IArticleModel>;
+  articles: Map<ModelId, IArticleModel>;
   users: Map<ModelId, IUserModel>;
   routeParams: {[key: string]: string};
   router: InjectedRouter;
@@ -174,7 +174,7 @@ export interface IIArticleTableState {
   sortString: string;
   sort: Array<string>;
   summary: IArticleModel;
-  processedArticles: Array<IArticleModel>;
+  processedArticles: Array<ModelId>;
 
   popupToShow?: string;
 
@@ -199,7 +199,7 @@ const clearPopupsState: Pick<IIArticleTableState,
   superModeratorIds: null,
 };
 
-function calculateSummaryCounts(processedArticles: Array<IArticleModel>) {
+function calculateSummaryCounts(articles: Seq.Indexed<IArticleModel>) {
   const columns = [
     'unmoderatedCount',
     'approvedCount',
@@ -210,16 +210,34 @@ function calculateSummaryCounts(processedArticles: Array<IArticleModel>) {
   ];
   const summary: any =  {};
   for (const i of columns) {
+    summary['count'] = 0;
     summary[i] = 0;
   }
 
-  for (const a of processedArticles) {
+  articles.reduce((s: any, a) =>  {
+    s['count'] ++;
     for (const i of columns) {
-      summary[i] += (a as any)[i];
+      s[i] += (a as any)[i];
     }
-  }
+    return s;
+  }, summary);
 
   return summary;
+}
+
+function filterArticles(
+  props: Readonly<IIArticleTableProps>,
+  filter: Array<IFilterItem>,
+) {
+  if (filter.length === 0) {
+    return props.articles.valueSeq();
+  }
+
+  return (props.articles.valueSeq().filter(executeFilter(filter,
+    {
+      myId: props.myUserId,
+      categories: props.categories,
+    })) as  Seq.Indexed<IArticleModel>); // Typescript doesn't match documentation
 }
 
 function processArticles(
@@ -227,30 +245,14 @@ function processArticles(
   filter: Array<IFilterItem>,
   sort: Array<string>) {
 
-  // Articles would be better as an array.  We could then store array of indices instead of a full array.
-  let processedArticles: Array<IArticleModel> = props.articles.toArray();
-
-  if (Object.keys(filter).length > 0) {
-    processedArticles = processedArticles.filter(executeFilter(filter,
-      {
-        myId: props.myUserId,
-        categories: props.categories,
-      }));
-  }
-
-  if (sort.length > 0) {
-    processedArticles = processedArticles.sort(executeSort(sort));
-  }
-  else {
-    processedArticles = processedArticles.sort(executeSort([`+${SORT_NEW}`]));
-  }
+  const filteredArticles = filterArticles(props, filter);
+  const summary = calculateSummaryCounts(filteredArticles);
+  const sortFn = (sort.length > 0) ? executeSort(sort) : executeSort([`+${SORT_NEW}`]);
+  const processedArticles = filteredArticles.toArray().sort(sortFn);
 
   // Use users map from store
-  const count = processedArticles.length;
-  const summary = calculateSummaryCounts(processedArticles);
-
+  const count = summary['count'];
   summary['id'] = 'summary';
-
   summary['title'] = ` ${count} Title` + (count !== 1 ? 's' : '');
 
   if (props.selectedCategory) {
@@ -263,30 +265,20 @@ function processArticles(
   }
 
   return {
-    processedArticles,
+    processedArticles: processedArticles.map((a) => a.id),
     summary,
   };
 }
 
-function updateArticles(state: IIArticleTableState, props: IIArticleTableProps) {
-  const newArticles = [...state.processedArticles];
-
-  const indexMap: { [key: string]: number; } = {};
-  newArticles.map((a, i) => { indexMap[a.id] = i; });
-
-  for (const a of props.articles.toArray()) {
-    if (a.id in indexMap) {
-      newArticles[indexMap[a.id]] = a;
-    }
-  }
-
+function updateArticles(state: IIArticleTableState, props: IIArticleTableProps, filter: Array<IFilterItem>) {
+  const filteredArticles = filterArticles(props, filter);
+  const summary = calculateSummaryCounts(filteredArticles);
   const newSummary = {
     ...state.summary,
-    ...calculateSummaryCounts(newArticles),
+    ...summary,
   };
 
   return {
-    processedArticles: newArticles,
     summary: newSummary,
   };
 }
@@ -359,7 +351,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
       Object.assign(newState, processArticles(props, filter, sort));
     }
     else {
-      Object.assign(newState, updateArticles(this.state, props));
+      Object.assign(newState, updateArticles(this.state, props, filter));
     }
 
     this.setState(newState);
@@ -745,7 +737,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
             <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
               <tbody>
                 {this.renderRow(summary, true)}
-                {processedArticles.slice(0, numberToShow).map((article: IArticleModel) => this.renderRow(article, false))}
+                {processedArticles.slice(0, numberToShow).map((id: ModelId) => this.renderRow(this.props.articles.get(id), false))}
               </tbody>
             </table>
           </PerfectScrollbar>
