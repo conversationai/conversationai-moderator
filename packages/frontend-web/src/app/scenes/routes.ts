@@ -35,6 +35,9 @@ export const searchBase = 'search';
 export function searchLink() {
   return `/${searchBase}`;
 }
+export function authorSearchLink() {
+  return `${searchBase}?searchByAuthor=true`;
+}
 
 export const articlesBase = 'articles';
 export const categoriesBase = 'categories';

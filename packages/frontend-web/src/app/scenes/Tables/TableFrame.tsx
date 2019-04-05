@@ -27,7 +27,6 @@ import {
 } from '@material-ui/core/styles';
 
 import { ICategoryModel, IUserModel } from '../../../models';
-import { logout } from '../../auth';
 import { HeaderBar } from '../../components';
 import { NICE_CONTROL_BLUE } from '../../styles';
 import { CategorySidebar, SIDEBAR_WIDTH } from './CategorySidebar';
@@ -46,6 +45,7 @@ export interface IITableFrameProps extends WithRouterProps {
   user: IUserModel;
   isAdmin: boolean;
   categories: Iterable.Indexed<ICategoryModel>;
+  logout (): void;
 }
 
 export interface IITableFrameState {
@@ -66,12 +66,6 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
       fixedSidebar: fixedSidebar(),
     };
   }
-
-  @autobind
-  logout() {
-    this.props.dispatch(logout());
-  }
-
   @autobind
   showSidebar() {
     this.setState({sidebarOpen: true});
@@ -147,7 +141,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
           <HeaderBar
             isMe={isMe}
             category={category}
-            logout={this.logout}
+            logout={this.props.logout}
           />
           <div style={{float: 'left', width: `${SIDEBAR_WIDTH + 1}px`, backgroundColor: 'white'}}>
             <div style={{width: `${SIDEBAR_WIDTH}px`, borderRight: '1px solid rgba(0,0,0,0.12)'}}>
@@ -174,7 +168,7 @@ export class TableFrame extends React.Component<IITableFrameProps, IITableFrameS
           isMe={isMe}
           category={category}
           showSidebar={this.showSidebar}
-          logout={this.logout}
+          logout={this.props.logout}
         />
         {this.renderSidebarPopup(isMe, category)}
         <div key="content">

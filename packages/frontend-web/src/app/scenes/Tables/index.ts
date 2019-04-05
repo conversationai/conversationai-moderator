@@ -20,8 +20,8 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { getMyUserId } from '../../auth';
-import { getWebsocketState, IAppStateRecord } from '../../stores';
+import { getMyUserId, logout } from '../../auth';
+import { getWebsocketState, IAppDispatch, IAppStateRecord } from '../../stores';
 import { getArticles } from '../../stores/articles';
 import { getCategories, getCategoryMap } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUsers } from '../../stores/users';
@@ -51,11 +51,16 @@ export const ArticleTable: React.ComponentClass<{}> = compose(
 
 export const TableFrame: React.ComponentClass<{}> = compose(
   withRouter,
-  connect(createStructuredSelector({
-    isLoading: (state: IAppStateRecord) => !getWebsocketState(state),
-    user: getCurrentUser,
-    isAdmin: getCurrentUserIsAdmin,
-    categories: getCategories,
-  })),
+  connect(
+    createStructuredSelector({
+      isLoading: (state: IAppStateRecord) => !getWebsocketState(state),
+      user: getCurrentUser,
+      isAdmin: getCurrentUserIsAdmin,
+      categories: getCategories,
+    }),
+    (dispatch: IAppDispatch) => ({
+      logout: () => dispatch(logout()),
+    }),
+  ),
   (c:  any) => withLoader(c, 'isLoading'),
 )(PureTableFrame);
