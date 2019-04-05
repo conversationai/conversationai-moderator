@@ -49,7 +49,7 @@ function getSortedUsers (state: IAppStateRecord, props: IAssignModeratorsOwnProp
   const assignedUsers = [];
   const unassignedUsers = [];
 
-  for (const u of allUsers.toArray()) {
+  for (const u of allUsers.valueSeq().toArray()) {
     if (u.id === userId) {
       currentUser.push(u);
     }

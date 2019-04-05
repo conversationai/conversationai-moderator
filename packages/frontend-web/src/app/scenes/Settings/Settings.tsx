@@ -17,7 +17,7 @@ limitations under the License.
 import * as copyToClipboard from 'copy-to-clipboard';
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { Iterable, List } from 'immutable';
+import { Iterable, List, Seq } from 'immutable';
 import { generate } from 'randomstring';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
@@ -183,7 +183,7 @@ const STYLES: any = stylesheet({
 });
 
 export interface ISettingsProps extends WithRouterProps {
-  users?: List<IUserModel>;
+  users?: Seq.Indexed<IUserModel>;
   serviceUsers?: List<IUserModel>;
   moderatorUsers?: List<IUserModel>;
   youtubeUsers?: List<IUserModel>;
