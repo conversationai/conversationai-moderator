@@ -22,49 +22,36 @@ import { IArticleModel, ModelId } from '../../models';
 import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'articles'];
-const DATA = [...STATE_ROOT, 'items'];
 const INDEX = [...STATE_ROOT, 'index'];
 
 export const articlesLoaded = createAction<List<IArticleModel>>('global/ARTICLES_LOADED');
 export const articleUpdated = createAction<IArticleModel>('global/ARTICLE_UPDATED');
 
-export function getArticles(state: IAppStateRecord): List<IArticleModel> {
-  return state.getIn(DATA);
+export function getArticles(state: IAppStateRecord): Map<ModelId, IArticleModel> {
+  return state.getIn(INDEX);
 }
 
 export function getArticle(state: IAppStateRecord, articleId: ModelId): IArticleModel {
-  const articles: List<IArticleModel> = state.getIn(DATA);
-  const index: Map<ModelId, number> = state.getIn(INDEX);
-  return articles.get(index.get(articleId));
+  return getArticles(state).get(articleId);
 }
 
 export interface IArticlesState {
-  items: List<IArticleModel>;
-  index: Map<ModelId, number>;
+  index: Map<ModelId, IArticleModel>;
 }
 
 export interface IArticlesStateRecord extends TypedRecord<IArticlesStateRecord>, IArticlesState {}
 
 const StateFactory = makeTypedFactory<IArticlesState, IArticlesStateRecord>({
-  items: List<IArticleModel>(),
-  index: Map<ModelId, number>(),
+  index: Map<ModelId, IArticleModel>(),
 });
 
 const reducer = handleActions<IArticlesStateRecord, List<IArticleModel>| IArticleModel>( {
   [articlesLoaded.toString()]: (state: IArticlesStateRecord, { payload }: Action<List<IArticleModel>>) => {
-    const index = Map<ModelId, number>(payload.map((v, i) => ([v.id, i])));
-    return state
-      .set('items', payload)
-      .set('index', index);
+    const index = Map<ModelId, IArticleModel>(payload.map((v) => ([v.id, v])));
+    return state.set('index', index);
   },
   [articleUpdated.toString()]: (state: IArticlesStateRecord, { payload }: Action<IArticleModel>) => {
-    const index = state.get('index').get(payload.id);
-    if (typeof index !== 'undefined') {
-      return state.set('items', state.get('items').set(index, payload));
-    }
-    return state
-      .set('items', state.get('items').push(payload))
-      .set('index', state.get('index').set(payload.id, payload));
+    return state.set('index', state.get('index').set(payload.id, payload));
   },
 }, StateFactory());
 
