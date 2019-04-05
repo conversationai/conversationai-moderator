@@ -58,3 +58,9 @@ export const VISUALLY_HIDDEN = {
   position: 'absolute',
   clip: 'rect(1px, 1px, 1px, 1px)',
 };
+
+export const flexCenter = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};

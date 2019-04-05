@@ -21,8 +21,8 @@ import React from 'react';
 
 import { ICategoryModel } from '../../../models';
 import { fakeCategoryModel, fakeUserModel } from '../../../models/fake';
+import { HeaderBar } from '../../components';
 import { CategorySidebar } from './CategorySidebar';
-import { HeaderBar } from './HeaderBar';
 
 faker.seed(123);
 

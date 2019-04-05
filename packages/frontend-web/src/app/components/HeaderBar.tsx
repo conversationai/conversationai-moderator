@@ -19,14 +19,14 @@ import { Link } from 'react-router';
 
 import { Menu, Person, Search } from '@material-ui/icons';
 
-import { ICategoryModel } from '../../../models';
+import { ICategoryModel } from '../../models';
+import { searchLink } from '../scenes/routes';
 import {
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT, HEADLINE_TYPE, LIGHT_PRIMARY_TEXT_COLOR, NICE_DARK_BLUE,
   NICE_MIDDLE_BLUE,
-} from '../../styles';
-import { css, stylesheet } from '../../utilx';
-import { searchLink } from '../routes';
+} from '../styles';
+import { css, stylesheet } from '../utilx';
 
 const STYLES = stylesheet({
   header: {

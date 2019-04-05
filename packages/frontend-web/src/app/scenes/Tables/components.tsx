@@ -25,9 +25,10 @@ import { OpenInNew } from '@material-ui/icons/';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import * as icons from '../../components/Icons';
-import { GREY_COLOR, NICE_CONTROL_BLUE, NICE_MIDDLE_BLUE } from '../../styles';
+import { NICE_MIDDLE_BLUE } from '../../styles';
+import { ICON_STYLES } from '../../stylesx';
 import { css, stylesheet } from '../../utilx';
-import { COMMON_STYLES, ICON_STYLES } from './styles';
+import { COMMON_STYLES } from './styles';
 
 export interface IMagicTimestampProps {
   timestamp: string;
@@ -147,7 +148,7 @@ export class SmallUserIcon extends React.Component<ISmallUserIconProps> {
   render() {
     const user = this.props.user;
     if (user.avatarURL) {
-      return (<img alt={user.name} key={user.id} src={user.avatarURL} {...css(COMMON_STYLES.xsmallImage, {margin: '1px'})}/>);
+      return (<img alt={user.name} key={user.id} src={user.avatarURL} {...css(ICON_STYLES.xsmallImage, {margin: '1px'})}/>);
     }
     else {
       return (
@@ -160,33 +161,6 @@ export class SmallUserIcon extends React.Component<ISmallUserIconProps> {
         </div>
       );
     }
-  }
-}
-
-interface IIControlFlagProps {
-  isCommentingEnabled?: boolean;
-  isAutoModerated?: boolean;
-}
-
-export class ControlFlag extends React.Component<IIControlFlagProps> {
-  render() {
-    let style: any;
-    let Icon: any;
-
-    if (this.props.isAutoModerated) {
-      Icon = icons.SpeechBubbleIconCircle;
-    }
-    else {
-      Icon = icons.SpeechBubbleIcon;
-    }
-
-    if (this.props.isCommentingEnabled) {
-      style = {color: NICE_CONTROL_BLUE};
-    }
-    else {
-      style = {color: GREY_COLOR};
-    }
-    return (<Icon {...css(style)}/>);
   }
 }
 
@@ -218,7 +192,7 @@ export class ModeratorsWidget extends React.Component<IIModeratorsWidgetProps> {
         <div onClick={this.openModeratorsDlg} {...css(ICON_STYLES.iconBackgroundCircle)}>
           <div {...css(ICON_STYLES.iconCenter)} >
             <icons.UserPlusIcon
-              {...css(COMMON_STYLES.smallIcon, {width: `${30}px`, height: `${30}px`})}
+              {...css(ICON_STYLES.smallIcon, {width: `${30}px`, height: `${30}px`})}
               onClick={this.openModeratorsDlg}
             />
           </div>
@@ -234,14 +208,14 @@ export class ModeratorsWidget extends React.Component<IIModeratorsWidgetProps> {
             alt={u.name}
             src={u.avatarURL}
             onClick={this.openModeratorsDlg}
-            {...css(COMMON_STYLES.smallImage)}
+            {...css(ICON_STYLES.smallImage)}
           />
         );
       } else {
         return (
           <div onClick={this.openModeratorsDlg} {...css(ICON_STYLES.iconBackgroundCircle)}>
             <div {...css(ICON_STYLES.iconCenter)} >
-              <icons.UserIcon {...css(COMMON_STYLES.smallIcon, {color: NICE_MIDDLE_BLUE})}/>
+              <icons.UserIcon {...css(ICON_STYLES.smallIcon, {color: NICE_MIDDLE_BLUE})}/>
             </div>
           </div>
         );
@@ -264,7 +238,7 @@ export class ModeratorsWidget extends React.Component<IIModeratorsWidgetProps> {
     if (extra) {
       ret.push(
         <div key="extra" style={{display: 'inline-block', margin: '1px'}}>
-          <div {...css(COMMON_STYLES.textCenterSmall)}>+{moderators.length - 3}</div>
+          <div {...css(ICON_STYLES.textCenterSmall)}>+{moderators.length - 3}</div>
         </div>,
       );
     }

@@ -28,9 +28,9 @@ import {
 
 import { ICategoryModel, IUserModel } from '../../../models';
 import { logout } from '../../auth';
+import { HeaderBar } from '../../components';
 import { NICE_CONTROL_BLUE } from '../../styles';
 import { CategorySidebar, SIDEBAR_WIDTH } from './CategorySidebar';
-import { HeaderBar } from './HeaderBar';
 import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
 
 const theme = createMuiTheme({
