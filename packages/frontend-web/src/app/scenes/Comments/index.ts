@@ -45,6 +45,7 @@ export {
 
 import { reducer as commentDetailReducer } from './components/CommentDetail';
 import { reducer as threadedCommentDetailReducer } from './components/ThreadedCommentDetail';
+import {logout} from '../../auth';
 export { CommentDetail } from './components/CommentDetail';
 export { ThreadedCommentDetail } from './components/ThreadedCommentDetail';
 
@@ -58,25 +59,29 @@ export const reducer: any = combineReducers({
 export const Comments = compose(
   withRouter,
   connect(createStructuredSelector({
-    user: getCurrentUser,
-    isAdmin: getCurrentUserIsAdmin,
-    article: (state: IAppStateRecord, { params: { articleId }}: ICommentsProps) => getArticle(state, articleId),
-    category: (state: IAppStateRecord, { params }: ICommentsProps) => {
-      if (params.articleId) {
-        const article = getArticle(state, params.articleId);
-        return getCategory(state, article.categoryId);
-      }
-      else if (params.categoryId && params.categoryId !== 'all') {
-        return getCategory(state, params.categoryId);
-      }
-    },
-    moderators: (state: IAppStateRecord, { params }: ICommentsProps) => {
-      if (!params.articleId) { return List<IUserModel>(); }
+      user: getCurrentUser,
+      isAdmin: getCurrentUserIsAdmin,
+      article: (state: IAppStateRecord, { params: { articleId }}: ICommentsProps) => getArticle(state, articleId),
+      category: (state: IAppStateRecord, { params }: ICommentsProps) => {
+        if (params.articleId) {
+          const article = getArticle(state, params.articleId);
+          return getCategory(state, article.categoryId);
+        }
+        else if (params.categoryId && params.categoryId !== 'all') {
+          return getCategory(state, params.categoryId);
+        }
+      },
+      moderators: (state: IAppStateRecord, { params }: ICommentsProps) => {
+        if (!params.articleId) { return List<IUserModel>(); }
 
-      const article = getArticle(state, params.articleId);
-      const users = getUsers(state);
-      return List<IUserModel>(article.assignedModerators.map((userId) => users.get(userId)));
-    },
-    globalCounts: (state: IAppStateRecord) => getGlobalCounts(state),
-  })),
+        const article = getArticle(state, params.articleId);
+        const users = getUsers(state);
+        return List<IUserModel>(article.assignedModerators.map((userId) => users.get(userId)));
+      },
+      globalCounts: (state: IAppStateRecord) => getGlobalCounts(state),
+    }),
+    (dispatch) => ({
+      logout: () => dispatch(logout()),
+    }),
+  ),
 )(PureComments);

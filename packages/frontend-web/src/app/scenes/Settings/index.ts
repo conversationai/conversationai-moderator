@@ -18,12 +18,14 @@ import { List } from 'immutable';
 import { connect } from 'react-redux';
 import { InjectedRouter, withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
+
 import {
   IPreselectModel,
   IRuleModel,
   ITaggingSensitivityModel,
   ITagModel,
 } from '../../../models';
+import { logout } from '../../auth';
 import { IAppDispatch, IAppState, IAppStateRecord } from '../../stores';
 import { getCategories } from '../../stores/categories';
 import { getPreselects } from '../../stores/preselects';
@@ -78,7 +80,8 @@ export type ISettingsDispatchProps = Pick<
   'updateTaggingSensitivities' |
   'updateTags' |
   'addUser' |
-  'modifyUser'
+  'modifyUser' |
+  'logout'
 >;
 
 const mapStateToProps = createStructuredSelector({
@@ -92,8 +95,6 @@ const mapStateToProps = createStructuredSelector({
   preselects: getPreselects,
   taggingSensitivities: getTaggingSensitivities,
   onCancel: (_: IAppState, { router }: { router: InjectedRouter }) => router.goBack,
-  onSearchClick: (_: IAppState, { router }: { router: InjectedRouter }) => () => router.push('/search'),
-  onAuthorSearchClick: (_: IAppState, { router }: { router: InjectedRouter }) => () => router.push('/search?searchByAuthor=true'),
 }) as (state: IAppState, props: ISettingsOwnProps) => ISettingsStateProps;
 
 function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
@@ -107,6 +108,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
     updateTags: (oldTags, newTags) => dispatch(updateTags(oldTags, newTags)),
     addUser: addUser,
     modifyUser: modifyUser,
+    logout: () => dispatch(logout()),
   };
 }
 

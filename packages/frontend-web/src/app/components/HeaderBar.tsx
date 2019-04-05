@@ -17,13 +17,18 @@ limitations under the License.
 import React from 'react';
 import { Link } from 'react-router';
 
-import { Menu, Person, Search } from '@material-ui/icons';
+import { AssignmentInd, Home, Menu, Person, Search } from '@material-ui/icons';
 
-import { ICategoryModel } from '../../models';
-import { searchLink } from '../scenes/routes';
+import { IArticleModel, ICategoryModel } from '../../models';
+import { articlesLink, authorSearchLink, categoriesLink, dashboardLink, searchLink } from '../scenes/routes';
+import { IGlobalCounts } from '../stores/categories';
 import {
+  flexCenter,
   GUTTER_DEFAULT_SPACING,
-  HEADER_HEIGHT, HEADLINE_TYPE, LIGHT_PRIMARY_TEXT_COLOR, NICE_DARK_BLUE,
+  HEADER_HEIGHT,
+  HEADLINE_TYPE,
+  LIGHT_PRIMARY_TEXT_COLOR,
+  NICE_DARK_BLUE,
   NICE_MIDDLE_BLUE,
 } from '../styles';
 import { css, stylesheet } from '../utilx';
@@ -83,8 +88,13 @@ const STYLES = stylesheet({
 });
 
 export interface IHeaderBarProps {
+  title?: string;
+  global?: IGlobalCounts;
   category?: ICategoryModel;
+  article?: IArticleModel;
+  selectedTab?: 'new' | 'moderated';
   isMe?: boolean;
+  homeLink?: boolean;
   showSidebar?(): void;
   logout(): void;
 }
@@ -108,13 +118,38 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
       );
     }
 
+    function iconCount(count: number) {
+      return <div style={{height: `${29}px`, ...flexCenter}}>{count}</div>;
+    }
+
     const {
+      global,
       category,
+      article,
       showSidebar,
       logout,
+      homeLink,
+      title,
+      selectedTab,
     } = this.props;
 
-    const categoryStr = category ? `Section: ${category.label}` : 'All Sections';
+    const categoryStr = title ? title :
+      article ? `Article: ${article.title}` :
+        category ? `Section: ${category.label}` :
+          'All Sections';
+
+    const counts = article ? article :
+      category ? category :
+        global;
+
+    const newLink = article ? articlesLink(article.id, 'new') :
+      category ? categoriesLink(category.id, 'new') :
+        categoriesLink('all', 'new');
+
+    const moderatedLink = article ? articlesLink(article.id, 'approved') :
+      category ? categoriesLink(category.id, 'approved') :
+        categoriesLink('all', 'approved');
+
     // const categoryFilter = category ? `${FILTER_CATEGORY}=${category.id}` : null;
 
     // let allArticles = dashboardLink();
@@ -131,11 +166,15 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
           <span key="icon" {...css(STYLES.menuIcon)}><Menu  style={{ fontSize: 30 }} /></span>
         </div>
         }
+        {homeLink && renderHeaderItem(<Home/>, 'Dashboard', dashboardLink())}
         <span key="cat" {...css(STYLES.title)}>{categoryStr}</span>
         {/*{renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}*/}
         {/*{renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}*/}
         <div key="spacer" style={{flexGrow: 1}}/>
+        {selectedTab && renderHeaderItem(iconCount(counts.unmoderatedCount), 'New', newLink, selectedTab === 'new')}
+        {selectedTab && renderHeaderItem(iconCount(counts.moderatedCount), 'Moderated', moderatedLink, selectedTab === 'moderated')}
         {renderHeaderItem(<Search/>, 'Search', searchLink())}
+        {renderHeaderItem(<AssignmentInd/>, 'By author', authorSearchLink())}
         <div key="logout" {...css(STYLES.headerItem)}>
           <div {...css(STYLES.headerLink)} aria-label="Logout" onClick={logout}>
             <div><Person/></div>
