@@ -42,7 +42,6 @@ export class Login extends React.Component<ILoginProps> {
       url += `&referrer=${encodeURIComponent(redirectURI)}`;
     }
 
-    console.log(errorMessage);
     return (
       <div key="login">
         <div key="headerLink" {...css(ROOT_STYLES.header2Tag, ROOT_STYLES.fadeIn)}>

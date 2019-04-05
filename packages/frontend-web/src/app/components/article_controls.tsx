@@ -20,13 +20,50 @@ import React from 'react';
 import {
   ClickAwayListener,
   DialogTitle,
+  Popper,
   Switch,
 } from '@material-ui/core';
 
-import { IArticleModel } from '../../../models';
-import { NICE_CONTROL_BLUE, SCRIM_STYLE } from '../../styles';
-import { css } from '../../utilx';
-import { ControlFlag } from './components';
+import { IArticleModel } from '../../models';
+import {
+  GREY_COLOR,
+  NICE_CONTROL_BLUE,
+  SCRIM_STYLE,
+} from '../styles';
+import {
+  big,
+  ICON_STYLES,
+} from '../stylesx';
+import { css } from '../utilx';
+import * as icons from './Icons';
+
+interface IIControlFlagProps {
+  isCommentingEnabled?: boolean;
+  isAutoModerated?: boolean;
+}
+
+export class ControlFlag extends React.Component<IIControlFlagProps> {
+  render() {
+    let style: any;
+    let Icon: any;
+
+    if (this.props.isAutoModerated) {
+      Icon = icons.SpeechBubbleIconCircle;
+    }
+    else {
+      Icon = icons.SpeechBubbleIcon;
+    }
+
+    if (this.props.isCommentingEnabled) {
+      style = {color: NICE_CONTROL_BLUE};
+    }
+    else {
+      style = {color: GREY_COLOR};
+    }
+
+    return (<Icon {...css(style)}/>);
+  }
+}
 
 export interface IIControlPopupProps {
   article: IArticleModel;
@@ -107,6 +144,70 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
           </div>
         </div>
       </ClickAwayListener>
+    );
+  }
+}
+
+interface IArticleControlIconProps {
+  article: IArticleModel;
+  open: boolean;
+
+  clearPopups(): void;
+
+  openControls(article: IArticleModel): void;
+
+  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean): void;
+}
+
+export class ArticleControlIcon extends React.Component<IArticleControlIconProps> {
+  anchorElement: any;
+
+  @autobind
+  setOpen() {
+    const {article, open, clearPopups, openControls} = this.props;
+    if (open) {
+      clearPopups();
+    }
+    else {
+      openControls(article);
+    }
+  }
+
+  render() {
+    const {article, open, saveControls, clearPopups} = this.props;
+
+    return (
+      <div key="aci">
+        <div
+          key="icon"
+          {...css(open ? ICON_STYLES.iconBackgroundCircle : big)}
+          ref={(node) => {
+            this.anchorElement = node;
+          }}
+        >
+          <div onClick={this.setOpen} {...css(ICON_STYLES.iconCenter)}>
+            <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated}/>
+          </div>
+        </div>
+        <Popper
+          key="popper"
+          open={open}
+          anchorEl={this.anchorElement}
+          placement="left"
+          modifiers={{
+            preventOverflow: {
+              enabled: true,
+              boundariesElement: 'viewport',
+            },
+          }}
+        >
+          <ArticleControlPopup
+            article={article}
+            saveControls={saveControls}
+            clearPopups={clearPopups}
+          />
+        </Popper>
+      </div>
     );
   }
 }

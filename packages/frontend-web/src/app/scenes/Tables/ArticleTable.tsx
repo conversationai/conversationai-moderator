@@ -22,11 +22,8 @@ import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { InjectedRouter, Link, WithRouterProps } from 'react-router';
 
-import {
-  Popper,
-} from '@material-ui/core';
-
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
+import { ArticleControlIcon } from '../../components';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
 import {
@@ -35,20 +32,20 @@ import {
   updateCategoryModerators,
 } from '../../platform/dataService';
 import {
+  flexCenter,
   HEADER_HEIGHT,
   NICE_LIGHTEST_BLUE,
   NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
 } from '../../styles';
+import { medium } from '../../stylesx';
 import { partial } from '../../util/partial';
 import { css, stylesheet } from '../../utilx';
 import { AssignModerators } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
-import { ArticleControlPopup } from './ArticleControlPopup';
-import { ControlFlag, MagicTimestamp, ModeratorsWidget, SimpleTitleCell, TitleCell } from './components';
+import { MagicTimestamp, ModeratorsWidget, SimpleTitleCell, TitleCell } from './components';
 import { FilterSidebar } from './FilterSidebar';
-import { ARTICLE_TABLE_STYLES, CELL_HEIGHT, COMMON_STYLES, ICON_STYLES } from './styles';
-import { big, flexCenter, medium } from './styles';
+import { ARTICLE_TABLE_STYLES, CELL_HEIGHT, COMMON_STYLES } from './styles';
 import {
   NOT_SET,
   SORT_APPROVED,
@@ -61,7 +58,6 @@ import {
   SORT_TITLE,
   SORT_UPDATED,
 } from './utils';
-
 import {
   executeFilter,
   executeSort,
@@ -89,66 +85,6 @@ const STYLES = stylesheet({
     color: 'white',
   },
 });
-
-interface IArticleControlIconProps {
-  article: IArticleModel;
-  open: boolean;
-
-  clearPopups(): void;
-  openControls(article: IArticleModel): void;
-  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean): void;
-}
-
-class ArticleControlIcon extends React.Component<IArticleControlIconProps> {
-  anchorElement: any;
-
-  @autobind
-  setOpen() {
-    const { article, open, clearPopups, openControls } = this.props;
-    if (open) {
-      clearPopups();
-    }
-    else {
-      openControls(article);
-    }
-  }
-
-  render() {
-    const { article, open, saveControls, clearPopups } = this.props;
-
-    return (
-      <div key="aci">
-        <div
-          key="icon"
-          {...css(open ? ICON_STYLES.iconBackgroundCircle : big)}
-          ref={(node) => { this.anchorElement = node; }}
-        >
-          <div onClick={this.setOpen} {...css(ICON_STYLES.iconCenter)}>
-            <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated}/>
-          </div>
-        </div>
-        <Popper
-          key="popper"
-          open={open}
-          anchorEl={this.anchorElement}
-          placement="left"
-          modifiers={{
-            preventOverflow: {
-              enabled: true,
-              boundariesElement: 'viewport',
-            },
-          }}
-        >
-          <ArticleControlPopup
-            article={article}
-            saveControls={saveControls}
-            clearPopups={clearPopups}
-          />
-        </Popper>
-      </div>
-    );
-  }
-}
 
 export interface IIArticleTableProps extends WithRouterProps {
   myUserId: string;
