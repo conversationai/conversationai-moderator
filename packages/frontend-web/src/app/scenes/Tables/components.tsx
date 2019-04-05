@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import { Set } from 'immutable';
+import { Map, Set } from 'immutable';
 import React from 'react';
 import { Link } from 'react-router';
 

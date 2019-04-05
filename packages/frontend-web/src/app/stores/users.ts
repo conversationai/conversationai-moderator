@@ -42,20 +42,12 @@ const systemUsersLoaded = createAction<ILoadSystemUsers>(
   'system-users/SYSTEM_USERS_LOADED',
 );
 
-export function getUsers(state: IAppStateRecord): List<IUserModel> {
+export function getUsers(state: IAppStateRecord): Map<ModelId, IUserModel> {
   return state.getIn(USERS_DATA);
 }
 
-export function getUserMap(state: IAppStateRecord): Map<ModelId, IUserModel> {
-  return Map(getUsers(state).map((u) => [u.id, u]));
-}
-
-export function getUser(state: IAppStateRecord, id: string): IUserModel | null {
-  const users = getUsers(state);
-  if (!users || users.size === 0) {
-    return null;
-  }
-  return users.find((u) => u.id === id);
+export function getUser(state: IAppStateRecord, id: ModelId): IUserModel | null {
+  return getUsers(state).get(id);
 }
 
 export function getCurrentUser(state: IAppStateRecord): IUserModel | null {
@@ -101,7 +93,8 @@ const StateFactory = makeTypedFactory<IUsersState, IUsersStateRecord>({
 
 const reducer = handleActions<IUsersStateRecord, List<IUserModel> | ILoadSystemUsers>( {
   [usersUpdated.toString()]: (state: IUsersStateRecord, { payload }: Action<List<IUserModel>>) => {
-    return state.set('humans', payload);
+    const users = Map<ModelId, IUserModel>(payload.map((v) => ([v.id, v])));
+    return state.set('humans', users);
   },
   [systemUsersLoaded.toString()]: (state: IUsersStateRecord, { payload }: Action<ILoadSystemUsers>) => {
     if (payload.type === USER_GROUP_SERVICE ||

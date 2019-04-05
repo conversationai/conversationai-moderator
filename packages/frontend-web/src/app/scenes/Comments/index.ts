@@ -24,7 +24,7 @@ import { IUserModel } from '../../../models';
 import { IAppStateRecord } from '../../stores';
 import { getArticle } from '../../stores/articles';
 import { getCategory, getGlobalCounts } from '../../stores/categories';
-import { getCurrentUser, getCurrentUserIsAdmin, getUserMap } from '../../stores/users';
+import { getCurrentUser, getCurrentUserIsAdmin, getUsers } from '../../stores/users';
 import { Comments as PureComments, ICommentsProps } from './Comments';
 
 import {
@@ -74,8 +74,8 @@ export const Comments = compose(
       if (!params.articleId) { return List<IUserModel>(); }
 
       const article = getArticle(state, params.articleId);
-      const usersMap = getUserMap(state);
-      return List<IUserModel>(article.assignedModerators.map((userId) => usersMap.get(userId)));
+      const users = getUsers(state);
+      return List<IUserModel>(article.assignedModerators.map((userId) => users.get(userId)));
     },
     globalCounts: (state: IAppStateRecord) => getGlobalCounts(state),
   })),

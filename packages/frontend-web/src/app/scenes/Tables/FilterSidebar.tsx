@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import {autobind} from 'core-decorators';
-import {List, Set} from 'immutable';
+import { Seq, Set } from 'immutable';
 import React, {KeyboardEvent, SyntheticEvent} from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
@@ -127,7 +127,7 @@ export interface IIFilterSidebarProps {
   filter: Array<IFilterItem>;
 
   myUserId: string;
-  users: List<IUserModel>;
+  users: Seq.Indexed<IUserModel>;
 
   setFilter(filter: Array<IFilterItem>): void;
 

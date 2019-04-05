@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { List, Set } from 'immutable';
+import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -155,7 +155,7 @@ export interface IIArticleTableProps extends WithRouterProps {
   categories: Map<ModelId, ICategoryModel>;
   selectedCategory: ICategoryModel;
   articles: List<IArticleModel>;
-  users: List<IUserModel>;
+  users: Map<ModelId, IUserModel>;
   routeParams: {[key: string]: string};
   router: InjectedRouter;
 }
@@ -174,7 +174,6 @@ export interface IIArticleTableState {
   sortString: string;
   sort: Array<string>;
   summary: IArticleModel;
-  usersMap: Map<string, IUserModel>;
   processedArticles: Array<IArticleModel>;
 
   popupToShow?: string;
@@ -247,9 +246,6 @@ function processArticles(
   }
 
   // Use users map from store
-  const usersMap = new Map<string, IUserModel>();
-  props.users.map((u) => usersMap.set(u.id, u));
-
   const count = processedArticles.length;
   const summary = calculateSummaryCounts(processedArticles);
 
@@ -267,7 +263,6 @@ function processArticles(
   }
 
   return {
-    usersMap,
     processedArticles,
     summary,
   };
@@ -424,7 +419,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
         filterString={this.state.filterString}
         filter={this.state.filter}
         myUserId={this.props.myUserId}
-        users={this.props.users}
+        users={this.props.users.valueSeq()}
         setFilter={setFilter}
         clearPopups={this.clearPopups}
       />
@@ -456,7 +451,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   renderModerators(targetId: ModelId, moderatorIds: Array<ModelId>, superModeratorIds: Array<ModelId>, isCategory: boolean) {
     return (
       <ModeratorsWidget
-        users={this.state.usersMap}
+        users={this.props.users}
         moderatorIds={moderatorIds}
         superModeratorIds={superModeratorIds}
         openSetModerators={partial(this.openSetModerators, targetId, moderatorIds, superModeratorIds, isCategory)}
