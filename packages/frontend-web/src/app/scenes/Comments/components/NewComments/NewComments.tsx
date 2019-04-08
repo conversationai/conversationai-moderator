@@ -36,6 +36,7 @@ import {
   AddIcon,
   ApproveIcon,
   ArrowPosition,
+  ArticleControlIcon,
   AssignTagsForm,
   CommentActionButton,
   CommentList,
@@ -45,7 +46,6 @@ import {
   RejectIcon,
   Scrim,
   ToastMessage,
-  Toggle,
   ToolTip,
 } from '../../../../components';
 import {
@@ -321,6 +321,7 @@ export interface INewCommentsState {
   taggingTooltipVisible?: boolean;
   moderateButtonsRef?: HTMLDivElement;
   taggingCommentId?: string;
+  articleControlOpen: boolean;
 }
 
 export class NewComments extends React.Component<INewCommentsProps, INewCommentsState> {
@@ -360,6 +361,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     taggingTooltipVisible: false,
     taggingCommentId: null,
     moderateButtonsRef: null,
+    articleControlOpen: false,
   };
 
   async componentDidUpdate(prevProps: INewCommentsProps) {
@@ -629,14 +631,14 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               <span aria-hidden="true" {...css(STYLES.arrow)} />
             </div>
             { this.props.params.articleId && (
-              <label htmlFor="automatedRulesToggle" onClick={this.handleRulesAppliedClick}  {...css(STYLES.toggleLabel)}>
-                Automated Rules
-                <Toggle
-                  style={{marginLeft: BOX_DEFAULT_SPACING}}
-                  inputId="automatedRulesToggle"
-                  isSelected={areAutomatedRulesApplied}
-                />
-              </label>
+              <ArticleControlIcon
+                article={this.props.article}
+                open={this.state.articleControlOpen}
+                clearPopups={this.closePopup}
+                openControls={this.openPopup}
+                saveControls={this.applyRules}
+                whiteBackground
+              />
             )}
           </div>
 
@@ -1133,8 +1135,18 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind
-  async handleRulesAppliedClick(e: React.MouseEvent<any>) {
-    e.preventDefault();
-    await updateArticle(this.props.article.id, this.props.article.isCommentingEnabled, !this.props.article.isAutoModerated);
+  openPopup() {
+    this.setState({articleControlOpen: true});
+  }
+
+  @autobind
+  closePopup() {
+    this.setState({articleControlOpen: false});
+  }
+
+  @autobind
+  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean): void {
+    this.closePopup();
+    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated);
   }
 }

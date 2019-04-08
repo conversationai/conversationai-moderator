@@ -151,6 +151,7 @@ export class ArticleControlPopup extends React.Component<IIControlPopupProps, II
 interface IArticleControlIconProps {
   article: IArticleModel;
   open: boolean;
+  whiteBackground?: boolean;
 
   clearPopups(): void;
 
@@ -174,13 +175,13 @@ export class ArticleControlIcon extends React.Component<IArticleControlIconProps
   }
 
   render() {
-    const {article, open, saveControls, clearPopups} = this.props;
+    const {article, open, whiteBackground, saveControls, clearPopups} = this.props;
 
     return (
       <div key="aci">
         <div
           key="icon"
-          {...css(open ? ICON_STYLES.iconBackgroundCircle : big)}
+          {...css(open || whiteBackground ? ICON_STYLES.iconBackgroundCircle : big)}
           ref={(node) => {
             this.anchorElement = node;
           }}
