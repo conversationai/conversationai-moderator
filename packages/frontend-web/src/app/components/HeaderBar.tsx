@@ -21,7 +21,6 @@ import { AssignmentInd, Home, Menu, Person, Search } from '@material-ui/icons';
 
 import { IArticleModel, ICategoryModel } from '../../models';
 import { authorSearchLink, dashboardLink, searchLink } from '../scenes/routes';
-import { ISummaryCounts } from '../stores/categories';
 import {
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
