@@ -20,10 +20,9 @@ import { Link } from 'react-router';
 import { AssignmentInd, Home, Menu, Person, Search } from '@material-ui/icons';
 
 import { IArticleModel, ICategoryModel } from '../../models';
-import { articlesLink, authorSearchLink, categoriesLink, dashboardLink, searchLink } from '../scenes/routes';
-import { IGlobalCounts } from '../stores/categories';
+import { authorSearchLink, dashboardLink, searchLink } from '../scenes/routes';
+import { ISummaryCounts } from '../stores/categories';
 import {
-  flexCenter,
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
   HEADLINE_TYPE,
@@ -89,10 +88,8 @@ const STYLES = stylesheet({
 
 export interface IHeaderBarProps {
   title?: string;
-  global?: IGlobalCounts;
   category?: ICategoryModel;
   article?: IArticleModel;
-  selectedTab?: 'new' | 'moderated';
   isMe?: boolean;
   homeLink?: boolean;
   showSidebar?(): void;
@@ -118,37 +115,19 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
       );
     }
 
-    function iconCount(count: number) {
-      return <div style={{height: `${29}px`, ...flexCenter}}>{count}</div>;
-    }
-
     const {
-      global,
       category,
       article,
       showSidebar,
       logout,
       homeLink,
       title,
-      selectedTab,
     } = this.props;
 
     const categoryStr = title ? title :
       article ? `Article: ${article.title}` :
         category ? `Section: ${category.label}` :
           'All Sections';
-
-    const counts = article ? article :
-      category ? category :
-        global;
-
-    const newLink = article ? articlesLink(article.id, 'new') :
-      category ? categoriesLink(category.id, 'new') :
-        categoriesLink('all', 'new');
-
-    const moderatedLink = article ? articlesLink(article.id, 'approved') :
-      category ? categoriesLink(category.id, 'approved') :
-        categoriesLink('all', 'approved');
 
     // const categoryFilter = category ? `${FILTER_CATEGORY}=${category.id}` : null;
 
@@ -171,8 +150,6 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
         {/*{renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}*/}
         {/*{renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}*/}
         <div key="spacer" style={{flexGrow: 1}}/>
-        {selectedTab && renderHeaderItem(iconCount(counts.unmoderatedCount), 'New', newLink, selectedTab === 'new')}
-        {selectedTab && renderHeaderItem(iconCount(counts.moderatedCount), 'Moderated', moderatedLink, selectedTab === 'moderated')}
         {renderHeaderItem(<Search/>, 'Search', searchLink())}
         {renderHeaderItem(<AssignmentInd/>, 'By author', authorSearchLink())}
         <div key="logout" {...css(STYLES.headerItem)}>

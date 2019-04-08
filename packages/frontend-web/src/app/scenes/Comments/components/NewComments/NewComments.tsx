@@ -63,7 +63,7 @@ import {
   HEADER_HEIGHT,
   LIGHT_PRIMARY_TEXT_COLOR,
   LIGHT_SECONDARY_TEXT_COLOR,
-  MEDIUM_COLOR,
+  MEDIUM_COLOR, NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
   SCRIM_Z_INDEX,
   SELECT_ELEMENT,
@@ -175,7 +175,7 @@ const STYLES = stylesheet({
     paddingLeft: `${GUTTER_DEFAULT_SPACING}px`,
     paddingRight: `${GUTTER_DEFAULT_SPACING * 2}px`,
     boxSizing: 'border-box',
-    backgroundColor: MEDIUM_COLOR,
+    backgroundColor: NICE_MIDDLE_BLUE,
     height: HEADER_HEIGHT,
   },
 

@@ -38,20 +38,39 @@ export function getCategory(state: IAppStateRecord, categoryId: ModelId): ICateg
   return getCategoryMap(state).get(categoryId);
 }
 
-export interface IGlobalCounts {
+export interface ISummaryCounts {
   unmoderatedCount: number;
   moderatedCount: number;
+  deferredCount: number;
+  approvedCount: number;
+  highlightedCount: number;
+  rejectedCount: number;
+  flaggedCount: number;
+  batchedCount: number;
 }
 
-export function getGlobalCounts(state: IAppStateRecord): IGlobalCounts {
+export function getGlobalCounts(state: IAppStateRecord): ISummaryCounts {
   const categories = getCategories(state);
-  const counts: IGlobalCounts = {
+  const counts: ISummaryCounts = {
     unmoderatedCount: 0,
     moderatedCount: 0,
+    deferredCount: 0,
+    approvedCount: 0,
+    highlightedCount: 0,
+    rejectedCount: 0,
+    flaggedCount: 0,
+    batchedCount: 0,
+
   };
   for (const c of categories.toArray()) {
     counts.unmoderatedCount += c.unmoderatedCount;
     counts.moderatedCount += c.moderatedCount;
+    counts.deferredCount += c.deferredCount;
+    counts.approvedCount += c.approvedCount;
+    counts.highlightedCount += c.highlightedCount;
+    counts.rejectedCount += c.rejectedCount;
+    counts.flaggedCount += c.flaggedCount;
+    counts.batchedCount += c.batchedCount;
   }
   return counts;
 }
