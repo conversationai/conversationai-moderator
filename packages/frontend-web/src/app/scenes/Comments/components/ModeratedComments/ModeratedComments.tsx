@@ -45,7 +45,7 @@ import {
   HEADER_HEIGHT,
   LIGHT_COLOR,
   LIGHT_PRIMARY_TEXT_COLOR,
-  MEDIUM_COLOR,
+  MEDIUM_COLOR, NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
   SCRIM_Z_INDEX,
   SELECT_ELEMENT,
@@ -56,7 +56,6 @@ import {
 import { partial } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
 import { getSortDefault } from '../../../../utilx';
-import { ModeratedStatusTabs } from './components/ModeratedStatusTabs';
 
 const ARROW_SIZE = 6;
 // magic number = height of the moderation status dropdown and the row of tabs
@@ -150,7 +149,7 @@ const STYLES = stylesheet({
     paddingLeft: `${GUTTER_DEFAULT_SPACING}px`,
     paddingRight: `${GUTTER_DEFAULT_SPACING}px`,
     boxSizing: 'border-box',
-    backgroundColor: MEDIUM_COLOR,
+    backgroundColor: NICE_MIDDLE_BLUE,
     borderBottom: `2px solid ${LIGHT_COLOR}`,
     height: HEADER_HEIGHT,
     [SHORT_SCREEN_QUERY]: {
@@ -404,10 +403,6 @@ export class ModeratedComments
       taggingToolTipArrowPosition,
     } = this.state;
 
-    const urlPrefix = this.props.params.articleId
-      ? `/articles/${this.props.params.articleId}/moderated`
-      : `/categories/${this.props.params.categoryId}/moderated`;
-
     const selectedIdsLength = moderatedComments && this.getSelectedIDs().length;
 
     let commentsMessaging = isLoading ? LOADING_COMMENTS_MESSAGING : null;
@@ -437,13 +432,6 @@ export class ModeratedComments
           <span aria-hidden="true" {...css(STYLES.arrow)} />
         </div>
       </div>
-
-      { this.state.currentSelect !== BATCH_SELECT_BY_DATE && (
-        <ModeratedStatusTabs
-          moderatedComments={moderatedComments}
-          urlPrefix={urlPrefix}
-        />
-      )}
 
       <div {...css(STYLES.row)}>
         <div {...css(STYLES.moderatedInfo)}>{selectedIdsLength}

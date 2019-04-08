@@ -28,7 +28,7 @@ import {
 } from '../../components';
 import { updateArticleModerators } from '../../platform/dataService';
 import { IAppDispatch } from '../../stores';
-import { IGlobalCounts } from '../../stores/categories';
+import { ISummaryCounts } from '../../stores/categories';
 import {
   clearReturnSavedCommentRow,
 } from '../../util';
@@ -42,6 +42,7 @@ import {
   SCRIM_STYLE,
   WHITE_COLOR,
 } from '../../styles';
+import {SubheaderBar} from './components/SubheaderBar';
 
 const ASSIGN_MODERATORS_POPUP_ID = 'assign-moderators';
 
@@ -58,7 +59,7 @@ export interface ICommentsProps extends WithRouterProps {
   article?: IArticleModel;
   category?: ICategoryModel;
   moderators?: List<IUserModel>;
-  globalCounts: IGlobalCounts;
+  globalCounts: ISummaryCounts;
   logout(): void;
 }
 
@@ -66,7 +67,7 @@ export interface ICommentsState {
   isArticleDetail: boolean;
   isCommentDetail: boolean;
   hideCommentHeader: boolean;
-  counts?: IGlobalCounts;
+  counts?: ISummaryCounts;
   isPreviewModalVisible?: boolean;
   isModeratorModalVisible?: boolean;
   moderatorIds?: Set<ModelId>;
@@ -127,8 +128,6 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
       isModeratorModalVisible,
     } = this.state;
 
-    const selectedTab = location.pathname.indexOf('/new/') >= 0 ? 'new' : 'moderated';
-
     return (
       <div {...css({height: '100%'})}>
         { isArticleDetail && (
@@ -188,15 +187,19 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
         <div {...css(STYLES.main)}>
           { !hideCommentHeader && (
             <HeaderBar
-              global={globalCounts}
               category={category}
               article={article}
               homeLink
-              selectedTab={selectedTab}
               logout={logout}
             />
           )}
 
+          <SubheaderBar
+            global={globalCounts}
+            category={category}
+            article={article}
+            location={location.pathname}
+          />
           <div
             {...css({
               background: WHITE_COLOR,
