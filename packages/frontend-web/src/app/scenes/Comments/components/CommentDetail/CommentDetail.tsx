@@ -1111,7 +1111,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
   @autobind
   async onCommentTagClick(commentScore: ICommentScoreModel) {
-    console.log(this.props.comment.id, commentScore.id);
     if (this.props.onRemoveCommentScore) {
       await this.props.onRemoveCommentScore(commentScore);
     }
@@ -1145,7 +1144,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     const thresholdByTag = getTaggingSensitivityForTag(this.props.taggingSensitivitiesInCategory, scoreClicked);
     const scoresSelectedByTag = this.props.allScores.filter(
       (score) => score.tagId === scoreClicked.tagId,
-    ).sort((a, b) => a.score > b.score ? -1 : a.score < b.score ? 1 : 0) as List<ICommentScoreModel>;
+    ).sort((a, b) => b.score - a.score) as List<ICommentScoreModel>;
 
     this.setState({
       isScoresModalVisible: true,

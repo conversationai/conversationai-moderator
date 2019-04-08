@@ -393,7 +393,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   @autobind
   handleAddServiceUser(event: React.FormEvent<any>) {
     event.preventDefault();
-    console.log('got here');
   }
 
   @autobind
