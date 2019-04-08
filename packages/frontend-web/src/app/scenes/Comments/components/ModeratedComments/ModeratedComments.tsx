@@ -23,7 +23,7 @@ import { WithRouterProps } from 'react-router';
 
 import { IArticleModel, ICommentModel, ITagModel, TagModel } from '../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../types';
-import { AssignTagsForm, Scrim } from '../../../../components';
+import { ArticleControlIcon, AssignTagsForm, Scrim } from '../../../../components';
 import {
   AddIcon,
   ApproveIcon,
@@ -37,6 +37,7 @@ import {
   ToolTip,
 } from '../../../../components';
 import { REQUIRE_REASON_TO_REJECT } from '../../../../config';
+import { updateArticle } from '../../../../platform/dataService';
 import {
   BASE_Z_INDEX,
   BOX_DEFAULT_SPACING,
@@ -309,6 +310,7 @@ export interface IModeratedCommentsState {
   loadedCategoryId?: string;
   loadedArticleId?: string;
   loadedTag?: string;
+  articleControlOpen: boolean;
 }
 
 export class ModeratedComments
@@ -341,6 +343,7 @@ export class ModeratedComments
     taggingCommentId: null,
     taggingTooltipVisible: false,
     moderateButtonsRef: null,
+    articleControlOpen: false,
   };
 
   componentDidMount() {
@@ -431,6 +434,16 @@ export class ModeratedComments
           </select>
           <span aria-hidden="true" {...css(STYLES.arrow)} />
         </div>
+        { this.props.params.articleId && (
+          <ArticleControlIcon
+            article={this.props.article}
+            open={this.state.articleControlOpen}
+            clearPopups={this.closePopup}
+            openControls={this.openPopup}
+            saveControls={this.applyRules}
+            whiteBackground
+          />
+        )}
       </div>
 
       <div {...css(STYLES.row)}>
@@ -934,5 +947,21 @@ export class ModeratedComments
     await this.props.toggleSingleItem({ id });
 
     this.setState({ updateCounter: this.state.updateCounter + 1 });
+  }
+
+  @autobind
+  openPopup() {
+    this.setState({articleControlOpen: true});
+  }
+
+  @autobind
+  closePopup() {
+    this.setState({articleControlOpen: false});
+  }
+
+  @autobind
+  applyRules(isCommentingEnabled: boolean, isAutoModerated: boolean): void {
+    this.closePopup();
+    updateArticle(this.props.article.id, isCommentingEnabled, isAutoModerated);
   }
 }
