@@ -24,7 +24,7 @@ const STATE_ROOT = ['global', 'categories'];
 const INDEX = [...STATE_ROOT, 'index'];
 
 export const categoriesLoaded = createAction<List<ICategoryModel>>('global/CATEGORIES_LOADED');
-export const categoryUpdated = createAction<ICategoryModel>('global/CATEGORY_UPDATED');
+export const categoryUpdated = createAction<List<ICategoryModel>>('global/CATEGORY_UPDATED');
 
 export function getCategoryMap(state: IAppStateRecord): Map<ModelId, ICategoryModel> {
   return state.getIn(INDEX);
@@ -90,7 +90,7 @@ export const reducer = handleActions<ICategoriesStateRecord, List<ICategoryModel
     const index = Map<ModelId, ICategoryModel>(payload.map((v) => ([v.id, v])));
     return state.set('index', index);
   },
-  [categoryUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<ICategoryModel>) => {
-    return state.set('index', state.get('index').set(payload.id, payload));
+  [categoryUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<List<ICategoryModel>>) => {
+    return state.set('index', state.get('index').merge(payload.map((v) => ([v.id, v]))));
   },
 }, CategoriesStateFactory());

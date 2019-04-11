@@ -69,8 +69,8 @@ export interface IAllArticlesData {
 }
 
 export interface IArticleUpdate {
-  category?: ICategoryModel;
-  article: IArticleModel;
+  categories?: List<ICategoryModel>;
+  articles?: List<IArticleModel>;
 }
 
 export interface IPerUserData {
@@ -123,25 +123,26 @@ function packArticleData(data: any): IAllArticlesData {
 }
 
 function packArticleUpdate(data: any): IArticleUpdate {
-  const cdata = data.category;
-  let cmodel;
-  let amodel;
-
-  if (cdata) {
-    cdata.id = cdata.id.toString();
-    cmodel = CategoryModel(cdata);
+  let categories;
+  let articles;
+  if(data.categories) {
+    categories = List<ICategoryModel>(data.categories.map((c: any) => {
+      c.id = c.id.toString();
+      return CategoryModel(c);
+    }));
   }
 
-  const adata = data.article;
-  if (adata) {
-    adata.id = adata.id.toString();
-    adata.categoryId = adata.categoryId && adata.categoryId.toString();
-    amodel = ArticleModel(adata);
+  if(data.articles) {
+    articles = List<IArticleModel>(data.articles.map((a: any) => {
+      a.id = a.id.toString();
+      a.categoryId = a.categoryId && a.categoryId.toString();
+      return ArticleModel(a);
+    }));
   }
 
   return {
-    category: cmodel,
-    article: amodel,
+    categories: categories,
+    articles: articles,
   };
 }
 
