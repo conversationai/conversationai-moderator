@@ -139,11 +139,11 @@ export async function initialiseClientModel(dispatch: IAppDispatch) {
       dispatch(articlesLoaded(data.articles));
     },
     (data) => {
-      if (data.category) {
-        dispatch(categoryUpdated(data.category));
+      if (data.categories) {
+        dispatch(categoryUpdated(data.categories));
       }
-      if (data.article) {
-        dispatch(articleUpdated(data.article));
+      if (data.articles) {
+        dispatch(articleUpdated(data.articles));
       }
     },
     (data) => {

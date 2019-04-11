@@ -25,7 +25,7 @@ const STATE_ROOT = ['global', 'articles'];
 const INDEX = [...STATE_ROOT, 'index'];
 
 export const articlesLoaded = createAction<List<IArticleModel>>('global/ARTICLES_LOADED');
-export const articleUpdated = createAction<IArticleModel>('global/ARTICLE_UPDATED');
+export const articleUpdated = createAction<List<IArticleModel>>('global/ARTICLE_UPDATED');
 
 export function getArticles(state: IAppStateRecord): Map<ModelId, IArticleModel> {
   return state.getIn(INDEX);
@@ -50,8 +50,8 @@ const reducer = handleActions<IArticlesStateRecord, List<IArticleModel>| IArticl
     const index = Map<ModelId, IArticleModel>(payload.map((v) => ([v.id, v])));
     return state.set('index', index);
   },
-  [articleUpdated.toString()]: (state: IArticlesStateRecord, { payload }: Action<IArticleModel>) => {
-    return state.set('index', state.get('index').set(payload.id, payload));
+  [articleUpdated.toString()]: (state: IArticlesStateRecord, { payload }: Action<List<IArticleModel>>) => {
+    return state.set('index', state.get('index').merge(payload.map((v) => ([v.id, v]))));
   },
 }, StateFactory());
 
