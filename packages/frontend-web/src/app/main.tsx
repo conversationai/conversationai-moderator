@@ -52,7 +52,8 @@ const store = createStore(
   Immutable.Map(),
   compose(
     applyMiddleware(thunk),
-    (window as any)['devToolsExtension'] ? (window as any)['devToolsExtension']() : (f: any) => f,
+    // TODO: Make this toggle based on environment
+    //(window as any)['devToolsExtension'] ? (window as any)['devToolsExtension']() : (f: any) => f,    
   ),
 );
 
