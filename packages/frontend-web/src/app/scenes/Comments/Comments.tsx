@@ -15,16 +15,13 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import FocusTrap from 'focus-trap-react';
 import { List, Set } from 'immutable';
-import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import {
   HeaderBar,
-  Scrim,
 } from '../../components';
 import { updateArticleModerators } from '../../platform/dataService';
 import { IAppDispatch } from '../../stores';
@@ -33,18 +30,12 @@ import {
   clearReturnSavedCommentRow,
 } from '../../util';
 import { css, stylesheet } from '../../utilx';
-import { AssignModerators } from '../Root/components/AssignModerators';
-import { ArticlePreview } from './components/ArticlePreview';
 
 import {
-  ARTICLE_HEADER,
   HEADER_HEIGHT,
-  SCRIM_STYLE,
   WHITE_COLOR,
 } from '../../styles';
 import {SubheaderBar} from './components/SubheaderBar';
-
-const ASSIGN_MODERATORS_POPUP_ID = 'assign-moderators';
 
 const STYLES = stylesheet({
   main: {
@@ -68,27 +59,17 @@ export interface ICommentsState {
   isCommentDetail: boolean;
   hideCommentHeader: boolean;
   counts?: ISummaryCounts;
-  isPreviewModalVisible?: boolean;
   isModeratorModalVisible?: boolean;
   moderatorIds?: Set<ModelId>;
 }
 
 export class Comments extends React.Component<ICommentsProps, ICommentsState> {
   state: ICommentsState = {
-    isPreviewModalVisible: false,
     isModeratorModalVisible: false,
     isArticleDetail: false,
     isCommentDetail: false,
     hideCommentHeader: false,
   };
-
-  componentDidMount() {
-    keyboardJS.bind('escape', this.onCloseClick);
-  }
-
-  componentWillUnmount() {
-    keyboardJS.unbind('escape', this.onCloseClick);
-  }
 
   static getDerivedStateFromProps(nextProps: ICommentsProps,  _prevState: ICommentsState) {
     const {
@@ -116,74 +97,15 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
       category,
       globalCounts,
       logout,
-      moderators,
       children,
     } = this.props;
 
     const {
-      isArticleDetail,
-      isCommentDetail,
       hideCommentHeader,
-      isPreviewModalVisible,
-      isModeratorModalVisible,
     } = this.state;
 
     return (
       <div {...css({height: '100%'})}>
-        { isArticleDetail && (
-          <Scrim
-            key="articlePreviewScrim"
-            scrimStyles={ARTICLE_HEADER.articlePreviewScrim}
-            wrapperStyles={ARTICLE_HEADER.articlePreviewWrapper}
-            isVisible={isPreviewModalVisible}
-            onBackgroundClick={this.onCloseClick}
-          >
-            <FocusTrap
-              focusTrapOptions={{
-                clickOutsideDeactivates: true,
-              }}
-            >
-              <ArticlePreview
-                isCommentDetail={isCommentDetail}
-                article={article}
-                moderators={moderators}
-                onAddModeratorClick={this.onAddModeratorClick}
-                onClose={this.onCloseClick}
-              />
-            </FocusTrap>
-            <Scrim
-              key="moderatorAssignmentScrim"
-              scrimStyles={SCRIM_STYLE.scrim}
-              isVisible={isModeratorModalVisible}
-              onBackgroundClick={this.closeModeratorAssignmentModal}
-            >
-              <FocusTrap
-                focusTrapOptions={{
-                  clickOutsideDeactivates: true,
-                }}
-              >
-                <div
-                  key="AssignModeratorsContainer"
-                  id={ASSIGN_MODERATORS_POPUP_ID}
-                  {...css(
-                    SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0},
-                  )}
-                >
-                  <AssignModerators
-                    label="Assign a moderator"
-                    moderatorIds={this.state.moderatorIds}
-                    superModeratorIds={this.props.category ? Set<ModelId>(this.props.category.assignedModerators) : null}
-                    onAddModerator={this.onAddModerator}
-                    onRemoveModerator={this.onRemoveModerator}
-                    onClickDone={this.saveModeratorAssignmentModal}
-                    onClickClose={this.closeModeratorAssignmentModal}
-                  />
-                </div>
-              </FocusTrap>
-            </Scrim>
-          </Scrim>
-        )}
-
         <div {...css(STYLES.main)}>
           { !hideCommentHeader && (
             <HeaderBar
@@ -232,16 +154,6 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
   @autobind
   onAuthorSearchClick() {
     this.props.router.push('/search?searchByAuthor=true');
-  }
-
-  @autobind
-  onOpenClick() {
-    this.setState({ isPreviewModalVisible: true });
-  }
-
-  @autobind
-  onCloseClick() {
-    this.setState({ isPreviewModalVisible: false });
   }
 
   @autobind
