@@ -68,13 +68,13 @@ function checkExpectations(
   articleExpectations: {[key: string]: number},
 ) {
   for (const k of Object.keys(categoryExpectations)) {
-    if (message.category[k] !== categoryExpectations[k]) {
-      console.log(`ERROR: category ${k} not updated correctly: ${message.category[k]} should be ${categoryExpectations[k]}`);
+    if (message.categories.get(0)[k] !== categoryExpectations[k]) {
+      console.log(`ERROR: category ${k} not updated correctly: ${message.categories.get(0)[k]} should be ${categoryExpectations[k]}`);
     }
   }
   for (const k of Object.keys(articleExpectations)) {
-    if (message.article[k] !== articleExpectations[k]) {
-      console.log(`ERROR: article ${k} not updated correctly: ${message.article[k]} should be ${articleExpectations[k]}`);
+    if (message.articles.get(0)[k] !== articleExpectations[k]) {
+      console.log(`ERROR: article ${k} not updated correctly: ${message.articles.get(0)[k]} should be ${articleExpectations[k]}`);
     }
   }
 }
@@ -117,10 +117,10 @@ export async function setArticleState(
     () => updateArticle(articleId, isCommentingEnabled, isAutoModerated),
     (type, message) => {
       checkTypeIsUpdate(type);
-      if (message.article.isCommentingEnabled !== isCommentingEnabled) {
+      if (message.articles.get(0).isCommentingEnabled !== isCommentingEnabled) {
         console.log(`ERROR: article.isCommentingEnabled is not in correct state after op: new state: ${message.article.isCommentingEnabled}`);
       }
-      if (message.article.isAutoModerated !== isAutoModerated) {
+      if (message.articles.get(0).isAutoModerated !== isAutoModerated) {
         console.log(`ERROR: article.isAutoModerated is not in correct state after op: new state: ${message.article.isAutoModerated}`);
       }
     });
@@ -135,13 +135,13 @@ export async function setArticleModerators(
     () => updateArticleModerators(articleId, moderators),
     (type, message) => {
       checkTypeIsUpdate(type);
-      if (moderators.length !== message.article.assignedModerators.length) {
+      if (moderators.length !== message.articles.get(0).assignedModerators.length) {
         console.log(`ERROR: Article moderators doesn't have expected number of entries`);
         return;
       }
 
       const testSet = new Set(moderators);
-      for (const m of message.article.assignedModerators) {
+      for (const m of message.articles.get(0).assignedModerators) {
         if (!testSet.has(m)) {
           console.log(`ERROR: Unexpected article moderator ${m}`);
         }

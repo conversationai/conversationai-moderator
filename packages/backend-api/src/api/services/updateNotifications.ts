@@ -183,8 +183,8 @@ async function getArticleUpdate(articleId: number) {
   return {
     type: 'article-update',
     data: {
-      category: cData,
-      article: aData,
+      categories: [cData],
+      articles: [aData],
     },
   } as IMessage;
 }
