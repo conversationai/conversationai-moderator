@@ -62,8 +62,7 @@ import {
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
   LIGHT_PRIMARY_TEXT_COLOR,
-  LIGHT_SECONDARY_TEXT_COLOR,
-  MEDIUM_COLOR, NICE_MIDDLE_BLUE,
+  NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
   SCRIM_Z_INDEX,
   SELECT_ELEMENT,
@@ -107,7 +106,7 @@ const STYLES = stylesheet({
 
   buttonContainer: {
     alignItems: 'center',
-    backgroundColor: MEDIUM_COLOR,
+    backgroundColor: NICE_MIDDLE_BLUE,
     boxSizing: 'border-box',
     display: 'flex',
     justifyContent: 'space-between',
@@ -141,7 +140,7 @@ const STYLES = stylesheet({
   },
 
   filler: {
-    backgroundColor: MEDIUM_COLOR,
+    backgroundColor: NICE_MIDDLE_BLUE,
     height: 0,
   },
 
@@ -225,19 +224,19 @@ const STYLES = stylesheet({
     backgroundColor: 'transparent',
     border: 'none',
     borderRadius: 0,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     cursor: 'pointer',
     padding: '8px 20px',
     textAlign: 'left',
     width: '100%',
 
     ':hover': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       color: LIGHT_PRIMARY_TEXT_COLOR,
     },
 
     ':focus': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       color: LIGHT_PRIMARY_TEXT_COLOR,
       outline: 0,
     },
@@ -674,14 +673,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
           <div {...css(STYLES.commentCount)}>
             { commentScores.size > 0 && (
               <div>
-                <span>Viewing </span>
-                <span>{totalScoresInView}</span>
-                { selectedCommentsCount !== commentScores.size && (
-                  <span key="commentScoresSize" {...css({ color: LIGHT_SECONDARY_TEXT_COLOR })}>
-                    {`/${ commentScores.size }`}
-                  </span>
-                )}
-                <span key="selectedCount" {...css({ paddingLeft: '4px' })}>{` ( ${selectedCommentsCount} selected )`}</span>
+                <span>{selectedCommentsCount} of {commentScores.size} comments selected</span>
               </div>
             )}
           </div>

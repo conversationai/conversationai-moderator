@@ -44,9 +44,8 @@ import {
   DARK_COLOR,
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
-  LIGHT_COLOR,
   LIGHT_PRIMARY_TEXT_COLOR,
-  MEDIUM_COLOR, NICE_MIDDLE_BLUE,
+  NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
   SCRIM_Z_INDEX,
   SELECT_ELEMENT,
@@ -96,33 +95,12 @@ const ACTION_PLURAL: {
 };
 
 const STYLES = stylesheet({
-  tabs: {
-    background: MEDIUM_COLOR,
-    display: 'flex',
-    flexWrap: 'wrap',
-    width: '100%',
-    justifyContent: 'space-around',
-  },
-
-  tab: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    flex: 1,
-    minWidth: '128px',
-    textDecoration: 'none',
-  },
-
-  label: {
-    fontSize: '12px',
-  },
-
   row: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: LIGHT_COLOR,
+    backgroundColor: NICE_MIDDLE_BLUE,
     paddingLeft: `${GUTTER_DEFAULT_SPACING}px`,
     paddingRight: `${GUTTER_DEFAULT_SPACING}px`,
     boxSizing: 'border-box',
@@ -151,7 +129,6 @@ const STYLES = stylesheet({
     paddingRight: `${GUTTER_DEFAULT_SPACING}px`,
     boxSizing: 'border-box',
     backgroundColor: NICE_MIDDLE_BLUE,
-    borderBottom: `2px solid ${LIGHT_COLOR}`,
     height: HEADER_HEIGHT,
     [SHORT_SCREEN_QUERY]: {
       height: '56px',
@@ -222,19 +199,19 @@ const STYLES = stylesheet({
     backgroundColor: 'transparent',
     border: 'none',
     borderRadius: 0,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     cursor: 'pointer',
     padding: '8px 20px',
     textAlign: 'left',
     width: '100%',
 
     ':hover': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       color: LIGHT_PRIMARY_TEXT_COLOR,
     },
 
     ':focus': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       color: LIGHT_PRIMARY_TEXT_COLOR,
     },
   },
@@ -394,7 +371,6 @@ export class ModeratedComments
     } = this.props;
 
     const {
-      actionLabel,
       commentIds,
       allModeratedCommentIds,
       isConfirmationModalVisible,
@@ -448,8 +424,7 @@ export class ModeratedComments
 
       <div {...css(STYLES.row)}>
         <div {...css(STYLES.moderatedInfo)}>{selectedIdsLength}
-          {selectedIdsLength === 1 ? ' comment ' : ' comments '}selected from
-          <p {...css(STYLES.actionLabel)}>{actionLabel}</p>
+          {selectedIdsLength === 1 ? ' comment ' : ' comments '}selected
         </div>
         <div {...css(STYLES.moderateButtons)}>
           <CommentActionButton
