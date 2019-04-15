@@ -86,13 +86,3 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
     fontSize: '16px',
   },
 });
-
-export const COMMON_STYLES = stylesheet({
-  cellLink: {
-    fontWeight: '500',
-    color: 'inherit',
-    ':hover': {
-      textDecoration: 'underline',
-    },
-  },
-});

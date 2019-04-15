@@ -26,9 +26,8 @@ import { OpenInNew } from '@material-ui/icons/';
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import * as icons from '../../components/Icons';
 import { NICE_MIDDLE_BLUE } from '../../styles';
-import { ICON_STYLES } from '../../stylesx';
+import { COMMON_STYLES, ICON_STYLES } from '../../stylesx';
 import { css, stylesheet } from '../../utilx';
-import { COMMON_STYLES } from './styles';
 
 export interface IMagicTimestampProps {
   timestamp: string;
