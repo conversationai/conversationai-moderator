@@ -128,14 +128,14 @@ describe('websocket tests: assign moderators', () => {
       (m: any) => { assertUserMessage(m); },
       (m: any) => {
         assertArticleUpdateMessage(m);
-        expect(m.data.category.assignedModerators.length).eq(0);
-        expect(m.data.article.assignedModerators.length).eq(1);
-        expect(m.data.article.assignedModerators[0]).eq(user.id.toString());
+        expect(m.data.categories[0].assignedModerators.length).eq(0);
+        expect(m.data.articles[0].assignedModerators.length).eq(1);
+        expect(m.data.articles[0].assignedModerators[0]).eq(user.id.toString());
       },
       (m: any) => {
         assertArticleUpdateMessage(m);
-        expect(m.data.category.assignedModerators.length).eq(0);
-        expect(m.data.article.assignedModerators.length).eq(0);
+        expect(m.data.categories[0].assignedModerators.length).eq(0);
+        expect(m.data.articles[0].assignedModerators.length).eq(0);
       },
     ]);
   });

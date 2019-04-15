@@ -21,8 +21,8 @@ import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { logout } from '../auth';
 import { connectNotifier, STATUS_RESET, STATUS_UP } from '../platform/websocketService';
-import { articlesLoaded, articleUpdated, IArticlesState, reducer as articleReducer } from './articles';
-import { categoriesLoaded, categoryUpdated, ICategoriesState, reducer as categoriesReducer } from './categories';
+import { articlesLoaded, articlesUpdated, IArticlesState, reducer as articleReducer } from './articles';
+import { categoriesLoaded, categoriesUpdated, ICategoriesState, reducer as categoriesReducer } from './categories';
 import { IColumnSortStateRecord, reducer as columnSortsReducer } from './columnSorts';
 import { IState as ICommentsState, reducer as commentsReducer } from './comments';
 import { ICommentSummaryScoresStateRecord, reducer as commentSummaryScoresReducer } from './commentSummaryScores';
@@ -140,10 +140,10 @@ export async function initialiseClientModel(dispatch: IAppDispatch) {
     },
     (data) => {
       if (data.categories) {
-        dispatch(categoryUpdated(data.categories));
+        dispatch(categoriesUpdated(data.categories));
       }
       if (data.articles) {
-        dispatch(articleUpdated(data.articles));
+        dispatch(articlesUpdated(data.articles));
       }
     },
     (data) => {

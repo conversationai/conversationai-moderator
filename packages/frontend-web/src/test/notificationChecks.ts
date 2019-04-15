@@ -67,9 +67,9 @@ class ArticleMessages {
   @autobind
   updateHandler(data: IArticleUpdate) {
     console.log('+ Received singe article update message');
-    data.categories.forEach(c => checkCategory(c));
-    data.articles.forEach(a => checkArticle(a));
-   
+    data.categories.forEach((c) => checkCategory(c));
+    data.articles.forEach((a) => checkArticle(a));
+
     if (this.updateHappened) {
       this.updateHappened('article-update', data);
     }

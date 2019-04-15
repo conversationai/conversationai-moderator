@@ -98,24 +98,24 @@ describe('websocket tests: update_notifications', () => {
         (m: any) => { assertUserMessage(m); },
         (m: any) => {
           assertArticleUpdateMessage(m);
-          expect(m.data.article.id).eq(article.id);
-          expect(m.data.article.isAutoModerated).eq(false);
-          expect(m.data.article.isCommentingEnabled).eq(true);
+          expect(m.data.articles[0].id).eq(article.id);
+          expect(m.data.articles[0].isAutoModerated).eq(false);
+          expect(m.data.articles[0].isCommentingEnabled).eq(true);
         },
         (m: any) => {
           assertArticleUpdateMessage(m);
-          expect(m.data.article.isAutoModerated).eq(true);
-          expect(m.data.article.isCommentingEnabled).eq(false);
+          expect(m.data.articles[0].isAutoModerated).eq(true);
+          expect(m.data.articles[0].isCommentingEnabled).eq(false);
         },
         (m: any) => {
           assertArticleUpdateMessage(m);
-          expect(m.data.article.isAutoModerated).eq(false);
-          expect(m.data.article.isCommentingEnabled).eq(false);
+          expect(m.data.articles[0].isAutoModerated).eq(false);
+          expect(m.data.articles[0].isCommentingEnabled).eq(false);
         },
         (m: any) => {
           assertArticleUpdateMessage(m);
-          expect(m.data.article.isAutoModerated).eq(true);
-          expect(m.data.article.isCommentingEnabled).eq(true);
+          expect(m.data.articles[0].isAutoModerated).eq(true);
+          expect(m.data.articles[0].isCommentingEnabled).eq(true);
         },
       ]);
   });
