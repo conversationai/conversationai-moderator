@@ -106,17 +106,6 @@ export type ICommentListProps = {
   triggerActionToast: any;
 } & ILazyCommentListOwnProps;
 
-export type ILazyCommentListStateProps = Pick<
-  ILazyCommentListProps,
-  'selectedSort' |
-  'commentPropsForRow' |
-  'rowHeightGetter' |
-  'heightOffset' |
-  'width' |
-  'selectedTag' |
-  'getInitialRowCount'
->;
-
 function mapStateToProps(state: any, ownProps: any): any {
   const {
     commentIds,

@@ -17,16 +17,16 @@ limitations under the License.
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 
-import { IServerAction } from './common';
+import {IServerAction, ModelId} from './common';
 
 export interface IRuleAttributes {
-  id: string;
+  id: ModelId;
   action: IServerAction | null;
-  categoryId: string | null;
+  categoryId?: ModelId;
   createdBy: string | null;
   lowerThreshold: number;
   upperThreshold: number;
-  tagId: string | null;
+  tagId?: ModelId;
 }
 
 export interface IRuleModel extends TypedRecord<IRuleModel>, IRuleAttributes {}

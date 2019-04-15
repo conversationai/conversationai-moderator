@@ -19,19 +19,16 @@ import { checkedSelectionReducer } from './checkedSelection';
 import { commentListLoaderReducer } from './commentListLoader';
 import { commentScoresReducer } from './commentScores';
 import { currentPagingIdentifierReducer } from './currentPagingIdentifier';
-import { dragHandlePositionsReducer } from './dragHandlePositions';
 
 export const newCommentsReducer: any = combineReducers({
   commentListLoader: commentListLoaderReducer,
   currentPagingIdentifier: currentPagingIdentifierReducer,
   commentScores: commentScoresReducer,
   checkedSelection: checkedSelectionReducer,
-  dragHandlePositions: dragHandlePositionsReducer,
 });
 
 export * from './commentListLoader';
 export * from './commentScores';
 export * from './currentPagingIdentifier';
 export * from './checkedSelection';
-export * from './dragHandlePositions';
 export * from './util';

@@ -81,6 +81,18 @@ export interface IPerUserData {
 //       When this is availabe, replace the "any" types in the code below.
 // TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
 //       Convert for now.  But at some point need to refactor to use numbers.
+
+function fixObject(o: any) {
+  o.id = o.id.toString();
+  if (o.categoryId) {
+    o.categoryId = o.categoryId.toString();
+  }
+  if (o.tagId) {
+    o.tagId = o.tagId.toString();
+  }
+
+}
+
 function packSystemData(data: any): ISystemData {
   return {
     users: List<IUserModel>(data.users.map((u: any) => {
@@ -92,12 +104,15 @@ function packSystemData(data: any): ISystemData {
       return TagModel(t);
     })),
     taggingSensitivities: List<ITaggingSensitivityModel>(data.taggingSensitivities.map((t: any) => {
+      fixObject(t);
       return TaggingSensitivityModel(t);
     })),
     rules: List<IRuleModel>(data.rules.map((r: any) => {
+      fixObject(r);
       return RuleModel(r);
     })),
     preselects: List<IPreselectModel>(data.preselects.map((p: any) => {
+      fixObject(p);
       return PreselectModel(p);
     })),
   };

@@ -34,6 +34,8 @@ import {
   getSummaryScoresById,
   loadCommentSummaryScores,
 } from '../../../../stores/commentSummaryScores';
+import { getPreselects } from '../../../../stores/preselects';
+import { getRules } from '../../../../stores/rules';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
 import {
@@ -48,19 +50,14 @@ import {
   executeCommentListLoader,
   getAreAllSelected,
   getAreAnyCommentsSelected,
-  getCommentIDsInRange,
   getCommentListHasLoaded,
   getCommentListIsLoading,
   getCommentScores,
   getCurrentPagingIdentifier,
-  getDragHandlePosition1,
-  getDragHandlePosition2,
   getIsItemChecked,
-  getRulesInCategory,
   getSelectedTag,
   parseRouteAndQueryString,
   removeCommentScore,
-  resetDragHandleScope,
   toggleSelectAll,
   toggleSingleItem,
 } from './store';
@@ -81,11 +78,6 @@ import {
   highlightComment,
   rejectComment,
 } from '../../../../stores/comments';
-
-type INewCommentsRouterProps = Pick<
-  INewCommentsProps,
-  'params'
-  >;
 
 const actionMap: {
   [key: string]: (ids: Array<string>, tagId?: string) => any;
@@ -117,8 +109,6 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: any): any {
   } = parseRouteAndQueryString(ownProps.params, ownProps.location.query);
 
   return {
-    resetDragHandleScope: () => dispatch(resetDragHandleScope()),
-
     tagComments: (ids: Array<string>, tagId: string) =>
         dispatch(tagCommentSummaryScores(ids, tagId)),
 
@@ -163,20 +153,13 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: any): any {
 }
 
 const mapStateToProps = createStructuredSelector({
-  article: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => {
+  article: (state: IAppStateRecord, { params }: INewCommentsProps) => {
     if (params.articleId) {
       return getArticle(state, params.articleId);
     }
   },
 
-  commentIds: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => (
-    getCommentIDsInRange(
-      getCommentScores(state),
-      getDragHandlePosition1(state),
-      getDragHandlePosition2(state),
-      params.tag === 'DATE',
-    )
-  ),
+  preselects: getPreselects,
 
   getComment: (state: IAppStateRecord) => (id: string) => (getComment(state, id)),
 
@@ -194,7 +177,7 @@ const mapStateToProps = createStructuredSelector({
 
   tags: getTaggableTags,
 
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => (id: string): Set<string> => {
+  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: INewCommentsProps) => (id: string): Set<string> => {
     if (!id) {
       return;
     }
@@ -205,17 +188,11 @@ const mapStateToProps = createStructuredSelector({
     ).map((score) => score.tagId).toSet();
   },
 
-  selectedTag: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => {
+  selectedTag: (state: IAppStateRecord, { params }: INewCommentsProps) => {
     return getSelectedTag(state, params.tag);
   },
 
-  rulesInCategory: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => {
-    return getRulesInCategory(state, params.categoryId, params.articleId).toArray();
-  },
-
-  pos1: getDragHandlePosition1,
-
-  pos2: getDragHandlePosition2,
+  rules: getRules,
 
   getCurrentColumnSort: (state: IAppStateRecord) => {
     return (key: string) => getCurrentColumnSort(state, 'commentsIndexNew', key);
@@ -239,15 +216,6 @@ const mapStateToProps = createStructuredSelector({
 
       return url;
     };
-  },
-
-  areAutomatedRulesApplied: (state: IAppStateRecord, { params }: INewCommentsRouterProps) => {
-    if (!params.articleId) {
-      return false;
-    }
-
-    const article = getArticle(state, params.articleId);
-    return article.isAutoModerated;
   },
 });
 

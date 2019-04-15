@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import formatDate from 'date-fns/format';
-import { Set } from 'immutable';
+import { List } from 'immutable';
 import { clamp } from 'lodash';
 import React from 'react';
 
@@ -89,7 +89,7 @@ export interface IBatchSelectorProps {
   defaultSelectionPosition1: number;
   defaultSelectionPosition2: number;
   automatedRuleToast?(rule: IRuleModel): void;
-  commentScores: Set<ICommentScoredModel | ICommentDatedModel>;
+  commentScores: List<ICommentScoredModel | ICommentDatedModel>;
   groupBy: 'date' | 'score';
   rules?: Array<IRuleModel>;
   onSelectionChange?(selectedComments: Array<number>, pos1: number, pos2: number): void;
