@@ -38,14 +38,14 @@ import {
   NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
 } from '../../styles';
-import { medium } from '../../stylesx';
+import { COMMON_STYLES, medium } from '../../stylesx';
 import { partial } from '../../util/partial';
 import { css, stylesheet } from '../../utilx';
 import { AssignModerators } from '../Root/components/AssignModerators';
 import { articlesLink, categoriesLink, dashboardLink } from '../routes';
 import { MagicTimestamp, ModeratorsWidget, SimpleTitleCell, TitleCell } from './components';
 import { FilterSidebar } from './FilterSidebar';
-import { ARTICLE_TABLE_STYLES, CELL_HEIGHT, COMMON_STYLES } from './styles';
+import { ARTICLE_TABLE_STYLES, CELL_HEIGHT } from './styles';
 import {
   NOT_SET,
   SORT_APPROVED,

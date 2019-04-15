@@ -86,3 +86,13 @@ export const ICON_STYLES = stylesheet({
     ...flexCenter,
   },
 });
+
+export const COMMON_STYLES = stylesheet({
+  cellLink: {
+    fontWeight: '500',
+    color: 'inherit',
+    ':hover': {
+      textDecoration: 'underline',
+    },
+  },
+});

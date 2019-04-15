@@ -27,9 +27,9 @@ import {
   ALMOST_WHITE,
   HEADER_HEIGHT,
 } from '../../styles';
+import { COMMON_STYLES } from '../../stylesx';
 import { css, stylesheet } from '../../utilx';
 import { categoriesLink, dashboardLink, settingsLink } from '../routes';
-import { COMMON_STYLES } from './styles';
 import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
 
 const SIDEBAR_HEADER_HEIGHT = 159;
