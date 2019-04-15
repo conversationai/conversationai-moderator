@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 export * from './cssInJs';
-export * from './abbreviateModerators';
 export * from './sortDefinitions';
 export * from './highlightText';
 export * from './keyCodes';
