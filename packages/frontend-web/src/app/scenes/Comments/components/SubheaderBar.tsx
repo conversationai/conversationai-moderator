@@ -40,21 +40,22 @@ const STYLES = stylesheet({
   },
 
   headerItem: {
-    color: LIGHT_PRIMARY_TEXT_COLOR,
+    color: `rgba(255,255,255,0.54)`,
     textAlign: 'center',
     paddingTop: `${10}px`,
     marginTop: `${3}px`,
     width: '13vw',
     height: `${HEADER_HEIGHT - 10 - 3}px`,
-    borderBottom: `3px solid ${NICE_MIDDLE_BLUE}`,
+    borderBottom: `3px solid rgba(255,255,255,0.05)`,
   },
 
   headerItemSelected: {
+    color: `${LIGHT_PRIMARY_TEXT_COLOR}`,
     borderBottom: `3px solid ${LIGHT_PRIMARY_TEXT_COLOR}`,
   },
 
   headerLink: {
-    color: LIGHT_PRIMARY_TEXT_COLOR,
+    color: 'inherit',
     textDecoration: 'none',
   },
 
