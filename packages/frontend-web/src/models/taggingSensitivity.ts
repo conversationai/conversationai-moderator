@@ -17,12 +17,14 @@ limitations under the License.
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 
+import { ModelId } from './common';
+
 export interface ITaggingSensitivityAttributes {
-  id: string;
-  categoryId: string | null;
+  id: ModelId;
+  categoryId?: ModelId;
   lowerThreshold: number;
   upperThreshold: number;
-  tagId: string | null;
+  tagId?: ModelId;
 }
 
 export interface ITaggingSensitivityModel extends TypedRecord<ITaggingSensitivityModel>, ITaggingSensitivityAttributes {}

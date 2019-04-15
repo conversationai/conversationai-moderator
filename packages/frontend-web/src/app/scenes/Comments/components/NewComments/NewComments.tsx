@@ -27,6 +27,7 @@ import {
   ICommentDatedModel,
   ICommentModel,
   ICommentScoredModel,
+  IPreselectModel,
   IRuleModel,
   ITagModel,
   TagModel,
@@ -79,6 +80,7 @@ import {
 import { css, stylesheet } from '../../../../utilx';
 import { articleBase, categoryBase, tagSelectorLink } from '../../../routes';
 import { BatchSelector } from './components/BatchSelector';
+import { getCommentIDsInRange } from './store';
 
 const ACTION_BAR_HEIGHT_FIXED = 68;
 const ARROW_SIZE = 6;
@@ -259,22 +261,18 @@ const STYLES = stylesheet({
 
 export interface INewCommentsProps extends WithRouterProps {
   article?: IArticleModel;
-  commentIds: List<string>;
-  commentScores: Set<ICommentScoredModel | ICommentDatedModel>;
+  preselects?: List<IPreselectModel>;
+  commentScores: List<ICommentScoredModel | ICommentDatedModel>;
   isLoading: boolean;
   selectedTag?: ITagModel;
   areNoneSelected?: boolean;
   areAllSelected: boolean;
   isItemChecked(id: string): boolean;
   tags: List<ITagModel>;
-  rulesInCategory?: Array<IRuleModel>;
+  rules?: List<IRuleModel>;
   getCurrentColumnSort?(key: string): string;
-  pos1?: number;
-  pos2?: number;
   getLinkTarget(comment: ICommentModel): string;
-  areAutomatedRulesApplied?: boolean;
   textSizes?: Map<number, number>;
-  resetDragHandleScope?(): any;
   tagComments?(ids: Array<string>, tagId: string): any;
   dispatchAction?(action: ICommentAction, idsToDispatch: Array<string>): any;
   removeCommentScore?(idsToDispatch: Array<string>): any;
@@ -293,8 +291,8 @@ export interface INewCommentsProps extends WithRouterProps {
 }
 
 export interface INewCommentsState {
+  commentIds?: List<string>;
   commentSortType?: string;
-  selectedCommentsCount?: number;
   isNavStuck?: boolean;
   isConfirmationModalVisible?: boolean;
   isRuleInfoVisible?: boolean;
@@ -305,8 +303,8 @@ export interface INewCommentsState {
   toastIcon?: JSX.Element;
   ruleToastIcon?: JSX.Element;
   showCount?: boolean;
-  selectionPosition1?: number;
-  selectionPosition2?: number;
+  pos1?: number;
+  pos2?: number;
   isTaggingToolTipMetaVisible?: boolean;
   taggingToolTipMetaPosition?: {
     top: number;
@@ -322,6 +320,7 @@ export interface INewCommentsState {
   moderateButtonsRef?: HTMLDivElement;
   taggingCommentId?: string;
   articleControlOpen: boolean;
+  rulesInCategory?: Array<IRuleModel>;
 }
 
 export class NewComments extends React.Component<INewCommentsProps, INewCommentsState> {
@@ -334,7 +333,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
   state: INewCommentsState = {
     commentSortType: 'newest',
-    selectedCommentsCount: 0,
     isNavStuck: false,
     isConfirmationModalVisible: false,
     isRuleInfoVisible: false,
@@ -345,8 +343,8 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     toastIcon: null,
     ruleToastIcon: null,
     showCount: false,
-    selectionPosition1: this.props.pos1 ? this.props.pos1 : DEFAULT_DRAG_HANDLE_POS1,
-    selectionPosition2: this.props.pos2 ? this.props.pos2 : DEFAULT_DRAG_HANDLE_POS2,
+    pos1: DEFAULT_DRAG_HANDLE_POS1,
+    pos2: DEFAULT_DRAG_HANDLE_POS2,
     isTaggingToolTipMetaVisible: false,
     taggingToolTipMetaPosition: {
       top: 0,
@@ -364,20 +362,61 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     articleControlOpen: false,
   };
 
-  async componentDidUpdate(prevProps: INewCommentsProps) {
-    if (!this.props.commentScores.equals(prevProps.commentScores)) {
-      this.setState({ selectedCommentsCount: this.getSelectedIDs().length });
+  static getDerivedStateFromProps(props: INewCommentsProps, _state: INewCommentsState) {
+    let preselect: IPreselectModel;
+    let categoryId = props.params.categoryId;
+    if (props.article) {
+      categoryId = props.article.categoryId;
+    }
+    if (props.preselects) {
+      if (categoryId && categoryId !== 'all' && props.selectedTag) {
+        preselect = props.preselects.find((p) => (p.categoryId === categoryId && p.tagId === props.selectedTag.id));
+      }
+      if (!preselect && categoryId && categoryId !== 'all') {
+        preselect = props.preselects.find((p) => (p.categoryId === categoryId && !p.tagId));
+      }
+      if (!preselect && props.selectedTag) {
+        preselect = props.preselects.find((p) => (!p.categoryId && p.tagId === props.selectedTag.id));
+      }
+      if (!preselect) {
+        preselect = props.preselects.find((p) => (!p.categoryId && !p.tagId));
+      }
     }
 
-    if (this.props.pos1 !== prevProps.pos1 || this.props.pos2 !== prevProps.pos2) {
-      await this.onBatchCommentsChangeEnd([], this.props.pos1, this.props.pos2);
-      this.setState({ selectedCommentsCount: this.getSelectedIDs().length });
-    }
+    const pos1 = props.location.query.pos1 ? Number.parseFloat(props.location.query.pos1) :
+      preselect ? preselect.lowerThreshold : DEFAULT_DRAG_HANDLE_POS1;
+    const pos2 = props.location.query.pos2 ? Number.parseFloat(props.location.query.pos2) :
+      preselect ? preselect.upperThreshold : DEFAULT_DRAG_HANDLE_POS2;
 
+    const commentIds = getCommentIDsInRange(
+      props.commentScores,
+      pos1,
+      pos2,
+      props.params.tag === 'DATE',
+    );
+
+    let rulesInCategory: List<IRuleModel>;
+    if (props.rules) {
+      if (categoryId && categoryId !== 'all') {
+        rulesInCategory = props.rules.filter((r) => (r.categoryId === categoryId || !r.categoryId)) as List<IRuleModel>;
+      }
+      else {
+        rulesInCategory = props.rules.filter((r) => (!r.categoryId)) as List<IRuleModel>;
+      }
+    }
+    return {
+      commentIds,
+      pos1,
+      pos2,
+      rulesInCategory,
+    };
+  }
+
+  async componentDidUpdate(_prevProps: INewCommentsProps) {
     // We need to wait for commentIDsInRange to load so we can check that against the saved row
     const commentId = getReturnSavedCommentRow();
 
-    if ((typeof commentId !== 'undefined') && !this.props.isLoading && this.state.isNavStuck === false && this.props.commentIds.size > 0 ) {
+    if ((typeof commentId !== 'undefined') && !this.props.isLoading && this.state.isNavStuck === false && this.state.commentIds.size > 0 ) {
 
       if (!this.props.getComment(commentId)) {
         return false;
@@ -392,7 +431,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
         });
       }, 60);
 
-      const row = this.props.commentIds.findIndex((idInRange) => idInRange === commentId);
+      const row = this.state.commentIds.findIndex((idInRange) => idInRange === commentId);
       this.setState({ selectedRow: row });
       clearReturnSavedCommentRow();
     }
@@ -400,14 +439,10 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
   componentDidMount() {
     keyboardJS.bind('escape', this.onPressEscape);
-    this.setState({
-      selectedCommentsCount: this.getSelectedIDs().length,
-    });
   }
 
   componentWillUnmount() {
     keyboardJS.unbind('escape', this.onPressEscape);
-    this.props.resetDragHandleScope();
   }
 
   @autobind
@@ -508,25 +543,23 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
   render() {
     const {
+      article,
       commentScores,
       textSizes,
       getLinkTarget,
-      commentIds,
       areNoneSelected,
       areAllSelected,
       isItemChecked,
       tags,
       selectedTag,
-      rulesInCategory,
       isLoading,
-      areAutomatedRulesApplied,
       getTagIdsAboveThresholdByCommentId,
     } = this.props;
 
     const {
-      selectionPosition1,
-      selectionPosition2,
-      selectedCommentsCount,
+      pos1,
+      pos2,
+      commentIds,
       isNavStuck,
       isConfirmationModalVisible,
       isRuleInfoVisible,
@@ -537,6 +570,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       selectedRow,
       taggingTooltipVisible,
       taggingCommentId,
+      rulesInCategory,
     } = this.state;
 
     const IS_SMALL_SCREEN = window.innerWidth < 1024;
@@ -596,9 +630,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       tagSelectorLink(articleBase, this.props.params.articleId, selectedTag && selectedTag.id) :
       tagSelectorLink(categoryBase, this.props.params.categoryId, selectedTag && selectedTag.id);
 
-    const allRules = rulesInCategory && (rulesInCategory.length > 0) && rulesInCategory;
-    const rules = selectedTag && selectedTag.key !== 'DATE' && allRules && allRules.filter((rule) => rule.tagId === selectedTag.id);
-
+    const rules = selectedTag && selectedTag.key !== 'DATE' && rulesInCategory;
     const disableAllButtons = areNoneSelected || commentScores.size <= 0;
     const groupBy = (selectedTag && selectedTag.key === 'DATE') ? 'date' : 'score';
 
@@ -632,7 +664,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
             </div>
             { this.props.params.articleId && (
               <ArticleControlIcon
-                article={this.props.article}
+                article={article}
                 open={this.state.articleControlOpen}
                 clearPopups={this.closePopup}
                 openControls={this.openPopup}
@@ -646,11 +678,10 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
             <BatchSelector
               groupBy={groupBy}
               rules={rules}
-              areAutomatedRulesApplied={areAutomatedRulesApplied}
-              defaultSelectionPosition1={selectionPosition1}
-              defaultSelectionPosition2={selectionPosition2}
+              areAutomatedRulesApplied={article && article.isAutoModerated}
+              defaultSelectionPosition1={pos1}
+              defaultSelectionPosition2={pos2}
               commentScores={commentScores}
-              onSelectionChange={this.onBatchCommentsChange}
               onSelectionChangeEnd={this.onBatchCommentsChangeEnd}
               automatedRuleToast={this.handleRemoveAutomatedRule}
             />
@@ -674,7 +705,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
           <div {...css(STYLES.commentCount)}>
             { commentScores.size > 0 && (
               <div>
-                <span>{selectedCommentsCount} of {commentScores.size} comments selected</span>
+                <span>{selectedIdsCount} of {commentScores.size} comments selected</span>
               </div>
             )}
           </div>
@@ -1038,7 +1069,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
   @autobind
   getSelectedIDs(): Array<string> {
-    return this.props.commentIds
+    return this.state.commentIds
         .filter((commentId) => this.props.isItemChecked(commentId)).toArray();
   }
 
@@ -1090,41 +1121,25 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind
-  onBatchCommentsChange(commentIds: Array<number>) {
-    this.setState({ selectedCommentsCount: commentIds.length });
-  }
-
-  updateLocalDragHandleState(pos1: number, pos2: number): void {
-    this.setState({
-      selectionPosition1: pos1,
-      selectionPosition2: pos2,
-    });
-  }
-
-  @autobind
-  onBatchCommentsChangeEnd(commentIds: Array<number>, pos1: number, pos2: number) {
+  onBatchCommentsChangeEnd(_commentIds: Array<number>, pos1: number, pos2: number) {
     if (
-      (pos1 === this.state.selectionPosition1) &&
-      (pos2 === this.state.selectionPosition2)
+      (pos1 === this.state.pos1) &&
+      (pos2 === this.state.pos2)
     ) {
       return;
     }
 
-    this.setState({ selectedCommentsCount: commentIds.length });
-    this.updateLocalDragHandleState(pos1, pos2);
     this.setQueryStringParam({ pos1, pos2 });
   }
 
   @autobind
   async onSelectAllChange() {
     await this.props.toggleSelectAll();
-    this.setState({ selectedCommentsCount: this.getSelectedIDs().length });
   }
 
   @autobind
   async onSelectionChange(id: string) {
     await this.props.toggleSingleItem({ id });
-    this.setState({ selectedCommentsCount: this.getSelectedIDs().length });
   }
 
   @autobind

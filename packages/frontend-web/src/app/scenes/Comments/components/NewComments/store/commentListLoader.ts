@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List, Map } from 'immutable';
+import { List } from 'immutable';
 import { Reducer } from 'redux-actions';
 import { ITagModel } from '../../../../../../models';
 import { IAppStateRecord, IThunkAction } from '../../../../../stores';
@@ -31,7 +31,6 @@ import {
   loadCommentScoresForCategory,
 } from './commentScores';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
-import { setDefaultDragHandlesIfScopeChange } from './dragHandlePositions';
 import { getCommentIDsInRange, getSelectedTag } from './util';
 
 import { DATA_PREFIX } from './reduxPrefix';
@@ -64,18 +63,6 @@ function loadCommentList(
       columnSort = await dispatch(fetchCurrentColumnSort('commentsIndexNew', tag));
     }
 
-    const scopeTagId = tag === 'DATE' ? tag : matchingTag.id;
-    const {
-      pos1: rangeStart,
-      pos2: rangeEnd,
-    } = await dispatch(
-      setDefaultDragHandlesIfScopeChange(
-        pos1,
-        pos2,
-        Map({ articleId, categoryId, tagId: scopeTagId }),
-      ),
-    );
-
     const sortDef = commentSortDefinitions[columnSort]
         ? commentSortDefinitions[columnSort].sortInfo
         : commentSortDefinitions['tag'].sortInfo;
@@ -95,11 +82,11 @@ function loadCommentList(
     }
 
     const commentScores = getCommentScores(getState());
-    const commentIDsInRange = getCommentIDsInRange(commentScores, rangeStart, rangeEnd, tag === 'DATE');
+    const commentIDsInRange = getCommentIDsInRange(commentScores, pos1, pos2, tag === 'DATE');
 
     const currentTagModel = getSelectedTag(getState(), tag);
 
-    const commentsLink = `new/${currentTagModel.key}?pos1=${rangeStart}&pos2=${rangeEnd}`;
+    const commentsLink = `new/${currentTagModel.key}?pos1=${pos1}&pos2=${pos2}`;
 
     const link = isArticleDetail ? `/articles/${articleId}/${commentsLink}` : `/categories/${categoryId}/${commentsLink}`;
 

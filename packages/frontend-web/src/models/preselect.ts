@@ -17,12 +17,14 @@ limitations under the License.
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 
+import { ModelId } from './common';
+
 export interface IPreselectAttributes {
   id: string;
-  categoryId: string | null;
+  categoryId?: ModelId;
   lowerThreshold: number;
   upperThreshold: number;
-  tagId: string | null;
+  tagId?: ModelId;
 }
 
 export interface IPreselectModel extends TypedRecord<IPreselectModel>, IPreselectAttributes {}
