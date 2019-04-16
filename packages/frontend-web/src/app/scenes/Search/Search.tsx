@@ -239,7 +239,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
           <Header hideSearchIcon>
             <form key="search-form" aria-label="Search form" onSubmit={this.handleSearchFormSubmit} {...css(HEADER_STYLES.formContainer)}>
               { searchByArticle && article &&
-                <SearchAttribute title={article.title} onClose={this.handleSearchAttributeClose} />
+                <SearchAttribute title={`Article: ${article.title}`} onClose={this.handleSearchAttributeClose} />
               }
               { searchByAuthor &&
                 <SearchAttribute title="By Comment Author" onClose={this.handleSearchAttributeClose} />

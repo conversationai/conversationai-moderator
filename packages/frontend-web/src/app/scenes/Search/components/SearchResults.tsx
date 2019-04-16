@@ -496,13 +496,17 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
         )}
         <div key="content" {...css({backgroundColor: 'white'}, searchReturned ? {display: 'block'} : {display: 'none'})}>
           <div {...css(STYLES.resultsHeader, !areNoneSelected && STYLES.resultsActionHeader)}>
-            {searchTerm && (
+            {searchTerm && !isLoading && (
               <p {...css(STYLES.resultsHeadline, !areNoneSelected && STYLES.resultsActionHeadline)}>
                 {selectedCount > 0 && `${selectedCount} / `}
                 {totalCommentCount} result{totalCommentCount > 1 && 's'}
                 {selectedCount > 0 || areAllSelected && ' selected'}
               </p>
             )}
+            {isLoading && (
+              <p {...css(STYLES.resultsHeadline, !areNoneSelected && STYLES.resultsActionHeadline)}>
+                  Loading...
+              </p>)}
             { !areNoneSelected && (
               <div {...css(STYLES.moderateButtons)}>
                 <CommentActionButton
