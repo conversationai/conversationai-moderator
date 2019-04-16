@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import {ModelId} from '../../models';
+
 export const dashboardBase = 'dashboard';
 export function dashboardLink(filter?: string, sort?: string) {
   let ret = `/${dashboardBase}`;
@@ -32,11 +34,19 @@ export function settingsLink() {
 }
 
 export const searchBase = 'search';
-export function searchLink() {
+export function searchLink(articleId?: ModelId, isAuthorSearch?: boolean) {
+  const queries: Array<string> = [];
+  if (articleId) {
+    queries.push(`articleId=${articleId}`);
+  }
+  if (isAuthorSearch) {
+    queries.push('searchByAuthor=true');
+  }
+
+  if (queries.length > 0) {
+    return `/${searchBase}?${queries.join('&')}`;
+  }
   return `/${searchBase}`;
-}
-export function authorSearchLink() {
-  return `${searchBase}?searchByAuthor=true`;
 }
 
 export const articleBase = 'articles';

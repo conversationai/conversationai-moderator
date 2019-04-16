@@ -20,7 +20,7 @@ import { Link } from 'react-router';
 import { AssignmentInd, Home, Menu, OpenInNew, Person, Search } from '@material-ui/icons';
 
 import { IArticleModel, ICategoryModel } from '../../models';
-import { authorSearchLink, dashboardLink, searchLink } from '../scenes/routes';
+import { dashboardLink, searchLink } from '../scenes/routes';
 import {
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
@@ -137,6 +137,7 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
     //   allArticles += `/${categoryFilter}`;
     //   myArticles += `+${categoryFilter}`;
     // }
+    const articleId = article && article.id;
 
     return (
       <header key="header" role="banner" {...css(STYLES.header)}>
@@ -159,8 +160,8 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
         {/*{renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}*/}
         {/*{renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}*/}
         <div key="spacer" style={{flexGrow: 1}}/>
-        {renderHeaderItem(<Search/>, 'Search', searchLink())}
-        {renderHeaderItem(<AssignmentInd/>, 'By author', authorSearchLink())}
+        {renderHeaderItem(<Search/>, 'Search', searchLink(articleId))}
+        {renderHeaderItem(<AssignmentInd/>, 'By author', searchLink(articleId, true))}
         <div key="logout" {...css(STYLES.headerItem)}>
           <div {...css(STYLES.headerLink)} aria-label="Logout" onClick={logout}>
             <div><Person/></div>
