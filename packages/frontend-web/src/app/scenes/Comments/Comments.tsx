@@ -86,7 +86,7 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
     return {
       isArticleDetail: !!articleId,
       isCommentDetail: !!commentId,
-      hideCommentHeader: !!originatingCommentId || nextProps.routes[3].path === 'tagselector',
+      hideCommentHeader: !!originatingCommentId,
       counts,
     };
   }

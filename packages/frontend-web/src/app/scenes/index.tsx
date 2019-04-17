@@ -51,7 +51,6 @@ const commentsRoutes = (path: string) => (
       <IndexRedirect to="approved" />
       <Route path=":tag" component={ModeratedComments}/>
     </Route>
-    <Route path="tagselector" component={TagSelector} />
     <Route path="comments/:commentId" component={CommentDetail} />
     <Route path="comments/:commentId/:originatingCommentId/replies" component={ThreadedCommentDetail} />
   </Route>
@@ -71,13 +70,14 @@ export const scenes = (history: any) => (
         <Route path="articles/:articleId/comments/:commentId" component={CommentDetail} />
       </Route>
       <Route path={routes.settingsBase} component={Settings} />
-      <Route path={routes.articlesBase}>
+      <Route path={routes.articleBase}>
         {commentsRoutes(':articleId')}
       </Route>
-      <Route path={routes.categoriesBase}>
+      <Route path={routes.categoryBase}>
         <IndexRedirect to="all" />
         {commentsRoutes(':categoryId')}
       </Route>
+      <Route path={`${routes.tagSelectorBase}/:base/:id/:currentTag`} component={TagSelector} />
     </Route>
   </Router>
 );

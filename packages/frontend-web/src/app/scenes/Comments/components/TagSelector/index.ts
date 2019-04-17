@@ -18,59 +18,11 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { API_URL } from '../../../../config';
-import { getToken } from '../../../../platform/localStore';
 import { getTags } from '../../../../stores/tags';
 import { TagSelector as PureTagSelector } from './TagSelector';
 
 const mapStateToProps = createStructuredSelector({
   tags: getTags,
-
-  articleId: (_: any, { params: { articleId }}: any) => {
-    return articleId;
-  },
-
-  categoryId: (_: any, { params: { categoryId }}: any) => {
-    let parsedCategoryId;
-
-    if (categoryId === 'all') {
-      parsedCategoryId = 'all';
-    } else {
-      parsedCategoryId = parseInt(categoryId, 10);
-    }
-
-    return parsedCategoryId;
-  },
-
-  getImagePath: (_: any, { params: { categoryId, articleId }}: any) => ({ tagId, width, height }: any) => {
-
-    let parsedCategoryId: 'all' | number;
-
-    if (categoryId === 'all') {
-      parsedCategoryId = 'all';
-    } else {
-      parsedCategoryId = parseInt(categoryId, 10);
-    }
-
-    const dp = window.devicePixelRatio || 1;
-    const startPath = !!articleId ?
-        `articles/${articleId}` :
-        `categories/${parsedCategoryId}`;
-
-    let tagSuffix;
-
-    if (tagId === 'DATE') {
-      tagSuffix = 'byDate';
-    } else {
-      tagSuffix = `tags/${tagId}`;
-    }
-
-    return `${API_URL}/services/histogramScores/`
-        + startPath
-        + '/'
-        + tagSuffix
-        + `/chart?width=${width * dp}&height=${height * dp}&token=${getToken()}`;
-  },
 });
 
 export const TagSelector = compose(
