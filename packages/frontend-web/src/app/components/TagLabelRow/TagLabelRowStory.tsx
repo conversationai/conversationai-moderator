@@ -59,6 +59,8 @@ storiesOf('TagLabelRow', module)
         <TagLabelRow
           imageHeight={SNAPSHOT_WIDTH}
           imageWidth={SNAPSHOT_HEIGHT}
+          base="categories"
+          id="1"
           tag={tag1}
           imagePath=""
           background={MEDIUM_COLOR}
@@ -73,6 +75,8 @@ storiesOf('TagLabelRow', module)
         <TagLabelRow
           imageHeight={SNAPSHOT_WIDTH}
           imageWidth={SNAPSHOT_HEIGHT}
+          base="categories"
+          id="1"
           tag={tag2}
           imagePath=""
           background={DARK_COLOR}

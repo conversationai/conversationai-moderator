@@ -39,9 +39,9 @@ export function authorSearchLink() {
   return `${searchBase}?searchByAuthor=true`;
 }
 
-export const articlesBase = 'articles';
-export const categoriesBase = 'categories';
-export function _commentLink(base: string, id: string, type: string) {
+export const articleBase = 'articles';
+export const categoryBase = 'categories';
+export function commentPageLink(base: string, id: string, type: string, tag?: string) {
   let suffix;
   if (type === 'new') {
     suffix = 'new';
@@ -49,11 +49,19 @@ export function _commentLink(base: string, id: string, type: string) {
   else {
     suffix = 'moderated/' + type;
   }
+  if (tag) {
+    return `/${base}/${id}/${suffix}/${tag}`;
+  }
   return `/${base}/${id}/${suffix}`;
 }
 export function articlesLink(id: string, type: string) {
-  return _commentLink(articlesBase, id, type);
+  return commentPageLink(articleBase, id, type);
 }
 export function categoriesLink(id: string, type: string) {
-  return _commentLink(categoriesBase, id, type);
+  return commentPageLink(categoryBase, id, type);
+}
+
+export const tagSelectorBase = 'tagselector';
+export function tagSelectorLink(base: string, id: string, currentTag: string) {
+  return `/${tagSelectorBase}/${base}/${id}/${currentTag}`;
 }

@@ -16,6 +16,8 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import React from 'react';
+import { WithRouterProps } from 'react-router';
+
 import { ITagModel, TagModel } from '../../../../../models';
 import {
   OverflowContainer,
@@ -32,6 +34,8 @@ import {
   WHITE_COLOR,
 } from '../../../../styles';
 import { css } from '../../../../utilx';
+import {API_URL} from '../../../../config';
+import {getToken} from '../../../../platform/localStore';
 
 const ACTION_STYLES = {
   header: {
@@ -75,24 +79,27 @@ const dateTag = TagModel({
   color: '',
 }).set('id', 'DATE');
 
-export interface ITagSelectorProps {
+function getImagePath(base: string, id: string, tagId: string) {
+  const dp = window.devicePixelRatio || 1;
+  const startPath = `${base}/${id}`;
+
+  let tagSuffix;
+
+  if (tagId === 'DATE') {
+    tagSuffix = 'byDate';
+  } else {
+    tagSuffix = `tags/${tagId}`;
+  }
+
+  return `${API_URL}/services/histogramScores/`
+    + startPath
+    + '/'
+    + tagSuffix
+    + `/chart?width=${SNAPSHOT_WIDTH * dp}&height=${SNAPSHOT_HEIGHT * dp}&token=${getToken()}`;
+}
+
+export interface ITagSelectorProps extends WithRouterProps {
   tags: Array<ITagModel>;
-  articleId?: number | null;
-  categoryId?: number | 'all' | null;
-  getImagePath?({
-    width,
-    height,
-    tagId,
-  }: {
-    width: number,
-    height: number,
-    tagId: string | 'DATE' | 'SUMMARY_SCORE',
-  }): string;
-  location?: {
-    query?: {
-      tagId?: string;
-    };
-  };
 }
 
 export class TagSelector extends React.Component<ITagSelectorProps> {
@@ -103,31 +110,23 @@ export class TagSelector extends React.Component<ITagSelectorProps> {
   }
 
   render() {
-    const { tags, articleId, categoryId, getImagePath } = this.props;
+    const { tags } = this.props;
+    const { base, id, currentTag } = this.props.params;
 
     const summaryTag = tags.filter((tag) => tag.key === 'SUMMARY_SCORE');
     const tagsWithoutSummary = tags.filter((tag) => tag.key !== 'SUMMARY_SCORE' && tag.isInBatchView === true);
     const tagsWithDate = [...summaryTag, ...tagsWithoutSummary, dateTag];
 
-    const linkURL = !!articleId ?
-        `/articles/${articleId}/new` :
-        `/categories/${categoryId}/new`;
-
-    const selectedTagId = this.props.location.query.tagId;
-
     const tagsWithDateRows = tagsWithDate.map((tag, i) => (
       <TagLabelRow
         tag={tag}
-        linkURL={linkURL}
         key={tag.key}
-        isSelected={selectedTagId === tag.id}
+        base={base}
+        id={id}
+        isSelected={currentTag === tag.id}
         imageWidth={SNAPSHOT_WIDTH}
         imageHeight={SNAPSHOT_HEIGHT}
-        imagePath={getImagePath({
-          width: SNAPSHOT_WIDTH,
-          height: SNAPSHOT_HEIGHT,
-          tagId: tag.key === 'SUMMARY_SCORE' ? 'SUMMARY_SCORE' : tag.id,
-        })}
+        imagePath={getImagePath(base, id, tag.key === 'SUMMARY_SCORE' ? 'SUMMARY_SCORE' : tag.id)}
         background={i % 2 ? '#295D86' : '#2F6793'}
       />
     ));

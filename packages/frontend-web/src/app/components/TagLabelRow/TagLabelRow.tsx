@@ -28,6 +28,7 @@ import {
   LIGHT_TERTIARY_TEXT_COLOR,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
+import {commentPageLink} from '../../scenes/routes';
 
 const STYLES = stylesheet({
   link: {
@@ -91,7 +92,8 @@ const STYLES = stylesheet({
 
 export interface ITagLabelRowProps {
   tag: ITagModel;
-  linkURL?: string;
+  base: string;
+  id: string;
   isSelected?: boolean;
   background?: string;
   imagePath: string;
@@ -132,7 +134,8 @@ export class TagLabelRow
       imageWidth,
       imageHeight,
       isSelected,
-      linkURL,
+      base,
+      id,
     } = this.props;
     const { isHovered } = this.state;
 
@@ -146,7 +149,7 @@ export class TagLabelRow
     return (
       <Link
         {...css(STYLES.link)}
-        to={`${linkURL}/${tag.key}`}
+        to={commentPageLink(base, id, 'new', tag.key)}
         key={tag.key}
         onMouseEnter={this.handleRowEnter}
         onMouseLeave={this.handleRowLeave}

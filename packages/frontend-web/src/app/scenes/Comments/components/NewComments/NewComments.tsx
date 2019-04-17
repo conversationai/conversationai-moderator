@@ -77,6 +77,7 @@ import {
   setReturnSavedCommentRow,
 } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
+import { articleBase, categoryBase, tagSelectorLink } from '../../../routes';
 import { BatchSelector } from './components/BatchSelector';
 
 const ACTION_BAR_HEIGHT_FIXED = 68;
@@ -592,8 +593,8 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     }
 
     const tagLinkURL = this.props.params.articleId ?
-        `/articles/${this.props.params.articleId}/tagselector?tagId=${selectedTag && selectedTag.id}` :
-        `/categories/${this.props.params.categoryId}/tagselector?tagId=${selectedTag && selectedTag.id}`;
+      tagSelectorLink(articleBase, this.props.params.articleId, selectedTag && selectedTag.id) :
+      tagSelectorLink(categoryBase, this.props.params.categoryId, selectedTag && selectedTag.id);
 
     const allRules = rulesInCategory && (rulesInCategory.length > 0) && rulesInCategory;
     const rules = selectedTag && selectedTag.key !== 'DATE' && allRules && allRules.filter((rule) => rule.tagId === selectedTag.id);
