@@ -16,8 +16,7 @@ limitations under the License.
 
 const path = require('path');
 const webpack = require('webpack');
-const config = require('@conversationai/moderator-config').config;
-
+const port = process.env['PORT']
 module.exports = {
   mode: 'development',
 
@@ -25,7 +24,7 @@ module.exports = {
 
   entry: {
     moderator: [
-      `webpack-dev-server/client?http://0.0.0.0:${config.get('port')}`,
+      `webpack-dev-server/client?http://0.0.0.0:${port}`,
       'webpack/hot/only-dev-server',
       '@babel/polyfill',
       './dist/app/main'
@@ -84,7 +83,7 @@ module.exports = {
 
   devServer: {
     contentBase: path.join(__dirname, "..", "public"),
-    port: config.get('port'),
+    port: port,
     historyApiFallback: true,
   },
 };
