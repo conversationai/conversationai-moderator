@@ -22,7 +22,7 @@ import qs from 'qs';
 import {
   INewResource,
   IParams,
-} from '@conversationai/moderator-jsonapi/src/types';
+} from './types';
 
 import {
   IAuthorCountsModel,
