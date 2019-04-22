@@ -304,6 +304,7 @@ export interface INewCommentsState {
   tag?: string;
   defaultPos1?: number;
   defaultPos2?: number;
+  defaultSort?: string;
   pos1?: number;
   pos2?: number;
   sort?: string;
@@ -380,26 +381,38 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     if (props.article) {
       categoryId = props.article.categoryId;
     }
-    if (props.preselects) {
-      if (categoryId && categoryId !== 'all' && props.selectedTag) {
-        preselect = props.preselects.find((p) => (p.categoryId === categoryId && p.tagId === props.selectedTag.id));
+    let defaultPos1: number;
+    let defaultPos2: number;
+    let defaultSort: string;
+
+    if (tag !== 'DATE') {
+      if (props.preselects) {
+        if (categoryId && categoryId !== 'all' && props.selectedTag) {
+          preselect = props.preselects.find((p) => (p.categoryId === categoryId && p.tagId === props.selectedTag.id));
+        }
+        if (!preselect && categoryId && categoryId !== 'all') {
+          preselect = props.preselects.find((p) => (p.categoryId === categoryId && !p.tagId));
+        }
+        if (!preselect && props.selectedTag) {
+          preselect = props.preselects.find((p) => (!p.categoryId && p.tagId === props.selectedTag.id));
+        }
+        if (!preselect) {
+          preselect = props.preselects.find((p) => (!p.categoryId && !p.tagId));
+        }
       }
-      if (!preselect && categoryId && categoryId !== 'all') {
-        preselect = props.preselects.find((p) => (p.categoryId === categoryId && !p.tagId));
-      }
-      if (!preselect && props.selectedTag) {
-        preselect = props.preselects.find((p) => (!p.categoryId && p.tagId === props.selectedTag.id));
-      }
-      if (!preselect) {
-        preselect = props.preselects.find((p) => (!p.categoryId && !p.tagId));
-      }
+      defaultPos1 = preselect ? preselect.lowerThreshold : DEFAULT_DRAG_HANDLE_POS1;
+      defaultPos2 = preselect ? preselect.upperThreshold : DEFAULT_DRAG_HANDLE_POS2;
+      defaultSort = DEFAULT_SORT;
+    }
+    else {
+      defaultPos1 = 0;
+      defaultPos2 = 1;
+      defaultSort = 'newest';
     }
 
-    const defaultPos1 = preselect ? preselect.lowerThreshold : DEFAULT_DRAG_HANDLE_POS1;
-    const defaultPos2 = preselect ? preselect.upperThreshold : DEFAULT_DRAG_HANDLE_POS2;
     const pos1 = props.location.query.pos1 ? Number.parseFloat(props.location.query.pos1) : defaultPos1;
     const pos2 = props.location.query.pos2 ? Number.parseFloat(props.location.query.pos2) : defaultPos2;
-    const sort = props.location.query.sort || DEFAULT_SORT;
+    const sort = props.location.query.sort || defaultSort;
 
     const commentIds = getCommentIDsInRange(
       props.commentScores,
@@ -430,6 +443,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       commentIds,
       defaultPos1,
       defaultPos2,
+      defaultSort,
       pos1,
       pos2,
       sort,
@@ -1132,7 +1146,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     if (pos2 !== this.state.defaultPos2) {
       query['pos2'] = pos2;
     }
-    if (sort !== DEFAULT_SORT) {
+    if (sort !== this.state.defaultSort) {
       query['sort'] = sort;
     }
     this.props.router.replace({
