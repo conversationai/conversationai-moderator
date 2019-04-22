@@ -41,33 +41,6 @@ export function getSelectedTag(state: IAppStateRecord, tag?: string): ITagModel 
   return tag && getTagsWithDateAndSummary(state).find((t) => t.key === tag);
 }
 
-export function parseRouteAndQueryString(
-  { articleId, categoryId, tag }: any,
-  { pos1, pos2 }: any,
-) {
-  const isArticleDetail = !!articleId;
-
-  let parsedPos1;
-  let parsedPos2;
-
-  if (tag === 'DATE') {
-    parsedPos1 = typeof pos1 !== 'undefined' ? parseFloat(pos1) : 0.0;
-    parsedPos2 = typeof pos2 !== 'undefined' ? parseFloat(pos2) : 1.0;
-  } else {
-    parsedPos1 = parseFloat(pos1);
-    parsedPos2 = parseFloat(pos2);
-  }
-
-  return {
-    isArticleDetail,
-    articleId,
-    category: categoryId,
-    tag,
-    pos1: parsedPos1,
-    pos2: parsedPos2,
-  };
-}
-
 export function getCommentIDsInRange(
   commentScores: List<ICommentScoredModel | ICommentDatedModel>,
   selectionPosition1: number,

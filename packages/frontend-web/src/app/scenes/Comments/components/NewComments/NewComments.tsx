@@ -30,6 +30,7 @@ import {
   IPreselectModel,
   IRuleModel,
   ITagModel,
+  ModelId,
   TagModel,
 } from '../../../../../models';
 import { ICommentAction } from '../../../../../types';
@@ -52,6 +53,7 @@ import {
 import {
   DEFAULT_DRAG_HANDLE_POS1,
   DEFAULT_DRAG_HANDLE_POS2,
+  DEFAULT_SORT,
   REQUIRE_REASON_TO_REJECT,
 } from '../../../../config';
 import { updateArticle } from '../../../../platform/dataService';
@@ -270,7 +272,6 @@ export interface INewCommentsProps extends WithRouterProps {
   isItemChecked(id: string): boolean;
   tags: List<ITagModel>;
   rules?: List<IRuleModel>;
-  getCurrentColumnSort?(key: string): string;
   getLinkTarget(comment: ICommentModel): string;
   textSizes?: Map<number, number>;
   tagComments?(ids: Array<string>, tagId: string): any;
@@ -278,12 +279,19 @@ export interface INewCommentsProps extends WithRouterProps {
   removeCommentScore?(idsToDispatch: Array<string>): any;
   toggleSelectAll?(): any;
   toggleSingleItem({ id }: { id: string }): any;
-  changeSort(newSort: string): Promise<boolean>;
   getComment?(id: string): any;
   setCommentModerationStatus?(
     commentIds: Array<string>,
     action: string,
   ): any;
+  loadData(
+    categoryId: string | null,
+    articleId: string | null,
+    tag: string,
+    pos1: number,
+    pos2: number,
+    sort: string,
+  ): void;
   loadScoresForCommentId?(id: string): void;
   getTagIdsAboveThresholdByCommentId?(commentId: string): Set<string>;
   confirmCommentSummaryScore?(id: string, tagId: string): void;
@@ -291,8 +299,15 @@ export interface INewCommentsProps extends WithRouterProps {
 }
 
 export interface INewCommentsState {
+  categoryId?: ModelId;
+  articleId?: ModelId;
+  tag?: string;
+  defaultPos1?: number;
+  defaultPos2?: number;
+  pos1?: number;
+  pos2?: number;
+  sort?: string;
   commentIds?: List<string>;
-  commentSortType?: string;
   isNavStuck?: boolean;
   isConfirmationModalVisible?: boolean;
   isRuleInfoVisible?: boolean;
@@ -303,8 +318,6 @@ export interface INewCommentsState {
   toastIcon?: JSX.Element;
   ruleToastIcon?: JSX.Element;
   showCount?: boolean;
-  pos1?: number;
-  pos2?: number;
   isTaggingToolTipMetaVisible?: boolean;
   taggingToolTipMetaPosition?: {
     top: number;
@@ -332,7 +345,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   batchContainerHeight: number = null;
 
   state: INewCommentsState = {
-    commentSortType: 'newest',
     isNavStuck: false,
     isConfirmationModalVisible: false,
     isRuleInfoVisible: false,
@@ -343,8 +355,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     toastIcon: null,
     ruleToastIcon: null,
     showCount: false,
-    pos1: DEFAULT_DRAG_HANDLE_POS1,
-    pos2: DEFAULT_DRAG_HANDLE_POS2,
     isTaggingToolTipMetaVisible: false,
     taggingToolTipMetaPosition: {
       top: 0,
@@ -362,9 +372,11 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     articleControlOpen: false,
   };
 
-  static getDerivedStateFromProps(props: INewCommentsProps, _state: INewCommentsState) {
+  static getDerivedStateFromProps(props: INewCommentsProps, state: INewCommentsState) {
     let preselect: IPreselectModel;
     let categoryId = props.params.categoryId;
+    const articleId = props.params.articleId;
+    const tag = props.params.tag;
     if (props.article) {
       categoryId = props.article.categoryId;
     }
@@ -383,10 +395,11 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       }
     }
 
-    const pos1 = props.location.query.pos1 ? Number.parseFloat(props.location.query.pos1) :
-      preselect ? preselect.lowerThreshold : DEFAULT_DRAG_HANDLE_POS1;
-    const pos2 = props.location.query.pos2 ? Number.parseFloat(props.location.query.pos2) :
-      preselect ? preselect.upperThreshold : DEFAULT_DRAG_HANDLE_POS2;
+    const defaultPos1 = preselect ? preselect.lowerThreshold : DEFAULT_DRAG_HANDLE_POS1;
+    const defaultPos2 = preselect ? preselect.upperThreshold : DEFAULT_DRAG_HANDLE_POS2;
+    const pos1 = props.location.query.pos1 ? Number.parseFloat(props.location.query.pos1) : defaultPos1;
+    const pos2 = props.location.query.pos2 ? Number.parseFloat(props.location.query.pos2) : defaultPos2;
+    const sort = props.location.query.sort || DEFAULT_SORT;
 
     const commentIds = getCommentIDsInRange(
       props.commentScores,
@@ -404,10 +417,22 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
         rulesInCategory = props.rules.filter((r) => (!r.categoryId)) as List<IRuleModel>;
       }
     }
+
+    if ((categoryId !== state.categoryId) || (articleId !== state.articleId) || (tag !== state.tag) ||
+        (pos1 !== state.pos1) || (pos2 !== state.pos2) || (sort !== state.sort)) {
+      props.loadData(categoryId, articleId, tag, pos1, pos2, sort);
+    }
+
     return {
+      categoryId,
+      articleId,
+      tag,
       commentIds,
+      defaultPos1,
+      defaultPos2,
       pos1,
       pos2,
+      sort,
       rulesInCategory,
     };
   }
@@ -819,12 +844,10 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               selectedTag={selectedTag}
               commentScores={commentScores}
               areAllSelected={areAllSelected}
-              getCurrentSort={this.getCurrentSort}
               getLinkTarget={getLinkTarget}
               isItemChecked={isItemChecked}
               onSelectAllChange={this.onSelectAllChange}
               onSelectionChange={this.onSelectionChange}
-              onSortChange={this.onSortChange}
               showAllComments={isNavStuck}
               tags={tags}
               onRejectWithTag={this.handleRejectWithTag}
@@ -835,6 +858,8 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               requireReasonForReject={REQUIRE_REASON_TO_REJECT}
               taggingTooltipVisible={taggingTooltipVisible}
               sortOptions={filterSortOptions}
+              getCurrentSort={this.getCurrentSort}
+              onSortChange={this.onSortChange}
               onCommentClick={this.saveCommentRow}
               scrollToRow={selectedRow}
               totalItems={commentIds.size}
@@ -1095,13 +1120,24 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind
-  setQueryStringParam({ pos1, pos2 }: { pos1: number, pos2: number }): void {
+  setQueryStringParam(pos1: number, pos2: number, sort: string): void {
+    if ((pos1 === this.state.pos1) && (pos2 === this.state.pos2) && (sort === this.state.sort)) {
+      return;
+    }
+
+    const query: any = {};
+    if (pos1 !== this.state.defaultPos1) {
+      query['pos1'] = pos1;
+    }
+    if (pos2 !== this.state.defaultPos2) {
+      query['pos2'] = pos2;
+    }
+    if (sort !== DEFAULT_SORT) {
+      query['sort'] = sort;
+    }
     this.props.router.replace({
       pathname: this.props.location.pathname,
-      query: {
-        pos1: pos1.toFixed(2),
-        pos2: pos2.toFixed(2),
-      },
+      query,
     });
   }
 
@@ -1112,24 +1148,17 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
   @autobind
   getCurrentSort(): string {
-    return this.props.getCurrentColumnSort(this.props.selectedTag && this.props.selectedTag.key);
+    return this.state.sort;
   }
 
   @autobind
   onSortChange(event: React.FormEvent<any>) {
-    this.props.changeSort((event.target as any).value);
+    this.setQueryStringParam(this.state.pos1, this.state.pos2, (event.target as any).value);
   }
 
   @autobind
   onBatchCommentsChangeEnd(_commentIds: Array<number>, pos1: number, pos2: number) {
-    if (
-      (pos1 === this.state.pos1) &&
-      (pos2 === this.state.pos2)
-    ) {
-      return;
-    }
-
-    this.setQueryStringParam({ pos1, pos2 });
+    this.setQueryStringParam(pos1, pos2, this.state.sort);
   }
 
   @autobind
