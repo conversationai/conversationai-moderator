@@ -17,18 +17,12 @@ limitations under the License.
 import { Set } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { provideHooks } from 'redial';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { ICommentModel } from '../../../../../models';
-import { IRedialLocals } from '../../../../../types';
 import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
-import {
-  changeColumnSortGroupDefault,
-  getCurrentColumnSort,
-} from '../../../../stores/columnSorts';
 import { getComment } from '../../../../stores/comments';
 import {
   getSummaryScoresById,
@@ -56,7 +50,6 @@ import {
   getCurrentPagingIdentifier,
   getIsItemChecked,
   getSelectedTag,
-  parseRouteAndQueryString,
   removeCommentScore,
   toggleSelectAll,
   toggleSingleItem,
@@ -98,16 +91,7 @@ const moderationStatusMap: {
   reject: rejectComment,
 };
 
-function mapDispatchToProps(dispatch: IAppDispatch, ownProps: any): any {
-  const {
-    isArticleDetail,
-    articleId,
-    category,
-    tag,
-    pos1,
-    pos2,
-  } = parseRouteAndQueryString(ownProps.params, ownProps.location.query);
-
+function mapDispatchToProps(dispatch: IAppDispatch): any {
   return {
     tagComments: (ids: Array<string>, tagId: string) =>
         dispatch(tagCommentSummaryScores(ids, tagId)),
@@ -134,19 +118,21 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: any): any {
       await dispatch(loadCommentSummaryScores(id));
     },
 
-    changeSort: async (newSort: string): Promise<void> => {
-      await dispatch(changeColumnSortGroupDefault({
-        group: 'commentsIndexNew',
-        key: newSort,
-      }));
-
+    loadData: async (
+      categoryId: string | null,
+      articleId: string | null,
+      tag: string,
+      pos1: number,
+      pos2: number,
+      sort: string,
+    ): Promise<void> => {
       await dispatch(executeCommentListLoader(
-        isArticleDetail,
         articleId,
-        category,
+        categoryId,
         tag,
         pos1,
         pos2,
+        sort,
       ));
     },
   };
@@ -194,10 +180,6 @@ const mapStateToProps = createStructuredSelector({
 
   rules: getRules,
 
-  getCurrentColumnSort: (state: IAppStateRecord) => {
-    return (key: string) => getCurrentColumnSort(state, 'commentsIndexNew', key);
-  },
-
   getLinkTarget: (state: IAppStateRecord, { params }: any) => {
     const identifier = getCurrentPagingIdentifier(state);
 
@@ -222,27 +204,6 @@ const mapStateToProps = createStructuredSelector({
 export const NewComments = compose(
   withRouter,
   connect(mapStateToProps, mapDispatchToProps),
-  provideHooks<IRedialLocals>({
-    fetch: async ({ params, query, dispatch }) => {
-      const {
-        isArticleDetail,
-        articleId,
-        category,
-        tag,
-        pos1,
-        pos2,
-      } = parseRouteAndQueryString(params, query);
-
-      await dispatch(executeCommentListLoader(
-        isArticleDetail,
-        articleId,
-        category,
-        tag,
-        pos1,
-        pos2,
-      ));
-    },
-  }),
 )(PureNewComments) as any;
 
 export * from './store';
