@@ -57,7 +57,7 @@ const validateDatedCommentsAndSendResponse = validateAndSendResponse<Array<IComm
   Joi.array().items(
     Joi.object().keys({
       commentId: Joi.string().required(),
-      date: Joi.string().isoDate().required(),
+      date: Joi.date().required(),
     }),
   ),
 );
