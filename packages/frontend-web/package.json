@@ -105,7 +105,6 @@
     "react-redux": "5.1.1",
     "react-router": "3.2.1",
     "react-test-renderer": "16.6.3",
-    "redial": "0.5.0",
     "redux": "3.7.2",
     "redux-actions": "2.6.4",
     "redux-devtools": "3.4.2",
