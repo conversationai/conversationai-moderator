@@ -20,7 +20,9 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { combineReducers } from 'redux-immutable';
 import { createStructuredSelector } from 'reselect';
+
 import { IUserModel } from '../../../models';
+import { logout } from '../../auth';
 import { IAppStateRecord } from '../../stores';
 import { getArticle } from '../../stores/articles';
 import { getCategory, getGlobalCounts } from '../../stores/categories';
@@ -45,7 +47,6 @@ export {
 
 import { reducer as commentDetailReducer } from './components/CommentDetail';
 import { reducer as threadedCommentDetailReducer } from './components/ThreadedCommentDetail';
-import {logout} from '../../auth';
 export { CommentDetail } from './components/CommentDetail';
 export { ThreadedCommentDetail } from './components/ThreadedCommentDetail';
 

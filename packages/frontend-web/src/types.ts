@@ -14,18 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export interface IRedialLocals {
-  path: string;
-  getState(): any;
-  query: {
-    [key: string]: string;
-  };
-  params: {
-    [key: string]: string;
-  };
-  dispatch(payload: any): any;
-}
-
 // These are our representation of the core moderator actions,
 // i.e., the things a moderator can do to a comment via one of the action buttons
 // They map onto the IRu
