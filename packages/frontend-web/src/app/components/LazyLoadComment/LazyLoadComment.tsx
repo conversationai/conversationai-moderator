@@ -49,12 +49,12 @@ import {
 import {
   ROW_STYLES,
 } from '../LazyCommentList';
-
+import { COMMON_STYLES } from '../../stylesx';
 const LAZY_BOX_STYLE = {
   width: '100%',
   height: '100%',
 };
-
+import { OpenInNew } from '@material-ui/icons';
 const AVATAR_SIZE = 24;
 
 export type ILinkTargetGetter = (comment: ICommentModel) => string;
@@ -254,6 +254,13 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                 {comment.article.title}
               </h4>
             </Link>
+            {comment.article.url && (
+            <div style={{display: 'inline-block', margin: '0 10px', position: 'relative', top: '3px'}}>
+              <a href={comment.article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
+                <OpenInNew fontSize="small"/>
+              </a>
+            </div>
+          )}
           </div>
         )}
         <div {...css(ROW_STYLES.meta)}>
