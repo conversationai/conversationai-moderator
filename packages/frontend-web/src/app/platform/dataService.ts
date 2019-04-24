@@ -230,7 +230,7 @@ export async function listHistogramScoresByArticle(
   validateID(tagId, `tagId`);
 
   const response: any = await axios.get(
-    serviceURL('histogramScores', `/articles/${articleId}/tags/${parseInt(tagId, 10)}`, { sort }),
+    serviceURL('histogramScores', `/articles/${articleId}/tags/${tagId}`, { sort }),
 
   );
 
@@ -279,8 +279,6 @@ export async function listHistogramScoresByCategory(
   tagId: string,
   sort: Array<string>,
 ): Promise<List<ICommentScoredModel>> {
-  const parsedCategoryId = categoryId !== 'all' ? parseInt(categoryId, 10) : categoryId;
-
   if (categoryId !== 'all') {
     validateID(categoryId, `categoryId`);
   }
@@ -288,7 +286,7 @@ export async function listHistogramScoresByCategory(
   validateID(tagId, `tagId`);
 
   const response: any = await axios.get(
-    serviceURL('histogramScores', `/categories/${parsedCategoryId}/tags/${parseInt(tagId, 10)}`, { sort }),
+    serviceURL('histogramScores', `/categories/${categoryId}/tags/${tagId}`, { sort }),
   );
 
   return List(
@@ -303,10 +301,8 @@ export async function listMaxHistogramScoresByCategory(
   if (categoryId !== 'all') {
     validateID(categoryId, `categoryId`);
   }
-  const parsedCategoryId = categoryId !== 'all' ? parseInt(categoryId, 10) : categoryId;
-
   const response: any = await axios.get(
-    serviceURL('histogramScores', `/categories/${parsedCategoryId}/summaryScore`, { sort }),
+    serviceURL('histogramScores', `/categories/${categoryId}/summaryScore`, { sort }),
   );
 
   return List(
@@ -321,10 +317,8 @@ export async function listHistogramScoresByCategoryByDate(
   if (categoryId !== 'all') {
     validateID(categoryId, `categoryId`);
   }
-  const parsedCategoryId = categoryId !== 'all' ? parseInt(categoryId, 10) : categoryId;
-
   const response: any = await axios.get(
-    serviceURL('histogramScores', `/categories/${parsedCategoryId}/byDate`, { sort }),
+    serviceURL('histogramScores', `/categories/${categoryId}/byDate`, { sort }),
   );
 
   return List(
