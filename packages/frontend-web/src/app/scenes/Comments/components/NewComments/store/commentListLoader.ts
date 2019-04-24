@@ -113,8 +113,8 @@ function executeCommentListLoader(
   sort: string,
 ): IThunkAction<void> {
   return loadingReducer.execute(loadCommentList(
-    articleId,
     categoryId,
+    articleId,
     tag,
     pos1,
     pos2,
