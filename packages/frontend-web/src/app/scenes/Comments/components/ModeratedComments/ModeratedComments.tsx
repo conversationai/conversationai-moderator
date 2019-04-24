@@ -380,6 +380,7 @@ export class ModeratedComments
       taggingTooltipVisible,
       taggingCommentId,
       taggingToolTipArrowPosition,
+      loadedArticleId,
     } = this.state;
 
     const selectedIdsLength = moderatedComments && this.getSelectedIDs().length;
@@ -546,6 +547,7 @@ export class ModeratedComments
             sortOptions={this.getSortOptions()}
             totalItems={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds.size : commentIds.size}
             triggerActionToast={this.triggerActionToast}
+            displayArticleTitle={!loadedArticleId}
             tagRejectionModalVisible={{
               id: taggingCommentId,
               isVisible: taggingTooltipVisible,
