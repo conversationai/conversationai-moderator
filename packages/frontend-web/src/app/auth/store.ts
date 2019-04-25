@@ -66,6 +66,7 @@ export function decodeToken(token: string): any {
 async function completeAuthentication(token: string, dispatch: IAppDispatch): Promise<void> {
   saveToken(token);
   setAxiosToken(token);
+  await checkAuthorization();
 
   const data = decodeToken(token);
   setUserId((data['user'] as number).toString());
@@ -76,12 +77,7 @@ async function completeAuthentication(token: string, dispatch: IAppDispatch): Pr
 export function handleToken(token: string, csrf: string): IThunkAction<void> {
   return async (dispatch) => {
     dispatch(startedAuthentication());
-
     verifyCSRF(csrf);
-
-    setAxiosToken(token);
-
-    await checkAuthorization();
     await completeAuthentication(token, dispatch);
   };
 }
@@ -119,11 +115,19 @@ export function startAuthentication(): IThunkAction<void> {
       // try to validate
       try {
         await dispatch(refreshToken());
-      } catch (e) {
-        dispatch(failedAuthentication());
-        console.error(e);
       }
-    } else {
+      catch (e) {
+        dispatch(failedAuthentication());
+        if (e.response && e.response.status === 401) {
+          console.log('Token didn\'t work, so resetting');
+          saveToken(null);
+        }
+        else {
+          console.error(e);
+        }
+      }
+    }
+    else {
       dispatch(failedAuthentication());
     }
   };

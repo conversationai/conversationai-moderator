@@ -41,10 +41,11 @@ export function getToken(): string | undefined {
   return storage()[LOCAL_STORAGE_AUTH_TOKEN_KEY];
 }
 
-export function saveToken(token: string): string {
+export function saveToken(token: string | null): string {
   if (token) {
     storage()[LOCAL_STORAGE_AUTH_TOKEN_KEY] = token;
-  } else {
+  }
+  else {
     delete storage()[LOCAL_STORAGE_AUTH_TOKEN_KEY];
   }
 
