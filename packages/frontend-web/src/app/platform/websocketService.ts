@@ -35,7 +35,7 @@ import {
   UserModel,
 } from '../../models';
 import { serviceURL } from './dataService';
-import { getToken } from './localStore';
+import { getToken, saveToken } from './localStore';
 
 // TODO: Is it possible to nail down the types of this object?
 // The WebSocket type is subtly different between browser and non-browser implementation, which makes this difficult.
@@ -184,6 +184,15 @@ export function connectNotifier(
 
         ws.onclose = (e: {code: number}) => {
           console.log('websocket closed', e.code);
+
+          if (e.code === 1005) {
+            // Although the meaning of these codes is not clear, it seems that this code means that the server
+            // is up and running but rejecting our request, probably due to an authentication issue.
+            // We'll need to reset everything and start again.
+            saveToken(null);
+            location.reload();
+          }
+
           socketUp = false;
           if (!gotSystem && !gotArticles && !gotUser) {
             // Never got a message.  Server is rejecting our advances.  Log out and try logging in again.
