@@ -17,6 +17,9 @@ limitations under the License.
 import {
   logger,
 } from '@conversationai/moderator-backend-core';
+import * as express from 'express';
+import * as Joi from 'joi';
+
 import {
   enqueue,
   ICommentActionData,
@@ -24,10 +27,7 @@ import {
   IGenericTagData,
   IKnownTasks,
   ITagCommentsData,
-} from '@conversationai/moderator-backend-queue';
-import * as express from 'express';
-import * as Joi from 'joi';
-
+} from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import { dataSchema, validateRequest } from '../util/validation';
 
