@@ -6,24 +6,6 @@ basename=`dirname $0`
 export FRONTEND_API=${MODERATOR_URL}
 export API_URL=${MODERATOR_URL}/api
 
-if [ "${IMAGE_FLAVOR}" == 'processing' ] ; then
-  # Pause to ensure database initialisation is complete.
-  sleep 60
-
-  if [ -f "${basename}/${MODERATOR_FLAVOR}.ctab" ]; then
-    crontab ${basename}/${MODERATOR_FLAVOR}.ctab
-    set | egrep -v '(BASHOPTS|BASH_VERSINFO|EUID|PPID|UID|SHELLOPTS|basename|BASH.*)' > environ
-    exec cron -f
-  fi
-
-  if [ -f "${basename}/${MODERATOR_FLAVOR}-sync" ]; then
-    ${basename}/${MODERATOR_FLAVOR}-sync full
-  fi
-
-  echo "No processing to do!"
-  exit 1
-else
-  # TODO fix initdb ${basename}/initdb
-  cd ${basename}/../packages/backend-api
-  exec node dist/server.js
-fi
+# TODO fix initdb ${basename}/initdb
+cd ${basename}/../packages/backend-api
+exec node dist/server.js

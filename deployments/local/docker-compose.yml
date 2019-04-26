@@ -18,13 +18,11 @@ services:
     image: 'redis:3.2.1'
     ports:
       - '6379:6379'
-  web:
+  server:
     build:
       context: ../..
       dockerfile: "deployments/local/Dockerfile"
     environment:
-      IMAGE_FLAVOR: 'web'
-      MODERATOR_FLAVOR: "${MODERATOR_FLAVOR}"
       DATABASE_HOST: database
       DATABASE_NAME: 'os_moderator'
       DATABASE_USER: 'os_moderator'
@@ -39,24 +37,6 @@ services:
       PORT: 8000
     ports:
       - "8000:8000"
-    links:
-        - database
-        - redis
-  processing:
-    build:
-      context: ../..
-      dockerfile: "deployments/local/Dockerfile"
-    environment:
-      IMAGE_FLAVOR: 'processing'
-      MODERATOR_FLAVOR: "${MODERATOR_FLAVOR}"
-      DATABASE_HOST: database
-      DATABASE_NAME: 'os_moderator'
-      DATABASE_USER: 'os_moderator'
-      DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
-      REDIS_URL: 'redis://redis:6379'
-      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
-      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
-      GOOGLE_CLOUD_API_KEY: "${GOOGLE_CLOUD_API_KEY}"
     links:
         - database
         - redis

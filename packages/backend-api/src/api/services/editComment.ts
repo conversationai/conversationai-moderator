@@ -19,10 +19,10 @@ import {
     logger,
     trigger,
 } from '@conversationai/moderator-backend-core';
-import { enqueue, ISendCommentForScoringTaskData } from '@conversationai/moderator-backend-queue';
 import * as express from 'express';
 import * as Joi from 'joi';
 
+import { enqueue, ISendCommentForScoringTaskData } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import { validateRequest } from '../util/validation';
 

@@ -18,13 +18,13 @@ import {
   CommentScoreRequest,
   logger,
 } from '@conversationai/moderator-backend-core';
+import * as express from 'express';
+
 import {
   enqueue,
   IProcessMachineScoreData,
   IScoreData,
-} from '@conversationai/moderator-backend-queue';
-import * as express from 'express';
-
+} from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import { onlyServices } from '../util/permissions';
 import { validateRequest } from '../util/validation';

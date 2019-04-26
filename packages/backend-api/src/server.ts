@@ -22,7 +22,9 @@ import * as https from 'https';
 import { applyCommonPostprocessors, getExpressAppWithPreprocessors, logger } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 import { mountWebFrontend } from '@conversationai/moderator-frontend-web';
+
 import { mountAPI } from '.';
+import { mountQueueDashboard } from './processing';
 
 // First argument is API URL to use.
 // Second argument is the Frontend URL to use.
@@ -59,6 +61,14 @@ async function init() {
   }
 
   expressWs(app, server);
+
+  if (config.get('env') === 'development') {
+    console.log('Publishing dev services.');
+    app.use('/queues', mountQueueDashboard());
+  }
+
+  // app.use('/tasks', mountTaskAPI());
+  // app.use('/cron', mountCronAPI());
 
   app.use(path, await mountAPI());
 

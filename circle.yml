@@ -16,7 +16,6 @@ dependencies:
     - node_modules
     - packages/backend-api/node_modules
     - packages/backend-core/node_modules
-    - packages/backend-queue/node_modules
     - packages/cli/node_modules
     - packages/config/node_modules
     - packages/frontend-web/node_modules

@@ -20,15 +20,15 @@ import {
   logger,
   sequelize,
 } from '@conversationai/moderator-backend-core';
-import {
-  enqueue,
-  IProcessTagAdditionData,
-  IProcessTagRevocationData,
-} from '@conversationai/moderator-backend-queue';
 import * as JSONAPI from '@conversationai/moderator-jsonapi';
 import * as express from 'express';
 import * as Joi from 'joi';
 
+import {
+  enqueue,
+  IProcessTagAdditionData,
+  IProcessTagRevocationData,
+} from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import { list } from '../util/SequelizeHandler';
 import {

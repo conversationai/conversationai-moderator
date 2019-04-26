@@ -10,9 +10,6 @@ cd packages/jsonapi && npm outdated || cd -
 echo "backend-core"
 cd packages/backend-core && npm outdated || cd -
 
-echo "backend-queue"
-cd packages/backend-queue && npm outdated || cd -
-
 echo "frontend-web"
 cd packages/frontend-web && npm outdated || cd -
 
