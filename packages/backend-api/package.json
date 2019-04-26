@@ -1,21 +1,15 @@
 {
   "name": "@conversationai/moderator-backend-api",
   "description": "API Endpoints for OSMod",
-  "main": "dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "src/server.ts",
   "version": "1.1.0",
   "scripts": {
-    "test": "npm run mocha",
-    "test:watch": "npm run compile && npm run compile:watch | npm run mocha:watch",
-    "mocha": "WORKER_RUN_IMMEDIATELY=true ../../node_modules/.bin/mocha 'dist/test/**/*.spec.js' --timeout 200000",
-    "mocha:watch": "WORKER_RUN_IMMEDIATELY=true ../../node_modules/.bin/mocha --watch 'dist/test/**/*.spec.js' --recursive --timeout 10000",
-    "start": "node ./server.js",
-    "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
-    "lint:fix": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
-    "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration",
-    "compile:watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --watch --preserveWatchOutput",
     "build": "npm run compile",
-    "watch": "nodemon --delay 5 --inspect=5859 --watch 'dist/**/*.js' --ignore 'test' dist/server.js"
+    "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration",
+    "test": "npm run mocha",
+    "mocha": "WORKER_RUN_IMMEDIATELY=true ../../node_modules/.bin/mocha 'dist/test/**/*.spec.js' --timeout 200000",
+    "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
+    "watch": "ts-node-dev --inspect=5858 src/server.ts"
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -47,7 +41,7 @@
     "lodash": "4.17.11",
     "moment": "2.21.0",
     "mysql": "2.15.0",
-    "nodemon": "1.18.3",
+    "nodemon": "1.18.11",
     "passport": "0.4.0",
     "passport-google-oauth20": "1.0.0",
     "passport-jwt": "4.0.0",
@@ -55,6 +49,7 @@
     "randomstring": "1.1.5",
     "request": "2.87.0",
     "sequelize": "3.30.4",
+    "ts-node-dev": "1.0.0-pre.32",
     "underscore.string": "3.3.4"
   }
 }

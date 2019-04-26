@@ -13,8 +13,6 @@ fi
 
 if [ "$1" != "frontend" ]; then
   cd packages/backend-api
-  npm run compile
-  npm run compile:watch &
   npm run watch &
   cd -
 fi
