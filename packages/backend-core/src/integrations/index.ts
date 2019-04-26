@@ -14,10 +14,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './domain';
-export * from './events';
-export * from './integrations';
-export * from './models';
-export * from './logger';
-export * from './sequelize';
-export * from './server';
+export * from './youtube/authenticate';
+export * from './youtube/objectmap';

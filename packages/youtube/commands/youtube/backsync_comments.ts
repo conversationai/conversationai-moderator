@@ -15,21 +15,21 @@ limitations under the License.
 */
 
 import { google } from 'googleapis';
-import * as yargs from 'yargs';
+import * as Yargs from 'yargs';
 
 import {
+  authorize,
+  foreachPendingDecision,
   logger,
+  markDecisionExecuted,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
 } from '@conversationai/moderator-backend-core';
 
-import { authorize } from './authenticate';
-import { foreachPendingDecision, markDecisionExecuted } from './objectmap';
-
 export const command = 'youtube:comments:backsync';
 export const describe = 'Backsync comment moderation decisions.';
 
-export function builder(yargs: yargs.Argv) {
+export function builder(yargs: Yargs.Argv) {
   return yargs
     .usage('Usage:\n\n' +
       'Backsync comment moderation decisions:\n' +
