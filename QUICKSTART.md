@@ -6,7 +6,7 @@ Step 0:
 Create a Google cloud project and a VM running 'Ubuntu 18.04 LTS Minimal' in the [Google console](https://console.cloud.google.com/compute/instances).
 
 You'll also need to create a [firewall rule](https://console.cloud.google.com/networking/firewalls/list) to allow
-traffic on ports 8000 and 8080, and add that rule to your VM network tags.
+traffic on ports 8000, and add that rule to your VM network tags.
 
 You'll also need to allocate a domain name for your new VM  - unfortunately the Google OAuth servers won't work with IP addresses.
 
@@ -56,29 +56,11 @@ Step 5:
 
 Set the following environment variables
 ```
-export URL_BASE=http://<domain name from step 0>
+export MODERATOR_URL=http://<domain name from step 0>:8000
 export GOOGLE_CLIENT_ID=<Client ID from step 1>
 export GOOGLE_CLIENT_SECRET=<Client secret from step 1>
 export GOOGLE_CLOUD_API_KEY=<API key from step 4>
-
-export MODERATOR_FLAVOR=youtube
 export DATABASE_PASSWORD=password
-export ATTRIBUTE_REQUESTS
-read -r -d '' ATTRIBUTE_REQUESTS << EOM
-{
-  "ATTACK_ON_AUTHOR": {},
-  "ATTACK_ON_COMMENTER": {},
-  "INCOHERENT": {},
-  "INFLAMMATORY": {},
-  "OBSCENE": {},
-  "OFF_TOPIC": {},
-  "SPAM": {} ,
-  "UNSUBSTANTIAL": {},
-  "LIKELY_TO_REJECT": {},
-  "TOXICITY": {}
-}
-EOM
-```
 
 Step 6:
 -------

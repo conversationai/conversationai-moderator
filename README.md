@@ -35,9 +35,7 @@ If `MODERATOR_FLAVOR` is not set, then we assume that comments will be pushed
 
 In a production setting, you'll also have to set the following:
 
-* `URL_BASE`: Base URL: Used by docker-compose to generate the other URLs.
-* `API_URL`: URL for the API endpoint
-* `FRONTEND_URL`: URL for the Frontend endpoint
+* `MODERATOR_URL`: URL (including protocol, host and port) that OSMOD will listen on.
 
 ### System setup:
 

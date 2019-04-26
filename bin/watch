@@ -1,15 +1,22 @@
 #!/bin/bash
 
-cd packages/frontend-web
-npm run compile
-npm run compile:watch &
-npm run watch &
-cd -
+export FRONTEND_URL=http://localhost:8000
+export BACKEND_URL=http://localhost:8080
 
-cd packages/backend-api
-npm run compile
-npm run compile:watch &
-npm run watch &
-cd -
+if [ "$1" != "backend" ]; then
+  cd packages/frontend-web
+  npm run compile
+  npm run compile:watch &
+  npm run watch &
+  cd -
+fi
+
+if [ "$1" != "frontend" ]; then
+  cd packages/backend-api
+  npm run compile
+  npm run compile:watch &
+  npm run watch &
+  cd -
+fi
 
 wait

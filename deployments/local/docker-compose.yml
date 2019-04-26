@@ -18,12 +18,12 @@ services:
     image: 'redis:3.2.1'
     ports:
       - '6379:6379'
-  backend:
+  web:
     build:
       context: ../..
       dockerfile: "deployments/local/Dockerfile"
     environment:
-      IMAGE_FLAVOR: 'backend'
+      IMAGE_FLAVOR: 'web'
       MODERATOR_FLAVOR: "${MODERATOR_FLAVOR}"
       DATABASE_HOST: database
       DATABASE_NAME: 'os_moderator'
@@ -33,32 +33,15 @@ services:
       GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
       GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
       HTTPS_LINKS_ONLY: 'false'
-      API_URL: '${URL_BASE}:8080'
-      FRONTEND_URL: '${URL_BASE}:8000'
       APP_NAME: 'Moderator'
       REDIRECT_OAUTH_TO: 'frontend_url'
       GOOGLE_CLOUD_API_KEY: "${GOOGLE_CLOUD_API_KEY}"
-      ATTRIBUTE_REQUESTS: "${ATTRIBUTE_REQUESTS}"
-      PORT: 8080
-    ports:
-      - "8080:8080"
-    links:
-        - database
-        - redis
-  frontend:
-    build:
-      context: ../..
-      dockerfile: "deployments/local/Dockerfile"
-    environment:
-      IMAGE_FLAVOR: 'frontend'
-      MODERATOR_FLAVOR: "${MODERATOR_FLAVOR}"
-      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
-      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
-      API_URL: '${URL_BASE}:8080'
-      APP_NAME: 'Moderator'
       PORT: 8000
     ports:
       - "8000:8000"
+    links:
+        - database
+        - redis
   processing:
     build:
       context: ../..
@@ -74,7 +57,6 @@ services:
       GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
       GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
       GOOGLE_CLOUD_API_KEY: "${GOOGLE_CLOUD_API_KEY}"
-      ATTRIBUTE_REQUESTS: "${ATTRIBUTE_REQUESTS}"
     links:
         - database
         - redis

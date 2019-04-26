@@ -3,16 +3,8 @@
 
 basename=`dirname $0`
 
-if [ "${IMAGE_FLAVOR}" == 'backend' ] ; then
-  ${basename}/initdb
-  cd ${basename}/../packages/backend-api
-  exec node ./server.js
-fi
-
-if [ "${IMAGE_FLAVOR}" == 'frontend' ] ; then
-  cd ${basename}/../packages/frontend-web
-  exec node tooling/server.js
-fi
+export FRONTEND_API=${MODERATOR_URL}
+export API_URL=${MODERATOR_URL}/api
 
 if [ "${IMAGE_FLAVOR}" == 'processing' ] ; then
   # Pause to ensure database initialisation is complete.
@@ -30,7 +22,8 @@ if [ "${IMAGE_FLAVOR}" == 'processing' ] ; then
 
   echo "No processing to do!"
   exit 1
+else
+  # TODO fix initdb ${basename}/initdb
+  cd ${basename}/../packages/backend-api
+  exec node dist/server.js
 fi
-
-echo "Unknown image flavor ${IMAGE_FLAVOR}"
-exit 1
