@@ -16,17 +16,19 @@ limitations under the License.
 
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
-import * as yargs from 'yargs';
+import * as Yargs from 'yargs';
 
-import {IUserInstance, logger} from '@conversationai/moderator-backend-core';
-
-import { authorize } from './authenticate';
-import { mapChannelToCategory } from './objectmap';
+import {
+  authorize,
+  IUserInstance,
+  logger,
+  mapChannelToCategory,
+} from '@conversationai/moderator-backend-core';
 
 export const command = 'youtube:channels:sync';
 export const describe = 'Sync youtube channels with OSMod categories.';
 
-export function builder(yargs: yargs.Argv) {
+export function builder(yargs: Yargs.Argv) {
   return yargs
     .usage('Usage:\n\n' +
       'Sync channels with YouTube:\n' +

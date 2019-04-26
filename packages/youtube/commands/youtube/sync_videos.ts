@@ -17,10 +17,14 @@ import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import * as yargs from 'yargs';
 
-import { Category, ICategoryInstance, IUserInstance, logger } from '@conversationai/moderator-backend-core';
-
-import { authorize } from './authenticate';
-import { mapPlaylistItemToArticle } from './objectmap';
+import {
+  authorize,
+  Category,
+  ICategoryInstance,
+  IUserInstance,
+  logger,
+  mapPlaylistItemToArticle,
+} from '@conversationai/moderator-backend-core';
 
 export const command = 'youtube:videos:sync';
 export const describe = 'Sync youtube videos with OSMod articles for each active channel/category.';

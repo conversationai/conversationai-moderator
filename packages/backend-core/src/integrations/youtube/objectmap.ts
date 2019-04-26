@@ -1,5 +1,5 @@
 /*
-Copyright 2018 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Article, Category, Comment, Decision } from '@conversationai/moderator-backend-core';
-import { IAuthorAttributes, ICommentInstance, IDecisionInstance, IUserInstance } from '@conversationai/moderator-backend-core';
-import { logger, sequelize } from '@conversationai/moderator-backend-core';
-import { postProcessComment, sendForScoring } from '@conversationai/moderator-backend-core';
+import { postProcessComment, sendForScoring } from '../../domain/comments';
+import { logger } from '../../logger';
+import { Article, Category, Comment, Decision } from '../../models';
+import { IAuthorAttributes, ICommentInstance, IDecisionInstance, IUserInstance } from '../../models';
+import { sequelize } from '../../sequelize';
 
 export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
   const channelId = channel.id!;

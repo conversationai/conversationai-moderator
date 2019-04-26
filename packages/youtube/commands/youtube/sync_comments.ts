@@ -16,17 +16,20 @@ limitations under the License.
 
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
-import * as yargs from 'yargs';
+import * as Yargs from 'yargs';
 
-import {IUserInstance, logger} from '@conversationai/moderator-backend-core';
-
-import { authorize } from './authenticate';
-import { foreachActiveChannel, mapCommentThreadToComments } from './objectmap';
+import {
+  authorize,
+  foreachActiveChannel,
+  IUserInstance,
+  logger,
+  mapCommentThreadToComments,
+} from '@conversationai/moderator-backend-core';
 
 export const command = 'youtube:comments:sync';
 export const describe = 'Sync youtube comment threads with OSMod comments.';
 
-export function builder(args: yargs.Argv) {
+export function builder(args: Yargs.Argv) {
   return args.usage('Usage:\n\n' +
       'Sync youtube comment threads:\n' +
       'node $0 youtube:comments:sync');
