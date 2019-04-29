@@ -42,7 +42,6 @@
     "lodash": "4.17.11",
     "moment": "2.21.0",
     "mysql": "2.15.0",
-    "nodemon": "1.18.11",
     "passport": "0.4.0",
     "passport-google-oauth20": "1.0.0",
     "passport-jwt": "4.0.0",
