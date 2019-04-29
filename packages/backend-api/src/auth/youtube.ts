@@ -16,7 +16,6 @@ limitations under the License.
 
 import * as express from 'express';
 import {google} from 'googleapis';
-import * as qs from 'qs';
 
 import { saveYouTubeUserToken } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
@@ -80,9 +79,8 @@ export function createYouTubeRouter(): express.Router {
       const uiRsp = await service.userinfo.get({auth: oauth2Client});
       saveYouTubeUserToken({name: uiRsp.data.name || 'Youtube user', email: uiRsp.data.email || 'youtube@user'}, token);
 
-      const queryString = qs.stringify(params);
-      const redirectHost = config.get('frontend_url');
-      res.redirect(`${redirectHost}#/settings?${queryString}`);
+      const frontend_url = config.get('frontend_url');
+      res.redirect(`${frontend_url}/settings`);
     });
 
   return router;
