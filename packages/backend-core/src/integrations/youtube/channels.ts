@@ -1,5 +1,5 @@
 /*
-Copyright 2018 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,28 +16,14 @@ limitations under the License.
 
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
-import * as Yargs from 'yargs';
 
-import {
-  authorize,
-  IUserInstance,
-  logger,
-  mapChannelToCategory,
-} from '@conversationai/moderator-backend-core';
-
-export const command = 'youtube:channels:sync';
-export const describe = 'Sync youtube channels with OSMod categories.';
-
-export function builder(yargs: Yargs.Argv) {
-  return yargs
-    .usage('Usage:\n\n' +
-      'Sync channels with YouTube:\n' +
-      'node $0 youtube:channels:sync');
-}
+import { logger } from '../../logger';
+import { IUserInstance } from '../../models';
+import { mapChannelToCategory } from './objectmap';
 
 const service = google.youtube('v3');
 
-async function sync_page_of_channels(owner: IUserInstance, auth: OAuth2Client, pageToken?: string) {
+export async function sync_page_of_channels(owner: IUserInstance, auth: OAuth2Client, pageToken?: string) {
   return new Promise<string | undefined>((resolve, reject) => {
     service.channels.list({
       auth: auth,
@@ -71,18 +57,5 @@ async function sync_page_of_channels(owner: IUserInstance, auth: OAuth2Client, p
         })
         .catch((reason) => reject(reason));
     });
-  });
-}
-
-export async function handler() {
-  authorize(async (owner, auth) => {
-    logger.info('Syncing channels for user %s.', owner.get('email'));
-
-    let next_page;
-    do {
-      next_page = await sync_page_of_channels(owner, auth, next_page);
-    } while (next_page);
-
-    logger.info('Done sync of channels for user %s.', owner.get('email'));
   });
 }

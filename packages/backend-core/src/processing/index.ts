@@ -14,6 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './youtube/authenticate';
-export * from './youtube/objectmap';
-export * from './youtube/task';
+import { syncYoutubeTask } from '../integrations';
+import { logger } from '../logger';
+
+export async function runTask(task: string) {
+  switch (task) {
+    case 'youtube':
+      await syncYoutubeTask(0);
+      break;
+
+    default:
+      logger.error(`No such task: ${task}`);
+  }
+}

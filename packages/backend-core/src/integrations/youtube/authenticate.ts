@@ -29,7 +29,7 @@ export function authorize(callback: (owner: IUserInstance, client: OAuth2Client)
     const users = await User.findAll({where: {group: USER_GROUP_YOUTUBE, isActive: true}});
     for (const u of users) {
       const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'));
-      logger.info(`Syncing ${u.get('name')}`);
+      logger.info(`Syncing YouTube user: ${u.get('name')}`);
       oauth2Client.setCredentials(JSON.parse(u.get('extra')));
       await callback(u, oauth2Client);
     }
