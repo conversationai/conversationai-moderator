@@ -334,7 +334,7 @@ export interface INewCommentsState {
   moderateButtonsRef?: HTMLDivElement;
   taggingCommentId?: string;
   articleControlOpen: boolean;
-  rulesInCategory?: Array<IRuleModel>;
+  rulesInCategory?: List<IRuleModel>;
 }
 
 export class NewComments extends React.Component<INewCommentsProps, INewCommentsState> {

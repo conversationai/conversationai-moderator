@@ -14,19 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { List } from 'immutable';
 import React from 'react';
+
 import { IRuleModel } from '../../../models';
 import { ConfirmationCircle } from '../../components';
 import {
   CENTER_CONTENT,
-  LIGHT_COLOR,
-  MEDIUM_COLOR,
+  NICE_LIGHT_BLUE,
+  NICE_MIDDLE_BLUE,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
 
 const STYLES = stylesheet({
   button: {
-    background: MEDIUM_COLOR,
+    background: NICE_MIDDLE_BLUE,
     border: '0',
     cursor: 'pointer',
     width: 32,
@@ -58,13 +60,13 @@ const STYLES = stylesheet({
     position: 'absolute',
     top: 0,
     bottom: 0,
-    backgroundColor: LIGHT_COLOR,
-    border: `1px solid ${MEDIUM_COLOR}`,
+    backgroundColor: NICE_LIGHT_BLUE,
+    border: `1px solid ${NICE_MIDDLE_BLUE}`,
   },
 });
 
-function differentiateRules(rules: Array<IRuleModel>): Array<IRuleModel> {
-  const sortedRules = rules.sort((a, b) => a.lowerThreshold - b.lowerThreshold);
+function differentiateRules(rules: List<IRuleModel>): Array<IRuleModel> {
+  const sortedRules = rules.toArray().sort((a, b) => a.lowerThreshold - b.lowerThreshold);
 
   return sortedRules.reduce((sum, currentRule, i, allRules) => {
     const nextRule = allRules[i + 1];
@@ -80,7 +82,7 @@ function differentiateRules(rules: Array<IRuleModel>): Array<IRuleModel> {
 }
 
 export interface IRuleBarsProps {
-  rules?: Array<IRuleModel>;
+  rules?: List<IRuleModel>;
   automatedRuleToast?(rule: IRuleModel): void;
 }
 
@@ -110,7 +112,7 @@ export class RuleBars extends React.Component<IRuleBarsProps> {
                 <div {...css(CENTER_CONTENT)}>
                   <span {...css(STYLES.button)}>
                     <ConfirmationCircle
-                      backgroundColor={LIGHT_COLOR}
+                      backgroundColor={NICE_LIGHT_BLUE}
                       action={rule.action.toLowerCase()}
                       size={26}
                       iconSize={13}
