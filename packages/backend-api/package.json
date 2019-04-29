@@ -8,9 +8,7 @@
     "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration",
     "test": "npm run mocha",
     "mocha": "WORKER_RUN_IMMEDIATELY=true ../../node_modules/.bin/mocha 'dist/test/**/*.spec.js' --timeout 200000",
-    "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
-    "watch-server": "ts-node-dev --inspect=5858 src/server.ts",
-    "watch-processor": "ts-node-dev --inspect=5859 src/processor.ts"
+    "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json"
   },
   "license": "Apache-2.0",
   "dependencies": {
