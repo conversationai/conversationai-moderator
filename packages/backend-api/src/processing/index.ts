@@ -94,3 +94,4 @@ export * from './tasks';
 export * from './util';
 export * from './dashboard';
 export * from './api';
+export * from './worker';
