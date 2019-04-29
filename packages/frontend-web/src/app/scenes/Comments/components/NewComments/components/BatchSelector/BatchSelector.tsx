@@ -91,7 +91,7 @@ export interface IBatchSelectorProps {
   automatedRuleToast?(rule: IRuleModel): void;
   commentScores: List<ICommentScoredModel | ICommentDatedModel>;
   groupBy: 'date' | 'score';
-  rules?: Array<IRuleModel>;
+  rules?: List<IRuleModel>;
   onSelectionChange?(selectedComments: Array<number>, pos1: number, pos2: number): void;
   onSelectionChangeEnd?(selectedComments: Array<number>, pos1: number, pos2: number): void;
   areAutomatedRulesApplied?: boolean;
@@ -171,7 +171,7 @@ export class BatchSelector
               />
             )}
           />
-          {rules && rules.length > 0 && areAutomatedRulesApplied && (
+          {rules && rules.size > 0 && areAutomatedRulesApplied && (
             <RuleBars
               rules={rules}
               automatedRuleToast={automatedRuleToast}
