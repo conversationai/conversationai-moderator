@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
 Copyright 2019 Google Inc.
 
@@ -14,6 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './youtube/authenticate';
-export * from './youtube/objectmap';
-export * from './youtube/task';
+'use strict';
+const { runTask } = require('../dist');
+runTask(process.argv[2] || '');

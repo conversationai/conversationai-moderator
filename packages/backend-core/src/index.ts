@@ -18,6 +18,7 @@ export * from './domain';
 export * from './events';
 export * from './integrations';
 export * from './models';
+export * from './processing';
 export * from './logger';
 export * from './sequelize';
 export * from './server';
