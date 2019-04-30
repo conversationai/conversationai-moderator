@@ -669,7 +669,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       tagSelectorLink(articleBase, this.props.params.articleId, selectedTag && selectedTag.id) :
       tagSelectorLink(categoryBase, this.props.params.categoryId, selectedTag && selectedTag.id);
 
-    const rules = selectedTag && selectedTag.key !== 'DATE' && rulesInCategory;
+    const rules = selectedTag && selectedTag.key !== 'DATE' && rulesInCategory && List<IRuleModel>(rulesInCategory.filter( r => r.tagId && r.tagId == selectedTag.id));
     const disableAllButtons = areNoneSelected || commentScores.size <= 0;
     const groupBy = (selectedTag && selectedTag.key === 'DATE') ? 'date' : 'score';
 
