@@ -13,6 +13,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/**
+ * This file provides the framework for the worker process.
+ * This is designed to run long-duration background tasks,
+ * e.g., synchronising with an external data source.
+ *
+ * It does 2 things:
+ *  - Every ${WORKER_POLL_INTERVAL} it kicks into action and runs all registered tasks sequentially.
+ *  - When a task set is running, it ensures that no new task sets are initiated.
+ *
+ * Each task item is passed the current tick count.  (Approximately the number of minutes that have
+ * passed since the process started.)  It can use that to decide which tasks to run.
+ *
+ * To register a task item, create a suitable async function.  Then, within startWorker,  call
+ * registerWorkItem with that function as an argument.
+ * TODO: Rearrange code so that tasks can be registered without modifying this file.
+ *
+ * Any process can call kickWorker to start the next tick immediately.  Pass "true" to this function
+ * to reset the tick to 0.  This is used to indicate to the task items that all tasks should be run.
+ */
 
 import { createClient, RedisClient } from 'redis';
 import { promisify } from 'util';

@@ -13,6 +13,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/**
+ * Core process for starting the server.
+ * The server can run in two modes:
+ *
+ * - STANDALONE: The server will serve both the static files and the API
+ *   entrypoints.
+ *
+ * - SPLIT: The static files are served from a separate server - e.g.,
+ *   Webpack or S3.  In this case we just serve the API entrypoints.)
+ *
+ * It currently does this by looking at the two environment variables:
+ *
+ * - FRONTEND_URL: The URL used to fetch static files.
+ *
+ * - API_URL: The root URL of the API.
+ *
+ * If the latter is a sub-URL of the former, then we assume we are running in
+ * STANDALONE mode.
+ */
 
 import * as expressWs from 'express-ws';
 import { readFileSync } from 'fs';
@@ -26,9 +45,6 @@ import { mountWebFrontend } from '@conversationai/moderator-frontend-web';
 import { mountAPI } from '.';
 import { mountQueueDashboard } from './processing';
 
-// First argument is API URL to use.
-// Second argument is the Frontend URL to use.
-// If there is only one URL, then the server will be started in standalone mode.
 const frontend_url = config.get('frontend_url');
 if (!frontend_url) {
   logger.error('FRONTEND_URL is not defined!');
@@ -67,6 +83,11 @@ async function init() {
     app.use('/queues', mountQueueDashboard());
   }
 
+  // TODO: We may need to resurrect these entrypoints for external integration.
+  //       Not sure who will use the task API.
+  //       The cron API is used to integrate with a system status or cron "heartbeat".
+  //       E.g., https://cloud.google.com/appengine/docs/standard/nodejs/scheduling-jobs-with-cron-yaml
+  //       though we may be able to replace this with the new worker infrastructure.
   // app.use('/tasks', mountTaskAPI());
   // app.use('/cron', mountCronAPI());
 

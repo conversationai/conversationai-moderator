@@ -31,10 +31,7 @@ export function createHeartbeatCron(): express.Router {
     '/',
     async (_, res, next) => {
       try {
-
-        // Send comments for rescoring.
         await heartbeatTask(undefined, logger, true);
-
         logger.info('OSMod Heartbeat Done!');
         res.status(200).json({ status: 'success'});
       } catch (err) {
