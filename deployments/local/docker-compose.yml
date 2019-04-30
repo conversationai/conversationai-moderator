@@ -34,9 +34,9 @@ services:
       APP_NAME: 'Moderator'
       REDIRECT_OAUTH_TO: 'frontend_url'
       GOOGLE_CLOUD_API_KEY: "${GOOGLE_CLOUD_API_KEY}"
-      PORT: 8000
+      PORT: 80
     ports:
-      - "8000:8000"
+      - "80:80"
     links:
         - database
         - redis
