@@ -6,7 +6,7 @@ Step 0:
 Create a Google cloud project and a VM running 'Ubuntu 18.04 LTS Minimal' in the [Google console](https://console.cloud.google.com/compute/instances).
 
 You'll also need to create a [firewall rule](https://console.cloud.google.com/networking/firewalls/list) to allow
-traffic on ports 8000, and add that rule to your VM network tags.
+HTTP traffic, and add that rule to your VM network tags.
 
 You'll also need to allocate a domain name for your new VM  - unfortunately the Google OAuth servers won't work with IP addresses.
 
@@ -17,8 +17,8 @@ Create an OAuth2.0 Client ID  entry in the [Google console](https://console.deve
 Add the following Authorised redirect URIs:
 
 ```
-http://<domain name from step 0>:8080/auth/callback/google
-http://<domain name from step 0>:8080/youtube/callback
+http://<domain name from step 0>/api/auth/callback/google
+http://<domain name from step 0>/api/youtube/callback
 ```
 
 Step 2:
@@ -56,7 +56,7 @@ Step 5:
 
 Set the following environment variables
 ```
-export MODERATOR_URL=http://<domain name from step 0>:8000
+export MODERATOR_URL=http://<domain name from step 0>
 export GOOGLE_CLIENT_ID=<Client ID from step 1>
 export GOOGLE_CLIENT_SECRET=<Client secret from step 1>
 export GOOGLE_CLOUD_API_KEY=<API key from step 4>
@@ -72,4 +72,4 @@ docker-compose -f deployments/local/docker-compose.yml up -d
 ```
 
 When it is up and running, point your browser in the right direction:
-http://<domain name from step 0>:8000/
+http://<domain name from step 0>/
