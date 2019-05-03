@@ -17,7 +17,7 @@ limitations under the License.
 import * as copyToClipboard from 'copy-to-clipboard';
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { Iterable, List, Seq } from 'immutable';
+import { Iterable, List, Map } from 'immutable';
 import { generate } from 'randomstring';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
@@ -34,6 +34,7 @@ import {
   ITaggingSensitivityModel,
   ITagModel,
   IUserModel,
+  ModelId,
   PreselectModel,
   RuleModel,
   SERVER_ACTION_ACCEPT,
@@ -163,7 +164,7 @@ const STYLES: any = stylesheet({
 });
 
 export interface ISettingsProps extends WithRouterProps {
-  users?: Seq.Indexed<IUserModel>;
+  users?: Map<ModelId, IUserModel>;
   serviceUsers?: List<IUserModel>;
   moderatorUsers?: List<IUserModel>;
   youtubeUsers?: List<IUserModel>;
@@ -279,12 +280,13 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
   @autobind
   handleEditUser(event: React.FormEvent<any>) {
-    const allUsers = new Map<string, IUserModel>();
-    this.props.users.map((u) => allUsers.set(u.id, u));
-    this.props.serviceUsers.map((u) => allUsers.set(u.id, u));
+    let user = this.props.users.get(event.currentTarget.value);
+    if (!user) {
+      user = this.props.serviceUsers.find((u) => (u.id === event.currentTarget.value));
+    }
 
     this.setState({
-      selectedUser: allUsers.get(event.currentTarget.value),
+      selectedUser: user,
       isEditUserScrimVisible: true,
     });
   }
@@ -633,7 +635,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
   renderUsers() {
     const { users } = this.props;
-    const sortedUsers = users.sort((a, b) => a.name.localeCompare(b.name));
+    const sortedUsers = users.valueSeq().sort((a, b) => a.name.localeCompare(b.name));
 
     return (
       <div key="editUsersSection">

@@ -85,7 +85,7 @@ export type ISettingsDispatchProps = Pick<
 >;
 
 const mapStateToProps = createStructuredSelector({
-  users: (state: IAppStateRecord) => getUsers(state).valueSeq(),
+  users: (state: IAppStateRecord) => getUsers(state),
   serviceUsers: (state: IAppStateRecord) => getSystemUsers(USER_GROUP_SERVICE, state),
   moderatorUsers: (state: IAppStateRecord) => getSystemUsers(USER_GROUP_MODERATOR, state),
   youtubeUsers: (state: IAppStateRecord) => getSystemUsers(USER_GROUP_YOUTUBE, state),
