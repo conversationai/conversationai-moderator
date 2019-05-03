@@ -34,11 +34,9 @@ import {
   IArticleInstance,
   ICategoryInstance,
   IModerationRuleInstance,
-  IModeratorAssignmentAttributes,
   IPreselectInstance,
   ITaggingSensitivityInstance,
   ITagInstance,
-  IUserCategoryAssignmentAttributes,
   IUserInstance,
 } from '@conversationai/moderator-backend-core';
 import { logger, registerInterest } from '@conversationai/moderator-backend-core';
@@ -53,9 +51,11 @@ const userFields = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
 const commonFields = ['id', 'updatedAt', 'allCount', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
   'approvedCount', 'highlightedCount', 'rejectedCount', 'deferredCount', 'flaggedCount',
   'batchedCount', 'recommendedCount', 'assignedModerators', ];
-const categoryFields = [...commonFields, 'label'];
+const categoryFields = [...commonFields, 'label', 'ownerId'];
 const articleFields = [...commonFields, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
   'isCommentingEnabled', 'isAutoModerated'];
+
+const idFields = new Set(['categoryId', 'tagId', 'ownerId']);
 
 interface ISystemData {
   users: any;
@@ -87,27 +87,27 @@ interface IMessage {
 async function getSystemData() {
   const users = await User.findAll({where: {group: ['admin', 'general']}});
   const userdata = users.map((u: IUserInstance) => {
-    return pick(u.toJSON(), userFields);
+    return serialiseObject(u, userFields);
   });
 
   const tags = await Tag.findAll({});
   const tagdata = tags.map((t: ITagInstance) => {
-    return pick(t.toJSON(), tagFields);
+    return serialiseObject(t, tagFields);
   });
 
   const taggingSensitivities = await TaggingSensitivity.findAll({});
   const tsdata = taggingSensitivities.map((t: ITaggingSensitivityInstance) => {
-    return pick(t.toJSON(), taggingSensitivityFields);
+    return serialiseObject(t, taggingSensitivityFields);
   });
 
   const rules = await ModerationRule.findAll({});
   const ruledata = rules.map((r: IModerationRuleInstance) => {
-    return pick(r.toJSON(), ruleFields);
+    return serialiseObject(r, ruleFields);
   });
 
   const preselects = await Preselect.findAll({});
   const preselectdata = preselects.map((p: IPreselectInstance) => {
-    return pick(p.toJSON(), preselectFields);
+    return serialiseObject(p, preselectFields);
   });
 
   return {
@@ -122,6 +122,28 @@ async function getSystemData() {
   } as IMessage;
 }
 
+// Convert IDs to strings, and assignedModerators to arrays of strings.
+function serialiseObject(o: any, fields: Array<string>): {[key: string]: any} {
+  const serialised = pick(o.toJSON(), fields);
+
+  serialised.id = serialised.id.toString();
+
+  for (const k in serialised) {
+    const v = serialised[k];
+
+    if (idFields.has(k) && v) {
+      serialised[k] = v.toString();
+    }
+  }
+
+  if (serialised.assignedModerators) {
+    serialised.assignedModerators = serialised.assignedModerators.map(
+      (i: any) => (i.user_category_assignment ?  i.user_category_assignment.userId.toString() :
+                                                 i.moderator_assignment.userId.toString()));
+  }
+  return serialised;
+}
+
 // TODO: Can't find a good way to get rid of the any types below
 //       Revisit when sequelize has been updated
 async function getAllArticlesData() {
@@ -132,12 +154,7 @@ async function getAllArticlesData() {
   const categoryIds: Array<number> = [];
   const categorydata = categories.map((c: ICategoryInstance) => {
     categoryIds.push(c.id);
-    const category: any = pick(c.toJSON(), categoryFields);
-    category.assignedModerators = category.assignedModerators.map(
-      (i: {user_category_assignment: IUserCategoryAssignmentAttributes}) =>
-        i.user_category_assignment.userId.toString(),
-    );
-    return category;
+    return serialiseObject(c, categoryFields);
   });
 
   const articles = await Article.findAll({
@@ -145,12 +162,7 @@ async function getAllArticlesData() {
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
   const articledata = articles.map((a: IArticleInstance) => {
-    const article: any = pick(a.toJSON(), articleFields);
-    article.assignedModerators = article.assignedModerators.map(
-      (i: {moderator_assignment: IModeratorAssignmentAttributes}) =>
-        i.moderator_assignment.userId.toString(),
-    );
-    return article;
+    return serialiseObject(a, articleFields);
   });
 
   return {
@@ -170,15 +182,13 @@ async function getArticleUpdate(articleId: number) {
   if (!article) {
     return null;
   }
-  const aData: any = pick(article.toJSON(), articleFields);
-  aData.assignedModerators = aData.assignedModerators.map((i: any) => i.moderator_assignment.userId.toString());
+  const aData = serialiseObject(article, articleFields);
 
   const category = await Category.findById(
     aData.categoryId,
     {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
   );
-  const cData: any = pick(category.toJSON(), categoryFields);
-  cData.assignedModerators = cData.assignedModerators.map((i: any) => i.user_category_assignment.userId.toString());
+  const cData: any = serialiseObject(category, categoryFields);
 
   return {
     type: 'article-update',
