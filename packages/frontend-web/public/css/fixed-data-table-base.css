@@ -308,15 +308,6 @@ body[dir="rtl"] .fixedDataTableColumnResizerLineLayout_main {
   width: 15px;
 }
 
-.comment-list .ScrollbarLayout_mainVertical {
-  top: 132px !important;
-}
-
-.ScrollbarLayout_mainVertical.public_Scrollbar_mainActive,
-.ScrollbarLayout_mainVertical:hover {
-  width: 17px;
-}
-
 .ScrollbarLayout_mainHorizontal {
   bottom: 0;
   height: 15px;

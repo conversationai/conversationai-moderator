@@ -125,7 +125,7 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
           <div
             {...css({
               background: WHITE_COLOR,
-              height: hideCommentHeader ? '100%' : `calc(100% - ${HEADER_HEIGHT}px)`,
+              height: hideCommentHeader ? '100%' : `calc(100% - ${HEADER_HEIGHT * 2 + 12}px)`,
               position: 'relative',
               overflow: 'hidden',
               WebkitOverflowScrolling: 'touch',

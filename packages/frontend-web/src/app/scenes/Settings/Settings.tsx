@@ -69,6 +69,7 @@ import {
   DARK_PRIMARY_TEXT_COLOR,
   DIVIDER_COLOR,
   GUTTER_DEFAULT_SPACING,
+  HEADER_HEIGHT,
   MEDIUM_COLOR,
   PALE_COLOR,
   SCRIM_STYLE,
@@ -96,7 +97,7 @@ const STYLES: any = stylesheet({
     boxSizing: 'border-box',
   },
   body: {
-    height: '100%',
+    height: `calc(100% - ${HEADER_HEIGHT}px)`,
     overflowY: 'auto',
     WebkitOverflowScrolling: 'touch',
   },
