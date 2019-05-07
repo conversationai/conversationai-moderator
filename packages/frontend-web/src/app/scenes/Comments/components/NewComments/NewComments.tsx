@@ -167,10 +167,6 @@ const STYLES = stylesheet({
     background: 'none',
   },
 
-  listContainer: {
-    height: `calc(100% - ${ACTION_BAR_HEIGHT_FIXED}px)`,
-  },
-
   topSelectRow: {
     display: 'flex',
     justifyContent: 'space-between',

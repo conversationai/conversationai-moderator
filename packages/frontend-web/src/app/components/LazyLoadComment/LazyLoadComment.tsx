@@ -245,8 +245,9 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
     return(
       <div {...css(ROW_STYLES.comment, {flex: 1})}>
         {displayArticleTitle && (
-          <div>
+          <div key="title">
             <Link
+              key="text"
               {...css(ROW_STYLES.articleLink)}
               to={`/articles/${comment.article.id}`}
             >
@@ -255,7 +256,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               </h4>
             </Link>
             {comment.article.url && (
-            <div style={{display: 'inline-block', margin: '0 10px', position: 'relative', top: '3px'}}>
+            <div key="link" style={{display: 'inline-block', margin: '0 10px', position: 'relative', top: '3px'}}>
               <a href={comment.article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
                 <OpenInNew fontSize="small"/>
               </a>
@@ -263,9 +264,8 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
           )}
           </div>
         )}
-        <div {...css(ROW_STYLES.meta)}>
-
-          <div {...css(ROW_STYLES.authorRow)}>
+        <div key="body" {...css(ROW_STYLES.meta)}>
+          <div key="text" {...css(ROW_STYLES.authorRow)}>
             { comment.replyToSourceId > 0 && (
               <Link
                 to={`/articles/${comment.articleId}/comments/${comment.replyId}/${comment.id}/replies`}
@@ -302,6 +302,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
 
           { !hideCommentAction && actionsAreVisible ? (
             <div
+              key="actions"
               {...css({ marginRight: '10px' })}
               ref={this.saveModerateButtonsRef}
             >
@@ -316,9 +317,9 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               />
             </div>
             ) : (
-              <div {...css(ROW_STYLES.actionContainer)}>
+              <div key="actions2" {...css(ROW_STYLES.actionContainer)}>
                 { activeButtons && activeButtons.includes('approve') && (
-                  <div {...css({ marginRight: '10px' })}>
+                  <div key="approve" {...css({ marginRight: '10px' })}>
                     <ConfirmationCircle
                       backgroundColor={MEDIUM_COLOR}
                       action="approve"
@@ -329,7 +330,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                 )
               }
               { activeButtons && activeButtons.includes('highlight') && (
-                <div {...css({ marginRight: '10px' })}>
+                <div key="highlight" {...css({ marginRight: '10px' })}>
                   <ConfirmationCircle
                     backgroundColor={MEDIUM_COLOR}
                     action="highlight"
@@ -339,7 +340,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                 </div>
               )}
               { activeButtons && activeButtons.includes('reject') && (
-                <div {...css({ marginRight: '10px' })}>
+                <div key="reject" {...css({ marginRight: '10px' })}>
                   <ConfirmationCircle
                     backgroundColor={MEDIUM_COLOR}
                     action="reject"
@@ -349,7 +350,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                 </div>
               )}
               { activeButtons && activeButtons.includes('defer') && (
-                <div {...css({ marginRight: '10px' })}>
+                <div key="defer" {...css({ marginRight: '10px' })}>
                   <ConfirmationCircle
                     backgroundColor={MEDIUM_COLOR}
                     action="defer"
@@ -359,14 +360,14 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                 </div>
               )}
               { !hideCommentAction && (
-                <button {...css(ROW_STYLES.actionToggle)} onClick={this.toggleActionsVisible} type="button">
+                <button key="moreactons" {...css(ROW_STYLES.actionToggle)} onClick={this.toggleActionsVisible} type="button">
                   <MoreVerticalIcon size={20} />
                 </button>
               )}
             </div>
           )}
         </div>
-        <div {...css(ROW_STYLES.commentContainer)}>
+        <div key="text" {...css(ROW_STYLES.commentContainer)}>
           <Linkify properties={{target: '_blank'}}>
             <div {...css(ROW_STYLES.comment)}>
               { commentLinkTarget ? (

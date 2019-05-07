@@ -396,198 +396,198 @@ export class ModeratedComments
     const showMessaging = !!commentsMessaging;
 
     return (
-      <div {...css({ height: '100%' })}>
+      <div {...css({height: '100%'})}>
 
-      <div {...css(STYLES.topSelectRow)}>
-        <div {...css(STYLES.dropdown)}>
-          <select
-            value={this.state.currentSelect}
-            onChange={this.onSelectChange}
-            id="sorted-type"
-            {...css(STYLES.select)}
-          >
-            <option value={BATCH_SELECT_BY_DATE}>Date</option>
-            <option value={BATCH_SELECT_BY_STATUS}>Moderation status</option>
-          </select>
-          <span aria-hidden="true" {...css(STYLES.arrow)} />
+        <div {...css(STYLES.topSelectRow)}>
+          <div {...css(STYLES.dropdown)}>
+            <select
+              value={this.state.currentSelect}
+              onChange={this.onSelectChange}
+              id="sorted-type"
+              {...css(STYLES.select)}
+            >
+              <option value={BATCH_SELECT_BY_DATE}>Date</option>
+              <option value={BATCH_SELECT_BY_STATUS}>Moderation status</option>
+            </select>
+            <span aria-hidden="true" {...css(STYLES.arrow)} />
+          </div>
+          {this.props.params.articleId && (
+            <ArticleControlIcon
+              article={this.props.article}
+              open={this.state.articleControlOpen}
+              clearPopups={this.closePopup}
+              openControls={this.openPopup}
+              saveControls={this.applyRules}
+              whiteBackground
+            />
+          )}
         </div>
-        { this.props.params.articleId && (
-          <ArticleControlIcon
-            article={this.props.article}
-            open={this.state.articleControlOpen}
-            clearPopups={this.closePopup}
-            openControls={this.openPopup}
-            saveControls={this.applyRules}
-            whiteBackground
-          />
-        )}
-      </div>
 
-      <div {...css(STYLES.row)}>
-        <div {...css(STYLES.moderatedInfo)}>{selectedIdsLength}
-          {selectedIdsLength === 1 ? ' comment ' : ' comments '}selected
-        </div>
-        <div {...css(STYLES.moderateButtons)}>
-          <CommentActionButton
-            disabled={areNoneSelected}
-            label="Approve"
-            onClick={partial(
-              this.triggerActionToast,
-              'approve',
-              selectedIdsLength,
-              partial(this.dispatchConfirmedAction, 'approve', this.getSelectedIDs()),
-            )}
-            icon={(
-              <ApproveIcon {...css({ fill: LIGHT_PRIMARY_TEXT_COLOR })} />
-            )}
-          />
-
-          <CommentActionButton
-            disabled={areNoneSelected}
-            label="Reject"
-            onClick={partial(
-              this.triggerActionToast,
-              'reject',
-              selectedIdsLength,
-              partial(this.dispatchConfirmedAction, 'reject', this.getSelectedIDs()),
-            )}
-            icon={(
-              <RejectIcon {...css({ fill: LIGHT_PRIMARY_TEXT_COLOR })} />
-            )}
-          />
-
-          <CommentActionButton
-            disabled={areNoneSelected}
-            label="Highlight"
-            onClick={partial(
-              this.triggerActionToast,
-              'highlight',
-              selectedIdsLength,
-              partial(this.dispatchConfirmedAction, 'highlight', this.getSelectedIDs()),
-            )}
-            icon={(
-              <HighlightIcon {...css({ fill: LIGHT_PRIMARY_TEXT_COLOR})} />
-            )}
-          />
-
-          <CommentActionButton
-            disabled={areNoneSelected}
-            label="Defer"
-            onClick={partial(
-              this.triggerActionToast,
-              'defer',
-              selectedIdsLength,
-              partial(this.dispatchConfirmedAction, 'defer', this.getSelectedIDs()),
-            )}
-            icon={(
-              <DeferIcon {...css({ fill: LIGHT_PRIMARY_TEXT_COLOR })} />
-            )}
-          />
-
-          <div {...css({ position: 'relative' })}>
+        <div {...css(STYLES.row)}>
+          <div {...css(STYLES.moderatedInfo)}>{selectedIdsLength}
+            {selectedIdsLength === 1 ? ' comment ' : ' comments '}selected
+          </div>
+          <div {...css(STYLES.moderateButtons)}>
             <CommentActionButton
               disabled={areNoneSelected}
-              buttonRef={this.calculateTaggingTriggerPosition}
-              label="Tag"
-              onClick={this.toggleTaggingToolTip}
+              label="Approve"
+              onClick={partial(
+                this.triggerActionToast,
+                'approve',
+                selectedIdsLength,
+                partial(this.dispatchConfirmedAction, 'approve', this.getSelectedIDs()),
+              )}
               icon={(
-                <AddIcon {...css({ fill: LIGHT_PRIMARY_TEXT_COLOR })} />
+                <ApproveIcon {...css({fill: LIGHT_PRIMARY_TEXT_COLOR})} />
               )}
             />
-            {isTaggingToolTipMetaVisible && (
-              <ToolTip
-                arrowPosition="topRight"
-                backgroundColor={WHITE_COLOR}
-                hasDropShadow
-                isVisible={isTaggingToolTipMetaVisible}
-                onDeactivate={this.toggleTaggingToolTip}
-                position={taggingToolTipMetaPosition}
-                size={16}
-                width={250}
-                zIndex={TOOLTIP_Z_INDEX}
-              >
-                <div {...css(STYLES.toolTipWithTagsContainer)}>
-                  <ul {...css(STYLES.toolTipWithTagsUl)}>
-                    {tags && tags.map((t, i) => (
-                      <li key={t.id}>
-                        <button
-                          onClick={partial(this.onTagButtonClick, t.id)}
-                          key={`tag-${i}`}
-                          {...css(STYLES.toolTipWithTagsButton)}
-                        >
-                          {t.label}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </ToolTip>
-            )}
+
+            <CommentActionButton
+              disabled={areNoneSelected}
+              label="Reject"
+              onClick={partial(
+                this.triggerActionToast,
+                'reject',
+                selectedIdsLength,
+                partial(this.dispatchConfirmedAction, 'reject', this.getSelectedIDs()),
+              )}
+              icon={(
+                <RejectIcon {...css({fill: LIGHT_PRIMARY_TEXT_COLOR})} />
+              )}
+            />
+
+            <CommentActionButton
+              disabled={areNoneSelected}
+              label="Highlight"
+              onClick={partial(
+                this.triggerActionToast,
+                'highlight',
+                selectedIdsLength,
+                partial(this.dispatchConfirmedAction, 'highlight', this.getSelectedIDs()),
+              )}
+              icon={(
+                <HighlightIcon {...css({fill: LIGHT_PRIMARY_TEXT_COLOR})} />
+              )}
+            />
+
+            <CommentActionButton
+              disabled={areNoneSelected}
+              label="Defer"
+              onClick={partial(
+                this.triggerActionToast,
+                'defer',
+                selectedIdsLength,
+                partial(this.dispatchConfirmedAction, 'defer', this.getSelectedIDs()),
+              )}
+              icon={(
+                <DeferIcon {...css({fill: LIGHT_PRIMARY_TEXT_COLOR})} />
+              )}
+            />
+
+            <div {...css({position: 'relative'})}>
+              <CommentActionButton
+                disabled={areNoneSelected}
+                buttonRef={this.calculateTaggingTriggerPosition}
+                label="Tag"
+                onClick={this.toggleTaggingToolTip}
+                icon={(
+                  <AddIcon {...css({fill: LIGHT_PRIMARY_TEXT_COLOR})} />
+                )}
+              />
+              {isTaggingToolTipMetaVisible && (
+                <ToolTip
+                  arrowPosition="topRight"
+                  backgroundColor={WHITE_COLOR}
+                  hasDropShadow
+                  isVisible={isTaggingToolTipMetaVisible}
+                  onDeactivate={this.toggleTaggingToolTip}
+                  position={taggingToolTipMetaPosition}
+                  size={16}
+                  width={250}
+                  zIndex={TOOLTIP_Z_INDEX}
+                >
+                  <div {...css(STYLES.toolTipWithTagsContainer)}>
+                    <ul {...css(STYLES.toolTipWithTagsUl)}>
+                      {tags && tags.map((t, i) => (
+                        <li key={t.id}>
+                          <button
+                            onClick={partial(this.onTagButtonClick, t.id)}
+                            key={`tag-${i}`}
+                            {...css(STYLES.toolTipWithTagsButton)}
+                          >
+                            {t.label}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </ToolTip>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Table View */}
-      <div>
-        { showMessaging ? (
-          <p {...css(STYLES.commentsNotFoundMessaging)}>{commentsMessaging}</p>
-        ) : (
-          <CommentList
-            heightOffset={listHeightOffset}
-            textSizes={textSizes}
-            commentIds={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds : commentIds}
-            areAllSelected={areAllSelected}
-            getCurrentSort={this.getCurrentSort}
-            getLinkTarget={getLinkTarget}
-            isItemChecked={isItemChecked}
-            onSelectAllChange={this.onSelectAllChange}
-            onSelectionChange={this.onSelectionChange}
-            onSortChange={this.onSortChange}
-            showAllComments
-            sortOptions={this.getSortOptions()}
-            totalItems={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds.size : commentIds.size}
-            triggerActionToast={this.triggerActionToast}
-            displayArticleTitle={!loadedArticleId}
-            tagRejectionModalVisible={{
-              id: taggingCommentId,
-              isVisible: taggingTooltipVisible,
-            }}
-            dispatchConfirmedAction={this.dispatchConfirmedAction}
-            onRejectWithTag={this.handleRejectWithTag}
-            requireReasonForReject={REQUIRE_REASON_TO_REJECT}
-            onTableScroll={this.handleTableScroll}
-          />
-        )}
-      </div>
+        {/* Table View */}
+        <div>
+          {showMessaging ? (
+            <p {...css(STYLES.commentsNotFoundMessaging)}>{commentsMessaging}</p>
+          ) : (
+            <CommentList
+              heightOffset={listHeightOffset}
+              textSizes={textSizes}
+              commentIds={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds : commentIds}
+              areAllSelected={areAllSelected}
+              getCurrentSort={this.getCurrentSort}
+              getLinkTarget={getLinkTarget}
+              isItemChecked={isItemChecked}
+              onSelectAllChange={this.onSelectAllChange}
+              onSelectionChange={this.onSelectionChange}
+              onSortChange={this.onSortChange}
+              showAllComments
+              sortOptions={this.getSortOptions()}
+              totalItems={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds.size : commentIds.size}
+              triggerActionToast={this.triggerActionToast}
+              displayArticleTitle={!loadedArticleId}
+              tagRejectionModalVisible={{
+                id: taggingCommentId,
+                isVisible: taggingTooltipVisible,
+              }}
+              dispatchConfirmedAction={this.dispatchConfirmedAction}
+              onRejectWithTag={this.handleRejectWithTag}
+              requireReasonForReject={REQUIRE_REASON_TO_REJECT}
+              onTableScroll={this.handleTableScroll}
+            />
+          )}
+        </div>
 
-      <Scrim
-        key="toastScrim"
-        scrimStyles={{...STYLES.scrim, ...SCRIM_STYLE.scrim}}
-        isVisible={isConfirmationModalVisible}
-        onBackgroundClick={this.onConfirmationClose}
-      >
-        <FocusTrap
-          focusTrapOptions={{
-            clickOutsideDeactivates: true,
-          }}
+        <Scrim
+          key="toastScrim"
+          scrimStyles={{...STYLES.scrim, ...SCRIM_STYLE.scrim}}
+          isVisible={isConfirmationModalVisible}
+          onBackgroundClick={this.onConfirmationClose}
         >
-          <ToastMessage
-            icon={null}
-            buttonLabel={this.state.toastButtonLabel}
-            onClick={this.handleUndoClick}
+          <FocusTrap
+            focusTrapOptions={{
+              clickOutsideDeactivates: true,
+            }}
           >
-            <div key="toastContent">
-              { this.state.showCount && (
-                <span key="toastCount" {...css(STYLES.actionToastCount)}>
+            <ToastMessage
+              icon={null}
+              buttonLabel={this.state.toastButtonLabel}
+              onClick={this.handleUndoClick}
+            >
+              <div key="toastContent">
+                {this.state.showCount && (
+                  <span key="toastCount" {...css(STYLES.actionToastCount)}>
                   {this.state.toastIcon}
-                  {this.state.actionCount}
+                    {this.state.actionCount}
                 </span>
-              )}
-              <p key="actionText">{this.state.actionText}</p>
-            </div>
-          </ToastMessage>
-        </FocusTrap>
-      </Scrim>
+                )}
+                <p key="actionText">{this.state.actionText}</p>
+              </div>
+            </ToastMessage>
+          </FocusTrap>
+        </Scrim>
         {tags && taggingTooltipVisible && (
           <FocusTrap
             focusTrapOptions={{
@@ -612,7 +612,7 @@ export class ModeratedComments
             </ToolTip>
           </FocusTrap>
         )}
-    </div>
+      </div>
     );
   }
 
