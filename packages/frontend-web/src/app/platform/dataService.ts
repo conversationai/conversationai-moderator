@@ -785,3 +785,7 @@ export async function listSystemUsers(type: string): Promise<List<IUserModel>> {
     return UserModel(u);
   }));
 }
+
+export async function kickProcessor(type: string): Promise<void> {
+  await axios.get(serviceURL('processing', `/trigger/${type}`));
+}
