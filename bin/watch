@@ -5,13 +5,19 @@ export BACKEND_URL=http://localhost:8080
 
 if [ "$1" != "backend" ]; then
   cd packages/frontend-web
-  npm run compile
+  npm run compile:web
   npm run compile:watch &
   npm run watch &
   cd -
 fi
 
 if [ "$1" != "frontend" ]; then
+  cd packages/backend-core
+  npm run compile
+  cd -
+  cd packages/frontend-web
+  npm run compile:lib
+  cd -
   cd packages/backend-api
   npx ts-node-dev --inspect=5858 src/server.ts &
   npx ts-node-dev --inspect=5857 src/processor.ts &
