@@ -59,12 +59,12 @@ import { IAppDispatch } from '../../stores';
 import {
   USER_GROUP_GENERAL,
   USER_GROUP_SERVICE,
-  USER_GROUP_YOUTUBE,
 } from '../../stores/users';
 import { partial, setCSRF } from '../../util';
 import { css, stylesheet } from '../../utilx';
 import { AddUsers } from './components/AddUsers';
 import { EditUsers } from './components/EditUsers';
+import { EditYouTubeUser } from './components/EditYouTubeUser';
 import { LabelSettings } from './components/LabelSettings';
 import { ModeratorUserRow, ServiceUserRow, UserRow, YoutubeUserRow } from './components/rows';
 import { RuleRow } from './components/RuleRow';
@@ -194,6 +194,7 @@ export interface ISettingsState {
   isAddUserScrimVisible?: boolean;
   addUserType?: string;
   isEditUserScrimVisible?: boolean;
+  isEditYouTubeScrimVisible?: boolean;
   selectedUser?: IUserModel;
   homeIsFocused?: boolean;
   submitStatus?: string;
@@ -212,6 +213,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     isStatusScrimVisible: false,
     isAddUserScrimVisible: false,
     isEditUserScrimVisible: false,
+    isEditYouTubeScrimVisible: false,
     selectedUser: null,
     homeIsFocused: false,
   };
@@ -286,6 +288,15 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({
       selectedUser: user,
       isEditUserScrimVisible: true,
+    });
+  }
+
+  @autobind
+  handleEditYoutube(userId: ModelId) {
+    const user = this.props.youtubeUsers.find((u) => (u.id === userId));
+    this.setState({
+      selectedUser: user,
+      isEditYouTubeScrimVisible: true,
     });
   }
 
@@ -551,6 +562,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({
       isAddUserScrimVisible: false,
       isEditUserScrimVisible: false,
+      isEditYouTubeScrimVisible: false,
     });
   }
 
@@ -567,12 +579,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       if (user.group === USER_GROUP_SERVICE) {
         await this.props.reloadServiceUsers();
       }
-      else if (user.group === USER_GROUP_YOUTUBE) {
-        await this.props.reloadYoutubeUsers();
+      else {
+        this.setState({
+          submitStatus: 'Waiting for refresh...',
+        });
       }
-      this.setState({
-        submitStatus: 'Waiting for refresh...',
-      });
     }
     catch (e) {
       this.setState({
@@ -594,12 +605,35 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       if (user.group === USER_GROUP_SERVICE) {
         await this.props.reloadServiceUsers();
       }
-      else if (user.group === USER_GROUP_YOUTUBE) {
-        await this.props.reloadYoutubeUsers();
+      else {
+        this.setState({
+          submitStatus: 'Waiting for refresh...',
+        });
       }
-
+    }
+    catch (e) {
       this.setState({
-        submitStatus: 'Waiting for refresh...',
+        submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
+      });
+    }
+  }
+
+  @autobind
+  async saveYouTubeSettings(user: IUserModel) {
+    await this.setState({
+      isEditYouTubeScrimVisible: false,
+      isStatusScrimVisible: true,
+      submitStatus: 'Saving changes...',
+    });
+    try {
+      const userId = user.id;
+      await this.props.modifyUser(user);
+      await this.props.reloadYoutubeUsers();
+      user = this.props.youtubeUsers.find((u) => (u.id === userId));
+      this.setState({
+        selectedUser: user,
+        isStatusScrimVisible: false,
+        isEditYouTubeScrimVisible: true,
       });
     }
     catch (e) {
@@ -772,6 +806,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     if (!youtubeUsers || youtubeUsers.count() === 0) {
       return (<p>None configured</p>);
     }
+
     return (
       <div key="youtubeUsersSection">
         <table>
@@ -793,7 +828,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           </thead>
           <tbody>
           {youtubeUsers.map((u) => (
-            <YoutubeUserRow key={u.id} user={u}/>
+            <YoutubeUserRow key={u.id} user={u} handleEditUser={this.handleEditYoutube}/>
           ))}
           </tbody>
         </table>
@@ -1012,6 +1047,36 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     );
   }
 
+  renderEditYouTubeScrim() {
+    return (
+      <Scrim
+        key="editYouTubeScrim"
+        scrimStyles={SCRIM_STYLE.scrim}
+        isVisible={this.state.isEditYouTubeScrimVisible}
+        onBackgroundClick={this.closeScrims}
+      >
+        <FocusTrap
+          focusTrapOptions={{
+            clickOutsideDeactivates: true,
+          }}
+        >
+          <div
+            key="editYouTubeContainer"
+            tabIndex={0}
+            {...css(SCRIM_STYLE.popup, {position: 'relative', width: '77vh'})}
+          >
+            <EditYouTubeUser
+              categories={this.props.categories}
+              user={this.state.selectedUser}
+              onUserUpdate={this.saveYouTubeSettings}
+              onClickClose={this.closeScrims}
+            />
+          </div>
+        </FocusTrap>
+      </Scrim>
+    );
+  }
+
   renderStatusScrim() {
     return (
       <Scrim
@@ -1164,6 +1229,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         {this.renderStatusScrim()}
         {this.renderAddUserScrim()}
         {this.renderEditUserScrim()}
+        {this.renderEditYouTubeScrim()}
       </div>
     );
   }

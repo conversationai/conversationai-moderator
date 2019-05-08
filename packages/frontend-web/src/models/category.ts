@@ -22,6 +22,9 @@ import { ModelId } from './common';
 export interface ICategoryAttributes {
   id: ModelId;
   label: string;
+  ownerId?: ModelId;
+  sourceId?: string;
+  isActive: boolean;
   updatedAt: string;
   allCount: number;
   unprocessedCount: number;
@@ -41,6 +44,9 @@ export interface ICategoryModel extends TypedRecord<ICategoryModel>, ICategoryAt
 const CategoryModelRecord = Record({
   id: null,
   label: null,
+  ownerId: null,
+  sourceId: null,
+  isActive: false,
   updatedAt: null,
   allCount: null,
   unprocessedCount: null,
