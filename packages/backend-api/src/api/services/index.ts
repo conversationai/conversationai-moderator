@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as express from 'express';
+import { processingTriggers } from '../../processing/api';
 import { createAssignmentsService } from './assignments';
 import { createAuthorCountsService } from './authorCounts';
 import { createCommentActionsService } from './commentActions';
@@ -46,6 +47,7 @@ export function createServicesRouter(): express.Router {
   router.use('/editComment', createEditCommentTextService());
   router.use('/updates', createUpdateNotificationService());
   router.use('/simple', createSimpleRESTService());
+  router.use('/processing', processingTriggers());
 
   return router;
 }

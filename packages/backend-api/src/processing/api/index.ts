@@ -15,6 +15,8 @@ limitations under the License.
 */
 
 import * as express from 'express';
+
+import { kickWorker } from '../worker';
 import { createHeartbeatCron } from './heartbeat';
 import { createKnownTasksRouter } from './known_tasks';
 
@@ -43,6 +45,21 @@ export function mountCronAPI(): express.Router {
   });
 
   router.use('/heartbeat', createHeartbeatCron());
+
+  return router;
+}
+
+export function processingTriggers(): express.Router {
+  const router = express.Router({
+    caseSensitive: true,
+    mergeParams: true,
+  });
+
+  router.get('/trigger/:category', async (_req, res, next) => {
+    await kickWorker(true);
+    res.json({ status: 'ok' });
+    next();
+  });
 
   return router;
 }

@@ -28,6 +28,8 @@ import {
 } from '@material-ui/core';
 import {
   Add,
+  Input,
+  SaveAlt,
 } from '@material-ui/icons';
 
 import {
@@ -51,6 +53,7 @@ import {
   Scrim,
 } from '../../components';
 import { API_URL } from '../../config';
+import { kickProcessor } from '../../platform/dataService';
 import { getToken } from '../../platform/localStore';
 import { IAppDispatch } from '../../stores';
 import {
@@ -606,6 +609,31 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     }
   }
 
+  connectYouTubeAccount() {
+    const csrf = generate();
+    setCSRF(csrf);
+    const token = getToken();
+    window.location.href =  `${API_URL}/youtube/connect?&csrf=${csrf}&token=${token}`;
+  }
+
+  @autobind
+  async kickYouTubeProcessor() {
+    this.setState({
+      isStatusScrimVisible: true,
+      submitStatus: 'Backend processor starting....',
+    });
+    await kickProcessor('youtube');
+    this.setState({
+      submitStatus: 'Backend processor processing....',
+    });
+    setTimeout(() => {
+      this.setState({
+        isStatusScrimVisible: false,
+      });
+      this.props.reloadYoutubeUsers();
+    }, 3000);
+  }
+
   @autobind
   onHomeFocus() {
     this.setState({ homeIsFocused: true });
@@ -736,7 +764,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     );
   }
 
-  renderYoutubeUsers() {
+  renderYouTubeUsers() {
     const {
       youtubeUsers,
     } = this.props;
@@ -1035,11 +1063,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       }),
     ]).concat(categories) as List<ICategoryModel>;
 
-    const csrf = generate();
-    setCSRF(csrf);
-    const token = getToken();
-    const youtubeUrl = `${API_URL}/youtube/connect?&csrf=${csrf}&token=${token}`;
-
     return (
       <div {...css(STYLES.base)}>
         <HeaderBar logout={logout} homeLink title="Settings"/>
@@ -1093,29 +1116,44 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
             </div>
             <div key="pluginsContent" {...css(STYLES.section)}>
               <h3>YouTube accounts</h3>
-              {this.renderYoutubeUsers()}
-              <p><a href={youtubeUrl} {...css(STYLES.pluginLink)}>Connect a YouTube Account</a></p>
-              <p>Click the link above, and select a Google user and one of that user's YouTube accounts.</p>
+              {this.renderYouTubeUsers()}
+              <div key="youtubeButtons" {...css(STYLES.buttonGroup)}>
+                <div style={{paddingRight: '30px'}}>
+                  <Tooltip title="Connect an account">
+                    <Fab color="primary" onClick={this.connectYouTubeAccount}>
+                      <Input/>
+                    </Fab>
+                  </Tooltip>
+                </div>
+                <div style={{paddingRight: '30px'}}>
+                  <Tooltip title="Check for new channels">
+                    <Fab color="primary" onClick={this.kickYouTubeProcessor}>
+                      <SaveAlt/>
+                    </Fab>
+                  </Tooltip>
+                </div>
+              </div>
+              <p>To connect a YouTube account, click the button above, and select a Google user and YouTube account.</p>
               <p>We'll then start syncing comments with the channels and videos in that account.</p>
-              <p>&nbsp;</p>
-              <h3>Wordpress</h3>
-              <p>Install the Wordpress plugin to use Moderator with your Wordpress blog.</p>
-              <p>
-                <a href="https://github.com/Jigsaw-Code/osmod-wordpress" {...css(STYLES.pluginLink)}>Get started →</a>
-              </p>
-              <p>&nbsp;</p>
-              <h3>Discourse</h3>
-              <p>Install the Discourse plugin to use Moderator with your Discourse community.</p>
-              <p>
-                <a href="https://github.com/Jigsaw-Code/moderator-discourse" {...css(STYLES.pluginLink)}>Get started →</a>
-              </p>
-              <p>&nbsp;</p>
-              <h3>Reddit</h3>
-              <p>A server running a cron job every minute that reads all comments copies them to on your subreddit and syncs their status. Requires owner rights on subreddit.</p>
-              <p>
-                <a href="https://github.com/Jigsaw-Code/moderator-reddit" {...css(STYLES.pluginLink)}>Get started →</a>
-              </p>
-              <p>&nbsp;</p>
+              {/*<p>&nbsp;</p>*/}
+              {/*<h3>Wordpress</h3>*/}
+              {/*<p>Install the Wordpress plugin to use Moderator with your Wordpress blog.</p>*/}
+              {/*<p>*/}
+              {/*  <a href="https://github.com/Jigsaw-Code/osmod-wordpress" {...css(STYLES.pluginLink)}>Get started →</a>*/}
+              {/*</p>*/}
+              {/*<p>&nbsp;</p>*/}
+              {/*<h3>Discourse</h3>*/}
+              {/*<p>Install the Discourse plugin to use Moderator with your Discourse community.</p>*/}
+              {/*<p>*/}
+              {/*  <a href="https://github.com/Jigsaw-Code/moderator-discourse" {...css(STYLES.pluginLink)}>Get started →</a>*/}
+              {/*</p>*/}
+              {/*<p>&nbsp;</p>*/}
+              {/*<h3>Reddit</h3>*/}
+              {/*<p>A server running a cron job every minute that reads all comments copies them to on your subreddit and syncs their status. Requires owner rights on subreddit.</p>*/}
+              {/*<p>*/}
+              {/*  <a href="https://github.com/Jigsaw-Code/moderator-reddit" {...css(STYLES.pluginLink)}>Get started →</a>*/}
+              {/*</p>*/}
+              {/*<p>&nbsp;</p>*/}
             </div>
           </div>
         </div>
