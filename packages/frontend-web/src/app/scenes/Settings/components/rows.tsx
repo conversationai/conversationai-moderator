@@ -19,23 +19,28 @@ import React from 'react';
 
 import {
   IconButton,
+  Tooltip,
 } from '@material-ui/core';
 import {
+  Edit,
   FileCopy,
 } from '@material-ui/icons';
 
-import { IUserModel } from '../../../../models';
+import { IUserModel, ModelId } from '../../../../models';
 import { USER_GROUP_ADMIN } from '../../../stores/users';
 import { css } from '../../../utilx';
 import { SETTINGS_STYLES } from '../settingsStyles';
-import { EditButton } from './AddButton';
 
 export interface IUserProps {
   user: IUserModel;
-  handleEditUser(event: React.FormEvent<any>): void;
+  handleEditUser(userId: ModelId): void;
 }
 
 export function UserRow({ user, handleEditUser }: IUserProps) {
+  function handleEditUserWrapper() {
+    handleEditUser(user.id);
+  }
+
   return (
     <tr {...css(SETTINGS_STYLES.userTableCell)}>
       <td {...css(SETTINGS_STYLES.userTableCell)}>
@@ -51,7 +56,11 @@ export function UserRow({ user, handleEditUser }: IUserProps) {
         {user.isActive ? 'Active' : ''}
       </td>
       <td {...css(SETTINGS_STYLES.userTableCell)}>
-        <EditButton width={44} onClick={handleEditUser} label="Edit user" value={user.id}/>
+        <Tooltip title="Edit this user">
+          <IconButton onClick={handleEditUserWrapper}>
+            <Edit color="primary"/>
+          </IconButton>
+        </Tooltip>
       </td>
     </tr>
   );
@@ -60,6 +69,10 @@ export function UserRow({ user, handleEditUser }: IUserProps) {
 export function ServiceUserRow({ user, handleEditUser }: IUserProps) {
   function copyButtonCLicked() {
     copyToClipboard(user.extra.jwt);
+  }
+
+  function handleEditUserWrapper() {
+    handleEditUser(user.id);
   }
 
   return (
@@ -74,15 +87,21 @@ export function ServiceUserRow({ user, handleEditUser }: IUserProps) {
         {user.extra.jwt}
       </td>
       <td>
-        <IconButton aria-label="Copy to clipboard" onClick={copyButtonCLicked}>
-          <FileCopy fontSize="small" />
-        </IconButton>
+        <Tooltip title="Copy auth token to clipboard">
+          <IconButton aria-label="Copy to clipboard" onClick={copyButtonCLicked}>
+            <FileCopy fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </td>
       <td {...css(SETTINGS_STYLES.userTableCell)}>
         {user.isActive ? 'Active' : ''}
       </td>
       <td {...css(SETTINGS_STYLES.userTableCell)}>
-        <EditButton width={44} onClick={handleEditUser} label="Edit user" value={user.id}/>
+        <Tooltip title="Edit this user">
+          <IconButton onClick={handleEditUserWrapper}>
+            <Edit color="primary"/>
+          </IconButton>
+        </Tooltip>
       </td>
     </tr>
   );

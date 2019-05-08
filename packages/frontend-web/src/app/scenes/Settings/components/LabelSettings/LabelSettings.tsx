@@ -15,10 +15,17 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-
 import React from 'react';
+
+import {
+  IconButton,
+  Radio,
+} from '@material-ui/core';
+import {
+  Delete,
+} from '@material-ui/icons';
+
 import { ITagModel } from '../../../../../models';
-import { Checkbox } from '../../../../components';
 import {
   ARTICLE_CATEGORY_TYPE,
   DARK_TERTIARY_TEXT_COLOR,
@@ -57,21 +64,11 @@ const STYLES = stylesheet({
     height: 40,
   },
 
-  deleteButton: {
-    ...SETTINGS_STYLES.button,
-    padding: '0 8px',
-    right: 0,
-  },
-
   checkboxContainer: {
     width: '100px',
-    marginRight: `${GUTTER_DEFAULT_SPACING}px`,
-  },
-
-  checkContainer: {
     display: 'flex',
     alignItems: 'center',
-    position: 'relative',
+    justifyContent: 'center',
   },
 });
 
@@ -155,34 +152,29 @@ export class LabelSettings extends React.Component<ILabelSettingsProps> {
             onChange={this.onDescriptionChange}
           />
           <ColorSelect tag={label} color={color} onChange={this.onColorChange} />
-          <div {...css(STYLES.checkboxContainer)}>
-            <label
-              htmlFor={`${tag.key}isInBatchView`}
-              onClick={this.onTagIsInBatchViewChange}
-              {...css(STYLES.checkContainer)}
-            >
-              <Checkbox isSelected={tag.isInBatchView} inputId={`${tag.key}isInBatchView`} onCheck={null} />
-            </label>
+          <div
+            {...css(STYLES.checkboxContainer)}
+            onClick={this.onTagIsInBatchViewChange}
+          >
+            <Radio color="primary" checked={tag.isInBatchView}/>
           </div>
-          <div {...css(STYLES.checkboxContainer)}>
-            <label
-              htmlFor={`${tag.key}isTaggable`}
-              onClick={this.onTagIsTaggableChange}
-              {...css(STYLES.checkContainer)}
-            >
-              <Checkbox isSelected={tag.isTaggable} inputId={`${tag.key}isTaggable`} onCheck={null} />
-            </label>
+          <div
+            {...css(STYLES.checkboxContainer)}
+            onClick={this.onTagIsTaggableChange}
+          >
+            <Radio color="primary" checked={tag.isTaggable}/>
           </div>
-          <div {...css(STYLES.checkboxContainer)}>
-            <label
-              htmlFor={`${tag.key}inSummaryScore`}
-              onClick={this.onTagInSummaryScoreChange}
-              {...css(STYLES.checkContainer)}
-            >
-              <Checkbox isSelected={tag.inSummaryScore} inputId={`${tag.key}inSummaryScore`} onCheck={null} />
-            </label>
+          <div
+            {...css(STYLES.checkboxContainer)}
+            onClick={this.onTagInSummaryScoreChange}
+          >
+            <Radio color="primary" checked={tag.inSummaryScore}/>
           </div>
-          <button {...css(STYLES.deleteButton, SMALLER_SCREEN && {marginLeft: 0})} type="button" onClick={this.onDeletePress}>Delete</button>
+          <div style={{paddingLeft: '50px'}}>
+            <IconButton aria-label={`Delete Tag`} onClick={this.onDeletePress}>
+              <Delete color="primary"/>
+            </IconButton>
+          </div>
         </div>
       </div>
     );

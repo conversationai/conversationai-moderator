@@ -17,6 +17,14 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
+
+import {
+  IconButton,
+} from '@material-ui/core';
+import {
+  Delete,
+} from '@material-ui/icons';
+
 import {
   convertClientAction,
   convertServerAction,
@@ -34,7 +42,6 @@ import {
   DARK_PRIMARY_TEXT_COLOR,
   GUTTER_DEFAULT_SPACING,
   INPUT_DROP_SHADOW,
-  MEDIUM_COLOR,
   OFFSCREEN,
   PALE_COLOR,
 } from '../../../../styles';
@@ -73,26 +80,6 @@ const STYLES = stylesheet({
     ...SETTINGS_STYLES.input,
     width: 84,
     height: INPUT_HEIGHT,
-  },
-
-  button: {
-    position: 'absolute',
-    right: GUTTER_DEFAULT_SPACING,
-    height: INPUT_HEIGHT,
-    marginLeft: 180,
-    backgroundColor: 'transparent',
-    border: 'none',
-    color: MEDIUM_COLOR,
-    cursor: 'pointer',
-    ':focus': {
-      outline: 0,
-      textDecoration: 'underline',
-    },
-  },
-
-  deleteButton: {
-    right: 0,
-    marginLeft: 0,
   },
 });
 
@@ -227,13 +214,11 @@ export class RuleRow extends React.Component<IRuleRowProps> {
               onClick={this.notifyWrapperOfActionChange}
             />
           )}
-        <button
-          {...css(STYLES.button, STYLES.deleteButton)}
-          type="button"
-          onClick={partial(maybeCallback(onDelete), rule)}
-        >
-          Delete
-        </button>
+        <div style={{paddingLeft: '50px'}}>
+          <IconButton aria-label={`Delete Rule`} onClick={partial(maybeCallback(onDelete), rule)}>
+            <Delete color="primary"/>
+          </IconButton>
+        </div>
       </div>
     );
   }

@@ -22,6 +22,15 @@ import React from 'react';
 import { WithRouterProps } from 'react-router';
 
 import {
+  Button,
+  Fab,
+  Tooltip,
+} from '@material-ui/core';
+import {
+  Add,
+} from '@material-ui/icons';
+
+import {
   CategoryModel,
   ICategoryModel,
   IPreselectModel,
@@ -38,7 +47,6 @@ import {
   TagModel,
 } from '../../../models';
 import {
-  Button,
   HeaderBar,
   Scrim,
 } from '../../components';
@@ -52,7 +60,6 @@ import {
 } from '../../stores/users';
 import { partial, setCSRF } from '../../util';
 import { css, stylesheet } from '../../utilx';
-import { AddButton } from './components/AddButton';
 import { AddUsers } from './components/AddUsers';
 import { EditUsers } from './components/EditUsers';
 import { LabelSettings } from './components/LabelSettings';
@@ -61,9 +68,7 @@ import { RuleRow } from './components/RuleRow';
 
 import {
   ARTICLE_CATEGORY_TYPE,
-  DARK_COLOR,
   DARK_PRIMARY_TEXT_COLOR,
-  DIVIDER_COLOR,
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
   MEDIUM_COLOR,
@@ -135,24 +140,7 @@ const STYLES: any = stylesheet({
   buttonGroup: {
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: WHITE_COLOR,
     padding: `${GUTTER_DEFAULT_SPACING}px`,
-  },
-  cancel: {
-    backgroundColor: WHITE_COLOR,
-    color: DARK_PRIMARY_TEXT_COLOR,
-    border: `1px solid ${DIVIDER_COLOR}`,
-    marginRight: `${GUTTER_DEFAULT_SPACING}px`,
-    ':focus': {
-      backgroundColor: PALE_COLOR,
-    },
-  },
-  save: {
-    backgroundColor: MEDIUM_COLOR,
-    color: WHITE_COLOR,
-    ':focus': {
-      backgroundColor: DARK_COLOR,
-    },
   },
   pluginLink: {
     display: 'inline-block',
@@ -276,10 +264,20 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleEditUser(event: React.FormEvent<any>) {
-    let user = this.props.users.get(event.currentTarget.value);
+  handleAddUserGeneral(event: React.FormEvent<any>) {
+    this.handleAddUser(USER_GROUP_GENERAL, event);
+  }
+
+  @autobind
+  handleAddUserService(event: React.FormEvent<any>) {
+    this.handleAddUser(USER_GROUP_SERVICE, event);
+  }
+
+  @autobind
+  handleEditUser(userId: ModelId) {
+    let user = this.props.users.get(userId);
     if (!user) {
-      user = this.props.serviceUsers.find((u) => (u.id === event.currentTarget.value));
+      user = this.props.serviceUsers.find((u) => (u.id === userId));
     }
 
     this.setState({
@@ -369,13 +367,13 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  handleAddServiceUser(event: React.FormEvent<any>) {
-    event.preventDefault();
-  }
+  async handleFormSubmit(e: React.MouseEvent<any>) {
+    e.preventDefault();
 
-  @autobind
-  async handleFormSubmit(event: React.FormEvent<any>) {
-    event.preventDefault();
+    this.setState({
+      isStatusScrimVisible: true,
+      submitStatus: 'Saving changes...',
+    });
 
     const {
       tags: tagsNew,
@@ -541,17 +539,8 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  onCancelPress(e: React.FormEvent<any>) {
-    e.preventDefault();
+  onCancelPress() {
     this.props.onCancel();
-  }
-
-  @autobind
-  onSavePress() {
-    this.setState({
-      isStatusScrimVisible: true,
-      submitStatus: 'Saving changes...',
-    });
   }
 
   @autobind
@@ -658,12 +647,16 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </thead>
               <tbody>
               {sortedUsers.map((u) => (
-                  <UserRow key={u.id} user={u} handleEditUser={this.handleEditUser}/>
+                <UserRow key={u.id} user={u} handleEditUser={this.handleEditUser}/>
               ))}
               </tbody>
             </table>
           </div>
-          <AddButton width={44} onClick={partial(this.handleAddUser, USER_GROUP_GENERAL)} label="Add a user"/>
+          <Tooltip title="Add a user">
+            <Fab color="primary" onClick={this.handleAddUserGeneral}>
+              <Add/>
+            </Fab>
+          </Tooltip>
         </div>
       </div>
     );
@@ -790,7 +783,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
             <p {...css(STYLES.colorTitle, SMALLER_SCREEN && {marginRight: '20px'})}>Color</p>
             <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>In Batch View</p>
             <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>Is Taggable</p>
-            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'}, { marginRight: '98px'})}>In Summary Score</p>
+            <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px'}, { marginRight: '68px'})}>In Summary Score</p>
           </div>
           {tags && tags.map((tag, i) => (
             <LabelSettings
@@ -803,12 +796,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               onTagChange={this.handleTagChange}
             />
           ))}
-          <AddButton
-            width={44}
-            onClick={this.handleAddTag}
-            label="Add a tag"
-            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
-          />
+          <Tooltip title="Add a tag">
+            <Fab color="primary" onClick={this.handleAddTag}>
+              <Add/>
+            </Fab>
+          </Tooltip>
         </div>
       </div>
     );
@@ -845,12 +837,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               tags={tags}
             />
           ))}
-          <AddButton
-            width={44}
-            onClick={this.handleAddAutomatedRule}
-            label="Add an automated rule"
-            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
-          />
+          <Tooltip title="Add an automated rule">
+            <Fab color="primary" onClick={this.handleAddAutomatedRule}>
+              <Add/>
+            </Fab>
+          </Tooltip>
         </div>
       </div>
     );
@@ -883,12 +874,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               tags={tags}
             />
           ))}
-          <AddButton
-            width={44}
-            onClick={this.handleAddTaggingSensitivity}
-            label="Add a tagging sensitivity rule"
-            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
-          />
+          <Tooltip title="Add a tagging sensitivity rule">
+            <Fab color="primary" onClick={this.handleAddTaggingSensitivity}>
+              <Add/>
+            </Fab>
+          </Tooltip>
         </div>
       </div>
     );
@@ -923,12 +913,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               tags={tags}
             />
           ))}
-          <AddButton
-            width={44}
-            onClick={this.handleAddPreselect}
-            label="Add a preselect"
-            buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
-          />
+          <Tooltip title="Add a preselect">
+            <Fab color="primary" onClick={this.handleAddPreselect}>
+              <Add/>
+            </Fab>
+          </Tooltip>
         </div>
       </div>
     );
@@ -1057,14 +1046,22 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         <div {...css(STYLES.body)}>
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
           {this.renderUsers()}
-          <form onSubmit={this.handleFormSubmit} {...css(STYLES.formContainer)}>
+          <form {...css(STYLES.formContainer)}>
             {this.renderTags(tagsNoSummary)}
             {this.renderRules(tags, categoriesWithAll)}
             {this.renderSensitivities(tagsWithAllNoSummary, categoriesWithAll)}
             {this.renderPreselects(tagsWithAll, categoriesWithAll)}
             <div key="submitSection" {...css(STYLES.buttonGroup)}>
-              <Button key="cancel" buttonStyles={STYLES.cancel} label="Cancel" onClick={this.onCancelPress}/>
-              <Button key="save" buttonStyles={STYLES.save} label="Save" onClick={this.onSavePress}/>
+              <div style={{paddingRight: '30px'}}>
+                <Button variant="outlined" onClick={this.onCancelPress} style={{width: '150px'}}>
+                  Cancel
+                </Button>
+              </div>
+              <div style={{paddingRight: '30px'}}>
+                <Button variant="contained" color="primary" onClick={this.handleFormSubmit} style={{width: '150px'}}>
+                  Save
+                </Button>
+              </div>
             </div>
           </form>
           <div key="serviceUsersHeader" {...css(STYLES.heading)}>
@@ -1076,12 +1073,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
             <h3>Service accounts</h3>
             <p>These accounts are used to access the OSMod API.</p>
             {this.renderServiceUsers()}
-            <AddButton
-              width={44}
-              onClick={partial(this.handleAddUser, USER_GROUP_SERVICE)}
-              label="Add a service account"
-              buttonStyles={{margin: `${GUTTER_DEFAULT_SPACING}px 0`}}
-            />
+            <Tooltip title="Add a service user">
+              <Fab color="primary" onClick={this.handleAddUserService}>
+                <Add/>
+              </Fab>
+            </Tooltip>
+
           </div>
           <div key="moderatorUsers" {...css(STYLES.section)}>
             <h3>Moderator accounts</h3>
