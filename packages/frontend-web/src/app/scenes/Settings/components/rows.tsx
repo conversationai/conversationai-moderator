@@ -126,20 +126,31 @@ export function ModeratorUserRow({ user }: {user: IUserModel}) {
   );
 }
 
-export function YoutubeUserRow({ user: u }: {user: IUserModel}) {
+export function YoutubeUserRow({ user, handleEditUser }: IUserProps) {
+  function handleEditUserWrapper() {
+    handleEditUser(user.id);
+  }
+
   return (
-    <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
+    <tr key={user.id} {...css(SETTINGS_STYLES.userTableCell)}>
       <td {...css(SETTINGS_STYLES.userTableCell)}>
-        {u.name}
+        {user.name}
       </td>
       <td {...css(SETTINGS_STYLES.userTableCell)}>
-        {u.email}
+        {user.email}
       </td>
       <td {...css(SETTINGS_STYLES.userTableCell)}>
-        {u.isActive ? 'Active' : 'Inactive'}
+        {user.isActive ? 'Active' : 'Inactive'}
       </td>
       <td {...css(SETTINGS_STYLES.userTableCell)}>
-        {u.extra.lastError ? u.extra.lastError.message : 'No error'}
+        {user.extra.lastError ? user.extra.lastError.message : 'No error'}
+      </td>
+      <td {...css(SETTINGS_STYLES.userTableCell)}>
+        <Tooltip title="Edit YouTube connection">
+          <IconButton onClick={handleEditUserWrapper}>
+            <Edit color="primary"/>
+          </IconButton>
+        </Tooltip>
       </td>
     </tr>
   );

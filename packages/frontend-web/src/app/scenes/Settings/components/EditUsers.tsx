@@ -42,8 +42,8 @@ const STYLES = stylesheet({
 });
 
 export interface IEditUsersProps {
-  onClickClose(e: React.FormEvent<any>): any;
-  onClickDone(user: IUserModel): any;
+  onClickClose(e: React.FormEvent<any>): void;
+  onClickDone(user: IUserModel): void;
   userToEdit?: IUserModel;
 }
 
