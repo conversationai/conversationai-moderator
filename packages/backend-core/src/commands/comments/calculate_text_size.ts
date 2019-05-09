@@ -14,14 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { calculateTextSize, Comment, logger } from '@conversationai/moderator-backend-core';
 import * as yargs from 'yargs';
+
+import { calculateTextSize } from '../../domain/comments';
+import { logger } from '../../logger';
+import { Comment } from '../../models';
 
 export const command = 'comments:calculate-text-size';
 export const describe = 'Using node-canvas, calculate a single comment height at a given width.';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
+export function builder(args: yargs.Argv) {
+  return args
       .usage('Usage: node $0 comments:calculate-text-size')
       .demand('comment-id')
       .number('comment-id')

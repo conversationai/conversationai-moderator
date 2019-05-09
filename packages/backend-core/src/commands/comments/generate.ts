@@ -18,14 +18,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as yargs from 'yargs';
 
-import {
-  IAuthorAttributes,
-  logger,
-  postProcessComment,
-  sendForScoring,
-  updateHappened,
-} from '@conversationai/moderator-backend-core';
-import { Article, Category, Comment } from '@conversationai/moderator-backend-core';
+import { postProcessComment, sendForScoring } from '../../domain/comments';
+import { logger } from '../../logger';
+import { Article, Category, Comment, IAuthorAttributes, updateHappened } from '../../models';
 
 const PREEXISTING_CATEGORIES = 5;
 const PREEXISTING_ARTICLES = 20;
@@ -148,7 +143,7 @@ function get_words(data: string, count: number): string {
 }
 
 export async function handler(argv: any) {
-  const data = fs.readFileSync(path.join(__dirname, '../../data/alice.txt'), 'UTF8');
+  const data = fs.readFileSync(path.join(__dirname, '../../../data/alice.txt'), 'UTF8');
 
   const categories = await Category.findAll({
     where: {

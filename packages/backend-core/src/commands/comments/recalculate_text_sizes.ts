@@ -14,15 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { cacheTextSize, Comment, CommentSize, logger } from '@conversationai/moderator-backend-core';
 import * as Bluebird from 'bluebird';
 import * as yargs from 'yargs';
+
+import { cacheTextSize } from '../../domain/comments';
+import { logger } from '../../logger';
+import { Comment, CommentSize } from '../../models';
 
 export const command = 'comments:recalculate-text-sizes';
 export const describe = 'Using node-canvas, recalculate comment heights at a given width.';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
+export function builder(args: yargs.Argv) {
+  return args
       .usage('Usage: node $0 comments:recalculate-text-sizes')
       .demand('width')
       .number('width')

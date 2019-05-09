@@ -14,23 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as Bluebird from 'bluebird';
+import * as yargs from 'yargs';
+
+import { denormalizeCountsForComment } from '../domain/comments';
+import { denormalizeCommentCountsForArticle } from '../domain/articles';
+import { logger } from '../logger';
 import {
   Article,
   Comment,
-  denormalizeCommentCountsForArticle,
-  denormalizeCountsForComment,
   IArticleInstance,
   ICommentInstance,
-  logger,
-} from '@conversationai/moderator-backend-core';
-import * as Bluebird from 'bluebird';
-import * as yargs from 'yargs';
+} from '../models';
 
 export const command = 'denormalize';
 export const describe = 'Re-run denormalize counts';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs.usage('Usage: node $0 denormalize')
+export function builder(args: yargs.Argv) {
+  return args.usage('Usage: node $0 denormalize')
               .boolean('articles-only')
               .describe('articles-only', 'Only recalculate counts for articles, not comments');
 }
