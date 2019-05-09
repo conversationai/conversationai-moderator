@@ -14,9 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as JSONAPI from '@conversationai/moderator-jsonapi';
 import * as express from 'express';
 import * as Joi from 'joi';
+
+import * as JSONAPI from '../jsonapi';
 import { handleQueryComments } from '../util/queryComments';
 import { validateRequest } from '../util/validation';
 

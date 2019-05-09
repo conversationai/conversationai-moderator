@@ -15,10 +15,11 @@ limitations under the License.
 */
 
 import { sequelize as sequelizeInstance, Tag } from '@conversationai/moderator-backend-core';
-import * as JSONAPI from '@conversationai/moderator-jsonapi';
 import * as express from 'express';
 import * as Joi from 'joi';
 import { mapValues } from 'lodash';
+
+import * as JSONAPI from '../jsonapi';
 import { filterTopScoresByTaggingSensitivity } from '../util/queryComments';
 import { validateAndSendResponse, validateRequest } from '../util/validation';
 

@@ -23,8 +23,8 @@ import {
   Tag,
 } from '@conversationai/moderator-backend-core';
 import { DotChartRenderer, groupByDateColumns, groupByScoreColumns } from '@conversationai/moderator-frontend-web';
-import * as JSONAPI from '@conversationai/moderator-jsonapi';
 
+import * as JSONAPI from '../../jsonapi';
 import { sort } from '../../util/SequelizeHandler';
 
 export interface ICommentScoredOrDated {
