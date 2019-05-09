@@ -24,4 +24,6 @@ mysql -u root << EOF
 UPDATE mysql.user SET Password=PASSWORD('$DATABASE_PASSWORD') WHERE User='root';
 EOF
 
-./bin/osmod migrate
+cd ${basename}/../packages/backend-core
+npx sequelize db:migrate --config ../config/sequelize.js --migrations-path dist/migrations --models-path dist/models
+cd -

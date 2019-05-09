@@ -4,9 +4,6 @@
 echo "shared"
 npm outdated
 
-echo "jsonapi"
-cd packages/jsonapi && npm outdated || cd -
-
 echo "backend-core"
 cd packages/backend-core && npm outdated || cd -
 
@@ -16,5 +13,3 @@ cd packages/frontend-web && npm outdated || cd -
 echo "backend-api"
 cd packages/backend-api && npm outdated || cd -
 
-echo "cli"
-cd packages/cli && npm outdated || cd -

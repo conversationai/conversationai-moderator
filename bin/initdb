@@ -20,15 +20,12 @@ CREATE USER '${DATABASE_USER}' IDENTIFIED BY '${DATABASE_PASSWORD}';
 GRANT ALL on ${DATABASE_NAME}.* to ${DATABASE_USER};
 EOF
 
-  # Load initial set of tables
   $mysqlx ${DATABASE_NAME} < ${basename}/../packages/backend-core/seed/initial-database.sql
-  ${basename}/osmod migrate
-
-  # Add a service user that can talk to the Perspective API:
-  ${basename}/osmod users:create --group moderator --name "PerspectiveAPI" --moderator-type "perspective-api"
-else
-  echo "Running migrations."
-  ${basename}/osmod migrate
 fi
+
+echo "Running migrations."
+cd ${basename}/../packages/backend-core
+npx sequelize db:migrate --config ../config/sequelize.js --migrations-path dist/migrations --models-path dist/models
+cd -
 
 
