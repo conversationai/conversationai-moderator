@@ -14,15 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { logger, sequelize } from '@conversationai/moderator-backend-core';
 import * as Bluebird from 'bluebird';
 import * as yargs from 'yargs';
+
+import { logger } from '../../logger';
+import { sequelize } from '../../sequelize';
 
 export const command = 'comments:rebuild-reply-relations';
 export const describe = 'Rebuild the join table for comment relations';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
+export function builder(args: yargs.Argv) {
+  return args
       .usage('Usage: node $0 comments:rebuild-reply-relations');
 }
 

@@ -14,15 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as yargs from 'yargs';
+
+import { checkScoringDone, sendToScorer } from '../../domain/comments';
+import { logger } from '../../logger';
 import {
   Article,
-  checkScoringDone,
   Comment,
-  logger,
-  sendToScorer,
-  User, USER_GROUP_MODERATOR,
-} from '@conversationai/moderator-backend-core';
-import * as yargs from 'yargs';
+  User,
+  USER_GROUP_MODERATOR,
+} from '../../models';
 
 export const command = 'comments:send-to-scorer';
 export const describe = 'Send comments to Endpoint of user object to get scored.';

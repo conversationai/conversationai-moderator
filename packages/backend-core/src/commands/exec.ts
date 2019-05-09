@@ -14,20 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-  logger,
-} from '@conversationai/moderator-backend-core';
 import { exec } from 'child_process';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 import { pickBy } from 'lodash';
 import * as yargs from 'yargs';
 
+import { logger } from '../logger';
+
 export const command = 'exec';
 export const describe = 'Run a subcommand with app.yaml environment';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
+export function builder(args: yargs.Argv) {
+  return args
       .usage('Usage: node $0 exec --yaml=app.yaml --command="osmod comments:calculate-text-size"')
       .demand('yaml')
       .string('yaml')

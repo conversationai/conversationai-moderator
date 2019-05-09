@@ -14,18 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as yargs from 'yargs';
+
+import { logger } from '../../logger';
 import {
   ENDPOINT_TYPE_API,
   ENDPOINT_TYPE_PROXY,
-  logger,
   User,
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
   USER_GROUP_MODERATOR,
   USER_GROUP_SERVICE,
   USER_GROUPS,
-} from '@conversationai/moderator-backend-core';
-import * as yargs from 'yargs';
+} from '../../models';
 
 export const command = 'users:create';
 

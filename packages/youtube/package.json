@@ -13,9 +13,9 @@
     "@conversationai/moderator-backend-core": "1.1.0",
     "@conversationai/moderator-config": "1.1.0",
     "@types/request": "2.47.0",
-    "@types/yargs": "11.0.0",
+    "@types/yargs": "13.0.0",
     "googleapis": "32.0.0",
     "request": "2.87.0",
-    "yargs": "11.1.0"
+    "yargs": "13.2.2"
   }
 }

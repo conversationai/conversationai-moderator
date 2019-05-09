@@ -14,14 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { cacheCommentTopScore, Comment, CommentTopScore, logger, Tag } from '@conversationai/moderator-backend-core';
 import * as yargs from 'yargs';
+
+import { cacheCommentTopScore } from '../../domain/commentScores';
+import { logger } from '../../logger';
+import { Comment, CommentTopScore, Tag } from '../../models';
 
 export const command = 'comments:recalculate-top-scores';
 export const describe = 'Recalculate comment top scores.';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
+export function builder(args: yargs.Argv) {
+  return args
       .usage('Usage: node $0 comments:recalculate-top-scores');
 }
 

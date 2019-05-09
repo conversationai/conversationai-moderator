@@ -14,18 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-  Comment,
-  logger,
-  resendForScoring,
-} from '@conversationai/moderator-backend-core';
 import * as yargs from 'yargs';
+
+import { resendForScoring } from '../../domain/comments';
+import { logger } from '../../logger';
+import { Comment } from '../../models';
 
 export const command = 'comments:rescore';
 export const describe = 'Rescore comment.';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
+export function builder(args: yargs.Argv) {
+  return args
       .usage('Usage: node $0 comments:rescore');
 }
 

@@ -14,19 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as yargs from 'yargs';
+
+import { denormalizeCommentCountsForArticle } from '../../domain/articles';
+import { logger } from '../../logger';
 import {
   Article,
   Comment,
-  denormalizeCommentCountsForArticle,
-  logger,
-} from '@conversationai/moderator-backend-core';
-import * as yargs from 'yargs';
+} from '../../models';
 
 export const command = 'comments:delete';
 export const describe = 'Delete all comments from the database.';
 
-export function builder(yargs: yargs.Argv) {
-  return yargs
+export function builder(args: yargs.Argv) {
+  return args
     .usage('Usage: node $0 comments:delete');
 }
 
