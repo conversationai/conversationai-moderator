@@ -21,19 +21,19 @@ const chaiHttp = require('chai-http');
 
 import { makeServer } from '@conversationai/moderator-backend-core';
 import { omit } from 'lodash';
-import {
-  ArticleSerializer,
-  CommentSerializer,
-  UserSerializer,
-} from '../../../api/util/serializers';
+
+import { fakeArticleModel, fakeCommentModel, fakeUserModel } from '@conversationai/moderator-frontend-web';
 
 import {
   createModelRouter,
   MockHandler,
   toIdentifier,
-} from '@conversationai/moderator-jsonapi';
-
-import { fakeArticleModel, fakeCommentModel, fakeUserModel } from '@conversationai/moderator-frontend-web';
+} from '../../../api/jsonapi';
+import {
+  ArticleSerializer,
+  CommentSerializer,
+  UserSerializer,
+} from '../../../api/util/serializers';
 
 const serverStuff = makeServer(true);
 const server: express.Application = serverStuff.app;

@@ -15,6 +15,9 @@ limitations under the License.
 */
 
 import { byType } from '@conversationai/moderator-backend-core';
+import * as Bluebird from 'bluebird';
+import { isObject, isString, uniq, uniqWith } from 'lodash';
+
 import {
   IFilters,
   IItemDetails,
@@ -26,9 +29,7 @@ import {
   IResourceIdentifier,
   IStatusError,
   Serializer,
-} from '@conversationai/moderator-jsonapi';
-import * as Bluebird from 'bluebird';
-import { isObject, isString, uniq, uniqWith } from 'lodash';
+} from '../jsonapi';
 import { byType as serializersClassesByType } from './serializers';
 
 const EXCLUDED_ATTRIBUTES_WITHOUT_EXTRA: Array<string> = [];

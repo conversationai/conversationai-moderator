@@ -22,8 +22,9 @@ import {
   ITopScores,
   TaggingSensitivity,
 } from '@conversationai/moderator-backend-core';
-import { IFields, IListDetails }from '@conversationai/moderator-jsonapi';
 import * as Bluebird from 'bluebird';
+
+import { IFields, IListDetails }from '../jsonapi';
 import { list } from './SequelizeHandler';
 
 export async function filterTopScoresByTaggingSensitivity(maxScores: ITopScores, tagId?: number, getComment?: (commentId: string) => Promise<ICommentInstance | null>): Promise<ITopScores> {

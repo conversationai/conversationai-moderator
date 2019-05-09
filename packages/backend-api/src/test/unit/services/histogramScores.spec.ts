@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { NotFoundError } from '@conversationai/moderator-jsonapi';
+import { NotFoundError } from '../../../api/jsonapi';
 
 import {
   Article,

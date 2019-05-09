@@ -20,7 +20,6 @@ import {
   logger,
   sequelize,
 } from '@conversationai/moderator-backend-core';
-import * as JSONAPI from '@conversationai/moderator-jsonapi';
 import * as express from 'express';
 import * as Joi from 'joi';
 
@@ -30,6 +29,7 @@ import {
   IProcessTagRevocationData,
 } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
+import * as JSONAPI from '../jsonapi';
 import { list } from '../util/SequelizeHandler';
 import {
   articleSchema,

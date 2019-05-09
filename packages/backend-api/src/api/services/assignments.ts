@@ -26,10 +26,10 @@ import {
   User,
   UserCategoryAssignment,
 } from '@conversationai/moderator-backend-core';
-import * as JSONAPI from '@conversationai/moderator-jsonapi';
 import * as express from 'express';
 
 import { REPLY_SUCCESS } from '../constants';
+import * as JSONAPI from '../jsonapi';
 import { list } from '../util/SequelizeHandler';
 
 export function createAssignmentsService(): express.Router {
