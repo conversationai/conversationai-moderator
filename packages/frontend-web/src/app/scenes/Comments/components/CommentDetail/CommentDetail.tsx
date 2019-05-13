@@ -31,6 +31,7 @@ import {
   ITaggingSensitivityModel,
   ITagModel,
   IUserModel,
+  ModelId,
 } from '../../../../../models';
 import {
   IConfirmationAction,
@@ -489,9 +490,9 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   }
 
   @autobind
-  handleAssignTagsSubmit(selectedTagIds: Set<string>) {
+  async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
-      this.props.tagCommentSummaryScore([this.props.comment.id], tagId);
+      this.props.tagCommentSummaryScore([commentId], tagId);
     });
     this.moderateComment('reject');
     this.setState({
@@ -566,9 +567,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     } else {
       batchURL = `/categories/${this.props.params.category}/new`;
     }
-
-    const tagIdsAboveThreshold = this.state.summaryScoresAboveThreshold ?
-      this.state.summaryScoresAboveThreshold.map((score) => score.tagId).toSet() : null;
 
     return (
       <div {...css({ height: '100%' })}>
@@ -800,7 +798,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
               </ul>
             </ToolTip>
           </Scrim>
-          {availableTags && taggingTooltipVisible && (
+          {taggingTooltipVisible && (
             <FocusTrap
               focusTrapOptions={{
                 clickOutsideDeactivates: true,
@@ -817,9 +815,8 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                 zIndex={TOOLTIP_Z_INDEX}
               >
                 <AssignTagsForm
-                  tags={availableTags}
+                  commentId={this.props.comment.id}
                   onSubmit={this.handleAssignTagsSubmit}
-                  tagsPreselected={tagIdsAboveThreshold}
                 />
               </ToolTip>
             </FocusTrap>

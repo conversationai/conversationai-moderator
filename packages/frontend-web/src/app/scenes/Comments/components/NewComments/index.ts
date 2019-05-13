@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Set } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { compose } from 'redux';
@@ -25,17 +24,12 @@ import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
 import { getComment } from '../../../../stores/comments';
 import {
-  getSummaryScoresById,
   loadCommentSummaryScores,
 } from '../../../../stores/commentSummaryScores';
 import { getPreselects } from '../../../../stores/preselects';
 import { getRules } from '../../../../stores/rules';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
-import {
-  getSummaryScoresAboveThreshold,
-  getTaggingSensitivitiesInCategory,
-} from '../../store';
 import {
   INewCommentsProps,
   NewComments as PureNewComments,
@@ -162,17 +156,6 @@ const mapStateToProps = createStructuredSelector({
   textSizes: getTextSizes,
 
   tags: getTaggableTags,
-
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: INewCommentsProps) => (id: string): Set<string> => {
-    if (!id) {
-      return;
-    }
-
-    return getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, params.categoryId, params.articleId),
-      getSummaryScoresById(state, id),
-    ).map((score) => score.tagId).toSet();
-  },
 
   selectedTag: (state: IAppStateRecord, { params }: INewCommentsProps) => {
     return getSelectedTag(state, params.tag);

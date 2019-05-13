@@ -32,10 +32,6 @@ export function getTags(state: IAppStateRecord): List<ITagModel> {
   return state.getIn(TAGS_DATA);
 }
 
-export function getTagsWithoutSummary(state: IAppStateRecord): List<ITagModel> {
-  return state.getIn(TAGS_DATA).filter((tag: ITagModel) => tag.key !== 'SUMMARY_SCORE');
-}
-
 export function getTaggableTags(state: IAppStateRecord): List<ITagModel> {
   return state.getIn(TAGS_DATA).filter((tag: ITagModel) => tag.isTaggable);
 }

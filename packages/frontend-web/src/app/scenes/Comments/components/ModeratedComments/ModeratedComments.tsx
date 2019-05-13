@@ -21,7 +21,13 @@ import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
 
-import { IArticleModel, ICommentModel, ITagModel, TagModel } from '../../../../../models';
+import {
+  IArticleModel,
+  ICommentModel,
+  ITagModel,
+  ModelId,
+  TagModel,
+} from '../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../types';
 import { ArticleControlIcon, AssignTagsForm, Scrim } from '../../../../components';
 import {
@@ -253,7 +259,6 @@ export interface IModeratedCommentsProps extends WithRouterProps {
     currentModeration: string,
   ): any;
   loadScoresForCommentId?(id: string): void;
-  getTagIdsAboveThresholdByCommentId?(commentId: string): Set<string>;
 }
 
 export interface IModeratedCommentsState {
@@ -367,7 +372,6 @@ export class ModeratedComments
       moderatedComments,
       getLinkTarget,
       textSizes,
-      getTagIdsAboveThresholdByCommentId,
     } = this.props;
 
     const {
@@ -588,7 +592,7 @@ export class ModeratedComments
             </ToastMessage>
           </FocusTrap>
         </Scrim>
-        {tags && taggingTooltipVisible && (
+        {taggingTooltipVisible && (
           <FocusTrap
             focusTrapOptions={{
               clickOutsideDeactivates: true,
@@ -605,9 +609,8 @@ export class ModeratedComments
               zIndex={TOOLTIP_Z_INDEX}
             >
               <AssignTagsForm
-                tags={tags}
+                commentId={taggingCommentId}
                 onSubmit={this.handleAssignTagsSubmit}
-                tagsPreselected={getTagIdsAboveThresholdByCommentId(taggingCommentId)}
               />
             </ToolTip>
           </FocusTrap>
@@ -771,11 +774,11 @@ export class ModeratedComments
   }
 
   @autobind
-  handleAssignTagsSubmit(selectedTagIds: Set<string>) {
+  async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
-      this.props.tagComments([this.state.taggingCommentId], tagId);
+      this.props.tagComments([commentId], tagId);
     });
-    this.dispatchConfirmedAction('reject', [this.state.taggingCommentId]);
+    this.dispatchConfirmedAction('reject', [commentId]);
     this.setState({
       taggingTooltipVisible: false,
       taggingCommentId: null,

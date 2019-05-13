@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Set } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
@@ -27,15 +26,10 @@ import {
   getCurrentColumnSort,
 } from '../../../../stores/columnSorts';
 import {
-  getSummaryScoresById,
   loadCommentSummaryScores,
 } from '../../../../stores/commentSummaryScores';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
-import {
-  getSummaryScoresAboveThreshold,
-  getTaggingSensitivitiesInCategory,
-} from '../../store';
 import { IModeratedCommentsProps, ModeratedComments as PureModeratedComments } from './ModeratedComments';
 import {
   executeCommentListLoader,
@@ -111,19 +105,6 @@ const mapStateToProps = createStructuredSelector({
   ),
 
   tags: getTaggableTags,
-
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: IModeratedCommentsProps) => (id: string): Set<string> => {
-    if (!id) {
-      return;
-    }
-
-    const scores = getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, params.categoryId, params.articleId),
-      getSummaryScoresById(state, id),
-    );
-
-    return scores && scores.map((score) => score.tagId).toSet();
-  },
 
   getCurrentColumnSort: (state: IAppStateRecord) => {
     return (key: string) => getCurrentColumnSort(state, 'commentsIndexModerated', key);
