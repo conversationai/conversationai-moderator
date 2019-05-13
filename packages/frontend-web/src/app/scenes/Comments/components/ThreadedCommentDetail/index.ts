@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List, Set } from 'immutable';
+import { List } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
+
 import { ICommentModel } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState, IAppStateRecord } from '../../../../stores';
@@ -39,9 +40,7 @@ import {
   rejectComment,
   resetComment,
 } from '../../../../stores/comments';
-import { getSummaryScoresById, loadCommentSummaryScores } from '../../../../stores/commentSummaryScores';
-import { getTaggableTags } from '../../../../stores/tags';
-import { getSummaryScoresAboveThreshold, getTaggingSensitivitiesInCategory } from '../../store';
+import { loadCommentSummaryScores } from '../../../../stores/commentSummaryScores';
 
 const updateCommentStateAction: {
   [key: string]: any;
@@ -75,7 +74,6 @@ type IThreadedCommentDetailOwnProps =  Pick<
 type IThreadedCommentDetailStateProps = Pick<
   IThreadedCommentDetailProps,
   'comment' |
-  'tags' |
   'isLoading' |
   'originatingCommentId'
   >;
@@ -123,19 +121,6 @@ const mapStateToProps = createStructuredSelector({
   isLoading: getIsLoading,
 
   originatingCommentId: (_: IAppStateRecord, { params }: IThreadedCommentDetailOwnProps) => params.originatingCommentId,
-
-  tags: (state: IAppStateRecord) => getTaggableTags(state),
-
-  getTagIdsAboveThresholdByCommentId: (state: IAppStateRecord, { params }: IThreadedCommentDetailOwnProps) => (id: string): Set<string> => {
-    if (!id || !getSummaryScoresById(state, id)) {
-      return;
-    }
-
-    return getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, params.categoryId, params.articleId),
-      getSummaryScoresById(state, id),
-    ).map((score) => score.tagId).toSet();
-  },
 }) as (state: IAppState, ownProps: IThreadedCommentDetailOwnProps) => IThreadedCommentDetailStateProps;
 
 function mapDispatchToProps(dispatch: IAppDispatch): any {

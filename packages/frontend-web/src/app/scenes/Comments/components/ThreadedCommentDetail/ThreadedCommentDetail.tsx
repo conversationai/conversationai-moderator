@@ -16,12 +16,12 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { List, Set } from 'immutable';
+import { Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
 
-import { ICommentModel, ITagModel } from '../../../../../models';
+import { ICommentModel, ModelId } from '../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../types';
 import {
   ArrowPosition,
@@ -101,10 +101,8 @@ export interface IThreadedCommentDetailProps extends WithRouterProps {
   onUpdateCommentState?(comment: ICommentModel, action: IConfirmationAction): any;
   loadData?(commentId: string): void;
   dispatchAction?(action: ICommentAction, idsToDispatch: Array<string>): any;
-  tags: List<ITagModel>;
   tagComments?(ids: Array<string>, tagId: string): any;
   loadScoresForCommentId?(id: string): void;
-  getTagIdsAboveThresholdByCommentId?(commentId: string): Set<string>;
 }
 
 export interface IThreadedCommentDetailState {
@@ -200,12 +198,12 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
   }
 
   @autobind
-  handleAssignTagsSubmit(selectedTagIds: Set<string>) {
+  async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
-      this.props.tagComments([this.state.taggingCommentId], tagId);
+      this.props.tagComments([commentId], tagId);
     });
-    this.props.dispatchAction('reject', [this.state.taggingCommentId]);
-    this.props.onUpdateReply('reject', this.state.taggingCommentId);
+    this.props.dispatchAction('reject', [commentId]);
+    this.props.onUpdateReply('reject', commentId);
     this.setState({
       taggingTooltipVisible: false,
       taggingCommentId: null,
@@ -255,8 +253,6 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
       updateCommentState,
       onUpdateReply,
       dispatchAction,
-      tags,
-      getTagIdsAboveThresholdByCommentId,
     } = this.props;
 
     const {
@@ -296,7 +292,7 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
           />
           }
         </div>
-          {tags && taggingTooltipVisible && (
+          {taggingTooltipVisible && (
             <FocusTrap
               key="assignTags"
               focusTrapOptions={{
@@ -314,9 +310,8 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
                 zIndex={TOOLTIP_Z_INDEX}
               >
                 <AssignTagsForm
-                  tags={tags}
+                  commentId={taggingCommentId}
                   onSubmit={this.handleAssignTagsSubmit}
-                  tagsPreselected={getTagIdsAboveThresholdByCommentId(taggingCommentId)}
                 />
               </ToolTip>
             </FocusTrap>

@@ -289,7 +289,6 @@ export interface INewCommentsProps extends WithRouterProps {
     sort: string,
   ): void;
   loadScoresForCommentId?(id: string): void;
-  getTagIdsAboveThresholdByCommentId?(commentId: string): Set<string>;
   confirmCommentSummaryScore?(id: string, tagId: string): void;
   rejectCommentSummaryScore?(id: string, tagId: string): void;
 }
@@ -506,24 +505,21 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   }
 
   @autobind
-  handleAssignTagsSubmit(selectedTagIds: Set<string>) {
+  async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>) {
     const {
       confirmCommentSummaryScore,
       rejectCommentSummaryScore,
-      getTagIdsAboveThresholdByCommentId,
     } = this.props;
-    const { taggingCommentId } = this.state;
 
     selectedTagIds.forEach((tagId) => {
-      confirmCommentSummaryScore(taggingCommentId, tagId);
+      confirmCommentSummaryScore(commentId, tagId);
     });
 
-    const rejectedTags = getTagIdsAboveThresholdByCommentId(taggingCommentId).subtract(selectedTagIds);
-    rejectedTags.forEach((tagId) => {
-      rejectCommentSummaryScore(taggingCommentId, tagId);
+    rejectedTagIds.forEach((tagId) => {
+      rejectCommentSummaryScore(commentId, tagId);
     });
 
-    this.dispatchConfirmedAction('reject', [taggingCommentId]);
+    this.dispatchConfirmedAction('reject', [commentId]);
     this.setState({
       taggingTooltipVisible: false,
       taggingCommentId: null,
@@ -588,7 +584,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       tags,
       selectedTag,
       isLoading,
-      getTagIdsAboveThresholdByCommentId,
     } = this.props;
 
     const {
@@ -926,7 +921,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
             </ToastMessage>
           </FocusTrap>
         </Scrim>
-        {tags && taggingTooltipVisible && (
+        {taggingTooltipVisible && (
           <ToolTip
             arrowPosition={taggingToolTipArrowPosition}
             backgroundColor={WHITE_COLOR}
@@ -943,8 +938,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               }}
             >
               <AssignTagsForm
-                tags={tags}
-                tagsPreselected={getTagIdsAboveThresholdByCommentId(taggingCommentId)}
+                commentId={taggingCommentId}
                 onSubmit={this.handleAssignTagsSubmit}
               />
             </FocusTrap>

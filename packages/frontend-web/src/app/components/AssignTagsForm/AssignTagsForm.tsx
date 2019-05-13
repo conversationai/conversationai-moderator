@@ -18,9 +18,9 @@ import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
 import React from 'react';
 
-import { ITagModel } from '../../../models';
+import { ITagModel, ModelId } from '../../../models';
 import { Button, CheckboxRow } from '../../components';
-import { maybeCallback, partial } from '../../util';
+import { partial } from '../../util';
 import { css, stylesheet } from '../../utilx';
 
 import {
@@ -29,6 +29,7 @@ import {
   MEDIUM_COLOR,
   WHITE_COLOR,
 } from '../../styles';
+import {WithRouterProps} from 'react-router';
 
 const STYLES = stylesheet({
   container: {
@@ -72,10 +73,11 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IAssignTagsFormProps {
+export interface IAssignTagsFormProps extends WithRouterProps {
+  commentId: ModelId;
   tags: List<ITagModel>;
-  onSubmit(selectedTagIds: Set<string>): any;
-  tagsPreselected?: Set<string>;
+  onSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
+  tagsPreselected?: Set<ModelId>;
 }
 
 export interface IAssignTagsFormState {
@@ -101,8 +103,14 @@ export class AssignTagsForm extends React.Component<IAssignTagsFormProps, IAssig
     }
   }
 
-  render() {
+  @autobind
+  onSubmit() {
+    const selectedTagIds = this.state.selectedTagIds;
+    const rejectedTagIds = this.props.tagsPreselected.subtract(selectedTagIds);
+    this.props.onSubmit(this.props.commentId, selectedTagIds, rejectedTagIds);
+  }
 
+  render() {
     const { tags } = this.props;
     const { selectedTagIds } = this.state;
 
@@ -123,7 +131,7 @@ export class AssignTagsForm extends React.Component<IAssignTagsFormProps, IAssig
           buttonStyles={STYLES.button}
           label="Reject Comment"
           disabled={selectedTagIds && selectedTagIds.size === 0}
-          onClick={partial(maybeCallback(this.props.onSubmit), selectedTagIds)}
+          onClick={this.onSubmit}
         />
       </div>
     );

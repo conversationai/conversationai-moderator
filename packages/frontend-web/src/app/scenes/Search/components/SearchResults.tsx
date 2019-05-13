@@ -22,7 +22,13 @@ import keyboardJS from 'keyboardjs';
 import React from 'react';
 
 import { ISearchScope } from '../';
-import { IArticleModel, ICommentModel, ITagModel, TagModel } from '../../../../models';
+import {
+  IArticleModel,
+  ICommentModel,
+  ITagModel,
+  ModelId,
+  TagModel,
+} from '../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../types';
 import {
   AddIcon,
@@ -208,7 +214,6 @@ export interface ISearchResultsProps {
   tagComments?(ids: Array<string>, tagId: string): any;
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
   loadScoresForCommentId?(id: string): void;
-  getTagIdsAboveThresholdByCommentId?(commentId: string): Set<string>;
   searchByAuthor?: boolean;
   searchByArticle?: boolean;
 }
@@ -538,11 +543,11 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   }
 
   @autobind
-  handleAssignTagsSubmit(selectedTagIds: Set<string>) {
+  async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
-      this.props.tagComments([this.state.taggingCommentId], tagId);
+      this.props.tagComments([commentId], tagId);
     });
-    this.dispatchConfirmedAction('reject', [this.state.taggingCommentId]);
+    this.dispatchConfirmedAction('reject', [commentId]);
     this.setState({
       taggingTooltipVisible: false,
       taggingCommentId: null,
@@ -763,7 +768,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
             </ToastMessage>
           </FocusTrap>
         </Scrim>
-          {tags && taggingTooltipVisible && (
+          {taggingTooltipVisible && (
             <FocusTrap
               focusTrapOptions={{
                 clickOutsideDeactivates: true,
@@ -780,7 +785,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
                 zIndex={TOOLTIP_Z_INDEX}
               >
                 <AssignTagsForm
-                  tags={tags}
+                  commentId={taggingCommentId}
                   onSubmit={this.handleAssignTagsSubmit}
                 />
               </ToolTip>
