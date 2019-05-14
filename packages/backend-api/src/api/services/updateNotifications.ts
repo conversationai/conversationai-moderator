@@ -58,6 +58,8 @@ const ARTICLE_FIELDS = [...COMMENTSET_FIELDS, 'title', 'url', 'categoryId', 'sou
 
 const ID_FIELDS = new Set(['categoryId', 'tagId', 'ownerId']);
 
+// TODO: Can't find a good way to get rid of the any types below.  And typing is generally a mess.
+//       Revisit when sequelize has been updated
 interface ISystemData {
   users: any;
   tags: any;
@@ -124,7 +126,10 @@ async function getSystemData() {
 }
 
 // Convert IDs to strings, and assignedModerators to arrays of strings.
-function serialiseObject(o: Sequelize.Instance<any>, fields: Array<string>): {[key: string]: {} | string | number} {
+function serialiseObject(
+  o: Sequelize.Instance<any>,
+  fields: Array<string>,
+): {[key: string]: {} | Array<string> | string | number} {
   const serialised = pick(o.toJSON(), fields);
 
   serialised.id = serialised.id.toString();
@@ -145,8 +150,6 @@ function serialiseObject(o: Sequelize.Instance<any>, fields: Array<string>): {[k
   return serialised;
 }
 
-// TODO: Can't find a good way to get rid of the any types below
-//       Revisit when sequelize has been updated
 async function getAllArticlesData() {
   const categories = await Category.findAll({
     where: {isActive: true},
@@ -190,7 +193,7 @@ async function getArticleUpdate(articleId: number) {
     {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
   );
 
-  const cData: any = serialiseObject(category, CATEGORY_FIELDS);
+  const cData = serialiseObject(category, CATEGORY_FIELDS);
 
   return {
     type: 'article-update',
