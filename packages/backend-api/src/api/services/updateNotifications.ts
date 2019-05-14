@@ -19,6 +19,7 @@ const SEND_TEST_UPDATE_PACKETS = false;
 
 import * as express from 'express';
 import { isEqual, pick } from 'lodash';
+import * as Sequelize from 'sequelize';
 import * as WebSocket from 'ws';
 
 import {
@@ -41,21 +42,21 @@ import {
 } from '@conversationai/moderator-backend-core';
 import { logger, registerInterest } from '@conversationai/moderator-backend-core';
 
-const tagFields = ['id', 'color', 'description', 'key', 'label', 'isInBatchView', 'inSummaryScore', 'isTaggable'];
-const rangeFields = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'tagId'];
-const taggingSensitivityFields = rangeFields;
-const ruleFields = ['action', 'createdBy', ...rangeFields];
-const preselectFields = rangeFields;
-const userFields = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
+const TAG_FIELDS = ['id', 'color', 'description', 'key', 'label', 'isInBatchView', 'inSummaryScore', 'isTaggable'];
+const RANGE_FIELDS = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'tagId'];
+const TAGGING_SENSITIVITY_FIELDS = RANGE_FIELDS;
+const RULE_FIELDS = ['action', 'createdBy', ...RANGE_FIELDS];
+const PRESELECT_FIELDS = RANGE_FIELDS;
+const USER_FIELDS = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
 
-const commonFields = ['id', 'updatedAt', 'allCount', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
+const COMMENTSET_FIELDS = ['id', 'updatedAt', 'allCount', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
   'approvedCount', 'highlightedCount', 'rejectedCount', 'deferredCount', 'flaggedCount',
   'batchedCount', 'recommendedCount', 'assignedModerators', ];
-const categoryFields = [...commonFields, 'label', 'ownerId'];
-const articleFields = [...commonFields, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
+const CATEGORY_FIELDS = [...COMMENTSET_FIELDS, 'label', 'ownerId'];
+const ARTICLE_FIELDS = [...COMMENTSET_FIELDS, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
   'isCommentingEnabled', 'isAutoModerated'];
 
-const idFields = new Set(['categoryId', 'tagId', 'ownerId']);
+const ID_FIELDS = new Set(['categoryId', 'tagId', 'ownerId']);
 
 interface ISystemData {
   users: any;
@@ -87,27 +88,27 @@ interface IMessage {
 async function getSystemData() {
   const users = await User.findAll({where: {group: ['admin', 'general']}});
   const userdata = users.map((u: IUserInstance) => {
-    return serialiseObject(u, userFields);
+    return serialiseObject(u, USER_FIELDS);
   });
 
   const tags = await Tag.findAll({});
   const tagdata = tags.map((t: ITagInstance) => {
-    return serialiseObject(t, tagFields);
+    return serialiseObject(t, TAG_FIELDS);
   });
 
   const taggingSensitivities = await TaggingSensitivity.findAll({});
   const tsdata = taggingSensitivities.map((t: ITaggingSensitivityInstance) => {
-    return serialiseObject(t, taggingSensitivityFields);
+    return serialiseObject(t, TAGGING_SENSITIVITY_FIELDS);
   });
 
   const rules = await ModerationRule.findAll({});
   const ruledata = rules.map((r: IModerationRuleInstance) => {
-    return serialiseObject(r, ruleFields);
+    return serialiseObject(r, RULE_FIELDS);
   });
 
   const preselects = await Preselect.findAll({});
   const preselectdata = preselects.map((p: IPreselectInstance) => {
-    return serialiseObject(p, preselectFields);
+    return serialiseObject(p, PRESELECT_FIELDS);
   });
 
   return {
@@ -123,7 +124,7 @@ async function getSystemData() {
 }
 
 // Convert IDs to strings, and assignedModerators to arrays of strings.
-function serialiseObject(o: any, fields: Array<string>): {[key: string]: any} {
+function serialiseObject(o: Sequelize.Instance<any>, fields: Array<string>): {[key: string]: {} | string | number} {
   const serialised = pick(o.toJSON(), fields);
 
   serialised.id = serialised.id.toString();
@@ -131,7 +132,7 @@ function serialiseObject(o: any, fields: Array<string>): {[key: string]: any} {
   for (const k in serialised) {
     const v = serialised[k];
 
-    if (idFields.has(k) && v) {
+    if (ID_FIELDS.has(k) && v) {
       serialised[k] = v.toString();
     }
   }
@@ -154,7 +155,7 @@ async function getAllArticlesData() {
   const categoryIds: Array<number> = [];
   const categorydata = categories.map((c: ICategoryInstance) => {
     categoryIds.push(c.id);
-    return serialiseObject(c, categoryFields);
+    return serialiseObject(c, CATEGORY_FIELDS);
   });
 
   const articles = await Article.findAll({
@@ -162,7 +163,7 @@ async function getAllArticlesData() {
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
   const articledata = articles.map((a: IArticleInstance) => {
-    return serialiseObject(a, articleFields);
+    return serialiseObject(a, ARTICLE_FIELDS);
   });
 
   return {
@@ -182,13 +183,14 @@ async function getArticleUpdate(articleId: number) {
   if (!article) {
     return null;
   }
-  const aData = serialiseObject(article, articleFields);
+  const aData = serialiseObject(article, ARTICLE_FIELDS);
 
   const category = await Category.findById(
-    aData.categoryId,
+    await article.get('categoryId'),
     {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
   );
-  const cData: any = serialiseObject(category, categoryFields);
+
+  const cData: any = serialiseObject(category, CATEGORY_FIELDS);
 
   return {
     type: 'article-update',

@@ -15,7 +15,9 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+
 import { sequelize } from '../sequelize';
+import { ICategoryInstance } from './category';
 import { updateHappened } from './last_update';
 import { IUserInstance } from './user';
 
@@ -50,6 +52,7 @@ export interface IArticleInstance
   createdAt: string;
   updatedAt: string;
 
+  getCategory: Sequelize.BelongsToGetAssociationMixin<ICategoryInstance>;
   getAssignedModerators: Sequelize.BelongsToManyGetAssociationsMixin<IUserInstance>;
   countAssignedModerators: Sequelize.BelongsToManyCountAssociationsMixin;
 }
