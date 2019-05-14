@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,6 +15,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/**
+ * Entrypoint for the osmod commandline tool.
+ *
+ * Provides commandline access to various features, including
+ *  - managing users
+ *  - inventing comments for test purposes
+ *  - managing comments
+ *
+ *  For a full list of available commands, run `osmod.js --help`
+ */
 
 'use strict';
 
