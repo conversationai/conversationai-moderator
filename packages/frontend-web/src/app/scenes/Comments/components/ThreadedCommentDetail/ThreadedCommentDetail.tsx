@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import FocusTrap from 'focus-trap-react';
 import { Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
@@ -24,10 +23,7 @@ import { WithRouterProps } from 'react-router';
 import { ICommentModel, ModelId } from '../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../types';
 import {
-  ArrowPosition,
-  AssignTagsForm,
   RejectIcon,
-  ToolTip,
 } from '../../../../components';
 import { REQUIRE_REASON_TO_REJECT } from '../../../../config';
 import {
@@ -38,7 +34,6 @@ import {
   GUTTER_DEFAULT_SPACING,
   MEDIUM_COLOR,
   SCRIM_Z_INDEX,
-  TOOLTIP_Z_INDEX,
   WHITE_COLOR,
 } from '../../../../styles';
 import { css, stylesheet } from '../../../../utilx';
@@ -112,11 +107,6 @@ export interface IThreadedCommentDetailState {
     top: number;
     left: number;
   };
-  taggingToolTipArrowPosition?: ArrowPosition;
-  selectedRow?: number;
-  taggingTooltipVisible?: boolean;
-  taggingCommentId?: string;
-  moderateButtonsRef?: HTMLDivElement;
 }
 
 export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetailProps, IThreadedCommentDetailState> {
@@ -127,10 +117,6 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
       top: 0,
       left: 0,
     },
-    taggingToolTipArrowPosition: null,
-    taggingTooltipVisible: false,
-    taggingCommentId: null,
-    moderateButtonsRef: null,
   };
 
   static getDerivedStateFromProps(nextProps: IThreadedCommentDetailProps, prevState: IThreadedCommentDetailState) {
@@ -153,7 +139,6 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
   @autobind
   onPressEscape() {
     this.setState({
-      taggingTooltipVisible: false,
       isTaggingToolTipMetaVisible: false,
     });
   }
@@ -164,87 +149,12 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
   }
 
   @autobind
-  onTaggingTooltipClose() {
-    this.setState({ taggingTooltipVisible: false });
-  }
-
-  @autobind
-  async handleRejectWithTag(
-    commentId: string,
-    tooltipRef: HTMLDivElement,
-  ) {
-    // we need to load the comment data so we can asses all the scores
-    await this.props.loadScoresForCommentId(commentId);
-    const tooltipPosition = this.getModerateButtonsPosition(tooltipRef);
-    let arrowPosition: ArrowPosition;
-    const top = tooltipPosition.top;
-    // unfortunate use of magic numbers to work on minimum screen height of 768 for ipad
-
-    if (top > window.innerHeight - 280) {
-      arrowPosition = 'leftBottom';
-    } else if (top < window.innerHeight - 490) {
-      arrowPosition = 'leftTop';
-    } else {
-      arrowPosition = 'leftCenter';
-    }
-
-    this.setState({
-      taggingCommentId: commentId,
-      taggingToolTipMetaPosition: tooltipPosition,
-      taggingTooltipVisible: true,
-      taggingToolTipArrowPosition: arrowPosition,
-      moderateButtonsRef: tooltipRef,
-    });
-  }
-
-  @autobind
   async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
       this.props.tagComments([commentId], tagId);
     });
     this.props.dispatchAction('reject', [commentId]);
     this.props.onUpdateReply('reject', commentId);
-    this.setState({
-      taggingTooltipVisible: false,
-      taggingCommentId: null,
-    });
-  }
-
-  @autobind
-  handleScroll() {
-    if (!this.state.moderateButtonsRef) {
-      return true;
-    }
-    const buttonPosition = this.getModerateButtonsPosition(this.state.moderateButtonsRef);
-    if (buttonPosition.top <= HEADER_HEIGHT) {
-      this.setState({
-        taggingTooltipVisible: false,
-      });
-
-      return true;
-    }
-    this.setState({
-      taggingToolTipMetaPosition: buttonPosition,
-    });
-
-    return true;
-  }
-
-  @autobind
-  getModerateButtonsPosition(ref: HTMLDivElement): {
-    top: number;
-    left: number;
-  } {
-    if (!ref) {
-      return;
-    }
-
-    const rect = ref.getBoundingClientRect();
-
-    return {
-      top: rect.top + (rect.height / 2),
-      left: rect.left + (rect.width / 2) - 10,
-    };
   }
 
   render() {
@@ -254,13 +164,6 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
       onUpdateReply,
       dispatchAction,
     } = this.props;
-
-    const {
-      taggingCommentId,
-      taggingTooltipVisible,
-      taggingToolTipArrowPosition,
-      taggingToolTipMetaPosition,
-    } = this.state;
 
     return (
       <div>
@@ -275,47 +178,19 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
             <RejectIcon {...css({ fill: DARK_COLOR })} />
           </button>
         </div>
-        <div key="comments" {...css(STYLES.body)} onScroll={this.handleScroll}>
+        <div key="comments" {...css(STYLES.body)}>
           {comment &&
           <ThreadedComment
-            onRejectWithTag={this.handleRejectWithTag}
-            tagRejectionModalVisible={{
-              id: taggingCommentId,
-              isVisible: taggingTooltipVisible,
-            }}
             requireReasonForReject={REQUIRE_REASON_TO_REJECT}
             updateCommentState={updateCommentState}
             onUpdateReply={onUpdateReply}
             dispatchAction={dispatchAction}
             comment={comment}
+            handleAssignTagsSubmit={this.handleAssignTagsSubmit}
             replies={comment.replies}
           />
           }
         </div>
-          {taggingTooltipVisible && (
-            <FocusTrap
-              key="assignTags"
-              focusTrapOptions={{
-                clickOutsideDeactivates: true,
-              }}
-            >
-              <ToolTip
-                arrowPosition={taggingToolTipArrowPosition}
-                backgroundColor={WHITE_COLOR}
-                hasDropShadow
-                isVisible={taggingTooltipVisible}
-                onDeactivate={this.onTaggingTooltipClose}
-                position={taggingToolTipMetaPosition}
-                size={16}
-                zIndex={TOOLTIP_Z_INDEX}
-              >
-                <AssignTagsForm
-                  commentId={taggingCommentId}
-                  onSubmit={this.handleAssignTagsSubmit}
-                />
-              </ToolTip>
-            </FocusTrap>
-          )}
       </div>
     );
   }

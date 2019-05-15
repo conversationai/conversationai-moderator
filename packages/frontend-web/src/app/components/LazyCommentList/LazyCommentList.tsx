@@ -16,11 +16,11 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import { Cell, Column, Table } from 'fixed-data-table-2';
-import { List } from 'immutable';
+import {List, Set} from 'immutable';
 import { clamp } from 'lodash';
 import React from 'react';
 
-import { ICommentModel, ITagModel } from '../../../models';
+import {ICommentModel, ITagModel, ModelId} from '../../../models';
 import { IConfirmationAction } from '../../../types';
 import { partial } from '../../util';
 import { css, stylesheet } from '../../utilx';
@@ -222,7 +222,6 @@ export interface ILazyCommentListProps {
   isItemChecked(id: string): boolean;
   selectedSort?: string;
   sortOptions?: List<ITagModel>;
-  tags: List<ITagModel>;
   onSelectionChange?(commentId: string): void;
   onSortChange?(e: React.ChangeEvent<any>): any;
   getLinkTarget?(comment: ICommentModel): string;
@@ -238,33 +237,22 @@ export interface ILazyCommentListProps {
   getInitialRowCount?(): number;
   ownerHeight?: number;
   searchTerm?: string;
-  onRejectWithTag?(
-    commentId: string,
-    tooltipRef: HTMLDivElement,
-  ): void;
-  tagRejectionModalVisible?: {
-    id: string;
-    isVisible: boolean;
-  };
   requireReasonForReject?: boolean;
-  taggingTooltipVisible?: boolean;
+  handleAssignTagsSubmit?(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
   displayArticleTitle?: boolean;
   selectedTag?: ITagModel;
   onTableScroll?(): any;
 }
 
 export interface ILazyCommentListState {
-  hoveredRowIndex?: number;
-  hoveredRowThresholdPassed?: boolean;
   tableWidth?: number;
   tableHeight?: number;
   smallerViewport?: boolean;
 }
 
-export class BaseLazyCommentList extends React.PureComponent<ILazyCommentListProps, ILazyCommentListState> {
+export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, ILazyCommentListState> {
 
   state: ILazyCommentListState = {
-    hoveredRowIndex: null,
     tableWidth: window.innerWidth,
     tableHeight: window.innerHeight - this.props.heightOffset,
     smallerViewport:  window.innerWidth < 1200,
@@ -287,34 +275,6 @@ export class BaseLazyCommentList extends React.PureComponent<ILazyCommentListPro
         tableHeight: window.innerHeight - this.props.heightOffset,
         smallerViewport: windowWidth < 1200,
       });
-    });
-  }
-
-  @autobind
-  handleRowMouseEnter(_: any, rowIndex: number): void {
-    if (this.props.taggingTooltipVisible) {
-      return;
-    }
-    this.setState({
-      hoveredRowIndex: rowIndex,
-    });
-    setTimeout(() => {
-      if (this.state.hoveredRowIndex === rowIndex) {
-        this.setState({
-          hoveredRowThresholdPassed: true,
-        });
-      }
-    }, 180);
-  }
-
-  @autobind
-  handleRowMouseLeave(): void {
-    if (this.props.taggingTooltipVisible) {
-      return;
-    }
-    this.setState({
-      hoveredRowIndex: null,
-      hoveredRowThresholdPassed: false,
     });
   }
 
@@ -359,27 +319,19 @@ export class BaseLazyCommentList extends React.PureComponent<ILazyCommentListPro
       commentPropsForRow,
       updateCounter,
       dispatchConfirmedAction,
-      tags,
-      onRejectWithTag,
       requireReasonForReject,
-      tagRejectionModalVisible,
     } = this.props;
 
     return (
       <Cell width={cellProps.width} height={cellProps.height}>
         <LazyLoadComment
-          tags={tags}
           loadingPlaceholder={<div {...css(ROW_STYLES.comment)}>...</div>}
           onRowRender={onRowRender}
           commentPropsForRow={commentPropsForRow}
           updateCounter={updateCounter}
           dispatchConfirmedAction={dispatchConfirmedAction}
-          hoveredRowIndex={this.state.hoveredRowIndex}
-          hoveredRowThresholdPassed={this.state.hoveredRowThresholdPassed}
           rowIndex={cellProps.rowIndex}
           requireReasonForReject={requireReasonForReject}
-          onRejectWithTag={onRejectWithTag}
-          tagRejectionModalVisible={tagRejectionModalVisible}
         >
           {bodyContent}
         </LazyLoadComment>
@@ -431,8 +383,8 @@ export class BaseLazyCommentList extends React.PureComponent<ILazyCommentListPro
       searchTerm,
       displayArticleTitle,
       scrollToRow,
-      tags,
       onTableScroll,
+      handleAssignTagsSubmit,
     } = this.props;
 
     const {
@@ -479,18 +431,25 @@ export class BaseLazyCommentList extends React.PureComponent<ILazyCommentListPro
     } else if (boundLinkTarget) {
       bodyContent = (
         <LinkedBasicBody
-          tags={tags}
           searchTerm={searchTerm}
           getLinkTarget={boundLinkTarget}
           onCommentClick={onCommentClick}
           hideCommentAction={hideCommentAction}
           topScore={null}
           comment={null}
+          handleAssignTagsSubmit={handleAssignTagsSubmit}
           displayArticleTitle={displayArticleTitle}
         />
       );
     } else {
-      bodyContent = (<BasicBody topScore={null} comment={null} hideCommentAction={hideCommentAction} />);
+      bodyContent = (
+        <BasicBody
+          topScore={null}
+          comment={null}
+          hideCommentAction={hideCommentAction}
+          handleAssignTagsSubmit={handleAssignTagsSubmit}
+        />
+      );
     }
 
     const bodyColumnHeader = () => (
@@ -555,8 +514,6 @@ export class BaseLazyCommentList extends React.PureComponent<ILazyCommentListPro
     return (
       <div className="comment-list">
         <Table
-          onRowMouseEnter={this.handleRowMouseEnter}
-          onRowMouseLeave={this.handleRowMouseLeave}
           scrollToRow={scrollToRow && (scrollToRow + 1)}
           onVerticalScroll={onTableScroll}
           headerHeight={COMMENT_HEADER_HEIGHT}
@@ -577,5 +534,3 @@ export class BaseLazyCommentList extends React.PureComponent<ILazyCommentListPro
   }
 
 }
-
-export const LazyCommentList = BaseLazyCommentList;

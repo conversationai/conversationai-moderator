@@ -22,6 +22,8 @@ import { fakeCommentModel } from '../../../../../../../models/fake';
 import { css } from '../../../../../../utilx';
 import { ThreadedComment } from './ThreadedComment';
 
+async function doNothing() {/**/}
+
 const author = AuthorModelRecord({
   email: 'name@email.com',
   location: 'NYC',
@@ -116,6 +118,7 @@ storiesOf('ThreadedComment', module)
           <ThreadedComment
             comment={comment}
             replies={replies}
+            handleAssignTagsSubmit={doNothing}
           />
         </div>
       </div>

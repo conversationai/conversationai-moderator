@@ -45,6 +45,7 @@ const comment = fakeCommentModel({
 
 const returnEmpty = () => '';
 const returnFalse = () => false;
+async function doNothing() {/**/}
 
 storiesOf('CommentBody', module)
   .add('Basic', () => {
@@ -53,6 +54,7 @@ storiesOf('CommentBody', module)
         <BasicBody
           comment={comment}
           dispatchConfirmedAction={returnFalse}
+          handleAssignTagsSubmit={doNothing}
         />
       </div>
     );
@@ -64,6 +66,7 @@ storiesOf('CommentBody', module)
           getLinkTarget={returnEmpty}
           comment={comment}
           dispatchConfirmedAction={returnFalse}
+          handleAssignTagsSubmit={doNothing}
         />
       </div>
     );
@@ -75,6 +78,7 @@ storiesOf('CommentBody', module)
           hideCommentAction
           comment={comment}
           dispatchConfirmedAction={returnFalse}
+          handleAssignTagsSubmit={doNothing}
         />
       </div>
     );

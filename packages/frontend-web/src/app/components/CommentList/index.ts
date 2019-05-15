@@ -70,7 +70,6 @@ export type ICommentListOwnPropNames =
   'onSelectAllChange' |
   'isItemChecked' |
   'sortOptions' |
-  'tags' |
   'onSelectionChange' |
   'onSortChange' |
   'showAllComments' |
@@ -86,10 +85,8 @@ export type ICommentListOwnPropNames =
   'heightOffset' |
   'dispatchConfirmedAction' |
   'displayArticleTitle' |
-  'onRejectWithTag' |
-  'tagRejectionModalVisible' |
-  'taggingTooltipVisible' |
   'requireReasonForReject' |
+  'handleAssignTagsSubmit' |
   'onTableScroll' |
   'searchTerm';
 
