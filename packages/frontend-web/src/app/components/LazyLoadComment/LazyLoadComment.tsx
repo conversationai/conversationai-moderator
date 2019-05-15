@@ -38,6 +38,7 @@ import {
   DARK_COLOR,
   MEDIUM_COLOR,
 } from '../../styles';
+import { COMMON_STYLES } from '../../stylesx';
 import { maybeCallback, partial } from '../../util';
 import { css } from '../../utilx';
 import {
@@ -49,7 +50,7 @@ import {
 import {
   ROW_STYLES,
 } from '../LazyCommentList';
-import { COMMON_STYLES } from '../../stylesx';
+
 const LAZY_BOX_STYLE = {
   width: '100%',
   height: '100%',
@@ -447,12 +448,6 @@ export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> 
       </div>
     );
   }
-}
-
-export interface ILazyComment {
-  id: string;
-  hasLoaded: boolean;
-  model: ICommentModel;
 }
 
 export interface ICommentProps {

@@ -211,12 +211,6 @@ export const ROW_STYLES = stylesheet({
 
 const SELECT_ALL_ID = 'select-all-checkbox';
 
-export interface ILazyComment {
-  id: string;
-  hasLoaded: boolean;
-  model: ICommentModel;
-}
-
 export interface ILazyCommentListProps {
   width: number;
   heightOffset: number;

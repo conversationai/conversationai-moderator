@@ -164,6 +164,11 @@ export class ArticleControlIcon extends React.Component<IArticleControlIconProps
   anchorElement: any;
 
   @autobind
+  setAnchorElement(node: any) {
+    this.anchorElement = node;
+  }
+
+  @autobind
   setOpen() {
     const {article, open, clearPopups, openControls} = this.props;
     if (open) {
@@ -182,9 +187,7 @@ export class ArticleControlIcon extends React.Component<IArticleControlIconProps
         <div
           key="icon"
           {...css(open || whiteBackground ? ICON_STYLES.iconBackgroundCircle : big)}
-          ref={(node) => {
-            this.anchorElement = node;
-          }}
+          ref={this.setAnchorElement}
         >
           <div onClick={this.setOpen} {...css(ICON_STYLES.iconCenter)}>
             <ControlFlag isCommentingEnabled={article.isCommentingEnabled} isAutoModerated={article.isAutoModerated}/>
