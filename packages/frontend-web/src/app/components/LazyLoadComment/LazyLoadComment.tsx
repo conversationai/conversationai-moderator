@@ -16,10 +16,11 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
-import { List } from 'immutable';
+import { List, Set } from 'immutable';
 import React from 'react';
 const Linkify = require('react-linkify').default;
-import { ICommentModel, ITagModel } from '../../../models';
+
+import { ICommentModel, ModelId } from '../../../models';
 import {
   IConfirmationAction,
   IModerationAction,
@@ -70,41 +71,34 @@ export interface IBasicBodyProps {
   onCommentClick?(commentId: string): any;
   searchTerm?: string;
   displayArticleTitle?: boolean;
-  tags?: List<ITagModel>;
-  onRejectWithTag?(
-    commentId: string,
-    tooltipRef: HTMLDivElement,
-  ): void;
   requireReasonForReject?: boolean;
-  tagRejectionModalVisible?: {
-    id: string;
-    isVisible: boolean;
-  };
+  handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
 export interface IBasicBodyState {
-  actionsAreVisible?: boolean;
+  hover: boolean;
+  popupOpen: boolean;
 }
 
 export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodyState> {
-
-  state: IBasicBodyState = {
-    actionsAreVisible: this.props.showActions,
+  state = {
+    hover: false,
+    popupOpen: false,
   };
 
-  moderateButtonsRef: any = null;
+  @autobind
+  popupOpen(isOpen: boolean) {
+    this.setState({popupOpen: isOpen});
+  }
 
-  componentDidUpdate(nextProps: ILinkedBasicBodyProps) {
-    if (this.props.showActions !== nextProps.showActions) {
-      const {
-        comment,
-        tagRejectionModalVisible,
-      } = this.props;
-      const shouldShowActions = tagRejectionModalVisible && tagRejectionModalVisible.id === comment.id && tagRejectionModalVisible.isVisible;
-      this.setState({
-        actionsAreVisible: shouldShowActions || !nextProps.showActions,
-      });
-    }
+  @autobind
+  mouseEnter() {
+    this.setState({hover: true});
+  }
+
+  @autobind
+  mouseLeave() {
+    this.setState({hover: false});
   }
 
   @autobind
@@ -112,21 +106,12 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
     this.props.dispatchConfirmedAction(action, [comment.id], shouldTriggerToast);
   }
 
-  @autobind
-  toggleActionsVisible() {
-    this.setState({
-      actionsAreVisible: !this.state.actionsAreVisible,
-    });
-  }
-
   getActiveButtons(): List<IModerationAction> {
-    const { comment, tagRejectionModalVisible } = this.props;
-    const shouldDisplayReject = tagRejectionModalVisible && tagRejectionModalVisible.id === comment.id && tagRejectionModalVisible.isVisible;
-
+    const { comment } = this.props;
     const activeCommentStates = [];
 
     if (comment.isAccepted === true) { activeCommentStates.push('approve'); }
-    if (comment.isAccepted === false || shouldDisplayReject) { activeCommentStates.push('reject'); }
+    if (comment.isAccepted === false || this.state.popupOpen) { activeCommentStates.push('reject'); }
     if (comment.isHighlighted) { activeCommentStates.push('highlight'); }
     if (comment.isDeferred) { activeCommentStates.push('defer'); }
 
@@ -158,36 +143,6 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
     );
   }
 
-  @autobind
-  saveModerateButtonsRef(ref: HTMLElement) {
-    this.moderateButtonsRef = ref;
-  }
-
-  @autobind
-  getModerateButtonsPosition(ref: any): {
-    top: number;
-    left: number;
-  } {
-    if (!ref) {
-      return;
-    }
-
-    const rect = ref.getBoundingClientRect();
-
-    return {
-      top: rect.top + (rect.height / 2),
-      left: rect.left + (rect.width / 2) - 10,
-    };
-  }
-
-  @autobind
-  handleRejectWithTag() {
-    this.props.onRejectWithTag(
-      this.props.comment.id,
-      this.moderateButtonsRef,
-    );
-  }
-
   render() {
     const {
       comment,
@@ -197,10 +152,10 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
       onCommentClick,
       displayArticleTitle,
       requireReasonForReject,
+      handleAssignTagsSubmit,
     } = this.props;
 
-    const { actionsAreVisible } = this.state;
-
+    const actionsAreVisible = this.state.hover || this.state.popupOpen;
     const activeButtons = this.getActiveButtons();
 
     let currentIndex = 0;
@@ -244,7 +199,11 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
     }
 
     return(
-      <div {...css(ROW_STYLES.comment, {flex: 1})}>
+      <div
+        onMouseEnter={this.mouseEnter}
+        onMouseLeave={this.mouseLeave}
+        {...css(ROW_STYLES.comment, {flex: 1})}
+      >
         {displayArticleTitle && (
           <div key="title">
             <Link
@@ -305,16 +264,17 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
             <div
               key="actions"
               {...css({ marginRight: '10px' })}
-              ref={this.saveModerateButtonsRef}
             >
               <ModerateButtons
-                requireReasonForReject={requireReasonForReject}
                 activeButtons={activeButtons}
                 darkOnLight
                 hideLabel
                 containerSize={36}
                 onClick={this.onClickModerateActions}
-                onRejectWithTag={this.handleRejectWithTag}
+                requireReasonForReject={requireReasonForReject}
+                comment={comment}
+                handleAssignTagsSubmit={handleAssignTagsSubmit}
+                popupOpen={this.popupOpen}
               />
             </div>
             ) : (
@@ -361,7 +321,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                 </div>
               )}
               { !hideCommentAction && (
-                <button key="moreactons" {...css(ROW_STYLES.actionToggle)} onClick={this.toggleActionsVisible} type="button">
+                <button key="moreactons" {...css(ROW_STYLES.actionToggle)} type="button">
                   <MoreVerticalIcon size={20} />
                 </button>
               )}
@@ -397,16 +357,8 @@ export interface ILinkedBasicBodyProps extends IBasicBodyProps {
   dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>, shouldTriggerToast?: boolean): any;
   searchTerm?: string;
   displayArticleTitle?: boolean;
-  tags?: List<ITagModel>;
-  onRejectWithTag?(
-    commentId: string,
-    tooltipRef: HTMLDivElement,
-  ): void;
   requireReasonForReject?: boolean;
-  tagRejectionModalVisible?: {
-    id: string;
-    isVisible: boolean;
-  };
+  handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
 export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> {
@@ -422,16 +374,13 @@ export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> 
       dispatchConfirmedAction,
       searchTerm,
       displayArticleTitle,
-      tags,
-      onRejectWithTag,
       requireReasonForReject,
-      tagRejectionModalVisible,
+      handleAssignTagsSubmit,
     } = this.props;
 
     return (
       <div key={`${comment.id}`}>
         <BasicBody
-          tags={tags}
           searchTerm={searchTerm}
           commentLinkTarget={getLinkTarget(comment)}
           onCommentClick={onCommentClick}
@@ -441,9 +390,8 @@ export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> 
           showActions={showActions}
           dispatchConfirmedAction={dispatchConfirmedAction}
           displayArticleTitle={displayArticleTitle}
-          onRejectWithTag={onRejectWithTag}
           requireReasonForReject={requireReasonForReject}
-          tagRejectionModalVisible={tagRejectionModalVisible}
+          handleAssignTagsSubmit={handleAssignTagsSubmit}
         />
       </div>
     );
@@ -465,18 +413,7 @@ export interface ILazyLoadCommentProps extends React.HTMLProps<any> {
   commentPropsForRow: ICommentPropsForRow;
   updateCounter?: number;
   dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>, shouldTriggerToast?: boolean): any;
-  hoveredRowIndex?: number;
-  hoveredRowThresholdPassed?: boolean;
-  tags?: List<ITagModel>;
-  onRejectWithTag?(
-    commentId: string,
-    tooltipRef: HTMLDivElement,
-  ): void;
   requireReasonForReject?: boolean;
-  tagRejectionModalVisible?: {
-    id: string;
-    isVisible: boolean;
-  };
 }
 
 export interface ILazyLoadCommentState {
@@ -497,16 +434,11 @@ export class LazyLoadComment
       rowIndex,
       children,
       loadingPlaceholder,
-      hoveredRowIndex,
-      hoveredRowThresholdPassed,
       dispatchConfirmedAction,
-      onRejectWithTag,
       requireReasonForReject,
-      tagRejectionModalVisible,
     } = this.props;
 
     const props = commentPropsForRow(rowIndex);
-    const showActions = hoveredRowThresholdPassed ? (rowIndex === hoveredRowIndex) : false;
 
     if (props && this.state.hasLoaded) {
       return (
@@ -517,12 +449,10 @@ export class LazyLoadComment
               React.cloneElement(child, {
                 ...child.props,
                 ...props,
-                showActions,
+                showActions: true,
                 dispatchConfirmedAction,
                 rowIndex,
-                onRejectWithTag,
                 requireReasonForReject,
-                tagRejectionModalVisible,
               })
             ),
           )}

@@ -15,8 +15,15 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import { List } from 'immutable';
+import { List, Set } from 'immutable';
+import keyboardJS from 'keyboardjs';
 import React from 'react';
+
+import {
+  Popper,
+} from '@material-ui/core';
+
+import { ICommentModel, ModelId } from '../../../models';
 import { IModerationAction } from '../../../types';
 import {
   GUTTER_DEFAULT_SPACING,
@@ -25,9 +32,9 @@ import {
 } from '../../styles';
 import { maybeCallback, partial } from '../../util';
 import { css, stylesheet } from '../../utilx';
+import { AssignTagsForm } from '../AssignTagsForm';
 import { CommentActionButton } from '../CommentActionButton';
 import { ConfirmationCircle } from '../ConfirmationCircle';
-
 import {
   ApproveIcon,
   DeferIcon,
@@ -89,26 +96,57 @@ export interface IModerateButtonsProps {
   activeButtons?: List<IModerationAction>;
   disabled?: boolean;
   requireReasonForReject?: boolean;
-  onRejectWithTag?(): any;
+  handleAssignTagsSubmit?(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
+  comment?: ICommentModel;
+  popupOpen?(isOpen: boolean): void;
+}
+
+interface IModerateButtonsState {
+  rejectChooseTags: boolean;
 }
 
 export class ModerateButtons
-  extends React.PureComponent<IModerateButtonsProps> {
+  extends React.PureComponent<IModerateButtonsProps, IModerateButtonsState> {
+  constructor(props: Readonly<IModerateButtonsProps>) {
+    super(props);
+    this.state = {
+      rejectChooseTags: false,
+    };
+  }
+
+  componentWillMount() {
+    keyboardJS.bind('escape', this.clearPopups);
+  }
+
+  componentWillUnmount() {
+    keyboardJS.unbind('escape', this.clearPopups);
+  }
+
+  rejectButtonAnchor: any;
+  @autobind
+  setRejectButtonAnchor(node: any) {
+    this.rejectButtonAnchor = node;
+  }
 
   @autobind
   handleReject() {
     const {
-      requireReasonForReject,
-      onRejectWithTag,
       onClick,
+      requireReasonForReject,
     } = this.props;
     if (requireReasonForReject) {
-      onRejectWithTag();
-
+      this.setState({rejectChooseTags: true});
+      this.props.popupOpen(true);
       return;
     }
 
     onClick('reject');
+  }
+
+  @autobind
+  clearPopups() {
+    this.setState({rejectChooseTags: false});
+    this.props.popupOpen(false);
   }
 
   render() {
@@ -120,6 +158,9 @@ export class ModerateButtons
       activeButtons,
       disabled,
       onClick,
+      requireReasonForReject,
+      handleAssignTagsSubmit,
+      comment,
     } = this.props;
 
     const ICON_COLOR = (vertical || darkOnLight) ? MEDIUM_COLOR : LIGHT_PRIMARY_TEXT_COLOR;
@@ -163,35 +204,57 @@ export class ModerateButtons
           onClick={partial(maybeCallback(onClick), 'approve')}
         />
 
-        <CommentActionButton
-          label="Reject"
-          isActive={activeButtons && activeButtons.includes('reject')}
-          hideLabel={hideLabel || vertical}
-          disabled={disabled}
-          icon={(
-            <RejectIcon
-              {...css({
-                fill: ICON_COLOR,
-                width: `${buttonContainerSize / 2}px`,
-                height: `${buttonContainerSize / 2}px`,
-              })}
-            />
-          )}
-          style={{
-            width: buttonContainerSize + 10,
-            height: buttonContainerSize + 10,
-            padding: `5px 0px`,
+        <div key="buttonAnchor" ref={this.setRejectButtonAnchor}>
+          <CommentActionButton
+            label="Reject"
+            isActive={activeButtons && activeButtons.includes('reject')}
+            hideLabel={hideLabel || vertical}
+            disabled={disabled}
+            icon={(
+              <RejectIcon
+                {...css({
+                  fill: ICON_COLOR,
+                  width: `${buttonContainerSize / 2}px`,
+                  height: `${buttonContainerSize / 2}px`,
+                })}
+              />
+            )}
+            style={{
+              width: buttonContainerSize + 10,
+              height: buttonContainerSize + 10,
+              padding: `5px 0px`,
+            }}
+            iconHovered={(
+              <ConfirmationCircle
+                backgroundColor={ICON_COLOR}
+                action="reject"
+                size={buttonContainerSize}
+                iconSize={buttonContainerSize / 2}
+              />
+            )}
+            onClick={this.handleReject}
+          />
+        </div>
+        {requireReasonForReject &&
+        <Popper
+          key="popper"
+          open={this.state.rejectChooseTags}
+          anchorEl={this.rejectButtonAnchor}
+          placement={vertical ? 'left' : 'bottom'}
+          modifiers={{
+            preventOverflow: {
+              enabled: true,
+              boundariesElement: 'viewport',
+            },
           }}
-          iconHovered={(
-            <ConfirmationCircle
-              backgroundColor={ICON_COLOR}
-              action="reject"
-              size={buttonContainerSize}
-              iconSize={buttonContainerSize / 2}
-            />
-          )}
-          onClick={this.handleReject}
-        />
+        >
+          <AssignTagsForm
+            commentId={comment.id}
+            clearPopups={this.clearPopups}
+            submit={handleAssignTagsSubmit}
+          />
+        </Popper>
+        }
 
         <CommentActionButton
           label="Highlight"

@@ -40,8 +40,6 @@ import {
 import {
   Arrow,
   ArrowIcon,
-  ArrowPosition,
-  AssignTagsForm,
   ConfirmationCircle,
   InfoIcon,
   LoadMoreIcon,
@@ -76,7 +74,6 @@ import {
   SCRIM_Z_INDEX,
   SELECT_Z_INDEX,
   TEXT_OFFSET_DEFAULT_SPACING,
-  TOOLTIP_Z_INDEX,
   VISUALLY_HIDDEN,
   WHITE_COLOR,
 } from '../../../../styles';
@@ -344,17 +341,10 @@ export interface ICommentDetailState {
     top: number,
     left: number,
   };
-  activeButtons?: List<IModerationAction>;
   upArrowIsFocused?: boolean;
   downArrowIsFocused?: boolean;
   infoIconFocused?: boolean;
-  taggingToolTipMetaPosition?: {
-    top: number;
-    left: number;
-  };
-  taggingToolTipArrowPosition?: ArrowPosition;
   selectedRow?: number;
-  taggingTooltipVisible?: boolean;
   taggingCommentId?: string;
 }
 
@@ -372,21 +362,13 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       top: 0,
       left: 0,
     },
-    activeButtons: this.getActiveButtons(this.props),
     upArrowIsFocused: false,
     downArrowIsFocused: false,
     infoIconFocused: false,
-    taggingToolTipMetaPosition: {
-      top: 0,
-      left: 0,
-    },
-    taggingToolTipArrowPosition: null,
-    taggingTooltipVisible: false,
     taggingCommentId: null,
   };
 
   buttonRef: HTMLElement = null;
-  moderateButtonsRef: HTMLDivElement = null;
 
   componentDidMount() {
     this.attachEvents();
@@ -414,11 +396,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       summaryScoresBelowThreshold,
       loadedCommentId: nextProps.params.commentId,
     };
-  }
-
-  @autobind
-  saveModerateButtonsRef(ref: HTMLDivElement) {
-    this.moderateButtonsRef = ref;
   }
 
   @autobind
@@ -462,48 +439,14 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   }
 
   @autobind
-  getModerateButtonsPosition(ref: HTMLDivElement): {
-    top: number;
-    left: number;
-  } {
-    if (!ref) {
-      return;
-    }
-
-    const rect = ref.getBoundingClientRect();
-
-    return {
-      top: rect.top + (rect.width / 2) - 10,
-      left: rect.left + (rect.width / 2) - 10,
-    };
-  }
-
-  @autobind
-  async handleRejectWithTag() {
-    const tooltipPosition = this.getModerateButtonsPosition(this.moderateButtonsRef);
-
-    this.setState({
-      taggingToolTipMetaPosition: tooltipPosition,
-      taggingTooltipVisible: true,
-      taggingToolTipArrowPosition: 'rightCenter',
-    });
-  }
-
-  @autobind
   async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
       this.props.tagCommentSummaryScore([commentId], tagId);
     });
     this.moderateComment('reject');
     this.setState({
-      taggingTooltipVisible: false,
       taggingCommentId: null,
     });
-  }
-
-  @autobind
-  onTaggingTooltipClose() {
-    this.setState({ taggingTooltipVisible: false });
   }
 
   render() {
@@ -548,15 +491,13 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       upArrowIsFocused,
       downArrowIsFocused,
       infoIconFocused,
-      taggingTooltipVisible,
-      taggingToolTipArrowPosition,
-      taggingToolTipMetaPosition,
     } = this.state;
 
     if (!comment) {
       return null;
     }
 
+    const activeButtons = this.getActiveButtons(this.props.comment);
     const inReplyTo = comment.replyTo;
     const isArticle = !!this.props.params.articleId;
 
@@ -590,14 +531,15 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
         <div {...css(STYLES.wrapper)}>
           <div {...css(STYLES.sidebar)}>
-            <div {...css(STYLES.buttons)} ref={this.saveModerateButtonsRef}>
+            <div {...css(STYLES.buttons)}>
               <ModerateButtons
                 vertical
-                activeButtons={this.state.activeButtons}
+                activeButtons={activeButtons}
                 onClick={this.moderateComment}
                 disabled={this.props.isLoading}
                 requireReasonForReject={comment.isAccepted === false ? false : REQUIRE_REASON_TO_REJECT}
-                onRejectWithTag={this.handleRejectWithTag}
+                comment={comment}
+                handleAssignTagsSubmit={this.handleAssignTagsSubmit}
               />
             </div>
             { (previousCommentId || nextCommentId) && (
@@ -798,30 +740,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
               </ul>
             </ToolTip>
           </Scrim>
-          {taggingTooltipVisible && (
-            <FocusTrap
-              focusTrapOptions={{
-                clickOutsideDeactivates: true,
-              }}
-            >
-              <ToolTip
-                arrowPosition={taggingToolTipArrowPosition}
-                backgroundColor={WHITE_COLOR}
-                hasDropShadow
-                isVisible={taggingTooltipVisible}
-                onDeactivate={this.onTaggingTooltipClose}
-                position={taggingToolTipMetaPosition}
-                size={16}
-                zIndex={TOOLTIP_Z_INDEX}
-              >
-                <AssignTagsForm
-                  commentId={this.props.comment.id}
-                  onSubmit={this.handleAssignTagsSubmit}
-                />
-              </ToolTip>
-            </FocusTrap>
-          )}
-
           <button
             tabIndex={0}
             ref={this.saveButtonRef}
@@ -989,7 +907,8 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
   @autobind
   async moderateComment(action: IModerationAction) {
-    const shouldResetAction = this.state.activeButtons && this.state.activeButtons.includes(action);
+    const activeButtons = this.getActiveButtons(this.props.comment);
+    const shouldResetAction = activeButtons.includes(action);
     const commentAction: IConfirmationAction = shouldResetAction ? 'reset' : action;
     this.setState({
       isConfirmationModalVisible: true,
@@ -1123,8 +1042,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     this.setState({ isConfirmationModalVisible: false });
   }
 
-  getActiveButtons(props: ICommentDetailProps): List<IModerationAction> {
-    const comment: ICommentModel = props.comment;
+  getActiveButtons(comment: ICommentModel): List<IModerationAction> {
     if (!comment) { return null; }
     let activeButtons = List();
 
@@ -1162,10 +1080,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
     if (this.state.isScoresModalVisible) {
       this.onScoresModalClose();
-    }
-
-    if (this.state.taggingTooltipVisible) {
-      this.onTaggingTooltipClose();
     }
   }
 }

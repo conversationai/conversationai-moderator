@@ -29,11 +29,10 @@ import {
   TagModel,
 } from '../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../types';
-import { ArticleControlIcon, AssignTagsForm, Scrim } from '../../../../components';
+import { ArticleControlIcon, Scrim } from '../../../../components';
 import {
   AddIcon,
   ApproveIcon,
-  ArrowPosition,
   CommentActionButton,
   CommentList,
   DeferIcon,
@@ -280,15 +279,7 @@ export interface IModeratedCommentsState {
     top: number;
     left: number;
   };
-  taggingToolTipPosition?: {
-    top: number;
-    left: number;
-  };
   updatedItems?: any;
-  taggingCommentId?: string;
-  taggingTooltipVisible?: boolean;
-  taggingToolTipArrowPosition?: ArrowPosition;
-  moderateButtonsRef?: HTMLDivElement;
   loadedCategoryId?: string;
   loadedArticleId?: string;
   loadedTag?: string;
@@ -317,14 +308,7 @@ export class ModeratedComments
       top: 0,
       left: 0,
     },
-    taggingToolTipPosition: {
-      top: 0,
-      left: 0,
-    },
     updatedItems: [],
-    taggingCommentId: null,
-    taggingTooltipVisible: false,
-    moderateButtonsRef: null,
     articleControlOpen: false,
   };
 
@@ -380,10 +364,6 @@ export class ModeratedComments
       isConfirmationModalVisible,
       isTaggingToolTipMetaVisible,
       taggingToolTipMetaPosition,
-      taggingToolTipPosition,
-      taggingTooltipVisible,
-      taggingCommentId,
-      taggingToolTipArrowPosition,
       loadedArticleId,
     } = this.state;
 
@@ -552,14 +532,8 @@ export class ModeratedComments
               totalItems={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds.size : commentIds.size}
               triggerActionToast={this.triggerActionToast}
               displayArticleTitle={!loadedArticleId}
-              tagRejectionModalVisible={{
-                id: taggingCommentId,
-                isVisible: taggingTooltipVisible,
-              }}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
-              onRejectWithTag={this.handleRejectWithTag}
               requireReasonForReject={REQUIRE_REASON_TO_REJECT}
-              onTableScroll={this.handleTableScroll}
             />
           )}
         </div>
@@ -592,29 +566,6 @@ export class ModeratedComments
             </ToastMessage>
           </FocusTrap>
         </Scrim>
-        {taggingTooltipVisible && (
-          <FocusTrap
-            focusTrapOptions={{
-              clickOutsideDeactivates: true,
-            }}
-          >
-            <ToolTip
-              arrowPosition={taggingToolTipArrowPosition}
-              backgroundColor={WHITE_COLOR}
-              hasDropShadow
-              isVisible={taggingTooltipVisible}
-              onDeactivate={this.onTaggingTooltipClose}
-              position={taggingToolTipPosition}
-              size={16}
-              zIndex={TOOLTIP_Z_INDEX}
-            >
-              <AssignTagsForm
-                commentId={taggingCommentId}
-                onSubmit={this.handleAssignTagsSubmit}
-              />
-            </ToolTip>
-          </FocusTrap>
-        )}
       </div>
     );
   }
@@ -640,47 +591,9 @@ export class ModeratedComments
   @autobind
   onPressEscape() {
     this.setState({
-      taggingTooltipVisible: false,
       isConfirmationModalVisible: false,
       isTaggingToolTipMetaVisible: false,
     });
-  }
-
-  @autobind
-  handleTableScroll() {
-    if (!this.state.moderateButtonsRef) {
-      return true;
-    }
-    const buttonPosition = this.getModerateButtonsPosition(this.state.moderateButtonsRef);
-    if (buttonPosition.top <= HEADER_HEIGHT + MODERATION_CONTAINER_HEIGHT) {
-      this.setState({
-        taggingTooltipVisible: false,
-      });
-
-      return true;
-    }
-    this.setState({
-      taggingToolTipPosition: buttonPosition,
-    });
-
-    return true;
-  }
-
-  @autobind
-  getModerateButtonsPosition(ref: HTMLDivElement): {
-    top: number;
-    left: number;
-  } {
-    if (!ref) {
-      return;
-    }
-
-    const rect = ref.getBoundingClientRect();
-
-    return {
-      top: rect.top + (rect.height / 2) - HEADER_HEIGHT,
-      left: rect.left + (rect.width / 2) - 10,
-    };
   }
 
   @autobind
@@ -779,44 +692,6 @@ export class ModeratedComments
       this.props.tagComments([commentId], tagId);
     });
     this.dispatchConfirmedAction('reject', [commentId]);
-    this.setState({
-      taggingTooltipVisible: false,
-      taggingCommentId: null,
-    });
-  }
-
- @autobind
-  async handleRejectWithTag(
-    commentId: string,
-    tooltipRef: HTMLDivElement,
-  ) {
-    // we need to load the comment data so we can asses all the scores
-    await this.props.loadScoresForCommentId(commentId);
-    const tooltipPosition = this.getModerateButtonsPosition(tooltipRef);
-    let arrowPosition: ArrowPosition;
-    const top = tooltipPosition.top;
-    // unfortunate use of magic numbers to work on minimum screen height of 768 for ipad
-
-    if (top > window.innerHeight - 280) {
-      arrowPosition = 'leftBottom';
-    } else if (top < window.innerHeight - 490) {
-      arrowPosition = 'leftTop';
-    } else {
-      arrowPosition = 'leftCenter';
-    }
-
-    this.setState({
-      taggingCommentId: commentId,
-      taggingToolTipPosition: tooltipPosition,
-      taggingTooltipVisible: true,
-      taggingToolTipArrowPosition: arrowPosition,
-      moderateButtonsRef: tooltipRef,
-    });
-  }
-
-  @autobind
-  onTaggingTooltipClose() {
-    this.setState({ taggingTooltipVisible: false });
   }
 
   @autobind

@@ -37,9 +37,7 @@ import { ICommentAction } from '../../../../../types';
 import {
   AddIcon,
   ApproveIcon,
-  ArrowPosition,
   ArticleControlIcon,
-  AssignTagsForm,
   CommentActionButton,
   CommentList,
   DeferIcon,
@@ -319,15 +317,7 @@ export interface INewCommentsState {
     top: number;
     left: number;
   };
-  taggingToolTipPosition?: {
-    top: number;
-    left: number;
-  };
-  taggingToolTipArrowPosition: ArrowPosition;
   selectedRow?: number;
-  taggingTooltipVisible?: boolean;
-  moderateButtonsRef?: HTMLDivElement;
-  taggingCommentId?: string;
   articleControlOpen: boolean;
   rulesInCategory?: List<IRuleModel>;
 }
@@ -356,15 +346,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       top: 0,
       left: 0,
     },
-    taggingToolTipPosition: {
-      top: 0,
-      left: 0,
-    },
-    taggingToolTipArrowPosition: null,
     selectedRow: null,
-    taggingTooltipVisible: false,
-    taggingCommentId: null,
-    moderateButtonsRef: null,
     articleControlOpen: false,
   };
 
@@ -482,7 +464,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   @autobind
   onPressEscape() {
     this.setState({
-      taggingTooltipVisible: false,
       isConfirmationModalVisible: false,
       isRuleInfoVisible: false,
       isTaggingToolTipMetaVisible: false,
@@ -520,56 +501,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     });
 
     this.dispatchConfirmedAction('reject', [commentId]);
-    this.setState({
-      taggingTooltipVisible: false,
-      taggingCommentId: null,
-    });
-  }
-
-  @autobind
-  getModerateButtonsPosition(ref: HTMLDivElement): {
-    top: number;
-    left: number;
-  } {
-    if (!ref) {
-      return;
-    }
-
-    const rect = ref.getBoundingClientRect();
-
-    return {
-      top: rect.top + (rect.height / 2) - HEADER_HEIGHT,
-      left: rect.left + (rect.width / 2) - 10,
-    };
-  }
-
-  @autobind
-  async handleRejectWithTag(
-    commentId: string,
-    tooltipRef: HTMLDivElement,
-  ) {
-    // we need to load the comment data so we can asses all the scores
-    await this.props.loadScoresForCommentId(commentId);
-    const tooltipPosition = this.getModerateButtonsPosition(tooltipRef);
-    let arrowPosition: ArrowPosition;
-    const top = tooltipPosition.top;
-    // unfortunate use of magic numbers to work on minimum screen height of 768 for ipad
-
-    if (top > window.innerHeight - 280) {
-      arrowPosition = 'leftBottom';
-    } else if (top < window.innerHeight - 490) {
-      arrowPosition = 'leftTop';
-    } else {
-      arrowPosition = 'leftCenter';
-    }
-
-    this.setState({
-      taggingCommentId: commentId,
-      taggingToolTipPosition: tooltipPosition,
-      taggingTooltipVisible: true,
-      taggingToolTipArrowPosition: arrowPosition,
-      moderateButtonsRef: tooltipRef,
-    });
   }
 
   render() {
@@ -595,11 +526,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       isRuleInfoVisible,
       isTaggingToolTipMetaVisible,
       taggingToolTipMetaPosition,
-      taggingToolTipPosition,
-      taggingToolTipArrowPosition,
       selectedRow,
-      taggingTooltipVisible,
-      taggingCommentId,
       rulesInCategory,
     } = this.state;
 
@@ -660,7 +587,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       tagSelectorLink(articleBase, this.props.params.articleId, selectedTag && selectedTag.id) :
       tagSelectorLink(categoryBase, this.props.params.categoryId, selectedTag && selectedTag.id);
 
-    const rules = selectedTag && selectedTag.key !== 'DATE' && rulesInCategory && List<IRuleModel>(rulesInCategory.filter( r => r.tagId && r.tagId == selectedTag.id));
+    const rules = selectedTag && selectedTag.key !== 'DATE' && rulesInCategory && List<IRuleModel>(rulesInCategory.filter( (r) => r.tagId && r.tagId === selectedTag.id));
     const disableAllButtons = areNoneSelected || commentScores.size <= 0;
     const groupBy = (selectedTag && selectedTag.key === 'DATE') ? 'date' : 'score';
 
@@ -854,14 +781,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               onSelectAllChange={this.onSelectAllChange}
               onSelectionChange={this.onSelectionChange}
               showAllComments={isNavStuck}
-              tags={tags}
-              onRejectWithTag={this.handleRejectWithTag}
-              tagRejectionModalVisible={{
-                id: taggingCommentId,
-                isVisible: taggingTooltipVisible,
-              }}
               requireReasonForReject={REQUIRE_REASON_TO_REJECT}
-              taggingTooltipVisible={taggingTooltipVisible}
               sortOptions={filterSortOptions}
               getCurrentSort={this.getCurrentSort}
               onSortChange={this.onSortChange}
@@ -871,7 +791,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               triggerActionToast={this.triggerActionToast}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               displayArticleTitle={!!this.props.params.categoryId}
-              onTableScroll={this.handleTableScroll}
             />
           )}
         </div>
@@ -921,60 +840,12 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
             </ToastMessage>
           </FocusTrap>
         </Scrim>
-        {taggingTooltipVisible && (
-          <ToolTip
-            arrowPosition={taggingToolTipArrowPosition}
-            backgroundColor={WHITE_COLOR}
-            hasDropShadow
-            isVisible={taggingTooltipVisible}
-            onDeactivate={this.onTaggingTooltipClose}
-            position={taggingToolTipPosition}
-            size={16}
-            zIndex={SCRIM_Z_INDEX}
-          >
-            <FocusTrap
-              focusTrapOptions={{
-                clickOutsideDeactivates: true,
-              }}
-            >
-              <AssignTagsForm
-                commentId={taggingCommentId}
-                onSubmit={this.handleAssignTagsSubmit}
-              />
-            </FocusTrap>
-          </ToolTip>
-        )}
       </div>
     );
   }
 
   @autobind
-  handleTableScroll() {
-    if (!this.state.moderateButtonsRef) {
-      return true;
-    }
-    const buttonPosition = this.getModerateButtonsPosition(this.state.moderateButtonsRef);
-    if (buttonPosition.top <= HEADER_HEIGHT + ACTION_BAR_HEIGHT_FIXED) {
-      this.setState({
-        taggingTooltipVisible: false,
-      });
-
-      return true;
-    }
-    this.setState({
-      taggingToolTipPosition: buttonPosition,
-    });
-
-    return true;
-  }
-
-  @autobind
   handleContainerScroll(_: any) {
-    if (this.state.moderateButtonsRef) {
-      this.setState({
-        taggingToolTipPosition: this.getModerateButtonsPosition(this.state.moderateButtonsRef),
-      });
-    }
     // Set this once so we don't recheck client height on every scroll tick
     if (!this.batchContainerHeight) {
       this.batchContainerHeight = this.batchContainer.clientHeight;
@@ -1110,11 +981,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   @autobind
   onRuleInfoClose() {
     this.setState({ isRuleInfoVisible: false });
-  }
-
-  @autobind
-  onTaggingTooltipClose() {
-    this.setState({ taggingTooltipVisible: false });
   }
 
   @autobind

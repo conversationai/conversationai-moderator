@@ -33,8 +33,6 @@ import { ICommentAction, IConfirmationAction } from '../../../../types';
 import {
   AddIcon,
   ApproveIcon,
-  ArrowPosition,
-  AssignTagsForm,
   CommentActionButton,
   CommentList,
   DeferIcon,
@@ -227,10 +225,6 @@ export interface ISearchResultsState {
     top: number;
     left: number;
   };
-  taggingToolTipPosition?: {
-    top: number;
-    left: number;
-  };
   isConfirmationModalVisible?: boolean;
   confirmationAction?: ICommentAction;
   toastButtonLabel?: 'Undo' | 'Remove rule';
@@ -241,10 +235,6 @@ export interface ISearchResultsState {
   actionText?: string;
   ruleToastIcon?: JSX.Element;
   searchReturned?: boolean;
-  taggingCommentId?: string;
-  taggingTooltipVisible?: boolean;
-  taggingToolTipArrowPosition: ArrowPosition;
-  moderateButtonsRef?: HTMLDivElement;
 }
 
 export class SearchResults extends React.Component<ISearchResultsProps, ISearchResultsState> {
@@ -259,10 +249,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
       top: 0,
       left: 0,
     },
-    taggingToolTipPosition: {
-      top: 0,
-      left: 0,
-    },
     isConfirmationModalVisible: false,
     confirmationAction: null,
     actionText: '',
@@ -272,10 +258,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
     actionCount: 0,
     ruleToastIcon: null,
     isRuleInfoVisible: false,
-    taggingCommentId: null,
-    taggingTooltipVisible: false,
-    taggingToolTipArrowPosition: null,
-    moderateButtonsRef: null,
   };
 
   componentDidMount() {
@@ -289,7 +271,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   @autobind
   onPressEscape() {
     this.setState({
-      taggingTooltipVisible: false,
       isConfirmationModalVisible: false,
       isRuleInfoVisible: false,
       isTaggingToolTipMetaVisible: false,
@@ -472,86 +453,11 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   }
 
   @autobind
-  getModerateButtonsPosition(ref: HTMLDivElement): {
-    top: number;
-    left: number;
-  } {
-    if (!ref) {
-      return;
-    }
-
-    const rect = ref.getBoundingClientRect();
-
-    return {
-      top: rect.top + (rect.height / 2),
-      left: rect.left + (rect.width / 2) - 10,
-    };
-  }
-
-  @autobind
-  async handleRejectWithTag(
-    commentId: string,
-    tooltipRef: HTMLDivElement,
-  ) {
-    // we need to load the comment data so we can asses all the scores
-    await this.props.loadScoresForCommentId(commentId);
-    const tooltipPosition = this.getModerateButtonsPosition(tooltipRef);
-    let arrowPosition: ArrowPosition;
-    const top = tooltipPosition.top;
-    // unfortunate use of magic numbers to work on minimum screen height of 768 for ipad
-
-    if (top > window.innerHeight - 280) {
-      arrowPosition = 'leftBottom';
-    } else if (top < window.innerHeight - 490) {
-      arrowPosition = 'leftTop';
-    } else {
-      arrowPosition = 'leftCenter';
-    }
-
-    this.setState({
-      taggingCommentId: commentId,
-      taggingToolTipPosition: tooltipPosition,
-      taggingTooltipVisible: true,
-      taggingToolTipArrowPosition: arrowPosition,
-      moderateButtonsRef: tooltipRef,
-    });
-  }
-
-  @autobind
-  handleTableScroll() {
-    if (!this.state.moderateButtonsRef) {
-      return true;
-    }
-    const buttonPosition = this.getModerateButtonsPosition(this.state.moderateButtonsRef);
-    if (buttonPosition.top <= HEADER_HEIGHT) {
-      this.setState({
-        taggingTooltipVisible: false,
-      });
-
-      return true;
-    }
-    this.setState({
-      taggingToolTipPosition: buttonPosition,
-    });
-
-    return true;
-  }
-
-  @autobind
-  onTaggingTooltipClose() {
-    this.setState({ taggingTooltipVisible: false });
-  }
-
-  @autobind
   async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
       this.props.tagComments([commentId], tagId);
     });
     this.dispatchConfirmedAction('reject', [commentId]);
-    this.setState({
-      taggingTooltipVisible: false,
-      taggingCommentId: null,
-    });
   }
 
   render() {
@@ -574,16 +480,12 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
       updateCounter,
       isTaggingToolTipMetaVisible,
       taggingToolTipMetaPosition,
-      taggingToolTipPosition,
       commentSortType,
       isConfirmationModalVisible,
       isRuleInfoVisible,
       actionCount,
       actionText,
       ruleToastIcon,
-      taggingCommentId,
-      taggingTooltipVisible,
-      taggingToolTipArrowPosition,
     } = this.state;
 
     return (
@@ -711,14 +613,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
               searchTerm={searchTerm}
               displayArticleTitle={!!searchTerm}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
-              onRejectWithTag={this.handleRejectWithTag}
-              tagRejectionModalVisible={{
-                id: taggingCommentId,
-                isVisible: taggingTooltipVisible,
-              }}
               requireReasonForReject={REQUIRE_REASON_TO_REJECT}
-              taggingTooltipVisible={taggingTooltipVisible}
-              onTableScroll={this.handleTableScroll}
             />
           )}
         </div>
@@ -768,29 +663,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
             </ToastMessage>
           </FocusTrap>
         </Scrim>
-          {taggingTooltipVisible && (
-            <FocusTrap
-              focusTrapOptions={{
-                clickOutsideDeactivates: true,
-              }}
-            >
-              <ToolTip
-                arrowPosition={taggingToolTipArrowPosition}
-                backgroundColor={WHITE_COLOR}
-                hasDropShadow
-                isVisible={taggingTooltipVisible}
-                onDeactivate={this.onTaggingTooltipClose}
-                position={taggingToolTipPosition}
-                size={16}
-                zIndex={TOOLTIP_Z_INDEX}
-              >
-                <AssignTagsForm
-                  commentId={taggingCommentId}
-                  onSubmit={this.handleAssignTagsSubmit}
-                />
-              </ToolTip>
-            </FocusTrap>
-          )}
       </div>
     );
   }

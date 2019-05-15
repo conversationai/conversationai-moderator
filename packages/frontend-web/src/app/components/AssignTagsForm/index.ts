@@ -35,18 +35,23 @@ const mapStateToProps = createStructuredSelector({
   tags: (state: IAppStateRecord) => getTaggableTags(state),
 
   tagsPreselected: (state: IAppStateRecord, { commentId, params }: IPureAssignTagsFormProps): Set<string> => {
-    if (!commentId) {
+    if (!commentId || (!params.categoryId && !params.articleId)) {
       return Set<ModelId>();
     }
 
-    return getSummaryScoresAboveThreshold(
-      getTaggingSensitivitiesInCategory(state, params.categoryId, params.articleId),
-      getSummaryScoresById(state, commentId),
-    ).map((score) => score.tagId).toSet();
+    const sensitivities = getTaggingSensitivitiesInCategory(state, params.categoryId, params.articleId);
+    const summaryScores = getSummaryScoresById(state, commentId);
+//    await this.props.loadScoresForCommentId(commentId);
+
+    if (!sensitivities || !summaryScores) {
+      return Set<ModelId>();
+    }
+    const scoresAboveThreshold = getSummaryScoresAboveThreshold(sensitivities, summaryScores);
+    return scoresAboveThreshold.map((score) => score.tagId).toSet();
   },
 });
 
-export type IAssignTagsFormProps = Pick<IPureAssignTagsFormProps, 'commentId' | 'onSubmit'>;
+export type IAssignTagsFormProps = Pick<IPureAssignTagsFormProps, 'commentId' | 'clearPopups' | 'submit'>;
 
 export const AssignTagsForm = compose<React.ComponentClass<IAssignTagsFormProps>>(
   withRouter,

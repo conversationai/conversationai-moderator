@@ -17,25 +17,27 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
 import React from 'react';
+import { WithRouterProps } from 'react-router';
+
+import {
+  ClickAwayListener,
+  DialogTitle,
+} from '@material-ui/core';
 
 import { ITagModel, ModelId } from '../../../models';
-import { Button, CheckboxRow } from '../../components';
 import { partial } from '../../util';
 import { css, stylesheet } from '../../utilx';
+import { CheckboxRow } from '../CheckboxRow';
 
 import {
   GUTTER_DEFAULT_SPACING,
   LIGHT_PRIMARY_TEXT_COLOR,
   MEDIUM_COLOR,
-  WHITE_COLOR,
+  NICE_CONTROL_BLUE,
+  SCRIM_STYLE,
 } from '../../styles';
-import {WithRouterProps} from 'react-router';
 
 const STYLES = stylesheet({
-  container: {
-    padding: `${GUTTER_DEFAULT_SPACING}px`,
-    background: `${WHITE_COLOR}`,
-  },
   tagsList: {
     listStyle: 'none',
     margin: 0,
@@ -76,7 +78,8 @@ const STYLES = stylesheet({
 export interface IAssignTagsFormProps extends WithRouterProps {
   commentId: ModelId;
   tags: List<ITagModel>;
-  onSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
+  clearPopups(): void;
+  submit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
   tagsPreselected?: Set<ModelId>;
 }
 
@@ -104,36 +107,41 @@ export class AssignTagsForm extends React.Component<IAssignTagsFormProps, IAssig
   }
 
   @autobind
-  onSubmit() {
+  submit() {
     const selectedTagIds = this.state.selectedTagIds;
+    if (selectedTagIds.size === 0) {
+      return;
+    }
     const rejectedTagIds = this.props.tagsPreselected.subtract(selectedTagIds);
-    this.props.onSubmit(this.props.commentId, selectedTagIds, rejectedTagIds);
+    this.props.submit(this.props.commentId, selectedTagIds, rejectedTagIds);
   }
 
   render() {
     const { tags } = this.props;
     const { selectedTagIds } = this.state;
 
+    const enabled =  selectedTagIds.size > 0;
     return (
-      <div {...css(STYLES.container)}>
-        <ul {...css(STYLES.tagsList)}>
-          {tags && tags.map((t) => (
-            <li key={`tag${t.id}`} {...css(STYLES.listItem)}>
-              <CheckboxRow
-                label={t.label}
-                isSelected={selectedTagIds && selectedTagIds.includes(t.id)}
-                onChange={partial(this.onTagButtonClick, t.id)}
-              />
-            </li>
-          ))}
-        </ul>
-        <Button
-          buttonStyles={STYLES.button}
-          label="Reject Comment"
-          disabled={selectedTagIds && selectedTagIds.size === 0}
-          onClick={this.onSubmit}
-        />
-      </div>
+      <ClickAwayListener onClickAway={this.props.clearPopups}>
+        <div {...css(SCRIM_STYLE.popupMenu, {padding: '20px 60px'})}>
+          <DialogTitle id="article-controls">Reason for rejection</DialogTitle>
+          <ul {...css(STYLES.tagsList)}>
+            {tags && tags.map((t) => (
+              <li key={`tag${t.id}`} {...css(STYLES.listItem)}>
+                <CheckboxRow
+                  label={t.label}
+                  isSelected={selectedTagIds && selectedTagIds.includes(t.id)}
+                  onChange={partial(this.onTagButtonClick, t.id)}
+                />
+              </li>
+            ))}
+          </ul>
+          <div key="footer" {...css({textAlign: 'right', marginBottom: '30px'})}>
+            <span onClick={this.props.clearPopups} {...css({marginRight: '30px', opacity: '0.5'})}>Cancel</span>
+            <span onClick={this.submit} {...css({color: NICE_CONTROL_BLUE, opacity: enabled ? 1 : 0.35})}>Reject Comment</span>
+          </div>
+        </div>
+      </ClickAwayListener>
     );
   }
 }

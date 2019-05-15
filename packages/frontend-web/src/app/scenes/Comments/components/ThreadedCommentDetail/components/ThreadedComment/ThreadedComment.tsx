@@ -15,8 +15,10 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
+import { Set } from 'immutable';
 import React from 'react';
-import { ICommentModel } from '../../../../../../../models';
+
+import {ICommentModel, ModelId} from '../../../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../../../types';
 import {
   BasicBody,
@@ -81,15 +83,8 @@ export interface IThreadedCommentProps {
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
   onUpdateReply?(action: ICommentAction, replyId: string): any;
   dispatchAction?(action: ICommentAction, idsToDispatch: Array<string>): any;
-  onRejectWithTag?(
-    commentId: string,
-    tooltipRef: HTMLDivElement,
-  ): void;
-  tagRejectionModalVisible?: {
-    id: string;
-    isVisible: boolean;
-  };
   requireReasonForReject?: boolean;
+  handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
 export interface IThreadedCommentState {
@@ -147,8 +142,7 @@ export class ThreadedComment extends React.Component<IThreadedCommentProps, IThr
       comment,
       replies,
       requireReasonForReject,
-      onRejectWithTag,
-      tagRejectionModalVisible,
+      handleAssignTagsSubmit,
     } = this.props;
 
     const { hoveredRowThresholdPassed, hoveredRowId } = this.state;
@@ -164,8 +158,7 @@ export class ThreadedComment extends React.Component<IThreadedCommentProps, IThr
             <BasicBody
               commentLinkTarget={`/articles/${comment.articleId}/comments/${comment.id}`}
               requireReasonForReject={requireReasonForReject}
-              onRejectWithTag={onRejectWithTag}
-              tagRejectionModalVisible={tagRejectionModalVisible}
+              handleAssignTagsSubmit={handleAssignTagsSubmit}
               comment={comment}
               showActions={(comment.id === hoveredRowId) && hoveredRowThresholdPassed}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
@@ -183,8 +176,7 @@ export class ThreadedComment extends React.Component<IThreadedCommentProps, IThr
             <div {...css(STYLES.body, STYLES.replyBody)}>
               <LinkedBasicBody
                 requireReasonForReject={requireReasonForReject}
-                onRejectWithTag={onRejectWithTag}
-                tagRejectionModalVisible={tagRejectionModalVisible}
+                handleAssignTagsSubmit={handleAssignTagsSubmit}
                 showActions={(reply.id === hoveredRowId) && hoveredRowThresholdPassed}
                 dispatchConfirmedAction={this.dispatchConfirmedReply}
                 getLinkTarget={always(`/articles/${reply.articleId}/comments/${reply.id}`)}
