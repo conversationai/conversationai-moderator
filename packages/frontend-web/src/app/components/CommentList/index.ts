@@ -72,14 +72,12 @@ export type ICommentListOwnPropNames =
   'sortOptions' |
   'onSelectionChange' |
   'onSortChange' |
-  'showAllComments' |
   'onCommentClick' |
   'commentBody' |
   'rowHeight' |
   'hideCommentAction' |
   'updateCounter' |
   'scrollToRow' |
-  'getInitialRowCount' |
   'ownerHeight' |
   'width' |
   'heightOffset' |
@@ -113,7 +111,6 @@ function mapStateToProps(state: any, ownProps: any): any {
     displayArticleTitle,
     heightOffset,
     width,
-    scrollToRow,
   } = ownProps;
 
   return {
@@ -182,28 +179,6 @@ function mapStateToProps(state: any, ownProps: any): any {
 
     width: width || window.innerWidth,
 
-    getInitialRowCount: () => {
-      if (scrollToRow) {
-        return commentIds.size;
-      }
-
-      const BATCHED_AREA_HEIGHT = 521;
-      const padding = displayArticleTitle ? ROW_PADDING_WITH_TITLE : ROW_PADDING;
-      const rowContainerHeight = window.innerHeight - HEADER_HEIGHT - BATCHED_AREA_HEIGHT;
-
-      if (rowContainerHeight < 1) { return 0; }
-
-      let rowHeight = 0;
-      let rowCount = 0;
-
-      while (rowHeight < rowContainerHeight) {
-        const commentId = commentIds.get(rowCount);
-        rowHeight += textSizes.get(commentId) + padding;
-        rowCount += 1;
-      }
-
-      return rowCount;
-    },
   };
 }
 

@@ -17,7 +17,6 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { Cell, Column, Table } from 'fixed-data-table-2';
 import {List, Set} from 'immutable';
-import { clamp } from 'lodash';
 import React from 'react';
 
 import {ICommentModel, ITagModel, ModelId} from '../../../models';
@@ -225,7 +224,6 @@ export interface ILazyCommentListProps {
   onSelectionChange?(commentId: string): void;
   onSortChange?(e: React.ChangeEvent<any>): any;
   getLinkTarget?(comment: ICommentModel): string;
-  showAllComments: boolean;
   onCommentClick?(commentIndex: string): any;
   commentBody?: JSX.Element;
   rowHeight?: number;
@@ -234,7 +232,6 @@ export interface ILazyCommentListProps {
   dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>, shouldTriggerToast?: boolean): any;
   rowHeightGetter?(index: number): number;
   scrollToRow?: number;
-  getInitialRowCount?(): number;
   ownerHeight?: number;
   searchTerm?: string;
   requireReasonForReject?: boolean;
@@ -372,13 +369,11 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, 
       areAllSelected,
       onSelectAllChange,
       getLinkTarget,
-      showAllComments,
       onCommentClick,
       commentBody,
       rowHeight,
       hideCommentAction,
       rowHeightGetter,
-      getInitialRowCount,
       ownerHeight,
       searchTerm,
       displayArticleTitle,
@@ -395,9 +390,6 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, 
     const ROW_HEIGHT = rowHeight || BASE_ROW_HEIGHT + ROW_PADDING;
     const checkboxColumnWidth = smallerViewport ? 80 : 250;
     const rightmostColumnWidth = smallerViewport ? 240 : 290;
-    const computedCommentCount = showAllComments
-        ? totalItems
-        : clamp(getInitialRowCount() + 1, 0, totalItems);
 
     const checkboxColumnHeader = () => (
       <div {...css(HEADER_STYLES.iconCentering, {flexDirection: 'row-reverse'})}>
@@ -519,7 +511,7 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, 
           headerHeight={COMMENT_HEADER_HEIGHT}
           rowHeight={ROW_HEIGHT}
           rowHeightGetter={rowHeightGetter}
-          rowsCount={computedCommentCount}
+          rowsCount={totalItems}
           touchScrollEnabled
           ownerHeight={ownerHeight}
           width={tableWidth}
