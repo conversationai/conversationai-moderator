@@ -605,7 +605,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
               onSelectAllChange={this.onSelectAllChange}
               onSelectionChange={this.onSelectionChange}
               onSortChange={this.onSortChange}
-              showAllComments
               sortOptions={sortOptions}
               totalItems={totalCommentCount}
               updateCounter={updateCounter}

@@ -67,7 +67,6 @@ import {
   SCRIM_STYLE,
   SCRIM_Z_INDEX,
   SELECT_ELEMENT,
-  STICKY_Z_INDEX,
   TOOLTIP_Z_INDEX,
   WHITE_COLOR,
 } from '../../../../styles';
@@ -117,14 +116,6 @@ const STYLES = stylesheet({
     width: '100%',
   },
 
-  buttonContainerStuck: {
-    left: 0,
-    position: 'fixed',
-    top: HEADER_HEIGHT,
-    padding: `0px ${GUTTER_DEFAULT_SPACING}px`,
-    zIndex: STICKY_Z_INDEX,
-  },
-
   commentCount: {
     ...ARTICLE_CATEGORY_TYPE,
     color: LIGHT_PRIMARY_TEXT_COLOR,
@@ -145,10 +136,6 @@ const STYLES = stylesheet({
   filler: {
     backgroundColor: NICE_MIDDLE_BLUE,
     height: 0,
-  },
-
-  buttonContainerFiller: {
-    height: ACTION_BAR_HEIGHT_FIXED,
   },
 
   actionToastCount: {
@@ -302,7 +289,6 @@ export interface INewCommentsState {
   pos2?: number;
   sort?: string;
   commentIds?: List<string>;
-  isNavStuck?: boolean;
   isConfirmationModalVisible?: boolean;
   isRuleInfoVisible?: boolean;
   confirmationAction?: ICommentAction;
@@ -331,7 +317,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   batchContainerHeight: number = null;
 
   state: INewCommentsState = {
-    isNavStuck: false,
     isConfirmationModalVisible: false,
     isRuleInfoVisible: false,
     confirmationAction: null,
@@ -432,7 +417,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     // We need to wait for commentIDsInRange to load so we can check that against the saved row
     const commentId = getReturnSavedCommentRow();
 
-    if ((typeof commentId !== 'undefined') && !this.props.isLoading && this.state.isNavStuck === false && this.state.commentIds.size > 0 ) {
+    if ((typeof commentId !== 'undefined') && !this.props.isLoading && this.state.commentIds.size > 0 ) {
 
       if (!this.props.getComment(commentId)) {
         return false;
@@ -442,9 +427,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       // Maybe we need a better has loaded thing to see if a single row has been rendered and bubble that up to here?
       setTimeout(() => {
         this.overflowContainer.scrollTop = this.batchContainer.clientHeight;
-        this.setState({
-          isNavStuck: true,
-        });
       }, 60);
 
       const row = this.state.commentIds.findIndex((idInRange) => idInRange === commentId);
@@ -521,7 +503,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       pos1,
       pos2,
       commentIds,
-      isNavStuck,
       isConfirmationModalVisible,
       isRuleInfoVisible,
       isTaggingToolTipMetaVisible,
@@ -609,7 +590,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       <div
         ref={this.saveOverflowContainerRef}
         onScroll={this.handleContainerScroll}
-        {...css(STYLES.container, isNavStuck && {width: window.innerWidth + 17, paddingRight: '17px'})}
+        {...css(STYLES.container)}
       >
         <div ref={this.saveBatchContainerRef} >
           <div {...css(STYLES.topSelectRow)}>
@@ -645,19 +626,9 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
           )}
         </div>
 
-        <div
-          {...css(
-            STYLES.filler,
-            isNavStuck && STYLES.buttonContainerFiller,
-          )}
-        />
+        <div {...css( STYLES.filler )} />
 
-        <div
-          {...css(
-            STYLES.buttonContainer,
-            isNavStuck && STYLES.buttonContainerStuck,
-          )}
-        >
+        <div {...css(STYLES.buttonContainer)}>
 
           <div {...css(STYLES.commentCount)}>
             { commentScores.size > 0 && (
@@ -780,7 +751,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               isItemChecked={isItemChecked}
               onSelectAllChange={this.onSelectAllChange}
               onSelectionChange={this.onSelectionChange}
-              showAllComments={isNavStuck}
               requireReasonForReject={REQUIRE_REASON_TO_REJECT}
               sortOptions={filterSortOptions}
               getCurrentSort={this.getCurrentSort}
@@ -849,21 +819,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     // Set this once so we don't recheck client height on every scroll tick
     if (!this.batchContainerHeight) {
       this.batchContainerHeight = this.batchContainer.clientHeight;
-    }
-    const {
-      isNavStuck,
-    } = this.state;
-
-    if (isNavStuck && (this.overflowContainer.scrollTop < this.batchContainerHeight)) {
-      // reset the amount of visible items, so it can scroll properly again
-      this.setState({
-        isNavStuck: false,
-        selectedRow: null,
-      });
-    } else if (!isNavStuck && (this.overflowContainer.scrollTop >= this.batchContainerHeight)) {
-      this.setState({
-        isNavStuck: true,
-      });
     }
   }
 

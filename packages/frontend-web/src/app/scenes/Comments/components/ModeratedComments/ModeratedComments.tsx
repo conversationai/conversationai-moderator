@@ -527,7 +527,6 @@ export class ModeratedComments
               onSelectAllChange={this.onSelectAllChange}
               onSelectionChange={this.onSelectionChange}
               onSortChange={this.onSortChange}
-              showAllComments
               sortOptions={this.getSortOptions()}
               totalItems={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds.size : commentIds.size}
               triggerActionToast={this.triggerActionToast}
