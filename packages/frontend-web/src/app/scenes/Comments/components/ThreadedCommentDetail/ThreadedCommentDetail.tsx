@@ -97,7 +97,6 @@ export interface IThreadedCommentDetailProps extends WithRouterProps {
   loadData?(commentId: string): void;
   dispatchAction?(action: ICommentAction, idsToDispatch: Array<string>): any;
   tagComments?(ids: Array<string>, tagId: string): any;
-  loadScoresForCommentId?(id: string): void;
 }
 
 export interface IThreadedCommentDetailState {

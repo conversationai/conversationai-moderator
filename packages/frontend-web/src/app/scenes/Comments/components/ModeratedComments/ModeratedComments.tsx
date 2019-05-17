@@ -257,7 +257,6 @@ export interface IModeratedCommentsProps extends WithRouterProps {
     moderationAction: IConfirmationAction,
     currentModeration: string,
   ): any;
-  loadScoresForCommentId?(id: string): void;
 }
 
 export interface IModeratedCommentsState {

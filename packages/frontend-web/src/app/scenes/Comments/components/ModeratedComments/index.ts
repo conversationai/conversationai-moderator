@@ -25,9 +25,6 @@ import {
   changeColumnSortGroupDefault,
   getCurrentColumnSort,
 } from '../../../../stores/columnSorts';
-import {
-  loadCommentSummaryScores,
-} from '../../../../stores/commentSummaryScores';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
 import { IModeratedCommentsProps, ModeratedComments as PureModeratedComments } from './ModeratedComments';
@@ -64,7 +61,6 @@ type IModeratedCommentsDispatchProps = Pick<
   'toggleSingleItem' |
   'setCommentModerationStatusForArticle' |
   'setCommentModerationStatusForCategory' |
-  'loadScoresForCommentId' |
   'changeSort' |
   'loadData' |
   'tagComments' |
@@ -172,10 +168,6 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
 
     setCommentModerationStatusForCategory: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
         dispatch(setCommentsModerationForCategory(categoryId, commentIds, moderationAction, currentModeration)),
-
-    loadScoresForCommentId: async (id: string) => {
-      await dispatch(loadCommentSummaryScores(id));
-    },
 
     changeSort: async (newSort: string): Promise<void> => {
       await dispatch(changeColumnSortGroupDefault({

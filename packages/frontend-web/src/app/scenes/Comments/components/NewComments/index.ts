@@ -23,9 +23,6 @@ import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
 import { getComment } from '../../../../stores/comments';
-import {
-  loadCommentSummaryScores,
-} from '../../../../stores/commentSummaryScores';
 import { getPreselects } from '../../../../stores/preselects';
 import { getRules } from '../../../../stores/rules';
 import { getTaggableTags } from '../../../../stores/tags';
@@ -107,10 +104,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
     toggleSelectAll: () => dispatch(toggleSelectAll()),
 
     toggleSingleItem: ({ id }: { id: string }) => dispatch(toggleSingleItem({ id })),
-
-    loadScoresForCommentId: async (id: string) => {
-      await dispatch(loadCommentSummaryScores(id));
-    },
 
     loadData: async (
       categoryId: string | null,
