@@ -532,6 +532,7 @@ export class ModeratedComments
               displayArticleTitle={!loadedArticleId}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               requireReasonForReject={REQUIRE_REASON_TO_REJECT}
+              handleAssignTagsSubmit={this.handleAssignTagsSubmit}
             />
           )}
         </div>

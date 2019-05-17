@@ -612,6 +612,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
               displayArticleTitle={!!searchTerm}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               requireReasonForReject={REQUIRE_REASON_TO_REJECT}
+              handleAssignTagsSubmit={this.handleAssignTagsSubmit}
             />
           )}
         </div>
