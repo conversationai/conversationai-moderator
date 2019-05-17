@@ -234,8 +234,8 @@ export interface ILazyCommentListProps {
   scrollToRow?: number;
   ownerHeight?: number;
   searchTerm?: string;
-  requireReasonForReject?: boolean;
-  handleAssignTagsSubmit?(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
+  requireReasonForReject: boolean;
+  handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
   displayArticleTitle?: boolean;
   selectedTag?: ITagModel;
   onTableScroll?(): any;

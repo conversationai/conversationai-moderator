@@ -751,6 +751,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               onSelectAllChange={this.onSelectAllChange}
               onSelectionChange={this.onSelectionChange}
               requireReasonForReject={REQUIRE_REASON_TO_REJECT}
+              handleAssignTagsSubmit={this.handleAssignTagsSubmit}
               sortOptions={filterSortOptions}
               getCurrentSort={this.getCurrentSort}
               onSortChange={this.onSortChange}
