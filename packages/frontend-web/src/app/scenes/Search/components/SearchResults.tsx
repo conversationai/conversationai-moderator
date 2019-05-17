@@ -211,7 +211,6 @@ export interface ISearchResultsProps {
   onSearch?(scope: ISearchScope): any;
   tagComments?(ids: Array<string>, tagId: string): any;
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
-  loadScoresForCommentId?(id: string): void;
   searchByAuthor?: boolean;
   searchByArticle?: boolean;
 }

@@ -136,7 +136,7 @@ export class ModerateButtons
     } = this.props;
     if (requireReasonForReject) {
       this.setState({rejectChooseTags: true});
-      this.props.popupOpen(true);
+      this.props.popupOpen && this.props.popupOpen(true);
       return;
     }
 
@@ -146,7 +146,7 @@ export class ModerateButtons
   @autobind
   clearPopups() {
     this.setState({rejectChooseTags: false});
-    this.props.popupOpen(false);
+    this.props.popupOpen && this.props.popupOpen(false);
   }
 
   render() {
@@ -247,9 +247,10 @@ export class ModerateButtons
               boundariesElement: 'viewport',
             },
           }}
+          style={{zIndex: 2}}
         >
           <AssignTagsForm
-            commentId={comment.id}
+            comment={comment}
             clearPopups={this.clearPopups}
             submit={handleAssignTagsSubmit}
           />

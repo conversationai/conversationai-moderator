@@ -14,17 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Set } from 'immutable';
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { ModelId } from '../../../models';
-import { getSummaryScoresAboveThreshold, getTaggingSensitivitiesInCategory } from '../../scenes/Comments/store';
-import { IAppStateRecord } from '../../stores';
-import { getSummaryScoresById } from '../../stores/commentSummaryScores';
+import { getTaggingSensitivitiesInCategory } from '../../scenes/Comments/store';
+import {IAppDispatch, IAppStateRecord} from '../../stores';
+import {getSummaryScoresById, loadCommentSummaryScores} from '../../stores/commentSummaryScores';
 import { getTaggableTags } from '../../stores/tags';
 import {
   AssignTagsForm as PureAssignTagsForm,
@@ -34,26 +31,23 @@ import {
 const mapStateToProps = createStructuredSelector({
   tags: (state: IAppStateRecord) => getTaggableTags(state),
 
-  tagsPreselected: (state: IAppStateRecord, { commentId, params }: IPureAssignTagsFormProps): Set<string> => {
-    if (!commentId || (!params.categoryId && !params.articleId)) {
-      return Set<ModelId>();
-    }
+  sensitivities: (state: IAppStateRecord, { comment }: IPureAssignTagsFormProps) =>
+    getTaggingSensitivitiesInCategory(state, null, comment.articleId),
 
-    const sensitivities = getTaggingSensitivitiesInCategory(state, params.categoryId, params.articleId);
-    const summaryScores = getSummaryScoresById(state, commentId);
-//    await this.props.loadScoresForCommentId(commentId);
-
-    if (!sensitivities || !summaryScores) {
-      return Set<ModelId>();
-    }
-    const scoresAboveThreshold = getSummaryScoresAboveThreshold(sensitivities, summaryScores);
-    return scoresAboveThreshold.map((score) => score.tagId).toSet();
-  },
+  summaryScores: (state: IAppStateRecord, { comment }: IPureAssignTagsFormProps) =>
+    getSummaryScoresById(state, comment.id),
 });
 
-export type IAssignTagsFormProps = Pick<IPureAssignTagsFormProps, 'commentId' | 'clearPopups' | 'submit'>;
+function mapDispatchToProps(dispatch: IAppDispatch) {
+  return {
+    loadScoresForCommentId: async (id: string) => {
+      await dispatch(loadCommentSummaryScores(id));
+    },
+  };
+}
+
+export type IAssignTagsFormProps = Pick<IPureAssignTagsFormProps, 'comment' | 'clearPopups' | 'submit'>;
 
 export const AssignTagsForm = compose<React.ComponentClass<IAssignTagsFormProps>>(
-  withRouter,
-  connect(mapStateToProps, null),
+  connect(mapStateToProps, mapDispatchToProps),
 )(PureAssignTagsForm);

@@ -40,7 +40,6 @@ import {
   rejectComment,
   resetComment,
 } from '../../../../stores/comments';
-import { loadCommentSummaryScores } from '../../../../stores/commentSummaryScores';
 
 const updateCommentStateAction: {
   [key: string]: any;
@@ -142,10 +141,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
 
     tagComments: (ids: Array<string>, tagId: string) =>
         dispatch(tagCommentSummaryScores(ids, tagId)),
-
-    loadScoresForCommentId: async (id: string) => {
-      await dispatch(loadCommentSummaryScores(id));
-    },
   };
 }
 

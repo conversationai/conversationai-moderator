@@ -17,14 +17,15 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
 import React from 'react';
-import { WithRouterProps } from 'react-router';
 
 import {
   ClickAwayListener,
   DialogTitle,
 } from '@material-ui/core';
 
-import { ITagModel, ModelId } from '../../../models';
+import { ICommentModel, ITaggingSensitivityModel, ITagModel, ModelId } from '../../../models';
+import { getSummaryScoresAboveThreshold } from '../../scenes/Comments/store';
+import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
 import { partial } from '../../util';
 import { css, stylesheet } from '../../utilx';
 import { CheckboxRow } from '../CheckboxRow';
@@ -75,23 +76,74 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IAssignTagsFormProps extends WithRouterProps {
-  commentId: ModelId;
+export interface IAssignTagsFormProps {
+  comment: ICommentModel;
   tags: List<ITagModel>;
+  sensitivities: List<ITaggingSensitivityModel>;
+  summaryScores:  List<ICommentSummaryScoreStateRecord>;
+  loadScoresForCommentId?(id: string): void;
   clearPopups(): void;
   submit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
-  tagsPreselected?: Set<ModelId>;
 }
 
 export interface IAssignTagsFormState {
-  selectedTagIds: Set<string>;
+  lastCommentId?: ModelId;
+  tagsPreselected?: Set<ModelId>;
+  selectedTagIds: Set<ModelId>;
+  loading: boolean;
 }
 
 export class AssignTagsForm extends React.Component<IAssignTagsFormProps, IAssignTagsFormState> {
-
-  state = {
-    selectedTagIds: this.props.tagsPreselected || Set<string>(),
+  state: IAssignTagsFormState = {
+    selectedTagIds: Set<ModelId>(),
+    loading: false,
   };
+
+  static getDerivedStateFromProps(props: IAssignTagsFormProps, state: IAssignTagsFormState) {
+    const {comment, sensitivities, summaryScores, loadScoresForCommentId} = props;
+    let {tagsPreselected, selectedTagIds, loading, lastCommentId} = state;
+
+    let reset = false;
+    if (lastCommentId) {
+      if (!comment) {
+        reset = true;
+        lastCommentId = null;
+      }
+      else if (lastCommentId !== comment.id) {
+        reset = true;
+        lastCommentId = comment.id;
+      }
+    }
+    else {
+      if (comment) {
+        reset = true;
+        lastCommentId = comment.id;
+      }
+    }
+
+    if (reset) {
+      tagsPreselected = null;
+      selectedTagIds = Set<ModelId>();
+      loading = false;
+    }
+
+    if (!tagsPreselected && !loading) {
+      if (!summaryScores) {
+        loadScoresForCommentId(comment.id);
+        return {loading: true};
+      }
+      const scoresAboveThreshold = getSummaryScoresAboveThreshold(sensitivities, summaryScores);
+      tagsPreselected = scoresAboveThreshold.map((score) => score.tagId).toSet();
+      selectedTagIds = selectedTagIds.merge(tagsPreselected);
+    }
+
+    return {
+      lastCommentId,
+      tagsPreselected,
+      selectedTagIds,
+      loading,
+    };
+  }
 
   @autobind
   onTagButtonClick(tagId: string) {
@@ -108,12 +160,12 @@ export class AssignTagsForm extends React.Component<IAssignTagsFormProps, IAssig
 
   @autobind
   submit() {
-    const selectedTagIds = this.state.selectedTagIds;
+    const {tagsPreselected, selectedTagIds} = this.state;
     if (selectedTagIds.size === 0) {
       return;
     }
-    const rejectedTagIds = this.props.tagsPreselected.subtract(selectedTagIds);
-    this.props.submit(this.props.commentId, selectedTagIds, rejectedTagIds);
+    const rejectedTagIds = tagsPreselected ? tagsPreselected.subtract(selectedTagIds) : Set<ModelId>();
+    this.props.submit(this.props.comment.id, selectedTagIds, rejectedTagIds);
   }
 
   render() {

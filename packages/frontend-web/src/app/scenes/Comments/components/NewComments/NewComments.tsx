@@ -273,7 +273,6 @@ export interface INewCommentsProps extends WithRouterProps {
     pos2: number,
     sort: string,
   ): void;
-  loadScoresForCommentId?(id: string): void;
   confirmCommentSummaryScore?(id: string, tagId: string): void;
   rejectCommentSummaryScore?(id: string, tagId: string): void;
 }

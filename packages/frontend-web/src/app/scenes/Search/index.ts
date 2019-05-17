@@ -54,7 +54,6 @@ import {
   rejectComment,
   resetComment,
 } from '../../stores/comments';
-import { loadCommentSummaryScores } from '../../stores/commentSummaryScores';
 import { getTaggableTags } from '../../stores/tags';
 import { ISearchProps, Search as PureSearch } from './Search';
 
@@ -156,10 +155,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
       dispatch(updateCommentStateAction[action](ids)),
 
     resetCommentIds: () => dispatch(resetCommentIds()),
-
-    loadScoresForCommentId: async (id: string) => {
-      await dispatch(loadCommentSummaryScores(id));
-    },
   };
 }
 
