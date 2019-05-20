@@ -22,6 +22,10 @@ import React from 'react';
 import { WithRouterProps } from 'react-router';
 
 import {
+  Collapse,
+} from '@material-ui/core';
+
+import {
   convertServerAction,
   IArticleModel,
   ICommentDatedModel,
@@ -81,7 +85,6 @@ import { articleBase, categoryBase, tagSelectorLink } from '../../../routes';
 import { BatchSelector } from './components/BatchSelector';
 import { getCommentIDsInRange } from './store';
 
-const ACTION_BAR_HEIGHT_FIXED = 68;
 const ARROW_SIZE = 6;
 const TOAST_DELAY = 6000;
 
@@ -101,9 +104,6 @@ const NO_COMMENTS_MESSAGING = 'No matching comments found.';
 const STYLES = stylesheet({
   container: {
     height: '100%',
-    overflowY: 'scroll',
-    overflowX: 'hidden',
-    WebkitOverflowScrolling: 'touch',
   },
 
   buttonContainer: {
@@ -305,15 +305,13 @@ export interface INewCommentsState {
   selectedRow?: number;
   articleControlOpen: boolean;
   rulesInCategory?: List<IRuleModel>;
+  hideHistogram: boolean;
 }
 
 export class NewComments extends React.Component<INewCommentsProps, INewCommentsState> {
 
   commentActionCancelled = false;
-  overflowContainer: HTMLDivElement = null;
   listContainerRef: any = null;
-  batchContainer: any = null;
-  batchContainerHeight: number = null;
 
   state: INewCommentsState = {
     isConfirmationModalVisible: false,
@@ -332,6 +330,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     },
     selectedRow: null,
     articleControlOpen: false,
+    hideHistogram: false,
   };
 
   static getDerivedStateFromProps(props: INewCommentsProps, state: INewCommentsState) {
@@ -424,10 +423,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
       // need to wait to make sure dom and other items are loaded before scrolling you down to the saved comment
       // Maybe we need a better has loaded thing to see if a single row has been rendered and bubble that up to here?
-      setTimeout(() => {
-        this.overflowContainer.scrollTop = this.batchContainer.clientHeight;
-      }, 60);
-
       const row = this.state.commentIds.findIndex((idInRange) => idInRange === commentId);
       this.setState({ selectedRow: row });
       clearReturnSavedCommentRow();
@@ -449,16 +444,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       isRuleInfoVisible: false,
       isTaggingToolTipMetaVisible: false,
     });
-  }
-
-  @autobind
-  saveOverflowContainerRef(ref: HTMLDivElement) {
-    this.overflowContainer = ref;
-  }
-
-  @autobind
-  saveBatchContainerRef(ref: HTMLDivElement) {
-    this.batchContainer = ref;
   }
 
   @autobind
@@ -508,6 +493,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       taggingToolTipMetaPosition,
       selectedRow,
       rulesInCategory,
+      hideHistogram,
     } = this.state;
 
     const IS_SMALL_SCREEN = window.innerWidth < 1024;
@@ -584,15 +570,13 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
     const showMessaging = !!commentsMessaging;
     const selectedIdsCount = this.getSelectedIDs().length;
+    const boundingRect = this.listContainerRef && this.listContainerRef.getBoundingClientRect();
+    const listHeightOffset = boundingRect ? boundingRect.top : 500;
 
     return (
-      <div
-        ref={this.saveOverflowContainerRef}
-        onScroll={this.handleContainerScroll}
-        {...css(STYLES.container)}
-      >
-        <div ref={this.saveBatchContainerRef} >
-          <div {...css(STYLES.topSelectRow)}>
+      <div {...css(STYLES.container)}>
+        <Collapse in={!hideHistogram}>
+          <div key="tagSelection" {...css(STYLES.topSelectRow)}>
             <div {...css(STYLES.dropdown)}>
               <Link {...css(STYLES.select)} to={tagLinkURL}>
                 {selectedTag && selectedTag.label}
@@ -613,6 +597,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
           { selectedTag && (
             <BatchSelector
+              key="selector"
               groupBy={groupBy}
               rules={rules}
               areAutomatedRulesApplied={article && article.isAutoModerated}
@@ -623,7 +608,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               automatedRuleToast={this.handleRemoveAutomatedRule}
             />
           )}
-        </div>
+        </Collapse>
 
         <div {...css( STYLES.filler )} />
 
@@ -739,8 +724,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
             <p {...css(STYLES.commentsNotFoundMessaging)}>{commentsMessaging}</p>
           ) : (
             <CommentList
-              ownerHeight={window.innerHeight - (this.listContainerRef && this.listContainerRef.getBoundingClientRect().top)}
-              heightOffset={HEADER_HEIGHT - ACTION_BAR_HEIGHT_FIXED + 5}
+              heightOffset={listHeightOffset}
               textSizes={textSizes}
               commentIds={commentIds}
               selectedTag={selectedTag}
@@ -761,6 +745,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               triggerActionToast={this.triggerActionToast}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               displayArticleTitle={!!this.props.params.categoryId}
+              onTableScroll={this.onTableScroll}
             />
           )}
         </div>
@@ -812,14 +797,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
         </Scrim>
       </div>
     );
-  }
-
-  @autobind
-  handleContainerScroll(_: any) {
-    // Set this once so we don't recheck client height on every scroll tick
-    if (!this.batchContainerHeight) {
-      this.batchContainerHeight = this.batchContainer.clientHeight;
-    }
   }
 
   matchAction(action: ICommentAction) {
@@ -994,6 +971,12 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   @autobind
   async onSelectionChange(id: string) {
     await this.props.toggleSingleItem({ id });
+  }
+
+  @autobind
+  onTableScroll(position: number) {
+    this.setState({hideHistogram: position !== 0});
+    return true;
   }
 
   @autobind

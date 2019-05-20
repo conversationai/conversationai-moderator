@@ -238,42 +238,16 @@ export interface ILazyCommentListProps {
   handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
   displayArticleTitle?: boolean;
   selectedTag?: ITagModel;
-  onTableScroll?(): any;
+  onTableScroll?(scrollPos: number): boolean;
 }
 
 export interface ILazyCommentListState {
-  tableWidth?: number;
-  tableHeight?: number;
-  smallerViewport?: boolean;
 }
 
 export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, ILazyCommentListState> {
 
   state: ILazyCommentListState = {
-    tableWidth: window.innerWidth,
-    tableHeight: window.innerHeight - this.props.heightOffset,
-    smallerViewport:  window.innerWidth < 1200,
   };
-
-  componentDidMount() {
-    window.addEventListener('resize', this.resizeListener);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.resizeListener);
-  }
-
-  @autobind
-  resizeListener() {
-    requestAnimationFrame(() => {
-      const windowWidth = window.innerWidth;
-      this.setState({
-        tableWidth: windowWidth,
-        tableHeight: window.innerHeight - this.props.heightOffset,
-        smallerViewport: windowWidth < 1200,
-      });
-    });
-  }
 
   @autobind
   onSelectionChange(comment: ICommentModel) {
@@ -380,13 +354,13 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, 
       scrollToRow,
       onTableScroll,
       handleAssignTagsSubmit,
+      heightOffset,
     } = this.props;
 
-    const {
-      smallerViewport,
-    } = this.state;
+    const tableWidth = window.innerWidth;
+    const tableHeight = window.innerHeight - heightOffset;
+    const smallerViewport = tableWidth < 1200;
 
-    const { tableWidth, tableHeight } = this.state;
     const ROW_HEIGHT = rowHeight || BASE_ROW_HEIGHT + ROW_PADDING;
     const checkboxColumnWidth = smallerViewport ? 80 : 250;
     const rightmostColumnWidth = smallerViewport ? 240 : 290;
