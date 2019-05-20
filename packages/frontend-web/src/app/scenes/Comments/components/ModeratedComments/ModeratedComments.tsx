@@ -22,6 +22,10 @@ import React from 'react';
 import { WithRouterProps } from 'react-router';
 
 import {
+  Collapse,
+} from '@material-ui/core';
+
+import {
   IArticleModel,
   ICommentModel,
   ITagModel,
@@ -283,6 +287,7 @@ export interface IModeratedCommentsState {
   loadedArticleId?: string;
   loadedTag?: string;
   articleControlOpen: boolean;
+  hideHistogram: boolean;
 }
 
 export class ModeratedComments
@@ -309,6 +314,7 @@ export class ModeratedComments
     },
     updatedItems: [],
     articleControlOpen: false,
+    hideHistogram: false,
   };
 
   componentDidMount() {
@@ -364,6 +370,7 @@ export class ModeratedComments
       isTaggingToolTipMetaVisible,
       taggingToolTipMetaPosition,
       loadedArticleId,
+      hideHistogram,
     } = this.state;
 
     const selectedIdsLength = moderatedComments && this.getSelectedIDs().length;
@@ -381,30 +388,32 @@ export class ModeratedComments
     return (
       <div {...css({height: '100%'})}>
 
-        <div {...css(STYLES.topSelectRow)}>
-          <div {...css(STYLES.dropdown)}>
-            <select
-              value={this.state.currentSelect}
-              onChange={this.onSelectChange}
-              id="sorted-type"
-              {...css(STYLES.select)}
-            >
-              <option value={BATCH_SELECT_BY_DATE}>Date</option>
-              <option value={BATCH_SELECT_BY_STATUS}>Moderation status</option>
-            </select>
-            <span aria-hidden="true" {...css(STYLES.arrow)} />
+        <Collapse in={!hideHistogram}>
+          <div {...css(STYLES.topSelectRow)}>
+            <div {...css(STYLES.dropdown)}>
+              <select
+                value={this.state.currentSelect}
+                onChange={this.onSelectChange}
+                id="sorted-type"
+                {...css(STYLES.select)}
+              >
+                <option value={BATCH_SELECT_BY_DATE}>Date</option>
+                <option value={BATCH_SELECT_BY_STATUS}>Moderation status</option>
+              </select>
+              <span aria-hidden="true" {...css(STYLES.arrow)} />
+            </div>
+            {this.props.params.articleId && (
+              <ArticleControlIcon
+                article={this.props.article}
+                open={this.state.articleControlOpen}
+                clearPopups={this.closePopup}
+                openControls={this.openPopup}
+                saveControls={this.applyRules}
+                whiteBackground
+              />
+            )}
           </div>
-          {this.props.params.articleId && (
-            <ArticleControlIcon
-              article={this.props.article}
-              open={this.state.articleControlOpen}
-              clearPopups={this.closePopup}
-              openControls={this.openPopup}
-              saveControls={this.applyRules}
-              whiteBackground
-            />
-          )}
-        </div>
+        </Collapse>
 
         <div {...css(STYLES.row)}>
           <div {...css(STYLES.moderatedInfo)}>{selectedIdsLength}
@@ -533,6 +542,7 @@ export class ModeratedComments
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               requireReasonForReject={REQUIRE_REASON_TO_REJECT}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
+              onTableScroll={this.onTableScroll}
             />
           )}
         </div>
@@ -640,6 +650,12 @@ export class ModeratedComments
     const ids = this.getSelectedIDs();
     this.triggerActionToast('tag', ids.length, () => this.props.tagComments(ids, tagId));
     this.toggleTaggingToolTip();
+  }
+
+  @autobind
+  onTableScroll(position: number) {
+    this.setState({hideHistogram: position !== 0});
+    return true;
   }
 
   @autobind
