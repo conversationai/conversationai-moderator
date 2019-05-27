@@ -18,6 +18,7 @@ import { autobind } from 'core-decorators';
 import formatDate from 'date-fns/format';
 import { List } from 'immutable';
 import React from 'react';
+
 import {
   IAuthorCountsModel,
   ICommentFlagModel,
@@ -60,7 +61,6 @@ import {
   TAG_UNSUBSTANTIAL_COLOR,
   WHITE_COLOR,
 } from '../../styles';
-import { maybeCallback, partial } from '../../util';
 import { css, stylesheet } from '../../utilx';
 import {
   ApproveIcon,
@@ -474,6 +474,34 @@ const FLAGS_STYLES = stylesheet({
   },
 });
 
+interface IRenderSummaryScoreProps {
+  allTags?: List<ITagModel>;
+  score: ICommentSummaryScoreModel;
+  withColor?: boolean;
+  onScoreClick?(score: ICommentSummaryScoreModel): void;
+}
+
+function RenderSummaryScore({allTags, score, withColor, onScoreClick}: IRenderSummaryScoreProps) {
+  const tag = allTags.find((t) => (t.get('id') === score.tagId));
+  if (!tag) {
+    return;
+  }
+  function onClick() {
+    onScoreClick && onScoreClick(score);
+  }
+
+  return (
+    <button
+      {...css(COMMENT_STYLES.tag, withColor ? { color : tag.color } : {})}
+      key={score.tagId}
+      onClick={onClick}
+    >
+      <div {...css(COMMENT_STYLES.label)}>{tag.label}</div>
+      <div>{(score.score * 100).toFixed()}%</div>
+    </button>
+  );
+}
+
 export interface ISingleCommentProps {
   comment: ICommentModel;
   allScores?: List<ICommentScoreModel>;
@@ -485,7 +513,7 @@ export interface ISingleCommentProps {
   isReply?: boolean;
   allTags?: List<ITagModel>;
   availableTags?: List<ITagModel>;
-  onScoreClick?(score: ICommentScoreModel): any;
+  onScoreClick?(score: ICommentSummaryScoreModel): void;
   onTagButtonClick?(tagId: string): Promise<any>;
   onCommentTagClick?(commentScore: ICommentScoreModel): void;
   onAnnotateTagButtonClick?(tag: string, start: number, end: number): Promise<any>;
@@ -928,7 +956,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                 onConfirmCommentScore={onConfirmCommentScore}
                 onRejectCommentScore={onRejectCommentScore}
                 onResetCommentScore={onResetCommentScore}
-                onDeleteCommentTag={partial(maybeCallback(onDeleteCommentTag), comment.id)}
+                onDeleteCommentTag={onDeleteCommentTag}
                 onRemoveCommentScore={onRemoveCommentScore}
                 onUpdateCommentScore={onUpdateCommentScore}
               />
@@ -936,20 +964,15 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
           </div>
           {summaryScoresAboveThreshold && (
             <div {...css(COMMENT_STYLES.tags)}>
-              {summaryScoresAboveThreshold.map((s) => {
-                const tag = allTags.find((t) => (t.get('id') === s.tagId));
-
-                return tag && (
-                  <button
-                    {...css(COMMENT_STYLES.tag, { color: tag.color })}
-                    key={s.tagId}
-                    onClick={partial(maybeCallback(onScoreClick), s)}
-                  >
-                    <div {...css(COMMENT_STYLES.label)}>{tag.label}</div>
-                    <div>{(s.score * 100).toFixed()}%</div>
-                  </button>
-                );
-              })}
+              {summaryScoresAboveThreshold.map((s) => (
+                <RenderSummaryScore
+                  key={s.tagId}
+                  score={s}
+                  allTags={allTags}
+                  onScoreClick={onScoreClick}
+                  withColor
+                />
+              ))}
             </div>
           )}
           {scoresBelowThresholdVisible && reducedScoresBelowThreshold && (
@@ -957,20 +980,14 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               <div {...css(COMMENT_STYLES.tags)}>
                 {summaryScoresBelowThreshold && (
                   <div {...css(COMMENT_STYLES.tags)}>
-                    {summaryScoresBelowThreshold.map((s) => {
-                      const tag = allTags.find((t) => (t.get('id') === s.tagId));
-
-                      return tag && (
-                        <button
-                          {...css(COMMENT_STYLES.tag)}
-                          key={s.tagId}
-                          onClick={partial(maybeCallback(onScoreClick), s)}
-                        >
-                          <div {...css(COMMENT_STYLES.label)}>{tag.label}</div>
-                          <div>{(s.score * 100).toFixed()}%</div>
-                        </button>
-                      );
-                    })}
+                    {summaryScoresBelowThreshold.map((s) => (
+                      <RenderSummaryScore
+                        key={s.tagId}
+                        score={s}
+                        allTags={allTags}
+                        onScoreClick={onScoreClick}
+                      />
+                    ))}
                   </div>
                 )}
               </div>

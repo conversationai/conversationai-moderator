@@ -26,7 +26,6 @@ import {
   LIGHT_PRIMARY_TEXT_COLOR,
   PALE_COLOR,
 } from '../../../../styles';
-import { partial } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
 import { SETTINGS_STYLES } from '../../settingsStyles';
 import { ColorSelect } from '../ColorSelect';
@@ -82,19 +81,52 @@ export interface ILabelSettingsProps {
   onDescriptionChange(tag: ITagModel, value: string): any;
   onColorChange(tag: ITagModel, color: string): any;
   onDeletePress(tag: ITagModel): any;
-  onTagChange(tag: ITagModel, key: string, value: boolean, e?: React.ChangeEvent<HTMLInputElement>): any;
+  onTagChange(tag: ITagModel, key: string, value: boolean): any;
 }
 
 export class LabelSettings extends React.Component<ILabelSettingsProps> {
   @autobind
-  onInputChange(
-    callback: (tag: ITagModel, value?: string) => any,
-    tag: ITagModel,
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) {
+  onLabelChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
+    this.props.onLabelChange(this.props.tag, e.target.value);
+  }
 
-    callback(tag, e.target.value);
+  @autobind
+  onDescriptionChange(e: React.ChangeEvent<HTMLInputElement>) {
+    e.preventDefault();
+    this.props.onDescriptionChange(this.props.tag, e.target.value);
+  }
+
+  @autobind
+  onColorChange(color: string) {
+    this.props.onColorChange(this.props.tag, color);
+  }
+
+  @autobind
+  onTagIsInBatchViewChange(e: React.MouseEvent<HTMLElement>) {
+    e.preventDefault();
+    const { tag, onTagChange } = this.props;
+    onTagChange(tag, 'isInBatchView', !tag.isInBatchView);
+  }
+
+  @autobind
+  onTagIsTaggableChange(e: React.MouseEvent<HTMLElement>) {
+    e.preventDefault();
+    const { tag, onTagChange } = this.props;
+    onTagChange(tag, 'isTaggable', !tag.isTaggable);
+  }
+
+  @autobind
+  onTagInSummaryScoreChange(e: React.MouseEvent<HTMLElement>) {
+    e.preventDefault();
+    const { tag, onTagChange } = this.props;
+    onTagChange(tag, 'inSummaryScore', !tag.inSummaryScore);
+  }
+
+  @autobind
+  onDeletePress(e: React.MouseEvent<HTMLElement>) {
+    e.preventDefault();
+    this.props.onDeletePress(this.props.tag);
   }
 
   render() {
@@ -105,11 +137,6 @@ export class LabelSettings extends React.Component<ILabelSettingsProps> {
         label,
         description,
       },
-      onLabelChange,
-      onDescriptionChange,
-      onTagChange,
-      onColorChange,
-      onDeletePress,
     } = this.props;
 
     return (
@@ -119,19 +146,19 @@ export class LabelSettings extends React.Component<ILabelSettingsProps> {
             type="text"
             {...css(STYLES.labelColor, { backgroundColor: color })}
             value={label ? label : ''}
-            onChange={partial(this.onInputChange, onLabelChange, tag)}
+            onChange={this.onLabelChange}
           />
           <input
             type="text"
             {...css(STYLES.description)}
             value={description ? description : ''}
-            onChange={partial(this.onInputChange, onDescriptionChange, tag)}
+            onChange={this.onDescriptionChange}
           />
-          <ColorSelect tag={label} color={color} onChange={partial(onColorChange, tag)} />
+          <ColorSelect tag={label} color={color} onChange={this.onColorChange} />
           <div {...css(STYLES.checkboxContainer)}>
             <label
               htmlFor={`${tag.key}isInBatchView`}
-              onClick={partial(onTagChange, tag, 'isInBatchView', !tag.isInBatchView)}
+              onClick={this.onTagIsInBatchViewChange}
               {...css(STYLES.checkContainer)}
             >
               <Checkbox isSelected={tag.isInBatchView} inputId={`${tag.key}isInBatchView`} onCheck={null} />
@@ -140,7 +167,7 @@ export class LabelSettings extends React.Component<ILabelSettingsProps> {
           <div {...css(STYLES.checkboxContainer)}>
             <label
               htmlFor={`${tag.key}isTaggable`}
-              onClick={partial(onTagChange, tag, 'isTaggable', !tag.isTaggable)}
+              onClick={this.onTagIsTaggableChange}
               {...css(STYLES.checkContainer)}
             >
               <Checkbox isSelected={tag.isTaggable} inputId={`${tag.key}isTaggable`} onCheck={null} />
@@ -149,13 +176,13 @@ export class LabelSettings extends React.Component<ILabelSettingsProps> {
           <div {...css(STYLES.checkboxContainer)}>
             <label
               htmlFor={`${tag.key}inSummaryScore`}
-              onClick={partial(onTagChange, tag, 'inSummaryScore', !tag.inSummaryScore)}
+              onClick={this.onTagInSummaryScoreChange}
               {...css(STYLES.checkContainer)}
             >
               <Checkbox isSelected={tag.inSummaryScore} inputId={`${tag.key}inSummaryScore`} onCheck={null} />
             </label>
           </div>
-          <button {...css(STYLES.deleteButton, SMALLER_SCREEN && {marginLeft: 0})} type="button" onClick={partial(onDeletePress, tag)}>Delete</button>
+          <button {...css(STYLES.deleteButton, SMALLER_SCREEN && {marginLeft: 0})} type="button" onClick={this.onDeletePress}>Delete</button>
         </div>
       </div>
     );

@@ -52,16 +52,19 @@ const defaultPaging = {
 function safelyEncodeStructure(structure: any): any {
   if (Array.isArray(structure)) {
     return structure.map(safelyEncodeStructure);
-  } else if (isObject(structure)) {
+  }
+  else if (isObject(structure)) {
     return Object.keys(structure).reduce((sum, key) => {
-      const value = structure[key];
+      const value = (structure as {[key: string]: any})[key];
       sum[encode(key)] = safelyEncodeStructure(value);
 
       return sum;
     }, {} as any);
-  } else if (isString(structure)) {
+  }
+  else if (isString(structure)) {
     return encode(structure);
-  } else {
+  }
+  else {
     return structure;
   }
 }

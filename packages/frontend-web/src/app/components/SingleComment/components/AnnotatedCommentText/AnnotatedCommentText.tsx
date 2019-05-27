@@ -21,7 +21,7 @@ import keyboardJS from 'keyboardjs';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { ICommentScoreModel, ITagModel, IUserModel } from '../../../../../models';
+import {ICommentScoreModel, ITagModel, IUserModel, ModelId} from '../../../../../models';
 import {
   ARTICLE_CAPTION_TYPE,
   GREY_COLOR,
@@ -130,10 +130,10 @@ export interface IAnnotatedCommentTextProps {
   availableTags: List<ITagModel>;
   onClick?(tag: string, start: number, end: number): Promise<any>;
   onUpdateCommentScore?(commentScore: ICommentScoreModel): void;
-  onConfirmCommentScore?(commentid: string, commentScoreId: string): void;
-  onRejectCommentScore?(commentid: string, commentScoreId: string): void;
-  onResetCommentScore?(commentid: string, commentScoreId: string): void;
-  onDeleteCommentTag?(commentScoreId: string): void;
+  onConfirmCommentScore?(commentId: ModelId, commentScoreId: ModelId): void;
+  onRejectCommentScore?(commentId: ModelId, commentScoreId: ModelId): void;
+  onResetCommentScore?(commentId: ModelId, commentScoreId: ModelId): void;
+  onDeleteCommentTag?(commentId: ModelId, commentScoreId: ModelId): void;
   onRemoveCommentScore?(commentScore: ICommentScoreModel): void;
   loadScores?(commentId: string): void;
   getUserById?(id: string): IUserModel;
@@ -533,10 +533,11 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
     if (
       this.props.currentUser.name === this.state.confirmationAuthor &&
       this.state.confirmationSource !== 'Machine' &&
-      this.props.onDeleteCommentTag && this.props.onRemoveCommentScore
+      this.props.onDeleteCommentTag &&
+      this.props.onRemoveCommentScore
     ) {
       this.props.onRemoveCommentScore(this.state.confirmationScore);
-      await this.props.onDeleteCommentTag(this.state.confirmationScore.id);
+      await this.props.onDeleteCommentTag(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
       this.closeConfirmationToolTip();
 
       return;
