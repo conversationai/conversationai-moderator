@@ -1055,8 +1055,8 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   }
 
   @autobind
-  handleScoreClick(scoreClicked: ICommentScoreModel) {
-    const thresholdByTag = getTaggingSensitivityForTag(this.props.taggingSensitivitiesInCategory, scoreClicked);
+  handleScoreClick(scoreClicked: ICommentSummaryScoreModel) {
+    const thresholdByTag = getTaggingSensitivityForTag(this.props.taggingSensitivitiesInCategory, scoreClicked.tagId);
     const scoresSelectedByTag = this.props.allScores.filter(
       (score) => score.tagId === scoreClicked.tagId,
     ).sort((a, b) => b.score - a.score) as List<ICommentScoreModel>;

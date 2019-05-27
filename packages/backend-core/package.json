@@ -6,13 +6,10 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "test": "npm run mocha",
-    "test:watch": "npm run compile:watch | npm run mocha:watch",
-    "mocha": "../../node_modules/.bin/mocha 'dist/test/**/*.spec.js' --recursive --timeout 200000",
-    "mocha:watch": "../../node_modules/.bin/mocha --watch 'dist/test/**/*.spec.js' --recursive --timeout 10000",
+    "mocha": "../../node_modules/.bin/ts-mocha 'src/test/**/*.spec.ts' --recursive --timeout 200000",
     "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
     "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration && npm run compile:migrations",
-    "compile:watch": "npm run compile:migrations && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --watch",
     "compile:migrations": "rm -f dist/migrations/* && cp -R src/migrations dist/",
     "build": "npm run compile"
   },
@@ -22,13 +19,12 @@
   },
   "dependencies": {
     "@conversationai/moderator-config": "1.1.0",
-    "@types/bluebird": "3.5.25",
     "@types/express": "4.16.0",
     "@types/express-ws": "3.0.0",
     "@types/joi": "10.4.0",
     "@types/js-yaml": "3.12.1",
     "@types/jsonwebtoken": "7.2.0",
-    "@types/lodash": "4.14.120",
+    "@types/lodash": "4.14.132",
     "@types/mysql": "2.15.5",
     "@types/passport": "0.4.5",
     "@types/passport-google-oauth2": "0.1.2",
@@ -37,8 +33,6 @@
     "@types/sequelize": "3.4.43",
     "@types/underscore.string": "0.0.30",
     "@types/yargs": "13.0.0",
-    "axios": "0.18.0",
-    "bluebird": "3.5.3",
     "body-parser": "1.17.1",
     "compression": "1.6.2",
     "cors": "2.8.1",
@@ -64,6 +58,6 @@
     "striptags": "3.1.1",
     "underscore.string": "3.3.4",
     "winston": "2.3.1",
-    "yargs": "13.2.2"
+    "yargs": "13.2.4"
   }
 }

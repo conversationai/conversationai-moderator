@@ -22,6 +22,9 @@ import {
   sequelize,
   User,
 } from '@conversationai/moderator-backend-core';
+import {
+  ICommentScoreRequestInstance,
+} from '@conversationai/moderator-backend-core';
 
 import {
   expect,
@@ -37,6 +40,8 @@ const prefixed = `${BASE_URL}/`;
 
 describe(prefixed, () => {
   const url = `${prefixed}scores/:id`;
+  let csRequest: ICommentScoreRequestInstance;
+  let score: {score: number, begin: number, end: number};
 
   describe('/scores/:id', () => {
     beforeEach(async () => {
@@ -46,13 +51,13 @@ describe(prefixed, () => {
       const comment = await makeComment();
       const user = await makeUser();
 
-      this.request = await CommentScoreRequest.create({
+      csRequest = await CommentScoreRequest.create({
         commentId: comment.id,
         userId: user.id,
         sentAt: sequelize.fn('now'),
       });
 
-      this.score = {
+      score = {
         score: 1,
         begin: 0,
         end: 1,
@@ -65,12 +70,12 @@ describe(prefixed, () => {
       try {
         const apiClient = chai.request(app);
 
-        const { status } = await apiClient.post(url.replace(':id', this.request.id)).send({
+        const { status } = await apiClient.post(url.replace(':id', csRequest.id.toString())).send({
           scores: {
-            SCORE_TAG: [this.score],
+            SCORE_TAG: [score],
           },
           summaryScores: {
-            SCORE_TAG: this.score.score,
+            SCORE_TAG: score.score,
           },
         });
 
@@ -87,12 +92,12 @@ describe(prefixed, () => {
       try {
         const apiClient = chai.request(app);
 
-        const { status } = await apiClient.post(url.replace(':id', this.request.id)).send({
+        const { status } = await apiClient.post(url.replace(':id', csRequest.id.toString())).send({
           scores: {
-            SCORE_TAG: this.score, // should be an array
+            SCORE_TAG: score, // should be an array
           },
           summaryScores: {
-            SCORE_TAG: this.score.score,
+            SCORE_TAG: score.score,
           },
         });
         expect(status).to.be.equal(422);
@@ -110,13 +115,13 @@ describe(prefixed, () => {
       try {
         const apiClient = chai.request(app);
 
-        const { status } = await apiClient.post(url.replace(':id', this.request.id)).send({
+        const { status } = await apiClient.post(url.replace(':id', csRequest.id.toString())).send({
           scores: {
-            SCORE_TAG: [this.score],
+            SCORE_TAG: [score],
           },
           // Below is missing on purpose.
           // summaryScores: {
-          //   SCORE_TAG: this.score.score,
+          //   SCORE_TAG: score.score,
           // },
         });
         expect(status).to.be.equal(422);
@@ -136,10 +141,10 @@ describe(prefixed, () => {
 
         const { status } = await apiClient.post(url.replace(':id', 'fake')).send({
           scores: {
-            SCORE_TAG: [this.score],
+            SCORE_TAG: [score],
           },
           summaryScores: {
-            SCORE_TAG: this.score.score,
+            SCORE_TAG: score.score,
           },
         });
         expect(status).to.be.equal(400);

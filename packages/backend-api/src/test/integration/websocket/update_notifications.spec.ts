@@ -98,7 +98,7 @@ describe('websocket tests: update_notifications', () => {
         (m: any) => { assertUserMessage(m); },
         (m: any) => {
           assertArticleUpdateMessage(m);
-          expect(m.data.articles[0].id).eq(article.id);
+          expect(m.data.articles[0].id).eq(article.id.toString());
           expect(m.data.articles[0].isAutoModerated).eq(false);
           expect(m.data.articles[0].isCommentingEnabled).eq(true);
         },

@@ -14,16 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as copyToClipboard from 'copy-to-clipboard';
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { Iterable, List, Map } from 'immutable';
 import { generate } from 'randomstring';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
-
-import IconButton from '@material-ui/core/IconButton';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
 
 import {
   CategoryModel,
@@ -50,17 +46,17 @@ import { API_URL } from '../../config';
 import { getToken } from '../../platform/localStore';
 import { IAppDispatch } from '../../stores';
 import {
-  USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
   USER_GROUP_SERVICE,
   USER_GROUP_YOUTUBE,
 } from '../../stores/users';
 import { partial, setCSRF } from '../../util';
 import { css, stylesheet } from '../../utilx';
-import { AddButton, EditButton } from './components/AddButton';
+import { AddButton } from './components/AddButton';
 import { AddUsers } from './components/AddUsers';
 import { EditUsers } from './components/EditUsers';
 import { LabelSettings } from './components/LabelSettings';
+import { ModeratorUserRow, ServiceUserRow, UserRow, YoutubeUserRow } from './components/rows';
 import { RuleRow } from './components/RuleRow';
 
 import {
@@ -473,9 +469,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     tag: ITagModel,
     key: string,
     value: boolean,
-    e: React.ChangeEvent<HTMLInputElement>,
   ) {
-    e.preventDefault();
     this.setState({
       tags: this.state.tags.update(
         this.state.tags.findIndex((t) => t.equals(tag)),
@@ -665,23 +659,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </thead>
               <tbody>
               {sortedUsers.map((u) => (
-                <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
-                  <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    {u.name}
-                  </td>
-                  <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    {u.email}
-                  </td>
-                  <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    {u.group === USER_GROUP_ADMIN ? 'Administrator' : 'Moderator'}
-                  </td>
-                  <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    {u.isActive ? 'Active' : ''}
-                  </td>
-                  <td {...css(SETTINGS_STYLES.userTableCell)}>
-                    <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id}/>
-                  </td>
-                </tr>
+                  <UserRow key={u.id} user={u} handleEditUser={this.handleEditUser}/>
               ))}
               </tbody>
             </table>
@@ -722,20 +700,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           </thead>
           <tbody>
           {moderatorUsers.map((u) => (
-            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.name}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.extra.endpointType}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.extra.endpoint}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.isActive ? 'Active' : ''}
-              </td>
-            </tr>
+            <ModeratorUserRow key={u.id} user={u}/>
           ))}
           </tbody>
         </table>
@@ -771,28 +736,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           </thead>
           <tbody>
           {serviceUsers.map((u) => (
-            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.id}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.name}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell, {fontSize: '10px'})}>
-                {u.extra.jwt}
-              </td>
-              <td>
-                <IconButton aria-label="Copy to clipboard" onClick={partial(copyToClipboard, u.extra.jwt)}>
-                  <FileCopyIcon fontSize="small" />
-                </IconButton>
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.isActive ? 'Active' : ''}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                <EditButton width={44} onClick={this.handleEditUser} label="Edit user" value={u.id}/>
-              </td>
-            </tr>
+            <ServiceUserRow key={u.id} user={u} handleEditUser={this.handleEditUser}/>
           ))}
           </tbody>
         </table>
@@ -826,17 +770,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           </thead>
           <tbody>
           {youtubeUsers.map((u) => (
-            <tr key={u.id} {...css(SETTINGS_STYLES.userTableCell)}>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.name}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.email}
-              </td>
-              <td {...css(SETTINGS_STYLES.userTableCell)}>
-                {u.isActive ? 'Active' : ''}
-              </td>
-            </tr>
+            <YoutubeUserRow key={u.id} user={u}/>
           ))}
           </tbody>
         </table>

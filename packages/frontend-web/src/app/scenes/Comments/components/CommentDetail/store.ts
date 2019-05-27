@@ -24,7 +24,7 @@ import {
   ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
-  ITaggingSensitivityModel,
+  ITaggingSensitivityModel, ModelId,
 } from '../../../../../models';
 import {
   getComment as getCommentSvc,
@@ -351,8 +351,8 @@ export function getTaggingSensitivitiesInCategory(state: any): List<ITaggingSens
   )) as List<ITaggingSensitivityModel>;
 }
 
-export function getTaggingSensitivityForTag(taggingSensitivities: List<ITaggingSensitivityModel>, score: ICommentScoreModel) {
-  return taggingSensitivities.find((ts) => ts.tagId === score.tagId || ts.categoryId === null);
+export function getTaggingSensitivityForTag(taggingSensitivities: List<ITaggingSensitivityModel>, tagId: ModelId) {
+  return taggingSensitivities.find((ts) => ts.tagId === tagId || ts.categoryId === null);
 }
 
 function dedupeScoreTypes(scores: List<ICommentScoreModel>): List<ICommentScoreModel> {

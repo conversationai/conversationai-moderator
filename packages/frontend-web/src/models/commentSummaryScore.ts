@@ -18,6 +18,7 @@ import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 
 export interface ICommentSummaryScoreAttributes {
+  id: number;
   commentId: string;
   tagId: string;
   score: number;
@@ -27,6 +28,7 @@ export interface ICommentSummaryScoreAttributes {
 export interface ICommentSummaryScoreModel extends TypedRecord<ICommentSummaryScoreModel>, ICommentSummaryScoreAttributes {}
 
 const CommentSummaryScoreModelRecord = Record({
+  id: null,
   commentId: null,
   tagId: null,
   score: null,
