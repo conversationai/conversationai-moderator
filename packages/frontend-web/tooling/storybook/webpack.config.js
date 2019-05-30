@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-module.exports = async (config) => {
+module.exports = async ({config}) => {
   config.module.rules.push({
       test:/\.css$/,
       use:['style-loader','css-loader']
