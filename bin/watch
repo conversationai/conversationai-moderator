@@ -5,8 +5,6 @@ export BACKEND_URL=http://localhost:8080
 
 if [ "$1" != "backend" ]; then
   cd packages/frontend-web
-  npm run compile:web
-  npm run compile:watch &
   npm run watch &
   cd -
 fi

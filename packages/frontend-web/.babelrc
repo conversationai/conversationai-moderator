@@ -1,14 +1,18 @@
 {
   "presets": [
     "@babel/preset-react",
-    "@babel/preset-env"
+    "@babel/preset-env",
+    "@babel/preset-typescript"
   ],
   "plugins": [
     "lodash",
-    "react-require",
+    "babel-plugin-react-require",
     "@babel/transform-react-constant-elements",
     "@babel/transform-react-inline-elements",
-    "react-hot-loader/babel"
+    "react-hot-loader/babel",
+    "@babel/proposal-object-rest-spread",
+    ["@babel/proposal-decorators", { "legacy": true }],
+    ["@babel/plugin-proposal-class-properties", { "loose": true }]
   ],
   "env": {
     "test": {

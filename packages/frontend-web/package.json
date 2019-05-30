@@ -5,22 +5,21 @@
   "types": "./dist-commonjs/index.d.ts",
   "description": "OSMod project React.js frontend",
   "scripts": {
-    "build:webpack": "npm run compile:lib && webpack --bail --progress --profile --colors --config tooling/webpack.config.production.js",
-    "build": "npm run compile:web && npm run build:webpack && npm run storybook:build",
+    "build": "npm run compile",
     "lint": "find src -name *.ts -o -name *.tsx | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
-    "watch": "PORT=8000 API_URL=http://localhost:8080 webpack-dev-server --config tooling/webpack.config.js --progress --colors --host 0.0.0.0",
     "lint:fix": "find src -name *.ts -o -name *.tsx | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
     "test": "npm run spec && npm run storybook:test",
     "spec": "jest src/**",
     "storybook": "npm run compile && npm run compile:watch | start-storybook -p 9001 -c tooling/storybook -s public",
-    "storybook:build": "build-storybook -c tooling/storybook -s public -o build/storybook",
+    "storybook:build": "npm run compile:dist && build-storybook -c tooling/storybook -s public -o build/storybook",
     "storybook:test": "jest -c tooling/storybook/jest.config.json tooling/storybook/Storyshots.test.js",
     "compile": "npm run compile:web | npm run compile:lib",
-    "compile:web": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --importHelpers",
+    "compile:dist": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --importHelpers",
     "compile:lib": "rm -rf dist-commonjs && ../../node_modules/.bin/tsc --sourceMap --outDir dist-commonjs --declaration --module commonjs && npm run compile:lib:cleanup",
     "compile:lib:cleanup": "find dist-commonjs -type f -exec sed -i -e 's/_1\\.default(/_1(/g' {} \\; && find dist-commonjs -type f -exec sed -i -e 's/_1\\.default\\./_1\\./g' {} \\;",
     "compile:lib:watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist-commonjs --declaration --module commonjs --watch",
-    "compile:watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --importHelpers --watch --preserveWatchOutput"
+    "compile:web": "webpack --bail --progress --profile --colors --config tooling/webpack.config.production.js",
+    "watch": "PORT=8000 API_URL=http://localhost:8080 webpack-dev-server --config tooling/webpack.config.js --progress --colors --host 0.0.0.0"
   },
   "license": "Apache-2.0",
   "browserslist": [

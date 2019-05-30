@@ -16,7 +16,8 @@ limitations under the License.
 
 const path = require('path');
 const webpack = require('webpack');
-const port = process.env['PORT']
+const port = process.env['PORT'];
+
 module.exports = {
   mode: 'development',
 
@@ -27,7 +28,7 @@ module.exports = {
       `webpack-dev-server/client?http://0.0.0.0:${port}`,
       'webpack/hot/only-dev-server',
       '@babel/polyfill',
-      './dist/app/main'
+      './src/app/main.tsx'
     ]
   },
 
@@ -39,12 +40,12 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.tsx?$/,
         use: 'source-map-loader',
         enforce: 'pre'
       },
       {
-        test: /\.jsx?$/,
+        test: /\.tsx?$/,
         use: 'babel-loader',
         exclude: /node_modules/,
         enforce: 'post'
@@ -56,10 +57,10 @@ module.exports = {
     ]
   },
 
-  devtool: "eval",
+  devtool: "source-map",
 
   resolve: {
-    extensions: [".web.js", ".js", ".jsx"],
+    extensions: [".ts", ".tsx", ".js"],
     alias: {
       'aphrodite': 'aphrodite/no-important',
       'ws': 'slugify', // Not a real alias.  But stops webpack from including ws library in bundle
@@ -75,6 +76,7 @@ module.exports = {
       ENV_API_URL: process.env['API_URL'] ? "'" + (process.env['API_URL']) + "'" : undefined,
       ENV_APP_NAME: "'" + (process.env['APP_NAME'] || 'Moderator') + "'",
       ENV_REQUIRE_REASON_TO_REJECT: (process.env['REQUIRE_REASON_TO_REJECT'] || true),
+      ENV_COMMENTS_EDITABLE_FLAG: (process.env['COMMENTS_EDITABLE_FLAG'] || true),
       ENV_RESTRICT_TO_SESSION: (process.env['RESTRICT_TO_SESSION'] || true),
       ENV_MODERATOR_GUIDELINES_URL: "'" + (process.env['MODERATOR_GUIDELINES_URL'] || '') + "'",
       ENV_SUBMIT_FEEDBACK_URL: "'" + (process.env['SUBMIT_FEEDBACK_URL'] || '') + "'"

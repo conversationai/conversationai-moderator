@@ -19,8 +19,6 @@ import { Map, Set } from 'immutable';
 import React from 'react';
 import { Link } from 'react-router';
 
-import Timer = NodeJS.Timer;
-
 import { OpenInNew } from '@material-ui/icons/';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
@@ -39,7 +37,7 @@ function maybeS(val: number) {
 }
 
 export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
-  timeoutId?: Timer;
+  timeoutId?: any;
 
   render() {
     const then = new Date(this.props.timestamp);
