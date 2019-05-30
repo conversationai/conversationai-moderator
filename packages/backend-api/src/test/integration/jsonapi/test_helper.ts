@@ -98,8 +98,8 @@ const models: {
   articles: {
     all: fakeArticles,
     spec: fakeArticles[0],
-    // id, type, category, owner, comments, assignedModerators
-    numberOfKeys: Object.keys(fakeArticles[0]).length - 6,
+    // id, type, updatedAt, comments, assignedModerators
+    numberOfKeys: Object.keys(fakeArticles[0]).length - 5,
     include: ['comments', 'comments'],
   },
   // 'users': {
