@@ -37,7 +37,7 @@ function maybeS(val: number) {
 }
 
 export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
-  timeoutId?: any;
+  timeoutId?: ReturnType<typeof setTimeout>;
 
   render() {
     const then = new Date(this.props.timestamp);
