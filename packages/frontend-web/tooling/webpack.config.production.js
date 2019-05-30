@@ -23,7 +23,7 @@ module.exports = {
 
   target: 'web',
 
-  entry: {moderator: ['@babel/polyfill', './dist/app/main']},
+  entry: {moderator: ['@babel/polyfill', './src/app/main.tsx']},
 
   output: {
     path: path.join(__dirname, "..", "build"),
@@ -35,12 +35,12 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.tsx?$/,
         use: 'source-map-loader',
         enforce: 'pre'
       },
       {
-        test: /\.jsx?$/,
+        test: /\.tsx?$/,
         use: 'babel-loader',
         exclude: /node_modules/,
         enforce: 'post'
@@ -54,7 +54,7 @@ module.exports = {
 
   devtool: "source-map",
   resolve: {
-    extensions: [".js", ".jsx"],
+    extensions: [".ts", ".tsx", ".js"],
     alias: {
       'aphrodite': 'aphrodite/no-important',
       'ws': 'slugify', // Not a real alias.  But stops webpack from including ws library in bundle
@@ -68,6 +68,7 @@ module.exports = {
       ENV_API_URL: process.env['API_URL'] ? "'" + (process.env['API_URL']) + "'" : undefined,
       ENV_APP_NAME: "'" + (process.env['APP_NAME'] || 'Moderator') + "'",
       ENV_REQUIRE_REASON_TO_REJECT: (process.env['REQUIRE_REASON_TO_REJECT'] || true),
+      ENV_COMMENTS_EDITABLE_FLAG: (process.env['COMMENTS_EDITABLE_FLAG'] || true),
       ENV_RESTRICT_TO_SESSION: (process.env['RESTRICT_TO_SESSION'] || true),
       ENV_MODERATOR_GUIDELINES_URL: "'" + (process.env['MODERATOR_GUIDELINES_URL'] || '') + "'",
       ENV_SUBMIT_FEEDBACK_URL: "'" + (process.env['SUBMIT_FEEDBACK_URL'] || '') + "'",
