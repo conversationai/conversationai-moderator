@@ -20,7 +20,7 @@ import { Map, Seq, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { InjectedRouter, Link, WithRouterProps } from 'react-router';
+import { Link, WithRouterProps } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import { ArticleControlIcon } from '../../components';
@@ -61,12 +61,12 @@ import {
 import {
   executeFilter,
   executeSort,
-  filterString,
+  getFilterString,
+  getSortString,
   IFilterItem,
   isFilterActive,
   parseFilter,
   parseSort,
-  sortString,
 } from './utils';
 
 const STYLES = stylesheet({
@@ -92,8 +92,6 @@ export interface IArticleTableProps extends WithRouterProps {
   selectedCategory: ICategoryModel;
   articles: Map<ModelId, IArticleModel>;
   users: Map<ModelId, IUserModel>;
-  routeParams: {[key: string]: string};
-  router: InjectedRouter;
 }
 
 const POPUP_MODERATORS = 'moderators';
@@ -222,14 +220,15 @@ function updateArticles(state: IArticleTableState, props: IArticleTableProps, fi
 export class ArticleTable extends React.Component<IArticleTableProps, IArticleTableState> {
   constructor(props: Readonly<IArticleTableProps>) {
     super(props);
-    const filter: Array<IFilterItem> = props.routeParams ? parseFilter(props.routeParams.filter) : [];
-    const sort: Array<string> = props.routeParams ? parseSort(props.routeParams.sort) : [];
+    const {filter: filterString, sort: sortString} = props.params;
+    const filter: Array<IFilterItem> = parseFilter(filterString);
+    const sort: Array<string> = parseSort(sortString);
     const articlesContainerHeight = window.innerHeight - HEADER_HEIGHT * 2;
     this._numberOnScreen = Math.ceil((articlesContainerHeight - HEADER_HEIGHT) / CELL_HEIGHT);
 
     this.state = {
-      filterString: props.routeParams ? props.routeParams.filter : NOT_SET,
-      sortString: props.routeParams ? props.routeParams.sort : NOT_SET,
+      filterString: filterString || NOT_SET,
+      sortString: sortString || NOT_SET,
       filter,
       sort,
       articlesTableHeight: 0,
@@ -248,36 +247,27 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
     let redoArticles = false;
     let filterUpdated = false;
     let sortUpdated = false;
+    const {filter: filterString, sort: sortString} = props.params;
 
     const newState: any = {};
 
-    if (props.routeParams) {
-      if (this.state.filterString !== props.routeParams.filter) {
-        filterUpdated = true;
-      }
-      if (this.state.sortString !== props.routeParams.sort) {
-        sortUpdated = true;
-      }
+    if (this.state.filterString !== filterString) {
+      filterUpdated = true;
     }
-    else {
-      if (this.state.filterString !== NOT_SET) {
-        filterUpdated = true;
-      }
-      if (this.state.sortString !== NOT_SET) {
-        sortUpdated = true;
-      }
+    if (this.state.sortString !== sortString) {
+      sortUpdated = true;
     }
 
     if (filterUpdated) {
-      filter = props.routeParams ? parseFilter(props.routeParams.filter) : [];
-      newState['filterString'] = props.routeParams ? props.routeParams.filter : NOT_SET;
+      filter = parseFilter(filterString);
+      newState['filterString'] = filterString || NOT_SET;
       newState['filter'] = filter;
       redoArticles = true;
     }
 
     if (sortUpdated) {
-      sort = props.routeParams ? parseSort(props.routeParams.sort) : [];
-      newState['sortString'] = props.routeParams ? props.routeParams.sort : NOT_SET;
+      sort = parseSort(sortString);
+      newState['sortString'] = sortString || NOT_SET;
       newState['sort'] = sort;
       redoArticles = true;
     }
@@ -327,7 +317,7 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
     this.setState(clearPopupsState);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     keyboardJS.bind('escape', this.clearPopups);
   }
 
@@ -338,7 +328,7 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
   renderFilterPopup(currentSort: string) {
     const router = this.props.router;
     function setFilter(newFilter: Array<IFilterItem>) {
-      router.push(dashboardLink(filterString(newFilter), currentSort));
+      router.push(dashboardLink(getFilterString(newFilter), currentSort));
     }
 
     return (
@@ -569,8 +559,8 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
       numberToShow,
     } = this.state;
 
-    const currentFilter = filterString(filter);
-    const currentSort = sortString(sort);
+    const currentFilter = getFilterString(filter);
+    const currentSort = getSortString(sort);
 
     function renderDirectionIndicatorUp() {
       return (
@@ -600,13 +590,13 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
           }
           else if (item[0] === '-') {
             directionIndicator = renderDirectionIndicatorUp();
-            nextSortItem = sortField;
+            nextSortItem = '';
           }
           break;
         }
       }
       // const newSort = sortString(updateSort(sort, nextSortItem)); implements multi sort
-      const newSort = sortString([nextSortItem]);
+      const newSort = getSortString([nextSortItem]);
       return (
         <Link to={dashboardLink(currentFilter, newSort)} {...css(COMMON_STYLES.cellLink)}>
           <span {...css({position: 'relative'})}>
