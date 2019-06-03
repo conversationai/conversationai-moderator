@@ -10,28 +10,19 @@ The configuration is found in packages/config/index.js.  It is pretty self expla
 All settings can be overridden via environment variables.
 
 Of particular note, the following have no sensible defaults, and
-must be set in the enviromnent before anything will work.
+must be set in the environment before anything will work.
 
 * `DATABASE_NAME`: The MySQL database name, e.g., 'os_moderator'.
 * `DATABASE_USER`: The MySQL database user, e.g., 'os_moderator'.
 * `DATABASE_PASSWORD`: The MySQL database password.
 * `GOOGLE_CLIENT_ID`: Google OAuth API client id.
 * `GOOGLE_CLIENT_SECRET`:  Google OAuth API secret.
-* `MODERATOR_FLAVOR`: What flavor of the moderator to run.
 
 To get values for the `GOOGLE_CLIENT_*` parameters, create an OAuth2.0 Client ID
 entry for your app in the [Google API console](https://console.developers.google.com/apis/credentials).
 Set the Authorised redirect URI to `http://localhost:8080/auth/callback/google`.
 (Replace localhost with the address of your server if you are not running
 locally.)
-
-The `MODERATOR_FLAVOR` setting controls how the moderator interacts with the outside world.
-We support the current flavors
-
-* `youtube`: Moderator will be used to moderate YouTube comments.
-
-If `MODERATOR_FLAVOR` is not set, then we assume that comments will be pushed
-(and determinations pulled) by an external entity, e.g., the `bootstrap_reviews.py` script.
 
 In a production setting, you'll also have to set the following:
 

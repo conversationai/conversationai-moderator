@@ -16,7 +16,8 @@ limitations under the License.
 
 const path = require('path');
 const webpack = require('webpack');
-const port = process.env['PORT'];
+const frontend_url = process.env['FRONTEND_URL'];
+const port = frontend_url ? (new URL(frontend_url)).port : '8000';
 
 module.exports = {
   mode: 'development',
