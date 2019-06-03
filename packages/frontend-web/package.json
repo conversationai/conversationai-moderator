@@ -19,7 +19,7 @@
     "compile:lib:cleanup": "find dist-commonjs -type f -exec sed -i -e 's/_1\\.default(/_1(/g' {} \\; && find dist-commonjs -type f -exec sed -i -e 's/_1\\.default\\./_1\\./g' {} \\;",
     "compile:lib:watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist-commonjs --declaration --module commonjs --watch",
     "compile:web": "webpack --bail --progress --profile --colors --config tooling/webpack.config.production.js",
-    "watch": "PORT=8000 API_URL=http://localhost:8080 webpack-dev-server --config tooling/webpack.config.js --progress --colors --host 0.0.0.0"
+    "watch": "webpack-dev-server --config tooling/webpack.config.js --progress --colors --host 0.0.0.0"
   },
   "license": "Apache-2.0",
   "browserslist": [

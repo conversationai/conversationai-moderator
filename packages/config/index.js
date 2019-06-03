@@ -28,13 +28,6 @@ const config = convict({
     env: 'NODE_ENV'
   },
 
-  port: {
-    doc: 'The port to bind to',
-    format: 'port',
-    default: 8080,
-    env: 'PORT'
-  },
-
   app_name: {
     doc: 'The name of the project displayed on the frontend.',
     format: String,
@@ -45,7 +38,7 @@ const config = convict({
   api_url: {
     doc: 'The public URL for the API',
     format: String,
-    default: 'http://localhost:8080',
+    default: 'http://localhost:8000/api',
     env: 'API_URL'
   },
 
