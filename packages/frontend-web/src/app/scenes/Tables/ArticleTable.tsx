@@ -86,7 +86,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IIArticleTableProps extends WithRouterProps {
+export interface IArticleTableProps extends WithRouterProps {
   myUserId: string;
   categories: Map<ModelId, ICategoryModel>;
   selectedCategory: ICategoryModel;
@@ -101,7 +101,7 @@ const POPUP_CONTROLS = 'controls';
 const POPUP_FILTERS = 'filters';
 const POPUP_SAVING = 'saving';
 
-export interface IIArticleTableState {
+export interface IArticleTableState {
   articlesContainerHeight: number;
   articlesTableHeight: number;
   numberToShow: number;
@@ -124,7 +124,7 @@ export interface IIArticleTableState {
   superModeratorIds?: Set<ModelId>;
 }
 
-const clearPopupsState: Pick<IIArticleTableState,
+const clearPopupsState: Pick<IArticleTableState,
   'popupToShow' | 'selectedArticle' | 'targetIsCategory' | 'targetId' | 'moderatorIds' | 'superModeratorIds'
   > = {
   popupToShow: null,
@@ -162,7 +162,7 @@ function calculateSummaryCounts(articles: Seq.Indexed<IArticleModel>) {
 }
 
 function filterArticles(
-  props: Readonly<IIArticleTableProps>,
+  props: Readonly<IArticleTableProps>,
   filter: Array<IFilterItem>,
 ) {
   if (filter.length === 0) {
@@ -177,7 +177,7 @@ function filterArticles(
 }
 
 function processArticles(
-  props: Readonly<IIArticleTableProps>,
+  props: Readonly<IArticleTableProps>,
   filter: Array<IFilterItem>,
   sort: Array<string>) {
 
@@ -206,7 +206,7 @@ function processArticles(
   };
 }
 
-function updateArticles(state: IIArticleTableState, props: IIArticleTableProps, filter: Array<IFilterItem>) {
+function updateArticles(state: IArticleTableState, props: IArticleTableProps, filter: Array<IFilterItem>) {
   const filteredArticles = filterArticles(props, filter);
   const summary = calculateSummaryCounts(filteredArticles);
   const newSummary = {
@@ -219,8 +219,8 @@ function updateArticles(state: IIArticleTableState, props: IIArticleTableProps, 
   };
 }
 
-export class ArticleTable extends React.Component<IIArticleTableProps, IIArticleTableState> {
-  constructor(props: Readonly<IIArticleTableProps>) {
+export class ArticleTable extends React.Component<IArticleTableProps, IArticleTableState> {
+  constructor(props: Readonly<IArticleTableProps>) {
     super(props);
     const filter: Array<IFilterItem> = props.routeParams ? parseFilter(props.routeParams.filter) : [];
     const sort: Array<string> = props.routeParams ? parseSort(props.routeParams.sort) : [];
@@ -242,7 +242,7 @@ export class ArticleTable extends React.Component<IIArticleTableProps, IIArticle
   _numberOnScreen = 0;
   _scrollBarRef: PerfectScrollbar = null;
 
-  componentWillReceiveProps(props: Readonly<IIArticleTableProps>): void {
+  componentWillReceiveProps(props: Readonly<IArticleTableProps>): void {
     let filter: Array<IFilterItem> = this.state.filter;
     let sort: Array<string> = this.state.sort;
     let redoArticles = false;

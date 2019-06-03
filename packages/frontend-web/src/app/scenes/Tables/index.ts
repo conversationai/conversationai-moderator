@@ -26,13 +26,13 @@ import { getArticles } from '../../stores/articles';
 import { getCategories, getCategoryMap } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUsers } from '../../stores/users';
 import { withLoader } from '../../utilx';
-import { ArticleTable as PureArticleTable, IIArticleTableProps } from './ArticleTable';
+import { ArticleTable as PureArticleTable, IArticleTableProps } from './ArticleTable';
 import { TableFrame as PureTableFrame } from './TableFrame';
 
 const baseSelector = createStructuredSelector({
   myUserId: getMyUserId,
   categories: getCategoryMap,
-  selectedCategory: (state: IAppStateRecord, { params }: IIArticleTableProps) => {
+  selectedCategory: (state: IAppStateRecord, { params }: IArticleTableProps) => {
     const m = /category=(\d+)/.exec(params.filter);
     if (!m) {
       return null;

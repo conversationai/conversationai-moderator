@@ -37,12 +37,12 @@ import {
 import { css } from '../utilx';
 import * as icons from './Icons';
 
-interface IIControlFlagProps {
+interface IControlFlagProps {
   isCommentingEnabled?: boolean;
   isAutoModerated?: boolean;
 }
 
-export class ControlFlag extends React.Component<IIControlFlagProps> {
+export class ControlFlag extends React.Component<IControlFlagProps> {
   render() {
     let style: any;
     let Icon: any;
@@ -65,19 +65,19 @@ export class ControlFlag extends React.Component<IIControlFlagProps> {
   }
 }
 
-export interface IIControlPopupProps {
+export interface IControlPopupProps {
   article: IArticleModel;
   clearPopups(): void;
   saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean): void;
 }
 
-export interface IIControlPopupState {
+export interface IControlPopupState {
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
 }
 
-export class ArticleControlPopup extends React.Component<IIControlPopupProps, IIControlPopupState> {
-  constructor(props: Readonly<IIControlPopupProps>) {
+export class ArticleControlPopup extends React.Component<IControlPopupProps, IControlPopupState> {
+  constructor(props: Readonly<IControlPopupProps>) {
     super(props);
     this.state = {
       isCommentingEnabled: this.props.article.isCommentingEnabled,

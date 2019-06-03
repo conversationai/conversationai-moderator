@@ -121,7 +121,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IIFilterSidebarProps {
+export interface IFilterSidebarProps {
   open: boolean;
   filterString: string;
   filter: Array<IFilterItem>;
@@ -134,7 +134,7 @@ export interface IIFilterSidebarProps {
   clearPopups(): void;
 }
 
-export interface IIFilterSidebarState {
+export interface IFilterSidebarState {
   titleFilter: string;
   moderatorFilterString: string;
   moderatorFilterUsers?: Set<ModelId>;
@@ -153,8 +153,8 @@ export interface IIFilterSidebarState {
 
 const DATE_FILTER_RANGE = 'custom';
 
-export class FilterSidebar extends React.Component<IIFilterSidebarProps, IIFilterSidebarState> {
-  state: IIFilterSidebarState = {
+export class FilterSidebar extends React.Component<IFilterSidebarProps, IFilterSidebarState> {
+  state: IFilterSidebarState = {
     titleFilter: '',
     moderatorFilterString: '',
     dateFilterKey: '',
@@ -167,7 +167,7 @@ export class FilterSidebar extends React.Component<IIFilterSidebarProps, IIFilte
     wasOpen: false,
   };
 
-  static getDerivedStateFromProps(props: Readonly<IIFilterSidebarProps>, state: Readonly<IIFilterSidebarState>): IIFilterSidebarState {
+  static getDerivedStateFromProps(props: Readonly<IFilterSidebarProps>, state: Readonly<IFilterSidebarState>): IFilterSidebarState {
     const filter = props.filter;
     const moderatorFilterString = getFilterValue(filter, FILTER_MODERATORS);
     let moderatorFilterUsers: Array<string> = [];
