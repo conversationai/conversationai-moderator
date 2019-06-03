@@ -161,14 +161,14 @@ export class SmallUserIcon extends React.Component<ISmallUserIconProps> {
   }
 }
 
-interface IIModeratorsWidgetProps {
+interface IModeratorsWidgetProps {
   users: Map<string, IUserModel>;
   moderatorIds: Array<ModelId>;
   superModeratorIds: Array<ModelId>;
   openSetModerators(): void;
 }
 
-export class ModeratorsWidget extends React.Component<IIModeratorsWidgetProps> {
+export class ModeratorsWidget extends React.Component<IModeratorsWidgetProps> {
   @autobind
   openModeratorsDlg() {
     this.props.openSetModerators();

@@ -40,7 +40,7 @@ const theme = createMuiTheme({
   },
 });
 
-export interface IITableFrameProps extends WithRouterProps {
+export interface ITableFrameProps extends WithRouterProps {
   dispatch: Function;
   user: IUserModel;
   isAdmin: boolean;
@@ -48,7 +48,7 @@ export interface IITableFrameProps extends WithRouterProps {
   logout (): void;
 }
 
-export interface IITableFrameState {
+export interface ITableFrameState {
   sidebarOpen: boolean;
   fixedSidebar: boolean;
 }
@@ -57,8 +57,8 @@ function fixedSidebar() {
   return SIDEBAR_WIDTH / window.innerWidth < 0.17;
 }
 
-export class TableFrame extends React.Component<IITableFrameProps, IITableFrameState> {
-  constructor(props: IITableFrameProps) {
+export class TableFrame extends React.Component<ITableFrameProps, ITableFrameState> {
+  constructor(props: ITableFrameProps) {
     super(props);
 
     this.state = {
