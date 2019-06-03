@@ -50,7 +50,7 @@ export function updateFilter(filterList: Array<IFilterItem>, newKey: string, new
   return filterList;
 }
 
-export function filterString(filterList: Array<IFilterItem>): string {
+export function getFilterString(filterList: Array<IFilterItem>): string {
   if (filterList.length === 0) {
     return NOT_SET;
   }
@@ -314,7 +314,7 @@ export function updateSort(sortList: Array<string>, newSort: string): Array<stri
   return sortList;
 }
 
-export function sortString(sl: Array<string>) {
+export function getSortString(sl: Array<string>) {
   if (sl.length === 0) {
     return NOT_SET;
   }

@@ -16,7 +16,7 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { connect } from 'react-redux';
-import { InjectedRouter, withRouter } from 'react-router';
+import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
 
 import {
@@ -94,7 +94,7 @@ const mapStateToProps = createStructuredSelector({
   rules: getRules,
   preselects: getPreselects,
   taggingSensitivities: getTaggingSensitivities,
-  onCancel: (_: IAppState, { router }: { router: InjectedRouter }) => router.goBack,
+  onCancel: (_: IAppState, { router }: ISettingsProps) => router.goBack,
 }) as (state: IAppState, props: ISettingsOwnProps) => ISettingsStateProps;
 
 function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
