@@ -31,7 +31,6 @@ export * from './Icons';
 export * from './LazyCommentList';
 export * from './LazyLoadComment';
 export * from './Loader';
-export * from './Link';
 export * from './ModerateButtons';
 export * from './NavigationTab';
 export * from './OverflowContainer';

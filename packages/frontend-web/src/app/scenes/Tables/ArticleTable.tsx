@@ -20,7 +20,8 @@ import { Map as IMap, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { Link, WithRouterProps } from 'react-router';
+import { WithRouterProps } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import { ArticleControlIcon } from '../../components';

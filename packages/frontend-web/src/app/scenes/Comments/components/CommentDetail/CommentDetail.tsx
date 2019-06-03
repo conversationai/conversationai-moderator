@@ -20,7 +20,8 @@ import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import qs from 'query-string';
 import React from 'react';
-import { Link, WithRouterProps } from 'react-router';
+import { WithRouterProps } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import {
   CommentScoreModel,

@@ -21,6 +21,7 @@ import keyboardJS from 'keyboardjs';
 import qs from 'query-string';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import {
   Collapse,
@@ -47,7 +48,6 @@ import {
   CommentList,
   DeferIcon,
   HighlightIcon,
-  Link,
   RejectIcon,
   Scrim,
   ToastMessage,

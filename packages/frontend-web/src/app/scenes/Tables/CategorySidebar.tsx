@@ -15,7 +15,7 @@ limitations under the License.
 */
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import 'react-perfect-scrollbar/dist/css/styles.css';
 

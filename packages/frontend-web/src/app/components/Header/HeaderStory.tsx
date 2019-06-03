@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { Link } from 'react-router-dom';
+
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 
@@ -26,7 +28,6 @@ import {
 } from '../../styles';
 import { css } from '../../utilx';
 import { HomeIcon } from '../Icons';
-import { Link } from '../Link';
 import { Header } from './Header';
 
 const STORY_STYLES = {
