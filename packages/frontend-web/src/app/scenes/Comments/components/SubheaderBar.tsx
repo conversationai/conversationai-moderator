@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { IArticleModel, ICategoryModel } from '../../../../models';
 import { ISummaryCounts } from '../../../stores/categories';

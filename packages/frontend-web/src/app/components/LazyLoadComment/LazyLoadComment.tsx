@@ -19,6 +19,7 @@ import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import { List, Set } from 'immutable';
 import React from 'react';
 const Linkify = require('react-linkify').default;
+import { Link } from 'react-router-dom';
 
 import { OpenInNew } from '@material-ui/icons';
 
@@ -56,7 +57,6 @@ import {
 import {
   ROW_STYLES,
 } from '../LazyCommentList';
-import { Link } from '../Link';
 import { ModerateButtons } from '../ModerateButtons';
 
 const LAZY_BOX_STYLE = {

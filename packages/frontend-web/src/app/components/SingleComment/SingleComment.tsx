@@ -18,6 +18,7 @@ import { autobind } from 'core-decorators';
 import formatDate from 'date-fns/format';
 import { List } from 'immutable';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import {
   IAuthorCountsModel,
@@ -72,9 +73,6 @@ import {
   ReputationIcon,
 } from '../Icons';
 import { Button } from '../index';
-import {
-  Link,
-} from '../Link';
 import { AnnotatedCommentText } from './components/AnnotatedCommentText';
 import { CommentTags } from './components/CommentTags';
 

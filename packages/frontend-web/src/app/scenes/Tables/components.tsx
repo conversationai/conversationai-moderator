@@ -17,7 +17,7 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { Map, Set } from 'immutable';
 import React from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { OpenInNew } from '@material-ui/icons/';
 
