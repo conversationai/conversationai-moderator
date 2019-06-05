@@ -19,7 +19,6 @@ import * as express from 'express';
 
 const chaiHttp = require('chai-http');
 
-import { makeServer } from '@conversationai/moderator-backend-core';
 import { omit } from 'lodash';
 
 import { fakeArticleModel, fakeCommentModel, fakeUserModel } from '@conversationai/moderator-frontend-web';
@@ -34,6 +33,7 @@ import {
   CommentSerializer,
   UserSerializer,
 } from '../../../api/util/serializers';
+import { makeServer } from '../../../api/util/server';
 
 const serverStuff = makeServer(true);
 const server: express.Application = serverStuff.app;

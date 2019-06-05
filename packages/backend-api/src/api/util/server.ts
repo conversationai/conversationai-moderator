@@ -18,11 +18,12 @@ import * as express from 'express';
 import * as expressWs from 'express-ws';
 import { Server } from 'http';
 
+import { logger } from '@conversationai/moderator-backend-core';
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const compression = require('compression');
 const helmet = require('helmet');
-import { logger } from './logger';
 
 export function getExpressAppWithPreprocessors(testMode?: boolean) {
   const app = express();

@@ -18,11 +18,12 @@ import * as chai from 'chai';
 
 import { Article, Category, User } from '@conversationai/moderator-backend-core';
 import { IArticleInstance, ICategoryInstance, IUserInstance } from '@conversationai/moderator-backend-core';
-import { clearInterested, makeServer } from '@conversationai/moderator-backend-core';
+import { clearInterested } from '@conversationai/moderator-backend-core';
 
 import { REPLY_SUCCESS_VALUE } from '../../../api/constants';
 import { destroyUpdateNotificationService } from '../../../api/services/updateNotifications';
-import { mountAPI} from '../../../index';
+import { makeServer } from '../../../api/util/server';
+import { mountAPI } from '../../../index';
 import {
   assertAllArticlesMessage,
   assertArticleUpdateMessage,
