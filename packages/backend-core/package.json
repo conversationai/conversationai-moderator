@@ -9,8 +9,7 @@
     "mocha": "../../node_modules/.bin/ts-mocha 'src/test/**/*.spec.ts' --recursive --timeout 200000",
     "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json",
     "lint:fix": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json --fix",
-    "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration && npm run compile:migrations",
-    "compile:migrations": "rm -f dist/migrations/* && cp -R src/migrations dist/",
+    "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration",
     "build": "npm run compile"
   },
   "license": "Apache-2.0",

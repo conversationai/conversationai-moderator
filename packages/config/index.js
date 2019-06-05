@@ -94,7 +94,7 @@ const config = convict({
   database_socket: {
     doc: 'Database socket',
     format: String,
-    default: 'nevermind',
+    default: undefined,
     env: 'DATABASE_SOCKET'
   },
 

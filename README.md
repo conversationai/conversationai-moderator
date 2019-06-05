@@ -88,8 +88,7 @@ EOF
 
 cd packages/backend-core
 mysql -u root -p $DATABASE_NAME < seed/initial-database.sql
-npx sequelize db:migrate --config ../config/sequelize.js \
-  --migrations-path dist/migrations --models-path dist/models
+npx sequelize db:migrate
 cd -
 
 # Add a service user that can talk to the Perspective API:

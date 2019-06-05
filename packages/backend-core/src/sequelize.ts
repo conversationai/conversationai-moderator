@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,32 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { config } from '@conversationai/moderator-config';
-
 import * as Sequelize from 'sequelize';
 
-const mysqlConfig: any = {
-  dialect: 'mysql',
-  define: {
-    charset: 'utf8',
-    collate: 'utf8_general_ci',
-  },
-  logging: false,
-  host: undefined,
-  port: undefined,
-  dialectOptions: undefined,
-};
-
-if (config.get('database_socket') !== 'nevermind') {
-  mysqlConfig.dialectOptions = { socketPath: config.get('database_socket') };
-}
-else {
-  mysqlConfig.host = config.get('database_host');
-  mysqlConfig.port = config.get('database_port');
-}
+import { database, mysqlConfig, password, username } from './sequelize-config';
 
 export const sequelize = new Sequelize(
-  config.get('database_name'),
-  config.get('database_user'),
-  config.get('database_password'),
-  mysqlConfig);
+  database,
+  username,
+  password,
+  mysqlConfig,
+);

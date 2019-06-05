@@ -1,6 +1,6 @@
 'use strict';
 
-const {User, USER_GROUP_GENERAL, USER_GROUP_ADMIN, USER_GROUP_SERVICE, USER_GROUP_YOUTUBE} = require('../models/user');
+const {User, USER_GROUP_GENERAL, USER_GROUP_ADMIN, USER_GROUP_SERVICE, USER_GROUP_YOUTUBE} = require('../../dist/models/user');
 
 module.exports = {
   up: function (queryInterface, Sequelize) {

@@ -20,6 +20,6 @@ CREATE DATABASE $DATABASE_NAME;
 GRANT ALL on $DATABASE_NAME.* to $DATABASE_USER;
 EOF
 sudo mysql $DATABASE_NAME < seed/initial-database.sql
-npx sequelize db:migrate --config ../config/sequelize.js --migrations-path dist/migrations --models-path dist/models
+npx sequelize db:migrate
 
 sudo mysql-schema-diff os_moderator_schema_test_migrations os_moderator_schema_test_sync
