@@ -6,7 +6,7 @@ const {
   USER_GROUP_ADMIN,
   USER_GROUP_SERVICE,
   USER_GROUP_MODERATOR,
-  USER_GROUP_YOUTUBE} = require('../models/user');
+  USER_GROUP_YOUTUBE} = require('../../dist/models/user');
 
 module.exports = {
   up: async function (queryInterface, Sequelize) {
