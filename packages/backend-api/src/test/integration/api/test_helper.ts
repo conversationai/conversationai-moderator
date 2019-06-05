@@ -19,7 +19,7 @@ import * as express from 'express';
 
 const chaiHttp = require('chai-http');
 
-import { makeServer } from '@conversationai/moderator-backend-core';
+import { makeServer } from '../../../api/util/server';
 import { mountAPI } from '../../../index';
 
 chai.use(chaiHttp);

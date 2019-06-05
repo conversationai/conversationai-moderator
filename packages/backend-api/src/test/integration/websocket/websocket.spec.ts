@@ -17,9 +17,11 @@ limitations under the License.
 import * as WebSocket from 'ws';
 
 import { User } from '@conversationai/moderator-backend-core';
-import { clearInterested, makeServer } from '@conversationai/moderator-backend-core';
+import { clearInterested } from '@conversationai/moderator-backend-core';
 
-import {mountAPI} from '../../../index';
+import { destroyUpdateNotificationService } from '../../../api/services/updateNotifications';
+import { makeServer } from '../../../api/util/server';
+import { mountAPI } from '../../../index';
 import {
   assertAllArticlesMessage,
   assertSystemMessage, assertUserMessage,
@@ -27,7 +29,6 @@ import {
   makeUser,
   sleep,
 } from '../../test_helper';
-import {destroyUpdateNotificationService} from '../../../api/services/updateNotifications';
 
 describe('websocket tests', () => {
   beforeEach(async () => {

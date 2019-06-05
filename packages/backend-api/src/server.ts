@@ -38,11 +38,12 @@ import { readFileSync } from 'fs';
 import * as http from 'http';
 import * as https from 'https';
 
-import { applyCommonPostprocessors, getExpressAppWithPreprocessors, logger } from '@conversationai/moderator-backend-core';
+import { logger } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 import { mountWebFrontend } from '@conversationai/moderator-frontend-web';
 
 import { mountAPI } from '.';
+import { applyCommonPostprocessors, getExpressAppWithPreprocessors } from './api/util/server';
 import { mountQueueDashboard } from './processing';
 
 const frontend_url = config.get('frontend_url');

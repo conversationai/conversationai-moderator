@@ -21,4 +21,3 @@ export * from './models';
 export * from './processing';
 export * from './logger';
 export * from './sequelize';
-export * from './server';
