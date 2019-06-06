@@ -18,16 +18,12 @@ import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
 import React from 'react';
 import { IUserModel } from '../../../../../models';
-import { Button, CheckboxRow, OverflowContainer, RejectIcon } from '../../../../components';
+import { CheckboxRow, ContainerFooter, ContainerHeader, OverflowContainer } from '../../../../components';
 import { partial } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
 
 import {
-  DARK_COLOR,
-  DARK_PRIMARY_TEXT_COLOR,
   GUTTER_DEFAULT_SPACING,
-  HEADLINE_TYPE,
-  PALE_COLOR,
 } from '../../../../styles';
 
 const STYLES = stylesheet({
@@ -50,46 +46,7 @@ const STYLES = stylesheet({
       textDecoration: 'underline',
     },
   },
-
-  h1: {
-    ...HEADLINE_TYPE,
-    margin: 0,
-    color: DARK_PRIMARY_TEXT_COLOR,
-  },
-
-  closeButton: {
-    background: 'none',
-    border: 'none',
-    position: 'absolute',
-    right: GUTTER_DEFAULT_SPACING,
-    top: GUTTER_DEFAULT_SPACING,
-    cursor: 'pointer',
-    ':focus': {
-      outline: 'none',
-      background: PALE_COLOR,
-    },
-  },
 });
-
-export interface IContainerHeaderProps {
-  label: string;
-  onClickClose: React.EventHandler<any>;
-}
-
-class ContainerHeader extends React.Component<IContainerHeaderProps> {
-  render() {
-    const { label, onClickClose } = this.props;
-
-    return (
-      <div>
-        <h1 key="label" {...css(STYLES.h1)}>{label}</h1>
-        <button key="close button" {...css(STYLES.closeButton)} aria-label="Close" onClick={onClickClose}>
-          <RejectIcon style={{fill: DARK_COLOR}} />
-        </button>
-      </div>
-    );
-  }
-}
 
 export type ModelId = string | number;
 
@@ -132,20 +89,6 @@ class ModeratorList extends React.Component<IModeratorListProps> {
   }
 }
 
-export interface IContainerFooterProps {
-  onClickButton?(): any;
-}
-
-class ContainerFooter extends React.Component<IContainerFooterProps> {
-  render() {
-    const { onClickButton } = this.props;
-
-    return (
-      <Button label="Save" onClick={onClickButton} />
-    );
-  }
-}
-
 export interface IAssignModeratorsProps {
   users?: List<IUserModel>;
   moderatorIds?: Set<ModelId>;
@@ -183,6 +126,8 @@ export class AssignModerators
       moderatorIds,
       superModeratorIds,
       isReady,
+      onClickClose,
+      onClickDone,
     } = this.props;
 
     if (!isReady) {
@@ -191,7 +136,7 @@ export class AssignModerators
 
     return (
       <OverflowContainer
-        header={<ContainerHeader label={label} onClickClose={this.onClickClose} />}
+        header={<ContainerHeader onClickClose={onClickClose}>{label}</ContainerHeader>}
         body={(
           <div {...css({ marginTop: `${GUTTER_DEFAULT_SPACING}px`, marginBottom: `${GUTTER_DEFAULT_SPACING}px`, })}>
             <ModeratorList
@@ -202,7 +147,7 @@ export class AssignModerators
             />
           </div>
         )}
-        footer={<ContainerFooter onClickButton={this.onClickDone} />}
+        footer={<ContainerFooter onClick={onClickDone} />}
       />
     );
   }
@@ -211,18 +156,9 @@ export class AssignModerators
   onModeratorStatusChange(userid: string, checked: boolean) {
     if (checked && this.props.onAddModerator) {
       this.props.onRemoveModerator(userid);
-    } else if (!checked && this.props.onRemoveModerator) {
+    }
+    else if (!checked && this.props.onRemoveModerator) {
       this.props.onAddModerator(userid);
     }
-  }
-
-  @autobind
-  onClickClose() {
-    this.props.onClickClose();
-  }
-
-  @autobind
-  onClickDone() {
-    this.props.onClickDone();
   }
 }
