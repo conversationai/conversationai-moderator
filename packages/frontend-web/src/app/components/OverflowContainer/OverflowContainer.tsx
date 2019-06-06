@@ -14,7 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import React, { MouseEvent,  ReactNode } from 'react';
+
+import {
+  Button,
+} from '@material-ui/core';
+import {
+  Close,
+} from '@material-ui/icons';
+
 import {
   ARTICLE_HEADLINE_TYPE,
   BODY_TEXT_TYPE,
@@ -52,7 +60,59 @@ const STYLES = stylesheet({
     ...ARTICLE_HEADLINE_TYPE,
     color: DARK_PRIMARY_TEXT_COLOR,
   },
+
+  h1: {
+    ...HEADLINE_TYPE,
+    margin: 0,
+    color: DARK_PRIMARY_TEXT_COLOR,
+  },
+
+  closeButtonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
+  saveButtonContainer: {
+    textAlign: 'right',
+  },
 });
+
+export interface IContainerHeaderProps {
+  children?: ReactNode;
+  onClickClose: React.EventHandler<any>;
+}
+
+export function ContainerHeader(props: IContainerHeaderProps) {
+  const { children, onClickClose } = props;
+
+  return (
+    <div {...css(STYLES.closeButtonContainer)}>
+      <h1 key="label" {...css(STYLES.h1)}>{children}</h1>
+      <Close onClick={onClickClose}/>
+    </div>
+  );
+}
+
+export interface IContainerFooterProps {
+  onClick(): void;
+  disabled?: boolean;
+}
+
+export function ContainerFooter(props: IContainerFooterProps) {
+  const { onClick, disabled } = props;
+
+  function onClickWrapper(e: MouseEvent) {
+    e.preventDefault();
+    onClick();
+  }
+
+  return (
+    <div {...css(STYLES.saveButtonContainer)}>
+      <Button variant="contained" color="primary" disabled={disabled} onClick={onClickWrapper}>Save</Button>
+    </div>
+  );
+}
 
 export interface IOverflowContainerProps {
   header?: JSX.Element;

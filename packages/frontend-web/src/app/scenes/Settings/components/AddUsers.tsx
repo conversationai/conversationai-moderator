@@ -16,56 +16,23 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import React from 'react';
+
 import { IUserModel, UserModel } from '../../../../models';
 import {
-  DARK_COLOR,
-  GUTTER_DEFAULT_SPACING,
-  PALE_COLOR,
-  SCRIM_Z_INDEX,
-} from '../../../styles';
-import { css, stylesheet } from '../../../utilx';
-import { UserForm } from './UserForm';
-
-import {
-  Button,
+  ContainerFooter,
+  ContainerHeader,
   OverflowContainer,
-  RejectIcon,
 } from '../../../components';
 import {
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
   USER_GROUP_SERVICE,
 } from '../../../stores/users';
-
-const STYLES = stylesheet({
-  heading: {
-    fontSize: '18px',
-  },
-
-  headerRow: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-
-  row: {
-    padding: '12px 0',
-  },
-
-  closeButton: {
-    background: 'none',
-    border: 'none',
-    position: 'absolute',
-    right: GUTTER_DEFAULT_SPACING,
-    top: GUTTER_DEFAULT_SPACING,
-    cursor: 'pointer',
-    zIndex: SCRIM_Z_INDEX,
-    ':focus': {
-      outline: 'none',
-      background: PALE_COLOR,
-    },
-  },
-});
+import {
+  GUTTER_DEFAULT_SPACING,
+} from '../../../styles';
+import { css } from '../../../utilx';
+import { UserForm } from './UserForm';
 
 export interface IAddUsersProps {
   userType: string;
@@ -113,9 +80,7 @@ export class AddUsers extends React.Component<IAddUsersProps, IAddUsersState> {
   }
 
   @autobind
-  onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
+  onSubmit() {
     this.props.onClickDone(this.state.newUser);
   }
 
@@ -136,26 +101,15 @@ export class AddUsers extends React.Component<IAddUsersProps, IAddUsersState> {
     }
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <OverflowContainer
-          header={(
-            <div {...css(STYLES.headerRow)}>
-              <h1 {...css(STYLES.heading)}>{title}</h1>
-              <button key="close button" {...css(STYLES.closeButton)} aria-label="Close" onClick={onClickClose}>
-                <RejectIcon style={{fill: DARK_COLOR}} />
-              </button>
-            </div>
-          )}
-          body={(
-            <div  {...css({ marginTop: `${GUTTER_DEFAULT_SPACING}px`, marginBottom: `${GUTTER_DEFAULT_SPACING}px`, })}>
-              <UserForm onInputChange={this.onInputChange} user={newUser} />
-            </div>
-          )}
-          footer={(
-            <Button disabled={isDisabled} label="Save" />
-          )}
-        />
-      </form>
+      <OverflowContainer
+        header={<ContainerHeader onClickClose={onClickClose}>{title}</ContainerHeader>}
+        body={(
+          <div  {...css({ marginTop: `${GUTTER_DEFAULT_SPACING}px`, marginBottom: `${GUTTER_DEFAULT_SPACING}px`, })}>
+            <UserForm onInputChange={this.onInputChange} user={newUser} />
+          </div>
+        )}
+        footer={<ContainerFooter disabled={isDisabled} onClick={this.onSubmit}/>}
+      />
     );
   }
 }

@@ -555,8 +555,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
-  closeScrims(e: React.FormEvent<any>) {
-    e.preventDefault();
+  closeScrims() {
     this.setState({
       isAddUserScrimVisible: false,
       isEditUserScrimVisible: false,
@@ -951,7 +950,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           <div
             key="addUserContainer"
             tabIndex={0}
-            {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
+            {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})}
           >
             <AddUsers
               userType={this.state.addUserType}
@@ -980,7 +979,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           <div
             key="editUserContainer"
             tabIndex={0}
-            {...css(SCRIM_STYLE.popup, {position: 'relative', paddingRight: 0, width: 450})}
+            {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})}
           >
             <EditUsers
               userToEdit={this.state.selectedUser}
