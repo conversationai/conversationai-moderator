@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { getMyUserId, logout } from '../../auth';
 import { getWebsocketState, IAppDispatch, IAppStateRecord } from '../../stores';
-import { getArticles } from '../../stores/articles';
+import { getArticleMap, getArticles } from '../../stores/articles';
 import { getActiveCategories, getCategoryMap } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUsers } from '../../stores/users';
 import { withLoader } from '../../utilx';
@@ -40,6 +40,7 @@ const baseSelector = createStructuredSelector({
 
     return getCategoryMap(state).get(m[1]);
   },
+  articleMap: getArticleMap,
   articles: getArticles,
   users: getUsers,
 });

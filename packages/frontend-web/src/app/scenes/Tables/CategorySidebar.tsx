@@ -13,7 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { Iterable } from 'immutable';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Link } from 'react-router';
@@ -148,7 +147,7 @@ const STYLES = stylesheet({
 
 export interface ICategorySidebarProps {
   user: IUserModel;
-  categories: Iterable.Indexed<ICategoryModel>;
+  categories: Array<ICategoryModel>;
   selectedCategory?: ICategoryModel;
   selectMine: boolean;
   isAdmin?: boolean;

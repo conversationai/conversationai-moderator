@@ -16,10 +16,8 @@ limitations under the License.
 
 import { storiesOf } from '@storybook/react';
 import faker from 'faker';
-import { List } from 'immutable';
 import React from 'react';
 
-import { ICategoryModel } from '../../../models';
 import { fakeCategoryModel, fakeUserModel } from '../../../models/fake';
 import { HeaderBar } from '../../components';
 import { CategorySidebar } from './CategorySidebar';
@@ -33,7 +31,7 @@ const userNoIcon = fakeUserModel({
   avatarURL: null,
 });
 
-const categories = List<ICategoryModel>([
+const categories = [
   fakeCategoryModel({unmoderatedCount: 10}),
   fakeCategoryModel({unmoderatedCount: 2}),
   fakeCategoryModel({label: 'N.Y.C. Events Guide', unmoderatedCount: 15}),
@@ -54,9 +52,9 @@ const categories = List<ICategoryModel>([
   fakeCategoryModel({unmoderatedCount: 11}),
   fakeCategoryModel({unmoderatedCount: 15}),
   fakeCategoryModel({unmoderatedCount: 10}),
-  ]);
+  ];
 
-const categoriesShort = List<ICategoryModel>([
+const categoriesShort = [
   fakeCategoryModel({unmoderatedCount: 10}),
   fakeCategoryModel({unmoderatedCount: 2}),
   fakeCategoryModel({label: 'N.Y.C. Events Guide', unmoderatedCount: 15}),
@@ -64,7 +62,7 @@ const categoriesShort = List<ICategoryModel>([
   fakeCategoryModel({label: 'ChuChu TV Nursery Rhymes & Kids Songs', unmoderatedCount: 2999}),
   fakeCategoryModel({unmoderatedCount: 1000}),
   fakeCategoryModel({unmoderatedCount: 100}),
-]);
+];
 
 const singleCategory = fakeCategoryModel({label: 'ChuChu TV Nursery Rhymes & Kids Songs', unmoderatedCount: 2999});
 
@@ -76,7 +74,7 @@ storiesOf('TableFrame', module)
         user={user}
         categories={categories}
         selectMine={false}
-        selectedCategory={categories.get(2)}
+        selectedCategory={categories[2]}
         hideSidebar={hide}
       />
     );
@@ -87,7 +85,7 @@ storiesOf('TableFrame', module)
         user={userNoIcon}
         categories={categoriesShort}
         selectMine={false}
-        selectedCategory={categoriesShort.get(3)}
+        selectedCategory={categoriesShort[3]}
       />
     );
   })

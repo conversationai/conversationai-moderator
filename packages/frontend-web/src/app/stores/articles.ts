@@ -14,44 +14,54 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
-import { IArticleModel, ModelId } from '../../models';
+import {IArticleModel, ModelId} from '../../models';
 import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'articles'];
 const INDEX = [...STATE_ROOT, 'index'];
+const ARRAY = [...STATE_ROOT, 'array'];
 
-export const articlesLoaded = createAction<List<IArticleModel>>('global/ARTICLES_LOADED');
-export const articlesUpdated = createAction<List<IArticleModel>>('global/ARTICLES_UPDATED');
+export const articlesLoaded = createAction<Array<IArticleModel>>('global/ARTICLES_LOADED');
+export const articlesUpdated = createAction<Array<IArticleModel>>('global/ARTICLES_UPDATED');
 
-export function getArticles(state: IAppStateRecord): Map<ModelId, IArticleModel> {
+export function getArticleMap(state: IAppStateRecord): Map<ModelId, IArticleModel> {
   return state.getIn(INDEX);
 }
 
+export function getArticles(state: IAppStateRecord): Array<IArticleModel> {
+  return state.getIn(ARRAY);
+}
+
 export function getArticle(state: IAppStateRecord, articleId: ModelId): IArticleModel {
-  return getArticles(state).get(articleId);
+  return getArticleMap(state).get(articleId);
 }
 
 export interface IArticlesState {
   index: Map<ModelId, IArticleModel>;
+  array: Array<IArticleModel>;
 }
 
 export interface IArticlesStateRecord extends TypedRecord<IArticlesStateRecord>, IArticlesState {}
 
 const StateFactory = makeTypedFactory<IArticlesState, IArticlesStateRecord>({
-  index: Map<ModelId, IArticleModel>(),
+  index: new Map<ModelId, IArticleModel>(),
+  array: [],
 });
 
-const reducer = handleActions<IArticlesStateRecord, List<IArticleModel>| IArticleModel>( {
-  [articlesLoaded.toString()]: (state: IArticlesStateRecord, { payload }: Action<List<IArticleModel>>) => {
-    const index = Map<ModelId, IArticleModel>(payload.map((v) => ([v.id, v])));
-    return state.set('index', index);
+const reducer = handleActions<IArticlesStateRecord, Array<IArticleModel>>( {
+  [articlesLoaded.toString()]: (state: IArticlesStateRecord, { payload }: Action<Array<IArticleModel>>) => {
+    const index = new Map<ModelId, IArticleModel>(payload.map((v) => ([v.id, v])));
+    return state.set('index', index).set('array', Array.from(index.values()));
   },
-  [articlesUpdated.toString()]: (state: IArticlesStateRecord, { payload }: Action<List<IArticleModel>>) => {
-    return state.set('index', state.get('index').merge(payload.map((v) => ([v.id, v]))));
+  [articlesUpdated.toString()]: (state: IArticlesStateRecord, { payload }: Action<Array<IArticleModel>>) => {
+    const index: Map<ModelId, IArticleModel> = state.get('index');
+    for (const a of payload) {
+      index.set(a.id, a);
+    }
+    return state.set('index', index).set('array', Array.from(index.values()));
   },
 }, StateFactory());
 
