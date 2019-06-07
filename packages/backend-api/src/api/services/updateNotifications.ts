@@ -52,7 +52,7 @@ const USER_FIELDS = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
 const COMMENTSET_FIELDS = ['id', 'updatedAt', 'allCount', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
   'approvedCount', 'highlightedCount', 'rejectedCount', 'deferredCount', 'flaggedCount',
   'batchedCount', 'recommendedCount', 'assignedModerators', ];
-const CATEGORY_FIELDS = [...COMMENTSET_FIELDS, 'label', 'ownerId'];
+const CATEGORY_FIELDS = [...COMMENTSET_FIELDS, 'label', 'ownerId', 'isActive', 'sourceId'];
 const ARTICLE_FIELDS = [...COMMENTSET_FIELDS, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
   'isCommentingEnabled', 'isAutoModerated'];
 
@@ -152,7 +152,6 @@ function serialiseObject(
 
 async function getAllArticlesData() {
   const categories = await Category.findAll({
-    where: {isActive: true},
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
   const categoryIds: Array<number> = [];
