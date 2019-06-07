@@ -64,13 +64,13 @@ export interface ISystemData {
 }
 
 export interface IAllArticlesData {
-  categories: List<ICategoryModel>;
-  articles: List<IArticleModel>;
+  categories: Array<ICategoryModel>;
+  articles: Array<IArticleModel>;
 }
 
 export interface IArticleUpdate {
-  categories?: List<ICategoryModel>;
-  articles?: List<IArticleModel>;
+  categories?: Array<ICategoryModel>;
+  articles?: Array<IArticleModel>;
 }
 
 export interface IPerUserData {
@@ -79,17 +79,12 @@ export interface IPerUserData {
 
 // TODO: Ideally we'd have a type file describing types sent over the wire.
 //       When this is availabe, replace the "any" types in the code below.
-// TODO: API sending number IDs, but we expect strings due to the way the old REST code works.
-//       Convert for now.  But at some point need to refactor to use numbers.
-
 function packSystemData(data: any): ISystemData {
   return {
     users: List<IUserModel>(data.users.map((u: any) => {
-      u.id = u.id.toString();
       return UserModel(u);
     })),
     tags: List<ITagModel>(data.tags.map((t: any) => {
-      t.id = t.id.toString();
       return TagModel(t);
     })),
     taggingSensitivities: List<ITaggingSensitivityModel>(data.taggingSensitivities.map((t: any) => {
@@ -106,16 +101,13 @@ function packSystemData(data: any): ISystemData {
 
 function packArticleData(data: any): IAllArticlesData {
 
-  const categories = List<ICategoryModel>(data.categories.map((c: any) => {
-    c.id = c.id.toString();
+  const categories = data.categories.map((c: any) => {
     return CategoryModel(c);
-  }));
+  });
 
-  const articles = List<IArticleModel>(data.articles.map((a: any) => {
-    a.id = a.id.toString();
-    a.categoryId = a.categoryId && a.categoryId.toString();
+  const articles = data.articles.map((a: any) => {
     return ArticleModel(a);
-  }));
+  });
 
   return {
     categories: categories,
@@ -126,19 +118,16 @@ function packArticleData(data: any): IAllArticlesData {
 function packArticleUpdate(data: any): IArticleUpdate {
   let categories;
   let articles;
-  if(data.categories) {
-    categories = List<ICategoryModel>(data.categories.map((c: any) => {
-      c.id = c.id.toString();
+  if (data.categories) {
+    categories = data.categories.map((c: any) => {
       return CategoryModel(c);
-    }));
+    });
   }
 
-  if(data.articles) {
-    articles = List<IArticleModel>(data.articles.map((a: any) => {
-      a.id = a.id.toString();
-      a.categoryId = a.categoryId && a.categoryId.toString();
+  if (data.articles) {
+    articles = data.articles.map((a: any) => {
       return ArticleModel(a);
-    }));
+    });
   }
 
   return {

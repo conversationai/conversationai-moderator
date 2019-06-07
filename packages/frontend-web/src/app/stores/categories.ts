@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Iterable, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import { ICategoryModel, ModelId } from '../../models';
@@ -22,20 +21,22 @@ import { IAppStateRecord } from './index';
 
 const STATE_ROOT = ['global', 'categories'];
 const INDEX = [...STATE_ROOT, 'index'];
+const ARRAY = [...STATE_ROOT, 'array'];
+const ACTIVE = [...STATE_ROOT, 'active'];
 
-export const categoriesLoaded = createAction<List<ICategoryModel>>('global/CATEGORIES_LOADED');
-export const categoriesUpdated = createAction<List<ICategoryModel>>('global/CATEGORIES_UPDATED');
+export const categoriesLoaded = createAction<Array<ICategoryModel>>('global/CATEGORIES_LOADED');
+export const categoriesUpdated = createAction<Array<ICategoryModel>>('global/CATEGORIES_UPDATED');
 
 export function getCategoryMap(state: IAppStateRecord): Map<ModelId, ICategoryModel> {
   return state.getIn(INDEX);
 }
 
-export function getCategories(state: IAppStateRecord): Iterable.Indexed<ICategoryModel> {
-  return getCategoryMap(state).valueSeq();
+export function getCategories(state: IAppStateRecord): Array<ICategoryModel> {
+  return state.getIn(ARRAY);
 }
 
 export function getActiveCategories(state: IAppStateRecord): Array<ICategoryModel> {
-  return getCategories(state).filter((c) => c.isActive);
+  return state.getIn(ACTIVE);
 }
 
 export function getCategory(state: IAppStateRecord, categoryId: ModelId): ICategoryModel {
@@ -64,9 +65,9 @@ export function getGlobalCounts(state: IAppStateRecord): ISummaryCounts {
     rejectedCount: 0,
     flaggedCount: 0,
     batchedCount: 0,
-
   };
-  for (const c of categories.toArray()) {
+
+  for (const c of categories) {
     counts.unmoderatedCount += c.unmoderatedCount;
     counts.moderatedCount += c.moderatedCount;
     counts.deferredCount += c.deferredCount;
@@ -81,20 +82,33 @@ export function getGlobalCounts(state: IAppStateRecord): ISummaryCounts {
 
 export interface ICategoriesState {
   index: Map<ModelId, ICategoryModel>;
+  array: Array<ICategoryModel>;
+  active: Array<ICategoryModel>;
 }
 
 export interface ICategoriesStateRecord extends TypedRecord<ICategoriesStateRecord>, ICategoriesState {}
 
 const CategoriesStateFactory = makeTypedFactory<ICategoriesState, ICategoriesStateRecord>({
-  index: Map<ModelId, ICategoryModel>(),
+  index: new Map<ModelId, ICategoryModel>(),
+  array: [],
+  active: [],
 });
 
-export const reducer = handleActions<ICategoriesStateRecord, List<ICategoryModel>| ICategoryModel>( {
-  [categoriesLoaded.toString()]: (state: ICategoriesStateRecord, { payload }: Action<List<ICategoryModel>>) => {
-    const index = Map<ModelId, ICategoryModel>(payload.map((v) => ([v.id, v])));
-    return state.set('index', index);
+export const reducer = handleActions<ICategoriesStateRecord, Array<ICategoryModel>>( {
+  [categoriesLoaded.toString()]: (state: ICategoriesStateRecord, { payload }: Action<Array<ICategoryModel>>) => {
+    const index = new Map<ModelId, ICategoryModel>(payload.map((v) => ([v.id, v])));
+    const array = Array.from(index.values());
+    return state.set('index', index)
+      .set('array', array)
+      .set('active', array.filter((c) => c.isActive));
   },
-  [categoriesUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<List<ICategoryModel>>) => {
-    return state.set('index', state.get('index').merge(payload.map((v) => ([v.id, v]))));
+  [categoriesUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<Array<ICategoryModel>>) => {
+    const index: Map<ModelId, ICategoryModel> = state.get('index');
+    for (const c of payload) {
+      index.set(c.id, c);
+    }
+    const array = Array.from(index.values());
+    return state.set('index', index).set('array', array)
+      .set('active', array.filter((c) => c.isActive));
   },
 }, CategoriesStateFactory());

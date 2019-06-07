@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { autobind } from 'core-decorators';
-import { Iterable } from 'immutable';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
 
@@ -44,7 +43,7 @@ export interface ITableFrameProps extends WithRouterProps {
   dispatch: Function;
   user: IUserModel;
   isAdmin: boolean;
-  categories: Iterable.Indexed<ICategoryModel>;
+  categories: Array<ICategoryModel>;
   logout (): void;
 }
 
@@ -128,7 +127,7 @@ export class TableFrame extends React.Component<ITableFrameProps, ITableFrameSta
     const re = new RegExp(`${FILTER_CATEGORY}=(\\d+)`);
     const m = re.exec(location.pathname);
     if (m) {
-      for (const c of categories.toArray()) {
+      for (const c of categories) {
         if (c.id === m[1]) {
           category = c;
         }

@@ -56,8 +56,8 @@ class ArticleMessages {
     console.log('+ Received all articles message');
     this.gotUpdate = true;
 
-    this.countCategories = data.categories.size;
-    this.countArticles = data.articles.size;
+    this.countCategories = data.categories.length;
+    this.countArticles = data.articles.length;
     this.data = data;
     if (this.updateHappened) {
       this.updateHappened('global', data);

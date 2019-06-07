@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { Map, Seq, Set } from 'immutable';
+import { Map as IMap, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -90,8 +90,9 @@ export interface IArticleTableProps extends WithRouterProps {
   myUserId: string;
   categories: Map<ModelId, ICategoryModel>;
   selectedCategory: ICategoryModel;
-  articles: Map<ModelId, IArticleModel>;
-  users: Map<ModelId, IUserModel>;
+  articles: Array<IArticleModel>;
+  articleMap: Map<ModelId, IArticleModel>;
+  users: IMap<ModelId, IUserModel>;
 }
 
 const POPUP_MODERATORS = 'moderators';
@@ -133,7 +134,7 @@ const clearPopupsState: Pick<IArticleTableState,
   superModeratorIds: null,
 };
 
-function calculateSummaryCounts(articles: Seq.Indexed<IArticleModel>) {
+function calculateSummaryCounts(articles: Array<IArticleModel>) {
   const columns = [
     'unmoderatedCount',
     'approvedCount',
@@ -162,16 +163,16 @@ function calculateSummaryCounts(articles: Seq.Indexed<IArticleModel>) {
 function filterArticles(
   props: Readonly<IArticleTableProps>,
   filter: Array<IFilterItem>,
-) {
+): Array<IArticleModel> {
   if (filter.length === 0) {
-    return props.articles.valueSeq();
+    return props.articles;
   }
 
-  return (props.articles.valueSeq().filter(executeFilter(filter,
+  return props.articles.filter(executeFilter(filter,
     {
       myId: props.myUserId,
       categories: props.categories,
-    })) as  Seq.Indexed<IArticleModel>); // Typescript doesn't match documentation
+    }));
 }
 
 function processArticles(
@@ -182,7 +183,7 @@ function processArticles(
   const filteredArticles = filterArticles(props, filter);
   const summary = calculateSummaryCounts(filteredArticles);
   const sortFn = (sort.length > 0) ? executeSort(sort) : executeSort([`+${SORT_NEW}`]);
-  const processedArticles = filteredArticles.toArray().sort(sortFn);
+  const processedArticles = filteredArticles.sort(sortFn);
 
   // Use users map from store
   const count = summary['count'];
@@ -358,7 +359,7 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
 
   @autobind
   showMore(_container: React.Component) {
-    if (this.state.numberToShow < this.props.articles.size) {
+    if (this.state.numberToShow < this.props.articles.length) {
       this.setState({
         numberToShow: this.state.numberToShow + this._numberOnScreen,
       });
@@ -663,7 +664,7 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
             <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
               <tbody>
                 {this.renderRow(summary, true)}
-                {processedArticles.slice(0, numberToShow).map((id: ModelId) => this.renderRow(this.props.articles.get(id), false))}
+                {processedArticles.slice(0, numberToShow).map((id: ModelId) => this.renderRow(this.props.articleMap.get(id), false))}
               </tbody>
             </table>
           </PerfectScrollbar>
