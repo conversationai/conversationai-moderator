@@ -23,7 +23,7 @@ import { createStructuredSelector } from 'reselect';
 import { getMyUserId, logout } from '../../auth';
 import { getWebsocketState, IAppDispatch, IAppStateRecord } from '../../stores';
 import { getArticles } from '../../stores/articles';
-import { getCategories, getCategoryMap } from '../../stores/categories';
+import { getActiveCategories, getCategoryMap } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUsers } from '../../stores/users';
 import { withLoader } from '../../utilx';
 import { ArticleTable as PureArticleTable, IArticleTableProps } from './ArticleTable';
@@ -56,7 +56,7 @@ export const TableFrame: React.ComponentClass<{}> = compose(
       isLoading: (state: IAppStateRecord) => !getWebsocketState(state),
       user: getCurrentUser,
       isAdmin: getCurrentUserIsAdmin,
-      categories: getCategories,
+      categories: getActiveCategories,
     }),
     (dispatch: IAppDispatch) => ({
       logout: () => dispatch(logout()),

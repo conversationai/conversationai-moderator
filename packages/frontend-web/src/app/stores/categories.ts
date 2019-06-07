@@ -34,6 +34,10 @@ export function getCategories(state: IAppStateRecord): Iterable.Indexed<ICategor
   return getCategoryMap(state).valueSeq();
 }
 
+export function getActiveCategories(state: IAppStateRecord): Array<ICategoryModel> {
+  return getCategories(state).filter((c) => c.isActive);
+}
+
 export function getCategory(state: IAppStateRecord, categoryId: ModelId): ICategoryModel {
   return getCategoryMap(state).get(categoryId);
 }
