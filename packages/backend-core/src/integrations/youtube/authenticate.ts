@@ -30,7 +30,8 @@ export function authorize(callback: (owner: IUserInstance, client: OAuth2Client)
     for (const u of users) {
       const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'));
       logger.info(`Syncing YouTube user: ${u.get('name')}`);
-      oauth2Client.setCredentials(JSON.parse(u.get('extra')));
+      const extra = JSON.parse(u.get('extra'));
+      oauth2Client.setCredentials(extra.token);
       await callback(u, oauth2Client);
     }
   })();

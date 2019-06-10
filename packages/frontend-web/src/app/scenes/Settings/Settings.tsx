@@ -783,8 +783,11 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
             <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
               Email
             </th>
-            <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
               Is Active
+            </th>
+            <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
+              Last Error
             </th>
           </tr>
           </thead>
@@ -1135,6 +1138,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </div>
               <p>To connect a YouTube account, click the button above, and select a Google user and YouTube account.</p>
               <p>We'll then start syncing comments with the channels and videos in that account.</p>
+              <p>If you are seeing errors above, then try reconnecting to your account.</p>
               {/*<p>&nbsp;</p>*/}
               {/*<h3>Wordpress</h3>*/}
               {/*<p>Install the Wordpress plugin to use Moderator with your Wordpress blog.</p>*/}
