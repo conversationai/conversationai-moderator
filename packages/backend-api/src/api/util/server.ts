@@ -14,16 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as bodyParser from 'body-parser';
+import * as compression from 'compression';
+import * as cors from 'cors';
 import * as express from 'express';
 import * as expressWs from 'express-ws';
+import * as helmet from 'helmet';
 import { Server } from 'http';
 
 import { logger } from '@conversationai/moderator-backend-core';
-
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const compression = require('compression');
-const helmet = require('helmet');
 
 export function getExpressAppWithPreprocessors(testMode?: boolean) {
   const app = express();

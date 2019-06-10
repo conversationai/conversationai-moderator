@@ -14,6 +14,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './providers';
 export * from './tokens';
 export * from './users';
