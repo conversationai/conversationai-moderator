@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import * as chai from 'chai';
-import { mapAuthDataToUser, mapAuthDataToUserSocialAuth } from '../../../../domain/auth/providers/google';
+import { mapAuthDataToUser, mapAuthDataToUserSocialAuth } from '../../../auth/providers/google';
 
 const assert = chai.assert;
 

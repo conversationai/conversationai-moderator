@@ -18,13 +18,13 @@ import * as express from 'express';
 import * as expressWs from 'express-ws';
 import * as passport from 'passport';
 
-import { getJwtStrategy, googleStrategy } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
 import { createAssistantRouter } from './api/assistant';
 import { createPublisherRouter } from './api/publisher';
 import { createRESTRouter } from './api/rest';
 import { createServicesRouter } from './api/services';
+import { getJwtStrategy, googleStrategy } from './auth/providers';
 import { createAuthRouter } from './auth/router';
 import { createYouTubeRouter } from './auth/youtube';
 

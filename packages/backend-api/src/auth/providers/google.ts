@@ -18,10 +18,12 @@ limitations under the License.
 //     And consider replacing it with passport-next or something else.
 
 import { config } from '@conversationai/moderator-config';
-import { ensureFirstUser, findOrCreateUserSocialAuth, isFirstUserInitialised } from '../users';
+
+import { ensureFirstUser, findOrCreateUserSocialAuth, isFirstUserInitialised } from '@conversationai/moderator-backend-core';
+import { IUserInstance, User } from '@conversationai/moderator-backend-core';
+
 const Strategy = require('passport-google-oauth20').Strategy;
 
-import { IUserInstance, User } from '../../../models';
 
 class AuthError extends Error {
 
