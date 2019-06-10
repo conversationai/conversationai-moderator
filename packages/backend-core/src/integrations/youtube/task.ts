@@ -14,21 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { logger } from '../../logger';
 import { for_all_youtube_users } from './authenticate';
-import { sync_page_of_channels } from './channels';
+import { sync_channels } from './channels';
+import { clearError } from './objectmap';
 
 // Tick is every minute.  Channel sync once per day.
 const CHANNEL_SYNC_INTERVAL = 60 * 24;
+const COMMENT_SYNC_INTERVAL = 5;
 
 export async function syncYoutubeTask(tick: number) {
-  await for_all_youtube_users(async (owner, auth) => {
-    if (tick % CHANNEL_SYNC_INTERVAL === 0) {
-      logger.info('Syncing channels for user %s.', owner.get('email'));
-      let next_page;
-      do {
-        next_page = await sync_page_of_channels(owner, auth, next_page);
-      } while (next_page);
-    }
-  });
+  if (tick % COMMENT_SYNC_INTERVAL === 0) {
+    await for_all_youtube_users(async (owner, auth) => {
+      if (tick % CHANNEL_SYNC_INTERVAL === 0) {
+        await clearError(owner);
+        await sync_channels(owner, auth);
+      }
+    });
+  }
 }

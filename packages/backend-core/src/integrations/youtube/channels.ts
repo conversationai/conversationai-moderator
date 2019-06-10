@@ -23,7 +23,7 @@ import { mapChannelToCategory, saveError } from './objectmap';
 
 const service = google.youtube('v3');
 
-export async function sync_page_of_channels(owner: IUserInstance, auth: OAuth2Client, pageToken?: string) {
+async function sync_page_of_channels(owner: IUserInstance, auth: OAuth2Client, pageToken?: string) {
   return new Promise<string | undefined>((resolve, reject) => {
     service.channels.list({
       auth: auth,
@@ -31,10 +31,10 @@ export async function sync_page_of_channels(owner: IUserInstance, auth: OAuth2Cl
       mine: true,
       maxResults: 50,
       pageToken: pageToken,
-    }, (err, response) => {
+    }, async (err, response) => {
       if (err) {
-        saveError(owner, err);
-        logger.error('The API returned an error: ' + err);
+        await saveError(owner, err);
+        logger.error('Google API returned an error: ' + err);
         reject('Google API error');
         return;
       }
@@ -43,20 +43,26 @@ export async function sync_page_of_channels(owner: IUserInstance, auth: OAuth2Cl
       const nextPageToken = response!.data.nextPageToken;
 
       if (channels.length === 0) {
-        logger.warn('No channels found.');
+        logger.info('No channels found.');
         resolve(undefined);
         return;
       }
 
-      (async () => {
-        for (const c of channels) {
-          await mapChannelToCategory(owner, c);
-        }
-      })()
-        .then(() => {
-          resolve(nextPageToken);
-        })
-        .catch((reason) => reject(reason));
+      for (const channel of channels) {
+        await mapChannelToCategory(owner, channel);
+      }
+      resolve(nextPageToken);
     });
   });
+}
+
+export async function sync_channels(
+  owner: IUserInstance,
+  auth: OAuth2Client,
+) {
+  logger.info('Syncing channels for user %s.', owner.get('email'));
+  let next_page;
+  do {
+    next_page = await sync_page_of_channels(owner, auth, next_page);
+  } while (next_page);
 }
