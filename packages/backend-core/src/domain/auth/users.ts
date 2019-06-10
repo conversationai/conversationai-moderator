@@ -109,5 +109,5 @@ export async function saveYouTubeUserToken({name, email}: {name: string, email: 
     }
   }
 
-  await user.set('extra', token).save();
+  await user.set('extra', {token: token}).save();
 }

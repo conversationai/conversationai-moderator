@@ -25,11 +25,16 @@ import { pick } from 'lodash';
 import {
   Article,
   User,
+  USER_GROUP_ADMIN,
+  USER_GROUP_GENERAL,
   USER_GROUP_SERVICE,
+  USER_GROUP_YOUTUBE,
 } from '@conversationai/moderator-backend-core';
 import {
+  clearError,
   createToken,
   partialUpdateHappened,
+  updateHappened,
 } from '@conversationai/moderator-backend-core';
 
 import { REPLY_SUCCESS } from '../constants';
@@ -58,6 +63,8 @@ export function createSimpleRESTService(): express.Router {
       }
       else {
         simple.extra = JSON.parse(u.get('extra'));
+        // Make sure we don't send any access tokens out.
+        delete simple.extra.token;
       }
       userdata.push(pick(simple, userFields));
     }
@@ -67,12 +74,42 @@ export function createSimpleRESTService(): express.Router {
     next();
   });
 
+  router.post('/user/update/:id', async (req, res, next) => {
+    const userId = parseInt(req.params.id, 10);
+    const user = await User.findById(userId);
+    const group = await user.get('group');
+
+    function isRealUser(g: string) {
+      return g === USER_GROUP_ADMIN || g === USER_GROUP_GENERAL;
+    }
+
+    if (isRealUser(group) || group === USER_GROUP_SERVICE) {
+      user.set('name', req.body.name);
+    }
+    if (isRealUser(group)) {
+      if (isRealUser(req.body.group)) {
+        user.set('group', req.body.group);
+      }
+      user.set('email', req.body.email);
+    }
+    user.set('isActive', req.body.isActive);
+    await user.save();
+
+    if (group === USER_GROUP_YOUTUBE && req.body.isActive) {
+      await clearError(user);
+    }
+
+    res.json(REPLY_SUCCESS);
+    updateHappened();
+    next();
+  });
+
   router.post('/article/update/:id', async (req, res, next) => {
     const articleId = parseInt(req.params.id, 10);
     const a = await Article.findById(articleId);
     a.set('isCommentingEnabled', req.body.isCommentingEnabled);
     a.set('isAutoModerated', req.body.isAutoModerated);
-    a.save();
+    await a.save();
 
     res.json(REPLY_SUCCESS);
     partialUpdateHappened(articleId);

@@ -19,7 +19,7 @@ import { google } from 'googleapis';
 
 import { logger } from '../../logger';
 import { IUserInstance } from '../../models';
-import { mapChannelToCategory } from './objectmap';
+import { mapChannelToCategory, saveError } from './objectmap';
 
 const service = google.youtube('v3');
 
@@ -33,6 +33,7 @@ export async function sync_page_of_channels(owner: IUserInstance, auth: OAuth2Cl
       pageToken: pageToken,
     }, (err, response) => {
       if (err) {
+        saveError(owner, err);
         logger.error('The API returned an error: ' + err);
         reject('Google API error');
         return;

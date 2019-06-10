@@ -17,6 +17,11 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
 import React from 'react';
+
+import {
+  Switch,
+} from '@material-ui/core';
+
 import { IUserModel } from '../../../../models';
 import { USER_GROUP_ADMIN, USER_GROUP_GENERAL } from '../../../stores/users';
 import { partial } from '../../../util';
@@ -96,15 +101,8 @@ export class UserForm extends React.Component<IAddUsersProps> {
         </div>
         }
         <div key="active" {...css(SETTINGS_STYLES.row)}>
-          <label htmlFor="isActive" {...css(SETTINGS_STYLES.label)}>User is active
-            <input
-              id="isActive"
-              type="checkbox"
-              style={SETTINGS_STYLES.checkbox}
-              onChange={this.onIsActiveChange}
-              checked={user.isActive}
-            />
-          </label>
+          <label htmlFor="isActive" {...css(SETTINGS_STYLES.label)}>User is active</label>
+          <Switch checked={user.isActive} color="primary" onChange={this.onIsActiveChange}/>
         </div>
       </div>
     );

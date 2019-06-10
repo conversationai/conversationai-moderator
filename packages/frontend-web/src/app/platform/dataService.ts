@@ -575,6 +575,12 @@ export async function updateArticle(id: string, isCommentingEnabled: boolean, is
   await axios.post(url, {isCommentingEnabled, isAutoModerated});
 }
 
+export async function updateUser(user: IUserModel) {
+  const url = serviceURL('simple', `/user/update/${user.id}`);
+  const attributes = pick(user.toJS(), ['name', 'email', 'group', 'isActive']);
+  await axios.post(url, attributes);
+}
+
 /**
  * Destroy a model.
  */

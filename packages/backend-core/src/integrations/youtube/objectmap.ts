@@ -14,11 +14,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { pick } from 'lodash';
+
 import { postProcessComment, sendForScoring } from '../../domain/comments';
 import { logger } from '../../logger';
 import { Article, Category, Comment, Decision } from '../../models';
 import { IAuthorAttributes, ICommentInstance, IDecisionInstance, IUserInstance } from '../../models';
 import { sequelize } from '../../sequelize';
+
+export async function saveError(owner: IUserInstance, error: Error) {
+  const extra = JSON.parse(owner.get('extra'));
+  extra.lastError = pick(error, ['name', 'message']);
+  owner.set('isActive', false);
+  owner.set('extra', extra);
+  await owner.save();
+}
+
+export async function clearError(owner: IUserInstance) {
+  const extra = JSON.parse(owner.get('extra'));
+  delete extra.lastError;
+  owner.set('extra', extra);
+  await owner.save();
+}
 
 export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
   const channelId = channel.id!;

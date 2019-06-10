@@ -138,6 +138,9 @@ export function YoutubeUserRow({ user: u }: {user: IUserModel}) {
       <td {...css(SETTINGS_STYLES.userTableCell)}>
         {u.isActive ? 'Active' : 'Inactive'}
       </td>
+      <td {...css(SETTINGS_STYLES.userTableCell)}>
+        {u.extra.lastError ? u.extra.lastError.message : 'No error'}
+      </td>
     </tr>
   );
 }
