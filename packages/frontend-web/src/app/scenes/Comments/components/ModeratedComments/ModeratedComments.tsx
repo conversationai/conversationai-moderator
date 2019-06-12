@@ -20,7 +20,7 @@ import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import { isEqual } from 'lodash';
 import React from 'react';
-import { WithRouterProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import {
   Collapse,
@@ -240,7 +240,7 @@ const STYLES = stylesheet({
 const LOADING_COMMENTS_MESSAGING = 'Loading comments.';
 const NO_COMMENTS_MESSAGING = 'No matching comments found.';
 
-export interface IModeratedCommentsProps extends WithRouterProps {
+export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedCommentsPathParams> {
   isLoading: boolean;
   getCurrentColumnSort(key: string): string;
   tags: List<ITagModel>;
@@ -294,10 +294,6 @@ export interface IModeratedCommentsState {
   hideHistogram: boolean;
 }
 
-export function getParams({params}: WithRouterProps): IModeratedCommentsPathParams {
-  return params as any as IModeratedCommentsPathParams; /* TODO: remove when types fixed */
-}
-
 export class ModeratedComments
   extends React.Component<IModeratedCommentsProps, IModeratedCommentsState> {
 
@@ -334,16 +330,16 @@ export class ModeratedComments
   }
 
   static getDerivedStateFromProps(props: IModeratedCommentsProps, state: IModeratedCommentsState) {
-    if (!state.currentPathParams || !isEqual(state.currentPathParams, props.params)) {
-      props.loadData(getParams(props));
+    if (!state.currentPathParams || !isEqual(state.currentPathParams, props.match.params)) {
+      props.loadData(props.match.params);
     }
 
-    const actionLabel = props.params.disposition;
+    const actionLabel = props.match.params.disposition;
     if (state.actionLabel !== actionLabel) {
-      props.changeSort(getParams(props), getSortDefault(actionLabel));
+      props.changeSort(props.match.params, getSortDefault(actionLabel));
     }
 
-    const commentIds = props.moderatedComments.get(props.params.disposition);
+    const commentIds = props.moderatedComments.get(props.match.params.disposition);
     const allModeratedCommentIds = props.moderatedComments.reduce((sum, tagList) =>
       sum.union(tagList.toSet()), Set());
 
@@ -351,7 +347,7 @@ export class ModeratedComments
       actionLabel,
       commentIds,
       allModeratedCommentIds,
-      currentPathParams: props.params,
+      currentPathParams: props.match.params,
     };
   }
 
@@ -364,7 +360,7 @@ export class ModeratedComments
       tags,
       moderatedComments,
       textSizes,
-      params,
+      match: { params },
       pagingIdentifier,
     } = this.props;
 
@@ -416,7 +412,7 @@ export class ModeratedComments
               </select>
               <span aria-hidden="true" {...css(STYLES.arrow)} />
             </div>
-            {isArticleContext(getParams(this.props)) && (
+            {isArticleContext(params) && (
               <ArticleControlIcon
                 article={this.props.article}
                 open={this.state.articleControlOpen}
@@ -552,7 +548,7 @@ export class ModeratedComments
               sortOptions={this.getSortOptions()}
               totalItems={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds.size : commentIds.size}
               triggerActionToast={this.triggerActionToast}
-              displayArticleTitle={isArticleContext(getParams(this.props))}
+              displayArticleTitle={isArticleContext(params)}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               requireReasonForReject={REQUIRE_REASON_TO_REJECT}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
@@ -771,13 +767,13 @@ export class ModeratedComments
 
   @autobind
   getCurrentSort() {
-    const categoryId = isArticleContext(getParams(this.props)) ? undefined : this.props.params.contextId;
+    const categoryId = isArticleContext(this.props.match.params) ? undefined : this.props.match.params.contextId;
     return this.props.getCurrentColumnSort(categoryId);
   }
 
   @autobind
   onSortChange(event: React.FormEvent<any>) {
-    this.props.changeSort(getParams(this.props), (event.target as any).value);
+    this.props.changeSort(this.props.match.params, (event.target as any).value);
   }
 
   @autobind
@@ -817,7 +813,7 @@ export class ModeratedComments
   onSelectChange(event: React.FormEvent<any>) {
     const currentSelect = (event.target as any).value;
     this.setState({ currentSelect });
-    this.props.changeSort(getParams(this.props), 'newest');
+    this.props.changeSort(this.props.match.params, 'newest');
   }
 
   @autobind

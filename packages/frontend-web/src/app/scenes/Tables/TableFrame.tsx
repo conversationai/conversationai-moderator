@@ -15,7 +15,7 @@ limitations under the License.
 */
 import { autobind } from 'core-decorators';
 import React from 'react';
-import { WithRouterProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import {
   Drawer,
@@ -28,6 +28,7 @@ import {
 import { ICategoryModel, IUserModel } from '../../../models';
 import { HeaderBar } from '../../components';
 import { NICE_CONTROL_BLUE } from '../../styles';
+import { IDashboardPathParams } from '../routes';
 import { CategorySidebar, SIDEBAR_WIDTH } from './CategorySidebar';
 import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
 
@@ -39,7 +40,7 @@ const theme = createMuiTheme({
   },
 });
 
-export interface ITableFrameProps extends WithRouterProps {
+export interface ITableFrameProps extends RouteComponentProps<IDashboardPathParams> {
   dispatch: Function;
   user: IUserModel;
   isAdmin: boolean;

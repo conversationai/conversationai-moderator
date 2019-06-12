@@ -19,7 +19,7 @@ import FocusTrap from 'focus-trap-react';
 import { Iterable, List, Map } from 'immutable';
 import { generate } from 'randomstring';
 import React from 'react';
-import { WithRouterProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import {
   Button,
@@ -151,7 +151,7 @@ const STYLES: any = stylesheet({
   },
 });
 
-export interface ISettingsProps extends WithRouterProps {
+export interface ISettingsProps extends RouteComponentProps<{}>  {
   users?: Map<ModelId, IUserModel>;
   serviceUsers?: List<IUserModel>;
   moderatorUsers?: List<IUserModel>;

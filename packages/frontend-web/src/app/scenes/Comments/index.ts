@@ -52,11 +52,11 @@ export const Comments = compose(
   connect(createStructuredSelector({
       user: getCurrentUser,
       isAdmin: getCurrentUserIsAdmin,
-      article: (state: IAppStateRecord, { params }: ICommentsProps) => (
-        isArticleContext(params as any /* TODO: remove when types fixed */) && getArticle(state, params.contextId)
+      article: (state: IAppStateRecord, {  match: { params }}: ICommentsProps) => (
+        isArticleContext(params) && getArticle(state, params.contextId)
       ),
-      category: (state: IAppStateRecord, { params }: ICommentsProps) => {
-        if (isArticleContext(params as any /* TODO: remove when types fixed */)) {
+      category: (state: IAppStateRecord, {  match: { params }}: ICommentsProps) => {
+        if (isArticleContext(params)) {
           const article = getArticle(state, params.contextId);
           return getCategory(state, article.categoryId);
         }
@@ -64,8 +64,8 @@ export const Comments = compose(
           return getCategory(state, params.contextId);
         }
       },
-      moderators: (state: IAppStateRecord, { params }: ICommentsProps) => {
-        if (!isArticleContext(params as any /* TODO: remove when types fixed */)) {
+      moderators: (state: IAppStateRecord, { match: { params }}: ICommentsProps) => {
+        if (!isArticleContext(params)) {
           return List<IUserModel>();
         }
 

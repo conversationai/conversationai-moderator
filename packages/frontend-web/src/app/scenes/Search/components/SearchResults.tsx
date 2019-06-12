@@ -20,7 +20,7 @@ import FocusTrap from 'focus-trap-react';
 import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
-import { WithRouterProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import {
   CircularProgress,
@@ -190,7 +190,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ISearchResultsProps extends WithRouterProps {
+export interface ISearchResultsProps extends RouteComponentProps<{}> {
   totalCommentCount: number;
   isLoading: boolean;
   isItemChecked(id: string): boolean;

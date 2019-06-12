@@ -73,12 +73,7 @@ import {
   updateCommentScore,
 } from './store';
 
-type ICommentDetailOwnProps = {
-  categoryId: string;
-  params: {
-    commentId: string;
-  };
-};
+type ICommentDetailOwnProps = Pick<ICommentDetailProps, 'match' | 'location'>;
 
 type ICommentDetailDispatchProps = Pick<
   ICommentDetailProps,
@@ -125,26 +120,34 @@ const mapStateToProps = createStructuredSelector({
   flags: getFlags,
 
   summaryScores: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => {
-    return getSummaryScoresById(state, ownProps.params.commentId);
+    return getSummaryScoresById(state, ownProps.match.params.commentId);
   },
 
-  currentCommentIndex: (state: IAppStateRecord, { params: { commentId }, location }: ICommentDetailProps) => {
+  currentCommentIndex: (
+    state: IAppStateRecord,
+    { match: { params: { commentId }}, location }: ICommentDetailOwnProps,
+  ) => {
     return getCurrentCommentIndex(state, getPagingIdentifier(location), commentId);
   },
 
-  nextCommentId: (state: IAppStateRecord, { params: { commentId }, location }: ICommentDetailProps) => {
+  nextCommentId: (
+    state: IAppStateRecord,
+    { match: { params: { commentId }}, location }: ICommentDetailOwnProps,
+  ) => {
     return getNextCommentId(state, getPagingIdentifier(location), commentId);
   },
 
-  previousCommentId: (state: IAppStateRecord, { params: { commentId }, location }: ICommentDetailProps) => {
+  previousCommentId: (
+    state: IAppStateRecord, { match: { params: { commentId }}, location }: ICommentDetailOwnProps,
+  ) => {
     return getPreviousCommentId(state, getPagingIdentifier(location), commentId);
   },
 
-  detailSource: (state: IAppStateRecord, { location }: ICommentDetailProps) => {
+  detailSource: (state: IAppStateRecord, { location }: ICommentDetailOwnProps) => {
     return getPagingSource(state, getPagingIdentifier(location));
   },
 
-  linkBackToList: (state: IAppStateRecord, { location }: ICommentDetailProps) => {
+  linkBackToList: (state: IAppStateRecord, { location }: ICommentDetailOwnProps) => {
     return getPagingLink(state, getPagingIdentifier(location));
   },
 

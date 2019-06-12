@@ -114,8 +114,8 @@ function mapDispatchToProps(dispatch: IAppDispatch): Partial<INewCommentsProps> 
 }
 
 const mapStateToProps = createStructuredSelector({
-  article: (state: IAppStateRecord, { params }: INewCommentsProps) => {
-    if (isArticleContext(params as any /* TODO: remove when types fixed */)) {
+  article: (state: IAppStateRecord, { match: { params }}: INewCommentsProps) => {
+    if (isArticleContext(params)) {
       return getArticle(state, params.contextId);
     }
   },
@@ -138,7 +138,7 @@ const mapStateToProps = createStructuredSelector({
 
   tags: getTaggableTags,
 
-  selectedTag: (state: IAppStateRecord, { params }: INewCommentsProps) => {
+  selectedTag: (state: IAppStateRecord, { match: { params }}: INewCommentsProps) => {
     return getSelectedTag(state, params.tag);
   },
 

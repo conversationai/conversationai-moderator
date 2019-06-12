@@ -20,7 +20,7 @@ import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import qs from 'query-string';
 import React from 'react';
-import { WithRouterProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import {
@@ -85,6 +85,7 @@ import {
   articleBase,
   commentDetailsPageLink,
   commentRepliesDetailsLink,
+  ICommentDetailsPathParams,
   isArticleContext,
   NEW_COMMENTS_DEFAULT_TAG,
   newCommentsPageLink,
@@ -297,7 +298,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ICommentDetailProps extends WithRouterProps {
+export interface ICommentDetailProps extends RouteComponentProps<ICommentDetailsPathParams> {
   comment: ICommentModel;
   allTags: List<ITagModel>;
   availableTags: List<ITagModel>;
@@ -395,8 +396,8 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     const summaryScoresAboveThreshold = getSummaryScoresAboveThreshold(nextProps.taggingSensitivitiesInCategory, nextProps.summaryScores);
     const summaryScoresBelowThreshold = getSummaryScoresBelowThreshold(nextProps.taggingSensitivitiesInCategory, nextProps.summaryScores);
 
-    if (prevState.loadedCommentId !== nextProps.params.commentId) {
-      nextProps.loadData(nextProps.params.commentId);
+    if (prevState.loadedCommentId !== nextProps.match.params.commentId) {
+      nextProps.loadData(nextProps.match.params.commentId);
     }
     return {
       allScoresAboveThreshold,
@@ -404,7 +405,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       reducedScoresBelowThreshold,
       summaryScoresAboveThreshold,
       summaryScoresBelowThreshold,
-      loadedCommentId: nextProps.params.commentId,
+      loadedCommentId: nextProps.match.params.commentId,
     };
   }
 
@@ -482,7 +483,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       linkBackToList,
       currentUser,
       onUpdateComment,
-      params,
+      match: {params},
     } = this.props;
 
     const {
@@ -531,7 +532,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
             <Link to={batchURL} {...css(STYLES.subHeading)}>
               <ArrowIcon direction="left" {...css({fill: DARK_COLOR, margin: 'auto 0'})} size={24} />
               <p {...css(STYLES.selectedInfo)}>
-                {`Back to ${isArticleContext(params as any /* TODO: remove when types fixed */) ? 'article' : 'category'}`}
+                {`Back to ${isArticleContext(params) ? 'article' : 'category'}`}
               </p>
             </Link>
           )}
@@ -802,7 +803,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
   generatePagingLink(commentId: string) {
     const pagingIdentifier: string = qs.parse(this.props.location.search).pagingIdentifier as string;
-    const params = this.props.params as any /* TODO: remove when types fixed */;
+    const params = this.props.match.params;
     const urlParams = {
       context: params.context,
       contextId: params.contextId,

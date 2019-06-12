@@ -21,7 +21,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { ICommentModel } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
-import { IAppDispatch, IAppState, IAppStateRecord } from '../../../../stores';
+import { IAppDispatch, IAppState } from '../../../../stores';
 import { getComment, getIsLoading, loadComment, updateComment } from './store';
 import { IThreadedCommentDetailProps, ThreadedCommentDetail as PureThreadedCommentDetail } from './ThreadedCommentDetail';
 export { reducer } from './store';
@@ -64,17 +64,13 @@ const actionMap: {
 
 type IThreadedCommentDetailOwnProps =  Pick<
   IThreadedCommentDetailProps,
-  'params' |
-  'location' |
-  'router' |
-  'routes'
+  'location'
   >;
 
 type IThreadedCommentDetailStateProps = Pick<
   IThreadedCommentDetailProps,
   'comment' |
-  'isLoading' |
-  'originatingCommentId'
+  'isLoading'
   >;
 
 type IThreadedCommentDetailDispatchProps = Pick<
@@ -116,10 +112,7 @@ function updateCommentState(comment: ICommentModel, action: IConfirmationAction)
 
 const mapStateToProps = createStructuredSelector({
   comment: getComment,
-
   isLoading: getIsLoading,
-
-  originatingCommentId: (_: IAppStateRecord, { params }: IThreadedCommentDetailOwnProps) => params.originatingCommentId,
 }) as (state: IAppState, ownProps: IThreadedCommentDetailOwnProps) => IThreadedCommentDetailStateProps;
 
 function mapDispatchToProps(dispatch: IAppDispatch): any {

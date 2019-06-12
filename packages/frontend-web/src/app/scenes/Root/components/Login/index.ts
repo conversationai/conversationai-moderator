@@ -18,12 +18,12 @@ import { pick } from 'lodash';
 import qs from 'qs';
 import { generate } from 'randomstring';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { IReturnURL, setCSRF, setReturnURL } from '../../../../util';
-import { Login as PureLogin } from './Login';
+import { ILoginProps, Login as PureLogin } from './Login';
 
 export const Login = compose(
   withRouter,
@@ -50,7 +50,7 @@ export const Login = compose(
       return csrf;
     },
 
-    returnURL: (_: any, { location }: any) => {
+    returnURL: (_: any, { location }: ILoginProps & RouteComponentProps) => {
       const returnDetails = pick(location, ['pathname', 'search']) as IReturnURL;
 
       setReturnURL(returnDetails);

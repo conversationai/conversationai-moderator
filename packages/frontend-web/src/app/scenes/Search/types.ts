@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import qs from 'query-string';
-import { WithRouterProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import { ISearchQueryParams, searchLink } from '../routes';
 
@@ -25,7 +25,7 @@ export interface ISearchScope {
 }
 
 export function updateSearchQuery(
-  props: WithRouterProps,
+  props: RouteComponentProps<{}>,
   queryDelta: ISearchQueryParams,
 ) {
   const query: ISearchQueryParams = qs.parse(props.location.search);
