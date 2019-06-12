@@ -67,15 +67,15 @@ export function getGlobalCounts(state: IAppStateRecord): ISummaryCounts {
     batchedCount: 0,
   };
 
-  for (const c of categories) {
-    counts.unmoderatedCount += c.unmoderatedCount;
-    counts.moderatedCount += c.moderatedCount;
-    counts.deferredCount += c.deferredCount;
-    counts.approvedCount += c.approvedCount;
-    counts.highlightedCount += c.highlightedCount;
-    counts.rejectedCount += c.rejectedCount;
-    counts.flaggedCount += c.flaggedCount;
-    counts.batchedCount += c.batchedCount;
+  for (const category of categories) {
+    counts.unmoderatedCount += category.unmoderatedCount;
+    counts.moderatedCount += category.moderatedCount;
+    counts.deferredCount += category.deferredCount;
+    counts.approvedCount += category.approvedCount;
+    counts.highlightedCount += category.highlightedCount;
+    counts.rejectedCount += category.rejectedCount;
+    counts.flaggedCount += category.flaggedCount;
+    counts.batchedCount += category.batchedCount;
   }
   return counts;
 }
@@ -104,8 +104,8 @@ export const reducer = handleActions<ICategoriesStateRecord, Array<ICategoryMode
   },
   [categoriesUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<Array<ICategoryModel>>) => {
     const index: Map<ModelId, ICategoryModel> = state.get('index');
-    for (const c of payload) {
-      index.set(c.id, c);
+    for (const category of payload) {
+      index.set(category.id, category);
     }
     const array = Array.from(index.values());
     return state.set('index', index).set('array', array)

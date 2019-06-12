@@ -58,8 +58,8 @@ const reducer = handleActions<IArticlesStateRecord, Array<IArticleModel>>( {
   },
   [articlesUpdated.toString()]: (state: IArticlesStateRecord, { payload }: Action<Array<IArticleModel>>) => {
     const index: Map<ModelId, IArticleModel> = state.get('index');
-    for (const a of payload) {
-      index.set(a.id, a);
+    for (const article of payload) {
+      index.set(article.id, article);
     }
     return state.set('index', index).set('array', Array.from(index.values()));
   },
