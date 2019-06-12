@@ -24,15 +24,22 @@ import { IUserInstance, User, USER_GROUP_YOUTUBE } from '../../models';
 
 export const SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl'];
 
-export function authorize(callback: (owner: IUserInstance, client: OAuth2Client) => Promise<void>) {
-  (async () => {
-    const users = await User.findAll({where: {group: USER_GROUP_YOUTUBE, isActive: true}});
-    for (const u of users) {
-      const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'));
-      logger.info(`Syncing YouTube user: ${u.get('name')}`);
-      const extra = JSON.parse(u.get('extra'));
-      oauth2Client.setCredentials(extra.token);
-      await callback(u, oauth2Client);
-    }
-  })();
+export async function for_one_youtube_user(
+  user: IUserInstance,
+  callback: (owner: IUserInstance, client: OAuth2Client) => Promise<void>,
+) {
+  const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'));
+  logger.info(`Youtube: Authenticating as: ${user.get('name')}`);
+  const extra = JSON.parse(user.get('extra'));
+  oauth2Client.setCredentials(extra.token);
+  await callback(user, oauth2Client);
+}
+
+export async function for_all_youtube_users(
+  callback: (owner: IUserInstance, client: OAuth2Client) => Promise<void>,
+) {
+  const users = await User.findAll({where: {group: USER_GROUP_YOUTUBE, isActive: true}});
+  for (const user of users) {
+    await for_one_youtube_user(user, callback);
+  }
 }

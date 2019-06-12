@@ -15,14 +15,14 @@ limitations under the License.
 */
 
 import { logger } from '../../logger';
-import { authorize } from './authenticate';
+import { for_all_youtube_users } from './authenticate';
 import { sync_page_of_channels } from './channels';
 
 // Tick is every minute.  Channel sync once per day.
 const CHANNEL_SYNC_INTERVAL = 60 * 24;
 
 export async function syncYoutubeTask(tick: number) {
-  await authorize(async (owner, auth) => {
+  await for_all_youtube_users(async (owner, auth) => {
     if (tick % CHANNEL_SYNC_INTERVAL === 0) {
       logger.info('Syncing channels for user %s.', owner.get('email'));
       let next_page;
