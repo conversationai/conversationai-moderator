@@ -125,13 +125,9 @@ export class TableFrame extends React.Component<ITableFrameProps, ITableFrameSta
 
     let category = null;
     const re = new RegExp(`${FILTER_CATEGORY}=(\\d+)`);
-    const m = re.exec(location.pathname);
-    if (m) {
-      for (const c of categories) {
-        if (c.id === m[1]) {
-          category = c;
-        }
-      }
+    const categoryMatch = re.exec(location.pathname);
+    if (categoryMatch) {
+      category = categories.find((c) => c.id === categoryMatch[1]);
     }
 
     if (this.state.fixedSidebar) {
