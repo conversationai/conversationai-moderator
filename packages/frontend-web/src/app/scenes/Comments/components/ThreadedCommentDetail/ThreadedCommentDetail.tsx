@@ -18,7 +18,7 @@ import { autobind } from 'core-decorators';
 import { Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
-import { WithRouterProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import { ICommentModel, ModelId } from '../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../types';
@@ -37,6 +37,7 @@ import {
   WHITE_COLOR,
 } from '../../../../styles';
 import { css, stylesheet } from '../../../../utilx';
+import { ICommentDetailsPathParams } from '../../../routes';
 import { ThreadedComment } from './components/ThreadedComment';
 
 const HEADER_HEIGHT = 75;
@@ -86,10 +87,9 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IThreadedCommentDetailProps extends WithRouterProps {
+export interface IThreadedCommentDetailProps extends RouteComponentProps<ICommentDetailsPathParams>  {
   comment: ICommentModel;
   isLoading?: boolean;
-  originatingCommentId: string;
   onUpdateReply?(action: ICommentAction, replyId: string): any;
   onUpdateComment(comment: ICommentModel): any;
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
@@ -120,10 +120,10 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
 
   static getDerivedStateFromProps(nextProps: IThreadedCommentDetailProps, prevState: IThreadedCommentDetailState) {
     if (!prevState.loadedCommentId) {
-      nextProps.loadData(nextProps.params.commentId);
+      nextProps.loadData(nextProps.match.params.commentId);
     }
     return {
-      loadedCommentId: nextProps.params.commentId,
+      loadedCommentId: nextProps.match.params.commentId,
     };
   }
 

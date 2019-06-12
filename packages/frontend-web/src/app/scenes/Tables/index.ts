@@ -32,7 +32,7 @@ import { TableFrame as PureTableFrame } from './TableFrame';
 const baseSelector = createStructuredSelector({
   myUserId: getMyUserId,
   categories: getCategoryMap,
-  selectedCategory: (state: IAppStateRecord, { params }: IArticleTableProps) => {
+  selectedCategory: (state: IAppStateRecord, { match: { params }}: IArticleTableProps) => {
     const m = /category=(\d+)/.exec(params.filter);
     if (!m) {
       return null;

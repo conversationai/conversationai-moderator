@@ -16,7 +16,7 @@ limitations under the License.
 
 import { List, Set } from 'immutable';
 import React from 'react';
-import { WithRouterProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import {
@@ -29,7 +29,13 @@ import {
   WHITE_COLOR,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import { isArticleContext } from '../routes';
+import {
+  ICommentDetailsPathParams,
+  ICommentReplyDetailsPathParams,
+  IModeratedCommentsPathParams,
+  INewCommentsPathParams,
+  isArticleContext,
+} from '../routes';
 import { SubheaderBar } from './components/SubheaderBar';
 
 const STYLES = stylesheet({
@@ -40,7 +46,12 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ICommentsProps extends WithRouterProps {
+export interface ICommentsProps extends RouteComponentProps<
+  INewCommentsPathParams |
+  IModeratedCommentsPathParams |
+  ICommentDetailsPathParams |
+  ICommentReplyDetailsPathParams
+> {
   dispatch?: IAppDispatch;
   article?: IArticleModel;
   category?: ICategoryModel;
@@ -66,21 +77,16 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
     hideCommentHeader: false,
   };
 
-  static getDerivedStateFromProps(nextProps: ICommentsProps,  _prevState: ICommentsState) {
-    const {
-      commentId,
-      originatingCommentId,
-    } = nextProps.params;
-
+  static getDerivedStateFromProps(props: ICommentsProps, _state: ICommentsState) {
     const counts =
-      nextProps.article ? nextProps.article :
-      nextProps.category ? nextProps.category :
-      nextProps.globalCounts;
+      props.article ? props.article :
+      props.category ? props.category :
+      props.globalCounts;
 
     return {
-      isArticleDetail: isArticleContext(nextProps.params as any/* TODO: remove when types fixed */),
-      isCommentDetail: !!commentId,
-      hideCommentHeader: !!originatingCommentId,
+      isArticleDetail: isArticleContext(props.match.params),
+      isCommentDetail: ('commentId' in props),
+      hideCommentHeader: ('originatingCommentId' in props),
       counts,
     };
   }

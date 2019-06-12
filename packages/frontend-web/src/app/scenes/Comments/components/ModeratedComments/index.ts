@@ -39,7 +39,6 @@ import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
 import {IModeratedCommentsPathParams, isArticleContext} from '../../../routes';
 import {
-  getParams,
   IModeratedCommentsProps,
   ModeratedComments as PureModeratedComments,
 } from './ModeratedComments';
@@ -86,9 +85,9 @@ type IModeratedCommentsStateProps = Pick<
 const mapStateToProps = createStructuredSelector({
   isLoading: (state: IAppStateRecord) => getCommentListIsLoading(state) || !getCommentListHasLoaded(state),
 
-  article: (state: IAppStateRecord, props: IModeratedCommentsProps) => {
-    if (isArticleContext(getParams(props))) {
-      return getArticle(state, getParams(props).contextId);
+  article: (state: IAppStateRecord, { match: { params }}: IModeratedCommentsProps) => {
+    if (isArticleContext(params)) {
+      return getArticle(state, params.contextId);
     }
   },
 
@@ -99,7 +98,7 @@ const mapStateToProps = createStructuredSelector({
   isItemChecked: (state: IAppStateRecord) => (id: string) => getIsItemChecked(state, id),
 
   moderatedComments: (state: IAppStateRecord, props: IModeratedCommentsProps) => (
-    getModeratedComments(state, getParams(props))
+    getModeratedComments(state, props.match.params)
   ),
 
   tags: getTaggableTags,
@@ -118,11 +117,11 @@ function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsPro
     [key: string]: (ids: Array<string>, tagId?: string) => any;
   } = {
     highlight: highlightComments,
-    approve: getParams(props).disposition === 'flagged' ? approveFlagsAndComments : approveComments,
+    approve: props.match.params.disposition === 'flagged' ? approveFlagsAndComments : approveComments,
     defer: deferComments,
-    reject: getParams(props).disposition === 'flagged' ? rejectFlagsAndComments : rejectComments,
+    reject: props.match.params.disposition === 'flagged' ? rejectFlagsAndComments : rejectComments,
     tag: tagCommentSummaryScores,
-    reset: getParams(props).disposition === 'flagged' ? approveFlagsAndComments : resetComments,
+    reset: props.match.params.disposition === 'flagged' ? approveFlagsAndComments : resetComments,
   };
 
   return {
@@ -141,10 +140,10 @@ function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsPro
     toggleSingleItem: ({ id }: { id: string }) => dispatch(toggleSingleItem({ id })),
 
     setCommentModerationStatusForArticle: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
-        dispatch(setCommentsModerationForArticle(getParams(props).contextId, commentIds, moderationAction, currentModeration)),
+        dispatch(setCommentsModerationForArticle(props.match.params.contextId, commentIds, moderationAction, currentModeration)),
 
     setCommentModerationStatusForCategory: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
-        dispatch(setCommentsModerationForCategory(getParams(props).contextId, commentIds, moderationAction, currentModeration)),
+        dispatch(setCommentsModerationForCategory(props.match.params.contextId, commentIds, moderationAction, currentModeration)),
 
     changeSort: async (params: IModeratedCommentsPathParams, newSort: string): Promise<void> => {
       await dispatch(changeColumnSortGroupDefault({

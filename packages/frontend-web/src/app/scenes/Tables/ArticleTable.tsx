@@ -20,7 +20,7 @@ import { Map as IMap, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { WithRouterProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
@@ -47,6 +47,7 @@ import {
   articleBase,
   categoryBase,
   dashboardLink,
+  IDashboardPathParams,
   moderatedCommentsPageLink,
   NEW_COMMENTS_DEFAULT_TAG,
   newCommentsPageLink,
@@ -94,7 +95,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IArticleTableProps extends WithRouterProps {
+export interface IArticleTableProps extends RouteComponentProps<IDashboardPathParams> {
   myUserId: string;
   categories: Map<ModelId, ICategoryModel>;
   selectedCategory: ICategoryModel;
@@ -229,7 +230,7 @@ function updateArticles(state: IArticleTableState, props: IArticleTableProps, fi
 export class ArticleTable extends React.Component<IArticleTableProps, IArticleTableState> {
   constructor(props: Readonly<IArticleTableProps>) {
     super(props);
-    const {filter: filterString, sort: sortString} = props.params;
+    const {filter: filterString, sort: sortString} = props.match.params;
     const filter: Array<IFilterItem> = parseFilter(filterString);
     const sort: Array<string> = parseSort(sortString);
     const articlesContainerHeight = window.innerHeight - HEADER_HEIGHT * 2;
@@ -256,7 +257,7 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
     let redoArticles = false;
     let filterUpdated = false;
     let sortUpdated = false;
-    const {filter: filterString, sort: sortString} = props.params;
+    const {filter: filterString, sort: sortString} = props.match.params;
 
     const newState: any = {};
 

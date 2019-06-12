@@ -19,7 +19,7 @@ import { List } from 'immutable';
 import { isEqual } from 'lodash';
 import qs from 'query-string';
 import React from 'react';
-import { WithRouterProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import {
   IArticleModel,
@@ -86,7 +86,7 @@ const HEADER_STYLES = stylesheet({
   },
 });
 
-export interface ISearchProps extends WithRouterProps {
+export interface ISearchProps extends RouteComponentProps<{}>  {
   totalCommentCount?: number;
   allCommentIds?: List<number>;
   onSearch?(newScope: ISearchScope): any;

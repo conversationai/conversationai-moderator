@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import React from 'react';
-import { WithRouterProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import { ITagModel, TagModel } from '../../../../../models';
 import {
@@ -36,6 +36,9 @@ import {
   WHITE_COLOR,
 } from '../../../../styles';
 import { css } from '../../../../utilx';
+import {
+  ITagSelectorPathParams,
+} from '../../../routes';
 
 const ACTION_STYLES = {
   header: {
@@ -98,7 +101,7 @@ function getImagePath(base: string, id: string, tagId: string) {
     + `/chart?width=${SNAPSHOT_WIDTH * dp}&height=${SNAPSHOT_HEIGHT * dp}&token=${getToken()}`;
 }
 
-export interface ITagSelectorProps extends WithRouterProps {
+export interface ITagSelectorProps extends RouteComponentProps<ITagSelectorPathParams> {
   tags: Array<ITagModel>;
 }
 
@@ -111,7 +114,7 @@ export class TagSelector extends React.Component<ITagSelectorProps> {
 
   render() {
     const { tags } = this.props;
-    const { context, contextId, tag: currentTag } = this.props.params;
+    const { context, contextId, tag: currentTag } = this.props.match.params;
 
     const summaryTag = tags.filter((tag) => tag.key === 'SUMMARY_SCORE');
     const tagsWithoutSummary = tags.filter((tag) => tag.key !== 'SUMMARY_SCORE' && tag.isInBatchView === true);
