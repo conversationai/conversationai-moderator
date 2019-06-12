@@ -20,6 +20,7 @@ import { createAssignmentsService } from './assignments';
 import { createAuthorCountsService } from './authorCounts';
 import { createCommentActionsService } from './commentActions';
 import { createCommentsByIdService } from './commentsById';
+import { createCommentSourcesService } from './commentSources';
 import { createEditCommentTextService } from './editComment';
 import { createHistogramScoresService } from './histogramScores';
 import { createModeratedCountsService } from './moderatedCounts';
@@ -48,6 +49,7 @@ export function createServicesRouter(): express.Router {
   router.use('/updates', createUpdateNotificationService());
   router.use('/simple', createSimpleRESTService());
   router.use('/processing', processingTriggers());
+  router.use('/comment_sources', createCommentSourcesService());
 
   return router;
 }

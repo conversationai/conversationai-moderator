@@ -224,11 +224,14 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.props.reloadYoutubeUsers();
   }
 
+  stateToRecover: {[key: string]: any};
   componentWillReceiveProps(_: Readonly<ISettingsProps>) {
     if (this.state.isStatusScrimVisible) {
       this.setState({
         isStatusScrimVisible: false,
+        ...this.stateToRecover,
       });
+      delete this.stateToRecover;
     }
   }
 
@@ -620,11 +623,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
   @autobind
   async saveYouTubeSettings(user: IUserModel) {
-    await this.setState({
-      isEditYouTubeScrimVisible: false,
-      isStatusScrimVisible: true,
-      submitStatus: 'Saving changes...',
-    });
     try {
       const userId = user.id;
       await this.props.modifyUser(user);
@@ -632,12 +630,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       user = this.props.youtubeUsers.find((u) => (u.id === userId));
       this.setState({
         selectedUser: user,
-        isStatusScrimVisible: false,
-        isEditYouTubeScrimVisible: true,
       });
     }
     catch (e) {
       this.setState({
+        isEditYouTubeScrimVisible: false,
+        isStatusScrimVisible: true,
         submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
       });
     }

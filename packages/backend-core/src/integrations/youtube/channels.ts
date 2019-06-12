@@ -19,7 +19,7 @@ import { google } from 'googleapis';
 
 import { logger } from '../../logger';
 import { IUserInstance } from '../../models';
-import { mapChannelToCategory, saveError } from './objectmap';
+import { mapChannelToCategory, saveError, setChannelActive } from './objectmap';
 
 const service = google.youtube('v3');
 
@@ -27,7 +27,7 @@ async function sync_page_of_channels(owner: IUserInstance, auth: OAuth2Client, p
   return new Promise<string | undefined>((resolve, reject) => {
     service.channels.list({
       auth: auth,
-      part: 'snippet',
+      part: 'snippet,brandingSettings',
       mine: true,
       maxResults: 50,
       pageToken: pageToken,
@@ -65,4 +65,53 @@ export async function sync_channels(
   do {
     next_page = await sync_page_of_channels(owner, auth, next_page);
   } while (next_page);
+}
+
+export async function activate_channel(
+  owner: IUserInstance,
+  auth: OAuth2Client,
+  channelId: string,
+  activate: boolean,
+): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    service.channels.list({
+      auth: auth,
+      id: channelId,
+      part: 'brandingSettings',
+    }, async (err: any, response: any) => {
+      if (err) {
+        await saveError(owner, err);
+        logger.error('Google API returned an error: ' + err);
+        reject('Google API error');
+        return;
+      }
+
+      if (response!.data.items.length === 0) {
+        logger.warn('Couldn\'t find channel %s.', channelId);
+        reject('Couldn\'t find corresponding youtube channel.');
+        return;
+      }
+
+      const data = response.data.items[0].brandingSettings;
+      data.channel.moderateComments = activate;
+
+      service.channels.update({
+        auth: auth,
+        part: 'brandingSettings',
+        requestBody: {
+          id: channelId,
+          brandingSettings: data,
+        },
+      }, async (err2: any, response2: any) => {
+        if (err2) {
+          await saveError(owner, err);
+          logger.error('Google API returned an error: ' + err);
+          reject('Google API error');
+          return;
+        }
+        await setChannelActive(owner, channelId, response2.data.brandingSettings);
+        resolve();
+      });
+    });
+  });
 }

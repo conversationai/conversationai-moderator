@@ -28,6 +28,7 @@ import {
 
 import { ICategoryModel, IUserModel } from '../../../../models';
 import { ContainerHeader, OverflowContainer } from '../../../components/OverflowContainer';
+import { activateCommentSource } from '../../../platform/dataService';
 import { GUTTER_DEFAULT_SPACING, PALE_COLOR, SCRIM_Z_INDEX } from '../../../styles';
 import { css, stylesheet } from '../../../utilx';
 
@@ -76,27 +77,69 @@ const STYLES = stylesheet({
       background: PALE_COLOR,
     },
   },
+
+  userTableCell: {
+    textAlign: 'left',
+    padding: '5px 20px 5px 0',
+  },
 });
+
+interface IYoutubeCategoryProps {
+  category: ICategoryModel;
+}
+
+function YoutubeCategory(props: IYoutubeCategoryProps) {
+  const {
+    category,
+  } = props;
+
+  const [changingActive, setChangingActive] = React.useState<boolean>(false);
+
+  async function activate() {
+    setChangingActive(true);
+    await activateCommentSource(category.id, !category.isActive);
+    setChangingActive(false);
+  }
+
+  return (
+    <tr>
+      <td key="label" {...css(STYLES.userTableCell)}>{category.label}</td>
+      <td key="source" {...css(STYLES.userTableCell)}>{category.sourceId}</td>
+      <td key="active" {...css(STYLES.userTableCell)}>
+        <Tooltip
+          title={category.isActive ? 'Comments will sync every 5 minute' : 'Automatic comment sync is disabled'}
+        >
+          <Switch color="primary" checked={category.isActive} onChange={activate} disabled={changingActive}/>
+        </Tooltip>
+      </td>
+    </tr>
+  );
+}
 
 export interface IEditYouTubeUserProps {
   onClickClose(e: React.FormEvent<any>): any;
-  onUserUpdate(user: IUserModel): void;
+  onUserUpdate(user: IUserModel): Promise<void>;
   categories: Iterable.Indexed<ICategoryModel>;
   user?: IUserModel;
 }
 
 export function EditYouTubeUser(props: IEditYouTubeUserProps) {
-  function onIsActiveChange() {
-    const u = user.set('isActive', !user.isActive);
-    props.onUserUpdate(u);
+  const [changingActive, setChangingActive] = React.useState<boolean>(false);
+
+  async function onIsActiveChange() {
+    setChangingActive(true);
+    await props.onUserUpdate(user.set('isActive', !user.isActive));
+    setChangingActive(false);
   }
 
   const {
+    categories,
     user,
     onClickClose,
   } = props;
 
   const hasError = !!user.extra.lastError;
+  const relevant = categories.filter((c) => c.ownerId === user.id);
 
   return (
     <OverflowContainer
@@ -113,7 +156,14 @@ export function EditYouTubeUser(props: IEditYouTubeUserProps) {
           </div>
           <div key="active" {...css(STYLES.row)}>
             <label {...css(STYLES.label)}>Is Active</label>
-            <Switch checked={user.isActive} color="primary" disabled={hasError} onChange={onIsActiveChange}/>
+            <div  style={{position: 'relative'}}>
+              <Switch
+                checked={user.isActive}
+                color="primary"
+                disabled={hasError || changingActive }
+                onChange={onIsActiveChange}
+              />
+            </div>
           </div>
           <div key="error" {...css(STYLES.row)}>
             <label {...css(STYLES.label)}>Last Error</label>
@@ -126,6 +176,29 @@ export function EditYouTubeUser(props: IEditYouTubeUserProps) {
               }
             </div>
           </div>
+          <h2 key="channelTitle" {...css(STYLES.subheading)}>Channels</h2>
+          <table>
+            <thead>
+            <tr>
+              <th key="1" {...css(STYLES.userTableCell)}>
+                Name
+              </th>
+              <th key="2" {...css(STYLES.userTableCell)}>
+                YouTube ID
+              </th>
+              <th key="3" {...css(STYLES.userTableCell)}>
+                Is Active
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+              {relevant.map((c) => (<YoutubeCategory key={c.id} category={c}/>))}
+            </tbody>
+          </table>
+          <p style={{marginTop: `${31}px`}}>
+            Activating moderation of a YouTube channel puts it into post-moderation mode.
+            Comments will not be visible to users until you mark them as approved.
+          </p>
         </div>
       )}
     />

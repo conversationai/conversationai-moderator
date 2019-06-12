@@ -1,0 +1,78 @@
+/*
+Copyright 2019 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+import * as express from 'express';
+
+import { Category, USER_GROUP_YOUTUBE } from '@conversationai/moderator-backend-core';
+import { youtubeActivateChannel } from '@conversationai/moderator-backend-core';
+
+import { REPLY_SUCCESS } from '../constants';
+
+/**
+ * API endpoints to control comment sources.
+ */
+
+const ACTION_ACTIVATE = 'activate';
+
+const ACTIONS = new Map([
+  [ACTION_ACTIVATE,  new Map([[USER_GROUP_YOUTUBE, youtubeActivateChannel]])],
+]);
+
+function createAction(actionId: string): express.RequestHandler {
+  return async (req, res, next) => {
+    const category = await Category.findOne({where: {id: req.params.categoryId}});
+    if (!category) {
+      res.status(400).json({error: 'No such category'});
+      next();
+      return;
+    }
+
+    const owner = await category.getOwner();
+    if (!owner) {
+      res.status(400).json({error: 'Category has no owner'});
+      next();
+      return;
+    }
+
+    const action = ACTIONS.get(actionId)!.get(await owner.get('group'));
+    if (!action) {
+      res.status(400).json({error: `Category does not support action ${action}`});
+      next();
+      return;
+    }
+
+    try {
+      await action(owner, category, req.body.data);
+    }
+    catch (e) {
+      res.status(400).json({error: `Something went wrong: ${e}`});
+      next();
+      return;
+    }
+    res.json(REPLY_SUCCESS);
+    next();
+  };
+}
+
+export function createCommentSourcesService(): express.Router {
+  const router = express.Router({
+    caseSensitive: true,
+    mergeParams: true,
+  });
+
+  router.post('/activate/:categoryId', createAction(ACTION_ACTIVATE));
+  return router;
+}

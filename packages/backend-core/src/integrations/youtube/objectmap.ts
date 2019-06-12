@@ -18,7 +18,7 @@ import { pick } from 'lodash';
 
 import { postProcessComment, sendForScoring } from '../../domain/comments';
 import { logger } from '../../logger';
-import { Article, Category, Comment, Decision } from '../../models';
+import { Article, Category, Comment, Decision, updateHappened } from '../../models';
 import { IAuthorAttributes, ICommentInstance, IDecisionInstance, IUserInstance } from '../../models';
 import { sequelize } from '../../sequelize';
 
@@ -39,6 +39,12 @@ export async function clearError(owner: IUserInstance) {
 
 export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
   const channelId = channel.id!;
+  const isActive = channel.brandingSettings.channel.moderateComments;
+
+  const categoryDefaults = {
+    label: channel.snippet!.title!,
+    isActive: isActive,
+  };
 
   try {
     const [category, created] = await Category.findOrCreate({
@@ -47,9 +53,9 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
         sourceId: channelId,
       },
       defaults: {
+        ...categoryDefaults,
         ownerId: owner.id,
         sourceId: channelId,
-        label: channel.snippet!.title!,
       },
     });
 
@@ -57,7 +63,7 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
       logger.info('Category created for channel %s (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
     }
     else {
-      category.set('label', channel.snippet!.title!);
+      category.set(categoryDefaults);
       await category.save();
       logger.info('Category updated for channel %s (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
     }
@@ -98,6 +104,12 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
   catch (error) {
     logger.error('Failed update of article for channel %s: %s', channel.snippet!.title, error);
   }
+}
+
+export async function setChannelActive(owner: IUserInstance, channelId: string, brandingSettings: any) {
+  const isActive: boolean = !!brandingSettings.channel.moderateComments;
+  await Category.update({isActive} as any, {where: {ownerId: owner.id, sourceId: channelId}});
+  await updateHappened();
 }
 
 export async function foreachActiveChannel(owner: IUserInstance, callback: (channelId: string, articleIdMap: Map<string, number>) => Promise<void>) {
