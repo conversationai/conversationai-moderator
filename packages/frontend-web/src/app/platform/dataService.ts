@@ -795,3 +795,7 @@ export async function listSystemUsers(type: string): Promise<List<IUserModel>> {
 export async function kickProcessor(type: string): Promise<void> {
   await axios.get(serviceURL('processing', `/trigger/${type}`));
 }
+
+export async function activateCommentSource(categoryId: ModelId, activate: boolean): Promise<void> {
+  await axios.post(serviceURL('comment_sources', `/activate/${categoryId}`), { data: {activate} });
+}

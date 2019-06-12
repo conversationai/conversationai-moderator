@@ -14,7 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './youtube/authenticate';
-export * from './youtube/objectmap';
-export * from './youtube/task';
-export * from './youtube/actions';
+import { ICategoryInstance, IUserInstance } from '../../models';
+import { for_one_youtube_user } from './authenticate';
+import { activate_channel } from './channels';
+
+export async function youtubeActivateChannel(
+  owner: IUserInstance,
+  channel: ICategoryInstance,
+  args: {[key: string]: boolean},
+) {
+  await for_one_youtube_user(owner, async (_, auth) => {
+    await activate_channel(owner, auth, await channel.get('sourceId'), args.activate);
+  });
+}

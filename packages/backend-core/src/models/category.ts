@@ -45,6 +45,7 @@ export interface ICategoryInstance
 
   getAssignedModerators: Sequelize.BelongsToManyGetAssociationsMixin<IUserInstance>;
   countAssignedModerators: Sequelize.BelongsToManyCountAssociationsMixin;
+  getOwner: Sequelize.BelongsToGetAssociationMixin<IUserInstance>;
 }
 
 /**
