@@ -16,9 +16,16 @@ limitations under the License.
 
 import * as express from 'express';
 
-import { Category, USER_GROUP_YOUTUBE } from '@conversationai/moderator-backend-core';
-import { youtubeActivateChannel } from '@conversationai/moderator-backend-core';
+import {
+  Category,
+  ICategoryInstance,
+  IUserInstance,
+  User,
+  USER_GROUP_YOUTUBE,
+} from '@conversationai/moderator-backend-core';
+import { youtubeActivateChannel, youtubeSynchronizeChannel } from '@conversationai/moderator-backend-core';
 
+import { enqueue, registerTask } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 
 /**
@@ -26,9 +33,29 @@ import { REPLY_SUCCESS } from '../constants';
  */
 
 const ACTION_ACTIVATE = 'activate';
+const ACTION_SYNC = 'sync';
+
+export interface ISynchronizeChannelData {
+  ownerId: number;
+  channelId: number;
+}
+
+async function _youtubeSynchronizeChannel(
+  owner: IUserInstance,
+  channel: ICategoryInstance,
+) {
+  await enqueue<ISynchronizeChannelData>('youtubeSynchronizeChannel', {ownerId: owner.id, channelId: channel.id});
+}
+
+registerTask<ISynchronizeChannelData>('youtubeSynchronizeChannel', async (data: ISynchronizeChannelData) => {
+  const owner = await User.findById(data.ownerId);
+  const channel = await Category.findById(data.channelId);
+  await youtubeSynchronizeChannel(owner, channel);
+});
 
 const ACTIONS = new Map([
   [ACTION_ACTIVATE,  new Map([[USER_GROUP_YOUTUBE, youtubeActivateChannel]])],
+  [ACTION_SYNC, new Map([[USER_GROUP_YOUTUBE, _youtubeSynchronizeChannel]])],
 ]);
 
 function createAction(actionId: string): express.RequestHandler {
@@ -74,5 +101,6 @@ export function createCommentSourcesService(): express.Router {
   });
 
   router.post('/activate/:categoryId', createAction(ACTION_ACTIVATE));
+  router.get('/sync/:categoryId', createAction(ACTION_SYNC));
   return router;
 }

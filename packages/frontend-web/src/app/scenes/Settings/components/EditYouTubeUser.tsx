@@ -18,18 +18,20 @@ import { Iterable } from 'immutable';
 import React from 'react';
 
 import {
+  CircularProgress,
   IconButton,
   Switch,
   Tooltip,
 } from '@material-ui/core';
 import {
   CheckCircleOutline,
+  Sync,
 } from '@material-ui/icons';
 
 import { ICategoryModel, IUserModel } from '../../../../models';
 import { ContainerHeader, OverflowContainer } from '../../../components/OverflowContainer';
-import { activateCommentSource } from '../../../platform/dataService';
-import { GUTTER_DEFAULT_SPACING, PALE_COLOR, SCRIM_Z_INDEX } from '../../../styles';
+import { activateCommentSource, syncCommentSource } from '../../../platform/dataService';
+import { flexCenter, GUTTER_DEFAULT_SPACING, PALE_COLOR, SCRIM_Z_INDEX } from '../../../styles';
 import { css, stylesheet } from '../../../utilx';
 
 const STYLES = stylesheet({
@@ -82,6 +84,12 @@ const STYLES = stylesheet({
     textAlign: 'left',
     padding: '5px 20px 5px 0',
   },
+
+  userTableCellButton: {
+    width: '49px',
+    height: '49px',
+    ...flexCenter,
+  },
 });
 
 interface IYoutubeCategoryProps {
@@ -94,11 +102,18 @@ function YoutubeCategory(props: IYoutubeCategoryProps) {
   } = props;
 
   const [changingActive, setChangingActive] = React.useState<boolean>(false);
+  const [syncingComments, setSyncingComments] = React.useState<boolean>(false);
 
   async function activate() {
     setChangingActive(true);
     await activateCommentSource(category.id, !category.isActive);
     setChangingActive(false);
+  }
+
+  async function sync() {
+    setSyncingComments(true);
+    await syncCommentSource(category.id);
+    setTimeout(() => setSyncingComments(false), 3000);
   }
 
   return (
@@ -111,6 +126,16 @@ function YoutubeCategory(props: IYoutubeCategoryProps) {
         >
           <Switch color="primary" checked={category.isActive} onChange={activate} disabled={changingActive}/>
         </Tooltip>
+      </td>
+      <td key="actions" {...css(STYLES.userTableCell)}>
+        <div {...css(STYLES.userTableCellButton)}>
+          <Tooltip title="Load recent articles and comments">
+            {syncingComments ?
+              <CircularProgress color="primary" size={30}/> :
+              <IconButton onClick={sync}><Sync/></IconButton>
+            }
+          </Tooltip>
+        </div>
       </td>
     </tr>
   );
@@ -198,6 +223,10 @@ export function EditYouTubeUser(props: IEditYouTubeUserProps) {
           <p style={{marginTop: `${31}px`}}>
             Activating moderation of a YouTube channel puts it into post-moderation mode.
             Comments will not be visible to users until you mark them as approved.
+          </p>
+          <p>
+            Syncing history data will make sure the last few hundred comments are available
+            in Moderator, even if they've already been published.
           </p>
         </div>
       )}

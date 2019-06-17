@@ -27,3 +27,11 @@ export async function youtubeActivateChannel(
     await activate_channel(owner, auth, await channel.get('sourceId'), args.activate);
   });
 }
+
+export async function youtubeSynchronizeChannel(
+  owner: IUserInstance,
+  channel: ICategoryInstance,
+) {
+  console.log(owner.id);
+  console.log(channel.id);
+}
