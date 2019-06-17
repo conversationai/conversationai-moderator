@@ -22,7 +22,18 @@ import { Article, Category, Comment, Decision, updateHappened } from '../../mode
 import { IAuthorAttributes, ICommentInstance, IDecisionInstance, IUserInstance } from '../../models';
 import { sequelize } from '../../sequelize';
 
+let testOnly = false;
+let testCallback: (type: string, obj: any) => void;
+export function youtubeSetTestOnly(c: typeof testCallback) {
+  testOnly = true;
+  testCallback = c;
+}
+
 export async function saveError(owner: IUserInstance, error: Error) {
+  if (testOnly) {
+    testCallback('error', error);
+    return;
+  }
   const extra = JSON.parse(owner.get('extra'));
   extra.lastError = pick(error, ['name', 'message']);
   owner.set('isActive', false);
@@ -38,6 +49,11 @@ export async function clearError(owner: IUserInstance) {
 }
 
 export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
+  if (testOnly) {
+    testCallback('channel', channel);
+    return;
+  }
+
   const channelId = channel.id!;
   const isActive = channel.brandingSettings.channel.moderateComments;
 
@@ -108,6 +124,10 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
 
 export async function setChannelActive(owner: IUserInstance, channelId: string, brandingSettings: any) {
   const isActive: boolean = !!brandingSettings.channel.moderateComments;
+  if (testOnly) {
+    testCallback('setChannelActive', brandingSettings);
+    return 0;
+  }
   await Category.update({isActive} as any, {where: {ownerId: owner.id, sourceId: channelId}});
   await updateHappened();
 }
@@ -147,6 +167,11 @@ export async function mapVideoItemToArticle(
   videoId: string,
   snippet: any,
 ): Promise<number|null> {
+  if (testOnly) {
+    testCallback('video', {videoId, snippet});
+    return 0;
+  }
+
   logger.info('Got video "%s" (%s)', snippet.title, videoId);
 
   const defaults = {
@@ -195,6 +220,11 @@ async function mapCommentToComment(
   ytcomment: any,
   replyToSourceId: string | undefined,
 ) {
+  if (testOnly) {
+    testCallback('comment', ytcomment);
+    return;
+  }
+
   try {
     const author: IAuthorAttributes = {
       name: ytcomment.snippet.authorDisplayName,
