@@ -23,8 +23,10 @@ import { DispatchProp } from 'react-redux';
 import {
   createMuiTheme,
   CssBaseline,
-  MuiThemeProvider,
 } from '@material-ui/core';
+import {
+  ThemeProvider,
+} from '@material-ui/styles';
 
 import { FOCUS_DATA_ATTR } from '../../config';
 import { focusedElement } from '../../stores/focus';
@@ -36,7 +38,6 @@ import { ROOT_STYLES } from './components/styles';
 
 const theme = createMuiTheme({
   typography: {
-    useNextVariants: true,
     fontFamily: 'Libre Franklin',
   },
   palette: {
@@ -49,10 +50,10 @@ const theme = createMuiTheme({
 export class ThemeRoot extends React.Component {
   render() {
     return (
-      <MuiThemeProvider key="root" theme={theme}>
+      <ThemeProvider key="root" theme={theme}>
         <CssBaseline key="baseline"/>
         {this.props.children}
-      </MuiThemeProvider>
+      </ThemeProvider>
     );
   }
 }
