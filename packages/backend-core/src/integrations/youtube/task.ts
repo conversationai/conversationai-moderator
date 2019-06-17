@@ -17,6 +17,7 @@ limitations under the License.
 import { for_all_youtube_users } from './authenticate';
 import { sync_channels } from './channels';
 import { clearError } from './objectmap';
+import { sync_known_videos } from './videos';
 
 // Tick is every minute.  Channel sync once per day.
 const CHANNEL_SYNC_INTERVAL = 60 * 24;
@@ -28,6 +29,7 @@ export async function syncYoutubeTask(tick: number) {
       if (tick % CHANNEL_SYNC_INTERVAL === 0) {
         await clearError(owner);
         await sync_channels(owner, auth);
+        await sync_known_videos(owner, auth);
       }
     });
   }
