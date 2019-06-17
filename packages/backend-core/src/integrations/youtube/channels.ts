@@ -115,3 +115,26 @@ export async function activate_channel(
     });
   });
 }
+
+export async function get_playlist_for_channel(owner: IUserInstance, auth: OAuth2Client, channelId: string) {
+  return new Promise<string>((resolve, reject) => {
+    service.channels.list({
+      auth: auth,
+      id: channelId,
+      part: 'contentDetails',
+    }, async (err: any, response: any) => {
+      if (err) {
+        await saveError(owner, err);
+        logger.error('Google API returned an error: ' + err);
+        reject('Google API error');
+        return;
+      }
+      if (response!.data.items.length === 0) {
+        logger.warn('Couldn\'t find channel %s.', channelId);
+        reject('Couldn\'t find corresponding youtube channel.');
+        return;
+      }
+      resolve(response!.data.items[0].contentDetails.relatedPlaylists.uploads);
+    });
+  });
+}

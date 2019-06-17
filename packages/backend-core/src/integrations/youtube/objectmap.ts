@@ -60,12 +60,12 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
     });
 
     if (created) {
-      logger.info('Category created for channel %s (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
+      logger.info('Category created for channel "%s" (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
     }
     else {
       category.set(categoryDefaults);
       await category.save();
-      logger.info('Category updated for channel %s (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
+      logger.info('Category updated for channel "%s" (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
     }
 
     // Create an article to store comments for the channel itself.
@@ -93,16 +93,16 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
     });
 
     if (acreated) {
-      logger.info('Article created for channel %s (local id: %s -> remote id: %s)', article.get('title'), article.id, channel.id);
+      logger.info('Article created for channel "%s" (local id: %s -> remote id: %s)', article.get('title'), article.id, channel.id);
     }
     else {
       article.set(defaults);
       await article.save();
-      logger.info('Article updated for channel %s (local id: %s -> remote id: %s)', article.get('title'), article.id, channel.id);
+      logger.info('Article updated for channel "%s" (local id: %s -> remote id: %s)', article.get('title'), article.id, channel.id);
     }
   }
   catch (error) {
-    logger.error('Failed update of article for channel %s: %s', channel.snippet!.title, error);
+    logger.error('Failed update of article for channel "%s": "%s"', channel.snippet!.title, error);
   }
 }
 
@@ -141,16 +141,20 @@ export async function foreachActiveChannel(owner: IUserInstance, callback: (chan
   }
 }
 
-export async function mapPlaylistItemToArticle(owner: IUserInstance, categoryId: number, item: any) {
-  const videoId = item.snippet.resourceId.videoId;
-  logger.info('Got video %s (%s)', item.snippet.title, videoId);
+export async function mapVideoItemToArticle(
+  owner: IUserInstance,
+  categoryId: number,
+  videoId: string,
+  snippet: any,
+): Promise<number|null> {
+  logger.info('Got video "%s" (%s)', snippet.title, videoId);
 
   const defaults = {
-    title: item.snippet.title.substring(0, 255),
-    text: item.snippet.description,
+    title: snippet.title.substring(0, 255),
+    text: snippet.description,
     url: 'https://www.youtube.com/watch?v=' + videoId,
-    sourceCreatedAt: new Date(Date.parse(item.snippet.publishedAt)),
-    extra: item,
+    sourceCreatedAt: new Date(Date.parse(snippet.publishedAt)),
+    extra: snippet,
   };
 
   try {
@@ -177,9 +181,11 @@ export async function mapPlaylistItemToArticle(owner: IUserInstance, categoryId:
       await article.save();
       logger.info('Updated article %s for video %s', article.id, article.get('sourceId'));
     }
+    return article.id;
   }
   catch (error) {
     logger.error('Failed update of video %s: %s', videoId, error);
+    return null;
   }
 }
 
