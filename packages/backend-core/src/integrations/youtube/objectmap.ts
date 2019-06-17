@@ -189,20 +189,25 @@ export async function mapVideoItemToArticle(
   }
 }
 
-async function mapCommentToComment(owner: IUserInstance, articleId: number, ytcomment: any, replyToSourceId: string | undefined) {
+async function mapCommentToComment(
+  owner: IUserInstance,
+  articleId: number,
+  ytcomment: any,
+  replyToSourceId: string | undefined,
+) {
   try {
-
     const author: IAuthorAttributes = {
       name: ytcomment.snippet.authorDisplayName,
       avatar: ytcomment.snippet.authorProfileImageUrl,
     };
 
+    const sourceCreatedAt = new Date(Date.parse(ytcomment.snippet.publishedAt));
     const defaults = {
       articleId: articleId,
       authorSourceId: ytcomment.snippet.authorChannelId.value,
       author: author,
       text: ytcomment.snippet.textDisplay,
-      sourceCreatedAt: new Date(Date.parse(ytcomment.snippet.publishedAt)),
+      sourceCreatedAt,
       replyToSourceId: replyToSourceId,
       extra: ytcomment,
     };
@@ -222,11 +227,13 @@ async function mapCommentToComment(owner: IUserInstance, articleId: number, ytco
     if (created) {
       logger.info('Created comment %s (%s)', comment.id, comment.get('sourceId'));
     }
-    else {
-      comment.set(defaults);
-      await comment.save();
-      logger.info('Updated comment %s (%s)', comment.id, comment.get('sourceId'));
+    else if (comment.get('sourceCreatedAt').getTime() === sourceCreatedAt.getTime()) {
+      logger.info('Comment %s (%s) unchanged', comment.id, comment.get('sourceId'));
+      return;
     }
+    comment.set(defaults);
+    await comment.save();
+    logger.info('Updated comment %s (%s)', comment.id, comment.get('sourceId'));
 
     try {
       await postProcessComment(comment);
@@ -243,24 +250,21 @@ async function mapCommentToComment(owner: IUserInstance, articleId: number, ytco
 
 export async function mapCommentThreadToComments(
   owner: IUserInstance,
-  channelId: string,
-  articleIds: Map<string, number>,
-  thread: any) {
-  let articleId = articleIds.get(thread.snippet.videoId);
-  if (!articleId) {
-    articleId = articleIds.get(channelId);
-  }
-  await mapCommentToComment(owner, articleId!, thread.snippet.topLevelComment, undefined);
+  articleId: number,
+  thread: any,
+) {
+  await mapCommentToComment(owner, articleId, thread.snippet.topLevelComment, undefined);
   if (thread.replies) {
     for (const c of thread.replies.comments) {
-      await mapCommentToComment(owner, articleId!, c, thread.snippet.topLevelComment.id);
+      await mapCommentToComment(owner, articleId, c, thread.snippet.topLevelComment.id);
     }
   }
 }
 
 export async function foreachPendingDecision(
   owner: IUserInstance,
-  callback: (decision: IDecisionInstance, comment: ICommentInstance) => Promise<void>) {
+  callback: (decision: IDecisionInstance, comment: ICommentInstance) => Promise<void>,
+) {
   const decisions = await Decision.findAll({
     where: {
       sentBackToPublisher: null,

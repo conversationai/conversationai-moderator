@@ -16,6 +16,7 @@ limitations under the License.
 
 import { for_all_youtube_users } from './authenticate';
 import { sync_channels } from './channels';
+import { sync_comment_threads } from './comments';
 import { clearError } from './objectmap';
 import { sync_known_videos } from './videos';
 
@@ -31,6 +32,7 @@ export async function syncYoutubeTask(tick: number) {
         await sync_channels(owner, auth);
         await sync_known_videos(owner, auth);
       }
+      await sync_comment_threads(owner, auth, false);
     });
   }
 }

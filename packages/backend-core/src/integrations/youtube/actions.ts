@@ -16,7 +16,8 @@ limitations under the License.
 
 import { ICategoryInstance, IUserInstance } from '../../models';
 import { for_one_youtube_user } from './authenticate';
-import { activate_channel } from './channels';
+import { activate_channel, get_article_id_map_for_channel } from './channels';
+import { sync_comment_threads_for_channel } from './comments';
 
 export async function youtubeActivateChannel(
   owner: IUserInstance,
@@ -32,6 +33,15 @@ export async function youtubeSynchronizeChannel(
   owner: IUserInstance,
   channel: ICategoryInstance,
 ) {
-  console.log(owner.id);
-  console.log(channel.id);
+  const articleIdMap = await get_article_id_map_for_channel(channel);
+  await for_one_youtube_user(owner, async (_, auth) => {
+    await sync_comment_threads_for_channel(
+      owner,
+      auth,
+      await channel.get('sourceId'),
+      articleIdMap,
+      true,
+      1000,
+    );
+  });
 }

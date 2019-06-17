@@ -18,7 +18,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
 import { logger } from '../../logger';
-import { IUserInstance } from '../../models';
+import { Article, Category, ICategoryInstance, IUserInstance } from '../../models';
 import { mapChannelToCategory, saveError, setChannelActive } from './objectmap';
 
 const service = google.youtube('v3');
@@ -137,4 +137,40 @@ export async function get_playlist_for_channel(owner: IUserInstance, auth: OAuth
       resolve(response!.data.items[0].contentDetails.relatedPlaylists.uploads);
     });
   });
+}
+
+export async function get_article_id_map_for_channel(
+  category: ICategoryInstance,
+) {
+  const articles = await Article.findAll({
+    where: {
+      categoryId: category.id,
+    },
+    attributes: ['id', 'sourceId'],
+  });
+
+  const articleIdMap = new Map<string, number>();
+  for (const a of articles) {
+    articleIdMap.set(a.get('sourceId'), a.id);
+  }
+  return articleIdMap;
+}
+
+export async function for_each_active_channel(
+  owner: IUserInstance,
+  callback: (channelId: string, articleIdMap: Map<string, number>) => Promise<void>,
+) {
+  const categories = await Category.findAll({
+    where: {
+      ownerId: owner.id,
+      sourceId: {ne: null},
+      isActive: true,
+    },
+  });
+
+  for (const category of categories) {
+    const channelId = category.get('sourceId');
+    const articleIdMap = await get_article_id_map_for_channel(category);
+    await callback(channelId, articleIdMap);
+  }
 }
