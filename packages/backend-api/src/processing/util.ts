@@ -40,7 +40,8 @@ export type IKnownTasks = (
   'rejectCommentSummaryScore' |
   'rejectTag' |
   'addTag' |
-  'removeTag'
+  'removeTag' |
+  'youtubeSynchronizeChannel'
 );
 
 /**

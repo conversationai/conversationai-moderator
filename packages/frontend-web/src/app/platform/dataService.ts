@@ -799,3 +799,7 @@ export async function kickProcessor(type: string): Promise<void> {
 export async function activateCommentSource(categoryId: ModelId, activate: boolean): Promise<void> {
   await axios.post(serviceURL('comment_sources', `/activate/${categoryId}`), { data: {activate} });
 }
+
+export async function syncCommentSource(categoryId: ModelId): Promise<void> {
+  await axios.get(serviceURL('comment_sources', `/sync/${categoryId}`));
+}

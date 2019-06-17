@@ -16,7 +16,7 @@ limitations under the License.
 
 import { registerTask } from './util';
 
-import {heartbeatTask, ICommentActionData} from './tasks';
+import { heartbeatTask, ICommentActionData } from './tasks';
 import {
   IProcessMachineScoreData,
   processMachineScoreTask,
