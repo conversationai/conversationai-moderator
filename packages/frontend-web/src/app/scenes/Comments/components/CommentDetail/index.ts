@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { Location } from 'history';
+import qs from 'query-string';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
@@ -108,6 +110,11 @@ const AVAILABLE_ACTIONS: {
   reset: resetComments,
 };
 
+function getPagingIdentifier(location: Location): string | null {
+  const query = qs.parse(location.search);
+  return query.pagingIdentifier as string | null;
+}
+
 const mapStateToProps = createStructuredSelector({
   comment: getComment,
   isLoading: getIsLoading,
@@ -121,24 +128,24 @@ const mapStateToProps = createStructuredSelector({
     return getSummaryScoresById(state, ownProps.params.commentId);
   },
 
-  currentCommentIndex: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
-    return getCurrentCommentIndex(state, pagingIdentifier, commentId);
+  currentCommentIndex: (state: IAppStateRecord, { params: { commentId }, location }: ICommentDetailProps) => {
+    return getCurrentCommentIndex(state, getPagingIdentifier(location), commentId);
   },
 
-  nextCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
-    return getNextCommentId(state, pagingIdentifier, commentId);
+  nextCommentId: (state: IAppStateRecord, { params: { commentId }, location }: ICommentDetailProps) => {
+    return getNextCommentId(state, getPagingIdentifier(location), commentId);
   },
 
-  previousCommentId: (state: IAppStateRecord, { params: { commentId }, location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
-    return getPreviousCommentId(state, pagingIdentifier, commentId);
+  previousCommentId: (state: IAppStateRecord, { params: { commentId }, location }: ICommentDetailProps) => {
+    return getPreviousCommentId(state, getPagingIdentifier(location), commentId);
   },
 
-  detailSource: (state: IAppStateRecord, { location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
-    return getPagingSource(state, pagingIdentifier);
+  detailSource: (state: IAppStateRecord, { location }: ICommentDetailProps) => {
+    return getPagingSource(state, getPagingIdentifier(location));
   },
 
-  linkBackToList: (state: IAppStateRecord, { location: { query: { pagingIdentifier } } }: ICommentDetailProps) => {
-    return getPagingLink(state, pagingIdentifier);
+  linkBackToList: (state: IAppStateRecord, { location }: ICommentDetailProps) => {
+    return getPagingLink(state, getPagingIdentifier(location));
   },
 
   isFromBatch: getPagingIsFromBatch,

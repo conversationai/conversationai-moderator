@@ -18,6 +18,7 @@ import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
+import qs from 'query-string';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
 
@@ -377,9 +378,10 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       defaultSort = 'newest';
     }
 
-    const pos1 = props.location.query.pos1 ? Number.parseFloat(props.location.query.pos1) : defaultPos1;
-    const pos2 = props.location.query.pos2 ? Number.parseFloat(props.location.query.pos2) : defaultPos2;
-    const sort = props.location.query.sort || defaultSort;
+    const query: INewCommentsQueryParams = qs.parse(props.location.search);
+    const pos1 = query.pos1 ? Number.parseFloat(query.pos1) : defaultPos1;
+    const pos2 = query.pos2 ? Number.parseFloat(query.pos2) : defaultPos2;
+    const sort = query.sort || defaultSort;
 
     const commentIds = getCommentIDsInRange(
       props.commentScores,

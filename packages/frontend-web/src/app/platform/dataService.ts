@@ -126,8 +126,10 @@ function serializeParams(originalParams?: Partial<IParams> | null): string {
   }
 
   // Type calls it filters, JSONAPI calls it filter. :(
-  params.filter = originalParams.filters;
   delete params.filters;
+  if (originalParams.filters) {
+    params.filter = originalParams.filters;
+  }
 
   // JSONAPI spec says "include" is comma separated.
   if (originalParams.include) {
