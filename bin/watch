@@ -18,8 +18,10 @@ if [ "$1" != "frontend" ]; then
   cd -
   cd packages/backend-api
   npx ts-node-dev --inspect=5858 src/server.ts &
-  npx ts-node-dev --inspect=5857 src/processor.ts &
-  npx ts-node-dev --inspect=5856 src/worker.ts &
+  if [ "$1" != "justweb" ]; then
+    npx ts-node-dev --inspect=5857 src/processor.ts &
+    npx ts-node-dev --inspect=5856 src/worker.ts &
+  fi
   cd -
 fi
 
