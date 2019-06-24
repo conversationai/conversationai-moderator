@@ -336,9 +336,9 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
   }
 
   renderFilterPopup(currentSort: string) {
-    const router = this.props.router;
+    const history = this.props.history;
     function setFilter(newFilter: Array<IFilterItem>) {
-      router.push(dashboardLink({filter: getFilterString(newFilter), sort: currentSort}));
+      history.push(dashboardLink({filter: getFilterString(newFilter), sort: currentSort}));
     }
 
     return (

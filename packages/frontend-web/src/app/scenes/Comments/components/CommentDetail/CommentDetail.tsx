@@ -974,7 +974,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     if (!previousCommentId) { return; }
 
     this.saveReturnRow(previousCommentId);
-    this.props.router.push(this.generatePagingLink(previousCommentId));
+    this.props.history.push(this.generatePagingLink(previousCommentId));
   }
 
   @autobind
@@ -984,7 +984,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     if (!nextCommentId) { return; }
 
     this.saveReturnRow(nextCommentId);
-    this.props.router.push(this.generatePagingLink(nextCommentId));
+    this.props.history.push(this.generatePagingLink(nextCommentId));
   }
 
   @autobind

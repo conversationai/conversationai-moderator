@@ -943,7 +943,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     if (sort !== this.state.defaultSort) {
       query.sort = sort;
     }
-    this.props.router.replace(newCommentsPageLink(this.props.match.params, query));
+    this.props.history.replace(newCommentsPageLink(this.props.match.params, query));
   }
 
   @autobind
