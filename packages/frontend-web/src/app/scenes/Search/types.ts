@@ -34,5 +34,5 @@ export function updateSearchQuery(
     ...queryDelta,
   };
 
-  props.router.replace(searchLink(newQuery));
+  props.history.replace(searchLink(newQuery));
 }

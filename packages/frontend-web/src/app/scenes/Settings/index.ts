@@ -94,7 +94,6 @@ const mapStateToProps = createStructuredSelector({
   rules: getRules,
   preselects: getPreselects,
   taggingSensitivities: getTaggingSensitivities,
-  onCancel: (_: IAppState, { router }: ISettingsProps) => router.goBack,
 }) as (state: IAppState, props: ISettingsOwnProps) => ISettingsStateProps;
 
 function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
