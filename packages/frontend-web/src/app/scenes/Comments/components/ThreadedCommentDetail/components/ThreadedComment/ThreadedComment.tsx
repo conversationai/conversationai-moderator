@@ -33,6 +33,7 @@ import {
 } from '../../../../../../styles';
 import { always, partial } from '../../../../../../util';
 import { css, stylesheet } from '../../../../../../utilx';
+import { articleBase, commentDetailsPageLink } from '../../../../../routes';
 
 const STYLES = stylesheet({
   base: {
@@ -156,7 +157,11 @@ export class ThreadedComment extends React.Component<IThreadedCommentProps, IThr
         >
           <div {...css(STYLES.body)}>
             <BasicBody
-              commentLinkTarget={`/articles/${comment.articleId}/comments/${comment.id}`}
+              commentLinkTarget={commentDetailsPageLink({
+                context: articleBase,
+                contextId: comment.articleId,
+                commentId: comment.id,
+              })}
               requireReasonForReject={requireReasonForReject}
               handleAssignTagsSubmit={handleAssignTagsSubmit}
               comment={comment}

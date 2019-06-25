@@ -18,6 +18,7 @@ import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
+import qs from 'query-string';
 import React from 'react';
 import { Link, WithRouterProps } from 'react-router';
 
@@ -79,6 +80,14 @@ import {
 } from '../../../../styles';
 import { clearReturnSavedCommentRow, partial, setReturnSavedCommentRow, timeout } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
+import {
+  articleBase,
+  categoryBase,
+  commentDetailsPageLink,
+  commentRepliesDetailsLink,
+  NEW_COMMENTS_DEFAULT_TAG,
+  newCommentsPageLink,
+} from '../../../routes';
 import {
   getSummaryScoresAboveThreshold,
   getSummaryScoresBelowThreshold,
@@ -501,13 +510,11 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     const inReplyTo = comment.replyTo;
     const isArticle = !!this.props.params.articleId;
 
-    let batchURL;
-
-    if (isArticle) {
-      batchURL = `/articles/${this.props.params.articleId}/new`;
-    } else {
-      batchURL = `/categories/${this.props.params.category}/new`;
-    }
+    const batchURL = newCommentsPageLink({
+      context: isArticle ? articleBase : categoryBase,
+      contextId: isArticle ? this.props.params.articleId : (this.props.params.categoryId || 'all'),
+      tag: NEW_COMMENTS_DEFAULT_TAG,
+    });
 
     return (
       <div {...css({ height: '100%' })}>
@@ -608,7 +615,12 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
               { inReplyTo && !this.props.isLoading && (
                 <div {...css(STYLES.replyToContainer)}>
                   <Link
-                    to={`/articles/${comment.articleId}/comments/${inReplyTo.id}/${comment.id}/replies`}
+                    to={commentRepliesDetailsLink({
+                      context: articleBase,
+                      contextId: comment.articleId,
+                      commentId: inReplyTo.id,
+                      originatingCommentId: comment.id,
+                    })}
                     {...css(STYLES.replyButton)}
                   >
                     <div {...css(STYLES.replyIcon)}>
@@ -788,19 +800,15 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   }
 
   generatePagingLink(commentId: string) {
-    const isArticle = !!this.props.params.articleId;
-
-    let articleURLPrefix;
-
-    if (isArticle) {
-      articleURLPrefix = `/articles/${this.props.params.articleId}/comments`;
-    } else {
-      articleURLPrefix = `/categories/${this.props.params.category}/comments`;
-    }
-
-    const queryString = (this.props.location && this.props.location.search) || '';
-
-    return `${articleURLPrefix}/${commentId}${queryString}`;
+    const pagingIdentifier: string = qs.parse(this.props.location.search).pagingIdentifier as string;
+    const urlParams = {
+      context: this.props.params.articleId ? articleBase : categoryBase,
+      contextId: this.props.params.articleId ? this.props.params.articleId :
+        this.props.params.categoryId ? this.props.params.categoryId : 'all',
+      commentId,
+    };
+    const query = pagingIdentifier && {pagingIdentifier};
+    return commentDetailsPageLink(urlParams, query);
   }
 
   @autobind

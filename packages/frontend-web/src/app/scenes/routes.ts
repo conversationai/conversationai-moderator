@@ -14,16 +14,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {ModelId} from '../../models';
+import qs from 'query-string';
+
+import { ModelId } from '../../models';
+
+export interface IDashboardPathParams {
+  filter?: string;
+  sort?: string;
+}
 
 export const dashboardBase = 'dashboard';
-export function dashboardLink(filter?: string, sort?: string) {
+export function dashboardLink(params: IDashboardPathParams) {
   let ret = `/${dashboardBase}`;
-  if (filter) {
-    ret = `${ret}/${filter}`;
+  if (params.filter) {
+    ret = `${ret}/${params.filter}`;
   }
-  if (sort) {
-    ret = `${ret}/${sort}`;
+  else if (params.sort) {
+    // Need to add a filter placeholder so we can add sort.
+    ret = `${ret}/~/`;
+  }
+
+  if (params.sort) {
+    ret = `${ret}/${params.sort}`;
   }
   return ret;
 }
@@ -33,45 +45,98 @@ export function settingsLink() {
   return `/${settingsBase}`;
 }
 
+export interface ISearchQueryParams {
+  articleId?: ModelId;
+  searchByAuthor?: boolean;
+  term?: string;
+  sort?: string;
+}
+
 export const searchBase = 'search';
-export function searchLink(articleId?: ModelId, isAuthorSearch?: boolean) {
-  const queries: Array<string> = [];
-  if (articleId) {
-    queries.push(`articleId=${articleId}`);
-  }
-  if (isAuthorSearch) {
-    queries.push('searchByAuthor=true');
+export function searchLink(params: ISearchQueryParams) {
+  let gotQuery = false;
+  for (const key of Object.keys(params)) {
+    const value = (params as any)[key];
+    if (!value) {
+      delete (params as any)[key];
+      continue;
+    }
+    gotQuery = true;
   }
 
-  if (queries.length > 0) {
-    return `/${searchBase}?${queries.join('&')}`;
+  if (gotQuery) {
+    return `/${searchBase}?${qs.stringify(params)}`;
   }
   return `/${searchBase}`;
 }
 
+export interface IContextPathParams {
+  context: string;
+  contextId: ModelId;
+}
+
+export interface INewCommentsPathParams extends IContextPathParams {
+  tag: string;
+}
+
+export interface INewCommentsQueryParams {
+  pos1?: string;
+  pos2?: string;
+  sort?: string;
+}
+
+export interface IModeratedCommentsPathParams extends IContextPathParams {
+  disposition: string;
+}
+
 export const articleBase = 'articles';
 export const categoryBase = 'categories';
-export function commentPageLink(base: string, id: string, type: string, tag?: string) {
-  let suffix;
-  if (type === 'new') {
-    suffix = 'new';
-  }
-  else {
-    suffix = 'moderated/' + type;
-  }
-  if (tag) {
-    return `/${base}/${id}/${suffix}/${tag}`;
-  }
-  return `/${base}/${id}/${suffix}`;
+export const NEW_COMMENTS_DEFAULT_TAG = '';
+export function newCommentsPageLink(
+  {context, contextId, tag}: INewCommentsPathParams,
+  query?: INewCommentsQueryParams,
+) {
+  const queryString = query ? '?' + qs.stringify(query) : '';
+  return `/${context}/${contextId}/new/${tag}${queryString}`;
 }
-export function articlesLink(id: string, type: string) {
-  return commentPageLink(articleBase, id, type);
+
+export function moderatedCommentsPageLink(
+  {context, contextId, disposition}: IModeratedCommentsPathParams,
+) {
+  return `/${context}/${contextId}/moderated/${disposition}`;
 }
-export function categoriesLink(id: string, type: string) {
-  return commentPageLink(categoryBase, id, type);
+
+export interface ITagSelectorPathParams extends IContextPathParams {
+  tag?: string;
 }
 
 export const tagSelectorBase = 'tagselector';
-export function tagSelectorLink(base: string, id: string, currentTag: string) {
-  return `/${tagSelectorBase}/${base}/${id}/${currentTag}`;
+export function tagSelectorLink({context, contextId, tag}: ITagSelectorPathParams) {
+  return `/${tagSelectorBase}/${context}/${contextId}/${tag}`;
+}
+
+export interface ICommentDetailsPathParams extends IContextPathParams {
+  commentId: ModelId;
+}
+
+export interface ICommentDetailsQueryParams {
+  pagingIdentifier: string;
+}
+
+export function commentDetailsPageLink (
+  {context, contextId, commentId}: ICommentDetailsPathParams,
+  query?: ICommentDetailsQueryParams,
+) {
+  const queryString = query ? `?${qs.stringify(query)}` : '';
+  return `/${context}/${contextId}/comments/${commentId}${queryString}`;
+}
+
+export interface ICommentReplyDetailsPathParams extends ICommentDetailsPathParams {
+  originatingCommentId: string;
+}
+
+export function commentRepliesDetailsLink(
+  {context, contextId, commentId, originatingCommentId}: ICommentReplyDetailsPathParams,
+) {
+  return `/${context}/${contextId}/comments/${commentId}/${originatingCommentId}/replies`;
 }

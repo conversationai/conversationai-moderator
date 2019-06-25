@@ -17,7 +17,6 @@ limitations under the License.
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
-import { ICommentModel } from '../../../../../models';
 import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
@@ -77,7 +76,6 @@ type IModeratedCommentsStateProps = Pick<
   'moderatedComments' |
   'tags' |
   'getCurrentColumnSort' |
-  'getLinkTarget' |
   'textSizes'
 >;
 
@@ -106,25 +104,7 @@ const mapStateToProps = createStructuredSelector({
     return (key: string) => getCurrentColumnSort(state, 'commentsIndexModerated', key);
   },
 
-  getLinkTarget: (state: any, { params }: IModeratedCommentsProps) => {
-    const identifier = getCurrentPagingIdentifier(state);
-
-    return (comment: ICommentModel): string => {
-      let url: string;
-
-      if (params.articleId) {
-        url = `/articles/${params.articleId}/comments/${comment.id}`;
-      } else {
-        url = `/categories/${params.categoryId}/comments/${comment.id}`;
-      }
-
-      if (identifier) {
-        url = `${url}?pagingIdentifier=${identifier}`;
-      }
-
-      return url;
-    };
-  },
+  pagingIdentifier: getCurrentPagingIdentifier,
 
   textSizes: getTextSizes,
 });

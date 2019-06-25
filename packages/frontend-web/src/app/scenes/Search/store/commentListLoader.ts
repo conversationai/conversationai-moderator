@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
+import { pick } from 'lodash';
 import { Reducer } from 'redux-actions';
 
 import { ISearchScope } from '../';
@@ -23,6 +24,7 @@ import { IAppStateRecord, IThunkAction } from '../../../stores';
 import { loadTextSizesByIds } from '../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../util';
 import { storeCommentPagingOptions } from '../../Comments/components/CommentDetail/store';
+import { searchLink } from '../../routes';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
 import { loadAllCommentIdsComplete } from './searchResults';
 
@@ -40,7 +42,11 @@ function loadCommentList(
 
     dispatch(loadAllCommentIdsComplete(commentIdsList));
 
-    const link = `/search/?term=${term}&articleId=${params.articleId}`;
+    const query = {
+      ...pick(params, ['articleId', 'searchByAuthor', 'sort']),
+      term,
+    };
+    const link = searchLink(query);
 
     const currentPagingIdentifier = await dispatch(storeCommentPagingOptions({
       commentIds: commentIdsList,

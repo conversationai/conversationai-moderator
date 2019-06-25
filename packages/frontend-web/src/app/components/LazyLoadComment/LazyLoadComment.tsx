@@ -20,6 +20,8 @@ import { List, Set } from 'immutable';
 import React from 'react';
 const Linkify = require('react-linkify').default;
 
+import { OpenInNew } from '@material-ui/icons';
+
 import { ICommentModel, ModelId } from '../../../models';
 import {
   IConfirmationAction,
@@ -27,6 +29,13 @@ import {
   ITopScore,
 } from '../../../types';
 import { FlagsSummary } from '../../scenes/Comments/components/FlagsSummary';
+import {
+  articleBase,
+  commentRepliesDetailsLink,
+  NEW_COMMENTS_DEFAULT_TAG,
+  newCommentsPageLink,
+  searchLink,
+} from '../../scenes/routes';
 import {
   ARTICLE_HEADLINE_TYPE,
   BODY_TEXT_BOLD_TYPE,
@@ -54,7 +63,7 @@ const LAZY_BOX_STYLE = {
   width: '100%',
   height: '100%',
 };
-import { OpenInNew } from '@material-ui/icons';
+
 const AVATAR_SIZE = 24;
 
 export type ILinkTargetGetter = (comment: ICommentModel) => string;
@@ -207,7 +216,11 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
             <Link
               key="text"
               {...css(ROW_STYLES.articleLink)}
-              to={`/articles/${comment.article.id}`}
+              to={newCommentsPageLink({
+                context: articleBase,
+                contextId: comment.article.id,
+                tag: NEW_COMMENTS_DEFAULT_TAG,
+              })}
             >
               <h4 {...css(ARTICLE_HEADLINE_TYPE, { marginBottom: '0px', marginTop: '0px'  })}>
                 {comment.article.title}
@@ -226,7 +239,12 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
           <div key="text" {...css(ROW_STYLES.authorRow)}>
             { comment.replyToSourceId > 0 && (
               <Link
-                to={`/articles/${comment.articleId}/comments/${comment.replyId}/${comment.id}/replies`}
+                to={commentRepliesDetailsLink({
+                  context: articleBase,
+                  contextId: comment.articleId,
+                  commentId: comment.replyId,
+                  originatingCommentId: comment.id,
+                })}
                 {...css(ROW_STYLES.reply)}
                 onClick={partial(maybeCallback(onCommentClick), comment.id)}
               >
@@ -240,7 +258,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               </span>
             )}
             { comment.author.name && (
-              <Link to={`/search?searchByAuthor=true&term=${comment.author.name}`} {...css({ color: DARK_COLOR })}>{comment.author.name}&nbsp;</Link>
+              <Link to={searchLink({searchByAuthor: true, term: comment.author.name})} {...css({ color: DARK_COLOR })}>{comment.author.name}&nbsp;</Link>
             )}
             {comment.author.location && (
               <span>from {comment.author.location}&nbsp;</span>

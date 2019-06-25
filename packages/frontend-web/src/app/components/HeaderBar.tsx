@@ -146,7 +146,7 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
           <span key="icon" {...css(STYLES.menuIcon)}><Menu  style={{ fontSize: 30 }} /></span>
         </div>
         }
-        {homeLink && renderHeaderItem(<Home/>, 'Dashboard', dashboardLink())}
+        {homeLink && renderHeaderItem(<Home/>, 'Dashboard', dashboardLink({}))}
         <span key="cat" {...css(STYLES.title)}>
           {categoryStr}
           {article && article.url && (
@@ -160,8 +160,8 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
         {/*{renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}*/}
         {/*{renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}*/}
         <div key="spacer" style={{flexGrow: 1}}/>
-        {renderHeaderItem(<Search/>, 'Search', searchLink(articleId))}
-        {renderHeaderItem(<AssignmentInd/>, 'By author', searchLink(articleId, true))}
+        {renderHeaderItem(<Search/>, 'Search', searchLink({articleId}))}
+        {renderHeaderItem(<AssignmentInd/>, 'By author', searchLink({articleId, searchByAuthor: true}))}
         <div key="logout" {...css(STYLES.headerItem)}>
           <div {...css(STYLES.headerLink)} aria-label="Logout" onClick={logout}>
             <div><Person/></div>

@@ -65,6 +65,7 @@ import {
 import { partial } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
 import { getSortDefault } from '../../../../utilx';
+import { articleBase, categoryBase, commentDetailsPageLink } from '../../../routes';
 
 const ARROW_SIZE = 6;
 // magic number = height of the moderation status dropdown and the row of tabs
@@ -242,7 +243,7 @@ export interface IModeratedCommentsProps extends WithRouterProps {
   isItemChecked(id: string): boolean;
   areNoneSelected?: boolean;
   areAllSelected: boolean;
-  getLinkTarget(comment: ICommentModel): string;
+  pagingIdentifier?: string;
   article?: IArticleModel;
   loadData?(categoryId: string, articleId: string, tag: string): void;
   tagComments?(ids: Array<string>, tagId: string): any;
@@ -359,8 +360,9 @@ export class ModeratedComments
       areAllSelected,
       tags,
       moderatedComments,
-      getLinkTarget,
       textSizes,
+      params,
+      pagingIdentifier,
     } = this.props;
 
     const {
@@ -372,6 +374,16 @@ export class ModeratedComments
       loadedArticleId,
       hideHistogram,
     } = this.state;
+
+    function getLinkTarget(comment: ICommentModel): string {
+      const urlParams = {
+        context: params.articleId ? articleBase : categoryBase,
+        contextId: params.articleId ? params.articleId : params.categoryId ? params.categoryId : 'all',
+        commentId: comment.id,
+      };
+      const query = pagingIdentifier && {pagingIdentifier};
+      return commentDetailsPageLink(urlParams, query);
+    }
 
     const selectedIdsLength = moderatedComments && this.getSelectedIDs().length;
 
@@ -757,7 +769,7 @@ export class ModeratedComments
 
   @autobind
   getCurrentSort() {
-    return this.props.getCurrentColumnSort(this.props.params.category);
+    return this.props.getCurrentColumnSort(this.props.params.categoryId);
   }
 
   @autobind

@@ -22,6 +22,7 @@ import { getTags } from '../../../../../stores/tags';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
 import { commentSortDefinitions } from '../../../../../utilx';
+import { articleBase, categoryBase, newCommentsPageLink } from '../../../../routes';
 import { storeCommentPagingOptions } from '../../CommentDetail/store';
 import {
   getCommentScores,
@@ -30,7 +31,7 @@ import {
 } from './commentScores';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
 import { DATA_PREFIX } from './reduxPrefix';
-import { getCommentIDsInRange, getSelectedTag } from './util';
+import { getCommentIDsInRange } from './util';
 
 const LOADING_DATA = [...DATA_PREFIX, 'commentListLoader'];
 
@@ -75,16 +76,14 @@ function loadCommentList(
     const commentScores = getCommentScores(getState());
     const commentIDsInRange = getCommentIDsInRange(commentScores, pos1, pos2, tag === 'DATE');
 
-    const currentTagModel = getSelectedTag(getState(), tag);
-
-    const commentsLink = `new/${currentTagModel.key}?pos1=${pos1}&pos2=${pos2}`;
-
-    const link = articleId ? `/articles/${articleId}/${commentsLink}` : `/categories/${categoryId}/${commentsLink}`;
+    const context = articleId ? articleBase : categoryBase;
+    const contextId = articleId ? articleId : categoryId;
+    const link = newCommentsPageLink({context, contextId, tag}, {pos1: pos1.toString(), pos2: pos2.toString(), sort});
 
     const currentPagingIdentifier = await dispatch(storeCommentPagingOptions({
       commentIds: commentIDsInRange.toList(),
       fromBatch: true,
-      source: `Comment %i of ${commentIDsInRange.size} from new comments with tag "${currentTagModel.label}"`,
+      source: `Comment %i of ${commentIDsInRange.size} from new comments with tag "${tag}"`,
       link,
     }));
 

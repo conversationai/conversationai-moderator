@@ -23,9 +23,14 @@ import {
   LIGHT_PRIMARY_TEXT_COLOR,
   NICE_MIDDLE_BLUE,
 } from '../../../styles';
-import { partial } from '../../../util/partial';
 import { css, stylesheet } from '../../../utilx';
-import { articlesLink, categoriesLink } from '../../routes';
+import {
+  articleBase,
+  categoryBase,
+  moderatedCommentsPageLink,
+  NEW_COMMENTS_DEFAULT_TAG,
+  newCommentsPageLink,
+} from '../../routes';
 
 const STYLES = stylesheet({
   header: {
@@ -92,9 +97,20 @@ export class SubheaderBar extends React.Component<ISubheaderBarProps> {
       location,
     } = this.props;
 
-    const linkFunction = article ? partial(articlesLink, article.id) :
-      category ? partial(categoriesLink, category.id) :
-        partial(categoriesLink, 'all');
+    function linkFunction(disposition: string) {
+      if (disposition === 'new') {
+        return newCommentsPageLink({
+          context: article ? articleBase : categoryBase,
+          contextId: article ? article.id : category ? category.id : 'all',
+          tag: NEW_COMMENTS_DEFAULT_TAG,
+        });
+      }
+      return moderatedCommentsPageLink({
+        context: article ? articleBase : categoryBase,
+        contextId: article ? article.id : category ? category.id : 'all',
+        disposition,
+      });
+    }
 
     const counts = article ? article :
       category ? category :

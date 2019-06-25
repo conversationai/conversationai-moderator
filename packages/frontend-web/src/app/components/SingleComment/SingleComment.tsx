@@ -31,6 +31,7 @@ import {
 import { DATE_FORMAT_LONG } from '../../config';
 import { editAndRescoreComment } from '../../platform/dataService';
 import { FlagsSummary } from '../../scenes/Comments/components/FlagsSummary';
+import { searchLink } from '../../scenes/routes';
 import { ICommentSummaryScore } from '../../stores/commentSummaryScores';
 import {
   ARTICLE_CATEGORY_TYPE,
@@ -744,7 +745,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               <div {...css(PROFILE_STYLES.name)}>
                 {!inEditMode ? (
                   <Link
-                    to={`/search?searchByAuthor=true&term=${author.name}`}
+                    to={searchLink({searchByAuthor: true, term: author.name})}
                     key="authorName"
                     {...css(PROFILE_STYLES.authorName)}
                   >
@@ -846,7 +847,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                   {comment.authorSourceId && (
                     <Link
                       key="authorSourceId"
-                      to={`/search?searchByAuthor=true&term=${comment.authorSourceId}`}
+                      to={searchLink({searchByAuthor: true, term: comment.authorSourceId.toString()})}
                       {...css(STYLES.linkFocus)}
                     >
                       <DetailRow
