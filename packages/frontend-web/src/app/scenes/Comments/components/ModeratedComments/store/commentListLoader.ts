@@ -21,6 +21,7 @@ import { getCurrentColumnSort } from '../../../../../stores/columnSorts';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
 import { commentSortDefinitions,  } from '../../../../../utilx';
+import { articleBase, categoryBase, moderatedCommentsPageLink } from '../../../../routes';
 import { storeCommentPagingOptions } from '../../CommentDetail/store';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
 import {
@@ -36,10 +37,10 @@ function loadCommentList(
   isArticleDetail: boolean,
   articleId: string,
   categoryId: string,
-  tag: string,
+  disposition: string,
 ): () => IThunkAction<void> {
   return () => async (dispatch, getState) => {
-    const columnSort = getCurrentColumnSort(getState(), 'commentsIndexModerated', tag || 'approved');
+    const columnSort = getCurrentColumnSort(getState(), 'commentsIndexModerated', disposition || 'approved');
     const sortDef = commentSortDefinitions[columnSort].sortInfo;
 
     if (isArticleDetail) {
@@ -57,16 +58,18 @@ function loadCommentList(
     const commentIds = getModeratedComments(getState(), {
       articleId,
       categoryId,
-    }).get(tag);
+    }).get(disposition);
 
     const bodyContentWidth = 696;
 
-    const link = isArticleDetail ? `/articles/${articleId}/moderated/${tag}` : `/categories/${categoryId}/moderated/${tag}`;
+    const context = isArticleDetail ? articleBase : categoryBase;
+    const contextId = isArticleDetail ? articleId : categoryId;
+    const link = moderatedCommentsPageLink({context, contextId, disposition});
 
     const currentPagingIdentifier = await dispatch(storeCommentPagingOptions({
       commentIds,
       fromBatch: false,
-      source: `Comment %i of ${commentIds.size} from moderated comments with tag "${tag}"`,
+      source: `Comment %i of ${commentIds.size} from moderated comments with tag "${disposition}"`,
       link,
     }));
 
@@ -79,8 +82,8 @@ function loadCommentList(
 const loadingReducer = makeLoadingReducer(LOADING_DATA);
 
 const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingReducer.reducer;
-const getCommentListIsLoading: (state:IAppStateRecord) => boolean = loadingReducer.getIsLoading;
-const getCommentListHasLoaded: (state:IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
+const getCommentListIsLoading: (state: IAppStateRecord) => boolean = loadingReducer.getIsLoading;
+const getCommentListHasLoaded: (state: IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
 
 function executeCommentListLoader(
   isArticleDetail: boolean,

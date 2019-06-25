@@ -67,7 +67,6 @@ export const scenes = (history: any) => (
       </Route>
       <Route path={routes.searchBase} component={Search}>
         <IndexRoute component={SearchResults} />
-        <Route path="articles/:articleId/comments/:commentId" component={CommentDetail} />
       </Route>
       <Route path={routes.settingsBase} component={Settings} />
       <Route path={routes.articleBase}>
@@ -77,7 +76,7 @@ export const scenes = (history: any) => (
         <IndexRedirect to="all" />
         {commentsRoutes(':categoryId')}
       </Route>
-      <Route path={`${routes.tagSelectorBase}/:base/:id/:currentTag`} component={TagSelector} />
+      <Route path={`${routes.tagSelectorBase}/:context/:contextId/:tag`} component={TagSelector} />
     </Route>
   </Router>
 );

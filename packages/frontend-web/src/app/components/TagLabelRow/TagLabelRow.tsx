@@ -18,7 +18,7 @@ import { autobind } from 'core-decorators';
 import React from 'react';
 import { ITagModel } from '../../../models';
 import { EyeIcon, Link } from '../../components';
-import { commentPageLink } from '../../scenes/routes';
+import { IContextPathParams, newCommentsPageLink } from '../../scenes/routes';
 import {
   ARTICLE_CATEGORY_TYPE,
   DARK_COLOR,
@@ -90,10 +90,8 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ITagLabelRowProps {
+export interface ITagLabelRowProps extends IContextPathParams {
   tag: ITagModel;
-  base: string;
-  id: string;
   isSelected?: boolean;
   background?: string;
   imagePath: string;
@@ -134,8 +132,8 @@ export class TagLabelRow
       imageWidth,
       imageHeight,
       isSelected,
-      base,
-      id,
+      context,
+      contextId,
     } = this.props;
     const { isHovered } = this.state;
 
@@ -149,7 +147,7 @@ export class TagLabelRow
     return (
       <Link
         {...css(STYLES.link)}
-        to={commentPageLink(base, id, 'new', tag.key)}
+        to={newCommentsPageLink({context, contextId, tag: tag.key})}
         key={tag.key}
         onMouseEnter={this.handleRowEnter}
         onMouseLeave={this.handleRowLeave}

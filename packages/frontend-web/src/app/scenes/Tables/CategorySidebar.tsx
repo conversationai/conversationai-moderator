@@ -28,7 +28,13 @@ import {
 } from '../../styles';
 import { COMMON_STYLES } from '../../stylesx';
 import { css, stylesheet } from '../../utilx';
-import { categoriesLink, dashboardLink, settingsLink } from '../routes';
+import {
+  categoryBase,
+  dashboardLink,
+  NEW_COMMENTS_DEFAULT_TAG,
+  newCommentsPageLink,
+  settingsLink,
+} from '../routes';
 import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
 
 const SIDEBAR_HEADER_HEIGHT = 159;
@@ -178,7 +184,7 @@ export class CategorySidebar extends React.PureComponent<ICategorySidebarProps> 
     } = this.props;
 
     const isMeSuffix = selectMine ? `+${FILTER_MODERATOR_ISME}` : '';
-    const allLink = selectMine ? dashboardLink(FILTER_MODERATOR_ISME) : dashboardLink();
+    const allLink = selectMine ? dashboardLink({filter: FILTER_MODERATOR_ISME}) : dashboardLink({});
     const allUnmoderated = categories.reduce((r: number, v: ICategoryModel) => (r + v.unmoderatedCount), 0);
     const sorted = categories.sort((a, b) => (b.unmoderatedCount - a.unmoderatedCount));
 
@@ -212,7 +218,14 @@ export class CategorySidebar extends React.PureComponent<ICategorySidebarProps> 
               <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}>
                 <Link to={allLink} onClick={hideSidebar} {...css(COMMON_STYLES.cellLink)}>Home / All</Link>
               </div>
-              <Link to={categoriesLink('all', 'new')} {...css(COMMON_STYLES.cellLink)}>
+              <Link
+                to={newCommentsPageLink({
+                  context: categoryBase,
+                  contextId: 'all',
+                  tag: NEW_COMMENTS_DEFAULT_TAG})
+                }
+                {...css(COMMON_STYLES.cellLink)}
+              >
                 <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>{allUnmoderated}</div>
               </Link>
             </div>
@@ -221,12 +234,22 @@ export class CategorySidebar extends React.PureComponent<ICategorySidebarProps> 
             <div key={c.id} {...css(STYLES.sidebarRow)}>
               <div {...css(STYLES.sidebarRowInner, selectedCategory && selectedCategory.id === c.id ? STYLES.sidebarRowSelected : {})}>
                 <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}>
-                  <Link to={dashboardLink(`${FILTER_CATEGORY}=${c.id}${isMeSuffix}`)} onClick={hideSidebar} {...css(COMMON_STYLES.cellLink)}>
+                  <Link
+                    to={dashboardLink({filter: `${FILTER_CATEGORY}=${c.id}${isMeSuffix}`})}
+                    onClick={hideSidebar}
+                    {...css(COMMON_STYLES.cellLink)}
+                  >
                     {c.label}
                   </Link>
                 </div>
                 <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText)}>
-                  <Link to={categoriesLink(c.id, 'new')} {...css(COMMON_STYLES.cellLink)}>
+                  <Link
+                    to={newCommentsPageLink({
+                      context: categoryBase,
+                      contextId: c.id,
+                      tag: NEW_COMMENTS_DEFAULT_TAG})}
+                    {...css(COMMON_STYLES.cellLink)}
+                  >
                     {c.unmoderatedCount}
                   </Link>
                 </div>

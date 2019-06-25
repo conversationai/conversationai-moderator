@@ -42,7 +42,14 @@ import { COMMON_STYLES, medium } from '../../stylesx';
 import { partial } from '../../util/partial';
 import { css, stylesheet } from '../../utilx';
 import { AssignModerators } from '../Root/components/AssignModerators';
-import { articlesLink, categoriesLink, dashboardLink } from '../routes';
+import {
+  articleBase,
+  categoryBase,
+  dashboardLink,
+  moderatedCommentsPageLink,
+  NEW_COMMENTS_DEFAULT_TAG,
+  newCommentsPageLink,
+} from '../routes';
 import { MagicTimestamp, ModeratorsWidget, SimpleTitleCell, TitleCell } from './components';
 import { FilterSidebar } from './FilterSidebar';
 import { ARTICLE_TABLE_STYLES, CELL_HEIGHT } from './styles';
@@ -329,7 +336,7 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
   renderFilterPopup(currentSort: string) {
     const router = this.props.router;
     function setFilter(newFilter: Array<IFilterItem>) {
-      router.push(dashboardLink(getFilterString(newFilter), currentSort));
+      router.push(dashboardLink({filter: getFilterString(newFilter), sort: currentSort}));
     }
 
     return (
@@ -454,14 +461,19 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
   renderRow(article: IArticleModel, isSummary: boolean) {
     const lastModerated: any = (!isSummary) ? ArticleTable.renderTime(article.lastModeratedAt) : '';
     const category = this.props.categories.get(article.categoryId);
-    function getLink(tag: string) {
-      if (isSummary) {
-        if (category) {
-          return categoriesLink(article.categoryId, tag);
-        }
-        return categoriesLink('all', tag);
+    function getLink(disposition: string) {
+      if (disposition === 'new') {
+        return newCommentsPageLink({
+          context: isSummary ? categoryBase : articleBase,
+          contextId: isSummary ? (category ? category.id : 'all') : article.id,
+          tag: NEW_COMMENTS_DEFAULT_TAG,
+        });
       }
-      return articlesLink(article.id, tag);
+      return moderatedCommentsPageLink({
+        context: isSummary ? categoryBase : articleBase,
+        contextId: isSummary ? (category ? category.id : 'all') : article.id,
+        disposition,
+      });
     }
 
     let targetId: ModelId | null = null;
@@ -599,7 +611,7 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
       // const newSort = sortString(updateSort(sort, nextSortItem)); implements multi sort
       const newSort = getSortString([nextSortItem]);
       return (
-        <Link to={dashboardLink(currentFilter, newSort)} {...css(COMMON_STYLES.cellLink)}>
+        <Link to={dashboardLink({filter: currentFilter, sort: newSort})} {...css(COMMON_STYLES.cellLink)}>
           <span {...css({position: 'relative'})}>
             {label}
             {directionIndicator}

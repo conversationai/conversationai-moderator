@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { ICommentModel } from '../../../../../models';
+
 import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
@@ -156,25 +156,7 @@ const mapStateToProps = createStructuredSelector({
 
   rules: getRules,
 
-  getLinkTarget: (state: IAppStateRecord, { params }: any) => {
-    const identifier = getCurrentPagingIdentifier(state);
-
-    return (comment: ICommentModel): string => {
-      let url: string;
-
-      if (params.articleId) {
-        url = `/articles/${params.articleId}/comments/${comment.id}`;
-      } else {
-        url = `/categories/${params.categoryId}/comments/${comment.id}`;
-      }
-
-      if (identifier) {
-        url = `${url}?pagingIdentifier=${identifier}`;
-      }
-
-      return url;
-    };
-  },
+  pagingIdentifier: getCurrentPagingIdentifier,
 });
 
 export const NewComments = compose(

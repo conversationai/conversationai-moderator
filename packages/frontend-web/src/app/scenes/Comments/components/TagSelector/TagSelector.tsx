@@ -24,6 +24,8 @@ import {
   RejectIcon,
 } from '../../../../components';
 import { TagLabelRow } from '../../../../components/TagLabelRow';
+import { API_URL } from '../../../../config';
+import { getToken } from '../../../../platform/localStore';
 import {
   ARTICLE_CATEGORY_TYPE,
   BODY_TEXT_TYPE,
@@ -34,8 +36,6 @@ import {
   WHITE_COLOR,
 } from '../../../../styles';
 import { css } from '../../../../utilx';
-import {API_URL} from '../../../../config';
-import {getToken} from '../../../../platform/localStore';
 
 const ACTION_STYLES = {
   header: {
@@ -111,7 +111,7 @@ export class TagSelector extends React.Component<ITagSelectorProps> {
 
   render() {
     const { tags } = this.props;
-    const { base, id, currentTag } = this.props.params;
+    const { context, contextId, tag: currentTag } = this.props.params;
 
     const summaryTag = tags.filter((tag) => tag.key === 'SUMMARY_SCORE');
     const tagsWithoutSummary = tags.filter((tag) => tag.key !== 'SUMMARY_SCORE' && tag.isInBatchView === true);
@@ -121,12 +121,12 @@ export class TagSelector extends React.Component<ITagSelectorProps> {
       <TagLabelRow
         tag={tag}
         key={tag.key}
-        base={base}
-        id={id}
+        context={context}
+        contextId={contextId}
         isSelected={currentTag === tag.id}
         imageWidth={SNAPSHOT_WIDTH}
         imageHeight={SNAPSHOT_HEIGHT}
-        imagePath={getImagePath(base, id, tag.key === 'SUMMARY_SCORE' ? 'SUMMARY_SCORE' : tag.id)}
+        imagePath={getImagePath(context, contextId, tag.key === 'SUMMARY_SCORE' ? 'SUMMARY_SCORE' : tag.id)}
         background={i % 2 ? '#295D86' : '#2F6793'}
       />
     ));

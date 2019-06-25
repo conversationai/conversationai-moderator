@@ -81,7 +81,14 @@ import {
   setReturnSavedCommentRow,
 } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
-import { articleBase, categoryBase, tagSelectorLink } from '../../../routes';
+import {
+  articleBase,
+  categoryBase,
+  commentDetailsPageLink,
+  INewCommentsQueryParams,
+  newCommentsPageLink,
+  tagSelectorLink,
+} from '../../../routes';
 import { BatchSelector } from './components/BatchSelector';
 import { getCommentIDsInRange } from './store';
 
@@ -253,7 +260,7 @@ export interface INewCommentsProps extends WithRouterProps {
   isItemChecked(id: string): boolean;
   tags: List<ITagModel>;
   rules?: List<IRuleModel>;
-  getLinkTarget(comment: ICommentModel): string;
+  pagingIdentifier: string;
   textSizes?: Map<number, number>;
   tagComments?(ids: Array<string>, tagId: string): any;
   dispatchAction?(action: ICommentAction, idsToDispatch: Array<string>): any;
@@ -474,13 +481,14 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       article,
       commentScores,
       textSizes,
-      getLinkTarget,
       areNoneSelected,
       areAllSelected,
       isItemChecked,
       tags,
       selectedTag,
       isLoading,
+      params,
+      pagingIdentifier,
     } = this.props;
 
     const {
@@ -495,6 +503,16 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       rulesInCategory,
       hideHistogram,
     } = this.state;
+
+    function getLinkTarget(comment: ICommentModel): string {
+      const urlParams = {
+        context: params.articleId ? articleBase : categoryBase,
+        contextId: params.articleId ? params.articleId : params.categoryId ? params.categoryId : 'all',
+        commentId: comment.id,
+      };
+      const query = pagingIdentifier && {pagingIdentifier};
+      return commentDetailsPageLink(urlParams, query);
+    }
 
     const IS_SMALL_SCREEN = window.innerWidth < 1024;
 
@@ -550,8 +568,8 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     }
 
     const tagLinkURL = this.props.params.articleId ?
-      tagSelectorLink(articleBase, this.props.params.articleId, selectedTag && selectedTag.id) :
-      tagSelectorLink(categoryBase, this.props.params.categoryId, selectedTag && selectedTag.id);
+      tagSelectorLink({context: articleBase, contextId: this.props.params.articleId, tag: selectedTag && selectedTag.id}) :
+      tagSelectorLink({context: categoryBase, contextId: this.props.params.categoryId, tag: selectedTag && selectedTag.id});
 
     const rules = selectedTag && selectedTag.key !== 'DATE' && rulesInCategory && List<IRuleModel>(rulesInCategory.filter( (r) => r.tagId && r.tagId === selectedTag.id));
     const disableAllButtons = areNoneSelected || commentScores.size <= 0;
@@ -927,20 +945,23 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       return;
     }
 
-    const query: any = {};
+    const query: INewCommentsQueryParams = {};
     if (pos1 !== this.state.defaultPos1) {
-      query['pos1'] = pos1;
+      query.pos1 = pos1.toString();
     }
     if (pos2 !== this.state.defaultPos2) {
-      query['pos2'] = pos2;
+      query.pos2 = pos2.toString();
     }
     if (sort !== this.state.defaultSort) {
-      query['sort'] = sort;
+      query.sort = sort;
     }
-    this.props.router.replace({
-      pathname: this.props.location.pathname,
-      query,
-    });
+
+    const path = this.props.location.pathname.split('/');
+    this.props.router.replace(newCommentsPageLink({
+      context: path[0],
+      contextId: path[1],
+      tag: path[3],
+    }, query));
   }
 
   @autobind
