@@ -16,6 +16,8 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import { List } from 'immutable';
+import { isEqual } from 'lodash';
+import qs from 'query-string';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
 
@@ -35,7 +37,8 @@ import {
   WHITE_COLOR,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import { ISearchScope } from './';
+import { ISearchQueryParams } from '../routes';
+import { ISearchScope, updateSearchQuery } from './types';
 
 const HEADER_STYLES = stylesheet({
   main: {
@@ -83,58 +86,52 @@ const HEADER_STYLES = stylesheet({
 });
 
 export interface ISearchProps extends WithRouterProps {
-  searchTerm: string;
   totalCommentCount?: number;
   allCommentIds?: List<number>;
   onSearch?(newScope: ISearchScope): any;
-  onCancelSearch?(): any;
-  articleId?: ModelId;
-  article?: IArticleModel;
+  articleMap: Map<ModelId, IArticleModel>;
   resetCommentIds?(): void;
-  searchByAuthor?: boolean;
 }
 
 export interface ISearchState {
   searchInputValue?: string;
-  searchRequested?: boolean;
-  searchReturned?: boolean;
-  searchByArticle?: boolean;
-  searchByAuthor?: boolean;
+  searchParams?: ISearchQueryParams;
+  article?: IArticleModel;
 }
 
 export class Search extends React.Component<ISearchProps, ISearchState> {
   searchInputRef: any = null;
 
   state: ISearchState = {
-    searchInputValue: this.props.searchTerm || '',
-    searchRequested: false,
-    searchReturned: false,
-    searchByArticle: !!this.props.articleId,
-    searchByAuthor: this.props.searchByAuthor,
+    searchInputValue: '',
   };
 
   componentDidMount() {
-    if (!this.state.searchInputValue) {
-      this.searchInputRef.focus();
-    }
-
-    if (this.state.searchInputValue) {
-      this.onSearchSubmitted();
-    }
+    this.searchInputRef.focus();
   }
 
-  componentWillUpdate(nextProps: ISearchProps, nextState: ISearchState) {
-    if ( nextProps.allCommentIds.size > 0 && this.props.allCommentIds.size !== nextProps.allCommentIds.size && !nextState.searchReturned && !nextState.searchRequested) {
-      // Aphrodite styles need to reinitialize
-      setTimeout(() => {
-          this.setState({
-            searchReturned: true,
-            searchRequested: true,
-          });
-        },
-        180,
-      );
+  static getDerivedStateFromProps(props: ISearchProps, state: ISearchState) {
+    const searchParams: ISearchQueryParams = qs.parse(props.location.search);
+    const newState: ISearchState = {searchParams};
+
+    if (searchParams.term) {
+      if (!isEqual(searchParams, state.searchParams)) {
+        newState.searchInputValue = searchParams.term;
+        props.onSearch({
+          term: searchParams.term,
+          params: {
+            articleId: searchParams.articleId,
+            searchByAuthor: searchParams.searchByAuthor,
+            sort: [searchParams.sort] || searchParams.searchByAuthor ? ['-sourceCreatedAt'] : null,
+          },
+        });
+      }
     }
+    if (searchParams.articleId) {
+      newState.article = props.articleMap.get(searchParams.articleId);
+    }
+
+    return newState;
   }
 
   @autobind
@@ -151,67 +148,19 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
   handleSearchFormSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
 
-    this.setQueryStringParam({
+    updateSearchQuery(this.props, {
       term: this.state.searchInputValue,
-    });
-
-    this.setState({ searchRequested: true });
-    this.onSearchSubmitted();
-  }
-
-  @autobind
-  setQueryStringParam({ term, articleId }: { term: string, articleId?: number }) {
-    this.props.router.replace({
-      pathname: this.props.location.pathname,
-      query: { term, articleId },
     });
   }
 
   @autobind
-  async onSearchSubmitted() {
-    const articleId = this.state.searchByArticle ? this.props.articleId : null;
-    const { searchByAuthor } = this.state;
-
-    this.props.onSearch({
-      term: this.state.searchInputValue,
-      params: {
-        articleId,
-        searchByAuthor,
-        sort: searchByAuthor ? ['-sourceCreatedAt'] : null,
-      },
-    });
-    this.setState({
-      searchRequested: null,
-      searchReturned: true,
-    });
-    this.props.router.replace({
-      pathname: 'search',
-      query: {
-        term: this.state.searchInputValue,
-        articleId,
-        searchByAuthor,
-      },
-    });
+  handleSearchArticleClose() {
+    updateSearchQuery(this.props, {articleId: null});
   }
 
   @autobind
-  handleSearchAttributeClose() {
-    this.setQueryStringParam({
-      term: this.props.searchTerm,
-    });
-    this.props.onSearch({
-      term: this.state.searchInputValue,
-      params: {
-        articleId: null,
-        searchByAuthor: false,
-      },
-    });
-    this.setState({
-      searchByArticle: false,
-      searchByAuthor: false,
-      searchRequested: null,
-      searchReturned: true,
-    });
+  handleSearchAuthorClose() {
+    updateSearchQuery(this.props, {searchByAuthor: false});
   }
 
   @autobind
@@ -223,26 +172,24 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
   onSearchInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     this.setState({
       searchInputValue: e.target.value,
-      searchReturned: null,
     });
   }
 
   render() {
-    const { searchInputValue, searchReturned, searchByArticle, searchByAuthor } = this.state;
-    const { article } = this.props;
+    const { article, searchInputValue, searchParams } = this.state;
 
-    const placeholderText = searchByAuthor ? 'Search comments by author ID or name' : 'Search';
+    const placeholderText = searchParams.articleId ? 'Search comments by author ID or name' : 'Search';
 
     return (
       <div {...css({height: '100%'})}>
         <div {...css(HEADER_STYLES.main)}>
           <Header hideSearchIcon>
             <form key="search-form" aria-label="Search form" onSubmit={this.handleSearchFormSubmit} {...css(HEADER_STYLES.formContainer)}>
-              { searchByArticle && article &&
-                <SearchAttribute title={`Article: ${article.title}`} onClose={this.handleSearchAttributeClose} />
+              { searchParams.articleId && article &&
+                <SearchAttribute title={`Article: ${article.title}`} onClose={this.handleSearchArticleClose} />
               }
-              { searchByAuthor &&
-                <SearchAttribute title="By Comment Author" onClose={this.handleSearchAttributeClose} />
+              { searchParams.searchByAuthor &&
+                <SearchAttribute title="By Comment Author" onClose={this.handleSearchAuthorClose} />
               }
               <input
                 key="search-input"
@@ -263,9 +210,8 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
 
           {React.cloneElement(this.props.children as any, {
             ...this.props,
-            searchReturned,
-            searchByAuthor,
-            searchByArticle,
+            searchTerm: searchParams.term,
+            searchByAuthor: searchParams.searchByAuthor,
           })}
         </div>
       </div>

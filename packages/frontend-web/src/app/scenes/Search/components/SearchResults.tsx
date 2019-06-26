@@ -20,10 +20,13 @@ import FocusTrap from 'focus-trap-react';
 import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
+import { WithRouterProps } from 'react-router';
 
-import { ISearchScope } from '../';
 import {
-  IArticleModel,
+  CircularProgress,
+} from '@material-ui/core';
+
+import {
   ICommentModel,
   ITagModel,
   ModelId,
@@ -39,7 +42,6 @@ import {
   HighlightIcon,
   RejectIcon,
   Scrim,
-  SearchIcon,
   ToastMessage,
   ToolTip,
 } from '../../../components';
@@ -58,6 +60,8 @@ import {
 } from '../../../styles';
 import { always, partial } from '../../../util';
 import { css, stylesheet } from '../../../utilx';
+import { articleBase, commentDetailsPageLink } from '../../routes';
+import { updateSearchQuery } from '../types';
 
 const TOAST_DELAY = 6000;
 
@@ -111,11 +115,6 @@ const STYLES = stylesheet({
     alignItems: 'center',
     height: window.innerHeight - HEADER_HEIGHT - RESULTS_HEADER_HEIGHT,
     width: '100%',
-  },
-  placeholderBg: {
-    fill: PALE_COLOR,
-    width: '30%',
-    height: '30%',
   },
   resultsHeader: {
     alignItems: 'center',
@@ -191,28 +190,24 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ISearchResultsProps {
+export interface ISearchResultsProps extends WithRouterProps {
   isLoading: boolean;
   totalCommentCount: number;
   onToggleSelectAll?(): void;
   onToggleSingleItem(item: { id: string }): void;
   dispatchAction?(action: IConfirmationAction, commentIds: Array<string>): any;
-  searchTerm: string;
-  article: IArticleModel;
   isItemChecked(id: string): boolean;
   areNoneSelected: boolean;
   areAllSelected: boolean;
   selectedCount: number;
   allCommentIds?: List<string>;
   tags?: List<ITagModel>;
-  searchReturned?: boolean;
   textSizes?: Map<number, number>;
-  getLinkTarget?(comment: ICommentModel): string;
-  onSearch?(scope: ISearchScope): any;
   tagComments?(ids: Array<string>, tagId: string): any;
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
+  searchTerm?: string;
   searchByAuthor?: boolean;
-  searchByArticle?: boolean;
+  pagingIdentifier?: string;
 }
 
 export interface ISearchResultsState {
@@ -233,7 +228,6 @@ export interface ISearchResultsState {
   actionCount?: number;
   actionText?: string;
   ruleToastIcon?: JSX.Element;
-  searchReturned?: boolean;
 }
 
 export class SearchResults extends React.Component<ISearchResultsProps, ISearchResultsState> {
@@ -279,54 +273,25 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   /**
    * Tell the lazy list to re-query.
    */
-  async updateScope(sort: any) {
-
+  updateScope(sort: any) {
     let newSort = sortDefinitions[sort] && sortDefinitions[sort].sortInfo;
-
     if (!newSort) {
       newSort = null;
     }
-
-    await this.props.onSearch({
-      term: this.props.searchTerm,
-      params: {
-        sort: [newSort],
-        searchByAuthor: this.props.searchByAuthor,
-        searchByArticle: this.props.searchByArticle,
-      },
-    });
-
-    // Wait for the result to come back and then increment a counter that
-    // goes to the LazyLoadComment to force it to recognize the change
-    this.setState({ updateCounter: this.state.updateCounter + 1 });
+    updateSearchQuery(this.props, {sort: newSort});
   }
 
   @autobind
   onSortChange(event: React.FormEvent<any>) {
     const newSort = (event.target as any).value;
     this.updateScope(newSort);
-    this.setState({ commentSortType: newSort });
+    this.setState({commentSortType: newSort});
   }
 
   @autobind
   getSortContentByType(comment: ICommentModel) {
     // Until we can actually sort by the other options, all moderated columns use Date
     return formatDate(comment.sourceCreatedAt, DATE_FORMAT_LONG);
-  }
-
-  applyActionForId(comment: ICommentModel, action: ICommentAction) {
-    switch (action) {
-      case 'approve':
-        return comment.set('isAccepted', true).set('isDeferred', false);
-      case 'reject':
-        return comment.set('isAccepted', false).set('isDeferred', false);
-      case 'highlight':
-        return comment.set('isHighlighted', true);
-      case 'defer':
-        return comment.set('isAccepted', null).set('isDeferred', true);
-      default:
-        return comment;
-    }
   }
 
   @autobind
@@ -463,16 +428,15 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
     const {
       totalCommentCount,
       textSizes,
-      searchTerm,
       isItemChecked,
       areNoneSelected,
       areAllSelected,
       selectedCount,
       tags,
-      searchReturned,
       allCommentIds,
-      getLinkTarget,
       isLoading,
+      pagingIdentifier,
+      searchTerm,
     } = this.props;
 
     const {
@@ -487,14 +451,20 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
       ruleToastIcon,
     } = this.state;
 
+    function getLinkTarget(comment: ICommentModel) {
+      const params = {context: articleBase, contextId: comment.articleId, commentId: comment.id};
+      const query = pagingIdentifier && {pagingIdentifier};
+      return commentDetailsPageLink(params, query);
+    }
+
     return (
       <div>
-        { !searchReturned && (
+        {isLoading &&
           <div key="searchIcon" {...css(STYLES.placeholderBgContainer)}>
-            <SearchIcon {...css(STYLES.placeholderBg)}/>
+            <CircularProgress color="primary" size={100}/>
           </div>
-        )}
-        <div key="content" {...css({backgroundColor: 'white'}, searchReturned ? {display: 'block'} : {display: 'none'})}>
+        }
+        <div key="content" {...css({backgroundColor: 'white'}, {display: 'block'})} >
           <div {...css(STYLES.resultsHeader, !areNoneSelected && STYLES.resultsActionHeader)}>
             {searchTerm && !isLoading && (
               <p {...css(STYLES.resultsHeadline, !areNoneSelected && STYLES.resultsActionHeadline)}>
@@ -596,7 +566,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
                 </div>
             )}
           </div>
-          {searchReturned && !isLoading && searchTerm && totalCommentCount > 0 &&  (
+          {!isLoading && searchTerm && totalCommentCount > 0 &&  (
             <CommentList
               heightOffset={HEADER_HEIGHT + RESULTS_HEADER_HEIGHT}
               textSizes={textSizes}
