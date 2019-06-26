@@ -18,27 +18,10 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { ICommentModel } from '../../../models';
-import { IAppDispatch, IAppStateRecord } from '../../stores';
-import { getTextSizes } from '../../stores/textSizes';
-import {
-  executeCommentListLoader,
-  getAllCommentIds,
-  getAreAllSelected,
-  getAreAnyCommentsSelected,
-  getCommentListHasLoaded,
-  getCommentListIsLoading,
-  getCurrentPagingIdentifier,
-  getIsItemChecked,
-  getSelectedCount,
-  resetCommentIds,
-  searchReducer,
-  toggleSelectAll,
-  toggleSingleItem,
-} from './store';
-export const reducer: any = searchReducer;
+
 import { ICommentAction } from '../../../types';
-import { getArticle } from '../../stores/articles';
+import { IAppDispatch, IAppStateRecord } from '../../stores';
+import { getArticleMap } from '../../stores/articles';
 import {
   approveComments,
   deferComments,
@@ -55,9 +38,25 @@ import {
   resetComment,
 } from '../../stores/comments';
 import { getTaggableTags } from '../../stores/tags';
-import { ISearchProps, Search as PureSearch } from './Search';
+import { getTextSizes } from '../../stores/textSizes';
+import { Search as PureSearch } from './Search';
+import {
+  executeCommentListLoader,
+  getAllCommentIds,
+  getAreAllSelected,
+  getAreAnyCommentsSelected,
+  getCommentListIsLoading,
+  getCurrentPagingIdentifier,
+  getIsItemChecked,
+  getSelectedCount,
+  resetCommentIds,
+  toggleSelectAll,
+  toggleSingleItem,
+} from './store';
+import { ISearchScope } from './types';
 
 export { SearchResults } from './components/SearchResults';
+export { searchReducer } from './store';
 
 export interface IActionMap {
   [key: string]: (ids: Array<string>, tagId?: string) => () => Promise<void>;
@@ -82,54 +81,19 @@ const actionMap: IActionMap = {
   reset: resetComments,
 };
 
-type ISearchOwnProps = Pick<
-  ISearchProps,
-  'location'
-  >;
-
 const mapStateToProps = createStructuredSelector({
   totalCommentCount: (state: IAppStateRecord) => getAllCommentIds(state).size,
-  isLoading: (state: IAppStateRecord) => getCommentListIsLoading(state) || !getCommentListHasLoaded(state),
+  isLoading: (state: IAppStateRecord) => getCommentListIsLoading(state),
   isItemChecked: (state: IAppStateRecord) => (id: string) => getIsItemChecked(state, id),
   areNoneSelected: getAreAnyCommentsSelected,
   areAllSelected: getAreAllSelected,
   selectedCount: getSelectedCount,
   allCommentIds: getAllCommentIds,
   tags: getTaggableTags,
-  searchTerm: (_state: IAppStateRecord, { location }: ISearchOwnProps) => location.query.term,
-  articleId: (_: IAppStateRecord, { location }: ISearchOwnProps) => location.query.articleId,
-  article: (state: IAppStateRecord, { location }: ISearchOwnProps) => location.query.articleId && getArticle(state, location.query.articleId),
+  articleMap: getArticleMap,
   textSizes: getTextSizes,
-  getLinkTarget: (state: IAppStateRecord, { location }: ISearchOwnProps) => {
-    const identifier = getCurrentPagingIdentifier(state);
-
-    return (comment: ICommentModel): string => {
-      let url: string;
-
-      const { articleId } = location.query;
-
-      if (articleId) {
-        url = `/articles/${articleId}/comments/${comment.id}`;
-      } else {
-        url = `/articles/${comment.articleId}/comments/${comment.id}`;
-      }
-
-      if (identifier) {
-        url = `${url}?pagingIdentifier=${identifier}`;
-      }
-
-      return url;
-    };
-  },
-  searchByAuthor: (_: IAppStateRecord, { location }: ISearchOwnProps) => {
-    return location.query.searchByAuthor === 'true';
-  },
+  pagingIdentifier: getCurrentPagingIdentifier,
 });
-
-export interface ISearchScope {
-  term: string;
-  params?: any;
-}
 
 function mapDispatchToProps(dispatch: IAppDispatch): any {
   return {

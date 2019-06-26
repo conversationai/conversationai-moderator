@@ -958,11 +958,10 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       query.sort = sort;
     }
 
-    const path = this.props.location.pathname.split('/');
     this.props.router.replace(newCommentsPageLink({
-      context: path[0],
-      contextId: path[1],
-      tag: path[3],
+      context: this.props.params.categoryId ? categoryBase : articleBase,
+      contextId: this.props.params.articleId || this.props.params.categoryId,
+      tag: this.props.params.tag,
     }, query));
   }
 

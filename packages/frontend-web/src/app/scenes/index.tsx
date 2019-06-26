@@ -30,7 +30,7 @@ import { Root } from './Root';
 import { reducer as rootReducer } from './Root';
 import * as routes from './routes';
 import { Search, SearchResults } from './Search';
-import { reducer as searchReducer } from './Search';
+import { searchReducer } from './Search';
 import { Settings } from './Settings';
 import { ArticleTable, TableFrame } from './Tables';
 
