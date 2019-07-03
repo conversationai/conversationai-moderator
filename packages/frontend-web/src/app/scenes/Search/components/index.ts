@@ -113,4 +113,4 @@ export type ISearchResultPublicProps = Pick<ISearchResultsProps, 'searchTerm' | 
 export const SearchResults: React.ComponentClass<ISearchResultPublicProps> = compose(
   withRouter,
   connect(mapStateToProps, mapDispatchToProps),
-)(PureSearchResults);
+)(PureSearchResults) as any;

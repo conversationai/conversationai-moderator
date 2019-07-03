@@ -62,11 +62,6 @@ const actionMap: {
   reset: resetComments,
 };
 
-type IThreadedCommentDetailOwnProps =  Pick<
-  IThreadedCommentDetailProps,
-  'location'
-  >;
-
 type IThreadedCommentDetailStateProps = Pick<
   IThreadedCommentDetailProps,
   'comment' |
@@ -113,7 +108,7 @@ function updateCommentState(comment: ICommentModel, action: IConfirmationAction)
 const mapStateToProps = createStructuredSelector({
   comment: getComment,
   isLoading: getIsLoading,
-}) as (state: IAppState, ownProps: IThreadedCommentDetailOwnProps) => IThreadedCommentDetailStateProps;
+}) as (state: IAppState, ownProps: IThreadedCommentDetailProps) => IThreadedCommentDetailStateProps;
 
 function mapDispatchToProps(dispatch: IAppDispatch): any {
   return {
@@ -140,7 +135,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
 const mergeProps = (
   stateProps: IThreadedCommentDetailStateProps,
   dispatchProps: IThreadedCommentDetailDispatchWithOverwriteProps,
-  ownProps: IThreadedCommentDetailOwnProps,
+  ownProps: IThreadedCommentDetailProps,
 ) => {
   return {
     ...ownProps,
