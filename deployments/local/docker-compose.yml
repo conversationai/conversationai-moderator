@@ -32,7 +32,6 @@ services:
       GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
       HTTPS_LINKS_ONLY: 'false'
       APP_NAME: 'Moderator'
-      REDIRECT_OAUTH_TO: 'frontend_url'
       GOOGLE_CLOUD_API_KEY: "${GOOGLE_CLOUD_API_KEY}"
       PORT: 80
     ports:

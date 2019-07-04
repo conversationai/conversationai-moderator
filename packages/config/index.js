@@ -132,13 +132,6 @@ const config = convict({
     env: 'HTTPS_LINKS_ONLY'
   },
 
-  redirect_oauth_to: {
-    doc: 'Where to redirect successful OAUTH',
-    format: String,
-    default: 'referrer',
-    env: 'REDIRECT_OAUTH_TO'
-  },
-
   publisher_notification_mode: {
     doc: 'Whether to post back to the publisher, or wait to be polled.',
     format: String,

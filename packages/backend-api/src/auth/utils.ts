@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 import * as express from 'express';
-import { generate } from 'randomstring';
 import * as moment from 'moment';
+import { generate } from 'randomstring';
 
 import { CSRF } from '@conversationai/moderator-backend-core';
 
@@ -41,7 +41,8 @@ export async function generateServerCSRF(req: express.Request, res: express.Resp
   return serverCSRF;
 }
 
-export async function getClientCSRF(req: express.Request): Promise<{clientCSRF: string|undefined, referrer: string|undefined, errorMessage: string|undefined}> {
+export async function getClientCSRF(req: express.Request):
+  Promise<{clientCSRF: string|undefined, referrer: string|undefined, errorMessage: string|undefined}> {
   const serverCSRF = req.query.state;
   if (!serverCSRF) {
     return {clientCSRF: undefined, referrer: undefined, errorMessage: 'CSRF missing.'};
