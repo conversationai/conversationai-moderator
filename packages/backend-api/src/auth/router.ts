@@ -118,7 +118,6 @@ export function createAuthRouter(): express.Router {
             {
               errorMessage: errorMessage,
             },
-            referrer,
           );
         }
 
@@ -144,12 +143,10 @@ export function createAuthRouter(): express.Router {
   ): void {
     let redirectHost;
 
-    if (
-      (config.get('redirect_oauth_to') === 'frontend_url') ||
-      !referrer
-    ) {
+    if (!referrer) {
       redirectHost = config.get('frontend_url');
-    } else {
+    }
+    else {
       redirectHost = referrer;
     }
 
