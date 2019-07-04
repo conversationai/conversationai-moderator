@@ -18,9 +18,7 @@ const RETURN_URL_PATH = 'moderator/return-url';
 
 export interface IReturnURL {
   pathname: string;
-  query?: {
-    [key: string]: string;
-  };
+  search: string;
 }
 
 export function getReturnURL(): IReturnURL {
