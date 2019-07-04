@@ -387,18 +387,15 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, 
       />
     );
 
-    const boundLinkTarget = getLinkTarget ?
-      (c: ICommentModel) => getLinkTarget(c) :
-      null;
-
     let bodyContent: any = null;
     if (commentBody) {
       bodyContent = commentBody;
-    } else if (boundLinkTarget) {
+    }
+    else if (getLinkTarget) {
       bodyContent = (
         <LinkedBasicBody
           searchTerm={searchTerm}
-          getLinkTarget={boundLinkTarget}
+          getLinkTarget={getLinkTarget}
           onCommentClick={onCommentClick}
           hideCommentAction={hideCommentAction}
           topScore={null}
@@ -407,7 +404,8 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, 
           displayArticleTitle={displayArticleTitle}
         />
       );
-    } else {
+    }
+    else {
       bodyContent = (
         <BasicBody
           topScore={null}

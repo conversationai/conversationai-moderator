@@ -350,15 +350,6 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
 
 export interface ILinkedBasicBodyProps extends IBasicBodyProps {
   getLinkTarget: ILinkTargetGetter;
-  onCommentClick?(commentId: string): any;
-  hideCommentAction?: boolean;
-  showActions?: boolean;
-  rowIndex?: number;
-  dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>, shouldTriggerToast?: boolean): any;
-  searchTerm?: string;
-  displayArticleTitle?: boolean;
-  requireReasonForReject?: boolean;
-  handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
 export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> {
