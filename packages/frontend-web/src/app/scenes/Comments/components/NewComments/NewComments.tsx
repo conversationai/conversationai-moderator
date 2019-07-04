@@ -86,6 +86,7 @@ import {
   articleBase,
   categoryBase,
   commentDetailsPageLink,
+  INewCommentsPathParams,
   INewCommentsQueryParams,
   newCommentsPageLink,
   tagSelectorLink,
@@ -274,9 +275,7 @@ export interface INewCommentsProps extends WithRouterProps {
     action: string,
   ): any;
   loadData(
-    categoryId: string | null,
-    articleId: string | null,
-    tag: string,
+    params: INewCommentsPathParams,
     pos1: number,
     pos2: number,
     sort: string,
@@ -402,7 +401,9 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
     if ((categoryId !== state.categoryId) || (articleId !== state.articleId) || (tag !== state.tag) ||
         (pos1 !== state.pos1) || (pos2 !== state.pos2) || (sort !== state.sort)) {
-      props.loadData(categoryId, articleId, tag, pos1, pos2, sort);
+      const params = articleId ? {context: articleBase, contextId: articleId, tag} :
+        {context: categoryBase, contextId: categoryId, tag};
+      props.loadData(params, pos1, pos2, sort);
     }
 
     return {

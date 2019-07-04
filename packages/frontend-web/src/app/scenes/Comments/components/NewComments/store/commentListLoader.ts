@@ -22,7 +22,11 @@ import { getTags } from '../../../../../stores/tags';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
 import { commentSortDefinitions } from '../../../../../utilx';
-import { articleBase, categoryBase, newCommentsPageLink } from '../../../../routes';
+import {
+  INewCommentsPathParams,
+  isArticleContext,
+  newCommentsPageLink,
+} from '../../../../routes';
 import { storeCommentPagingOptions } from '../../CommentDetail/store';
 import {
   getCommentScores,
@@ -36,9 +40,7 @@ import { getCommentIDsInRange } from './util';
 const LOADING_DATA = [...DATA_PREFIX, 'commentListLoader'];
 
 function loadCommentList(
-  categoryId: string | null,
-  articleId: string | null,
-  tag: string,
+  params: INewCommentsPathParams,
   pos1: number,
   pos2: number,
   sort: string,
@@ -46,44 +48,41 @@ function loadCommentList(
   return () => async (dispatch, getState) => {
     const tags = getTags(getState()) as List<ITagModel>;
 
-    let tagId: string;
-    const matchingTag = tags.find((t) => t.key === tag);
-
-    if (tag === 'DATE' || tag === 'SUMMARY_SCORE') {
-      tagId = tag;
-    } else {
-      tagId = matchingTag.id;
-    }
+    const tagId = (params.tag === 'DATE' || params.tag === 'SUMMARY_SCORE') ? params.tag :
+      tags.find((t) => t.key === params.tag).id;
 
     const sortDef = commentSortDefinitions[sort]
         ? commentSortDefinitions[sort].sortInfo
         : commentSortDefinitions['tag'].sortInfo;
 
-    if (articleId) {
+    if (isArticleContext(params)) {
       await dispatch(loadCommentScoresForArticle(
-        articleId,
+        params.contextId,
         tagId,
         sortDef,
       ));
-    } else {
+    }
+    else {
       await dispatch(loadCommentScoresForCategory(
-        categoryId,
+        params.contextId,
         tagId,
         sortDef,
       ));
     }
 
     const commentScores = getCommentScores(getState());
-    const commentIDsInRange = getCommentIDsInRange(commentScores, pos1, pos2, tag === 'DATE');
-
-    const context = articleId ? articleBase : categoryBase;
-    const contextId = articleId ? articleId : categoryId;
-    const link = newCommentsPageLink({context, contextId, tag}, {pos1: pos1.toString(), pos2: pos2.toString(), sort});
+    const commentIDsInRange = getCommentIDsInRange(
+      commentScores,
+      pos1,
+      pos2,
+      params.tag === 'DATE',
+    );
+    const link = newCommentsPageLink(params, {pos1: pos1.toString(), pos2: pos2.toString(), sort});
 
     const currentPagingIdentifier = await dispatch(storeCommentPagingOptions({
       commentIds: commentIDsInRange.toList(),
       fromBatch: true,
-      source: `Comment %i of ${commentIDsInRange.size} from new comments with tag "${tag}"`,
+      source: `Comment %i of ${commentIDsInRange.size} from new comments with tag "${params.tag}"`,
       link,
     }));
 
@@ -102,21 +101,12 @@ const getCommentListIsLoading: (state: IAppStateRecord) => boolean = loadingRedu
 const getCommentListHasLoaded: (state: IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
 
 function executeCommentListLoader(
-  articleId: string,
-  categoryId: string,
-  tag: string,
+  params: INewCommentsPathParams,
   pos1: number,
   pos2: number,
   sort: string,
 ): IThunkAction<void> {
-  return loadingReducer.execute(loadCommentList(
-    categoryId,
-    articleId,
-    tag,
-    pos1,
-    pos2,
-    sort,
-  ));
+  return loadingReducer.execute(loadCommentList(params, pos1, pos2, sort));
 }
 
 export {

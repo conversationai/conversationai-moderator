@@ -21,7 +21,11 @@ import { getCurrentColumnSort } from '../../../../../stores/columnSorts';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
 import { commentSortDefinitions,  } from '../../../../../utilx';
-import { articleBase, categoryBase, moderatedCommentsPageLink } from '../../../../routes';
+import {
+  IModeratedCommentsPathParams,
+  isArticleContext,
+  moderatedCommentsPageLink,
+} from '../../../../routes';
 import { storeCommentPagingOptions } from '../../CommentDetail/store';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
 import {
@@ -33,43 +37,34 @@ import { DATA_PREFIX } from './reduxPrefix';
 
 const LOADING_DATA = [...DATA_PREFIX, 'commentListLoader'];
 
-function loadCommentList(
-  isArticleDetail: boolean,
-  articleId: string,
-  categoryId: string,
-  disposition: string,
-): () => IThunkAction<void> {
+function loadCommentList(params: IModeratedCommentsPathParams): () => IThunkAction<void> {
   return () => async (dispatch, getState) => {
-    const columnSort = getCurrentColumnSort(getState(), 'commentsIndexModerated', disposition || 'approved');
+    const columnSort = getCurrentColumnSort(getState(), 'commentsIndexModerated', params.disposition || 'approved');
     const sortDef = commentSortDefinitions[columnSort].sortInfo;
-
+    const isArticleDetail = isArticleContext(params);
     if (isArticleDetail) {
       await dispatch(loadModeratedCommentsForArticle(
-        articleId,
+        params.contextId,
         sortDef,
       ));
-    } else {
+    }
+    else {
       await dispatch(loadModeratedCommentsForCategory(
-        categoryId,
+        params.contextId,
         sortDef,
       ));
     }
 
-    const commentIds = getModeratedComments(getState(), {
-      articleId,
-      categoryId,
-    }).get(disposition);
+    const commentIds = getModeratedComments(getState(), params).get(params.disposition);
 
     const bodyContentWidth = 696;
 
-    const context = isArticleDetail ? articleBase : categoryBase;
-    const contextId = isArticleDetail ? articleId : categoryId;
-    const link = moderatedCommentsPageLink({context, contextId, disposition});
+    const link = moderatedCommentsPageLink(params);
 
     const currentPagingIdentifier = await dispatch(storeCommentPagingOptions({
       commentIds,
       fromBatch: false,
-      source: `Comment %i of ${commentIds.size} from moderated comments with tag "${disposition}"`,
+      source: `Comment %i of ${commentIds.size} from moderated comments with disposition "${params.disposition}"`,
       link,
     }));
 
@@ -85,18 +80,8 @@ const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingRedu
 const getCommentListIsLoading: (state: IAppStateRecord) => boolean = loadingReducer.getIsLoading;
 const getCommentListHasLoaded: (state: IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
 
-function executeCommentListLoader(
-  isArticleDetail: boolean,
-  articleId: string,
-  category: string,
-  tag: string,
-): IThunkAction<void> {
-  return loadingReducer.execute(loadCommentList(
-    isArticleDetail,
-    articleId,
-    category,
-    tag,
-  ));
+function executeCommentListLoader(params: IModeratedCommentsPathParams): IThunkAction<void> {
+  return loadingReducer.execute(loadCommentList(params));
 }
 
 export {
