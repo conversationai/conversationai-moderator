@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List, Set } from 'immutable';
+import { List } from 'immutable';
 import React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { Redirect, Route, RouteComponentProps, Switch } from 'react-router';
 
-import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
+import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
 import {
   HeaderBar,
 } from '../../components';
@@ -30,13 +30,20 @@ import {
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
 import {
-  ICommentDetailsPathParams,
-  ICommentReplyDetailsPathParams,
-  IModeratedCommentsPathParams,
-  INewCommentsPathParams,
-  isArticleContext,
+  IContextPathParams,
+  NEW_COMMENTS_DEFAULT_TAG,
 } from '../routes';
+import { CommentDetail } from './components/CommentDetail';
+import { ModeratedComments } from './components/ModeratedComments';
+import { NewComments } from './components/NewComments';
 import { SubheaderBar } from './components/SubheaderBar';
+import { ThreadedCommentDetail } from './components/ThreadedCommentDetail';
+
+function redirect(to: string) {
+  return () => {
+    return <Redirect to={to}/>;
+  };
+}
 
 const STYLES = stylesheet({
   main: {
@@ -46,12 +53,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ICommentsProps extends RouteComponentProps<
-  INewCommentsPathParams |
-  IModeratedCommentsPathParams |
-  ICommentDetailsPathParams |
-  ICommentReplyDetailsPathParams
-> {
+export interface ICommentsProps extends RouteComponentProps<IContextPathParams> {
   dispatch?: IAppDispatch;
   article?: IArticleModel;
   category?: ICategoryModel;
@@ -60,81 +62,51 @@ export interface ICommentsProps extends RouteComponentProps<
   logout(): void;
 }
 
-export interface ICommentsState {
-  isArticleDetail: boolean;
-  isCommentDetail: boolean;
-  hideCommentHeader: boolean;
-  counts?: ISummaryCounts;
-  isModeratorModalVisible?: boolean;
-  moderatorIds?: Set<ModelId>;
-}
+export function Comments(props: ICommentsProps) {
+  const {
+    article,
+    category,
+    globalCounts,
+    logout,
+    match: {path, url},
+  } = props;
 
-export class Comments extends React.Component<ICommentsProps, ICommentsState> {
-  state: ICommentsState = {
-    isModeratorModalVisible: false,
-    isArticleDetail: false,
-    isCommentDetail: false,
-    hideCommentHeader: false,
-  };
-
-  static getDerivedStateFromProps(props: ICommentsProps, _state: ICommentsState) {
-    const counts =
-      props.article ? props.article :
-      props.category ? props.category :
-      props.globalCounts;
-
-    return {
-      isArticleDetail: isArticleContext(props.match.params),
-      isCommentDetail: ('commentId' in props),
-      hideCommentHeader: ('originatingCommentId' in props),
-      counts,
-    };
-  }
-
-  render() {
-    const {
-      article,
-      category,
-      globalCounts,
-      logout,
-      children,
-    } = this.props;
-
-    const {
-      hideCommentHeader,
-    } = this.state;
-
-    return (
-      <div {...css({height: '100%'})}>
-        <div {...css(STYLES.main)}>
-          { !hideCommentHeader && (
-            <HeaderBar
-              category={category}
-              article={article}
-              homeLink
-              logout={logout}
-            />
-          )}
-
+  return (
+    <div {...css({height: '100%'})}>
+      <div {...css(STYLES.main)}>
+        <HeaderBar
+          category={category}
+          article={article}
+          homeLink
+          logout={logout}
+        />
+        <Route path={`${path}/:pt1/:pt2`}>
           <SubheaderBar
             global={globalCounts}
             category={category}
             article={article}
-            location={location.pathname}
           />
-          <div
-            {...css({
-              background: WHITE_COLOR,
-              height: hideCommentHeader ? '100%' : `calc(100% - ${HEADER_HEIGHT * 2 + 12}px)`,
-              position: 'relative',
-              overflow: 'hidden',
-              WebkitOverflowScrolling: 'touch',
-            })}
-          >
-            {children}
-          </div>
+        </Route>
+        <div
+          {...css({
+            background: WHITE_COLOR,
+            height: `calc(100% - ${HEADER_HEIGHT * 2 + 12}px)`,
+            position: 'relative',
+            overflow: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+          })}
+        >
+          <Switch>
+            <Route exact path={`${path}`} render={redirect(`${url}/new/${NEW_COMMENTS_DEFAULT_TAG}`)} />
+            <Route exact path={`${path}/new`} render={redirect(`${url}/new/${NEW_COMMENTS_DEFAULT_TAG}`)} />
+            <Route exact path={`${path}/moderated`} render={redirect(`${url}/moderated/approved`)} />
+            <Route path={`${path}/new/:tag`} component={NewComments}/>
+            <Route path={`${path}/moderated/:disposition`} component={ModeratedComments}/>
+            <Route path={`${path}/comments/:commentId`} component={CommentDetail}/>
+            <Route path={`${path}/comments/:commentId/:originatingCommentId/replies`} component={ThreadedCommentDetail}/>
+          </Switch>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }

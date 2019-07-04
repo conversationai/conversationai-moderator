@@ -15,7 +15,7 @@ limitations under the License.
 */
 import { autobind } from 'core-decorators';
 import React from 'react';
-import { RouteComponentProps } from 'react-router';
+import {Route, RouteComponentProps} from 'react-router';
 
 import {
   Drawer,
@@ -30,6 +30,7 @@ import { HeaderBar } from '../../components';
 import { NICE_CONTROL_BLUE } from '../../styles';
 import { IDashboardPathParams } from '../routes';
 import { CategorySidebar, SIDEBAR_WIDTH } from './CategorySidebar';
+import { ArticleTable } from './index';
 import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
 
 const theme = createMuiTheme({
@@ -120,6 +121,7 @@ export class TableFrame extends React.Component<ITableFrameProps, ITableFrameSta
       isAdmin,
       categories,
       location,
+      match: {path},
     } = this.props;
 
     const isMe = location.pathname.indexOf(FILTER_MODERATOR_ISME) >= 0;
@@ -152,7 +154,7 @@ export class TableFrame extends React.Component<ITableFrameProps, ITableFrameSta
             </div>
           </div>
           <div style={{marginLeft: `${SIDEBAR_WIDTH + 1}px`, height: '100%'}}>
-            {this.props.children}
+            <Route path={`${path}`} component={ArticleTable}/>
           </div>
         </div>
       );
@@ -168,7 +170,7 @@ export class TableFrame extends React.Component<ITableFrameProps, ITableFrameSta
         />
         {this.renderSidebarPopup(isMe, category)}
         <div key="content">
-          {this.props.children}
+          <Route path={`${path}`} component={ArticleTable}/>
         </div>
       </MuiThemeProvider>
     );
