@@ -191,11 +191,8 @@ const STYLES = stylesheet({
 });
 
 export interface ISearchResultsProps extends WithRouterProps {
-  isLoading: boolean;
   totalCommentCount: number;
-  onToggleSelectAll?(): void;
-  onToggleSingleItem(item: { id: string }): void;
-  dispatchAction?(action: IConfirmationAction, commentIds: Array<string>): any;
+  isLoading: boolean;
   isItemChecked(id: string): boolean;
   areNoneSelected: boolean;
   areAllSelected: boolean;
@@ -203,11 +200,16 @@ export interface ISearchResultsProps extends WithRouterProps {
   allCommentIds?: List<string>;
   tags?: List<ITagModel>;
   textSizes?: Map<number, number>;
+  pagingIdentifier?: string;
+
   tagComments?(ids: Array<string>, tagId: string): any;
+  dispatchAction?(action: IConfirmationAction, commentIds: Array<string>): any;
+  onToggleSelectAll?(): void;
+  onToggleSingleItem(item: { id: string }): void;
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
+
   searchTerm?: string;
   searchByAuthor?: boolean;
-  pagingIdentifier?: string;
 }
 
 export interface ISearchResultsState {
