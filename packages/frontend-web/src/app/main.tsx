@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 import Immutable from 'immutable';
-import { isEmpty, pick } from 'lodash';
-import qs from 'qs';
+import { isEmpty } from 'lodash';
+import qs from 'query-string';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { browserHistory } from 'react-router';
@@ -77,26 +77,27 @@ function renderError(elem: HTMLElement, errorMessage: string) {
 window.document.title = APP_NAME;
 
 // Let's rock
-const queryString = window.location.search && qs.parse(window.location.search.replace(/^\?/, ''));
+const queryString = qs.parse(window.location.search);
 
 if (queryString && queryString['token']) {
   (async () => {
     try {
-      await dispatch(handleToken(queryString['token'], queryString['csrf']) as any);
+      await dispatch(handleToken(queryString['token'] as string, queryString['csrf'] as string));
 
+      // If we've saved off a pathname and search string, use that instead.
+      // The original link - derived from the http referrer of the original request - doesn't
+      // have the necessary search info.
       const returnURL = getReturnURL();
-
+      // TODO: We'd really like to do this via the router so we don't refresh the page
       if (returnURL && !isEmpty(returnURL)) {
-        clearReturnURL();
-        window.location.href = `/#${returnURL.pathname}?${qs.stringify(returnURL.query)}`;
-      } else {
-        const returnDetails = pick(window.location, ['pathname', 'query']) as any;
-        returnDetails.query = returnDetails.query || {};
-        delete returnDetails.query.token;
-        delete returnDetails.query.csrf;
-
-        window.location.href = `/#${returnDetails.pathname}?${qs.stringify(returnDetails.query)}`;
+        // Forward to the saved URL
+        window.location.href = `${returnURL.pathname}${returnURL.search}`;
       }
+      else {
+        // Strip off the CSRF stuff
+        window.location.href = window.location.pathname;
+      }
+      clearReturnURL();
     } catch (e) {
       console.error(e);
       renderError(document.getElementById('app'), e.message);

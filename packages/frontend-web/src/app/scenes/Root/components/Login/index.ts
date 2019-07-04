@@ -51,7 +51,7 @@ export const Login = compose(
     },
 
     returnURL: (_: any, { location }: any) => {
-      const returnDetails = pick(location, ['pathname', 'query']) as IReturnURL;
+      const returnDetails = pick(location, ['pathname', 'search']) as IReturnURL;
 
       setReturnURL(returnDetails);
 
