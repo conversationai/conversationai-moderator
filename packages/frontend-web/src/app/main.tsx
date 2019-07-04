@@ -19,7 +19,6 @@ import { isEmpty } from 'lodash';
 import qs from 'query-string';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { browserHistory } from 'react-router';
 import {
   applyMiddleware,
   compose,
@@ -56,7 +55,7 @@ const store = createStore(
 
 const { dispatch } = store;
 
-const routes = makeRoutes(browserHistory);
+const routes = makeRoutes();
 
 function render(elem: HTMLElement) {
   ReactDOM.render(

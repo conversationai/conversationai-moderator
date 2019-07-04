@@ -14,25 +14,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { IndexRedirect, Redirect, Route, Router } from 'react-router';
+import { Redirect, Route, Switch } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 import { combineReducers } from 'redux-immutable';
 
 import {
-  CommentDetail,
   Comments,
-  ModeratedComments,
-  NewComments,
   reducer as commentsIndexReducer,
   TagSelector,
-  ThreadedCommentDetail,
 } from './Comments';
 import { Root } from './Root';
 import { reducer as rootReducer } from './Root';
-import * as routes from './routes';
+import {
+  dashboardBase,
+  searchBase,
+  settingsBase,
+  tagSelectorBase,
+} from './routes';
 import { Search } from './Search';
 import { searchReducer } from './Search';
 import { Settings } from './Settings';
-import { ArticleTable, TableFrame } from './Tables';
+import { TableFrame } from './Tables';
 
 export const reducer: any = combineReducers({
   commentsIndex: commentsIndexReducer,
@@ -40,34 +42,23 @@ export const reducer: any = combineReducers({
   root: rootReducer,
 });
 
-export const scenes = (history: any) => (
-  <Router history={history}>
-    <Route path="/" component={Root}>
-      <IndexRedirect to={routes.dashboardBase} />
-      <Route path="/" component={TableFrame}>
-        <Route path={routes.dashboardBase} component={ArticleTable}/>
-        <Route path={`${routes.dashboardBase}/:filter/:sort`} component={ArticleTable}/>
-        <Route path={`${routes.dashboardBase}/:filter`} component={ArticleTable}/>
-      </Route>
-      <Route path={routes.searchBase} component={Search}/>
-      <Route path={routes.settingsBase} component={Settings} />
-      <Redirect from={`/${routes.categoryBase}`} to={`/${routes.categoryBase}/all/new`}/>
-      <Route path={':context'}>
-        <Route path=":contextId" component={Comments}>
-          <IndexRedirect to="new" />
-          <Route path="new">
-            <IndexRedirect to={routes.NEW_COMMENTS_DEFAULT_TAG} />
-            <Route path=":tag" component={NewComments}/>
-          </Route>
-          <Route path="moderated">
-            <IndexRedirect to="approved" />
-            <Route path=":disposition" component={ModeratedComments}/>
-          </Route>
-          <Route path="comments/:commentId" component={CommentDetail} />
-          <Route path="comments/:commentId/:originatingCommentId/replies" component={ThreadedCommentDetail} />
-        </Route>
-      </Route>
-      <Route path={`${routes.tagSelectorBase}/:context/:contextId/:tag`} component={TagSelector} />
-    </Route>
-  </Router>
+function redirect(to: string) {
+  return () => {
+    return <Redirect to={to}/>;
+  };
+}
+
+export const scenes = () => (
+  <BrowserRouter>
+    <Root>
+      <Switch>
+        <Route exact path="/" render={redirect(`/${dashboardBase}`)} />
+        <Route path={`/${dashboardBase}/:filter?/:sort?`} component={TableFrame}/>
+        <Route path={`/${settingsBase}`} component={Settings}/>
+        <Route path={`/${searchBase}`} component={Search}/>
+        <Route path={`/${tagSelectorBase}/:context/:contextId/:tag`} component={TagSelector} />
+        <Route path={'/:context/:contextId'} component={Comments}/>
+      </Switch>
+    </Root>
+  </BrowserRouter>
 );

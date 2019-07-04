@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link, RouteComponentProps, withRouter} from 'react-router-dom';
 
 import { IArticleModel, ICategoryModel } from '../../../../models';
 import { ISummaryCounts } from '../../../stores/categories';
@@ -71,11 +71,10 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ISubheaderBarProps {
+export interface ISubheaderBarProps extends RouteComponentProps<{pt1: string, pt2: string}> {
   global?: ISummaryCounts;
   category?: ICategoryModel;
   article?: IArticleModel;
-  location: string;
 }
 
 const CELLS = [
@@ -88,53 +87,53 @@ const CELLS = [
   ['Batched', 'batchedCount', 'batched'],
 ];
 
-export class SubheaderBar extends React.Component<ISubheaderBarProps> {
-  render() {
-    const {
-      global,
-      category,
-      article,
-      location,
-    } = this.props;
+function _SubheaderBar(props: ISubheaderBarProps) {
+  const {
+    global,
+    category,
+    article,
+    match: { params },
+  } = props;
 
-    function linkFunction(disposition: string) {
-      if (disposition === 'new') {
-        return newCommentsPageLink({
-          context: article ? articleBase : categoryBase,
-          contextId: article ? article.id : category ? category.id : 'all',
-          tag: NEW_COMMENTS_DEFAULT_TAG,
-        });
-      }
-      return moderatedCommentsPageLink({
+  function linkFunction(disposition: string) {
+    if (disposition === 'new') {
+      return newCommentsPageLink({
         context: article ? articleBase : categoryBase,
         contextId: article ? article.id : category ? category.id : 'all',
-        disposition,
+        tag: NEW_COMMENTS_DEFAULT_TAG,
       });
     }
+    return moderatedCommentsPageLink({
+      context: article ? articleBase : categoryBase,
+      contextId: article ? article.id : category ? category.id : 'all',
+      disposition,
+    });
+  }
 
-    const counts = article ? article :
-      category ? category :
-        global;
+  const counts = article ? article :
+    category ? category :
+      global;
 
-    function renderHeaderItem(cell: Array<string>) {
-      let styles = {...css(STYLES.headerItem)};
-      if (location.indexOf(`/${cell[2]}`) >= 0) {
-        styles = {...css(STYLES.headerItem, STYLES.headerItemSelected)};
-      }
-      return (
-        <div key={cell[2]} {...styles}>
-          <Link to={linkFunction(cell[2])} aria-label={cell[0]} {...css(STYLES.headerLink)}>
-            <div {...css(STYLES.headerText)}>{cell[0]}</div>
-            <div {...css(STYLES.headerText)}>{(counts as any)[cell[1]]}</div>
-          </Link>
-        </div>
-      );
+  function renderHeaderItem(cell: Array<string>) {
+    let styles = {...css(STYLES.headerItem)};
+    if (cell[2] === params.pt1 || cell[2] === params.pt2) {
+      styles = {...css(STYLES.headerItem, STYLES.headerItemSelected)};
     }
-
     return (
-      <header key="header" role="banner" {...css(STYLES.header)}>
-        {CELLS.map(renderHeaderItem)}
-      </header>
+      <div key={cell[2]} {...styles}>
+        <Link to={linkFunction(cell[2])} aria-label={cell[0]} {...css(STYLES.headerLink)}>
+          <div {...css(STYLES.headerText)}>{cell[0]}</div>
+          <div {...css(STYLES.headerText)}>{(counts as any)[cell[1]]}</div>
+        </Link>
+      </div>
     );
   }
+
+  return (
+    <header key="header" role="banner" {...css(STYLES.header)}>
+      {CELLS.map(renderHeaderItem)}
+    </header>
+  );
 }
+
+export const SubheaderBar = withRouter(_SubheaderBar);

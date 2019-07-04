@@ -73,7 +73,7 @@ export const Comments = compose(
         const users = getUsers(state);
         return List<IUserModel>(article.assignedModerators.map((userId) => users.get(userId)));
       },
-      globalCounts: (state: IAppStateRecord) => getGlobalCounts(state),
+      globalCounts: getGlobalCounts,
     }),
     (dispatch) => ({
       logout: () => dispatch(logout()),
