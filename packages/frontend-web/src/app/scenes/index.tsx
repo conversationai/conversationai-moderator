@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { IndexRedirect, IndexRoute, Route, Router } from 'react-router';
+import { IndexRedirect, Route, Router } from 'react-router';
 import { combineReducers } from 'redux-immutable';
 
 import {
@@ -29,7 +29,7 @@ import {
 import { Root } from './Root';
 import { reducer as rootReducer } from './Root';
 import * as routes from './routes';
-import { Search, SearchResults } from './Search';
+import { Search } from './Search';
 import { searchReducer } from './Search';
 import { Settings } from './Settings';
 import { ArticleTable, TableFrame } from './Tables';
@@ -65,9 +65,7 @@ export const scenes = (history: any) => (
         <Route path={`${routes.dashboardBase}/:filter/:sort`} component={ArticleTable}/>
         <Route path={`${routes.dashboardBase}/:filter`} component={ArticleTable}/>
       </Route>
-      <Route path={routes.searchBase} component={Search}>
-        <IndexRoute component={SearchResults} />
-      </Route>
+      <Route path={routes.searchBase} component={Search}/>
       <Route path={routes.settingsBase} component={Settings} />
       <Route path={routes.articleBase}>
         {commentsRoutes(':articleId')}

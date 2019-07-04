@@ -38,6 +38,7 @@ import {
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
 import { ISearchQueryParams } from '../routes';
+import { SearchResults } from './components';
 import { ISearchScope, updateSearchQuery } from './types';
 
 const HEADER_STYLES = stylesheet({
@@ -207,12 +208,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
               <RejectIcon {...css({fill: LIGHT_PRIMARY_TEXT_COLOR})} />
             </button>
           </Header>
-
-          {React.cloneElement(this.props.children as any, {
-            ...this.props,
-            searchTerm: searchParams.term,
-            searchByAuthor: searchParams.searchByAuthor,
-          })}
+          <SearchResults searchTerm={searchParams.term} searchByAuthor={searchParams.searchByAuthor}/>
         </div>
       </div>
     );
