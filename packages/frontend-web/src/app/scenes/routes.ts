@@ -75,6 +75,10 @@ export interface IContextPathParams {
   contextId: ModelId;
 }
 
+export function isArticleContext(params: IContextPathParams) {
+  return params.context === articleBase;
+}
+
 export interface INewCommentsPathParams extends IContextPathParams {
   tag: string;
 }
@@ -91,7 +95,7 @@ export interface IModeratedCommentsPathParams extends IContextPathParams {
 
 export const articleBase = 'articles';
 export const categoryBase = 'categories';
-export const NEW_COMMENTS_DEFAULT_TAG = '';
+export const NEW_COMMENTS_DEFAULT_TAG = 'SUMMARY_SCORE';
 export function newCommentsPageLink(
   {context, contextId, tag}: INewCommentsPathParams,
   query?: INewCommentsQueryParams,

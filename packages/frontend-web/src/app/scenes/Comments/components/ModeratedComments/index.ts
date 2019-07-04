@@ -17,6 +17,7 @@ limitations under the License.
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
+
 import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
@@ -24,9 +25,24 @@ import {
   changeColumnSortGroupDefault,
   getCurrentColumnSort,
 } from '../../../../stores/columnSorts';
+import {
+  approveComments,
+  approveFlagsAndComments,
+  deferComments,
+  highlightComments,
+  rejectComments,
+  rejectFlagsAndComments,
+  resetComments,
+  tagCommentSummaryScores,
+} from '../../../../stores/commentActions';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
-import { IModeratedCommentsProps, ModeratedComments as PureModeratedComments } from './ModeratedComments';
+import { IModeratedCommentsPathParams } from '../../../routes';
+import {
+  getParams,
+  IModeratedCommentsProps,
+  ModeratedComments as PureModeratedComments,
+} from './ModeratedComments';
 import {
   executeCommentListLoader,
   getAreAllSelected,
@@ -42,17 +58,6 @@ import {
   toggleSelectAll,
   toggleSingleItem,
 } from './store';
-
-import {
-  approveComments,
-  approveFlagsAndComments,
-  deferComments,
-  highlightComments,
-  rejectComments,
-  rejectFlagsAndComments,
-  resetComments,
-  tagCommentSummaryScores,
-} from '../../../../stores/commentActions';
 
 type IModeratedCommentsDispatchProps = Pick<
   IModeratedCommentsProps,
@@ -94,9 +99,9 @@ const mapStateToProps = createStructuredSelector({
 
   isItemChecked: (state: IAppStateRecord) => (id: string) => getIsItemChecked(state, id),
 
-  moderatedComments: (state: IAppStateRecord, { params }: IModeratedCommentsProps) => (
-    getModeratedComments(state, params)
-  ),
+  moderatedComments: (state: IAppStateRecord, props: IModeratedCommentsProps) => {
+    return getModeratedComments(state, getParams(props));
+  },
 
   tags: getTaggableTags,
 
@@ -111,7 +116,6 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedCommentsProps): IModeratedCommentsDispatchProps {
   const {
-    isArticleDetail,
     articleId,
     categoryId,
     tag,
@@ -129,8 +133,8 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
   };
 
   return {
-    loadData: (cId: string, aId: string, t: string) => {
-      dispatch(executeCommentListLoader(!!aId, aId, cId, t));
+    loadData: (params: IModeratedCommentsPathParams) => {
+      dispatch(executeCommentListLoader(params));
     },
 
     tagComments: (ids: Array<string>, tagId: string) =>
@@ -149,18 +153,13 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
     setCommentModerationStatusForCategory: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
         dispatch(setCommentsModerationForCategory(categoryId, commentIds, moderationAction, currentModeration)),
 
-    changeSort: async (newSort: string): Promise<void> => {
+    changeSort: async (params: IModeratedCommentsPathParams, newSort: string): Promise<void> => {
       await dispatch(changeColumnSortGroupDefault({
         group: 'commentsIndexModerated',
         key: newSort,
       }));
 
-      await dispatch(executeCommentListLoader(
-        isArticleDetail,
-        articleId,
-        categoryId,
-        tag,
-      ));
+      await dispatch(executeCommentListLoader(params));
     },
   };
 }

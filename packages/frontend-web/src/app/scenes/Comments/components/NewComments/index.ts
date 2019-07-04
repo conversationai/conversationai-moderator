@@ -22,11 +22,27 @@ import { createStructuredSelector } from 'reselect';
 import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
-import { getComment } from '../../../../stores/comments';
+import {
+  approveComments,
+  confirmCommentSummaryScore,
+  deferComments,
+  highlightComments,
+  rejectComments,
+  rejectCommentSummaryScore,
+  tagCommentSummaryScores,
+} from '../../../../stores/commentActions';
+import {
+  approveComment,
+  deferComment,
+  getComment,
+  highlightComment,
+  rejectComment,
+} from '../../../../stores/comments';
 import { getPreselects } from '../../../../stores/preselects';
 import { getRules } from '../../../../stores/rules';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
+import { INewCommentsPathParams } from '../../../routes';
 import {
   INewCommentsProps,
   NewComments as PureNewComments,
@@ -45,23 +61,6 @@ import {
   toggleSelectAll,
   toggleSingleItem,
 } from './store';
-
-import {
-  approveComments,
-  confirmCommentSummaryScore,
-  deferComments,
-  highlightComments,
-  rejectComments,
-  rejectCommentSummaryScore,
-  tagCommentSummaryScores,
-} from '../../../../stores/commentActions';
-
-import {
-  approveComment,
-  deferComment,
-  highlightComment,
-  rejectComment,
-} from '../../../../stores/comments';
 
 const actionMap: {
   [key: string]: (ids: Array<string>, tagId?: string) => any;
@@ -82,7 +81,7 @@ const moderationStatusMap: {
   reject: rejectComment,
 };
 
-function mapDispatchToProps(dispatch: IAppDispatch): any {
+function mapDispatchToProps(dispatch: IAppDispatch): Partial<INewCommentsProps> {
   return {
     tagComments: (ids: Array<string>, tagId: string) =>
         dispatch(tagCommentSummaryScores(ids, tagId)),
@@ -105,22 +104,8 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
 
     toggleSingleItem: ({ id }: { id: string }) => dispatch(toggleSingleItem({ id })),
 
-    loadData: async (
-      categoryId: string | null,
-      articleId: string | null,
-      tag: string,
-      pos1: number,
-      pos2: number,
-      sort: string,
-    ): Promise<void> => {
-      await dispatch(executeCommentListLoader(
-        articleId,
-        categoryId,
-        tag,
-        pos1,
-        pos2,
-        sort,
-      ));
+    loadData: async (params: INewCommentsPathParams, pos1: number, pos2: number, sort: string): Promise<void> => {
+      await dispatch(executeCommentListLoader(params, pos1, pos2, sort));
     },
   };
 }

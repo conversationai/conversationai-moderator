@@ -65,7 +65,12 @@ import {
 import { partial } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
 import { getSortDefault } from '../../../../utilx';
-import { articleBase, categoryBase, commentDetailsPageLink } from '../../../routes';
+import {
+  articleBase,
+  categoryBase,
+  commentDetailsPageLink,
+  IModeratedCommentsPathParams,
+} from '../../../routes';
 
 const ARROW_SIZE = 6;
 // magic number = height of the moderation status dropdown and the row of tabs
@@ -245,13 +250,13 @@ export interface IModeratedCommentsProps extends WithRouterProps {
   areAllSelected: boolean;
   pagingIdentifier?: string;
   article?: IArticleModel;
-  loadData?(categoryId: string, articleId: string, tag: string): void;
+  loadData?(params: IModeratedCommentsPathParams): void;
   tagComments?(ids: Array<string>, tagId: string): any;
   dispatchAction?(action: IConfirmationAction, idsToDispatch: Array<string>): any;
   toggleSelectAll?(): any;
   toggleSingleItem({ id }: { id: string }): any;
   textSizes?: Map<number, number>;
-  changeSort(newSort: string): Promise<void>;
+  changeSort(params: IModeratedCommentsPathParams, newSort: string): Promise<void>;
   setCommentModerationStatusForArticle?(
     commentIds: Array<string>,
     moderationAction: IConfirmationAction,
@@ -289,6 +294,14 @@ export interface IModeratedCommentsState {
   loadedTag?: string;
   articleControlOpen: boolean;
   hideHistogram: boolean;
+}
+
+export function getParams({params}: WithRouterProps): IModeratedCommentsPathParams {
+  return {
+    context: params.articleId ? articleBase : categoryBase,
+    contextId: params.articleId || params.categoryId,
+    disposition: params.tag,
+  };
 }
 
 export class ModeratedComments
@@ -330,12 +343,12 @@ export class ModeratedComments
     if (prevState.loadedCategoryId !== nextProps.params.categoryId ||
         prevState.loadedArticleId !== nextProps.params.articleId ||
         prevState.loadedTag !== nextProps.params.tag) {
-      nextProps.loadData(nextProps.params.categoryId, nextProps.params.articleId, nextProps.params.tag);
+      nextProps.loadData(getParams(nextProps));
     }
 
     const actionLabel = nextProps.params.tag;
     if (prevState.actionLabel !== actionLabel) {
-      nextProps.changeSort(getSortDefault(actionLabel));
+      nextProps.changeSort(getParams(nextProps), getSortDefault(actionLabel));
     }
 
     const commentIds = nextProps.moderatedComments.get(nextProps.params.tag);
@@ -774,7 +787,7 @@ export class ModeratedComments
 
   @autobind
   onSortChange(event: React.FormEvent<any>) {
-    this.props.changeSort((event.target as any).value);
+    this.props.changeSort(getParams(this.props), (event.target as any).value);
   }
 
   @autobind
@@ -814,7 +827,7 @@ export class ModeratedComments
   onSelectChange(event: React.FormEvent<any>) {
     const currentSelect = (event.target as any).value;
     this.setState({ currentSelect });
-    this.props.changeSort('newest');
+    this.props.changeSort(getParams(this.props), 'newest');
   }
 
   @autobind

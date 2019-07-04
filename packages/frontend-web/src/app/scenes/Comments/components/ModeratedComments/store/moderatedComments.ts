@@ -17,6 +17,7 @@ limitations under the License.
 import { fromJS, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
 import {
   getModeratedCommentIdsForArticle as fetchModeratedCommentIdsForArticle,
   getModeratedCommentIdsForCategory as fetchModeratedCommentIdsForCategory,
@@ -30,7 +31,7 @@ import {
   rejectComment,
   resetComment,
 } from '../../../../../stores/comments';
-
+import { IModeratedCommentsPathParams, isArticleContext } from '../../../../routes';
 import { DATA_PREFIX } from './reduxPrefix';
 
 export const updateCommentStateAction: {
@@ -282,16 +283,17 @@ export function getModeratedCommentsIsLoading(state: IAppStateRecord): boolean {
   return state.getIn(MODERATED_COMMENTS_IS_LOADING);
 }
 
-export function getModeratedComments(state: IAppStateRecord, params: any): Map<string, List<string>> {
-  if (!!params.articleId) {
+export function getModeratedComments(state: IAppStateRecord, params: IModeratedCommentsPathParams): Map<string, List<string>> {
+  if (isArticleContext(params)) {
     const articles = getModeratedCommentsForArticle(state);
-    const articleId = params.articleId;
+    const articleId = params.contextId;
     if (articles && articles.has(articleId)) {
       return articles.get(articleId);
     }
-  } else {
+  }
+  else {
     const categories = getModeratedCommentsForCategory(state);
-    const categoryId = params.categoryId.toString();
+    const categoryId = params.contextId;
     if (categories && categories.has(categoryId)) {
       return categories.get(categoryId);
     }
