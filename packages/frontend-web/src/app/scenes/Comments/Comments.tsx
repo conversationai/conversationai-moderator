@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
@@ -23,12 +22,8 @@ import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../mod
 import {
   HeaderBar,
 } from '../../components';
-import { updateArticleModerators } from '../../platform/dataService';
 import { IAppDispatch } from '../../stores';
 import { ISummaryCounts } from '../../stores/categories';
-import {
-  clearReturnSavedCommentRow,
-} from '../../util';
 import { css, stylesheet } from '../../utilx';
 
 import {
@@ -136,53 +131,5 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
         </div>
       </div>
     );
-  }
-
-  @autobind
-  handleBackButtonClick() {
-    clearReturnSavedCommentRow();
-  }
-
-  @autobind
-  onSearchClick() {
-    const searchPath = this.props.article ?
-        `/search?articleId=${this.props.article.id}` :
-        `/search`;
-    this.props.router.push(searchPath);
-  }
-
-  @autobind
-  onAuthorSearchClick() {
-    this.props.router.push('/search?searchByAuthor=true');
-  }
-
-  @autobind
-  async onAddModeratorClick() {
-    this.setState({
-      isModeratorModalVisible: true,
-      moderatorIds: Set<ModelId>(this.props.article.assignedModerators),
-    });
-  }
-
-  @autobind
-  onAddModerator(userId: string) {
-    this.setState({moderatorIds: this.state.moderatorIds.add(userId)});
-  }
-
-  @autobind
-  onRemoveModerator(userId: string) {
-    this.setState({moderatorIds: this.state.moderatorIds.remove(userId)});
-  }
-
-  @autobind
-  closeModeratorAssignmentModal() {
-    this.setState({ isModeratorModalVisible: false });
-  }
-
-  @autobind
-  saveModeratorAssignmentModal() {
-    const moderatorIds = this.state.moderatorIds.toArray();
-    updateArticleModerators(this.props.article.id, moderatorIds);
-    this.closeModeratorAssignmentModal();
   }
 }
