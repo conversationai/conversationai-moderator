@@ -27,33 +27,31 @@ export interface ILoginProps {
   errorMessage?: boolean | string;
 }
 
-export class Login extends React.Component<ILoginProps> {
-  render() {
-    const { errorMessage, csrf } = this.props;
-    const redirectURI = window.location.origin + window.location.pathname;
+export function Login(props: ILoginProps) {
+  const { errorMessage, csrf } = props;
+  const redirectURI = window.location.origin + window.location.pathname;
 
-    let url = `${API_URL}/auth/login/google?`;
+  let url = `${API_URL}/auth/login/google?`;
 
-    if (csrf) {
-      url += `&csrf=${csrf}`;
-    }
-
-    if (redirectURI) {
-      url += `&referrer=${encodeURIComponent(redirectURI)}`;
-    }
-
-    return (
-      <div key="login">
-        <div key="headerLink" {...css(ROOT_STYLES.header2Tag, ROOT_STYLES.fadeIn)}>
-          <a href={url} {...css(ROOT_STYLES.link)}>Sign in</a>
-        </div>
-        { errorMessage && (
-          <div key="login-errors" {...css(ROOT_STYLES.errors, ROOT_STYLES.fadeIn)}>
-            <p key="message">{errorMessage}</p>
-            <p key="try-again" {...css(ROOT_STYLES.errorsTryAgain)}><a key="try-again" href={url} {...css(ROOT_STYLES.link)}>Try Again</a></p>
-          </div>
-        )}
-      </div>
-    );
+  if (csrf) {
+    url += `&csrf=${csrf}`;
   }
+
+  if (redirectURI) {
+    url += `&referrer=${encodeURIComponent(redirectURI)}`;
+  }
+
+  return (
+    <div key="login">
+      <div key="headerLink" {...css(ROOT_STYLES.header2Tag, ROOT_STYLES.fadeIn)}>
+        <a href={url} {...css(ROOT_STYLES.link)}>Sign in</a>
+      </div>
+      { errorMessage && (
+        <div key="login-errors" {...css(ROOT_STYLES.errors, ROOT_STYLES.fadeIn)}>
+          <p key="message">{errorMessage}</p>
+          <p key="try-again" {...css(ROOT_STYLES.errorsTryAgain)}><a key="try-again" href={url} {...css(ROOT_STYLES.link)}>Try Again</a></p>
+        </div>
+      )}
+    </div>
+  );
 }
