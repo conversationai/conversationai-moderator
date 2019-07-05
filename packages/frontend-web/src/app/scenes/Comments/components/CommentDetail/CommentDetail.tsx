@@ -82,9 +82,9 @@ import { clearReturnSavedCommentRow, partial, setReturnSavedCommentRow, timeout 
 import { css, stylesheet } from '../../../../utilx';
 import {
   articleBase,
-  categoryBase,
   commentDetailsPageLink,
   commentRepliesDetailsLink,
+  isArticleContext,
   NEW_COMMENTS_DEFAULT_TAG,
   newCommentsPageLink,
 } from '../../../routes';
@@ -481,6 +481,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       linkBackToList,
       currentUser,
       onUpdateComment,
+      params,
     } = this.props;
 
     const {
@@ -508,11 +509,10 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
     const activeButtons = this.getActiveButtons(this.props.comment);
     const inReplyTo = comment.replyTo;
-    const isArticle = !!this.props.params.articleId;
 
     const batchURL = newCommentsPageLink({
-      context: isArticle ? articleBase : categoryBase,
-      contextId: isArticle ? this.props.params.articleId : (this.props.params.categoryId || 'all'),
+      context: params.context,
+      contextId: params.contextId,
       tag: NEW_COMMENTS_DEFAULT_TAG,
     });
 
@@ -530,7 +530,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
             <Link to={batchURL} {...css(STYLES.subHeading)}>
               <ArrowIcon direction="left" {...css({fill: DARK_COLOR, margin: 'auto 0'})} size={24} />
               <p {...css(STYLES.selectedInfo)}>
-                {`Back to ${isArticle ? 'article' : 'category'}`}
+                {`Back to ${isArticleContext(params as any /* TODO: remove when types fixed */) ? 'article' : 'category'}`}
               </p>
             </Link>
           )}
@@ -801,10 +801,10 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
   generatePagingLink(commentId: string) {
     const pagingIdentifier: string = qs.parse(this.props.location.search).pagingIdentifier as string;
+    const params = this.props.params as any /* TODO: remove when types fixed */;
     const urlParams = {
-      context: this.props.params.articleId ? articleBase : categoryBase,
-      contextId: this.props.params.articleId ? this.props.params.articleId :
-        this.props.params.categoryId ? this.props.params.categoryId : 'all',
+      context: params.context,
+      contextId: params.contextId,
       commentId,
     };
     const query = pagingIdentifier && {pagingIdentifier};

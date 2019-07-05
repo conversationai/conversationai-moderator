@@ -18,6 +18,7 @@ import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
+import { isEqual } from 'lodash';
 import React from 'react';
 import { WithRouterProps } from 'react-router';
 
@@ -66,10 +67,9 @@ import { partial } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
 import { getSortDefault } from '../../../../utilx';
 import {
-  articleBase,
-  categoryBase,
   commentDetailsPageLink,
   IModeratedCommentsPathParams,
+  isArticleContext,
 } from '../../../routes';
 
 const ARROW_SIZE = 6;
@@ -289,19 +289,13 @@ export interface IModeratedCommentsState {
     left: number;
   };
   updatedItems?: any;
-  loadedCategoryId?: string;
-  loadedArticleId?: string;
-  loadedTag?: string;
+  currentPathParams?: IModeratedCommentsPathParams;
   articleControlOpen: boolean;
   hideHistogram: boolean;
 }
 
 export function getParams({params}: WithRouterProps): IModeratedCommentsPathParams {
-  return {
-    context: params.articleId ? articleBase : categoryBase,
-    contextId: params.articleId || params.categoryId,
-    disposition: params.tag,
-  };
+  return params as any as IModeratedCommentsPathParams; /* TODO: remove when types fixed */
 }
 
 export class ModeratedComments
@@ -339,29 +333,25 @@ export class ModeratedComments
     keyboardJS.unbind('escape', this.onPressEscape);
   }
 
-  static getDerivedStateFromProps(nextProps: IModeratedCommentsProps, prevState: IModeratedCommentsState) {
-    if (prevState.loadedCategoryId !== nextProps.params.categoryId ||
-        prevState.loadedArticleId !== nextProps.params.articleId ||
-        prevState.loadedTag !== nextProps.params.tag) {
-      nextProps.loadData(getParams(nextProps));
+  static getDerivedStateFromProps(props: IModeratedCommentsProps, state: IModeratedCommentsState) {
+    if (!state.currentPathParams || !isEqual(state.currentPathParams, props.params)) {
+      props.loadData(getParams(props));
     }
 
-    const actionLabel = nextProps.params.tag;
-    if (prevState.actionLabel !== actionLabel) {
-      nextProps.changeSort(getParams(nextProps), getSortDefault(actionLabel));
+    const actionLabel = props.params.disposition;
+    if (state.actionLabel !== actionLabel) {
+      props.changeSort(getParams(props), getSortDefault(actionLabel));
     }
 
-    const commentIds = nextProps.moderatedComments.get(nextProps.params.tag);
-    const allModeratedCommentIds = nextProps.moderatedComments.reduce((sum, tagList) =>
+    const commentIds = props.moderatedComments.get(props.params.disposition);
+    const allModeratedCommentIds = props.moderatedComments.reduce((sum, tagList) =>
       sum.union(tagList.toSet()), Set());
 
     return {
       actionLabel,
       commentIds,
       allModeratedCommentIds,
-      loadedCategoryId: nextProps.params.categoryId,
-      loadedArticleId: nextProps.params.articleId,
-      loadedTag: nextProps.params.tag,
+      currentPathParams: props.params,
     };
   }
 
@@ -384,14 +374,13 @@ export class ModeratedComments
       isConfirmationModalVisible,
       isTaggingToolTipMetaVisible,
       taggingToolTipMetaPosition,
-      loadedArticleId,
       hideHistogram,
     } = this.state;
 
     function getLinkTarget(comment: ICommentModel): string {
       const urlParams = {
-        context: params.articleId ? articleBase : categoryBase,
-        contextId: params.articleId ? params.articleId : params.categoryId ? params.categoryId : 'all',
+        context: params.context,
+        contextId: params.contextId,
         commentId: comment.id,
       };
       const query = pagingIdentifier && {pagingIdentifier};
@@ -427,7 +416,7 @@ export class ModeratedComments
               </select>
               <span aria-hidden="true" {...css(STYLES.arrow)} />
             </div>
-            {this.props.params.articleId && (
+            {isArticleContext(getParams(this.props)) && (
               <ArticleControlIcon
                 article={this.props.article}
                 open={this.state.articleControlOpen}
@@ -563,7 +552,7 @@ export class ModeratedComments
               sortOptions={this.getSortOptions()}
               totalItems={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds.size : commentIds.size}
               triggerActionToast={this.triggerActionToast}
-              displayArticleTitle={!loadedArticleId}
+              displayArticleTitle={isArticleContext(getParams(this.props))}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               requireReasonForReject={REQUIRE_REASON_TO_REJECT}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
@@ -782,7 +771,8 @@ export class ModeratedComments
 
   @autobind
   getCurrentSort() {
-    return this.props.getCurrentColumnSort(this.props.params.categoryId);
+    const categoryId = isArticleContext(getParams(this.props)) ? undefined : this.props.params.contextId;
+    return this.props.getCurrentColumnSort(categoryId);
   }
 
   @autobind

@@ -27,6 +27,7 @@ import { IAppStateRecord } from '../../stores';
 import { getArticle } from '../../stores/articles';
 import { getCategory, getGlobalCounts } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUsers } from '../../stores/users';
+import { isArticleContext } from '../routes';
 import { Comments as PureComments, ICommentsProps } from './Comments';
 import { reducer as commentDetailReducer } from './components/CommentDetail/store';
 import { reducer as moderatedCommentsReducer } from './components/ModeratedComments';
@@ -51,20 +52,24 @@ export const Comments = compose(
   connect(createStructuredSelector({
       user: getCurrentUser,
       isAdmin: getCurrentUserIsAdmin,
-      article: (state: IAppStateRecord, { params: { articleId }}: ICommentsProps) => getArticle(state, articleId),
+      article: (state: IAppStateRecord, { params }: ICommentsProps) => (
+        isArticleContext(params as any /* TODO: remove when types fixed */) && getArticle(state, params.contextId)
+      ),
       category: (state: IAppStateRecord, { params }: ICommentsProps) => {
-        if (params.articleId) {
-          const article = getArticle(state, params.articleId);
+        if (isArticleContext(params as any /* TODO: remove when types fixed */)) {
+          const article = getArticle(state, params.contextId);
           return getCategory(state, article.categoryId);
         }
-        else if (params.categoryId && params.categoryId !== 'all') {
-          return getCategory(state, params.categoryId);
+        else if (params.contextId !== 'all') {
+          return getCategory(state, params.contextId);
         }
       },
       moderators: (state: IAppStateRecord, { params }: ICommentsProps) => {
-        if (!params.articleId) { return List<IUserModel>(); }
+        if (!isArticleContext(params as any /* TODO: remove when types fixed */)) {
+          return List<IUserModel>();
+        }
 
-        const article = getArticle(state, params.articleId);
+        const article = getArticle(state, params.contextId);
         const users = getUsers(state);
         return List<IUserModel>(article.assignedModerators.map((userId) => users.get(userId)));
       },
