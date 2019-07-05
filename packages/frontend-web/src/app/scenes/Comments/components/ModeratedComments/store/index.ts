@@ -31,4 +31,3 @@ export * from './checkedSelection';
 export * from './commentListLoader';
 export * from './currentPagingIdentifier';
 export * from './moderatedComments';
-export * from './util';

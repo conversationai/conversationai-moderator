@@ -83,11 +83,10 @@ import {
 } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
 import {
-  articleBase,
-  categoryBase,
   commentDetailsPageLink,
   INewCommentsPathParams,
   INewCommentsQueryParams,
+  isArticleContext,
   newCommentsPageLink,
   tagSelectorLink,
 } from '../../../routes';
@@ -270,16 +269,8 @@ export interface INewCommentsProps extends WithRouterProps {
   toggleSelectAll?(): any;
   toggleSingleItem({ id }: { id: string }): any;
   getComment?(id: string): any;
-  setCommentModerationStatus?(
-    commentIds: Array<string>,
-    action: string,
-  ): any;
-  loadData(
-    params: INewCommentsPathParams,
-    pos1: number,
-    pos2: number,
-    sort: string,
-  ): void;
+  setCommentModerationStatus?(commentIds: Array<string>, action: string): any;
+  loadData(params: INewCommentsPathParams, pos1: number, pos2: number, sort: string): void;
   confirmCommentSummaryScore?(id: string, tagId: string): void;
   rejectCommentSummaryScore?(id: string, tagId: string): void;
 }
@@ -342,12 +333,10 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
   static getDerivedStateFromProps(props: INewCommentsProps, state: INewCommentsState) {
     let preselect: IPreselectModel;
-    let categoryId = props.params.categoryId;
-    const articleId = props.params.articleId;
-    const tag = props.params.tag;
-    if (props.article) {
-      categoryId = props.article.categoryId;
-    }
+    const params = props.params as any /* TODO: remove when types fixed */;
+    const tag = params.tag;
+    const categoryId = (!isArticleContext(params)) ? params.contextId : props.article.categoryId;
+    const articleId = (isArticleContext(params)) ? params.contextId : null;
     let defaultPos1: number;
     let defaultPos2: number;
     let defaultSort: string;
@@ -401,8 +390,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
     if ((categoryId !== state.categoryId) || (articleId !== state.articleId) || (tag !== state.tag) ||
         (pos1 !== state.pos1) || (pos2 !== state.pos2) || (sort !== state.sort)) {
-      const params = articleId ? {context: articleBase, contextId: articleId, tag} :
-        {context: categoryBase, contextId: categoryId, tag};
       props.loadData(params, pos1, pos2, sort);
     }
 
@@ -509,8 +496,8 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
     function getLinkTarget(comment: ICommentModel): string {
       const urlParams = {
-        context: params.articleId ? articleBase : categoryBase,
-        contextId: params.articleId ? params.articleId : params.categoryId ? params.categoryId : 'all',
+        context: params.context,
+        contextId: params.contextId,
         commentId: comment.id,
       };
       const query = pagingIdentifier && {pagingIdentifier};
@@ -570,9 +557,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
           }));
     }
 
-    const tagLinkURL = this.props.params.articleId ?
-      tagSelectorLink({context: articleBase, contextId: this.props.params.articleId, tag: selectedTag && selectedTag.id}) :
-      tagSelectorLink({context: categoryBase, contextId: this.props.params.categoryId, tag: selectedTag && selectedTag.id});
+    const tagLinkURL = tagSelectorLink({context: params.context, contextId: params.contextId, tag: selectedTag && selectedTag.id});
 
     const rules = selectedTag && selectedTag.key !== 'DATE' && rulesInCategory && List<IRuleModel>(rulesInCategory.filter( (r) => r.tagId && r.tagId === selectedTag.id));
     const disableAllButtons = areNoneSelected || commentScores.size <= 0;
@@ -604,7 +589,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               </Link>
               <span aria-hidden="true" {...css(STYLES.arrow)} />
             </div>
-            { this.props.params.articleId && (
+            { isArticleContext(params as any /* TODO: remove when types fixed */) && (
               <ArticleControlIcon
                 article={article}
                 open={this.state.articleControlOpen}
@@ -765,7 +750,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               totalItems={commentIds.size}
               triggerActionToast={this.triggerActionToast}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
-              displayArticleTitle={!!this.props.params.categoryId}
+              displayArticleTitle={isArticleContext(params as any /* TODO: remove when types fixed */)}
               onTableScroll={this.onTableScroll}
             />
           )}
@@ -958,12 +943,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     if (sort !== this.state.defaultSort) {
       query.sort = sort;
     }
-
-    this.props.router.replace(newCommentsPageLink({
-      context: this.props.params.categoryId ? categoryBase : articleBase,
-      contextId: this.props.params.articleId || this.props.params.categoryId,
-      tag: this.props.params.tag,
-    }, query));
+    this.props.router.replace(newCommentsPageLink(this.props.params as any /* TODO: remove when types fixed */, query));
   }
 
   @autobind

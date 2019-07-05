@@ -42,7 +42,10 @@ import { getPreselects } from '../../../../stores/preselects';
 import { getRules } from '../../../../stores/rules';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
-import { INewCommentsPathParams } from '../../../routes';
+import {
+  INewCommentsPathParams,
+  isArticleContext,
+} from '../../../routes';
 import {
   INewCommentsProps,
   NewComments as PureNewComments,
@@ -112,8 +115,8 @@ function mapDispatchToProps(dispatch: IAppDispatch): Partial<INewCommentsProps> 
 
 const mapStateToProps = createStructuredSelector({
   article: (state: IAppStateRecord, { params }: INewCommentsProps) => {
-    if (params.articleId) {
-      return getArticle(state, params.articleId);
+    if (isArticleContext(params as any /* TODO: remove when types fixed */)) {
+      return getArticle(state, params.contextId);
     }
   },
 

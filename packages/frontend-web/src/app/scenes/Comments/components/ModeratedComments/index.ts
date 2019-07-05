@@ -37,7 +37,7 @@ import {
 } from '../../../../stores/commentActions';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
-import { IModeratedCommentsPathParams } from '../../../routes';
+import {IModeratedCommentsPathParams, isArticleContext} from '../../../routes';
 import {
   getParams,
   IModeratedCommentsProps,
@@ -52,7 +52,6 @@ import {
   getCurrentPagingIdentifier,
   getIsItemChecked,
   getModeratedComments,
-  parseRoute,
   setCommentsModerationForArticle,
   setCommentsModerationForCategory,
   toggleSelectAll,
@@ -87,9 +86,9 @@ type IModeratedCommentsStateProps = Pick<
 const mapStateToProps = createStructuredSelector({
   isLoading: (state: IAppStateRecord) => getCommentListIsLoading(state) || !getCommentListHasLoaded(state),
 
-  article: (state: IAppStateRecord, { params }: IModeratedCommentsProps) => {
-    if (params.articleId) {
-      return getArticle(state, params.articleId);
+  article: (state: IAppStateRecord, props: IModeratedCommentsProps) => {
+    if (isArticleContext(getParams(props))) {
+      return getArticle(state, getParams(props).contextId);
     }
   },
 
@@ -99,9 +98,9 @@ const mapStateToProps = createStructuredSelector({
 
   isItemChecked: (state: IAppStateRecord) => (id: string) => getIsItemChecked(state, id),
 
-  moderatedComments: (state: IAppStateRecord, props: IModeratedCommentsProps) => {
-    return getModeratedComments(state, getParams(props));
-  },
+  moderatedComments: (state: IAppStateRecord, props: IModeratedCommentsProps) => (
+    getModeratedComments(state, getParams(props))
+  ),
 
   tags: getTaggableTags,
 
@@ -114,22 +113,16 @@ const mapStateToProps = createStructuredSelector({
   textSizes: getTextSizes,
 });
 
-function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedCommentsProps): IModeratedCommentsDispatchProps {
-  const {
-    articleId,
-    categoryId,
-    tag,
-  } = parseRoute(ownProps.params);
-
+function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsProps): IModeratedCommentsDispatchProps {
   const actionMap: {
     [key: string]: (ids: Array<string>, tagId?: string) => any;
   } = {
     highlight: highlightComments,
-    approve: tag === 'flagged' ? approveFlagsAndComments : approveComments,
+    approve: getParams(props).disposition === 'flagged' ? approveFlagsAndComments : approveComments,
     defer: deferComments,
-    reject: tag === 'flagged' ? rejectFlagsAndComments : rejectComments,
+    reject: getParams(props).disposition === 'flagged' ? rejectFlagsAndComments : rejectComments,
     tag: tagCommentSummaryScores,
-    reset: tag === 'flagged' ? approveFlagsAndComments : resetComments,
+    reset: getParams(props).disposition === 'flagged' ? approveFlagsAndComments : resetComments,
   };
 
   return {
@@ -148,10 +141,10 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: IModeratedComments
     toggleSingleItem: ({ id }: { id: string }) => dispatch(toggleSingleItem({ id })),
 
     setCommentModerationStatusForArticle: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
-        dispatch(setCommentsModerationForArticle(articleId, commentIds, moderationAction, currentModeration)),
+        dispatch(setCommentsModerationForArticle(getParams(props).contextId, commentIds, moderationAction, currentModeration)),
 
     setCommentModerationStatusForCategory: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
-        dispatch(setCommentsModerationForCategory(categoryId, commentIds, moderationAction, currentModeration)),
+        dispatch(setCommentsModerationForCategory(getParams(props).contextId, commentIds, moderationAction, currentModeration)),
 
     changeSort: async (params: IModeratedCommentsPathParams, newSort: string): Promise<void> => {
       await dispatch(changeColumnSortGroupDefault({

@@ -24,13 +24,13 @@ import {
 } from '../../components';
 import { IAppDispatch } from '../../stores';
 import { ISummaryCounts } from '../../stores/categories';
-import { css, stylesheet } from '../../utilx';
-
 import {
   HEADER_HEIGHT,
   WHITE_COLOR,
 } from '../../styles';
-import {SubheaderBar} from './components/SubheaderBar';
+import { css, stylesheet } from '../../utilx';
+import { isArticleContext } from '../routes';
+import { SubheaderBar } from './components/SubheaderBar';
 
 const STYLES = stylesheet({
   main: {
@@ -68,7 +68,6 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
 
   static getDerivedStateFromProps(nextProps: ICommentsProps,  _prevState: ICommentsState) {
     const {
-      articleId,
       commentId,
       originatingCommentId,
     } = nextProps.params;
@@ -79,7 +78,7 @@ export class Comments extends React.Component<ICommentsProps, ICommentsState> {
       nextProps.globalCounts;
 
     return {
-      isArticleDetail: !!articleId,
+      isArticleDetail: isArticleContext(nextProps.params as any/* TODO: remove when types fixed */),
       isCommentDetail: !!commentId,
       hideCommentHeader: !!originatingCommentId,
       counts,

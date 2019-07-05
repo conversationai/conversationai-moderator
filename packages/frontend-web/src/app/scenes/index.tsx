@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { IndexRedirect, Route, Router } from 'react-router';
+import { IndexRedirect, Redirect, Route, Router } from 'react-router';
 import { combineReducers } from 'redux-immutable';
 
 import {
@@ -40,22 +40,6 @@ export const reducer: any = combineReducers({
   root: rootReducer,
 });
 
-const commentsRoutes = (path: string) => (
-  <Route path={path} component={Comments}>
-    <IndexRedirect to="new" />
-    <Route path="new">
-      <IndexRedirect to="SUMMARY_SCORE" />
-      <Route path=":tag" component={NewComments}/>
-    </Route>
-    <Route path="moderated">
-      <IndexRedirect to="approved" />
-      <Route path=":tag" component={ModeratedComments}/>
-    </Route>
-    <Route path="comments/:commentId" component={CommentDetail} />
-    <Route path="comments/:commentId/:originatingCommentId/replies" component={ThreadedCommentDetail} />
-  </Route>
-);
-
 export const scenes = (history: any) => (
   <Router history={history}>
     <Route path="/" component={Root}>
@@ -67,12 +51,21 @@ export const scenes = (history: any) => (
       </Route>
       <Route path={routes.searchBase} component={Search}/>
       <Route path={routes.settingsBase} component={Settings} />
-      <Route path={routes.articleBase}>
-        {commentsRoutes(':articleId')}
-      </Route>
-      <Route path={routes.categoryBase}>
-        <IndexRedirect to="all" />
-        {commentsRoutes(':categoryId')}
+      <Redirect from={`/${routes.categoryBase}`} to={`/${routes.categoryBase}/all/new`}/>
+      <Route path={':context'}>
+        <Route path=":contextId" component={Comments}>
+          <IndexRedirect to="new" />
+          <Route path="new">
+            <IndexRedirect to={routes.NEW_COMMENTS_DEFAULT_TAG} />
+            <Route path=":tag" component={NewComments}/>
+          </Route>
+          <Route path="moderated">
+            <IndexRedirect to="approved" />
+            <Route path=":disposition" component={ModeratedComments}/>
+          </Route>
+          <Route path="comments/:commentId" component={CommentDetail} />
+          <Route path="comments/:commentId/:originatingCommentId/replies" component={ThreadedCommentDetail} />
+        </Route>
       </Route>
       <Route path={`${routes.tagSelectorBase}/:context/:contextId/:tag`} component={TagSelector} />
     </Route>
