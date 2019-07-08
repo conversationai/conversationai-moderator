@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# Install all deps
-./bin/install
-
-./node_modules/.bin/lerna publish --exact --force-publish="*"
