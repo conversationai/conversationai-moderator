@@ -1,8 +1,15 @@
 #!/bin/bash
 
+basename=`dirname $0`
+cd $basename/..
+
+if [ ! -z $1 ]; then
+  echo Removing old packages so we fetch everything from scratch
+  rm -Rf node_modules package-lock.json
+fi
+
 # Get packages for the root of the system, in particular lerna
 NODE_ENV=development npm install
-NODE_ENV=development npm prune
 
 # Use lerna to link together sub-modules, then build
 ./bin/link-packages
