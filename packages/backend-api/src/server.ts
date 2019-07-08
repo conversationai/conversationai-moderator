@@ -60,7 +60,7 @@ if (!api_url) {
 
 const STANDALONE = api_url.startsWith(frontend_url);
 const pUrl = new URL(api_url);
-const port = pUrl.port || (pUrl.protocol === 'https' ? 443 : 80);
+const port = pUrl.port || (pUrl.protocol === 'https:' ? 443 : 80);
 const path = pUrl.pathname;
 
 async function init() {
@@ -68,8 +68,10 @@ async function init() {
   let server;
 
   if (pUrl.protocol === 'https:') {
-    const privateKey = readFileSync('sslcert/key.pem', 'utf8');
-    const certificate = readFileSync('sslcert/cert.pem', 'utf8');
+    // We assume a LetsEncrypt generated key
+    const sslRoot = `/etc/letsencrypt/live/${pUrl.hostname}`;
+    const privateKey = readFileSync(`${sslRoot}/privkey.pem`, 'utf8');
+    const certificate = readFileSync(`${sslRoot}/fullchain.pem`, 'utf8');
     const credentials = {key: privateKey, cert: certificate};
     server = https.createServer(credentials, app);
   }
@@ -95,13 +97,14 @@ async function init() {
   app.use(path, await mountAPI());
 
   if (STANDALONE) {
+    console.log('Mounting web frontend');
     app.use('/', mountWebFrontend());
   }
 
   applyCommonPostprocessors(app);
 
   console.log(`Binding to ${pUrl.protocol} ${pUrl.hostname} : ${port}`);
-  await server.listen(port);
+  await server.listen({host: '0.0.0.0', port});
   console.log(`Started server in ${STANDALONE ? 'standalone' : 'API only'} mode`);
 }
 
