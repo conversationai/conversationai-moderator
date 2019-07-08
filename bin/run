@@ -2,10 +2,35 @@
 # Script to run some moderator component inside a docker container
 
 basename=`dirname $0`
+server=$1
+logs=$2
 
-export FRONTEND_API=${MODERATOR_URL}
-export API_URL=${MODERATOR_URL}/api
+if [ -z $server ]; then
+  echo You need to specify a server name.
+  exit 1
+fi
+
+if [ -z $logs ]; then
+  logs=/tmp/logs
+  echo "Using default log directory ($logs)"
+else
+  echo Logging to $logs
+fi
+
+mkdir -p $logs
+logs=`readlink -f $logs`
+
+export FRONTEND_URL=${server}
+export API_URL=${server}/api
 
 # TODO fix initdb ${basename}/initdb
 cd ${basename}/../packages/backend-api
-exec node dist/server.js
+
+now=`date`
+echo Starting: $now  >> $logs/server.log
+echo Starting: $now  >> $logs/processor.log
+echo Starting: $now  >> $logs/worker.log
+
+node dist/processor.js 2>&1 | tee -a $logs/processor.log &
+node dist/worker.js 2>&1 | tee -a $logs/worker.log &
+node dist/server.js 2>&1 | tee -a $logs/server.log
