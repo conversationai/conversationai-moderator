@@ -16,10 +16,10 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import { Cell, Column, Table } from 'fixed-data-table-2';
-import {List, Set} from 'immutable';
+import { List, Set } from 'immutable';
 import React from 'react';
 
-import {ICommentModel, ITagModel, ModelId} from '../../../models';
+import { ICommentModel, ITagModel, ModelId } from '../../../models';
 import { IConfirmationAction } from '../../../types';
 import { partial } from '../../util';
 import { css, stylesheet } from '../../utilx';

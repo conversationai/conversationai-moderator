@@ -18,6 +18,7 @@ import { autobind } from 'core-decorators';
 import React from 'react';
 import { ITagModel } from '../../../models';
 import { EyeIcon, Link } from '../../components';
+import { commentPageLink } from '../../scenes/routes';
 import {
   ARTICLE_CATEGORY_TYPE,
   DARK_COLOR,
@@ -28,7 +29,6 @@ import {
   LIGHT_TERTIARY_TEXT_COLOR,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import {commentPageLink} from '../../scenes/routes';
 
 const STYLES = stylesheet({
   link: {

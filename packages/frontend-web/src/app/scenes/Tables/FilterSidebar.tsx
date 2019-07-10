@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {autobind} from 'core-decorators';
+import { autobind } from 'core-decorators';
 import { Seq, Set } from 'immutable';
-import React, {KeyboardEvent, SyntheticEvent} from 'react';
+import React, { KeyboardEvent, SyntheticEvent } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -38,11 +38,11 @@ import {
   ExpandMore,
 } from '@material-ui/icons';
 
-import {IUserModel, ModelId} from '../../../models';
+import { IUserModel, ModelId } from '../../../models';
 import * as icons from '../../components/Icons';
-import {HEADER_HEIGHT, SCRIM_STYLE} from '../../styles';
-import {css, stylesheet} from '../../utilx';
-import {SmallUserIcon} from './components';
+import { HEADER_HEIGHT, SCRIM_STYLE } from '../../styles';
+import { css, stylesheet } from '../../utilx';
+import { SmallUserIcon } from './components';
 import {
   FILTER_DATE_lastModeratedAt,
   FILTER_DATE_sourceCreatedAt,
