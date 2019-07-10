@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { GUTTER_DEFAULT_SPACING, MODAL_DROP_SHADOW, WHITE_COLOR } from '../styles';
+import { WHITE_COLOR } from './colors';
+import { GUTTER_DEFAULT_SPACING, MODAL_DROP_SHADOW } from './util';
 
 /*
  * Select element styles

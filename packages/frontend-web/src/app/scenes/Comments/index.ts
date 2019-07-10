@@ -28,25 +28,14 @@ import { getArticle } from '../../stores/articles';
 import { getCategory, getGlobalCounts } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUsers } from '../../stores/users';
 import { Comments as PureComments, ICommentsProps } from './Comments';
-
-import {
-  newCommentsReducer,
-} from './components/NewComments';
-export {
-  NewComments,
-} from './components/NewComments';
-export {
-  TagSelector,
-} from './components/TagSelector';
-import {
-  reducer as moderatedCommentsReducer,
-} from './components/ModeratedComments';
-export {
-  ModeratedComments,
-} from './components/ModeratedComments';
-
-import { reducer as commentDetailReducer } from './components/CommentDetail';
+import { reducer as commentDetailReducer } from './components/CommentDetail/store';
+import { reducer as moderatedCommentsReducer } from './components/ModeratedComments';
+import { newCommentsReducer } from './components/NewComments';
 import { reducer as threadedCommentDetailReducer } from './components/ThreadedCommentDetail';
+
+export { NewComments } from './components/NewComments';
+export { TagSelector } from './components/TagSelector';
+export { ModeratedComments } from './components/ModeratedComments';
 export { CommentDetail } from './components/CommentDetail';
 export { ThreadedCommentDetail } from './components/ThreadedCommentDetail';
 

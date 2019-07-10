@@ -19,7 +19,7 @@ import {
   DIVIDER_COLOR,
   MEDIUM_COLOR,
   WHITE_COLOR,
-} from '../styles';
+} from './colors';
 
 /*
  * Checkbox/radio input styles

@@ -26,12 +26,6 @@ import {
   IModerationAction,
   ITopScore,
 } from '../../../types';
-import {
-  Avatar,
-  Link,
-  ModerateButtons,
-  ReplyIcon,
-} from '../../components';
 import { FlagsSummary } from '../../scenes/Comments/components/FlagsSummary';
 import {
   ARTICLE_HEADLINE_TYPE,
@@ -42,15 +36,19 @@ import {
 import { COMMON_STYLES } from '../../stylesx';
 import { maybeCallback, partial } from '../../util';
 import { css } from '../../utilx';
+import { Avatar } from '../Avatar';
 import {
   ConfirmationCircle,
 } from '../ConfirmationCircle';
 import {
   MoreVerticalIcon,
+  ReplyIcon,
 } from '../Icons';
 import {
   ROW_STYLES,
 } from '../LazyCommentList';
+import { Link } from '../Link';
+import { ModerateButtons } from '../ModerateButtons';
 
 const LAZY_BOX_STYLE = {
   width: '100%',

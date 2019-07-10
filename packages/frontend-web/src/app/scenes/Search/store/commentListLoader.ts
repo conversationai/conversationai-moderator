@@ -22,7 +22,7 @@ import { search } from '../../../platform/dataService';
 import { IAppStateRecord, IThunkAction } from '../../../stores';
 import { loadTextSizesByIds } from '../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../util';
-import { storeCommentPagingOptions } from '../../Comments/components/CommentDetail';
+import { storeCommentPagingOptions } from '../../Comments/components/CommentDetail/store';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
 import { loadAllCommentIdsComplete } from './searchResults';
 

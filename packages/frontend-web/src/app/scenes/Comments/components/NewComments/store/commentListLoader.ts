@@ -19,20 +19,18 @@ import { Reducer } from 'redux-actions';
 import { ITagModel } from '../../../../../../models';
 import { IAppStateRecord, IThunkAction } from '../../../../../stores';
 import { getTags } from '../../../../../stores/tags';
+import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
 import { commentSortDefinitions } from '../../../../../utilx';
-
-import { loadTextSizesByIds } from '../../../../../stores/textSizes';
-import { storeCommentPagingOptions } from '../../CommentDetail';
+import { storeCommentPagingOptions } from '../../CommentDetail/store';
 import {
   getCommentScores,
   loadCommentScoresForArticle,
   loadCommentScoresForCategory,
 } from './commentScores';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
-import { getCommentIDsInRange, getSelectedTag } from './util';
-
 import { DATA_PREFIX } from './reduxPrefix';
+import { getCommentIDsInRange, getSelectedTag } from './util';
 
 const LOADING_DATA = [...DATA_PREFIX, 'commentListLoader'];
 
