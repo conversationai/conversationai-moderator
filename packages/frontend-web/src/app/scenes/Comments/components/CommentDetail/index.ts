@@ -71,8 +71,6 @@ import {
   updateCommentScore,
 } from './store';
 
-export { reducer, storeCommentPagingOptions } from './store';
-
 type ICommentDetailOwnProps = {
   categoryId: string;
   params: {

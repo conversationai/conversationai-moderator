@@ -17,7 +17,7 @@ limitations under the License.
 import {
   HEADLINE_TYPE,
 } from '../styles';
-import { css } from '../utilx';
+import { css } from './cssInJs';
 
 export interface ITextNode {
   start: number;

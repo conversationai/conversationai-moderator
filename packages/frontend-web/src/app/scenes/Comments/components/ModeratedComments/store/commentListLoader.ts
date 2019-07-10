@@ -15,19 +15,19 @@ limitations under the License.
 */
 
 import { Reducer } from 'redux-actions';
+
 import { IAppStateRecord, IThunkAction } from '../../../../../stores';
 import { getCurrentColumnSort } from '../../../../../stores/columnSorts';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
 import { commentSortDefinitions,  } from '../../../../../utilx';
-import { storeCommentPagingOptions } from '../../CommentDetail';
+import { storeCommentPagingOptions } from '../../CommentDetail/store';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
 import {
   getModeratedComments,
   loadModeratedCommentsForArticle,
   loadModeratedCommentsForCategory,
 } from './moderatedComments';
-
 import { DATA_PREFIX } from './reduxPrefix';
 
 const LOADING_DATA = [...DATA_PREFIX, 'commentListLoader'];
