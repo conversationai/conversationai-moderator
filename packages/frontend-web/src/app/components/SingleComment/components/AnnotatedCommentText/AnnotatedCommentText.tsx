@@ -21,7 +21,7 @@ import keyboardJS from 'keyboardjs';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import {ICommentScoreModel, ITagModel, IUserModel, ModelId} from '../../../../../models';
+import { ICommentScoreModel, ITagModel, IUserModel, ModelId } from '../../../../../models';
 import {
   ARTICLE_CAPTION_TYPE,
   GREY_COLOR,

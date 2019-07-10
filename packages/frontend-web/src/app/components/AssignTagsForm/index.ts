@@ -20,8 +20,8 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { getTaggingSensitivitiesInCategory } from '../../scenes/Comments/store';
-import {IAppDispatch, IAppStateRecord} from '../../stores';
-import {getSummaryScoresById, loadCommentSummaryScores} from '../../stores/commentSummaryScores';
+import { IAppDispatch, IAppStateRecord } from '../../stores';
+import { getSummaryScoresById, loadCommentSummaryScores } from '../../stores/commentSummaryScores';
 import { getTaggableTags } from '../../stores/tags';
 import {
   AssignTagsForm as PureAssignTagsForm,
