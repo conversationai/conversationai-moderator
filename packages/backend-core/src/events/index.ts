@@ -62,47 +62,34 @@ export function getEventEmitterSingleton(): EventEmitter {
   return emitter;
 }
 
-function subscribe(pluginName: string, eventName: 'api.publisher.pullArticle', callback: IEventCallback<IEventPublisherPullArticleArgs>): void;
-function subscribe(pluginName: string, eventName: 'api.publisher.highlightComment', callback: IEventCallback<IEventPublisherHighlightCommentArgs>): void;
-function subscribe(pluginName: string, eventName: 'api.publisher.unhighlightComment', callback: IEventCallback<IEventPublisherUnhighlightCommentArgs>): void;
-function subscribe(pluginName: string, eventName: 'api.publisher.sendDecisionToPublisher', callback: IEventCallback<IEventPublisherDecisionToPublisherArgs>): void;
-function subscribe(pluginName: string, eventName: 'api.publisher.editComment', callback: IEventCallback<IEventPublisherEditCommentArgs>): void;
-
-function subscribe<T, S, R>(pluginName: string, eventName: T, callback: IEventCallback<S> | IEventWithMapCallback<S, R>): void {
+function subscribe<S, R>(pluginName: string, eventName: string & IKnownEvents, callback: IEventCallback<S> | IEventWithMapCallback<S, R>): void {
   const e = getEventEmitterSingleton();
 
   logger.info(`Event subscription: ${pluginName} is listening to ${eventName}`);
 
-  e.addListener(eventName.toString(), callback);
+  e.addListener(eventName, callback);
 }
 
-function unsubscribe(pluginName: string, eventName: 'api.publisher.pullArticle', callback: IEventCallback<IEventPublisherPullArticleArgs>): void;
-function unsubscribe(pluginName: string, eventName: 'api.publisher.highlightComment', callback: IEventCallback<IEventPublisherHighlightCommentArgs>): void;
-function unsubscribe(pluginName: string, eventName: 'api.publisher.unhighlightComment', callback: IEventCallback<IEventPublisherUnhighlightCommentArgs>): void;
-function unsubscribe(pluginName: string, eventName: 'api.publisher.sendDecisionToPublisher', callback: IEventCallback<IEventPublisherDecisionToPublisherArgs>): void;
-function unsubscribe(pluginName: string, eventName: 'api.publisher.editComment', callback: IEventCallback<IEventPublisherEditCommentArgs>): void;
-
-function unsubscribe<T, S, R>(pluginName: string, eventName: T, callback: IEventCallback<S> | IEventWithMapCallback<S, R>): void {
+function unsubscribe<S, R>(pluginName: string, eventName: string & IKnownEvents, callback: IEventCallback<S> | IEventWithMapCallback<S, R>): void {
   const e = getEventEmitterSingleton();
 
   logger.info(`Event unsubscription: ${pluginName} is no longer listening to ${eventName}`);
 
-  e.removeListener(eventName.toString(), callback);
+  e.removeListener(eventName, callback);
 }
 
-function trigger<T>(name: T, args: object) {
+function trigger(name: string & IKnownEvents, args: object) {
   const e = getEventEmitterSingleton();
 
   logger.info(`Triggering event: ${name}`);
 
-  e.emit(name.toString(), args);
+  e.emit(name, args);
 }
 
-function triggerMap(name: 'api.publisher.pullArticle', args: IEventPublisherPullArticleArgs): Promise<Array<IEventPublisherPullArticleReturns>>;
-async function triggerMap<T, S, R>(name: T, args: S): Promise<Array<R>> {
+async function triggerMap<S, R>(name: string & 'api.publisher.pullArticle', args: S): Promise<Array<R>> {
   const e = getEventEmitterSingleton();
 
-  const listeners = e.listeners(name.toString());
+  const listeners = e.listeners(name);
 
   logger.info(`Mapping event: ${name} across ${listeners.length} listeners`);
 
@@ -111,11 +98,10 @@ async function triggerMap<T, S, R>(name: T, args: S): Promise<Array<R>> {
   );
 }
 
-function triggerMapFirst(name: 'api.publisher.pullArticle', args: IEventPublisherPullArticleArgs): Promise<IEventPublisherPullArticleReturns>;
-async function triggerMapFirst<T, S, R>(name: T, args: S): Promise<R> {
+async function triggerMapFirst<S, R>(name: string & 'api.publisher.pullArticle', args: S): Promise<R> {
   logger.info(`Mapping first event: ${name}`);
 
-  const data = await triggerMap(name as any, args as any);
+  const data = await triggerMap(name, args as any);
 
   return (data as Array<any>)[0];
 }

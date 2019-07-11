@@ -59,11 +59,11 @@ export async function handler({ yaml, command: commandString }: any) {
       env: Object.assign({}, process.env, env),
     });
 
-    cmd.stdout.on('data', (data) => {
+    cmd.stdout!.on('data', (data) => {
       logger.info(`exec: ${data.toString().replace(/(\r\n)*$/g, '').replace(/(\n)*$/g, '')}`);
     });
 
-    cmd.stderr.on('data', (data) => {
+    cmd.stderr!.on('data', (data) => {
       logger.error(`exec: ${data.toString().replace(/(\r\n)*$/g, '').replace(/(\n)*$/g, '')}`);
     });
 
