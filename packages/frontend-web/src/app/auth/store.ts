@@ -16,22 +16,20 @@ limitations under the License.
 
 import axios from 'axios';
 import JwtDecode from 'jwt-decode';
+import { isEmpty } from 'lodash';
+import qs from 'query-string';
+import { Dispatch } from 'redux';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
+import { AuthenticationStates, SystemStates } from '../../types';
 import { checkAuthorization, setUserId } from '../platform/dataService';
 import { getToken, saveToken } from '../platform/localStore';
 import { disconnectNotifier } from '../platform/websocketService';
-import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
+import { IAppDispatch, IAppStateRecord } from '../stores';
 import { initialiseClientModel } from '../stores';
-import { clearCSRF, getCSRF } from '../util';
+import { clearCSRF, clearReturnURL, getCSRF, getReturnURL } from '../util';
 
-import { IUserModel } from '../../models';
-
-const startedAuthentication =
-  createAction('auth/STARTED_AUTHENTICATION');
-const failedAuthentication =
-  createAction('auth/FAILED_AUTHENTICATION');
 const completedAuthentication =
   createAction<number>('auth/COMPLETED_AUTHENTICATION');
 
@@ -52,34 +50,23 @@ export function setAxiosToken(token: string): void {
   // axios.defaults.headers.common['Authorization'] = 'JWT ' + token;
 }
 
-{
-  const token = getToken();
-  if (token) {
-    setAxiosToken(token);
-  }
-}
-
 export function decodeToken(token: string): any {
   return JwtDecode(token);
 }
 
-async function completeAuthentication(token: string, dispatch: IAppDispatch): Promise<void> {
-  saveToken(token);
+async function completeAuthentication(
+  dispatch: IAppDispatch,
+  setState: (state: SystemStates) => void,
+): Promise<void> {
+  const token = getToken();
   setAxiosToken(token);
   await checkAuthorization();
 
   const data = decodeToken(token);
   setUserId((data['user'] as number).toString());
   await dispatch(completedAuthentication(data['user'] as number));
-  await initialiseClientModel(dispatch);
-}
-
-export function handleToken(token: string, csrf: string): IThunkAction<void> {
-  return async (dispatch) => {
-    dispatch(startedAuthentication());
-    verifyCSRF(csrf);
-    await completeAuthentication(token, dispatch);
-  };
+  await initialiseClientModel(dispatch, setState);
+  setState('gtg');
 }
 
 function verifyCSRF(csrf?: string): void {
@@ -96,102 +83,97 @@ function verifyCSRF(csrf?: string): void {
   clearCSRF();
 }
 
-function refreshToken(): IThunkAction<void> {
-  return async (dispatch) => {
-    await completeAuthentication(
-      getToken(),
-      dispatch,
-    );
-  };
+// Returns the final destination to go to after the redirect.
+async function handleLoginRedirect(
+  dispatch: Dispatch<{}>,
+  setState: (state: AuthenticationStates) => void,
+  queryString: qs.ParsedQuery,
+) {
+  verifyCSRF(queryString['csrf'] as string);
+  saveToken(queryString['token'] as string);
+  await completeAuthentication(dispatch, setState);
+  const returnURL = getReturnURL();
+  clearReturnURL();
+  if (returnURL && !isEmpty(returnURL)) {
+    // We've saved off a pathname and search string, so use that.
+    return `${returnURL.pathname}${returnURL.search}`;
+  }
+  else {
+    // We haven't got anything saved.  So use the current URL (derived from the http
+    // referrer of the original request) but strip off the token and csrf stuff first
+    return window.location.pathname;
+  }
 }
 
-export function startAuthentication(): IThunkAction<void> {
-  return async (dispatch) => {
-    dispatch(startedAuthentication());
+let setAuthenticationState: (state: AuthenticationStates) => void = null;
 
-    const localKey = getToken();
-
-    if (localKey) {
-      // try to validate
-      try {
-        await dispatch(refreshToken());
-      }
-      catch (e) {
-        dispatch(failedAuthentication());
-        if (e.response && e.response.status === 401) {
-          console.log('Token didn\'t work, so resetting');
-          saveToken(null);
-        }
-        else {
-          console.error(e);
-        }
-      }
+export async function start(
+  dispatch: Dispatch<{}>,
+  setState: (state: SystemStates) => void,
+  setRoute: (route: string) => void,
+  setError: (error: string) => void,
+) {
+  setAuthenticationState = setState;
+  try {
+    const queryString = qs.parse(window.location.search);
+    if (queryString && queryString['token']) {
+      setState('check_token');
+      setRoute(await handleLoginRedirect(dispatch, setState, queryString));
+    }
+    else if (getToken()) {
+      setState('check_token');
+      await completeAuthentication(dispatch, setState);
     }
     else {
-      dispatch(failedAuthentication());
+      setState('unauthenticated');
     }
-  };
+  }
+  catch (e) {
+    if (e.response) {
+      // network error
+      if (e.response.status === 401) {
+        console.log('Token didn\'t work, so resetting');
+        saveToken(null);
+        setState('unauthenticated');
+      }
+      else {
+        setError(`API connection error: ${e.response.status}: ${e.response.statusText}`);
+      }
+    }
+    else if (e.message) {
+      setError(e.message);
+    }
+    else {
+      console.error(e);
+      setError(`Internal error.  See console.`);
+    }
+  }
 }
 
 export interface IAuthenticationState {
-  isAuthenticating: boolean;
-  isAuthenticated: boolean;
   userId: number| null;
-  user: IUserModel | null;
 }
 
 export interface IAuthenticationStateRecord extends TypedRecord<IAuthenticationStateRecord>, IAuthenticationState {}
 
 const StateFactory = makeTypedFactory<IAuthenticationState, IAuthenticationStateRecord>({
-  isAuthenticating: false,
-  isAuthenticated: false,
   userId: null,
-  user: null,
 });
 
 const initialState = StateFactory();
 
-export const reducer = handleActions<
-  IAuthenticationStateRecord,
-  void       | // startedAuthentication, failedAuthentication, logout
-  number       // completedAuthentication
->({
-  [startedAuthentication.toString()]: (state) => (
-    state
-      .set('isAuthenticating', true)
-  ),
-
-  [failedAuthentication.toString()]: (state) => (
-    state
-      .set('isAuthenticating', false)
-      .set('isAuthenticated', false)
-  ),
-
+export const reducer = handleActions<IAuthenticationStateRecord, void | number>({
   [completedAuthentication.toString()]: (state, { payload }: Action<number>) => (
-    state
-      .set('userId', payload)
-      .set('isAuthenticating', false)
-      .set('isAuthenticated', true)
+    state.set('userId', payload)
   ),
 
   [logout.toString()]: (state) => {
     saveToken(null);
     disconnectNotifier();
-
-    return state
-      .set('isAuthenticating', false)
-      .set('isAuthenticated', false)
-      .set('userId', null);
+    setAuthenticationState('unauthenticated');
+    return state.set('userId', null);
   },
 }, initialState);
-
-export function getIsAuthenticating(state: IAppStateRecord): boolean {
-  return state.getIn(['auth', 'isAuthenticating']);
-}
-
-export function getIsAuthenticated(state: IAppStateRecord): boolean {
-  return state.getIn(['auth', 'isAuthenticated']);
-}
 
 export function getMyUserId(state: IAppStateRecord): string | null {
   const userId = state.getIn(['auth', 'userId']);

@@ -15,9 +15,6 @@ limitations under the License.
 */
 
 export {
-  reducer,
-  startAuthentication,
-  handleToken,
   getMyUserId,
   logout,
 } from './store';

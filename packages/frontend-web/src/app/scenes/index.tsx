@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@ limitations under the License.
 
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router';
-import { BrowserRouter } from 'react-router-dom';
 import { combineReducers } from 'redux-immutable';
 
-import { SplashRoot } from '../components';
+import { FocusRoot, focusRootReducer, SplashRoot} from '../components';
 import { IAppStateRecord } from '../stores';
 import { getCurrentUserIsAdmin } from '../stores/users';
 import {
@@ -27,8 +26,6 @@ import {
   reducer as commentsIndexReducer,
   TagSelector,
 } from './Comments';
-import { Root } from './Root';
-import { reducer as rootReducer } from './Root';
 import {
   dashboardBase,
   searchBase,
@@ -43,7 +40,7 @@ import { TableFrame } from './Tables';
 export const reducer: any = combineReducers({
   commentsIndex: commentsIndexReducer,
   search: searchReducer,
-  root: rootReducer,
+  root: focusRootReducer,
 });
 
 function redirect(to: string) {
@@ -54,21 +51,19 @@ function redirect(to: string) {
 
 function _AppRoot(props: {isAdmin: boolean}) {
   return (
-    <BrowserRouter>
-      <Root>
-        <Switch>
-          <Route exact path="/" render={redirect(`/${dashboardBase}`)} />
-          <Route path={`/${dashboardBase}/:filter?/:sort?`} component={TableFrame}/>
-          {props.isAdmin &&
-          <Route path={`/${settingsBase}`} component={Settings}/>
-          }
-          <Route path={`/${searchBase}`} component={Search}/>
-          <Route path={`/${tagSelectorBase}/:context/:contextId/:tag`} component={TagSelector} />
-          <Route path={'/:context/:contextId'} component={Comments}/>
-          <Route path={'/'} component={SplashRoot}/>
-        </Switch>
-      </Root>
-    </BrowserRouter>
+    <FocusRoot>
+      <Switch>
+        <Route exact path="/" render={redirect(`/${dashboardBase}`)} />
+        <Route path={`/${dashboardBase}/:filter?/:sort?`} component={TableFrame}/>
+        {props.isAdmin &&
+        <Route path={`/${settingsBase}`} component={Settings}/>
+        }
+        <Route path={`/${searchBase}`} component={Search}/>
+        <Route path={`/${tagSelectorBase}/:context/:contextId/:tag`} component={TagSelector} />
+        <Route path={'/:context/:contextId'} component={Comments}/>
+        <Route path={'/'} component={SplashRoot}/>
+      </Switch>
+    </FocusRoot>
   );
 }
 

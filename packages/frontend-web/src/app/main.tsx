@@ -15,11 +15,11 @@ limitations under the License.
 */
 
 import Immutable from 'immutable';
-import { isEmpty } from 'lodash';
-import qs from 'query-string';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 import {
   applyMiddleware,
   compose,
@@ -28,16 +28,18 @@ import {
 import { combineReducers } from 'redux-immutable';
 import thunk from 'redux-thunk';
 
+import { AuthenticationStates, SystemStates, WebsocketStates } from '../types';
 import {
-  handleToken,
   reducer as authReducer,
-  startAuthentication,
-} from './auth';
-import { ErrorRoot } from './components';
+  start,
+} from './auth/store';
+import { ErrorRoot, SPLASH_STYLES, SplashRoot, ThemeRoot } from './components';
 import { APP_NAME } from './config';
 import { AppRoot, reducer as scenesReducer } from './scenes';
-import { reducer as globalReducer } from './stores';
-import { clearReturnURL, getReturnURL } from './util';
+import { Login } from './scenes/Login';
+import { reducer as globalReducer} from './stores';
+import { COMMON_STYLES } from './stylesx';
+import { css } from './utilx';
 
 // Add the reducer to your store on the `routing` key
 const store = createStore(
@@ -54,57 +56,70 @@ const store = createStore(
   ),
 );
 
-const { dispatch } = store;
+function _Root(props: React.PropsWithChildren<RouteComponentProps<{}>>) {
+  const [error, setError] = React.useState<string>(null);
+  const [authState, setAuthState] = React.useState<AuthenticationStates>('initialising');
+  const [wsState, setWsState] = React.useState<WebsocketStates>('ws_connecting');
 
-function render(elem: HTMLElement) {
-  ReactDOM.render(
-    (
-      <Provider store={store}>
-        <AppRoot/>
-      </Provider>
-    ),
-    elem,
-  );
+  function setState(state: SystemStates) {
+    if (state.startsWith('ws_')) {
+      setWsState(state as WebsocketStates);
+    }
+    else {
+      setAuthState(state as AuthenticationStates);
+    }
+  }
+  function setRoute(route: string) {
+    props.history.replace(route);
+  }
+
+  React.useEffect(() => {
+    start(store.dispatch, setState, setRoute, setError);
+  }, []);
+
+  if (error) {
+    function retry() {
+      setState('initialising');
+      start(store.dispatch, setState, setRoute, setError);
+    }
+    return <ErrorRoot errorMessage={error} retry={retry}/>;
+  }
+
+  function message(msg: string) {
+    return (
+      <SplashRoot>
+        <div key="message" {...css(SPLASH_STYLES.header2Tag, COMMON_STYLES.fadeIn)}>{msg}...</div>
+      </SplashRoot>
+    );
+  }
+
+  switch (authState) {
+    case 'initialising':
+      return message('Initialising');
+    case 'check_token':
+      return message('Checking');
+    case 'unauthenticated':
+      return <Login/>;
+  }
+
+  if (wsState === 'ws_connecting') {
+    return message('Connecting');
+  }
+  return <AppRoot/>;
 }
 
-function renderError(elem: HTMLElement, errorMessage: string) {
-  ReactDOM.render(<ErrorRoot errorMessage={errorMessage}/>, elem);
-}
+const Root = withRouter(_Root);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <ThemeRoot>
+      <BrowserRouter>
+        <Root/>;
+      </BrowserRouter>
+    </ThemeRoot>
+  </Provider>,
+  document.getElementById('app'),
+);
 
 // Set window title.
 window.document.title = APP_NAME;
-
-// Let's rock
-const queryString = qs.parse(window.location.search);
-
-if (queryString && queryString['token']) {
-  (async () => {
-    try {
-      await dispatch(handleToken(queryString['token'] as string, queryString['csrf'] as string));
-
-      // If we've saved off a pathname and search string, use that instead.
-      // The original link - derived from the http referrer of the original request - doesn't
-      // have the necessary search info.
-      const returnURL = getReturnURL();
-      // TODO: We'd really like to do this via the router so we don't refresh the page
-      if (returnURL && !isEmpty(returnURL)) {
-        // Forward to the saved URL
-        window.location.href = `${returnURL.pathname}${returnURL.search}`;
-      }
-      else {
-        // Strip off the CSRF stuff
-        window.location.href = window.location.pathname;
-      }
-      clearReturnURL();
-    } catch (e) {
-      console.error(e);
-      renderError(document.getElementById('app'), e.message);
-    }
-  })();
-}
-else {
-  (async () => {
-    await dispatch(startAuthentication() as any);
-    render(document.getElementById('app'));
-  })();
-}

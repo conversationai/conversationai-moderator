@@ -17,7 +17,6 @@ limitations under the License.
 import React from 'react';
 
 import { stylesheet } from '../utilx';
-import { ThemeRoot } from './ThemeRoot';
 
 export const SPLASH_STYLES = stylesheet({
   errors: {
@@ -81,7 +80,7 @@ export function Bubbles() {
 
 export function SplashRoot(props: React.PropsWithChildren<{}>) {
   return (
-    <ThemeRoot>
+    <div>
       <div key="header" className="landing_headerTag">
         Moderator
       </div>
@@ -98,6 +97,6 @@ export function SplashRoot(props: React.PropsWithChildren<{}>) {
         </a> <span className="landing_extratext">about Modereator.</span>
       </div>
       {props.children}
-    </ThemeRoot>
+    </div>
   );
 }

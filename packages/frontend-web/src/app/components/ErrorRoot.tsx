@@ -22,18 +22,16 @@ import { SPLASH_STYLES, SplashRoot } from './SplashRoot';
 
 interface IErrorRootProps {
   errorMessage: string;
+  retry(): void;
 }
 
 export function ErrorRoot(props: React.PropsWithChildren<IErrorRootProps>) {
-  function reloadPage() {
-    window.location.href = window.location.pathname;
-  }
   return (
     <SplashRoot>
       <div key="errors" {...css(SPLASH_STYLES.errors, COMMON_STYLES.fadeIn)}>
         <p key="message">{props.errorMessage}</p>
         <p key="try-again" {...css(SPLASH_STYLES.errorsTryAgain)}>
-          <a key="try-again" onClick={reloadPage} {...css(SPLASH_STYLES.link)}>Try Again</a>
+          <a key="try-again" onClick={props.retry} {...css(SPLASH_STYLES.link)}>Try Again</a>
         </p>
       </div>
     </SplashRoot>

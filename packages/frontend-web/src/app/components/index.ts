@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ export * from './CommentList';
 export * from './ConfirmationCircle';
 export * from './DotChart';
 export * from './ErrorRoot';
+export * from './FocusRoot';
 export * from './Header';
 export * from './Icons';
 export * from './LazyCommentList';
@@ -44,6 +45,7 @@ export * from './SingleComment';
 export * from './Slider';
 export * from './SplashRoot';
 export * from './TagLabelRow';
+export * from './ThemeRoot';
 export * from './Toast';
 export * from './Toggle';
 export * from './ToolTip';

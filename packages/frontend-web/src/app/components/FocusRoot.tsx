@@ -17,43 +17,26 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { DispatchProp } from 'react-redux';
+import { connect, DispatchProp } from 'react-redux';
+import { compose } from 'redux';
+import { createStructuredSelector } from 'reselect';
 
-import { SPLASH_STYLES, SplashRoot } from '../../components';
-import { FOCUS_DATA_ATTR } from '../../config';
-import { focusedElement } from '../../stores/focus';
-import { COMMON_STYLES } from '../../stylesx';
-import { css, stylesheet } from '../../utilx';
-import { Login } from '../Login';
+import { FOCUS_DATA_ATTR } from '../config';
+import { focusedElement, getCurrentlyFocused, reducer as focusRootReducer } from '../stores/focus';
+import { css, stylesheet } from '../utilx';
+
+export { focusRootReducer };
 
 export const STYLES = stylesheet({
   base: { height: '100%' },
 });
 
-export interface IRootProps extends DispatchProp<{}> {
-  isAuthenticated: boolean;
-  isConnected: boolean;
+export interface IFocusRootProps extends DispatchProp<{}> {
   currentlyFocused: number;
 }
 
-export class Root extends React.Component<IRootProps> {
+class PureFocusRoot extends React.Component<IFocusRootProps> {
   render() {
-    const {isAuthenticated, isConnected} = this.props;
-
-    if (!isAuthenticated) {
-      return (
-        <Login/>
-      );
-    }
-
-    if (!isConnected) {
-      return (
-        <SplashRoot>
-          <div key="connecting" {...css(SPLASH_STYLES.header2Tag, COMMON_STYLES.fadeIn)}>Connecting...</div>
-        </SplashRoot>
-      );
-    }
-
     return (
       <div {...css(STYLES.base)}>
         {this.props.children}
@@ -74,7 +57,7 @@ export class Root extends React.Component<IRootProps> {
     node.removeEventListener('focusin', this.onFocusIn as any);
   }
 
-  componentDidUpdate(prevProps: IRootProps) {
+  componentDidUpdate(prevProps: IFocusRootProps) {
     const node = ReactDOM.findDOMNode(this) as Element;
 
     if (this.props.currentlyFocused !== prevProps.currentlyFocused) {
@@ -99,3 +82,11 @@ export class Root extends React.Component<IRootProps> {
     }
   }
 }
+
+const mapStateToProps = createStructuredSelector({
+  currentlyFocused: getCurrentlyFocused,
+});
+
+export const FocusRoot: React.ComponentClass = compose(
+  connect<Pick<IFocusRootProps, 'currentlyFocused'>, Pick<IFocusRootProps, 'dispatch'>>(mapStateToProps),
+)(PureFocusRoot);
