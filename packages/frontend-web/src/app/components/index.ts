@@ -16,6 +16,7 @@ limitations under the License.
 
 export * from './Arrow';
 export * from './AspectRatio';
+export * from './AssignModerators';
 export * from './AssignTagsForm';
 export * from './Avatar';
 export * from './Button';
@@ -26,6 +27,7 @@ export * from './CommentActionButton';
 export * from './CommentList';
 export * from './ConfirmationCircle';
 export * from './DotChart';
+export * from './ErrorRoot';
 export * from './Header';
 export * from './Icons';
 export * from './LazyCommentList';
@@ -40,6 +42,7 @@ export * from './Scrim';
 export * from './SearchAttribute';
 export * from './SingleComment';
 export * from './Slider';
+export * from './SplashRoot';
 export * from './TagLabelRow';
 export * from './Toast';
 export * from './Toggle';

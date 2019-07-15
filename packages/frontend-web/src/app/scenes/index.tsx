@@ -19,6 +19,7 @@ import { Redirect, Route, Switch } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 import { combineReducers } from 'redux-immutable';
 
+import { SplashRoot } from '../components';
 import { IAppStateRecord } from '../stores';
 import { getCurrentUserIsAdmin } from '../stores/users';
 import {
@@ -28,7 +29,6 @@ import {
 } from './Comments';
 import { Root } from './Root';
 import { reducer as rootReducer } from './Root';
-import { SplashRoot } from './Root/components/SplashRoot';
 import {
   dashboardBase,
   searchBase,

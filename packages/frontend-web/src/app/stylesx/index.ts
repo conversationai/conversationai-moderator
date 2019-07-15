@@ -95,4 +95,19 @@ export const COMMON_STYLES = stylesheet({
       textDecoration: 'underline',
     },
   },
+
+  fadeIn: {
+    animationName: {
+      from: {
+        opacity: 0,
+      },
+
+      to: {
+        opacity: 1,
+      },
+    },
+    animationDuration: '0.3s',
+    animationTimingFunction: 'ease',
+    animationIterationCount: 1,
+  },
 });

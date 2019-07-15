@@ -33,9 +33,9 @@ import {
   reducer as authReducer,
   startAuthentication,
 } from './auth';
+import { ErrorRoot } from './components';
 import { APP_NAME } from './config';
 import { AppRoot, reducer as scenesReducer } from './scenes';
-import { ErrorRoot } from './scenes/Root/components/ErrorRoot';
 import { reducer as globalReducer } from './stores';
 import { clearReturnURL, getReturnURL } from './util';
 

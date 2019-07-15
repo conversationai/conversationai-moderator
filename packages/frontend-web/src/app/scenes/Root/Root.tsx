@@ -19,45 +19,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { DispatchProp } from 'react-redux';
 
-import {
-  createMuiTheme,
-  CssBaseline,
-} from '@material-ui/core';
-import {
-  ThemeProvider,
-} from '@material-ui/styles';
-
+import { SPLASH_STYLES, SplashRoot } from '../../components';
 import { FOCUS_DATA_ATTR } from '../../config';
 import { focusedElement } from '../../stores/focus';
-import { NICE_MIDDLE_BLUE } from '../../styles';
-import { css } from '../../utilx';
-import { Login } from './components/Login';
-import { SplashRoot } from './components/SplashRoot';
-import { ROOT_STYLES } from './components/styles';
+import { COMMON_STYLES } from '../../stylesx';
+import { css, stylesheet } from '../../utilx';
+import { Login } from '../Login';
 
-const theme = createMuiTheme({
-  typography: {
-    fontFamily: 'Libre Franklin',
-  },
-  palette: {
-    background: {
-      default: NICE_MIDDLE_BLUE,
-    },
-  },
+export const STYLES = stylesheet({
+  base: { height: '100%' },
 });
 
-export class ThemeRoot extends React.Component {
-  render() {
-    return (
-      <ThemeProvider key="root" theme={theme}>
-        <CssBaseline key="baseline"/>
-        {this.props.children}
-      </ThemeProvider>
-    );
-  }
-}
-
-export interface IRootProps extends DispatchProp<any> {
+export interface IRootProps extends DispatchProp<{}> {
   isAuthenticated: boolean;
   isConnected: boolean;
   currentlyFocused: number;
@@ -69,22 +42,20 @@ export class Root extends React.Component<IRootProps> {
 
     if (!isAuthenticated) {
       return (
-        <SplashRoot>
-          <Login/>
-        </SplashRoot>
+        <Login/>
       );
     }
 
     if (!isConnected) {
       return (
         <SplashRoot>
-          <div key="connecting" {...css(ROOT_STYLES.header2Tag, ROOT_STYLES.fadeIn)}>Connecting...</div>
+          <div key="connecting" {...css(SPLASH_STYLES.header2Tag, COMMON_STYLES.fadeIn)}>Connecting...</div>
         </SplashRoot>
       );
     }
 
     return (
-      <div {...css(ROOT_STYLES.base)}>
+      <div {...css(STYLES.base)}>
         {this.props.children}
       </div>
     );

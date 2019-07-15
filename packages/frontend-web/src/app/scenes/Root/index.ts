@@ -22,9 +22,9 @@ import { createStructuredSelector } from 'reselect';
 import { getIsAuthenticated } from '../../auth/store';
 import { getWebsocketState } from '../../stores';
 import { getCurrentlyFocused, reducer } from '../../stores/focus';
-import { IRootProps, Root as PureRoot, ThemeRoot } from './Root';
+import { IRootProps, Root as PureRoot } from './Root';
 
-export { reducer, ThemeRoot };
+export { reducer };
 
 const mapStateToProps = createStructuredSelector({
   currentlyFocused: getCurrentlyFocused,
