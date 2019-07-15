@@ -22,7 +22,6 @@ import { createStructuredSelector } from 'reselect';
 import { getIsAuthenticated } from '../../auth/store';
 import { getWebsocketState } from '../../stores';
 import { getCurrentlyFocused, reducer } from '../../stores/focus';
-import { getCurrentUserIsAdmin } from '../../stores/users';
 import { IRootProps, Root as PureRoot, ThemeRoot } from './Root';
 
 export { reducer, ThemeRoot };
@@ -31,7 +30,6 @@ const mapStateToProps = createStructuredSelector({
   currentlyFocused: getCurrentlyFocused,
   isAuthenticated: getIsAuthenticated,
   isConnected: getWebsocketState,
-  isAdmin: getCurrentUserIsAdmin,
 });
 
 export const Root: React.ComponentClass = compose(

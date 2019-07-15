@@ -17,6 +17,7 @@ limitations under the License.
 import Immutable from 'immutable';
 import { isEmpty } from 'lodash';
 import qs from 'query-string';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import {
@@ -33,7 +34,7 @@ import {
   startAuthentication,
 } from './auth';
 import { APP_NAME } from './config';
-import { reducer as scenesReducer, scenes as makeRoutes } from './scenes';
+import { AppRoot, reducer as scenesReducer } from './scenes';
 import { ErrorRoot } from './scenes/Root/components/ErrorRoot';
 import { reducer as globalReducer } from './stores';
 import { clearReturnURL, getReturnURL } from './util';
@@ -55,13 +56,11 @@ const store = createStore(
 
 const { dispatch } = store;
 
-const routes = makeRoutes();
-
 function render(elem: HTMLElement) {
   ReactDOM.render(
     (
       <Provider store={store}>
-        {routes}
+        <AppRoot/>
       </Provider>
     ),
     elem,

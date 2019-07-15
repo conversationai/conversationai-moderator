@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import { Location } from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { DispatchProp } from 'react-redux';
@@ -61,14 +60,12 @@ export class ThemeRoot extends React.Component {
 export interface IRootProps extends DispatchProp<any> {
   isAuthenticated: boolean;
   isConnected: boolean;
-  isAdmin: boolean;
   currentlyFocused: number;
-  location: Location;
 }
 
 export class Root extends React.Component<IRootProps> {
   render() {
-    const {isAuthenticated, isConnected, isAdmin, location} = this.props;
+    const {isAuthenticated, isConnected} = this.props;
 
     if (!isAuthenticated) {
       return (
@@ -83,14 +80,6 @@ export class Root extends React.Component<IRootProps> {
         <SplashRoot>
           <div key="connecting" {...css(ROOT_STYLES.header2Tag, ROOT_STYLES.fadeIn)}>Connecting...</div>
         </SplashRoot>
-      );
-    }
-
-    if (location.pathname.startsWith('/settings') && !isAdmin) {
-      return (
-        <div {...css(ROOT_STYLES.base, ROOT_STYLES.placeholder)}>
-          Settings only available to admins....
-        </div>
       );
     }
 
