@@ -367,7 +367,7 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
   }
 
   @autobind
-  showMore(_container: React.Component) {
+  showMore() {
     if (this.state.numberToShow < this.props.articles.length) {
       this.setState({
         numberToShow: this.state.numberToShow + this._numberOnScreen,
