@@ -269,7 +269,7 @@ describe('Comments Domain States Tests', () => {
   describe('approve', () => {
     it('should set the passed in comment to a "approved" state and save it', async () => {
       const user = await createUser();
-      const updated = await approve(comment, user, false);
+      const updated = await approve(comment, user);
 
       assert.equal(comment.id, updated.id);
       assert.isTrue(updated.get('isAccepted'));
@@ -280,7 +280,7 @@ describe('Comments Domain States Tests', () => {
 
     it('should optionally accept additional data', async () => {
       const user = await createUser();
-      const updated = await approve(comment, user, false);
+      const updated = await approve(comment, user);
 
       assert.equal(comment.id, updated.id);
       assert.isTrue(updated.get('isAccepted'));
@@ -293,7 +293,7 @@ describe('Comments Domain States Tests', () => {
   describe('reject', () => {
     it('should set the passed in comment to a "rejected" state and save it', async () => {
       const user = await createUser();
-      const updated = await reject(comment, user, false);
+      const updated = await reject(comment, user);
 
       assert.equal(comment.id, updated.id);
       assert.isFalse(updated.get('isAccepted'));
@@ -306,7 +306,7 @@ describe('Comments Domain States Tests', () => {
   describe('defer', () => {
     it('should set the passed in comment to a "deferred" state and save it', async () => {
       const user = await createUser();
-      const updated = await defer(comment, user, false);
+      const updated = await defer(comment, user);
 
       assert.equal(comment.id, updated.id);
       assert.isNull(updated.get('isAccepted'));

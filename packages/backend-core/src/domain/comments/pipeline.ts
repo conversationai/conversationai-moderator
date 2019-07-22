@@ -396,7 +396,6 @@ export async function recordDecision(
   comment: ICommentInstance,
   status: IResolution,
   source: IUserInstance | IModerationRuleInstance | null,
-  autoConfirm: boolean,
 ): Promise<IDecisionInstance> {
   // Find out if we're overriding a previous decision.
   const previousDecisions = await comment.getDecisions({
@@ -420,10 +419,6 @@ export async function recordDecision(
     source: source ? (source instanceof User.Instance ? 'User' : 'Rule') : 'Rule',
     userId: source ? (source instanceof User.Instance ? source.id : undefined) : undefined,
     moderationRuleId: source ? (source instanceof ModerationRule.Instance ? source.id : undefined) : undefined,
-
-    ...(autoConfirm ? {
-      sentBackToPublisher: sequelize.fn('now'),
-    } : {}),
   });
 
   // Don't send decision to publisher in noop mode
@@ -431,7 +426,8 @@ export async function recordDecision(
 
   if (mode === 'noop') {
     await decision.update({ sentBackToPublisher: sequelize.fn('now') });
-  } else if (mode === 'push') {
+  }
+  else if (mode === 'push') {
     await trigger('api.publisher.sendDecisionToPublisher', { decision });
   }
 

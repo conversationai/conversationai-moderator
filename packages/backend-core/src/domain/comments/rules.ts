@@ -147,7 +147,7 @@ export async function resolveComment(
 
   // If there's no consensus or everything is "defer", defer the comment
   if (!consensus) {
-    await defer(comment, null, false);
+    await defer(comment, null);
     await comment.set('isAutoResolved', true).save();
 
     return {
@@ -164,7 +164,7 @@ export async function resolveComment(
     // Only highlight accepted comments
     const extra = wasHighlighted ? getHighlightStateData() : {};
 
-    await approve(comment, appliedRule, false, extra);
+    await approve(comment, appliedRule, extra);
     await comment.set('isAutoResolved', true).save();
 
     return {
@@ -173,7 +173,7 @@ export async function resolveComment(
     };
   } else if (replacedAction === 'reject') {
     // Reject a comment if all actions equal "reject" and "highlight" hasn't been set
-    await reject(comment, appliedRule, false);
+    await reject(comment, appliedRule);
     await comment.set('isAutoResolved', true).save();
 
     return {
@@ -182,7 +182,7 @@ export async function resolveComment(
     };
   } else if (replacedAction === 'defer') {
     // Defer a comment
-    await defer(comment, appliedRule, false);
+    await defer(comment, appliedRule);
     await comment.set('isAutoResolved', true).save();
 
     return {
