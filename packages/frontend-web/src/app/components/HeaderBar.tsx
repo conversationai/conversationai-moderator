@@ -48,7 +48,7 @@ const STYLES = stylesheet({
     textAlign: 'center',
     paddingLeft: `${GUTTER_DEFAULT_SPACING}px`,
     paddingRight: `${GUTTER_DEFAULT_SPACING}px`,
-    paddingTop: `${10}px`,
+    paddingTop: `${4}px`,
     marginTop: `${3}px`,
     flexGrow: 0,
     height: `${HEADER_HEIGHT - 10 - 3}px`,

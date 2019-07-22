@@ -66,7 +66,7 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
   },
   numberCell: {
     textAlign: 'right',
-    width: '80px',
+    width: '90px',
     paddingRight: '10px',
   },
   timeCell: {

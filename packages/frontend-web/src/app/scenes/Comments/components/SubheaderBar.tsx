@@ -47,7 +47,6 @@ const STYLES = stylesheet({
   headerItem: {
     color: `rgba(255,255,255,0.54)`,
     textAlign: 'center',
-    paddingTop: `${10}px`,
     marginTop: `${3}px`,
     width: '13vw',
     height: `${HEADER_HEIGHT - 10 - 3}px`,
