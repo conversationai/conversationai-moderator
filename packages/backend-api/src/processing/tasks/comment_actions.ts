@@ -45,7 +45,6 @@ export interface ICommentActionData {
   commentId: number;
   userId?: number | null;
   isBatchAction: boolean;
-  autoConfirmDecision?: boolean;
 }
 
 export type IDeferCommentsData = ICommentActionData;
@@ -122,7 +121,7 @@ export interface IRemoveTagData {
  *
  */
 export const deferCommentsTask: IQueueHandler<IDeferCommentsData> = handler<IDeferCommentsData>(async (data, logger) => {
-  const { commentId, userId, isBatchAction, autoConfirmDecision } = data;
+  const { commentId, userId, isBatchAction } = data;
 
   let user = null;
 
@@ -152,7 +151,7 @@ export const deferCommentsTask: IQueueHandler<IDeferCommentsData> = handler<IDef
 
   logger.info('defer comment : ',  commentId );
 
-  return defer(comment, user, !!autoConfirmDecision);
+  return defer(comment, user);
 });
 
 /**
@@ -171,7 +170,7 @@ export const deferCommentsTask: IQueueHandler<IDeferCommentsData> = handler<IDef
  *
  */
 export const highlightCommentsTask = handler<IHighlightCommentsData>(async (data, logger) => {
-  const { commentId, userId, isBatchAction, autoConfirmDecision } = data;
+  const { commentId, userId, isBatchAction } = data;
 
   let user = null;
 
@@ -201,7 +200,7 @@ export const highlightCommentsTask = handler<IHighlightCommentsData>(async (data
 
   logger.info('highlight comment : ', commentId);
 
-  return highlight(comment, user, !!autoConfirmDecision);
+  return highlight(comment, user);
 });
 
 /**
@@ -469,8 +468,7 @@ async function resolveComment(
   logger: IJobLogger,
   isBatchAction: boolean,
   status: IResolution,
-  domainFn: (comment: ICommentInstance, source: any, autoConfirm: boolean) => Promise<ICommentInstance>,
-  autoConfirm: boolean,
+  domainFn: (comment: ICommentInstance, source: any) => Promise<ICommentInstance>,
 ): Promise<void> {
 
   let user = null;
@@ -501,7 +499,7 @@ async function resolveComment(
 
   logger.info(`${status} comment: ${commentId}`);
 
-  await domainFn(comment, user, autoConfirm);
+  await domainFn(comment, user);
 }
 
 async function resolveFlags(
@@ -538,12 +536,11 @@ async function resolveCommentAndFlags(
   logger: IJobLogger,
   isBatchAction: boolean,
   status: IResolution,
-  domainFn: (comment: ICommentInstance, source: any, autoConfirm: boolean) => Promise<ICommentInstance>,
-  autoConfirm: boolean,
+  domainFn: (comment: ICommentInstance, source: any) => Promise<ICommentInstance>,
 ): Promise<void> {
   // We update flags first as we do the denormalization in the resolveComment action.
   await resolveFlags(commentId, userId ? userId : undefined);
-  await resolveComment(commentId, userId, logger, isBatchAction, status, domainFn, autoConfirm);
+  await resolveComment(commentId, userId, logger, isBatchAction, status, domainFn);
 }
 
 /**
@@ -562,7 +559,7 @@ async function resolveCommentAndFlags(
  *
  */
 export const acceptCommentsTask = handler<IAcceptCommentsData>((data, logger) => {
-  const { commentId, userId, isBatchAction, autoConfirmDecision } = data;
+  const { commentId, userId, isBatchAction } = data;
 
   return resolveComment(
     commentId,
@@ -571,12 +568,11 @@ export const acceptCommentsTask = handler<IAcceptCommentsData>((data, logger) =>
     isBatchAction,
     MODERATION_ACTION_ACCEPT,
     approve,
-    !!autoConfirmDecision,
   );
 });
 
 export const acceptCommentsAndFlagsTask = handler<ICommentActionData>((data, logger) => {
-  const { commentId, userId, isBatchAction, autoConfirmDecision } = data;
+  const { commentId, userId, isBatchAction } = data;
 
   return resolveCommentAndFlags(
     commentId,
@@ -585,7 +581,6 @@ export const acceptCommentsAndFlagsTask = handler<ICommentActionData>((data, log
     isBatchAction,
     MODERATION_ACTION_ACCEPT,
     approve,
-    !!autoConfirmDecision,
   );
 });
 
@@ -614,7 +609,7 @@ export const resolveFlagsTask = handler<ICommentActionData>((data, _logger) => {
  *
  */
 export const rejectCommentsTask = handler<IRejectCommentsData>((data, logger) => {
-  const { commentId, userId, isBatchAction, autoConfirmDecision } = data;
+  const { commentId, userId, isBatchAction } = data;
 
   return resolveComment(
     commentId,
@@ -623,12 +618,11 @@ export const rejectCommentsTask = handler<IRejectCommentsData>((data, logger) =>
     isBatchAction,
     MODERATION_ACTION_REJECT,
     reject,
-    !!autoConfirmDecision,
   );
 });
 
 export const rejectCommentsAndFlagsTask = handler<ICommentActionData>((data, logger) => {
-  const { commentId, userId, isBatchAction, autoConfirmDecision } = data;
+  const { commentId, userId, isBatchAction } = data;
 
   return resolveCommentAndFlags(
     commentId,
@@ -637,7 +631,6 @@ export const rejectCommentsAndFlagsTask = handler<ICommentActionData>((data, log
     isBatchAction,
     MODERATION_ACTION_REJECT,
     reject,
-    !!autoConfirmDecision,
   );
 });
 

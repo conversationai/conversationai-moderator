@@ -667,7 +667,7 @@ describe('Comments Domain Pipeline Tests', () => {
     it('should record the descision to accept', async () => {
       const comment = await createComment();
       const user = await createUser();
-      await recordDecision(comment, MODERATION_ACTION_ACCEPT, user, false);
+      await recordDecision(comment, MODERATION_ACTION_ACCEPT, user);
 
       const foundDecisions = await Decision.findAll({
         where: {
@@ -698,8 +698,8 @@ describe('Comments Domain Pipeline Tests', () => {
 
       const comment = await createComment();
 
-      await recordDecision(comment, MODERATION_ACTION_ACCEPT, user, false);
-      await recordDecision(comment, MODERATION_ACTION_REJECT, rule, false);
+      await recordDecision(comment, MODERATION_ACTION_ACCEPT, user);
+      await recordDecision(comment, MODERATION_ACTION_REJECT, rule);
 
       const foundDecisions = await Decision.findAll({
         where: {

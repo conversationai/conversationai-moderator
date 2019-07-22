@@ -203,12 +203,11 @@ export async function setCommentState(
 export async function approve(
   comment: ICommentInstance,
   source: IUserInstance | IModerationRuleInstance | null,
-  autoConfirm: boolean,
   data?: object,
 ): Promise<ICommentInstance> {
   const updated = await setCommentState(comment, source, getApproveStateData(), data);
 
-  await recordDecision(updated, MODERATION_ACTION_ACCEPT, source, autoConfirm);
+  await recordDecision(updated, MODERATION_ACTION_ACCEPT, source);
 
   return updated;
 }
@@ -220,12 +219,11 @@ export async function approve(
 export async function reject(
   comment: ICommentInstance,
   source: IUserInstance | IModerationRuleInstance | null,
-  autoConfirm: boolean,
   data?: object,
 ): Promise<ICommentInstance> {
   const updated = await setCommentState(comment, source, getRejectStateData(), data);
 
-  await recordDecision(updated, MODERATION_ACTION_REJECT, source, autoConfirm);
+  await recordDecision(updated, MODERATION_ACTION_REJECT, source);
 
   return updated;
 }
@@ -237,12 +235,11 @@ export async function reject(
 export async function defer(
   comment: ICommentInstance,
   source: IUserInstance | IModerationRuleInstance | null,
-  autoConfirm: boolean,
   data?: object,
 ): Promise<ICommentInstance> {
   const updated = await setCommentState(comment, source, getDeferStateData(), data);
 
-  await recordDecision(updated, MODERATION_ACTION_DEFER, source, autoConfirm);
+  await recordDecision(updated, MODERATION_ACTION_DEFER, source);
 
   return updated;
 }
@@ -254,7 +251,6 @@ export async function defer(
 export async function highlight(
   comment: ICommentInstance,
   source: IUserInstance | IModerationRuleInstance | null,
-  _autoConfirm?: boolean,
 ): Promise<ICommentInstance> {
   let updated = comment;
   if (comment.get('isHighlighted') === true) {
