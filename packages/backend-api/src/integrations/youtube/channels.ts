@@ -17,8 +17,9 @@ limitations under the License.
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
-import { logger } from '../../logger';
-import { Article, Category, ICategoryInstance, IUserInstance } from '../../models';
+import { logger } from '@conversationai/moderator-backend-core';
+import { Article, Category, ICategoryInstance, IUserInstance } from '@conversationai/moderator-backend-core';
+
 import { mapChannelToCategory, saveError, setChannelActive } from './objectmap';
 
 const service = google.youtube('v3');

@@ -45,7 +45,6 @@ yargs
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'delete')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'generate')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'flag')))
-  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'tests', 'youtube')))
   .demand(1)
   .usage('Usage: $0')
   .help()

@@ -16,11 +16,16 @@ limitations under the License.
 
 import { pick } from 'lodash';
 
-import { postProcessComment, sendForScoring } from '../../domain/comments';
-import { logger } from '../../logger';
-import { Article, Category, Comment, Decision, updateHappened } from '../../models';
-import { IAuthorAttributes, ICommentInstance, IDecisionInstance, IUserInstance } from '../../models';
-import { sequelize } from '../../sequelize';
+import { postProcessComment, sendForScoring } from '@conversationai/moderator-backend-core';
+import { logger } from '@conversationai/moderator-backend-core';
+import { Article, Category, Comment, Decision, updateHappened } from '@conversationai/moderator-backend-core';
+import {
+  IAuthorAttributes,
+  ICommentInstance,
+  IDecisionInstance,
+  IUserInstance,
+} from '@conversationai/moderator-backend-core';
+import { sequelize } from '@conversationai/moderator-backend-core';
 
 let testOnly = false;
 let testCallback: (type: string, obj: any) => void;

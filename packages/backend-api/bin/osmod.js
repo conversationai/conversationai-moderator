@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
 Copyright 2019 Google Inc.
 
@@ -13,17 +15,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+/**
+ * Entrypoint for the osmod commandline tool.
+ *
+ * Provides commandline access to various features, including
+ *  - managing users
+ *  - inventing comments for test purposes
+ *  - managing comments
+ *
+ *  For a full list of available commands, run `osmod.js --help`
+ */
 
-import { syncYoutubeTask } from '../integrations';
-import { logger } from '../logger';
+'use strict';
 
-export async function runTask(task: string) {
-  switch (task) {
-    case 'youtube':
-      await syncYoutubeTask(0);
-      break;
+const path = require('path');
+const yargs = require('yargs');
 
-    default:
-      logger.error(`No such task: ${task}`);
-  }
-}
+yargs
+  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'tests', 'youtube')))
+  .demand(1)
+  .usage('Usage: $0')
+  .help()
+  .argv;
