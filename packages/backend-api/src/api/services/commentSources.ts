@@ -23,8 +23,8 @@ import {
   User,
   USER_GROUP_YOUTUBE,
 } from '@conversationai/moderator-backend-core';
-import { youtubeActivateChannel, youtubeSynchronizeChannel } from '@conversationai/moderator-backend-core';
 
+import { youtubeActivateChannel, youtubeSynchronizeChannel } from '../../integrations';
 import { enqueue, registerTask } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 

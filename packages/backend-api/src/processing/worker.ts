@@ -27,7 +27,6 @@ limitations under the License.
  *
  * To register a task item, create a suitable async function.  Then, within startWorker,  call
  * registerWorkItem with that function as an argument.
- * TODO: Rearrange code so that tasks can be registered without modifying this file.
  *
  * Any process can call kickWorker to start the next tick immediately.  Pass "true" to this function
  * to reset the tick to 0.  This is used to indicate to the task items that all tasks should be run.
@@ -36,22 +35,22 @@ limitations under the License.
 import { createClient, RedisClient } from 'redis';
 import { promisify } from 'util';
 
-import { logger, syncYoutubeTask } from '@conversationai/moderator-backend-core';
+import { logger } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
 // a minute in milliseconds
 const WORK_POLL_INTERVAL = 60 * 1000;
 const REDIS_WORK_TRIGGER_CHANNEL = 'work_trigger';
-const REDIS_WORK_TRIGGER_KICK = 'kick';
-const REDIS_WORK_TRIGGER_RESET = 'reset';
+export type REDIS_WORK_TRIGGER_TYPE = 'kick' | 'start' | 'reset' | 'stop';
 
 const redisClient: RedisClient = createClient(config.get('redis_url'));
 const publish = promisify(redisClient.publish).bind(redisClient);
 
-const items: Array<(tick: number) => Promise<void>> = [];
+const workItems = new Map<string, (tick: number) => Promise<void>>();
 
-function registerWorkItem(item: (tick: number) => Promise<void>) {
-  items.push(item);
+export function registerWorkItem(itemName: string, item: (tick: number) => Promise<void>) {
+  logger.info(`Registering work item ${itemName}`);
+  workItems.set(itemName, item);
 }
 
 let tick = 0;
@@ -70,7 +69,7 @@ async function processWorkItems() {
     }
 
     logger.info(`Processing tick ${tick}.`);
-    for (const i of items) {
+    for (const i of workItems.values()) {
       await i(tick);
     }
     lastTick = tick;
@@ -79,26 +78,49 @@ async function processWorkItems() {
   lastTick = null;
 }
 
-export async function startWorker() {
-  registerWorkItem(syncYoutubeTask);
+let intervalId: NodeJS.Timer;
 
+async function startWorking() {
+  intervalId = setInterval(() => {
+    logger.info('Start processing ticks');
+    kickWorker('kick');
+  }, WORK_POLL_INTERVAL);
+}
+
+async function stopWorking() {
+  logger.info('Stop processing ticks');
+  clearInterval(intervalId);
+}
+
+export async function startWorker() {
   const subscribeClient: RedisClient = createClient(config.get('redis_url'));
   const subscribe = promisify(subscribeClient.subscribe).bind(subscribeClient);
   subscribeClient.on('message', (_channel, message) => {
-    if (message === REDIS_WORK_TRIGGER_RESET) {
-      tick = 0;
+    switch (message as REDIS_WORK_TRIGGER_TYPE) {
+      case 'start':
+        startWorking();
+        return;
+      case 'stop':
+        stopWorking();
+        return;
+      case 'reset':
+        tick = 0;
     }
     processWorkItems();
     tick++;
   });
   await subscribe(REDIS_WORK_TRIGGER_CHANNEL);
-  await kickWorker(true);
 
-  setInterval(() => {
-    kickWorker(false);
-  }, WORK_POLL_INTERVAL);
+  startWorking();
 }
 
-export async function kickWorker(reset: boolean) {
-  publish(REDIS_WORK_TRIGGER_CHANNEL, reset ? REDIS_WORK_TRIGGER_RESET : REDIS_WORK_TRIGGER_KICK);
+export async function kickWorker(type: REDIS_WORK_TRIGGER_TYPE) {
+  publish(REDIS_WORK_TRIGGER_CHANNEL, type);
+}
+
+export async function runTask(task: string) {
+  const item = workItems.get(task);
+  if (item) {
+    await item(0);
+  }
 }

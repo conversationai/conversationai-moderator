@@ -17,8 +17,9 @@ limitations under the License.
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
-import { logger } from '../../logger';
-import { IUserInstance, MODERATION_ACTION_ACCEPT, MODERATION_ACTION_DEFER } from '../../models';
+import { logger } from '@conversationai/moderator-backend-core';
+import { IUserInstance, MODERATION_ACTION_ACCEPT, MODERATION_ACTION_DEFER } from '@conversationai/moderator-backend-core';
+
 import { for_each_active_channel } from './channels';
 import { foreachPendingDecision, mapCommentThreadToComments, markDecisionExecuted } from './objectmap';
 import { get_article_id_from_youtube_id } from './videos';

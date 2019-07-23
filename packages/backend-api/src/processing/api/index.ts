@@ -56,7 +56,7 @@ export function processingTriggers(): express.Router {
   });
 
   router.get('/trigger/:category', async (_req, res, next) => {
-    await kickWorker(true);
+    await kickWorker('reset');
     res.json({ status: 'ok' });
     next();
   });
