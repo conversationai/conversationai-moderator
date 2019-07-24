@@ -32,6 +32,8 @@ const path = require('path');
 const yargs = require('yargs');
 
 yargs
+  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'users', 'create')))
+  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'users', 'get_token')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'tests', 'youtube')))
   .demand(1)
   .usage('Usage: $0')

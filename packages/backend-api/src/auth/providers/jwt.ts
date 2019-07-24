@@ -17,7 +17,9 @@ limitations under the License.
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { IUserInstance, User } from '@conversationai/moderator-backend-core';
-import { getTokenConfiguration, isValidToken, isValidUser } from '@conversationai/moderator-backend-core';
+
+import { getTokenConfiguration, isValidToken } from '../tokens';
+import { isValidUser } from '../users';
 
 /**
  * Verify JWT payload from JWT Passportstrategy

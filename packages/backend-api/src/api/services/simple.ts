@@ -31,11 +31,11 @@ import {
   USER_GROUP_YOUTUBE,
 } from '@conversationai/moderator-backend-core';
 import {
-  createToken,
   partialUpdateHappened,
   updateHappened,
 } from '@conversationai/moderator-backend-core';
 
+import { createToken } from '../../auth/tokens';
 import { clearError } from '../../integrations';
 import { REPLY_SUCCESS } from '../constants';
 

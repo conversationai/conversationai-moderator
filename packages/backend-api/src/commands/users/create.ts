@@ -16,7 +16,7 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-import { logger } from '../../logger';
+import { logger } from '@conversationai/moderator-backend-core';
 import {
   ENDPOINT_TYPE_API,
   ENDPOINT_TYPE_PROXY,
@@ -26,7 +26,7 @@ import {
   USER_GROUP_MODERATOR,
   USER_GROUP_SERVICE,
   USER_GROUPS,
-} from '../../models';
+} from '@conversationai/moderator-backend-core';
 
 export const command = 'users:create';
 

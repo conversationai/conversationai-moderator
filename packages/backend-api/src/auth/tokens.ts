@@ -18,7 +18,13 @@ import { randomBytes } from 'crypto';
 import * as jwt from 'jsonwebtoken';
 import { isNumber } from 'lodash';
 import * as moment from 'moment';
-import { CONFIGURATION_TOKEN, getConfigItem, IUserInstance, setConfigItem } from '../../models';
+
+import {
+  CONFIGURATION_TOKEN,
+  getConfigItem,
+  IUserInstance,
+  setConfigItem,
+} from '@conversationai/moderator-backend-core';
 
 export interface ITokenConfiguration {
   secret: string;
