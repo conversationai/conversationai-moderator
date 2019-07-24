@@ -18,6 +18,7 @@ import * as chai from 'chai';
 import * as jwt from 'jsonwebtoken';
 import * as moment from 'moment';
 import * as sinon from 'sinon';
+
 import {
   createToken,
   getTokenConfiguration,
@@ -25,7 +26,7 @@ import {
   ITokenConfiguration,
   refreshToken,
   verifyToken,
-} from '../../../domain/auth';
+} from '../../auth/tokens';
 
 const assert = chai.assert;
 

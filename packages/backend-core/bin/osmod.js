@@ -32,8 +32,6 @@ const path = require('path');
 const yargs = require('yargs');
 
 yargs
-  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'users', 'create')))
-  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'users', 'get_token')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'denormalize')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'exec')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'articles', 'delete')))

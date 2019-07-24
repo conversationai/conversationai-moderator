@@ -20,8 +20,8 @@ import {
   USER_GROUP_ADMIN,
   USER_GROUP_YOUTUBE,
   UserSocialAuth,
-} from '../../models';
-import { IUserSocialAuthAttributes, IUserSocialAuthInstance } from '../../models/';
+} from '@conversationai/moderator-backend-core';
+import { IUserSocialAuthAttributes, IUserSocialAuthInstance } from '@conversationai/moderator-backend-core';
 
 /**
  * Indicates whether a user is valid to be authenticated

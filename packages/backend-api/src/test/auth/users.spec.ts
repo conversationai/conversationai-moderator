@@ -15,18 +15,20 @@ limitations under the License.
 */
 
 import * as chai from 'chai';
+
+import {
+  sequelize,
+  User,
+  UserSocialAuth,
+} from '@conversationai/moderator-backend-core';
+import { createUser } from '@conversationai/moderator-backend-core/src/test/domain/comments/fixture';
+
 import {
   ensureFirstUser,
   findOrCreateUserSocialAuth,
   isFirstUserInitialised,
   isValidUser,
-} from '../../../domain/auth';
-import {
-  User,
-  UserSocialAuth,
-} from '../../../models';
-import { sequelize } from '../../../sequelize';
-import {createUser} from '../comments/fixture';
+} from '../../auth/users';
 
 const assert = chai.assert;
 
