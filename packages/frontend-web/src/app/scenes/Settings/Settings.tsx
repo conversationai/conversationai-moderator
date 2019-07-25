@@ -1081,15 +1081,9 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         scrimStyles={SCRIM_STYLE.scrim}
         isVisible={this.state.isStatusScrimVisible}
       >
-        <FocusTrap
-          focusTrapOptions={{
-            clickOutsideDeactivates: true,
-          }}
-        >
-          <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})} tabIndex={0}>
-            <p>{this.state.submitStatus}</p>
-          </div>
-        </FocusTrap>
+        <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})} tabIndex={0}>
+          <p>{this.state.submitStatus}</p>
+        </div>
       </Scrim>
     );
   }
