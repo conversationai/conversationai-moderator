@@ -29,6 +29,16 @@ export const SPLASH_STYLES = stylesheet({
     color: 'white',
   },
 
+  signIn: {
+    position: 'absolute',
+    bottom: '30vh',
+    width: '100%',
+    padding: '0 20vw',
+    textAlign: 'center',
+    fontSize: '3vh',
+    color: 'white',
+  },
+
   errorsTryAgain: {
     fontSize: '2.5vh',
   },

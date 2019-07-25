@@ -28,7 +28,12 @@ import {
 import { combineReducers } from 'redux-immutable';
 import thunk from 'redux-thunk';
 
-import { AuthenticationStates, SystemStates, WebsocketStates } from '../types';
+import {
+  AuthenticationStates,
+  ServerStates,
+  SystemStates,
+  WebsocketStates,
+} from '../types';
 import {
   reducer as authReducer,
   start,
@@ -58,11 +63,15 @@ const store = createStore(
 
 function _Root(props: React.PropsWithChildren<RouteComponentProps<{}>>) {
   const [error, setError] = React.useState<string>(null);
+  const [serverState, setServerState] = React.useState<ServerStates>('s_connecting');
   const [authState, setAuthState] = React.useState<AuthenticationStates>('initialising');
   const [wsState, setWsState] = React.useState<WebsocketStates>('ws_connecting');
 
   function setState(state: SystemStates) {
-    if (state.startsWith('ws_')) {
+    if (state.startsWith('s_')) {
+      setServerState(state as ServerStates);
+    }
+    else if (state.startsWith('ws_')) {
       setWsState(state as WebsocketStates);
     }
     else {
@@ -77,11 +86,12 @@ function _Root(props: React.PropsWithChildren<RouteComponentProps<{}>>) {
     start(store.dispatch, setState, setRoute, setError);
   }, []);
 
+  function retry() {
+    setState('initialising');
+    start(store.dispatch, setState, setRoute, setError);
+  }
+
   if (error) {
-    function retry() {
-      setState('initialising');
-      start(store.dispatch, setState, setRoute, setError);
-    }
     return <ErrorRoot errorMessage={error} retry={retry}/>;
   }
 
@@ -91,6 +101,15 @@ function _Root(props: React.PropsWithChildren<RouteComponentProps<{}>>) {
         <div key="message" {...css(SPLASH_STYLES.header2Tag, COMMON_STYLES.fadeIn)}>{msg}...</div>
       </SplashRoot>
     );
+  }
+
+  switch (serverState) {
+    case 's_connecting':
+      return message('Connecting');
+    case 's_unavailable':
+      return <ErrorRoot errorMessage="Server unavailable" retry={retry}/>;
+    case 's_init_first_user':
+      return <Login firstUser/>;
   }
 
   switch (authState) {

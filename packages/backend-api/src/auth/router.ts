@@ -41,7 +41,7 @@ export function createAuthRouter(): express.Router {
         res.send('ok');
         return;
       }
-      res.status(218).send('Still initialising');
+      res.status(218).send('init_first_user');
     },
   );
 

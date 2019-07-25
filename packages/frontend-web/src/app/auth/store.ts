@@ -23,7 +23,7 @@ import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import { AuthenticationStates, SystemStates } from '../../types';
-import { checkAuthorization, setUserId } from '../platform/dataService';
+import { checkAuthorization, checkServerStatus, setUserId } from '../platform/dataService';
 import { getToken, saveToken } from '../platform/localStore';
 import { disconnectNotifier } from '../platform/websocketService';
 import { IAppDispatch, IAppStateRecord } from '../stores';
@@ -114,6 +114,31 @@ export async function start(
   setError: (error: string) => void,
 ) {
   setAuthenticationState = setState;
+  try {
+    const status = await checkServerStatus();
+    setState(status);
+    if (status !== 's_gtg') {
+      return;
+    }
+  }
+  catch (e) {
+    if (e.response) {
+      // Server is there but ignoring/rejecting the healthchek.  Assume gtg
+      setState('s_gtg');
+    }
+    else if (e.request) {
+      // Server is not there
+      setState('s_unavailable');
+      return;
+    }
+    else {
+      // Something else went wrong
+      console.log(e);
+      setError(`Something went wrong: ${e.message}`);
+      return;
+    }
+  }
+
   try {
     const queryString = qs.parse(window.location.search);
     if (queryString && queryString['token']) {

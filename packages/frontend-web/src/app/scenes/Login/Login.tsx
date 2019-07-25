@@ -20,15 +20,14 @@ import { generate } from 'randomstring';
 import React from 'react';
 
 import { SPLASH_STYLES, SplashRoot } from '../../components';
-import {
-  API_URL,
-} from '../../config';
+import { API_URL } from '../../config';
 import { COMMON_STYLES } from '../../stylesx';
 import { IReturnURL, setCSRF, setReturnURL } from '../../util';
 import { css } from '../../utilx';
 
 export interface ILoginProps {
   errorMessage?: string;
+  firstUser?: boolean;
 }
 
 export function Login(props: ILoginProps) {
@@ -56,19 +55,40 @@ export function Login(props: ILoginProps) {
     window.location.href = url;
   }
 
-  return (
-    <SplashRoot>
-      <div key="headerLink" {...css(SPLASH_STYLES.header2Tag, COMMON_STYLES.fadeIn)}>
-        <a onClick={redirectToLogin} {...css(SPLASH_STYLES.link)}>Sign in</a>
-      </div>
-      { errorMessage && (
+  function contents() {
+    if (errorMessage) {
+      return (
         <div key="login-errors" {...css(SPLASH_STYLES.errors, COMMON_STYLES.fadeIn)}>
           <p key="message">{errorMessage}</p>
-          <p key="try-again" {...css(SPLASH_STYLES.errorsTryAgain)}>
+          <p key="action" {...css(SPLASH_STYLES.errorsTryAgain)}>
             <a key="try-again" onClick={redirectToLogin} {...css(SPLASH_STYLES.link)}>Try Again</a>
           </p>
         </div>
-      )}
+      );
+    }
+    if (props.firstUser) {
+      return (
+        <div key="first-user" {...css(SPLASH_STYLES.errors, COMMON_STYLES.fadeIn)}>
+          <p key="message">There are no administrators registered yet.</p>
+          <p key="message2">The first person to log in will become the administrator.<br/>
+          Once the first user has registered, the system will be locked down.<br/>
+          Additional users can be added on the settings pages.</p>
+          <p key="action" {...css(SPLASH_STYLES.errorsTryAgain)}>
+            <a onClick={redirectToLogin} {...css(SPLASH_STYLES.link)}>Create First User</a>
+          </p>
+        </div>
+      );
+    }
+    return (
+      <div key="signin" {...css(SPLASH_STYLES.signIn, COMMON_STYLES.fadeIn)}>
+        <a onClick={redirectToLogin} {...css(SPLASH_STYLES.link)}>Sign In</a>
+      </div>
+    );
+  }
+
+  return (
+    <SplashRoot>
+      {contents()}
     </SplashRoot>
   );
 }
