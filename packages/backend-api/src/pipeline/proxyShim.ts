@@ -17,17 +17,17 @@ limitations under the License.
 import * as Bluebird from 'bluebird';
 import * as requestRaw from 'request';
 import * as striptags  from 'striptags';
-import {rtrim} from 'underscore.string';
+import { rtrim } from 'underscore.string';
 
-import { config } from '@conversationai/moderator-config';
-import { logger } from '../../logger';
-
+import { logger } from '@conversationai/moderator-backend-core';
 import {
   Article,
   ICommentInstance,
   IUserInstance,
-} from '../../models';
-import {IScoreData} from './shim';
+} from '@conversationai/moderator-backend-core';
+import { config } from '@conversationai/moderator-config';
+
+import { IScoreData } from './shim';
 
 const request = Bluebird.promisify(requestRaw) as any;
 Bluebird.promisifyAll(request);

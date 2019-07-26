@@ -20,6 +20,7 @@ import {
   max,
   uniq,
 } from 'lodash';
+
 import {
   CommentSummaryScore,
   ICommentInstance,
@@ -30,7 +31,8 @@ import {
   MODERATION_ACTION_REJECT,
   ModerationRule,
   Tag,
-} from '../../models';
+} from '@conversationai/moderator-backend-core';
+
 import {
   approve,
   defer,

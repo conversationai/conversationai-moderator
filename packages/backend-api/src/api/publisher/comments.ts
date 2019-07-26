@@ -18,12 +18,13 @@ import {
   Article,
   Comment,
   ICommentInstance, logger,
-  postProcessComment,
   triggerMapFirst,
 } from '@conversationai/moderator-backend-core';
 import * as Bluebird from 'bluebird';
 
 import { enqueue, ISendCommentForScoringTaskData } from '../../processing';
+
+import {postProcessComment} from '../../pipeline/pipeline';
 
 /**
  * Take a comment defintion and return a promise that either resolves

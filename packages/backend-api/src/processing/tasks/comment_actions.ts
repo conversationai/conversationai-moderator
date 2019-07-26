@@ -15,23 +15,17 @@ limitations under the License.
 */
 
 import {
-  addScore,
-  approve,
   Article,
   Comment,
   CommentFlag,
   CommentScore,
   CommentSummaryScore,
-  defer,
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
-  highlight,
   ICommentInstance,
   IResolution,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_REJECT,
-  reject,
-  reset,
   Tag,
   User,
 } from '@conversationai/moderator-backend-core';
@@ -40,6 +34,8 @@ import {
   IJobLogger,
   IQueueHandler,
 } from '../util';
+
+import { addScore, approve, defer, highlight, reject, reset } from '../../pipeline/state';
 
 export interface ICommentActionData {
   commentId: number;

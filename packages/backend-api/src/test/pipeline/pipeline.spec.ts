@@ -19,20 +19,6 @@ import { groupBy } from 'lodash';
 import * as moment from 'moment';
 
 import {
-  compileScoresData,
-  compileSummaryScoresData,
-  completeMachineScoring,
-  findOrCreateTagsByKey,
-  getCommentsToResendForScoring,
-  getIsDoneScoring,
-  processMachineScore,
-  recordDecision,
-} from '../../../domain/comments';
-import {
-  IScores,
-  ISummaryScores,
-} from '../../../domain/comments';
-import {
   Article,
   Category,
   Comment,
@@ -43,8 +29,8 @@ import {
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_REJECT,
   Tag,
-} from '../../../models';
-import { ITagInstance } from '../../../models';
+} from '@conversationai/moderator-backend-core';
+import { ITagInstance } from '@conversationai/moderator-backend-core';
 import {
   createArticle,
   createCategory,
@@ -55,9 +41,21 @@ import {
   createModeratorUser,
   createTag,
   createUser,
-} from './fixture';
+} from '@conversationai/moderator-backend-core/src/test/domain/comments/fixture';
 
-describe('Comments Domain Pipeline Tests', () => {
+import {
+  compileScoresData,
+  compileSummaryScoresData,
+  completeMachineScoring,
+  findOrCreateTagsByKey,
+  getCommentsToResendForScoring,
+  processMachineScore,
+  recordDecision,
+} from '../../pipeline';
+import { IScores, ISummaryScores } from '../../pipeline/shim';
+import { getIsDoneScoring } from '../../pipeline/state';
+
+describe('Pipeline Tests', () => {
   beforeEach(async () => {
     await CommentSummaryScore.destroy({where: {}});
     await CommentScore.destroy({where: {}});

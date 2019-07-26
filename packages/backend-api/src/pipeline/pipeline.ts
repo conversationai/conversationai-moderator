@@ -22,8 +22,7 @@ import { humanize, titleize, trim } from 'underscore.string';
 
 import { config } from '@conversationai/moderator-config';
 
-import { trigger } from '../../events';
-import { logger } from '../../logger';
+import { logger, trigger } from '@conversationai/moderator-backend-core';
 import {
   Article,
   Comment,
@@ -46,16 +45,16 @@ import {
   Tag,
   User,
   USER_GROUP_MODERATOR,
-} from '../../models';
-import { sequelize } from '../../sequelize';
-import { denormalizeCommentCountsForArticle } from '../articles';
-import { cacheCommentTopScores } from '../commentScores';
-import { denormalizeCountsForComment } from './countDenormalization';
-import { processRulesForComment } from './rules';
-import { getIsDoneScoring } from './state';
-import { cacheTextSize } from './textSizes';
+} from '@conversationai/moderator-backend-core';
+import { sequelize } from '@conversationai/moderator-backend-core';
+import { denormalizeCommentCountsForArticle } from '@conversationai/moderator-backend-core';
+import { cacheCommentTopScores } from '@conversationai/moderator-backend-core';
+import { denormalizeCountsForComment } from '@conversationai/moderator-backend-core';
+import { cacheTextSize } from '@conversationai/moderator-backend-core';
 
-import {IScoreData, IScores, IShim, ISummaryScores} from './shim';
+import { processRulesForComment } from './rules';
+import { IScoreData, IScores, IShim, ISummaryScores } from './shim';
+import { getIsDoneScoring } from './state';
 
 import { createShim as createApiShim } from './apiShim';
 import { createShim as createProxyShim } from './proxyShim';

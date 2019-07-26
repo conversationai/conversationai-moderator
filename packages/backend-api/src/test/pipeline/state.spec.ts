@@ -16,6 +16,23 @@ limitations under the License.
 
 import * as chai from 'chai';
 import * as moment from 'moment';
+
+import {
+  CommentScoreRequest,
+  Decision,
+  ICommentInstance,
+  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_DEFER,
+  MODERATION_ACTION_REJECT,
+} from '@conversationai/moderator-backend-core';
+import {
+  createArticle,
+  createComment,
+  createCommentScoreRequest,
+  createModeratorUser,
+  createUser,
+} from '@conversationai/moderator-backend-core/src/test/domain/comments/fixture';
+
 import {
   approve,
   defer,
@@ -24,25 +41,10 @@ import {
   reject,
   scoresComplete,
   setCommentState,
-} from '../../../domain/comments/state';
-import {
-  CommentScoreRequest,
-  Decision,
-  ICommentInstance,
-  MODERATION_ACTION_ACCEPT,
-  MODERATION_ACTION_DEFER,
-  MODERATION_ACTION_REJECT,
-} from '../../../models';
-import {
-  createArticle,
-  createComment,
-  createCommentScoreRequest,
-  createModeratorUser,
-  createUser,
-} from './fixture';
+} from '../../pipeline/state';
 
 // tslint:disable no-import-side-effect
-import '../../test_helper';
+import '../test_helper';
 // tslint:enable no-import-side-effect
 
 const assert = chai.assert;
@@ -68,7 +70,7 @@ async function shouldRecordDecision(comment: ICommentInstance, status: string, s
 
 }
 
-describe('Comments Domain States Tests', () => {
+describe('Pipeline States Tests', () => {
   let comment: any;
   let article;
 

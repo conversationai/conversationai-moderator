@@ -15,9 +15,10 @@ limitations under the License.
 */
 
 import { groupBy, omit } from 'lodash';
+
 import {
     trigger,
-} from '../../events';
+} from '@conversationai/moderator-backend-core';
 import {
   CommentScore,
   CommentScoreRequest,
@@ -33,9 +34,10 @@ import {
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
   User,
-} from '../../models';
-import {denormalizeCommentCountsForArticle} from '../articles';
-import {denormalizeCountsForComment} from '../comments';
+} from '@conversationai/moderator-backend-core';
+import { denormalizeCommentCountsForArticle } from '@conversationai/moderator-backend-core';
+import { denormalizeCountsForComment } from '@conversationai/moderator-backend-core';
+
 import { recordDecision } from './pipeline';
 
 export interface IDecision {

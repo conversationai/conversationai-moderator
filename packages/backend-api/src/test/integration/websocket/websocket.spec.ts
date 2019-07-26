@@ -24,11 +24,13 @@ import { makeServer } from '../../../api/util/server';
 import { mountAPI } from '../../../index';
 import {
   assertAllArticlesMessage,
-  assertSystemMessage, assertUserMessage,
-  expect, listenForMessages,
+  assertSystemMessage,
+  assertUserMessage,
+  expect,
+  listenForMessages,
   makeUser,
   sleep,
-} from '../../test_helper';
+} from '../../fixture';
 
 describe('websocket tests', () => {
   beforeEach(async () => {

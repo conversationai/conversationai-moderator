@@ -16,14 +16,15 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-import { checkScoringDone, sendToScorer } from '../../domain/comments';
-import { logger } from '../../logger';
+import { logger } from '@conversationai/moderator-backend-core';
 import {
   Article,
   Comment,
   User,
   USER_GROUP_MODERATOR,
-} from '../../models';
+} from '@conversationai/moderator-backend-core';
+
+import { checkScoringDone, sendToScorer } from '../../pipeline';
 
 export const command = 'comments:send-to-scorer';
 export const describe = 'Send comments to Endpoint of user object to get scored.';
