@@ -16,10 +16,11 @@ limitations under the License.
 
 import {
   completeMachineScoring,
-  getIsDoneScoring,
-  IScoreData,
   processMachineScore,
-} from '@conversationai/moderator-backend-core';
+} from '../../pipeline';
+import { IScoreData } from '../../pipeline/shim';
+import { getIsDoneScoring } from '../../pipeline/state';
+
 import { handler, IQueueHandler } from '../util';
 
 export { IScoreData };

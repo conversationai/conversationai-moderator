@@ -16,7 +16,6 @@ limitations under the License.
 
 import { pick } from 'lodash';
 
-import { postProcessComment, sendForScoring } from '@conversationai/moderator-backend-core';
 import { logger } from '@conversationai/moderator-backend-core';
 import { Article, Category, Comment, Decision, updateHappened } from '@conversationai/moderator-backend-core';
 import {
@@ -26,6 +25,8 @@ import {
   IUserInstance,
 } from '@conversationai/moderator-backend-core';
 import { sequelize } from '@conversationai/moderator-backend-core';
+
+import { postProcessComment, sendForScoring } from '../../pipeline';
 
 let testOnly = false;
 let testCallback: (type: string, obj: any) => void;

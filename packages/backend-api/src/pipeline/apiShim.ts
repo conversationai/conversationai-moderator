@@ -15,17 +15,17 @@ limitations under the License.
 */
 
 import * as Bluebird from 'bluebird';
-import {google} from 'googleapis';
+import { google } from 'googleapis';
 import * as requestRaw from 'request';
-const striptags = require('striptags');
+import * as striptags  from 'striptags';
 
-import { logger } from '../../logger';
-
+import { logger } from '@conversationai/moderator-backend-core';
 import {
   ICommentInstance,
   IUserInstance,
-} from '../../models';
-import {IScoreData} from './shim';
+} from '@conversationai/moderator-backend-core';
+
+import { IScoreData } from './shim';
 
 const request = Bluebird.promisify(requestRaw) as any;
 Bluebird.promisifyAll(request);

@@ -37,7 +37,7 @@ import {
   makeCommentScore,
   makeTag,
   makeTaggingSensitivity,
-} from '../../test_helper';
+} from '../../fixture';
 
 import {
   filterTopScoresByTaggingSensitivity,

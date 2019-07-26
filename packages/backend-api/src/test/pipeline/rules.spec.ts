@@ -15,11 +15,7 @@ limitations under the License.
 */
 
 import { assert } from 'chai';
-import {
-  compileScores,
-  processRulesForComment,
-  resolveComment,
-} from '../../../domain/comments';
+
 import {
   Article,
   Category,
@@ -31,7 +27,7 @@ import {
   MODERATION_ACTION_REJECT,
   ModerationRule,
   Tag,
-} from '../../../models';
+} from '@conversationai/moderator-backend-core';
 import {
   createArticle,
   createCategory,
@@ -41,9 +37,15 @@ import {
   createTag,
   getCommentSummaryScoreData,
   getTagData,
-} from './fixture';
+} from '@conversationai/moderator-backend-core/src/test/domain/comments/fixture';
 
-describe('Comment Domain Rules Tests', () => {
+import {
+  compileScores,
+  processRulesForComment,
+  resolveComment,
+} from '../../pipeline/rules';
+
+describe('Pipeline Rules Tests', () => {
   beforeEach(async () => {
     await CommentSummaryScore.destroy({where: {}});
     await Comment.destroy({where: {}});

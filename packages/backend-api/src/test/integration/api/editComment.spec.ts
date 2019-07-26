@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import * as chai from "chai";
+import * as chai from 'chai';
 
 import {
   Comment,
@@ -22,7 +22,7 @@ import {
 import {
   expect,
   makeComment,
-} from '../../test_helper';
+} from '../../fixture';
 
 import {
   app,

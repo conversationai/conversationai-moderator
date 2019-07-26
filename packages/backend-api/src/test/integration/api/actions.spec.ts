@@ -40,7 +40,7 @@ import {
   makeComment,
   makeFlag,
   makeUser,
-} from '../../test_helper';
+} from '../../fixture';
 import { app } from './test_helper';
 
 const BASE_URL = `/services/commentActions`;
