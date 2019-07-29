@@ -15,27 +15,27 @@ limitations under the License.
 */
 
 import {
-  Article,
-  Comment,
-  CommentFlag,
   CommentScore,
   CommentSummaryScore,
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
-  ICommentInstance,
-  IResolution,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_REJECT,
-  Tag,
-  User,
 } from '@conversationai/moderator-backend-core';
+
+import { addScore, approve, defer, highlight, reject, reset } from '../../pipeline/state';
 import {
   handler,
   IJobLogger,
-  IQueueHandler,
 } from '../util';
-
-import { addScore, approve, defer, highlight, reject, reset } from '../../pipeline/state';
+import {
+  getComment,
+  getTag,
+  getUser,
+  resolveComment,
+  resolveCommentAndFlags,
+  resolveFlagsAndDenormalize,
+} from './utils';
 
 export interface ICommentActionData {
   commentId: number;
@@ -116,39 +116,15 @@ export interface IRemoveTagData {
  *      .save();
  *
  */
-export const deferCommentsTask: IQueueHandler<IDeferCommentsData> = handler<IDeferCommentsData>(async (data, logger) => {
-  const { commentId, userId, isBatchAction } = data;
-
-  let user = null;
-
-  if (typeof userId !== 'undefined' && userId !== null) {
-    user = await User.findById(userId);
-
-    if (!user) {
-      throw new Error(`User not found, id: ${userId}`);
-    }
-  }
-
-  const comment = await Comment.findOne({
-    where: {
-      id: commentId,
-    },
-    include: [
-      { model: Article, required: true},
-    ],
-  });
-
-  if (!comment) {
-    throw new Error(`Comment not found, id: ${commentId}`);
-  }
+export async function deferCommentsTask(data: IDeferCommentsData, logger: IJobLogger) {
+  const user = await getUser(data.userId);
+  const comment = await getComment(data.commentId);
 
   // update batch action
-  await comment.set('isBatchResolved', isBatchAction).save();
-
-  logger.info('defer comment : ',  commentId );
-
+  logger.info('defer comment : ',  comment.id );
+  await comment.set('isBatchResolved', data.isBatchAction).save();
   return defer(comment, user);
-});
+}
 
 /**
  * Worker task wrapper for highlighting a comment. Fetches the comment by id and updates.
@@ -166,36 +142,11 @@ export const deferCommentsTask: IQueueHandler<IDeferCommentsData> = handler<IDef
  *
  */
 export const highlightCommentsTask = handler<IHighlightCommentsData>(async (data, logger) => {
-  const { commentId, userId, isBatchAction } = data;
+  const user = await getUser(data.userId);
+  const comment = await getComment(data.commentId);
 
-  let user = null;
-
-  if (typeof userId !== 'undefined' && userId !== null) {
-    user = await User.findById(userId);
-
-    if (!user) {
-      throw new Error(`User not found, id: ${userId}`);
-    }
-  }
-
-  const comment = await Comment.findOne({
-    where: {
-      id: commentId,
-    },
-    include: [
-      { model: Article, required: true},
-    ],
-  });
-
-  if (!comment) {
-    throw new Error(`Comment not found, id: ${commentId}`);
-  }
-
-  // update batch action
-  await comment.set('isBatchResolved', isBatchAction).save();
-
-  logger.info('highlight comment : ', commentId);
-
+  logger.info('highlight comment : ', comment.id);
+  await comment.set('isBatchResolved', data.isBatchAction).save();
   return highlight(comment, user);
 });
 
@@ -216,43 +167,13 @@ export const highlightCommentsTask = handler<IHighlightCommentsData>(async (data
  *
  */
 export const tagCommentsTask = handler<ITagCommentsData>(async (data, logger) => {
-  const { commentId, tagId, userId } = data;
+  const user = await getUser(data.userId);
+  const comment = await getComment(data.commentId);
+  const tag = await getTag(data.tagId);
 
-  logger.info(`Run tag comment process with comment id ${commentId} and tag id ${tagId}`);
-
-  const comment = await Comment.findOne({
-    where: {
-      id: commentId,
-    },
-    include: [
-      { model: Article, required: true},
-    ],
-  });
-
-  if (!comment) {
-    throw new Error(`Comment not found, id: ${commentId}`);
-  }
-
-  const tag = await Tag.findById(tagId);
-
-  if (!tag) {
-    throw new Error(`Tag not found, id: ${tagId}`);
-  }
-
-  let user = null;
-
-  if (typeof userId !== 'undefined' && userId !== null) {
-    user = await User.findById(userId);
-
-    if (!user) {
-      throw new Error(`User not found, id: ${userId}`);
-    }
-  }
-
+  logger.info(`Run tag comment process with comment id ${comment.id} and tag id ${tag.id}`);
   const commentScore = await addScore(comment, tag, user);
-
   logger.info('Comment Score added.');
-
   return commentScore;
 });
 
@@ -273,49 +194,21 @@ export const tagCommentsTask = handler<ITagCommentsData>(async (data, logger) =>
  *
  */
 export const tagCommentSummaryScoresTask = handler<ITagCommentsData>(async (data, logger) => {
-  const { commentId, tagId, userId } = data;
+  const user = await getUser(data.userId);
+  const comment = await getComment(data.commentId);
+  const tag = await getTag(data.tagId);
 
-  logger.info(`Run tag comment process with comment id ${commentId} and tag id ${tagId}`);
-
-  const comment = await Comment.findOne({
-    where: {
-      id: commentId,
-    },
-    include: [
-      { model: Article, required: true},
-    ],
-  });
-
-  if (!comment) {
-    throw new Error(`Comment not found, id: ${commentId}`);
-  }
-
-  const tag = await Tag.findById(tagId);
-
-  if (!tag) {
-    throw new Error(`Tag not found, id: ${tagId}`);
-  }
-
-  let user = null;
-
-  if (typeof userId !== 'undefined' && userId !== null) {
-    user = await User.findById(userId);
-
-    if (!user) {
-      throw new Error(`User not found, id: ${userId}`);
-    }
-  }
+  logger.info(`Run tag comment process with comment id ${comment.id} and tag id ${tag.id}`);
 
   await CommentSummaryScore.insertOrUpdate({
     commentId: comment.id,
-    tagId,
+    tagId: tag.id,
     score: 1,
     isConfirmed: true,
-    confirmedUserId: userId,
+    confirmedUserId: user && user.id,
   });
 
   logger.info('Comment Summary Score added.');
-
 });
 
 /**
@@ -334,17 +227,8 @@ export const tagCommentSummaryScoresTask = handler<ITagCommentsData>(async (data
  *
  */
 export const confirmCommentSummaryScoreTask = handler<IConfirmSummaryScoreData>(async (data, logger) => {
-  const { commentId, tagId, userId } = data;
-
-  let user = null;
-
-  if (typeof userId !== 'undefined' && userId !== null) {
-    user = await User.findById(userId);
-
-    if (!user) {
-      throw new Error(`User not found, id: ${userId}`);
-    }
-  }
+  const user = await getUser(data.userId);
+  const { commentId, tagId } = data;
 
   // Confirm Comment Score Exists
   const cs = await CommentSummaryScore.findOne({
@@ -354,15 +238,13 @@ export const confirmCommentSummaryScoreTask = handler<IConfirmSummaryScoreData>(
     },
   });
 
-  // debugger
-
   if (!cs) { return; }
 
   logger.info(`Confirm tag for comment_score commentId: ${cs.get('commentId')}`);
 
   return cs.update({
     isConfirmed: true,
-    confirmedUserId: userId,
+    confirmedUserId: user && user.id,
   });
 });
 
@@ -382,17 +264,8 @@ export const confirmCommentSummaryScoreTask = handler<IConfirmSummaryScoreData>(
  *
  */
 export const rejectCommentSummaryScoreTask = handler<IRejectSummaryScoreData>(async (data, logger) => {
+  await getUser(data.userId);
   const { commentId, tagId, userId } = data;
-
-  let user = null;
-
-  if (typeof userId !== 'undefined' && userId !== null) {
-    user = await User.findById(userId);
-
-    if (!user) {
-      throw new Error(`User not found, id: ${userId}`);
-    }
-  }
 
   // Confirm Comment Score Exists
   const cs = await CommentSummaryScore.findOne({
@@ -428,116 +301,11 @@ export const rejectCommentSummaryScoreTask = handler<IRejectSummaryScoreData>(as
  *
  */
 export const resetCommentsTask = handler<IResetCommentsData>(async (data, logger) => {
-  const { commentId, userId } = data;
-
-  let user = null;
-
-  if (typeof userId !== 'undefined' && userId !== null) {
-    user = await User.findById(userId);
-
-    if (!user) {
-      throw new Error(`User not found, id: ${userId}`);
-    }
-  }
-
-  const comment = await Comment.findOne({
-    where: {
-      id: commentId,
-    },
-    include: [
-      { model: Article, required: true},
-    ],
-  });
-
-  if (!comment) {
-    throw new Error(`Comment not found, id: ${commentId}`);
-  }
-
-  logger.info(`reset comment: ${commentId}`);
-
+  const user = await getUser(data.userId);
+  const comment = await getComment(data.commentId);
+  logger.info(`reset comment: ${comment.id}`);
   return reset(comment, user);
 });
-
-async function resolveComment(
-  commentId: number,
-  userId: number | null,
-  logger: IJobLogger,
-  isBatchAction: boolean,
-  status: IResolution,
-  domainFn: (comment: ICommentInstance, source: any) => Promise<ICommentInstance>,
-): Promise<void> {
-
-  let user = null;
-
-  if (typeof userId !== 'undefined' && userId !== null) {
-    user = await User.findById(userId);
-
-    if (!user) {
-      throw new Error(`User not found, id: ${userId}`);
-    }
-  }
-
-  const comment = await Comment.findOne({
-    where: {
-      id: commentId,
-    },
-    include: [
-      { model: Article, required: true},
-    ],
-  });
-
-  if (!comment) {
-    throw new Error(`Comment not found, id: ${commentId}`);
-  }
-
-  // update batch action
-  await comment.set('isBatchResolved', isBatchAction).save();
-
-  logger.info(`${status} comment: ${commentId}`);
-
-  await domainFn(comment, user);
-}
-
-async function resolveFlags(
-  commentId: number,
-  userId?: number,
-): Promise<void> {
-  await CommentFlag.update(
-    {
-      isResolved: true,
-      resolvedById: userId,
-      resolvedAt: new Date(),
-    } as any,
-    { where: {
-        commentId: commentId,
-        isResolved: false,
-      }},
-  );
-}
-
-async function resolveFlagsAndDenormalize(
-  commentId: number,
-  userId?: number,
-): Promise<void> {
-  await resolveFlags(commentId, userId);
-  const comment = await Comment.findById(commentId);
-  const article = await comment.getArticle();
-  await denormalizeCountsForComment(comment);
-  await denormalizeCommentCountsForArticle(article, true);
-}
-
-async function resolveCommentAndFlags(
-  commentId: number,
-  userId: number | null,
-  logger: IJobLogger,
-  isBatchAction: boolean,
-  status: IResolution,
-  domainFn: (comment: ICommentInstance, source: any) => Promise<ICommentInstance>,
-): Promise<void> {
-  // We update flags first as we do the denormalization in the resolveComment action.
-  await resolveFlags(commentId, userId ? userId : undefined);
-  await resolveComment(commentId, userId, logger, isBatchAction, status, domainFn);
-}
 
 /**
  * Worker task wrapper for approving a comment. Fetches the comment by id and updates.
@@ -554,33 +322,31 @@ async function resolveCommentAndFlags(
  *      .save();
  *
  */
-export const acceptCommentsTask = handler<IAcceptCommentsData>((data, logger) => {
+export const acceptCommentsTask = handler<IAcceptCommentsData>((data) => {
   const { commentId, userId, isBatchAction } = data;
 
   return resolveComment(
     commentId,
     userId || null,
-    logger,
     isBatchAction,
     MODERATION_ACTION_ACCEPT,
     approve,
   );
 });
 
-export const acceptCommentsAndFlagsTask = handler<ICommentActionData>((data, logger) => {
+export const acceptCommentsAndFlagsTask = handler<ICommentActionData>((data) => {
   const { commentId, userId, isBatchAction } = data;
 
   return resolveCommentAndFlags(
     commentId,
     userId || null,
-    logger,
     isBatchAction,
     MODERATION_ACTION_ACCEPT,
     approve,
   );
 });
 
-export const resolveFlagsTask = handler<ICommentActionData>((data, _logger) => {
+export const resolveFlagsTask = handler<ICommentActionData>((data) => {
   const { commentId, userId } = data;
 
   return resolveFlagsAndDenormalize(
@@ -604,26 +370,24 @@ export const resolveFlagsTask = handler<ICommentActionData>((data, _logger) => {
  *      .save();
  *
  */
-export const rejectCommentsTask = handler<IRejectCommentsData>((data, logger) => {
+export const rejectCommentsTask = handler<IRejectCommentsData>((data) => {
   const { commentId, userId, isBatchAction } = data;
 
   return resolveComment(
     commentId,
     userId || null,
-    logger,
     isBatchAction,
     MODERATION_ACTION_REJECT,
     reject,
   );
 });
 
-export const rejectCommentsAndFlagsTask = handler<ICommentActionData>((data, logger) => {
+export const rejectCommentsAndFlagsTask = handler<ICommentActionData>((data) => {
   const { commentId, userId, isBatchAction } = data;
 
   return resolveCommentAndFlags(
     commentId,
     userId || null,
-    logger,
     isBatchAction,
     MODERATION_ACTION_REJECT,
     reject,
@@ -791,8 +555,8 @@ export const removeTagTask = handler<IRemoveTagData>(async (data, logger) => {
     throw new Error(`Comment Score Not found, id: ${commentScoreId}`);
   }
 
-  const comment = await (cs as any)['getComment']();
-  const article = await (comment as any)['getArticle']();
+  const comment = await cs.getComment();
+  const article = await comment.getArticle();
 
   // Remove
   await CommentScore.destroy({
