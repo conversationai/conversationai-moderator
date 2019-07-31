@@ -24,9 +24,10 @@ import * as express from 'express';
 import * as Joi from 'joi';
 
 import {
-  enqueue,
+  enqueueProcessTagAdditionTask,
+  enqueueProcessTagRevocationTask,
+  IProcessTagData,
   IProcessTagAdditionData,
-  IProcessTagRevocationData,
 } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import * as JSONAPI from '../jsonapi';
@@ -155,7 +156,7 @@ export function createPublisherService(): express.Router {
       logger.info('Comment Tag(s) posted to comments/tags: ', JSON.stringify(items));
 
       for (const data of items) {
-        await enqueue<IProcessTagAdditionData>('processTagAddition', data, req.body.runImmediately || false);
+        await enqueueProcessTagAdditionTask(data, req.body.runImmediately);
       }
 
       res.json(REPLY_SUCCESS);
@@ -167,11 +168,11 @@ export function createPublisherService(): express.Router {
   router.post('/comments/tags/revoke',
     validateDataSchema(revokeTagSchema),
     async (req, res, next) => {
-      const items: Array<IProcessTagRevocationData> = Array.isArray(req.body.data) ? req.body.data : [req.body.data];
+      const items: Array<IProcessTagData> = Array.isArray(req.body.data) ? req.body.data : [req.body.data];
       logger.info('Comment Tag(s) revoked to comments/tags/revoke: ', JSON.stringify(items));
 
       for (const data of items) {
-        await enqueue<IProcessTagRevocationData>('processTagRevocation', data, req.body.runImmediately || false);
+        await enqueueProcessTagRevocationTask(data, req.body.runImmediately);
       }
 
       res.json(REPLY_SUCCESS);

@@ -20,36 +20,15 @@ import {
 } from '../../pipeline';
 import { IScoreData } from '../../pipeline/shim';
 import { getIsDoneScoring } from '../../pipeline/state';
+import { enqueue, registerTask } from '../util';
 
-export { IScoreData };
-export interface IProcessMachineScoreData {
+interface IProcessMachineScoreData {
   commentId: number;
   userId: number;
   scoreData: IScoreData;
-  runImmediately?: boolean;
 }
 
-/**
- * Worker wrapper for machine score processing
- *
- * Usage:
- *
- *    import { queue } from './worker/queue';
- *
- *    queue
- *      .create('processMachineScore', {
- *        commentId: 43,
- *        userId: 8,
- *        scoreData: {
- *          'scores': {
- *            ...
- *          }
- *        }
- *      })
- *      .save();
- *
- */
-export async function processMachineScoreTask(data: IProcessMachineScoreData) {
+async function executeProcessMachineScoreTask(data: IProcessMachineScoreData) {
   await processMachineScore(
     data.commentId,
     data.userId,
@@ -61,4 +40,11 @@ export async function processMachineScoreTask(data: IProcessMachineScoreData) {
   if (isDoneScoring) {
     await completeMachineScoring(data.commentId);
   }
+}
+
+registerTask<IProcessMachineScoreData>('processMachineScore', executeProcessMachineScoreTask);
+
+export async function enqueueProcessMachineScoreTask(commentId: number, userId: number, scoreData: IScoreData, runImmediately: boolean) {
+  const taskData = { commentId, userId, scoreData };
+  await enqueue<IProcessMachineScoreData>('processMachineScore', taskData, runImmediately);
 }

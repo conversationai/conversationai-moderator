@@ -22,9 +22,8 @@ import {
 } from '@conversationai/moderator-backend-core';
 import * as Bluebird from 'bluebird';
 
-import { enqueue, ISendCommentForScoringTaskData } from '../../processing';
-
-import {postProcessComment} from '../../pipeline/pipeline';
+import { postProcessComment } from '../../pipeline';
+import { enqueueSendCommentForScoringTask } from '../../processing';
 
 /**
  * Take a comment defintion and return a promise that either resolves
@@ -85,10 +84,8 @@ export function createComments(items: Array<any>): Bluebird<Array<ICommentInstan
 /**
  * Send the comments to the queue for scoring.
  */
-export async function sendCommentsToScoringQueue(comments: Array<ICommentInstance>, runImmediately = false): Promise<void> {
+export async function sendCommentsToScoringQueue(comments: Array<ICommentInstance>): Promise<void> {
   for (const c of comments) {
-    await enqueue<ISendCommentForScoringTaskData>('sendCommentForScoring', {
-      commentId: c.id,
-    }, runImmediately);
+    await enqueueSendCommentForScoringTask(c.id);
   }
 }

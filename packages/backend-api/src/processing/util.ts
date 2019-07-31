@@ -17,32 +17,6 @@ limitations under the License.
 import { config } from '@conversationai/moderator-config';
 import { createQueue, Job, Queue } from 'kue';
 
-export type IKnownTasks = (
-  'processMachineScore' |
-  'heartbeat' |
-  'processTagAddition' |
-  'processTagRevocation' |
-  'sendCommentForScoring' |
-  'deferComments' |
-  'highlightComments' |
-  'tagComments' |
-  'tagCommentSummaryScores' |
-  'acceptComments' |
-  'acceptCommentsAndFlags' |
-  'rejectComments' |
-  'rejectCommentsAndFlags' |
-  'resolveFlags' |
-  'resetTag' |
-  'resetComments' |
-  'confirmTag' |
-  'confirmCommentSummaryScore' |
-  'rejectCommentSummaryScore' |
-  'rejectTag' |
-  'addTag' |
-  'removeTag' |
-  'youtubeSynchronizeChannel'
-);
-
 /**
  * Creating the job queue before importing tasks as `createQueue`
  * creates a singleton, followed by importing tasks
@@ -61,7 +35,7 @@ export const knownTasks: {
   [name: string]: IQueueHandler<any>;
 } = {};
 
-export function enqueue<T>(name: IKnownTasks, data: T, runImmediately = false): Job | Promise<any> {
+export function enqueue<T>(name: string, data: T, runImmediately = false): Job | Promise<any> {
   if (runImmediately || config.get('worker.run_immediately')) {
     const fn = knownTasks[name];
     return fn(data);
@@ -81,7 +55,7 @@ export interface IQueueHandler<T> {
   (data: T): Promise<any>;
 }
 
-export function registerTask<T>(name: IKnownTasks, fn: IQueueHandler<T>) {
+export function registerTask<T>(name: string, fn: IQueueHandler<T>) {
   knownTasks[name] = fn;
 }
 

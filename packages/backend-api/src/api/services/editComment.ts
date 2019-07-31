@@ -21,7 +21,7 @@ import {
 import * as express from 'express';
 import * as Joi from 'joi';
 
-import { enqueue, ISendCommentForScoringTaskData } from '../../processing';
+import { enqueueSendCommentForScoringTask } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import { validateRequest } from '../util/validation';
 
@@ -68,10 +68,7 @@ export function createEditCommentTextService(): express.Router {
           author,
         });
 
-        // update comment scores
-        await enqueue<ISendCommentForScoringTaskData>('sendCommentForScoring', {
-          commentId: comment.id,
-        }, false);
+        enqueueSendCommentForScoringTask(commentId);
 
       } catch (err) {
         logger.error('Edit Comment error: ', err.name, err.message);

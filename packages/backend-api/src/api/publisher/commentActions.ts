@@ -17,9 +17,8 @@ import { logger } from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 
 import {
-  enqueue,
-  ICommentActionData,
-  IKnownTasks,
+  enqueueCommentAction,
+  CommentActions,
 } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import { commentActionSchema } from '../services/commentActions';
@@ -30,23 +29,17 @@ const validateCommentActionRequest = validateRequest(dataSchema(commentActionSch
 /**
  * Queues an approval or rejected action. Accepts array of comment ids, or a single comment id.
  */
-export function queueMainAction(name: IKnownTasks): express.RequestHandler {
+export function queueMainAction(name: CommentActions): express.RequestHandler {
   return async ({ body }, res, next) => {
     try {
       const dataArray = Array.isArray(body.data) ? body.data : [body.data];
+      const isBatchAction = (dataArray.length > 1);
 
       for (const data of dataArray) {
         const { userId, commentId } = data;
-
         const parsedUserId = parseInt(userId, 10);
         const parsedCommentId = parseInt(commentId, 10);
-
-        const isBatchAction = (dataArray.length > 1);
-        await enqueue<ICommentActionData>(name, {
-          commentId: parsedCommentId,
-          userId: parsedUserId,
-          isBatchAction,
-        }, body.runImmediately || false);
+        await enqueueCommentAction(name, parsedUserId, parsedCommentId, isBatchAction, body.runImmediately);
       }
 
       res.json(REPLY_SUCCESS);

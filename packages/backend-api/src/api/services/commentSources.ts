@@ -25,7 +25,7 @@ import {
 } from '@conversationai/moderator-backend-core';
 
 import { youtubeActivateChannel, youtubeSynchronizeChannel } from '../../integrations';
-import { enqueue, registerTask } from '../../processing';
+import { enqueue, registerTask } from '../../processing/util';
 import { REPLY_SUCCESS } from '../constants';
 
 /**

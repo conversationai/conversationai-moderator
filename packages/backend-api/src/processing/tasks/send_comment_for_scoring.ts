@@ -21,27 +21,13 @@ import {
 } from '@conversationai/moderator-backend-core';
 
 import { sendForScoring } from '../../pipeline';
+import { enqueue, registerTask } from '../util';
 
-export interface ISendCommentForScoringTaskData {
+interface ISendCommentForScoringTaskData {
   commentId: number;
 }
 
-/**
- * Worker task wrapper for sending a comment for scoring. Fetches the comment by id and
- * sends it off.
- *
- * Usage:
- *
- *    import { queue } from './worker/queue';
- *
- *    queue
- *      .create('sendCommentForScoring', {
- *        commentId: 43
- *      })
- *      .save();
- *
- */
-export async function sendCommentForScoringTask(data: ISendCommentForScoringTaskData): Promise<void> {
+async function executeSendCommentForScoringTask(data: ISendCommentForScoringTaskData): Promise<void> {
   const {commentId} = data;
 
   logger.info(`sendCommentForScoringTask: Looking for ${commentId}`);
@@ -64,4 +50,10 @@ export async function sendCommentForScoringTask(data: ISendCommentForScoringTask
   }
 
   await sendForScoring(comment);
+}
+
+registerTask<ISendCommentForScoringTaskData>('sendCommentForScoring', executeSendCommentForScoringTask);
+
+export async function enqueueSendCommentForScoringTask(commentId: number) {
+  await enqueue<ISendCommentForScoringTaskData>('sendCommentForScoring', { commentId });
 }
