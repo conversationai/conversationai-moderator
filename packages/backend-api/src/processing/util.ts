@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { logger } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 import { createQueue, Job, Queue } from 'kue';
 
@@ -60,16 +59,14 @@ export function getQueueSingleton(): Queue {
 
 export const knownTasks: {
   [name: string]: IQueueHandler<any>;
-} = {
-
-};
+} = {};
 
 export function enqueue<T>(name: IKnownTasks, data: T, runImmediately = false): Job | Promise<any> {
   if (runImmediately || config.get('worker.run_immediately')) {
     const fn = knownTasks[name];
-
-    return fn(data, logger, true);
-  } else {
+    return fn(data);
+  }
+  else {
     const q = getQueueSingleton();
     const job = q.createJob(name, data);
 
@@ -80,35 +77,8 @@ export function enqueue<T>(name: IKnownTasks, data: T, runImmediately = false): 
   }
 }
 
-export interface IJobLogger {
-  info(message: string, data?: any): void;
-  error(message: string, data?: any): void;
-}
-
-export function queueLogger(job: Job): IJobLogger {
-  return {
-    info: (message: string, data?: any) => {
-      if (typeof data === 'undefined') {
-        logger.info(message);
-      } else {
-        logger.info(message, data);
-      }
-      job.log('Info: ' + message);
-    },
-
-    error: (message: string, data?: any) => {
-      if (typeof data === 'undefined') {
-        logger.error(message);
-      } else {
-        logger.error(message, data);
-      }
-      job.log('Error: ' + message);
-    },
-  };
-}
-
 export interface IQueueHandler<T> {
-  (data: T, log: IJobLogger, runImmediately?: boolean): Promise<any>;
+  (data: T): Promise<any>;
 }
 
 export function registerTask<T>(name: IKnownTasks, fn: IQueueHandler<T>) {
@@ -119,15 +89,11 @@ export function processKnownTasks() {
   for (const key in knownTasks) {
     queue.process(key, 1, async (job: Job, done: (event: any, data?: any) => any) => {
       try {
-        const data = await knownTasks[key](job.data, queueLogger(job));
+        const data = await knownTasks[key](job.data);
         done(null, data);
       } catch (e) {
         done(e);
       }
     });
   }
-}
-
-export function handler<T>(fn: IQueueHandler<T>): IQueueHandler<T> {
-  return fn;
 }

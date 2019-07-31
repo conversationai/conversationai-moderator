@@ -20,8 +20,8 @@ import {
   CommentFlag,
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
+  logger,
 } from '@conversationai/moderator-backend-core';
-import { handler, IQueueHandler } from '../util';
 
 export interface ICoreTagData {
   type: 'recommendation' | 'flag';
@@ -60,7 +60,7 @@ function lookUpCommentBySourceId(sid: string ) {
  *      .save();
  *
  */
-export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = handler<IProcessTagAdditionData>(async (data, logger) => {
+export async function processTagAdditionTask(data: IProcessTagAdditionData) {
   const { type, sourceCommentId, sourceUserId, extra } = data;
 
   logger.info('Process Tag Addition', JSON.stringify(data));
@@ -99,7 +99,7 @@ export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = ha
     logger.error('Catch Tag Addition', err);
     throw err;
   }
-});
+}
 
 /**
  * Worker wrapper for tag addition processing
@@ -117,7 +117,7 @@ export const processTagAdditionTask: IQueueHandler<IProcessTagAdditionData> = ha
  *      .save();
  *
  */
-export const processTagRevocationTask = handler<IProcessTagRevocationData>(async (data, logger) => {
+export async function processTagRevocationTask(data: IProcessTagRevocationData) {
   const { sourceCommentId, sourceUserId } = data;
 
   logger.info('Process Tag Revocation', JSON.stringify(data));
@@ -143,4 +143,4 @@ export const processTagRevocationTask = handler<IProcessTagRevocationData>(async
     logger.error('Catch Tag Revocation', err);
     throw err;
   }
-});
+}

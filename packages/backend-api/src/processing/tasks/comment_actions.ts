@@ -19,15 +19,12 @@ import {
   CommentSummaryScore,
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
+  logger,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_REJECT,
 } from '@conversationai/moderator-backend-core';
 
 import { addScore, approve, defer, highlight, reject, reset } from '../../pipeline/state';
-import {
-  handler,
-  IJobLogger,
-} from '../util';
 import {
   getComment,
   getTag,
@@ -116,7 +113,7 @@ export interface IRemoveTagData {
  *      .save();
  *
  */
-export async function deferCommentsTask(data: IDeferCommentsData, logger: IJobLogger) {
+export async function deferCommentsTask(data: IDeferCommentsData) {
   const user = await getUser(data.userId);
   const comment = await getComment(data.commentId);
 
@@ -141,14 +138,14 @@ export async function deferCommentsTask(data: IDeferCommentsData, logger: IJobLo
  *      .save();
  *
  */
-export const highlightCommentsTask = handler<IHighlightCommentsData>(async (data, logger) => {
+export async function highlightCommentsTask(data: IHighlightCommentsData)  {
   const user = await getUser(data.userId);
   const comment = await getComment(data.commentId);
 
   logger.info('highlight comment : ', comment.id);
   await comment.set('isBatchResolved', data.isBatchAction).save();
   return highlight(comment, user);
-});
+}
 
 /**
  * Worker task wrapper for adding tagging a comment. Fetches the comment by id, fetches tag by ID and inserts.
@@ -166,7 +163,7 @@ export const highlightCommentsTask = handler<IHighlightCommentsData>(async (data
  *      .save();
  *
  */
-export const tagCommentsTask = handler<ITagCommentsData>(async (data, logger) => {
+export async function tagCommentsTask(data: ITagCommentsData) {
   const user = await getUser(data.userId);
   const comment = await getComment(data.commentId);
   const tag = await getTag(data.tagId);
@@ -175,7 +172,7 @@ export const tagCommentsTask = handler<ITagCommentsData>(async (data, logger) =>
   const commentScore = await addScore(comment, tag, user);
   logger.info('Comment Score added.');
   return commentScore;
-});
+}
 
 /**
  * Worker task wrapper for adding tagging a comment. Fetches the comment by id, fetches tag by ID and inserts.
@@ -193,7 +190,7 @@ export const tagCommentsTask = handler<ITagCommentsData>(async (data, logger) =>
  *      .save();
  *
  */
-export const tagCommentSummaryScoresTask = handler<ITagCommentsData>(async (data, logger) => {
+export async function tagCommentSummaryScoresTask(data: ITagCommentsData) {
   const user = await getUser(data.userId);
   const comment = await getComment(data.commentId);
   const tag = await getTag(data.tagId);
@@ -209,7 +206,7 @@ export const tagCommentSummaryScoresTask = handler<ITagCommentsData>(async (data
   });
 
   logger.info('Comment Summary Score added.');
-});
+}
 
 /**
  *
@@ -226,7 +223,7 @@ export const tagCommentSummaryScoresTask = handler<ITagCommentsData>(async (data
  *      .save();
  *
  */
-export const confirmCommentSummaryScoreTask = handler<IConfirmSummaryScoreData>(async (data, logger) => {
+export async function confirmCommentSummaryScoreTask(data: IConfirmSummaryScoreData) {
   const user = await getUser(data.userId);
   const { commentId, tagId } = data;
 
@@ -246,7 +243,7 @@ export const confirmCommentSummaryScoreTask = handler<IConfirmSummaryScoreData>(
     isConfirmed: true,
     confirmedUserId: user && user.id,
   });
-});
+}
 
 /**
  *
@@ -263,7 +260,7 @@ export const confirmCommentSummaryScoreTask = handler<IConfirmSummaryScoreData>(
  *      .save();
  *
  */
-export const rejectCommentSummaryScoreTask = handler<IRejectSummaryScoreData>(async (data, logger) => {
+export async function rejectCommentSummaryScoreTask(data: IRejectSummaryScoreData) {
   await getUser(data.userId);
   const { commentId, tagId, userId } = data;
 
@@ -283,7 +280,7 @@ export const rejectCommentSummaryScoreTask = handler<IRejectSummaryScoreData>(as
     isConfirmed: false,
     confirmedUserId: userId,
   });
-});
+}
 
 /**
  * Worker task wrapper for resetting a comment.
@@ -300,12 +297,12 @@ export const rejectCommentSummaryScoreTask = handler<IRejectSummaryScoreData>(as
  *      .save();
  *
  */
-export const resetCommentsTask = handler<IResetCommentsData>(async (data, logger) => {
+export async function resetCommentsTask(data: IResetCommentsData) {
   const user = await getUser(data.userId);
   const comment = await getComment(data.commentId);
   logger.info(`reset comment: ${comment.id}`);
   return reset(comment, user);
-});
+}
 
 /**
  * Worker task wrapper for approving a comment. Fetches the comment by id and updates.
@@ -322,7 +319,7 @@ export const resetCommentsTask = handler<IResetCommentsData>(async (data, logger
  *      .save();
  *
  */
-export const acceptCommentsTask = handler<IAcceptCommentsData>((data) => {
+export async function acceptCommentsTask(data: IAcceptCommentsData) {
   const { commentId, userId, isBatchAction } = data;
 
   return resolveComment(
@@ -332,9 +329,9 @@ export const acceptCommentsTask = handler<IAcceptCommentsData>((data) => {
     MODERATION_ACTION_ACCEPT,
     approve,
   );
-});
+}
 
-export const acceptCommentsAndFlagsTask = handler<ICommentActionData>((data) => {
+export async function acceptCommentsAndFlagsTask(data: ICommentActionData) {
   const { commentId, userId, isBatchAction } = data;
 
   return resolveCommentAndFlags(
@@ -344,16 +341,16 @@ export const acceptCommentsAndFlagsTask = handler<ICommentActionData>((data) => 
     MODERATION_ACTION_ACCEPT,
     approve,
   );
-});
+}
 
-export const resolveFlagsTask = handler<ICommentActionData>((data) => {
+export async function resolveFlagsTask(data: ICommentActionData) {
   const { commentId, userId } = data;
 
   return resolveFlagsAndDenormalize(
     commentId,
     userId ? userId : undefined,
   );
-});
+}
 
 /**
  * Worker task wrapper for rejecting a comment. Fetches the comment by id and updates.
@@ -370,7 +367,7 @@ export const resolveFlagsTask = handler<ICommentActionData>((data) => {
  *      .save();
  *
  */
-export const rejectCommentsTask = handler<IRejectCommentsData>((data) => {
+export async function rejectCommentsTask(data: IRejectCommentsData) {
   const { commentId, userId, isBatchAction } = data;
 
   return resolveComment(
@@ -380,9 +377,9 @@ export const rejectCommentsTask = handler<IRejectCommentsData>((data) => {
     MODERATION_ACTION_REJECT,
     reject,
   );
-});
+}
 
-export const rejectCommentsAndFlagsTask = handler<ICommentActionData>((data) => {
+export async function rejectCommentsAndFlagsTask(data: ICommentActionData) {
   const { commentId, userId, isBatchAction } = data;
 
   return resolveCommentAndFlags(
@@ -392,7 +389,7 @@ export const rejectCommentsAndFlagsTask = handler<ICommentActionData>((data) => 
     MODERATION_ACTION_REJECT,
     reject,
   );
-});
+}
 
 /**
  *
@@ -408,7 +405,7 @@ export const rejectCommentsAndFlagsTask = handler<ICommentActionData>((data) => 
  *      .save();
  *
  */
-export const resetTagTask = handler<IResetTagData>(async (data, logger) => {
+export async function resetTagTask(data: IResetTagData) {
   const { commentScoreId } = data;
 
   // Confirm Comment Score Exists
@@ -421,7 +418,7 @@ export const resetTagTask = handler<IResetTagData>(async (data, logger) => {
   return cs.update({
     isConfirmed: null,
   });
-});
+}
 
 /**
  *
@@ -438,7 +435,7 @@ export const resetTagTask = handler<IResetTagData>(async (data, logger) => {
  *      .save();
  *
  */
-export const confirmTagTask = handler<IConfirmTagData>(async (data, logger) => {
+export async function confirmTagTask(data: IConfirmTagData) {
   const { commentScoreId, userId } = data;
 
   // Confirm Comment Score Exists
@@ -452,7 +449,7 @@ export const confirmTagTask = handler<IConfirmTagData>(async (data, logger) => {
     isConfirmed: true,
     confirmedUserId: userId,
   });
-});
+}
 
 /**
  *
@@ -469,7 +466,7 @@ export const confirmTagTask = handler<IConfirmTagData>(async (data, logger) => {
  *      .save();
  *
  */
-export const rejectTagTask = handler<IRejectTagData>(async (data, logger) => {
+export async function rejectTagTask(data: IRejectTagData) {
   const { commentScoreId, userId } = data;
 
   const cs = await CommentScore.findById(commentScoreId);
@@ -482,7 +479,7 @@ export const rejectTagTask = handler<IRejectTagData>(async (data, logger) => {
     isConfirmed: false,
     confirmedUserId: userId,
   });
-});
+}
 
 /**
  *
@@ -502,7 +499,7 @@ export const rejectTagTask = handler<IRejectTagData>(async (data, logger) => {
  *      .save();
  *
  */
-export const addTagTask = handler<IAddTagData>(async (data) => {
+export async function addTagTask(data: IAddTagData) {
   const {
     commentId,
     tagId,
@@ -530,7 +527,7 @@ export const addTagTask = handler<IAddTagData>(async (data) => {
   await denormalizeCommentCountsForArticle(article, false);
 
   return cs;
-});
+}
 
 /**
  *
@@ -546,7 +543,7 @@ export const addTagTask = handler<IAddTagData>(async (data) => {
  *      .save();
  *
  */
-export const removeTagTask = handler<IRemoveTagData>(async (data, logger) => {
+export async function removeTagTask(data: IRemoveTagData) {
   const { commentScoreId } = data;
 
   const cs = await CommentScore.findById(commentScoreId);
@@ -571,4 +568,4 @@ export const removeTagTask = handler<IRemoveTagData>(async (data, logger) => {
   logger.info(`Remove comment score ${commentScoreId}`);
 
   return cs;
-});
+}

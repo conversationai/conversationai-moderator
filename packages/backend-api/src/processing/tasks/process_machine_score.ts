@@ -21,8 +21,6 @@ import {
 import { IScoreData } from '../../pipeline/shim';
 import { getIsDoneScoring } from '../../pipeline/state';
 
-import { handler, IQueueHandler } from '../util';
-
 export { IScoreData };
 export interface IProcessMachineScoreData {
   commentId: number;
@@ -51,7 +49,7 @@ export interface IProcessMachineScoreData {
  *      .save();
  *
  */
-export const processMachineScoreTask: IQueueHandler<IProcessMachineScoreData> = handler<IProcessMachineScoreData>(async (data) => {
+export async function processMachineScoreTask(data: IProcessMachineScoreData) {
   await processMachineScore(
     data.commentId,
     data.userId,
@@ -63,4 +61,4 @@ export const processMachineScoreTask: IQueueHandler<IProcessMachineScoreData> = 
   if (isDoneScoring) {
     await completeMachineScoring(data.commentId);
   }
-});
+}

@@ -56,7 +56,7 @@ export function createKnownTasksRouter(): express.Router {
         }
 
         const task = knownTasks[taskName];
-        await task(body.data, logger, true);
+        await task(body.data);
 
         logger.info(`OSMod Task ${task} complete!`);
         res.status(200).json({ status: 'success'});
