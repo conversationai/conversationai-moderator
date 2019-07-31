@@ -15,11 +15,9 @@ limitations under the License.
 */
 
 import { logger } from '@conversationai/moderator-backend-core';
+
 import { getQueueSingleton, processKnownTasks } from '../util';
 
-/**
- * Kue task registry
- */
 export function startProcessing() {
   const queue = getQueueSingleton();
 
@@ -59,8 +57,21 @@ export function startProcessing() {
   });
 }
 
-export * from './heartbeat';
-export * from './process_machine_score';
-export * from './send_comment_for_scoring';
-export * from './comment_actions';
-export * from './process_tagging';
+export { heartbeatTask } from './heartbeat';
+export { CommentActions, enqueueCommentAction } from './comment_actions';
+export {
+  enqueueAddTagTask,
+  enqueueConfirmTagTask,
+  enqueueRejectTagTask,
+  enqueueRemoveTagTask,
+  enqueueResetTagTask,
+} from './score_tag_actions';
+export { enqueueProcessMachineScoreTask } from './process_machine_score';
+export { enqueueSendCommentForScoringTask } from './send_comment_for_scoring';
+export { enqueueScoreAction, ScoreActions } from './score_actions';
+export {
+  enqueueProcessTagAdditionTask,
+  enqueueProcessTagRevocationTask,
+  IProcessTagAdditionData,
+  IProcessTagData,
+} from './process_tagging';

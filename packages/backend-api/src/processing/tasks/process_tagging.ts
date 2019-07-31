@@ -22,18 +22,16 @@ import {
   denormalizeCountsForComment,
   logger,
 } from '@conversationai/moderator-backend-core';
+import {enqueue, registerTask} from '../util';
 
-export interface ICoreTagData {
+export interface IProcessTagData {
   type: 'recommendation' | 'flag';
   sourceUserId: string;
   sourceCommentId: string;
 }
 
-export interface IProcessTagAdditionData extends ICoreTagData {
+export interface IProcessTagAdditionData extends IProcessTagData {
   extra?: any;
-}
-
-export interface IProcessTagRevocationData extends ICoreTagData {
 }
 
 function lookUpCommentBySourceId(sid: string ) {
@@ -43,24 +41,7 @@ function lookUpCommentBySourceId(sid: string ) {
   });
 }
 
-/**
- * Worker wrapper for tag addition processing
- *
- * Usage:
- *
- *    import { queue } from './worker/queue';
- *
- *    queue
- *      .create('processTagAddition', {
- *        type: 'recommendation',
- *        sourceUserId: '1',
- *        sourceCommentId: '950',
- *        extra: {},
- *      })
- *      .save();
- *
- */
-export async function processTagAdditionTask(data: IProcessTagAdditionData) {
+export async function executeProcessTagAdditionTask(data: IProcessTagAdditionData) {
   const { type, sourceCommentId, sourceUserId, extra } = data;
 
   logger.info('Process Tag Addition', JSON.stringify(data));
@@ -95,29 +76,18 @@ export async function processTagAdditionTask(data: IProcessTagAdditionData) {
 
     await denormalizeCountsForComment(comment);
     await denormalizeCommentCountsForArticle(await comment.getArticle(), false);
-  } catch (err) { // Catching just for logging purposes
+  }
+  catch (err) { // Catching just for logging purposes
     logger.error('Catch Tag Addition', err);
     throw err;
   }
 }
 
-/**
- * Worker wrapper for tag addition processing
- *
- * Usage:
- *
- *    import { queue } from './worker/queue';
- *
- *    queue
- *      .create('processTagRevocation', {
- *        type: 'recommendation',
- *        sourceUserId: '1',
- *        sourceCommentId: '950',
- *      })
- *      .save();
- *
- */
-export async function processTagRevocationTask(data: IProcessTagRevocationData) {
+export async function enqueueProcessTagAdditionTask(data: IProcessTagData, runImmediately: boolean) {
+  await enqueue<IProcessTagAdditionData>('processTagAddition', data, runImmediately);
+}
+
+export async function executeProcessTagRevocationTask(data: IProcessTagData) {
   const { sourceCommentId, sourceUserId } = data;
 
   logger.info('Process Tag Revocation', JSON.stringify(data));
@@ -143,4 +113,11 @@ export async function processTagRevocationTask(data: IProcessTagRevocationData) 
     logger.error('Catch Tag Revocation', err);
     throw err;
   }
+}
+
+registerTask<IProcessTagAdditionData>('processTagAddition', executeProcessTagAdditionTask);
+registerTask<IProcessTagData>('processTagRevocation', executeProcessTagRevocationTask);
+
+export async function enqueueProcessTagRevocationTask(data: IProcessTagData, runImmediately: boolean) {
+  await enqueue<IProcessTagData>('processTagRevocation', data, runImmediately);
 }

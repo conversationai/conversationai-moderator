@@ -20,10 +20,9 @@ import {
 } from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 
+import { IScoreData } from '../../pipeline/shim';
 import {
-  enqueue,
-  IProcessMachineScoreData,
-  IScoreData,
+  enqueueProcessMachineScoreTask,
 } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import { onlyServices } from '../util/permissions';
@@ -54,14 +53,7 @@ export function createAssistant(): express.Router {
       const scoreRequest = await CommentScoreRequest.findById(id);
 
       if (scoreRequest) {
-        const taskData = {
-          commentId: scoreRequest.get('commentId'),
-          userId: scoreRequest.get('userId'),
-          scoreData,
-        };
-
-        await enqueue<IProcessMachineScoreData>('processMachineScore', taskData, runImmediately || false);
-
+        await enqueueProcessMachineScoreTask(scoreRequest.get('commentId'), scoreRequest.get('userId'), scoreData, runImmediately);
         res.json(REPLY_SUCCESS);
         next();
       } else {
