@@ -17,10 +17,10 @@ limitations under the License.
 import {
   Article,
   Comment,
+  logger,
 } from '@conversationai/moderator-backend-core';
 
 import { sendForScoring } from '../../pipeline';
-import { handler, IQueueHandler } from '../util';
 
 export interface ISendCommentForScoringTaskData {
   commentId: number;
@@ -41,28 +41,27 @@ export interface ISendCommentForScoringTaskData {
  *      .save();
  *
  */
-export const sendCommentForScoringTask: IQueueHandler<ISendCommentForScoringTaskData> = handler<ISendCommentForScoringTaskData>(
-  async (data, logger) => {
-    const { commentId } = data;
+export async function sendCommentForScoringTask(data: ISendCommentForScoringTaskData): Promise<void> {
+  const {commentId} = data;
 
-    logger.info(`sendCommentForScoringTask: Looking for ${commentId}`);
+  logger.info(`sendCommentForScoringTask: Looking for ${commentId}`);
 
-    const comment = await Comment.findById(commentId, {
-      include: [
-        Article,
-        {
-          model: Comment,
-          as: 'replyTo',
-        },
-      ],
-    });
+  const comment = await Comment.findById(commentId, {
+    include: [
+      Article,
+      {
+        model: Comment,
+        as: 'replyTo',
+      },
+    ],
+  });
 
-    if (comment) {
-      logger.info(`sendCommentForScoringTask: Found ${commentId}`);
-    } else {
-      throw new Error(`sendCommentForScoringTask: Comment not found, id: ${commentId}`);
-    }
+  if (comment) {
+    logger.info(`sendCommentForScoringTask: Found ${commentId}`);
+  }
+  else {
+    throw new Error(`sendCommentForScoringTask: Comment not found, id: ${commentId}`);
+  }
 
-    return sendForScoring(comment);
-  },
-);
+  await sendForScoring(comment);
+}
