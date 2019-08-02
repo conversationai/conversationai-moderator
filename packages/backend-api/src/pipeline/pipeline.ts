@@ -38,10 +38,11 @@ import {
   IDecisionInstance,
   IModerationRuleInstance,
   IResolution,
+  isUser,
+  isModerationRule,
   ITagAttributes,
   ITagInstance,
   IUserInstance,
-  ModerationRule,
   Tag,
   User,
   USER_GROUP_MODERATOR,
@@ -415,9 +416,9 @@ export async function recordDecision(
     commentId: comment.id,
     status,
 
-    source: source ? (source instanceof User.Instance ? 'User' : 'Rule') : 'Rule',
-    userId: source ? (source instanceof User.Instance ? source.id : undefined) : undefined,
-    moderationRuleId: source ? (source instanceof ModerationRule.Instance ? source.id : undefined) : undefined,
+    source: isUser(source) ? 'User' : 'Rule',
+    userId: (source && isUser(source)) ? source.id : undefined,
+    moderationRuleId: (source && isModerationRule(source)) ? source.id : undefined,
   });
 
   // Don't send decision to publisher in noop mode

@@ -125,3 +125,11 @@ export const ModerationRule = sequelize.define<
     afterBulkDestroy: updateHappened,
   },
 });
+
+export function isModerationRule(instance: any) {
+  // TODO: instanceof doesn't work under some circumstances that I don't really understand.
+  //       Hopefully fixed in later sequelize.
+  //       Instead check for an attribute unique to this object.
+  // return instance instanceof ModerationRule.Instance;
+  return instance && instance.get && !!instance.get('action');
+}
