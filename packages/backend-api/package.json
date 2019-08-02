@@ -34,7 +34,8 @@
     "@types/redis": "2.6.0",
     "@types/request": "2.47.0",
     "@types/sequelize": "3.4.43",
-    "@types/underscore.string": "0.0.30",
+    "@types/underscore.string": "0.0.38",
+    "@types/yargs": "13.0.2",
     "body-parser": "1.19.0",
     "canvas": "2.2.0",
     "compression": "1.7.4",
@@ -58,7 +59,9 @@
     "redis": "2.7.1",
     "request": "2.87.0",
     "sequelize": "3.30.4",
+    "striptags": "3.1.1",
     "ts-node-dev": "1.0.0-pre.32",
-    "underscore.string": "3.3.4"
+    "underscore.string": "3.3.5",
+    "yargs": "13.3.0"
   }
 }
