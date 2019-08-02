@@ -21,6 +21,7 @@ import {
   CommentScoreRequest,
   Decision,
   ICommentInstance,
+  isUser,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
@@ -271,6 +272,7 @@ describe('Pipeline States Tests', () => {
   describe('approve', () => {
     it('should set the passed in comment to a "approved" state and save it', async () => {
       const user = await createUser();
+      console.log("got here 1", isUser(user));
       const updated = await approve(comment, user);
 
       assert.equal(comment.id, updated.id);

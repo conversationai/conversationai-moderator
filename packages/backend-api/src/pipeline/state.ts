@@ -28,12 +28,12 @@ import {
   ICommentScoreRequestInstance,
   IModerationRuleInstance,
   IResolution,
+  isUser,
   ITagInstance,
   IUserInstance,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
-  User,
 } from '@conversationai/moderator-backend-core';
 import { denormalizeCommentCountsForArticle } from '@conversationai/moderator-backend-core';
 import { denormalizeCountsForComment } from '@conversationai/moderator-backend-core';
@@ -192,7 +192,7 @@ export async function setCommentState(
   // denormalize the comment counts
   const article = await comment.getArticle();
   if (article) {
-    await denormalizeCommentCountsForArticle(article, source instanceof User.Instance);
+    await denormalizeCommentCountsForArticle(article, isUser(source));
   }
 
   return updated;
