@@ -17,8 +17,9 @@ limitations under the License.
 import {
   Article,
   Comment,
-  sendForScoring,
 } from '@conversationai/moderator-backend-core';
+
+import { sendForScoring } from '../../pipeline';
 import { handler, IQueueHandler } from '../util';
 
 export interface ISendCommentForScoringTaskData {

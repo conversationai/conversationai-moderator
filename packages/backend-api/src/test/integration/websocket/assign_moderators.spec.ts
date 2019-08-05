@@ -35,7 +35,7 @@ import {
   makeCategory,
   makeUser,
   sleep,
-} from '../../test_helper';
+} from '../../fixture';
 
 const chaiHttp = require('chai-http');
 chai.use(chaiHttp);

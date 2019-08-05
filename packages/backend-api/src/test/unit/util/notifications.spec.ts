@@ -45,11 +45,13 @@ import {
 
 import {
   makeArticle,
-  makeCategory, makePreselect, makeRule,
+  makeCategory,
+  makePreselect,
+  makeRule,
   makeTag,
   makeTaggingSensitivity,
   makeUser,
-} from '../../test_helper';
+} from '../../fixture';
 
 const assert = chai.assert;
 

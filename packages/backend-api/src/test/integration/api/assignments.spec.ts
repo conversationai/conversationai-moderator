@@ -41,7 +41,7 @@ import {
   makeCategory,
   makeComment,
   makeUser,
-} from '../../test_helper';
+} from '../../fixture';
 import {
   app,
 } from './test_helper';

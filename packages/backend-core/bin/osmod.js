@@ -32,20 +32,14 @@ const path = require('path');
 const yargs = require('yargs');
 
 yargs
-  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'users', 'create')))
-  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'users', 'get_token')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'denormalize')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'exec')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'articles', 'delete')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'recalculate_text_sizes')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'calculate_text_size')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'recalculate_top_scores')))
-  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'rescore')))
-  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'send_to_scorer')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'delete')))
-  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'generate')))
   .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'flag')))
-  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'tests', 'youtube')))
   .demand(1)
   .usage('Usage: $0')
   .help()

@@ -17,7 +17,7 @@ limitations under the License.
 import {
   getCommentsToResendForScoring,
   resendForScoring,
-} from '@conversationai/moderator-backend-core';
+} from '../../pipeline';
 import { handler, IQueueHandler } from '../util';
 
 // Control the processing of comments per heartbeat

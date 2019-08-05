@@ -33,7 +33,7 @@ import {
   makeComment,
   makeCommentSummaryScore,
   makeTag,
-} from '../../test_helper';
+} from '../../fixture';
 import {
   app,
 } from './test_helper';

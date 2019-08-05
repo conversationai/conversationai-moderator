@@ -25,7 +25,7 @@
     "@types/request": "2.47.0",
     "@types/sequelize": "3.4.43",
     "@types/underscore.string": "0.0.38",
-    "@types/yargs": "13.0.0",
+    "@types/yargs": "13.0.2",
     "express-winston": "2.5.1",
     "find-up": "3.0.0",
     "googleapis": "32.0.0",
@@ -38,9 +38,8 @@
     "request": "2.87.0",
     "sequelize": "3.30.4",
     "sequelize-cli": "2.7.0",
-    "striptags": "3.1.1",
     "underscore.string": "3.3.5",
     "winston": "2.3.1",
-    "yargs": "13.2.4"
+    "yargs": "13.3.0"
   }
 }

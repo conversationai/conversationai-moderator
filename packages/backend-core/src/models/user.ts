@@ -179,3 +179,11 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
     },
   },
 });
+
+export function isUser(instance: any) {
+  // TODO: instanceof doesn't work under some circumstances that I don't really understand.
+  //       Hopefully fixed in later sequelize.
+  //       Instead check for an attribute unique to this object.
+  // return instance instanceof User.Instance;
+  return instance && instance.get && !!instance.get('group');
+}

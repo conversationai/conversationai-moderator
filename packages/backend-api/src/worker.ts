@@ -14,5 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { startWorker } from './processing';
+import { syncYoutubeTask } from './integrations';
+import { registerWorkItem, startWorker } from './processing';
+
+registerWorkItem('youtube', syncYoutubeTask);
 startWorker();
