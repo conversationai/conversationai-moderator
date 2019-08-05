@@ -226,10 +226,8 @@ export interface ISearchResultsState {
   toastButtonLabel?: 'Undo' | 'Remove rule';
   toastIcon?: JSX.Element;
   showCount?: boolean;
-  isRuleInfoVisible?: boolean;
   actionCount?: number;
   actionText?: string;
-  ruleToastIcon?: JSX.Element;
 }
 
 export class SearchResults extends React.Component<ISearchResultsProps, ISearchResultsState> {
@@ -251,8 +249,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
     toastIcon: null,
     showCount: false,
     actionCount: 0,
-    ruleToastIcon: null,
-    isRuleInfoVisible: false,
   };
 
   componentDidMount() {
@@ -267,7 +263,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   onPressEscape() {
     this.setState({
       isConfirmationModalVisible: false,
-      isRuleInfoVisible: false,
       isTaggingToolTipMetaVisible: false,
     });
   }
@@ -375,11 +370,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   }
 
   @autobind
-  onRuleInfoClose() {
-    this.setState({ isRuleInfoVisible: false });
-  }
-
-  @autobind
   confirmationClose() {
     this.setState({ isConfirmationModalVisible: false });
   }
@@ -447,10 +437,8 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
       taggingToolTipMetaPosition,
       commentSortType,
       isConfirmationModalVisible,
-      isRuleInfoVisible,
       actionCount,
       actionText,
-      ruleToastIcon,
     } = this.state;
 
     function getLinkTarget(comment: ICommentModel) {
@@ -618,23 +606,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
                 )}
                 <p key="actionText">{actionText}</p>
               </div>
-            </ToastMessage>
-          </FocusTrap>
-        </Scrim>
-
-        <Scrim
-          key="ruleInfoScrim"
-          scrimStyles={{...STYLES.scrim, ...SCRIM_STYLE.scrim}}
-          isVisible={isRuleInfoVisible}
-          onBackgroundClick={this.onRuleInfoClose}
-        >
-          <FocusTrap
-            focusTrapOptions={{
-              clickOutsideDeactivates: true,
-            }}
-          >
-            <ToastMessage icon={ruleToastIcon}>
-              <p key="toastContent">{actionText}</p>
             </ToastMessage>
           </FocusTrap>
         </Scrim>

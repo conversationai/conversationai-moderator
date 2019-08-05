@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Iterable } from 'immutable';
 import React from 'react';
 
 import {
@@ -144,7 +143,7 @@ function YoutubeCategory(props: IYoutubeCategoryProps) {
 export interface IEditYouTubeUserProps {
   onClickClose(e: React.FormEvent<any>): any;
   onUserUpdate(user: IUserModel): Promise<void>;
-  categories: Iterable.Indexed<ICategoryModel>;
+  categories: Array<ICategoryModel>;
   user?: IUserModel;
 }
 
@@ -185,7 +184,7 @@ export function EditYouTubeUser(props: IEditYouTubeUserProps) {
               <Switch
                 checked={user.isActive}
                 color="primary"
-                disabled={hasError || changingActive }
+                disabled={hasError || changingActive}
                 onChange={onIsActiveChange}
               />
             </div>

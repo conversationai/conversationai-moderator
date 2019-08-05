@@ -4,12 +4,13 @@ html {
 }
 
 body {
-  font-family: sans-serif;
+  font-family: "Libre Franklin";
   height: 100%;
   overflow: hidden; /* prevent the scroll bounce */
 
   /* AKA "NICE_MIDDLE_BLUE" from app/styles/colors */
   background: #185bac;
+  line-height: 1.43;
 }
 
 #app {

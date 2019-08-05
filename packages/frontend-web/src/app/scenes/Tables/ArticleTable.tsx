@@ -24,7 +24,7 @@ import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
-import { ArticleControlIcon } from '../../components';
+import { ArticleControlIcon, AssignModerators } from '../../components';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
 import {
@@ -42,7 +42,6 @@ import {
 import { COMMON_STYLES, medium } from '../../stylesx';
 import { partial } from '../../util/partial';
 import { css, stylesheet } from '../../utilx';
-import { AssignModerators } from '../Root/components/AssignModerators';
 import {
   articleBase,
   categoryBase,
@@ -367,7 +366,7 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
   }
 
   @autobind
-  showMore(_container: React.Component) {
+  showMore() {
     if (this.state.numberToShow < this.props.articles.length) {
       this.setState({
         numberToShow: this.state.numberToShow + this._numberOnScreen,

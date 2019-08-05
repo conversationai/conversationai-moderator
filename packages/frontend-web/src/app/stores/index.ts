@@ -15,10 +15,10 @@ limitations under the License.
 */
 
 import { Action as RootAction, Dispatch as ReduxDispatch } from 'redux';
-import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
+import { TypedRecord } from 'typed-immutable-record';
 
+import { WebsocketStates } from '../../types';
 import { logout } from '../auth';
 import { connectNotifier, STATUS_RESET, STATUS_UP } from '../platform/websocketService';
 import { articlesLoaded, articlesUpdated, IArticlesState, reducer as articleReducer } from './articles';
@@ -40,14 +40,7 @@ import { ITextSizesStateRecord, reducer as textSizesReducer } from './textSizes'
 import { IState as ITopScoresState, ISummaryState as ITopSummaryScoresState, scoreReducer as topScoresReducer, summaryScoreReducer as topSummaryScoresReducer } from './topScores';
 import { IUsersState, reducer as usersReducer, usersUpdated } from './users';
 
-export interface IWebsocketState {
-  isActive: boolean;
-}
-
-interface IWebsocketStateRecord extends TypedRecord<IWebsocketStateRecord>, IWebsocketState {}
-
 export interface IAppState {
-  websocketState: IWebsocketState;
   categories: ICategoriesState;
   articles: IArticlesState;
   comments: ICommentsState;
@@ -81,23 +74,7 @@ declare module 'redux' {
 }
 // tslint:enable interface-name
 
-const WebsocketStateFactory = makeTypedFactory<IWebsocketState, IWebsocketStateRecord>({
-  isActive: false,
-});
-
-const websocketStateUpdated = createAction<boolean>('global/WEBSOCKET_STATE_CHANGE');
-
-const websocketStateReducer = handleActions<IWebsocketState, boolean>( {
-  [websocketStateUpdated.toString()]: (state: IWebsocketStateRecord, { payload }: Action<boolean>) => {
-    return (
-      state
-        .set('isActive', payload)
-    );
-  },
-}, WebsocketStateFactory());
-
 export const reducer: any = combineReducers<IAppStateRecord>({
-  websocketState: websocketStateReducer,
   categories: categoriesReducer,
   articles: articleReducer,
   comments: commentsReducer,
@@ -114,14 +91,18 @@ export const reducer: any = combineReducers<IAppStateRecord>({
   topSummaryScores: topSummaryScoresReducer,
 });
 
-export async function initialiseClientModel(dispatch: IAppDispatch) {
+export async function initialiseClientModel(
+  dispatch: IAppDispatch,
+  setState: (state: WebsocketStates) => void,
+) {
+  setState('ws_connecting');
   connectNotifier(
     (status: string) => {
       if (status === STATUS_UP) {
-        dispatch(websocketStateUpdated(true));
+        setState('ws_gtg');
       }
       else {
-        dispatch(websocketStateUpdated(false));
+        setState('ws_connecting');
         if (status === STATUS_RESET) {
           dispatch(logout());
         }
@@ -150,8 +131,4 @@ export async function initialiseClientModel(dispatch: IAppDispatch) {
       dispatch(assignmentCountUpdated(data.assignments));
     },
   );
-}
-
-export function getWebsocketState(state: IAppStateRecord): boolean {
-  return state.getIn(['global', 'websocketState', 'isActive']);
 }

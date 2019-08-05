@@ -21,11 +21,10 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { getMyUserId, logout } from '../../auth';
-import { getWebsocketState, IAppDispatch, IAppStateRecord } from '../../stores';
+import { IAppDispatch, IAppStateRecord } from '../../stores';
 import { getArticleMap, getArticles } from '../../stores/articles';
 import { getActiveCategories, getCategoryMap } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin, getUsers } from '../../stores/users';
-import { withLoader } from '../../utilx';
 import { ArticleTable as PureArticleTable, IArticleTableProps } from './ArticleTable';
 import { TableFrame as PureTableFrame } from './TableFrame';
 
@@ -54,7 +53,6 @@ export const TableFrame: React.ComponentClass<{}> = compose(
   withRouter,
   connect(
     createStructuredSelector({
-      isLoading: (state: IAppStateRecord) => !getWebsocketState(state),
       user: getCurrentUser,
       isAdmin: getCurrentUserIsAdmin,
       categories: getActiveCategories,
@@ -63,5 +61,4 @@ export const TableFrame: React.ComponentClass<{}> = compose(
       logout: () => dispatch(logout()),
     }),
   ),
-  (c:  any) => withLoader(c, 'isLoading'),
 )(PureTableFrame);

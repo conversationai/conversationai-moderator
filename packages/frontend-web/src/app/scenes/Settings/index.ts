@@ -66,8 +66,7 @@ export type ISettingsStateProps = Pick<
   'categories' |
   'rules' |
   'preselects' |
-  'taggingSensitivities' |
-  'onCancel'
+  'taggingSensitivities'
 >;
 
 export type ISettingsDispatchProps = Pick<

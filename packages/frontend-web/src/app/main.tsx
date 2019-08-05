@@ -15,10 +15,11 @@ limitations under the License.
 */
 
 import Immutable from 'immutable';
-import { isEmpty } from 'lodash';
-import qs from 'query-string';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { RouteComponentProps, withRouter } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 import {
   applyMiddleware,
   compose,
@@ -28,15 +29,22 @@ import { combineReducers } from 'redux-immutable';
 import thunk from 'redux-thunk';
 
 import {
-  handleToken,
+  AuthenticationStates,
+  ServerStates,
+  SystemStates,
+  WebsocketStates,
+} from '../types';
+import {
   reducer as authReducer,
-  startAuthentication,
-} from './auth';
+  start,
+} from './auth/store';
+import { ErrorRoot, SPLASH_STYLES, SplashRoot, ThemeRoot } from './components';
 import { APP_NAME } from './config';
-import { reducer as scenesReducer, scenes as makeRoutes } from './scenes';
-import { ErrorRoot } from './scenes/Root/components/ErrorRoot';
-import { reducer as globalReducer } from './stores';
-import { clearReturnURL, getReturnURL } from './util';
+import { AppRoot, reducer as scenesReducer } from './scenes';
+import { Login } from './scenes/Login';
+import { reducer as globalReducer} from './stores';
+import { COMMON_STYLES } from './stylesx';
+import { css } from './utilx';
 
 // Add the reducer to your store on the `routing` key
 const store = createStore(
@@ -53,59 +61,84 @@ const store = createStore(
   ),
 );
 
-const { dispatch } = store;
+function _Root(props: React.PropsWithChildren<RouteComponentProps<{}>>) {
+  const [error, setError] = React.useState<string>(null);
+  const [serverState, setServerState] = React.useState<ServerStates>('s_connecting');
+  const [authState, setAuthState] = React.useState<AuthenticationStates>('initialising');
+  const [wsState, setWsState] = React.useState<WebsocketStates>('ws_connecting');
 
-const routes = makeRoutes();
+  function setState(state: SystemStates) {
+    if (state.startsWith('s_')) {
+      setServerState(state as ServerStates);
+    }
+    else if (state.startsWith('ws_')) {
+      setWsState(state as WebsocketStates);
+    }
+    else {
+      setAuthState(state as AuthenticationStates);
+    }
+  }
+  function setRoute(route: string) {
+    props.history.replace(route);
+  }
 
-function render(elem: HTMLElement) {
-  ReactDOM.render(
-    (
-      <Provider store={store}>
-        {routes}
-      </Provider>
-    ),
-    elem,
-  );
+  React.useEffect(() => {
+    start(store.dispatch, setState, setRoute, setError);
+  }, []);
+
+  function retry() {
+    setState('initialising');
+    start(store.dispatch, setState, setRoute, setError);
+  }
+
+  if (error) {
+    return <ErrorRoot errorMessage={error} retry={retry}/>;
+  }
+
+  function message(msg: string) {
+    return (
+      <SplashRoot>
+        <div key="message" {...css(SPLASH_STYLES.header2Tag, COMMON_STYLES.fadeIn)}>{msg}...</div>
+      </SplashRoot>
+    );
+  }
+
+  switch (serverState) {
+    case 's_connecting':
+      return message('Connecting');
+    case 's_unavailable':
+      return <ErrorRoot errorMessage="Server unavailable" retry={retry}/>;
+    case 's_init_first_user':
+      return <Login firstUser/>;
+  }
+
+  switch (authState) {
+    case 'initialising':
+      return message('Initialising');
+    case 'check_token':
+      return message('Checking');
+    case 'unauthenticated':
+      return <Login/>;
+  }
+
+  if (wsState === 'ws_connecting') {
+    return message('Connecting');
+  }
+  return <AppRoot/>;
 }
 
-function renderError(elem: HTMLElement, errorMessage: string) {
-  ReactDOM.render(<ErrorRoot errorMessage={errorMessage}/>, elem);
-}
+const Root = withRouter(_Root);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <ThemeRoot>
+      <BrowserRouter>
+        <Root/>;
+      </BrowserRouter>
+    </ThemeRoot>
+  </Provider>,
+  document.getElementById('app'),
+);
 
 // Set window title.
 window.document.title = APP_NAME;
-
-// Let's rock
-const queryString = qs.parse(window.location.search);
-
-if (queryString && queryString['token']) {
-  (async () => {
-    try {
-      await dispatch(handleToken(queryString['token'] as string, queryString['csrf'] as string));
-
-      // If we've saved off a pathname and search string, use that instead.
-      // The original link - derived from the http referrer of the original request - doesn't
-      // have the necessary search info.
-      const returnURL = getReturnURL();
-      // TODO: We'd really like to do this via the router so we don't refresh the page
-      if (returnURL && !isEmpty(returnURL)) {
-        // Forward to the saved URL
-        window.location.href = `${returnURL.pathname}${returnURL.search}`;
-      }
-      else {
-        // Strip off the CSRF stuff
-        window.location.href = window.location.pathname;
-      }
-      clearReturnURL();
-    } catch (e) {
-      console.error(e);
-      renderError(document.getElementById('app'), e.message);
-    }
-  })();
-}
-else {
-  (async () => {
-    await dispatch(startAuthentication() as any);
-    render(document.getElementById('app'));
-  })();
-}

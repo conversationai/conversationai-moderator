@@ -35,7 +35,7 @@ import {
   UserModel,
 } from '../../models';
 import { serviceURL } from './dataService';
-import { getToken, saveToken } from './localStore';
+import { getToken } from './localStore';
 
 // TODO: Is it possible to nail down the types of this object?
 // The WebSocket type is subtly different between browser and non-browser implementation, which makes this difficult.
@@ -164,8 +164,8 @@ export function connectNotifier(
             // Although the meaning of these codes is not clear, it seems that this code means that the server
             // is up and running but rejecting our request, probably due to an authentication issue.
             // We'll need to reset everything and start again.
-            saveToken(null);
-            location.reload();
+            websocketStateHandler(STATUS_RESET);
+            return;
           }
 
           socketUp = false;

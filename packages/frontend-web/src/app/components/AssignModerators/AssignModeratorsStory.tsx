@@ -16,7 +16,7 @@ limitations under the License.
 
 import { storiesOf } from '@storybook/react';
 import { List, Set } from 'immutable';
-import { fakeUserModel } from '../../../../../models/fake';
+import { fakeUserModel } from '../../../models/fake';
 import { AssignModerators } from './AssignModerators';
 
 const users = List([

@@ -16,10 +16,11 @@ limitations under the License.
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { IUserModel } from '../../../../../models';
-import { getMyUserId } from '../../../../auth';
-import { IAppStateRecord } from '../../../../stores';
-import { getUsers } from '../../../../stores/users';
+
+import { IUserModel } from '../../../models';
+import { getMyUserId } from '../../auth';
+import { IAppStateRecord } from '../../stores';
+import { getUsers } from '../../stores/users';
 import {
   AssignModerators as PureAssignModerators,
   IAssignModeratorsProps,

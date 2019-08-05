@@ -17,14 +17,14 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
 import React from 'react';
-import { IUserModel } from '../../../../../models';
-import { CheckboxRow, ContainerFooter, ContainerHeader, OverflowContainer } from '../../../../components';
-import { partial } from '../../../../util';
-import { css, stylesheet } from '../../../../utilx';
+import { IUserModel } from '../../../models';
+import { CheckboxRow, ContainerFooter, ContainerHeader, OverflowContainer } from '../../components';
+import { partial } from '../../util';
+import { css, stylesheet } from '../../utilx';
 
 import {
   GUTTER_DEFAULT_SPACING,
-} from '../../../../styles';
+} from '../../styles';
 
 const STYLES = stylesheet({
   list: {

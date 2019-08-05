@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { Iterable, List, Map } from 'immutable';
+import { List, Map } from 'immutable';
 import { generate } from 'randomstring';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
@@ -160,9 +160,8 @@ export interface ISettingsProps extends RouteComponentProps<{}>  {
   rules?: List<IRuleModel>;
   taggingSensitivities?:  List<ITaggingSensitivityModel>;
   preselects?: List<IPreselectModel>;
-  categories: Iterable.Indexed<ICategoryModel>;
+  categories: Array<ICategoryModel>;
   dispatch: IAppDispatch;
-  onCancel(): void;
   reloadServiceUsers?(): Promise<void>;
   reloadModeratorUsers?(): Promise<void>;
   reloadYoutubeUsers?(): Promise<void>;
@@ -557,7 +556,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
   @autobind
   onCancelPress() {
-    this.props.onCancel();
+    this.props.history.goBack();
   }
 
   @autobind
@@ -1082,15 +1081,9 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         scrimStyles={SCRIM_STYLE.scrim}
         isVisible={this.state.isStatusScrimVisible}
       >
-        <FocusTrap
-          focusTrapOptions={{
-            clickOutsideDeactivates: true,
-          }}
-        >
-          <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})} tabIndex={0}>
-            <p>{this.state.submitStatus}</p>
-          </div>
-        </FocusTrap>
+        <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})} tabIndex={0}>
+          <p>{this.state.submitStatus}</p>
+        </div>
       </Scrim>
     );
   }

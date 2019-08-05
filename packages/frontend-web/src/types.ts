@@ -14,6 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+export type ServerStates =
+  's_connecting' |
+  's_unavailable' |
+  's_init_oauth' |
+  's_init_first_user' |
+  's_init_perspective' |
+  's_gtg';
+export type AuthenticationStates = 'initialising' | 'check_token' | 'unauthenticated' | 'gtg';
+export type WebsocketStates = 'ws_connecting' | 'ws_gtg';
+export type SystemStates = ServerStates | AuthenticationStates | WebsocketStates;
+
 // These are our representation of the core moderator actions,
 // i.e., the things a moderator can do to a comment via one of the action buttons
 // They map onto the IRu

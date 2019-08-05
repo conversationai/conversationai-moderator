@@ -38,7 +38,7 @@ import {
   CommentScoredModel,
   UserModel,
 } from '../../models';
-import { ITopScore } from '../../types';
+import { ITopScore, ServerStates } from '../../types';
 import { API_URL } from '../config';
 import { convertArrayFromJSONAPI } from '../util';
 import { convertFromJSONAPI } from '../util';
@@ -622,6 +622,18 @@ export function getCommentScores(commentId: string) {
 
 export function getCommentFlags(commentId: string) {
   return listRelationshipModels('comments', commentId, 'commentFlags', {page: {offset: 0, limit: -1}});
+}
+
+export async function checkServerStatus(): Promise<ServerStates> {
+  const response = await axios.get(
+    `${API_URL}/auth/healthcheck`,
+  );
+  if (response.status === 218) {
+    if (response.data === 'init_first_user') {
+      return 's_init_first_user';
+    }
+  }
+  return 's_gtg';
 }
 
 /**

@@ -17,7 +17,9 @@ limitations under the License.
 import { storiesOf } from '@storybook/react';
 import { ErrorRoot } from './ErrorRoot';
 
+function noop() {/**/}
+
 storiesOf('Errors', module)
   .add('Error page', () => {
-    return <ErrorRoot errorMessage="Hello there"/>;
+    return <ErrorRoot errorMessage="Hello there" retry={noop}/>;
   });
