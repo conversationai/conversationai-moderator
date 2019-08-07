@@ -25,16 +25,37 @@ import { createToken } from './tokens';
 import { isFirstUserInitialised } from './users';
 import { generateServerCSRF, getClientCSRF } from './utils';
 
-export function createAuthRouter(): express.Router {
+function redirectToFrontend(
+  res: express.Response,
+  success: boolean,
+  params: object = {},
+  referrer?: string,
+): void {
+  let redirectHost;
+
+  if (!referrer) {
+    redirectHost = config.get('frontend_url');
+  }
+  else {
+    redirectHost = referrer;
+  }
+
+  if (redirectHost === '') {
+    redirectHost = '/';
+  }
+
+  const queryString = qs.stringify(Object.assign({
+    error: !success,
+  }, params));
+
+  res.redirect(`${redirectHost}?${queryString}`);
+}
+
+export function createHealthcheckRouter(): express.Router {
   const router = express.Router({
     caseSensitive: true,
     mergeParams: true,
   });
-
-  // Test endpoint, you should not be able to see the result of this without
-  // a vaid JWT Authorization header:
-  //
-  // Authorization: JWT (token string)
 
   router.get(
     '/auth/healthcheck',
@@ -47,6 +68,15 @@ export function createAuthRouter(): express.Router {
     },
   );
 
+  return router;
+}
+
+export function createAuthRouter(): express.Router {
+  const router = express.Router({
+    caseSensitive: true,
+    mergeParams: true,
+  });
+
   router.get(
     '/auth/test',
     passport.authenticate('jwt', { session: false }),
@@ -55,8 +85,7 @@ export function createAuthRouter(): express.Router {
     },
   );
 
-  // Configure Google OAuth2 login
-
+  // Start OAuth login entrypoint.  It should forward to Google OAuth servers
   router.get(
     '/auth/login/google',
     async (req, res, next) => {
@@ -82,8 +111,8 @@ export function createAuthRouter(): express.Router {
     },
   );
 
-  // Google OAuth Callback URL
-
+  // Complete OAuth login entrypoint.  Google returns here after successful login
+  // We create a login token and forward to the
   router.get(
     '/auth/callback/google',
     (req, res, next) => {
@@ -136,32 +165,6 @@ export function createAuthRouter(): express.Router {
       })(req, res, next);
     },
   );
-
-  function redirectToFrontend(
-    res: express.Response,
-    success: boolean,
-    params: object = {},
-    referrer?: string,
-  ): void {
-    let redirectHost;
-
-    if (!referrer) {
-      redirectHost = config.get('frontend_url');
-    }
-    else {
-      redirectHost = referrer;
-    }
-
-    if (redirectHost === '') {
-      redirectHost = '/';
-    }
-
-    const queryString = qs.stringify(Object.assign({
-      error: !success,
-    }, params));
-
-    res.redirect(`${redirectHost}?${queryString}`);
-  }
 
   return router;
 }

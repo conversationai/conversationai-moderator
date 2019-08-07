@@ -22,14 +22,19 @@ import { config } from '@conversationai/moderator-config';
 import { saveYouTubeUserToken } from './users';
 import { generateServerCSRF, getClientCSRF } from './utils';
 
-export function createYouTubeRouter(): express.Router {
+export function createYouTubeRouter(authenticator: any): express.Router {
   const router = express.Router({
     caseSensitive: true,
     mergeParams: true,
   });
 
+  if (authenticator) {
+    // Only the connect entrypoint should be authenticated.
+    router.get('/youtube/connect', authenticator);
+  }
+
   router.get(
-    '/connect',
+    '/youtube/connect',
     async (req, res, next) => {
       const serverCSRF = await generateServerCSRF(req, res, next);
 
@@ -53,7 +58,7 @@ export function createYouTubeRouter(): express.Router {
   );
 
   router.get(
-    '/callback',
+    '/youtube/callback',
     async (req, res) => {
       const {clientCSRF, errorMessage} = await getClientCSRF(req);
 

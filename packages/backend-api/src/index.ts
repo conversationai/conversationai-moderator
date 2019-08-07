@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,12 +20,9 @@ import * as passport from 'passport';
 
 import { config } from '@conversationai/moderator-config';
 
-import { createAssistantRouter } from './api/assistant';
-import { createPublisherRouter } from './api/publisher';
-import { createRESTRouter } from './api/rest';
-import { createServicesRouter } from './api/services';
-import { getJwtStrategy, googleStrategy } from './auth/providers';
-import { createAuthRouter } from './auth/router';
+import { createApiRouter } from './api/router';
+import { getGoogleStrategy, getJwtStrategy } from './auth/providers';
+import { createAuthRouter, createHealthcheckRouter } from './auth/router';
 import { createYouTubeRouter } from './auth/youtube';
 
 export async function mountAPI(testMode?: boolean): Promise<express.Express> {
@@ -38,11 +35,13 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
   });
 
   // Initialize auth strategies and Passport
+  // (Authenticator doesn't have a well-defined type...)
+  let jwtAuthenticator: any;
   if (!testMode) {
     passport.use(await getJwtStrategy());
-    passport.use(googleStrategy);
-
+    passport.use(await getGoogleStrategy());
     app.use(passport.initialize());
+    jwtAuthenticator = passport.authenticate('jwt', { session: false });
   }
 
   // Fully-qualify the links field of responses.
@@ -62,48 +61,10 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
     next();
   });
 
-  // Auth routes
+  app.use('/', createHealthcheckRouter());
   app.use('/', createAuthRouter());
-
-  // Connect YouTube Account entrypoints
-  // Only the connect entrypoint should be authenticated.
-  app.get('/youtube/connect', passport.authenticate('jwt', {session: false}));
-  app.use('/youtube', createYouTubeRouter());
-
-  app.use('/', (() => {
-    const router = express.Router({
-      caseSensitive: true,
-      mergeParams: true,
-    });
-
-    if (!testMode) {
-      // Require tokens for our CRUD endpoints.
-      // Not necessary for `options` requests.
-      ['get', 'post', 'patch', 'delete'].forEach((method) => {
-        (router as any)[method]('*', passport.authenticate('jwt', { session: false }));
-      });
-    }
-
-    // The REST API provides standard CRUD operations on our database models using
-    // the JSONAPI scheme format.
-    router.use('/rest', createRESTRouter());
-
-    // The services API provides custom endpoints for our clients which would
-    // normally be awkward REST queries or are unrelated to database models.
-    router.use('/services', createServicesRouter());
-
-    // The services API provides custom endpoints for publishers to add new database
-    // to the system. These are separated from REST because their API will be
-    // optimised for specific publishers' data models.
-    router.use('/publisher', createPublisherRouter());
-
-    // The assistant API provides callbacks for assistant users to send per-comment
-    // scores into OSMOD. These are often, but not always, the result of a scoring
-    // request when a new comment is added by the publisher.
-    router.use('/assistant', createAssistantRouter());
-
-    return router;
-  })());
+  app.use('/', createYouTubeRouter(jwtAuthenticator));
+  app.use('/', createApiRouter(jwtAuthenticator));
 
   return app;
 }

@@ -110,31 +110,33 @@ export async function verifyGoogleToken(accessToken: string, refreshToken: strin
   return user;
 }
 
-export const googleStrategy = new Strategy(
-  {
-    clientID: config.get('google_client_id'),
-    clientSecret: config.get('google_client_secret'),
-    callbackURL: `${config.get('api_url')}/auth/callback/google`,
-    userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
-  },
-  async (accessToken: string, refreshToken: string, profile: IGoogleProfile, callback: (err: any, user?: IUserInstance | false, info?: any) => any) => {
-    try {
-      const user = await verifyGoogleToken(accessToken, refreshToken, profile);
+export async function getGoogleStrategy() {
+  return new Strategy(
+    {
+      clientID: config.get('google_client_id'),
+      clientSecret: config.get('google_client_secret'),
+      callbackURL: `${config.get('api_url')}/auth/callback/google`,
+      userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
+    },
+    async (accessToken: string, refreshToken: string, profile: IGoogleProfile, callback: (err: any, user?: IUserInstance | false, info?: any) => any) => {
+      try {
+        const user = await verifyGoogleToken(accessToken, refreshToken, profile);
 
-      // Sync avatar
-      if (profile.photos && profile.photos[0] && profile.photos[0].value) {
-        await user.update({ avatarURL: profile.photos[0].value });
-      }
+        // Sync avatar
+        if (profile.photos && profile.photos[0] && profile.photos[0].value) {
+          await user.update({avatarURL: profile.photos[0].value});
+        }
 
-      callback(null, user);
-    }
-    catch (e) {
-      if (e instanceof AuthError) {
-        callback(null, false, { reason: e.message });
+        callback(null, user);
       }
-      else {
-        callback(e);
+      catch (e) {
+        if (e instanceof AuthError) {
+          callback(null, false, {reason: e.message});
+        }
+        else {
+          callback(e);
+        }
       }
-    }
-  },
-);
+    },
+  );
+}
