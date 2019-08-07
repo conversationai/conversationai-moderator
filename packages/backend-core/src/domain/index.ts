@@ -18,4 +18,3 @@ export * from './articles';
 export * from './categories';
 export * from './comments';
 export * from './commentScores';
-export * from './models';
