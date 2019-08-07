@@ -110,17 +110,11 @@ export async function verifyGoogleToken(accessToken: string, refreshToken: strin
   return user;
 }
 
-let apiPrefix = config.get('api_url');
-
-if (config.get('httpsLinksOnly')) {
-  apiPrefix = apiPrefix.replace('http://', 'https://');
-}
-
 export const googleStrategy = new Strategy(
   {
     clientID: config.get('google_client_id'),
     clientSecret: config.get('google_client_secret'),
-    callbackURL: `${apiPrefix}/auth/callback/google`,
+    callbackURL: `${config.get('api_url')}/auth/callback/google`,
     userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
   },
   async (accessToken: string, refreshToken: string, profile: IGoogleProfile, callback: (err: any, user?: IUserInstance | false, info?: any) => any) => {

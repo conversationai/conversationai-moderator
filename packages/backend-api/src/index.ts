@@ -47,16 +47,10 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
 
   // Fully-qualify the links field of responses.
   app.use((_req, _res, next) => {
-    let apiPrefix = config.get('api_url');
-
-    if (config.get('httpsLinksOnly')) {
-      apiPrefix = apiPrefix.replace('http://', 'https://');
-    }
-
     app.set('json replacer', (key: string, value: any) => {
       if (key === 'links') {
         return Object.keys(value).reduce((sum, k) => {
-          sum[k] = value[k] && value[k].replace(/^\//, apiPrefix + '/');
+          sum[k] = value[k] && value[k].replace(/^\//, config.get('api_url') + '/');
 
           return sum;
         }, {} as any);
