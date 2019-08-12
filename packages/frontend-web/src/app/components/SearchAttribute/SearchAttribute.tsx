@@ -15,10 +15,11 @@ limitations under the License.
 */
 
 import React from 'react';
-import { CanvasTruncate, RejectIcon } from '../../components';
 import { css, stylesheet } from '../../utilx';
 
 import { ARTICLE_HEADLINE_TYPE, BUTTON_RESET, LIGHT_HIGHLIGHT_COLOR, WHITE_COLOR } from '../../styles';
+import { CanvasTruncate } from '../CanvasTruncate';
+import { RejectIcon } from '../Icons';
 
 const STYLES = stylesheet({
   container: {

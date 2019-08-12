@@ -17,13 +17,14 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import React from 'react';
 import { IUserModel } from '../../../models';
-import { Avatar, Checkbox } from '../../components';
 import {
   ARTICLE_CATEGORY_TYPE,
   DARK_PRIMARY_TEXT_COLOR,
   LABEL_CHECK,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
+import { Avatar } from '../Avatar';
+import { Checkbox } from '../Checkbox';
 
 const AVATAR_SIZE = 46;
 

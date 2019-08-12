@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import React from 'react';
-import { SearchIcon, UserIcon } from '../../components';
+
 import {
   DARK_COLOR,
   HEADER_HEIGHT,
@@ -25,6 +25,7 @@ import {
 } from '../../styles';
 import { maybeCallback } from '../../util';
 import { css, stylesheet } from '../../utilx';
+import { SearchIcon, UserIcon } from '../Icons';
 
 const STYLES = stylesheet({
   bar: {

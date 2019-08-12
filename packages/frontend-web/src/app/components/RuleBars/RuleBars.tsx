@@ -18,13 +18,13 @@ import { List } from 'immutable';
 import React from 'react';
 
 import { IRuleModel } from '../../../models';
-import { ConfirmationCircle } from '../../components';
 import {
   CENTER_CONTENT,
   NICE_LIGHT_BLUE,
   NICE_MIDDLE_BLUE,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
+import { ConfirmationCircle } from '../ConfirmationCircle';
 
 const STYLES = stylesheet({
   button: {

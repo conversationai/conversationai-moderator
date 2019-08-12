@@ -64,6 +64,7 @@ import {
   WHITE_COLOR,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
+import { Button } from '../Button';
 import {
   ApproveIcon,
   EditIcon,
@@ -72,7 +73,6 @@ import {
   IdIcon,
   ReputationIcon,
 } from '../Icons';
-import { Button } from '../index';
 import { AnnotatedCommentText } from './components/AnnotatedCommentText';
 import { CommentTags } from './components/CommentTags';
 
