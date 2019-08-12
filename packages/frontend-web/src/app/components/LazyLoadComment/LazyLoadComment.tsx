@@ -54,10 +54,8 @@ import {
   MoreVerticalIcon,
   ReplyIcon,
 } from '../Icons';
-import {
-  ROW_STYLES,
-} from '../LazyCommentList';
 import { ModerateButtons } from '../ModerateButtons';
+import { ROW_STYLES } from '../styles';
 
 const LAZY_BOX_STYLE = {
   width: '100%',

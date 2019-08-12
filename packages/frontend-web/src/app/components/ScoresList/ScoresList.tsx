@@ -19,7 +19,7 @@ import { List } from 'immutable';
 import React from 'react';
 import { css, stylesheet } from '../../utilx';
 
-import { RejectIcon } from '../../components';
+import { RejectIcon } from '../Icons';
 
 import {
   ICommentModel,

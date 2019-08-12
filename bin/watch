@@ -3,13 +3,30 @@
 export FRONTEND_URL=http://localhost:8000
 export API_URL=http://localhost:8080
 
-if [ "$1" != "backend" ]; then
+if [ -z "$1" ]; then
+  FRONTEND=1
+  BACKEND=1
+else
+  while [ -n "$1" ]; do
+    if [ "$1" == frontend ]; then
+      FRONTEND=1
+    elif [ "$1" == backend ]; then
+      BACKEND=1
+    elif [ "$1" == justweb ]; then
+      BACKEND=1
+      JUSTWEB=1
+    fi
+    shift
+  done
+fi
+
+if [ -n "$FRONTEND" ]; then
   cd packages/frontend-web
   npm run watch &
   cd -
 fi
 
-if [ "$1" != "frontend" ]; then
+if [ -n "$BACKEND" ]; then
   cd packages/backend-core
   npm run compile
   cd -
@@ -18,7 +35,7 @@ if [ "$1" != "frontend" ]; then
   cd -
   cd packages/backend-api
   npx ts-node-dev --inspect=5858 src/server.ts &
-  if [ "$1" != "justweb" ]; then
+  if [ -z "$JUSTWEB" ]; then
     npx ts-node-dev --inspect=5857 src/processor.ts &
     npx ts-node-dev --inspect=5856 src/worker.ts &
   fi

@@ -15,27 +15,26 @@ limitations under the License.
 */
 
 import * as express from 'express';
-import {google} from 'googleapis';
+import { google } from 'googleapis';
 
 import { config } from '@conversationai/moderator-config';
 
 import { saveYouTubeUserToken } from './users';
 import { generateServerCSRF, getClientCSRF } from './utils';
 
-let apiPrefix = config.get('api_url');
-
-if (config.get('httpsLinksOnly')) {
-  apiPrefix = apiPrefix.replace('http://', 'https://');
-}
-
-export function createYouTubeRouter(): express.Router {
+export function createYouTubeRouter(authenticator: any): express.Router {
   const router = express.Router({
     caseSensitive: true,
     mergeParams: true,
   });
 
+  if (authenticator) {
+    // Only the connect entrypoint should be authenticated.
+    router.get('/youtube/connect', authenticator);
+  }
+
   router.get(
-    '/connect',
+    '/youtube/connect',
     async (req, res, next) => {
       const serverCSRF = await generateServerCSRF(req, res, next);
 
@@ -43,7 +42,10 @@ export function createYouTubeRouter(): express.Router {
         return;
       }
 
-      const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'), `${apiPrefix}/youtube/callback`);
+      const oauth2Client = new google.auth.OAuth2(
+        config.get('google_client_id'),
+        config.get('google_client_secret'),
+        `${config.get('api_url')}/youtube/callback`);
       const authUrl = oauth2Client.generateAuthUrl({
         access_type: 'offline',
         scope:  ['profile', 'email', 'https://www.googleapis.com/auth/youtube.force-ssl'],
@@ -56,7 +58,7 @@ export function createYouTubeRouter(): express.Router {
   );
 
   router.get(
-    '/callback',
+    '/youtube/callback',
     async (req, res) => {
       const {clientCSRF, errorMessage} = await getClientCSRF(req);
 
@@ -71,7 +73,10 @@ export function createYouTubeRouter(): express.Router {
         params['errorMessage'] = errorMessage;
       }
 
-      const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'), `${apiPrefix}/youtube/callback`, );
+      const oauth2Client = new google.auth.OAuth2(
+        config.get('google_client_id'),
+        config.get('google_client_secret'),
+        `${config.get('api_url')}/youtube/callback`, );
       const tokenRsp = await oauth2Client.getToken(req.query.code);
       const token = tokenRsp.tokens;
       oauth2Client.setCredentials(token);

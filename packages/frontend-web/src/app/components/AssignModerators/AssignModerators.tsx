@@ -18,13 +18,14 @@ import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
 import React from 'react';
 import { IUserModel } from '../../../models';
-import { CheckboxRow, ContainerFooter, ContainerHeader, OverflowContainer } from '../../components';
 import { partial } from '../../util';
 import { css, stylesheet } from '../../utilx';
 
 import {
   GUTTER_DEFAULT_SPACING,
 } from '../../styles';
+import { CheckboxRow } from '../CheckboxRow';
+import { ContainerFooter, ContainerHeader, OverflowContainer } from '../OverflowContainer';
 
 const STYLES = stylesheet({
   list: {

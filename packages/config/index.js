@@ -105,12 +105,6 @@ const config = convict({
       default: true,
       env: 'WORKER_RUN_IMMEDIATELY',
     },
-    run_scheduled_tasks: {
-      doc: 'Whether to run scheduled worker tasks or not',
-      format: Boolean,
-      default: true,
-      env: 'WORKER_RUN_SCHEDULED_TASKS',
-    },
     remove_task_on_complete: {
       doc: 'Whether to remove successful tasks from kue history to save memory',
       format: Boolean,
@@ -123,13 +117,6 @@ const config = convict({
       default: (5 * 60) * 1000, // 5 minutes.
       env: 'WORKER_TASK_TTL',
     }
-  },
-
-  httpsLinksOnly: {
-    doc: 'Always return HTTPS links',
-    format: Boolean,
-    default: false,
-    env: 'HTTPS_LINKS_ONLY'
   },
 
   publisher_notification_mode: {

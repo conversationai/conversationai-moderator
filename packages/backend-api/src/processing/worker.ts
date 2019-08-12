@@ -81,8 +81,8 @@ async function processWorkItems() {
 let intervalId: NodeJS.Timer;
 
 async function startWorking() {
+  logger.info('Start processing ticks');
   intervalId = setInterval(() => {
-    logger.info('Start processing ticks');
     kickWorker('kick');
   }, WORK_POLL_INTERVAL);
 }
