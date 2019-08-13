@@ -26,6 +26,7 @@ import {
   ITagModel,
 } from '../../../models';
 import { logout } from '../../auth';
+import { listSystemUsers } from '../../platform/dataService';
 import { IAppDispatch, IAppState, IAppStateRecord } from '../../stores';
 import { getCategories } from '../../stores/categories';
 import { getPreselects } from '../../stores/preselects';
@@ -35,13 +36,12 @@ import { getTags } from '../../stores/tags';
 import {
   getSystemUsers,
   getUsers,
-  loadSystemUsers,
+  systemUsersLoaded,
   USER_GROUP_MODERATOR,
   USER_GROUP_SERVICE,
   USER_GROUP_YOUTUBE,
 } from '../../stores/users';
 import { ISettingsProps, Settings as PureSettings } from './Settings';
-
 import {
   addUser,
   modifyUser,
@@ -94,6 +94,12 @@ const mapStateToProps = createStructuredSelector({
   preselects: getPreselects,
   taggingSensitivities: getTaggingSensitivities,
 }) as (state: IAppState, props: ISettingsOwnProps) => ISettingsStateProps;
+
+export async function loadSystemUsers(dispatch: IAppDispatch, type: string): Promise<void> {
+  const result = await listSystemUsers(type);
+
+  await dispatch(systemUsersLoaded({type, users: result}));
+}
 
 function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
   return {

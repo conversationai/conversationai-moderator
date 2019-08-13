@@ -19,7 +19,7 @@ import { Action } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { loadTopScoresForSummaryScores, loadTopScoresForTag } from '../platform/dataService';
 import { IQueuedModelStateRecord, makeQueuedModelStore } from '../util';
-import { IAppStateRecord, IThunkAction } from './index';
+import { IAppStateRecord, IThunkAction } from './appstate';
 
 export interface ITopScoreState {
   commentId: string;

@@ -18,7 +18,7 @@ import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import { IPreselectModel } from '../../models';
-import { IAppStateRecord } from './index';
+import { IAppStateRecord } from './appstate';
 
 const STATE_ROOT = ['global', 'preselects'];
 const PRESELECTS_DATA = [...STATE_ROOT, 'items'];
