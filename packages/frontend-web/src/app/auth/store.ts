@@ -22,16 +22,22 @@ import { Dispatch } from 'redux';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
-import { AuthenticationStates, SystemStates } from '../../types';
+import { AuthenticationStates, SystemStates, WebsocketStates } from '../../types';
 import { checkAuthorization, checkServerStatus, setUserId } from '../platform/dataService';
 import { getToken, saveToken } from '../platform/localStore';
-import { disconnectNotifier } from '../platform/websocketService';
+import { connectNotifier, disconnectNotifier, STATUS_RESET, STATUS_UP }  from '../platform/websocketService';
 import { IAppDispatch, IAppStateRecord } from '../stores';
-import { initialiseClientModel } from '../stores';
+import { articlesLoaded, articlesUpdated } from '../stores/articles';
+import { categoriesLoaded, categoriesUpdated } from '../stores/categories';
+import { assignmentCountUpdated } from '../stores/counts';
+import { preselectsUpdated } from '../stores/preselects';
+import { rulesUpdated } from '../stores/rules';
+import { taggingSensitivitiesUpdated } from '../stores/taggingSensitivities';
+import { tagsUpdated } from '../stores/tags';
+import { usersUpdated } from '../stores/users';
 import { clearCSRF, clearReturnURL, getCSRF, getReturnURL } from '../util';
 
-const completedAuthentication =
-  createAction<number>('auth/COMPLETED_AUTHENTICATION');
+const completedAuthentication = createAction<number>('auth/COMPLETED_AUTHENTICATION');
 
 export const logout: () => Action<void> = createAction('auth/LOGOUT');
 
@@ -54,6 +60,48 @@ export function decodeToken(token: string): any {
   return JwtDecode(token);
 }
 
+async function connectWebsocket(
+  dispatch: IAppDispatch,
+  setState: (state: WebsocketStates) => void,
+) {
+  setState('ws_connecting');
+  connectNotifier(
+    (status: string) => {
+      if (status === STATUS_UP) {
+        setState('ws_gtg');
+      }
+      else {
+        setState('ws_connecting');
+        if (status === STATUS_RESET) {
+          dispatch(logout());
+        }
+      }
+    },
+    (data) => {
+      dispatch(usersUpdated(data.users));
+      dispatch(tagsUpdated(data.tags));
+      dispatch(taggingSensitivitiesUpdated(data.taggingSensitivities));
+      dispatch(rulesUpdated(data.rules));
+      dispatch(preselectsUpdated(data.preselects));
+    },
+    (data) => {
+      dispatch(categoriesLoaded(data.categories));
+      dispatch(articlesLoaded(data.articles));
+    },
+    (data) => {
+      if (data.categories) {
+        dispatch(categoriesUpdated(data.categories));
+      }
+      if (data.articles) {
+        dispatch(articlesUpdated(data.articles));
+      }
+    },
+    (data) => {
+      dispatch(assignmentCountUpdated(data.assignments));
+    },
+  );
+}
+
 async function completeAuthentication(
   dispatch: IAppDispatch,
   setState: (state: SystemStates) => void,
@@ -65,7 +113,7 @@ async function completeAuthentication(
   const data = decodeToken(token);
   setUserId((data['user'] as number).toString());
   await dispatch(completedAuthentication(data['user'] as number));
-  await initialiseClientModel(dispatch, setState);
+  await connectWebsocket(dispatch, setState);
   setState('gtg');
 }
 
