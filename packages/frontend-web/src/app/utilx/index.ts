@@ -18,4 +18,3 @@ export * from './cssInJs';
 export * from './sortDefinitions';
 export * from './highlightText';
 export * from './keyCodes';
-export * from './withLoader';
