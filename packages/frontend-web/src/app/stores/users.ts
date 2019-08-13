@@ -20,8 +20,7 @@ import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { IUserModel, ModelId } from '../../models';
 import { getMyUserId } from '../auth';
-import { listSystemUsers } from '../platform/dataService';
-import { IAppDispatch, IAppStateRecord } from './index';
+import { IAppStateRecord } from './appstate';
 
 const STATE_ROOT = ['global', 'users'];
 const USERS_DATA = [...STATE_ROOT, 'humans'];
@@ -38,7 +37,7 @@ export const usersUpdated = createAction<List<IUserModel>>(
 
 export interface ILoadSystemUsers { type: string; users: List<IUserModel>; }
 
-const systemUsersLoaded = createAction<ILoadSystemUsers>(
+export const systemUsersLoaded = createAction<ILoadSystemUsers>(
   'system-users/SYSTEM_USERS_LOADED',
 );
 
@@ -107,9 +106,3 @@ const reducer = handleActions<IUsersStateRecord, List<IUserModel> | ILoadSystemU
 }, StateFactory());
 
 export { reducer };
-
-export async function loadSystemUsers(dispatch: IAppDispatch, type: string): Promise<void> {
-  const result = await listSystemUsers(type);
-
-  await dispatch(systemUsersLoaded({type, users: result}));
-}

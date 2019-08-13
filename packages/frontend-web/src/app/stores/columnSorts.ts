@@ -19,7 +19,7 @@ import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import { getStoreItem, saveStoreItem } from '../platform/localStore';
-import { IAppStateRecord, IThunkAction } from './index';
+import { IAppStateRecord, IThunkAction } from './appstate';
 
 export interface IColumnSortGroupAttributes {
   defaultValue: string;

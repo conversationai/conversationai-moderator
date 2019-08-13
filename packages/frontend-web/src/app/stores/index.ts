@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,57 +14,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Action as RootAction, Dispatch as ReduxDispatch } from 'redux';
 import { combineReducers } from 'redux-immutable';
-import { TypedRecord } from 'typed-immutable-record';
 
 import { WebsocketStates } from '../../types';
 import { logout } from '../auth';
 import { connectNotifier, STATUS_RESET, STATUS_UP } from '../platform/websocketService';
-import { articlesLoaded, articlesUpdated, IArticlesState, reducer as articleReducer } from './articles';
-import { categoriesLoaded, categoriesUpdated, ICategoriesState, reducer as categoriesReducer } from './categories';
-import { IColumnSortStateRecord, reducer as columnSortsReducer } from './columnSorts';
-import { IState as ICommentsState, reducer as commentsReducer } from './comments';
-import { ICommentSummaryScoresStateRecord, reducer as commentSummaryScoresReducer } from './commentSummaryScores';
+import { IAction, IAppDispatch, IAppStateRecord } from './appstate';
+import { articlesLoaded, articlesUpdated, reducer as articleReducer } from './articles';
+import { categoriesLoaded, categoriesUpdated, reducer as categoriesReducer } from './categories';
+import { reducer as columnSortsReducer } from './columnSorts';
+import { reducer as commentsReducer } from './comments';
+import { reducer as commentSummaryScoresReducer } from './commentSummaryScores';
 import { assignmentCountUpdated } from './counts';
-import { IFocusStateRecord, reducer as focusReducer } from './focus';
-import { IPreselectsStateRecord, preselectsUpdated, reducer as preselectsReducer } from './preselects';
-import { IRulesStateRecord, reducer as rulesReducer, rulesUpdated } from './rules';
+import { reducer as focusReducer } from './focus';
+import { preselectsUpdated, reducer as preselectsReducer } from './preselects';
+import { reducer as rulesReducer, rulesUpdated } from './rules';
 import {
-  ITaggingSensitivitiesStateRecord,
   reducer as taggingSensitivitiesReducer,
   taggingSensitivitiesUpdated,
 } from './taggingSensitivities';
-import { ITagsStateRecord, reducer as tagsReducer, tagsUpdated } from './tags';
-import { ITextSizesStateRecord, reducer as textSizesReducer } from './textSizes';
-import { IState as ITopScoresState, ISummaryState as ITopSummaryScoresState, scoreReducer as topScoresReducer, summaryScoreReducer as topSummaryScoresReducer } from './topScores';
-import { IUsersState, reducer as usersReducer, usersUpdated } from './users';
-
-export interface IAppState {
-  categories: ICategoriesState;
-  articles: IArticlesState;
-  comments: ICommentsState;
-  commentSummaryScores: ICommentSummaryScoresStateRecord;
-  users: IUsersState;
-  tags: ITagsStateRecord;
-  rules: IRulesStateRecord;
-  preselects: IPreselectsStateRecord;
-  taggingSensitivities: ITaggingSensitivitiesStateRecord;
-  focus: IFocusStateRecord;
-  columnSorts: IColumnSortStateRecord;
-  textSizes: ITextSizesStateRecord;
-  topScores: ITopScoresState;
-  topSummaryScores: ITopSummaryScoresState;
-}
-
-export interface IAppStateRecord extends TypedRecord<IAppStateRecord>, IAppState {}
-
-export type IThunkAction<R> = (dispatch: ReduxDispatch<IAppStateRecord>, getState: () => IAppStateRecord) => R;
-export type IAction<T> = IThunkAction<T> | RootAction;
-
-export interface IAppDispatch {
-  <R>(action: IAction<R>): R;
-}
+import { reducer as tagsReducer, tagsUpdated } from './tags';
+import { reducer as textSizesReducer } from './textSizes';
+import {
+  scoreReducer as topScoresReducer,
+  summaryScoreReducer as topSummaryScoresReducer,
+} from './topScores';
+import { reducer as usersReducer, usersUpdated } from './users';
 
 // tslint:disable interface-name
 declare module 'redux' {
@@ -73,6 +48,8 @@ declare module 'redux' {
   }
 }
 // tslint:enable interface-name
+
+export { IAppDispatch, IAppState, IAppStateRecord, IThunkAction } from './appstate';
 
 export const reducer: any = combineReducers<IAppStateRecord>({
   categories: categoriesReducer,

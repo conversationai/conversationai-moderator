@@ -18,7 +18,7 @@ import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import {IArticleModel, ModelId} from '../../models';
-import { IAppStateRecord } from './index';
+import { IAppStateRecord } from './appstate';
 
 const STATE_ROOT = ['global', 'articles'];
 const INDEX = [...STATE_ROOT, 'index'];

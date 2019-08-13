@@ -17,8 +17,9 @@ limitations under the License.
 import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
-import { IAppStateRecord, IThunkAction } from '.';
+
 import { listTextSizesByIds } from '../platform/dataService';
+import { IAppStateRecord, IThunkAction } from './appstate';
 
 const DATA_PREFIX = ['global', 'textSizes'];
 const TEXT_SIZES_HAS_DATA = [...DATA_PREFIX, 'hasData'];

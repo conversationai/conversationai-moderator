@@ -17,7 +17,9 @@ limitations under the License.
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
-import { IAppStateRecord } from '../../stores';
+
+import { IAppStateRecord } from './appstate';
+
 export const focusedElement = createAction<string | null>('root/FOCUSED_ELEMENT');
 export const unfocusedElement: () => Action<void> = createAction('root/UNFOCUSED_ELEMENT');
 export const saveFocus: () => Action<void> = createAction('root/SAVE_FOCUS');
