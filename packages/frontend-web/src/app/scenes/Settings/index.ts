@@ -25,7 +25,6 @@ import {
   ITaggingSensitivityModel,
   ITagModel,
 } from '../../../models';
-import { logout } from '../../auth';
 import { listSystemUsers } from '../../platform/dataService';
 import { IAppDispatch, IAppState, IAppStateRecord } from '../../stores';
 import { getCategories } from '../../stores/categories';
@@ -79,8 +78,7 @@ export type ISettingsDispatchProps = Pick<
   'updateTaggingSensitivities' |
   'updateTags' |
   'addUser' |
-  'modifyUser' |
-  'logout'
+  'modifyUser'
 >;
 
 const mapStateToProps = createStructuredSelector({
@@ -112,7 +110,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
     updateTags: (oldTags, newTags) => dispatch(updateTags(oldTags, newTags)),
     addUser: addUser,
     modifyUser: modifyUser,
-    logout: () => dispatch(logout()),
   };
 }
 

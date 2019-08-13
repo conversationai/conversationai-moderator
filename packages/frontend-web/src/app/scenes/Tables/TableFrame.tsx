@@ -29,9 +29,7 @@ import {
 } from '@material-ui/core/styles';
 
 import { ICategoryModel, IUserModel } from '../../../models';
-import { logout } from '../../auth';
 import { HeaderBar } from '../../components';
-import { IAppDispatch } from '../../stores';
 import { getActiveCategories } from '../../stores/categories';
 import { getCurrentUser, getCurrentUserIsAdmin } from '../../stores/users';
 import { NICE_CONTROL_BLUE } from '../../styles';
@@ -53,7 +51,6 @@ export interface ITableFrameProps extends RouteComponentProps<IDashboardPathPara
   user: IUserModel;
   isAdmin: boolean;
   categories: Array<ICategoryModel>;
-  logout (): void;
 }
 
 export interface ITableFrameState {
@@ -146,7 +143,6 @@ export class PureTableFrame extends React.Component<ITableFrameProps, ITableFram
           <HeaderBar
             isMe={isMe}
             category={category}
-            logout={this.props.logout}
           />
           <div style={{float: 'left', width: `${SIDEBAR_WIDTH + 1}px`, backgroundColor: 'white'}}>
             <div style={{width: `${SIDEBAR_WIDTH}px`, borderRight: '1px solid rgba(0,0,0,0.12)'}}>
@@ -173,7 +169,6 @@ export class PureTableFrame extends React.Component<ITableFrameProps, ITableFram
           isMe={isMe}
           category={category}
           showSidebar={this.showSidebar}
-          logout={this.props.logout}
         />
         {this.renderSidebarPopup(isMe, category)}
         <div key="content">
@@ -191,9 +186,6 @@ export const TableFrame: React.ComponentClass<{}> = compose(
       user: getCurrentUser,
       isAdmin: getCurrentUserIsAdmin,
       categories: getActiveCategories,
-    }),
-    (dispatch: IAppDispatch) => ({
-      logout: () => dispatch(logout()),
     }),
   ),
 )(PureTableFrame);

@@ -59,7 +59,6 @@ export interface ICommentsProps extends RouteComponentProps<IContextPathParams> 
   category?: ICategoryModel;
   moderators?: List<IUserModel>;
   globalCounts: ISummaryCounts;
-  logout(): void;
 }
 
 export function Comments(props: ICommentsProps) {
@@ -67,7 +66,6 @@ export function Comments(props: ICommentsProps) {
     article,
     category,
     globalCounts,
-    logout,
     match: {path, url},
   } = props;
 
@@ -78,7 +76,6 @@ export function Comments(props: ICommentsProps) {
           category={category}
           article={article}
           homeLink
-          logout={logout}
         />
         <Route path={`${path}/:pt1/:pt2`}>
           <SubheaderBar

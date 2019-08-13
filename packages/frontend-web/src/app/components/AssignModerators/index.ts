@@ -44,7 +44,7 @@ type IAssignModeratorsStateProps = Pick<
 >;
 
 function getSortedUsers (state: IAppStateRecord, props: IAssignModeratorsOwnProps): Array<IUserModel> {
-  const userId = getMyUserId(state);
+  const userId = getMyUserId();
   const allUsers = getUsers(state);
   const currentUser = [];
   const assignedUsers = [];

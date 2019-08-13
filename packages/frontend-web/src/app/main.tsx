@@ -35,9 +35,8 @@ import {
   WebsocketStates,
 } from '../types';
 import {
-  reducer as authReducer,
   start,
-} from './auth/store';
+} from './auth';
 import { ErrorRoot, SPLASH_STYLES, SplashRoot, ThemeRoot } from './components';
 import { APP_NAME } from './config';
 import { AppRoot, reducer as scenesReducer } from './scenes';
@@ -51,7 +50,6 @@ const store = createStore(
   combineReducers({
     scenes: scenesReducer,
     global: globalReducer,
-    auth: authReducer,
   }),
   Immutable.Map(),
   compose(

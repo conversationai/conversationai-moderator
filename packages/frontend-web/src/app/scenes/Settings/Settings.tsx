@@ -177,7 +177,6 @@ export interface ISettingsProps extends RouteComponentProps<{}>  {
     newTaggingSensitivities: List<ITaggingSensitivityModel>,
     newTags: List<ITagModel>,
   ): Error;
-  logout (): void;
 }
 
 export interface ISettingsState {
@@ -1091,7 +1090,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   render() {
     const {
       categories,
-      logout,
     } = this.props;
 
     const {
@@ -1124,7 +1122,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
     return (
       <div {...css(STYLES.base)}>
-        <HeaderBar logout={logout} homeLink title="Settings"/>
+        <HeaderBar homeLink title="Settings"/>
         <div {...css(STYLES.body)}>
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
           {this.renderUsers()}

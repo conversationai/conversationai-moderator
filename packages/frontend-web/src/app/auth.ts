@@ -19,27 +19,21 @@ import JwtDecode from 'jwt-decode';
 import { isEmpty } from 'lodash';
 import qs from 'query-string';
 import { Dispatch } from 'redux';
-import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
-import { AuthenticationStates, SystemStates, WebsocketStates } from '../../types';
-import { checkAuthorization, checkServerStatus, setUserId } from '../platform/dataService';
-import { getToken, saveToken } from '../platform/localStore';
-import { connectNotifier, disconnectNotifier, STATUS_RESET, STATUS_UP }  from '../platform/websocketService';
-import { IAppDispatch, IAppStateRecord } from '../stores';
-import { articlesLoaded, articlesUpdated } from '../stores/articles';
-import { categoriesLoaded, categoriesUpdated } from '../stores/categories';
-import { assignmentCountUpdated } from '../stores/counts';
-import { preselectsUpdated } from '../stores/preselects';
-import { rulesUpdated } from '../stores/rules';
-import { taggingSensitivitiesUpdated } from '../stores/taggingSensitivities';
-import { tagsUpdated } from '../stores/tags';
-import { usersUpdated } from '../stores/users';
-import { clearCSRF, clearReturnURL, getCSRF, getReturnURL } from '../util';
-
-const completedAuthentication = createAction<number>('auth/COMPLETED_AUTHENTICATION');
-
-export const logout: () => Action<void> = createAction('auth/LOGOUT');
+import { AuthenticationStates, SystemStates, WebsocketStates } from '../types';
+import { checkAuthorization, checkServerStatus, setUserId } from './platform/dataService';
+import { getToken, saveToken } from './platform/localStore';
+import { connectNotifier, disconnectNotifier, STATUS_RESET, STATUS_UP }  from './platform/websocketService';
+import { IAppDispatch } from './stores';
+import { articlesLoaded, articlesUpdated } from './stores/articles';
+import { categoriesLoaded, categoriesUpdated } from './stores/categories';
+import { assignmentCountUpdated } from './stores/counts';
+import { preselectsUpdated } from './stores/preselects';
+import { rulesUpdated } from './stores/rules';
+import { taggingSensitivitiesUpdated } from './stores/taggingSensitivities';
+import { tagsUpdated } from './stores/tags';
+import { usersUpdated } from './stores/users';
+import { clearCSRF, clearReturnURL, getCSRF, getReturnURL } from './util';
 
 export function setAxiosToken(token: string): void {
   // Use query string for auth.
@@ -60,6 +54,8 @@ export function decodeToken(token: string): any {
   return JwtDecode(token);
 }
 
+let userId: string | null;
+
 async function connectWebsocket(
   dispatch: IAppDispatch,
   setState: (state: WebsocketStates) => void,
@@ -73,7 +69,7 @@ async function connectWebsocket(
       else {
         setState('ws_connecting');
         if (status === STATUS_RESET) {
-          dispatch(logout());
+          logout();
         }
       }
     },
@@ -111,8 +107,8 @@ async function completeAuthentication(
   await checkAuthorization();
 
   const data = decodeToken(token);
-  setUserId((data['user'] as number).toString());
-  await dispatch(completedAuthentication(data['user'] as number));
+  userId = (data['user'] as number).toString();
+  setUserId(userId);
   await connectWebsocket(dispatch, setState);
   setState('gtg');
 }
@@ -223,35 +219,13 @@ export async function start(
   }
 }
 
-export interface IAuthenticationState {
-  userId: number| null;
+export function logout() {
+  userId = null;
+  saveToken(null);
+  disconnectNotifier();
+  setAuthenticationState('unauthenticated');
 }
 
-export interface IAuthenticationStateRecord extends TypedRecord<IAuthenticationStateRecord>, IAuthenticationState {}
-
-const StateFactory = makeTypedFactory<IAuthenticationState, IAuthenticationStateRecord>({
-  userId: null,
-});
-
-const initialState = StateFactory();
-
-export const reducer = handleActions<IAuthenticationStateRecord, void | number>({
-  [completedAuthentication.toString()]: (state, { payload }: Action<number>) => (
-    state.set('userId', payload)
-  ),
-
-  [logout.toString()]: (state) => {
-    saveToken(null);
-    disconnectNotifier();
-    setAuthenticationState('unauthenticated');
-    return state.set('userId', null);
-  },
-}, initialState);
-
-export function getMyUserId(state: IAppStateRecord): string | null {
-  const userId = state.getIn(['auth', 'userId']);
-  if (!userId) {
-    return null;
-  }
-  return userId.toString();
+export function getMyUserId(): string | null {
+  return userId;
 }

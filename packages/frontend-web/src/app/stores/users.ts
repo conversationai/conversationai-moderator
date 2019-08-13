@@ -50,7 +50,7 @@ export function getUser(state: IAppStateRecord, id: ModelId): IUserModel | null 
 }
 
 export function getCurrentUser(state: IAppStateRecord): IUserModel | null {
-  const id = getMyUserId(state);
+  const id = getMyUserId();
   if (!id) {
     return null;
   }
