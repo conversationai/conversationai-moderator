@@ -39,11 +39,11 @@ if (!token) {
   API_URL: api_url,
 };
 
-import { decodeToken, setAxiosToken } from '../app/auth/store';
-import {setUserId} from '../app/platform/dataService';
+import { decodeToken, setAxiosToken } from '../app/auth';
+import { setUserId } from '../app/platform/dataService';
 import { saveToken } from '../app/platform/localStore';
 import { connectNotifier } from '../app/platform/websocketService';
-import {approveComment, rejectComment, setArticleModerators, setArticleState} from './actions';
+import { approveComment, rejectComment, setArticleModerators, setArticleState } from './actions';
 import { articleData, systemData, userData } from './notificationChecks';
 import {
   commentDetailsPage, fetchArticleText,

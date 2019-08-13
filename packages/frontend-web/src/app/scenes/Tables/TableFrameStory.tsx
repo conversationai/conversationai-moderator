@@ -91,19 +91,15 @@ storiesOf('TableFrame', module)
   })
   .add('Header bar with show sidebar', () => {
     function show() { console.log('show clicked'); }
-    function logout() { console.log('logout clicked'); }
     return (
       <HeaderBar
         showSidebar={show}
-        logout={logout}
       />
     );
   })
   .add('Header bar for admin', () => {
-    function logout() { console.log('logout clicked'); }
     return (
       <HeaderBar
-        logout={logout}
         category={singleCategory}
       />
     );

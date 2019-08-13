@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom';
 import { AssignmentInd, Home, Menu, OpenInNew, Person, Search } from '@material-ui/icons';
 
 import { IArticleModel, ICategoryModel } from '../../models';
+import { logout } from '../auth';
 import { dashboardLink, searchLink } from '../scenes/routes';
 import {
   GUTTER_DEFAULT_SPACING,
@@ -93,7 +94,6 @@ export interface IHeaderBarProps {
   isMe?: boolean;
   homeLink?: boolean;
   showSidebar?(): void;
-  logout(): void;
 }
 
 export class HeaderBar extends React.Component<IHeaderBarProps> {
@@ -119,7 +119,6 @@ export class HeaderBar extends React.Component<IHeaderBarProps> {
       category,
       article,
       showSidebar,
-      logout,
       homeLink,
       title,
     } = this.props;

@@ -22,7 +22,6 @@ import { combineReducers } from 'redux-immutable';
 import { createStructuredSelector } from 'reselect';
 
 import { IUserModel } from '../../../models';
-import { logout } from '../../auth';
 import { IAppStateRecord } from '../../stores';
 import { getArticle } from '../../stores/articles';
 import { getCategory, getGlobalCounts } from '../../stores/categories';
@@ -74,9 +73,6 @@ export const Comments = compose(
         return List<IUserModel>(article.assignedModerators.map((userId) => users.get(userId)));
       },
       globalCounts: getGlobalCounts,
-    }),
-    (dispatch) => ({
-      logout: () => dispatch(logout()),
     }),
   ),
 )(PureComments);
