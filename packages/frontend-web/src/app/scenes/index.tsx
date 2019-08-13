@@ -35,7 +35,7 @@ import {
 import { Search } from './Search';
 import { searchReducer } from './Search';
 import { Settings } from './Settings';
-import { TableFrame } from './Tables';
+import { TableFrame } from './Tables/TableFrame';
 
 export const reducer: any = combineReducers({
   commentsIndex: commentsIndexReducer,

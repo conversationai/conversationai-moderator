@@ -15,7 +15,10 @@ limitations under the License.
 */
 import { autobind } from 'core-decorators';
 import React from 'react';
-import {Route, RouteComponentProps} from 'react-router';
+import { connect } from 'react-redux';
+import { Route, RouteComponentProps, withRouter } from 'react-router';
+import { compose } from 'redux';
+import { createStructuredSelector } from 'reselect';
 
 import {
   Drawer,
@@ -26,11 +29,15 @@ import {
 } from '@material-ui/core/styles';
 
 import { ICategoryModel, IUserModel } from '../../../models';
+import { logout } from '../../auth';
 import { HeaderBar } from '../../components';
+import { IAppDispatch } from '../../stores';
+import { getActiveCategories } from '../../stores/categories';
+import { getCurrentUser, getCurrentUserIsAdmin } from '../../stores/users';
 import { NICE_CONTROL_BLUE } from '../../styles';
 import { IDashboardPathParams } from '../routes';
+import { ArticleTable } from './ArticleTable';
 import { CategorySidebar, SIDEBAR_WIDTH } from './CategorySidebar';
-import { ArticleTable } from './index';
 import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
 
 const theme = createMuiTheme({
@@ -58,7 +65,7 @@ function fixedSidebar() {
   return SIDEBAR_WIDTH / window.innerWidth < 0.17;
 }
 
-export class TableFrame extends React.Component<ITableFrameProps, ITableFrameState> {
+export class PureTableFrame extends React.Component<ITableFrameProps, ITableFrameState> {
   constructor(props: ITableFrameProps) {
     super(props);
 
@@ -176,3 +183,17 @@ export class TableFrame extends React.Component<ITableFrameProps, ITableFrameSta
     );
   }
 }
+
+export const TableFrame: React.ComponentClass<{}> = compose(
+  withRouter,
+  connect(
+    createStructuredSelector({
+      user: getCurrentUser,
+      isAdmin: getCurrentUserIsAdmin,
+      categories: getActiveCategories,
+    }),
+    (dispatch: IAppDispatch) => ({
+      logout: () => dispatch(logout()),
+    }),
+  ),
+)(PureTableFrame);

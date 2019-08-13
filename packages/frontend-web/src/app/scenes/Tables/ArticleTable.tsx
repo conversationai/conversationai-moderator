@@ -20,10 +20,14 @@ import { Map as IMap, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { RouteComponentProps } from 'react-router';
+import { connect } from 'react-redux';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
+import { compose } from 'redux';
+import { createStructuredSelector } from 'reselect';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
+import { getMyUserId } from '../../auth';
 import { ArticleControlIcon, AssignModerators } from '../../components';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
@@ -32,6 +36,10 @@ import {
   updateArticleModerators,
   updateCategoryModerators,
 } from '../../platform/dataService';
+import { IAppStateRecord } from '../../stores';
+import { getArticleMap, getArticles } from '../../stores/articles';
+import { getCategoryMap } from '../../stores/categories';
+import { getUsers } from '../../stores/users';
 import {
   flexCenter,
   HEADER_HEIGHT,
@@ -226,7 +234,7 @@ function updateArticles(state: IArticleTableState, props: IArticleTableProps, fi
   };
 }
 
-export class ArticleTable extends React.Component<IArticleTableProps, IArticleTableState> {
+export class PureArticleTable extends React.Component<IArticleTableProps, IArticleTableState> {
   constructor(props: Readonly<IArticleTableProps>) {
     super(props);
     const {filter: filterString, sort: sortString} = props.match.params;
@@ -460,7 +468,7 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
   }
 
   renderRow(article: IArticleModel, isSummary: boolean) {
-    const lastModerated: any = (!isSummary) ? ArticleTable.renderTime(article.lastModeratedAt) : '';
+    const lastModerated: any = (!isSummary) ? PureArticleTable.renderTime(article.lastModeratedAt) : '';
     const category = this.props.categories.get(article.categoryId);
     function getLink(disposition: string) {
       if (disposition === 'new') {
@@ -689,3 +697,24 @@ export class ArticleTable extends React.Component<IArticleTableProps, IArticleTa
     );
   }
 }
+
+const baseSelector = createStructuredSelector({
+  myUserId: getMyUserId,
+  categories: getCategoryMap,
+  selectedCategory: (state: IAppStateRecord, { match: { params }}: IArticleTableProps) => {
+    const m = /category=(\d+)/.exec(params.filter);
+    if (!m) {
+      return null;
+    }
+
+    return getCategoryMap(state).get(m[1]);
+  },
+  articleMap: getArticleMap,
+  articles: getArticles,
+  users: getUsers,
+});
+
+export const ArticleTable: React.ComponentClass<{}> = compose(
+  withRouter,
+  connect(baseSelector),
+)(PureArticleTable);
