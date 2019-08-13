@@ -19,7 +19,7 @@ import { combineReducers } from 'redux-immutable';
 import { WebsocketStates } from '../../types';
 import { logout } from '../auth';
 import { connectNotifier, STATUS_RESET, STATUS_UP } from '../platform/websocketService';
-import { IAction, IAppDispatch, IAppStateRecord } from './appstate';
+import { IAppDispatch, IAppStateRecord } from './appstate';
 import { articlesLoaded, articlesUpdated, reducer as articleReducer } from './articles';
 import { categoriesLoaded, categoriesUpdated, reducer as categoriesReducer } from './categories';
 import { reducer as columnSortsReducer } from './columnSorts';
@@ -40,14 +40,6 @@ import {
   summaryScoreReducer as topSummaryScoresReducer,
 } from './topScores';
 import { reducer as usersReducer, usersUpdated } from './users';
-
-// tslint:disable interface-name
-declare module 'redux' {
-  export interface Dispatch<S> {
-    <R>(action: IAction<R>): R;
-  }
-}
-// tslint:enable interface-name
 
 export { IAppDispatch, IAppState, IAppStateRecord, IThunkAction } from './appstate';
 
