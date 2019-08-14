@@ -17,9 +17,6 @@ limitations under the License.
 import { groupBy, omit } from 'lodash';
 
 import {
-    trigger,
-} from '@conversationai/moderator-backend-core';
-import {
   CommentScore,
   CommentScoreRequest,
   ICommentAttributes,
@@ -260,13 +257,12 @@ export async function highlight(
       ...getApproveStateData(),
       ...getUnHighlightStateData(),
     });
-    await trigger('api.publisher.unhighlightComment', { comment: updated });
-  } else {
+  }
+  else {
     updated = await setCommentState(comment, source, {
       ...getApproveStateData(),
       ...getHighlightStateData(),
     });
-    await trigger('api.publisher.highlightComment', { comment: updated });
   }
 
   return updated;

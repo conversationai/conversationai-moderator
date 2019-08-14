@@ -17,7 +17,6 @@ limitations under the License.
 import {
     Comment,
     logger,
-    trigger,
 } from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 import * as Joi from 'joi';
@@ -73,11 +72,6 @@ export function createEditCommentTextService(): express.Router {
         await enqueue<ISendCommentForScoringTaskData>('sendCommentForScoring', {
           commentId: comment.id,
         }, false);
-
-        // send edit event to publisher
-        await trigger('api.publisher.editComment', {
-          comment,
-        });
 
       } catch (err) {
         logger.error('Edit Comment error: ', err.name, err.message);

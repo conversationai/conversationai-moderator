@@ -17,8 +17,8 @@ limitations under the License.
 import {
   Article,
   Comment,
-  ICommentInstance, logger,
-  triggerMapFirst,
+  ICommentInstance,
+  logger,
 } from '@conversationai/moderator-backend-core';
 import * as Bluebird from 'bluebird';
 
@@ -33,22 +33,14 @@ import {postProcessComment} from '../../pipeline/pipeline';
  */
 async function createCommentIfNew(commentData: any): Promise<ICommentInstance> {
   // Verify article existence
-  let article = await Article.findOne({
+  const article = await Article.findOne({
     where: {
       sourceId: commentData.articleId,
     },
   });
 
   if (!article) {
-    logger.info(`Article id ${commentData.articleId} doesn't exist, pulling it.`);
-
-    article = await triggerMapFirst('api.publisher.pullArticle', {
-      articleId: commentData.articleId,
-    });
-
-    if (!article) {
-      throw new Error(`Attempted to pull article  ${commentData.articleId}, but it failed`);
-    }
+    throw new Error(`Article is not available:  ${commentData.articleId}`);
   }
 
   // Force convert publisher data to conform to DB model

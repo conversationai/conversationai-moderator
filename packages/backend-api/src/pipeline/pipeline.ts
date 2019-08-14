@@ -22,7 +22,7 @@ import { humanize, titleize, trim } from 'underscore.string';
 
 import { config } from '@conversationai/moderator-config';
 
-import { logger, trigger } from '@conversationai/moderator-backend-core';
+import { logger } from '@conversationai/moderator-backend-core';
 import {
   Article,
   Comment,
@@ -38,8 +38,8 @@ import {
   IDecisionInstance,
   IModerationRuleInstance,
   IResolution,
-  isUser,
   isModerationRule,
+  isUser,
   ITagAttributes,
   ITagInstance,
   IUserInstance,
@@ -426,9 +426,6 @@ export async function recordDecision(
 
   if (mode === 'noop') {
     await decision.update({ sentBackToPublisher: sequelize.fn('now') });
-  }
-  else if (mode === 'push') {
-    await trigger('api.publisher.sendDecisionToPublisher', { decision });
   }
 
   return decision;
