@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 export * from './domain';
-export * from './events';
 export * from './models';
 export * from './logger';
 export * from './sequelize';
