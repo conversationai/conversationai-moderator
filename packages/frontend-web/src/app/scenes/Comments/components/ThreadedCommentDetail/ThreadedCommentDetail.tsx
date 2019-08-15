@@ -25,7 +25,6 @@ import { ICommentAction, IConfirmationAction } from '../../../../../types';
 import {
   RejectIcon,
 } from '../../../../components';
-import { REQUIRE_REASON_TO_REJECT } from '../../../../config';
 import {
   BASE_Z_INDEX,
   BODY_TEXT_TYPE,
@@ -180,7 +179,6 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
         <div key="comments" {...css(STYLES.body)}>
           {comment &&
           <ThreadedComment
-            requireReasonForReject={REQUIRE_REASON_TO_REJECT}
             updateCommentState={updateCommentState}
             onUpdateReply={onUpdateReply}
             dispatchAction={dispatchAction}

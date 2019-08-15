@@ -29,6 +29,7 @@ import {
   IModerationAction,
   ITopScore,
 } from '../../../types';
+import { REQUIRE_REASON_TO_REJECT } from '../../config';
 import { FlagsSummary } from '../../scenes/Comments/components/FlagsSummary';
 import {
   articleBase,
@@ -76,7 +77,6 @@ export interface IBasicBodyProps {
   onCommentClick?(commentId: string): any;
   searchTerm?: string;
   displayArticleTitle?: boolean;
-  requireReasonForReject?: boolean;
   handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
@@ -156,7 +156,6 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
       commentLinkTarget,
       onCommentClick,
       displayArticleTitle,
-      requireReasonForReject,
       handleAssignTagsSubmit,
     } = this.props;
 
@@ -285,7 +284,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                 hideLabel
                 containerSize={36}
                 onClick={this.onClickModerateActions}
-                requireReasonForReject={requireReasonForReject}
+                requireReasonForReject={REQUIRE_REASON_TO_REJECT}
                 comment={comment}
                 handleAssignTagsSubmit={handleAssignTagsSubmit}
                 popupOpen={this.popupOpen}
@@ -379,7 +378,6 @@ export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> 
       dispatchConfirmedAction,
       searchTerm,
       displayArticleTitle,
-      requireReasonForReject,
       handleAssignTagsSubmit,
     } = this.props;
 
@@ -395,7 +393,6 @@ export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> 
           showActions={showActions}
           dispatchConfirmedAction={dispatchConfirmedAction}
           displayArticleTitle={displayArticleTitle}
-          requireReasonForReject={requireReasonForReject}
           handleAssignTagsSubmit={handleAssignTagsSubmit}
         />
       </div>
@@ -418,7 +415,6 @@ export interface ILazyLoadCommentProps extends React.HTMLProps<any> {
   commentPropsForRow: ICommentPropsForRow;
   updateCounter?: number;
   dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>, shouldTriggerToast?: boolean): any;
-  requireReasonForReject?: boolean;
 }
 
 export interface ILazyLoadCommentState {
@@ -440,7 +436,6 @@ export class LazyLoadComment
       children,
       loadingPlaceholder,
       dispatchConfirmedAction,
-      requireReasonForReject,
     } = this.props;
 
     const props = commentPropsForRow(rowIndex);
@@ -457,7 +452,6 @@ export class LazyLoadComment
                 showActions: true,
                 dispatchConfirmedAction,
                 rowIndex,
-                requireReasonForReject,
               })
             ),
           )}
