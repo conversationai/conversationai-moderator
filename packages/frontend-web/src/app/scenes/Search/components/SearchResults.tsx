@@ -45,7 +45,7 @@ import {
   ToastMessage,
   ToolTip,
 } from '../../../components';
-import { DATE_FORMAT_LONG, REQUIRE_REASON_TO_REJECT } from '../../../config';
+import { DATE_FORMAT_LONG } from '../../../config';
 import {
   DARK_COLOR,
   GUTTER_DEFAULT_SPACING,
@@ -575,7 +575,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
               searchTerm={searchTerm}
               displayArticleTitle={!!searchTerm}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
-              requireReasonForReject={REQUIRE_REASON_TO_REJECT}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
             />
           )}

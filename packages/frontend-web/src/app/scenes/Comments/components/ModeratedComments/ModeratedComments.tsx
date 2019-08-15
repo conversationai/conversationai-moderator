@@ -46,7 +46,6 @@ import {
   ToastMessage,
   ToolTip,
 } from '../../../../components';
-import { REQUIRE_REASON_TO_REJECT } from '../../../../config';
 import { updateArticle } from '../../../../platform/dataService';
 import {
   BASE_Z_INDEX,
@@ -550,7 +549,6 @@ export class ModeratedComments
               triggerActionToast={this.triggerActionToast}
               displayArticleTitle={isArticleContext(params)}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
-              requireReasonForReject={REQUIRE_REASON_TO_REJECT}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
               onTableScroll={this.onTableScroll}
             />

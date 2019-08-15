@@ -83,7 +83,6 @@ export type ICommentListOwnPropNames =
   'heightOffset' |
   'dispatchConfirmedAction' |
   'displayArticleTitle' |
-  'requireReasonForReject' |
   'handleAssignTagsSubmit' |
   'onTableScroll' |
   'searchTerm';

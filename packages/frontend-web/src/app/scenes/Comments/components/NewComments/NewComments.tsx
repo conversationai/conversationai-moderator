@@ -57,7 +57,6 @@ import {
   DEFAULT_DRAG_HANDLE_POS1,
   DEFAULT_DRAG_HANDLE_POS2,
   DEFAULT_SORT,
-  REQUIRE_REASON_TO_REJECT,
 } from '../../../../config';
 import { updateArticle } from '../../../../platform/dataService';
 import {
@@ -740,7 +739,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               isItemChecked={isItemChecked}
               onSelectAllChange={this.onSelectAllChange}
               onSelectionChange={this.onSelectionChange}
-              requireReasonForReject={REQUIRE_REASON_TO_REJECT}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
               sortOptions={filterSortOptions}
               getCurrentSort={this.getCurrentSort}

@@ -84,7 +84,6 @@ export interface IThreadedCommentProps {
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
   onUpdateReply?(action: ICommentAction, replyId: string): any;
   dispatchAction?(action: ICommentAction, idsToDispatch: Array<string>): any;
-  requireReasonForReject?: boolean;
   handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
@@ -142,7 +141,6 @@ export class ThreadedComment extends React.Component<IThreadedCommentProps, IThr
     const {
       comment,
       replies,
-      requireReasonForReject,
       handleAssignTagsSubmit,
     } = this.props;
 
@@ -162,7 +160,6 @@ export class ThreadedComment extends React.Component<IThreadedCommentProps, IThr
                 contextId: comment.articleId,
                 commentId: comment.id,
               })}
-              requireReasonForReject={requireReasonForReject}
               handleAssignTagsSubmit={handleAssignTagsSubmit}
               comment={comment}
               showActions={(comment.id === hoveredRowId) && hoveredRowThresholdPassed}
@@ -180,7 +177,6 @@ export class ThreadedComment extends React.Component<IThreadedCommentProps, IThr
           >
             <div {...css(STYLES.body, STYLES.replyBody)}>
               <LinkedBasicBody
-                requireReasonForReject={requireReasonForReject}
                 handleAssignTagsSubmit={handleAssignTagsSubmit}
                 showActions={(reply.id === hoveredRowId) && hoveredRowThresholdPassed}
                 dispatchConfirmedAction={this.dispatchConfirmedReply}

@@ -131,7 +131,6 @@ export interface ILazyCommentListProps {
   scrollToRow?: number;
   ownerHeight?: number;
   searchTerm?: string;
-  requireReasonForReject: boolean;
   handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
   displayArticleTitle?: boolean;
   selectedTag?: ITagModel;
@@ -187,7 +186,6 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, 
       commentPropsForRow,
       updateCounter,
       dispatchConfirmedAction,
-      requireReasonForReject,
     } = this.props;
 
     return (
@@ -199,7 +197,6 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, 
           updateCounter={updateCounter}
           dispatchConfirmedAction={dispatchConfirmedAction}
           rowIndex={cellProps.rowIndex}
-          requireReasonForReject={requireReasonForReject}
         >
           {bodyContent}
         </LazyLoadComment>
