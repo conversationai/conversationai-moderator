@@ -17,7 +17,6 @@ limitations under the License.
 import * as express from 'express';
 
 import { kickWorker } from '../worker';
-import { createHeartbeatCron } from './heartbeat';
 import { createKnownTasksRouter } from './known_tasks';
 
 /*
@@ -31,20 +30,6 @@ export function mountTaskAPI(): express.Router {
   });
 
   router.use('/:taskName', createKnownTasksRouter());
-
-  return router;
-}
-
-/*
-    The Cron API exposes HTTP endpoints for starting cron-like tasks.
-*/
-export function mountCronAPI(): express.Router {
-  const router = express.Router({
-    caseSensitive: true,
-    mergeParams: true,
-  });
-
-  router.use('/heartbeat', createHeartbeatCron());
 
   return router;
 }
@@ -64,6 +49,5 @@ export function processingTriggers(): express.Router {
   return router;
 }
 
-export * from './heartbeat';
 export * from './known_tasks';
 export * from './permissions';

@@ -16,7 +16,7 @@ limitations under the License.
 
 import { registerTask } from './util';
 
-import { heartbeatTask, ICommentActionData } from './tasks';
+import { ICommentActionData } from './tasks';
 import {
   IProcessMachineScoreData,
   processMachineScoreTask,
@@ -67,7 +67,6 @@ import {
   processTagRevocationTask,
 } from './tasks';
 
-registerTask<void>('heartbeat', heartbeatTask);
 registerTask<IProcessMachineScoreData>('processMachineScore', processMachineScoreTask);
 registerTask<IProcessTagAdditionData>('processTagAddition', processTagAdditionTask);
 registerTask<IProcessTagRevocationData>('processTagRevocation', processTagRevocationTask);
