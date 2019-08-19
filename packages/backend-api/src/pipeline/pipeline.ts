@@ -20,8 +20,6 @@ import * as moment from 'moment';
 import { FindOrInitializeOptions } from 'sequelize';
 import { humanize, titleize, trim } from 'underscore.string';
 
-import { config } from '@conversationai/moderator-config';
-
 import { logger } from '@conversationai/moderator-backend-core';
 import {
   Article,
@@ -420,13 +418,6 @@ export async function recordDecision(
     userId: (source && isUser(source)) ? source.id : undefined,
     moderationRuleId: (source && isModerationRule(source)) ? source.id : undefined,
   });
-
-  // Don't send decision to publisher in noop mode
-  const mode = config.get('publisher_notification_mode');
-
-  if (mode === 'noop') {
-    await decision.update({ sentBackToPublisher: sequelize.fn('now') });
-  }
 
   return decision;
 }

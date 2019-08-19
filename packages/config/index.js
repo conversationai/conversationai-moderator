@@ -119,13 +119,6 @@ const config = convict({
     }
   },
 
-  publisher_notification_mode: {
-    doc: 'Whether to post back to the publisher, or wait to be polled.',
-    format: String,
-    default: 'push',
-    env: 'PUBLISHER_NOTIFICATION_MODE'
-  },
-
   google_client_id: {
     doc: 'The Google OAuth web client id, found at https://console.developers.google.com',
     format: String,
