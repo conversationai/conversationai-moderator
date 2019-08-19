@@ -58,6 +58,7 @@ import { IScoreData, IScores, IShim, ISummaryScores } from './shim';
 import { getIsDoneScoring } from './state';
 
 import { createShim as createApiShim } from './apiShim';
+import { commentModeratedHook } from './hooks';
 import { createShim as createProxyShim } from './proxyShim';
 
 const shims = new Map<number, IShim>();
@@ -421,6 +422,7 @@ export async function recordDecision(
     moderationRuleId: (source && isModerationRule(source)) ? source.id : undefined,
   });
 
+  await commentModeratedHook(comment);
   return decision;
 }
 
