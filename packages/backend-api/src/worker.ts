@@ -15,7 +15,8 @@ limitations under the License.
 */
 
 import { syncYoutubeTask } from './integrations';
-import { registerWorkItem, startWorker } from './processing';
+import { heartbeatTask, registerWorkItem, startWorker } from './processing';
 
 registerWorkItem('youtube', syncYoutubeTask);
+registerWorkItem('heartbeat', heartbeatTask);
 startWorker();

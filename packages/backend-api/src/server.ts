@@ -88,11 +88,7 @@ async function init() {
 
   // TODO: We may need to resurrect these entrypoints for external integration.
   //       Not sure who will use the task API.
-  //       The cron API is used to integrate with a system status or cron "heartbeat".
-  //       E.g., https://cloud.google.com/appengine/docs/standard/nodejs/scheduling-jobs-with-cron-yaml
-  //       though we may be able to replace this with the new worker infrastructure.
   // app.use('/tasks', mountTaskAPI());
-  // app.use('/cron', mountCronAPI());
 
   app.use(path, await mountAPI());
 

@@ -14,31 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { logger } from '@conversationai/moderator-backend-core';
+
 import {
   getCommentsToResendForScoring,
   resendForScoring,
 } from '../../pipeline';
-import { handler, IQueueHandler } from '../util';
 
-// Control the processing of comments per heartbeat
+const HEARTBEAT_INTERVAL = 10;
 const PROCESS_COMMENT_LIMIT = 10;
 
-/**
- * Heartbeat, baby
- *
- * The soundtrack to this worker task:
- *   https://open.spotify.com/track/61h7fpfufg6ZA7kCOtXoZR
- *   https://open.spotify.com/track/24efdUt3KGbZ6wnBLp6j2n
- *   https://open.spotify.com/track/78TnMTAFmWUWWCgNXR7D3K
- *
- */
-export const heartbeatTask: IQueueHandler<void> = handler<void>(async (_, logger) => {
-  await resendComments(logger);
+export async function heartbeatTask(tick: number) {
+  if (tick % HEARTBEAT_INTERVAL === 0) {
+    await resendComments();
+  }
+}
 
-  logger.info('OSMod Heartbeat Done!');
-});
-
-export async function resendComments(logger: any) {
+async function resendComments() {
   logger.info('Process checking for comments to re-send for scoring');
   let comments;
 
