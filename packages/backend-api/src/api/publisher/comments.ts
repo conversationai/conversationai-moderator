@@ -40,7 +40,7 @@ async function createCommentIfNew(commentData: any): Promise<ICommentInstance> {
   });
 
   if (!article) {
-    throw new Error(`Article is not available:  ${commentData.articleId}`);
+    throw new Error(`Article is not available: ${commentData.articleId}`);
   }
 
   // Force convert publisher data to conform to DB model

@@ -32,7 +32,7 @@ import {
   resolveComment,
   resolveCommentAndFlags,
   resolveFlagsAndDenormalize,
-} from './utils';
+} from './db_operations';
 
 export interface ICommentActionData {
   commentId: number;

@@ -257,8 +257,7 @@ export async function highlight(
       ...getApproveStateData(),
       ...getUnHighlightStateData(),
     });
-  }
-  else {
+  } else {
     updated = await setCommentState(comment, source, {
       ...getApproveStateData(),
       ...getHighlightStateData(),
