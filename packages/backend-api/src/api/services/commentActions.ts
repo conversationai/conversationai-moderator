@@ -38,7 +38,7 @@ export const detailAddTagSchema = Joi.object({
 });
 
 export const commentActionSchema = Joi.object({
-  userId: Joi.string().required(),
+  userId: Joi.string().optional(),
   commentId: Joi.string().required(),
 });
 
@@ -49,21 +49,19 @@ const validateDetailRequest = (schema: Joi.Schema) => validateRequest(dataSchema
  * Queues an accept, reject, defer or highlight action. Accepts array of comment ids, or a single comment id.
  */
 export function queueMainAction(name: IKnownTasks): express.RequestHandler {
-  return async ({ body }, res, next) => {
+  return async ({ body, user }, res, next) => {
     const dataArray = Array.isArray(body.data) ? body.data : [body.data];
+    const isBatchAction = (dataArray.length > 1);
 
     for (const data of dataArray) {
-      const { userId, commentId } = data;
-
-      const parsedUserId = parseInt(userId, 10);
+      const { commentId } = data;
       const parsedCommentId = parseInt(commentId, 10);
 
-      const isBatchAction = (dataArray.length > 1);
       await enqueue<ICommentActionData>(name, {
         commentId: parsedCommentId,
-        userId: parsedUserId,
+        userId: user.id,
         isBatchAction,
-      }, body.runImmediately || false);
+      }, !!body.runImmediately);
     }
 
     res.json(REPLY_SUCCESS);
@@ -75,22 +73,22 @@ export function queueMainAction(name: IKnownTasks): express.RequestHandler {
  * Queues an tag action. Accepts array of comment ids, or a single comment id.
  */
 export function queueTagAction(): express.RequestHandler {
-  return async ({ body, params }, res, next) => {
+  return async ({ body, params, user }, res, next) => {
     const dataArray = Array.isArray(body.data) ? body.data : [body.data];
+    const parsedTagId = parseInt(params.tagid, 10);
+    const isBatchAction = (dataArray.length > 1);
 
-    for (const { commentId, userId } of dataArray) {
-      const parsedUserId = parseInt(userId, 10);
+    for (const { commentId } of dataArray) {
       const parsedCommentId = parseInt(commentId, 10);
-      const parsedTagId = parseInt(params.tagid, 10);
 
       logger.info('start queue for comment id %s and tag id %s', commentId, params.tagid);
 
       await enqueue<ITagCommentsData>('tagComments', {
         commentId: parsedCommentId,
         tagId: parsedTagId,
-        userId: parsedUserId,
-        isBatchAction: false,
-      }, body.runImmediately || false);
+        userId: user.id,
+        isBatchAction: isBatchAction,
+      }, !!body.runImmediately);
     }
 
     res.json(REPLY_SUCCESS);
@@ -113,7 +111,7 @@ export function queueTagCommentSummaryAction(): express.RequestHandler {
       await enqueue<ICommentSummaryScoreData>('tagCommentSummaryScores', {
         commentId: parsedCommentId,
         tagId: parsedTagId,
-      }, body.runImmediately || false);
+      }, !!body.runImmediately);
     }
 
     res.json(REPLY_SUCCESS);
@@ -131,7 +129,7 @@ export function queueScoreCommentSummaryAction(name: IKnownTasks): express.Reque
     await enqueue<ICommentSummaryScoreData>(name, {
       commentId: params.commentid,
       tagId: params.tagid,
-    }, body.runImmediately || false);
+    }, !!body.runImmediately);
 
     res.json(REPLY_SUCCESS);
     next();
@@ -149,11 +147,10 @@ export function queueScoreAction(name: IKnownTasks): express.RequestHandler {
       commentId: parseInt(params.commentid, 10),
       tagId: body.data ? parseInt(body.data.tagId, 10) : undefined,
       commentScoreId: params.commentscoreid ? params.commentscoreid : undefined,
-      // TODO(ldixon): explore if user is actually always defined.
-      userId: user!.id,
+      userId: user.id,
       annotationStart: body.data ? body.data.annotationStart : undefined,
       annotationEnd: body.data ? body.data.annotationEnd : undefined,
-    }, body.runImmediately || false);
+    }, !!body.runImmediately);
 
     res.json(REPLY_SUCCESS);
     next();

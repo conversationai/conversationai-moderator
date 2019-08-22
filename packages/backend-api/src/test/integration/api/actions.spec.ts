@@ -41,7 +41,7 @@ import {
   makeFlag,
   makeUser,
 } from '../../fixture';
-import { app } from './test_helper';
+import { app, setAuthenticatedUser } from './test_helper';
 
 const BASE_URL = `/services/commentActions`;
 
@@ -111,6 +111,7 @@ describe(BASE_URL, () => {
     comment1 = await makeComment({articleId: article.id, isModerated: false});
     comment2 = await makeComment({articleId: article.id, isModerated: true, isAccepted: true});
     user = await makeUser();
+    setAuthenticatedUser(user);
     user2 = await makeUser({email: 'other@example.com'});
     unresolved1 = await makeFlag({commentId: comment1.id, label: 'unresolved 1'});
     unresolved2 = await makeFlag({commentId: comment1.id, label: 'unresolved 2', isRecommendation: true});
