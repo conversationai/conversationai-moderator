@@ -53,12 +53,19 @@ export function createAssistant(): express.Router {
       const scoreRequest = await CommentScoreRequest.findById(id);
 
       if (scoreRequest) {
-        await enqueueProcessMachineScoreTask(scoreRequest.get('commentId'), scoreRequest.get('userId'), scoreData, runImmediately);
+        await enqueueProcessMachineScoreTask(
+          scoreRequest.get('commentId'),
+          scoreRequest.get('userId'),
+          scoreData,
+          runImmediately);
         res.json(REPLY_SUCCESS);
         next();
       } else {
         logger.error(`Score request not found for provided id: ${id}`);
-        res.status(400).json({ status: 'error', errors: 'Score request not found by provided scoreRequestId' });
+        res.status(400).json({
+          status: 'error',
+          errors: 'Score request not found by provided scoreRequestId',
+        });
 
         return;
       }
