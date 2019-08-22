@@ -17,6 +17,8 @@ limitations under the License.
 import * as chai from 'chai';
 import * as express from 'express';
 
+import { IUserInstance } from '@conversationai/moderator-backend-core';
+
 const chaiHttp = require('chai-http');
 
 import { makeServer } from '../../../api/util/server';
@@ -24,11 +26,20 @@ import { mountAPI } from '../../../index';
 
 chai.use(chaiHttp);
 let app: express.Application;
+let user: IUserInstance;
 
 before(async () => {
   const serverStuff = makeServer(true);
   app = serverStuff.app;
+  app.use('/', (req, _, next) => {
+    req.user = user;
+    next();
+  });
   app.use('/', await mountAPI(true));
 });
+
+export function setAuthenticatedUser(u: IUserInstance) {
+  user = u;
+}
 
 export { app };
