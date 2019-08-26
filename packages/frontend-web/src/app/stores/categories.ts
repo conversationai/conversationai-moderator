@@ -15,28 +15,25 @@ limitations under the License.
 */
 
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
+
 import { ICategoryModel, ModelId } from '../../models';
 import { IAppStateRecord } from './appstate';
 
 const STATE_ROOT = ['global', 'categories'];
-const INDEX = [...STATE_ROOT, 'index'];
-const ARRAY = [...STATE_ROOT, 'array'];
-const ACTIVE = [...STATE_ROOT, 'active'];
 
 export const categoriesLoaded = createAction<Array<ICategoryModel>>('global/CATEGORIES_LOADED');
 export const categoriesUpdated = createAction<Array<ICategoryModel>>('global/CATEGORIES_UPDATED');
 
 export function getCategoryMap(state: IAppStateRecord): Map<ModelId, ICategoryModel> {
-  return state.getIn(INDEX);
+  return state.getIn(STATE_ROOT).index;
 }
 
 export function getCategories(state: IAppStateRecord): Array<ICategoryModel> {
-  return state.getIn(ARRAY);
+  return state.getIn(STATE_ROOT).array;
 }
 
 export function getActiveCategories(state: IAppStateRecord): Array<ICategoryModel> {
-  return state.getIn(ACTIVE);
+  return state.getIn(STATE_ROOT).active;
 }
 
 export function getCategory(state: IAppStateRecord, categoryId: ModelId): ICategoryModel {
@@ -86,29 +83,20 @@ export interface ICategoriesState {
   active: Array<ICategoryModel>;
 }
 
-export interface ICategoriesStateRecord extends TypedRecord<ICategoriesStateRecord>, ICategoriesState {}
-
-const CategoriesStateFactory = makeTypedFactory<ICategoriesState, ICategoriesStateRecord>({
-  index: new Map<ModelId, ICategoryModel>(),
-  array: [],
-  active: [],
-});
-
-export const reducer = handleActions<ICategoriesStateRecord, Array<ICategoryModel>>( {
-  [categoriesLoaded.toString()]: (state: ICategoriesStateRecord, { payload }: Action<Array<ICategoryModel>>) => {
+export const reducer = handleActions<Readonly<ICategoriesState>, Array<ICategoryModel>>( {
+  [categoriesLoaded.toString()]: (_state: Readonly<ICategoriesState>, { payload }: Action<Array<ICategoryModel>>) => {
     const index = new Map<ModelId, ICategoryModel>(payload.map((v) => ([v.id, v])));
     const array = Array.from(index.values());
-    return state.set('index', index)
-      .set('array', array)
-      .set('active', array.filter((c) => c.isActive));
+    const active = array.filter((c) => c.isActive);
+    return {index, array, active};
   },
-  [categoriesUpdated.toString()]: (state: ICategoriesStateRecord, { payload }: Action<Array<ICategoryModel>>) => {
-    const index: Map<ModelId, ICategoryModel> = state.get('index');
+  [categoriesUpdated.toString()]: (state: Readonly<ICategoriesState>, { payload }: Action<Array<ICategoryModel>>) => {
+    const index: Map<ModelId, ICategoryModel> = state.index;
     for (const category of payload) {
       index.set(category.id, category);
     }
     const array = Array.from(index.values());
-    return state.set('index', index).set('array', array)
-      .set('active', array.filter((c) => c.isActive));
+    const active = array.filter((c) => c.isActive);
+    return {index, array, active};
   },
-}, CategoriesStateFactory());
+}, {index: new Map<ModelId, ICategoryModel>(), array: [], active: []});

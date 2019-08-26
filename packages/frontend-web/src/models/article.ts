@@ -14,9 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
-
 import { ModelId } from './common';
 
 export interface IArticleAttributes {
@@ -44,46 +41,15 @@ export interface IArticleAttributes {
   isAutoModerated: boolean;
 }
 
-export interface IArticleModel extends TypedRecord<IArticleModel>, IArticleAttributes {}
+export type IArticleModel = Readonly<IArticleAttributes>;
 
-const ArticleModelRecord = Record({
-  id: null,
-  sourceCreatedAt: null,
-  updatedAt: null,
-  text: null,
-  title: null,
-  url: null,
-  categoryId: null,
-  allCount: null,
-  unprocessedCount: null,
-  unmoderatedCount: null,
-  moderatedCount: null,
-  highlightedCount: null,
-  approvedCount: null,
-  rejectedCount: null,
-  deferredCount: null,
-  flaggedCount: null,
-  batchedCount: null,
-  lastModeratedAt: null,
-  assignedModerators: null,
-  isCommentingEnabled: null,
-  isAutoModerated: null,
-});
-
-export function ArticleModel(keyValuePairs?: IArticleAttributes): IArticleModel {
-  let article = ArticleModelRecord(keyValuePairs) as IArticleModel;
-
+export function ArticleModel(articleData?: IArticleAttributes): IArticleModel {
   // Sanitize URLs for security.
-  if (article.url) {
-    article = article.update('url', (url) => {
-      if (url.startsWith('http://') || url.startsWith('https://')) {
-        return url;
-      }
-
-      // Invalid URL, might be an XSS attempt.
-      return null;
-    });
+  if (articleData.url) {
+    const url = articleData.url;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      articleData.url = null;
+    }
   }
-
-  return article;
+  return articleData as IArticleModel;
 }

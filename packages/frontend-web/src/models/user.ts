@@ -14,13 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
-
 import { ModelId } from './common';
 
 export interface IUserAttributes {
-  id: ModelId;
+  id?: ModelId;
   name: string;
   key?: string;
   email?: string;
@@ -30,19 +27,8 @@ export interface IUserAttributes {
   extra?: any;
 }
 
-export interface IUserModel extends TypedRecord<IUserModel>, IUserAttributes {}
+export type IUserModel = Readonly<IUserAttributes>;
 
-const UserModelRecord = Record({
-  id: null,
-  name: null,
-  key: null,
-  email: null,
-  avatarURL: null,
-  group: null,
-  isActive: null,
-  extra: null,
-});
-
-export function UserModel(keyValuePairs?: IUserAttributes): IUserModel {
-  return new UserModelRecord(keyValuePairs) as IUserModel;
+export function UserModel(userAttributes: IUserAttributes): IUserModel {
+  return userAttributes as IUserModel;
 }

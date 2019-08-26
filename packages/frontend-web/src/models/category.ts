@@ -14,9 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
-
 import { ModelId } from './common';
 
 export interface ICategoryAttributes {
@@ -39,28 +36,8 @@ export interface ICategoryAttributes {
   assignedModerators: Array<ModelId>;
 }
 
-export interface ICategoryModel extends TypedRecord<ICategoryModel>, ICategoryAttributes {}
+export type ICategoryModel = Readonly<ICategoryAttributes>;
 
-const CategoryModelRecord = Record({
-  id: null,
-  label: null,
-  ownerId: null,
-  sourceId: null,
-  isActive: false,
-  updatedAt: null,
-  allCount: null,
-  unprocessedCount: null,
-  unmoderatedCount: null,
-  moderatedCount: null,
-  deferredCount: null,
-  approvedCount: null,
-  highlightedCount: null,
-  rejectedCount: null,
-  flaggedCount: null,
-  batchedCount: null,
-  assignedModerators: null,
-});
-
-export function CategoryModel(keyValuePairs?: Partial<ICategoryAttributes>): ICategoryModel {
-  return new CategoryModelRecord(keyValuePairs) as ICategoryModel;
+export function CategoryModel(categoryData?: Partial<ICategoryAttributes>): ICategoryModel {
+  return categoryData as ICategoryModel;
 }

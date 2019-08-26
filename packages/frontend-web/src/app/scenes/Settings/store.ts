@@ -22,8 +22,9 @@ import {
   IRuleModel,
   ITaggingSensitivityModel,
   ITagModel,
+  IUserAttributes,
   IUserModel,
- } from '../../../models';
+} from '../../../models';
 import {
   createModel,
   destroyModel,
@@ -50,9 +51,10 @@ function diff<T extends Map<string, any>>(original: List<T>, current: List<T>): 
 }
 
 export async function addUser(user: IUserModel): Promise<void> {
-  await createModel<IUserModel>(
+  // TODO: Don't know what's going on with the types here (hence the cast to any), nor with the key field...
+  await createModel<IUserAttributes & {key: string}>(
     'users',
-    user.set('key', slugify(user.get('name'), '_').toUpperCase()) as any,
+    {...user, key: slugify(user.name, '_').toUpperCase()} as any,
   );
 }
 

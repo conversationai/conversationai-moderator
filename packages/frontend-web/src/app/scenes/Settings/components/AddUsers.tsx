@@ -46,9 +46,8 @@ export interface IAddUsersState {
 }
 
 export class AddUsers extends React.Component<IAddUsersProps, IAddUsersState> {
-  // Find a way to generate random ids that will be thrown away.
   state = {
-    newUser: UserModel().set('group', this.props.userType).set('isActive', true).set('id', 123),
+    newUser: UserModel({name: '', group: this.props.userType, isActive: true}),
     isDisabled: true,
   };
 
@@ -71,8 +70,15 @@ export class AddUsers extends React.Component<IAddUsersProps, IAddUsersState> {
   }
 
   @autobind
-  onInputChange(inputType: string, value: string) {
-    const newUser = this.state.newUser.set(inputType, value);
+  onInputChange(inputType: 'name' | 'email' | 'group' | 'isActive', value: string | boolean) {
+    const newUser = {...this.state.newUser};
+    if (inputType === 'isActive') {
+      newUser[inputType] = value as boolean;
+    }
+    else {
+      newUser[inputType] = value as string;
+    }
+
     this.setState({
       newUser,
       isDisabled: !this.isNewUserValid(newUser),
