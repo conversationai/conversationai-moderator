@@ -29,7 +29,7 @@ import { css } from '../../../utilx';
 import { SETTINGS_STYLES } from '../settingsStyles';
 
 export interface IAddUsersProps {
-  onInputChange(type: string, value: string | boolean): any;
+  onInputChange(type: 'name' | 'email' | 'group' | 'isActive', value: string | boolean): any;
   user?: IUserModel;
 }
 
@@ -41,9 +41,8 @@ const GROUPS = List([
 export class UserForm extends React.Component<IAddUsersProps> {
 
   @autobind
-  onValueChange(property: string, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+  onValueChange(property: 'name' | 'email' | 'group' , e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     e.preventDefault();
-
     this.props.onInputChange(property, e.target.value);
   }
 

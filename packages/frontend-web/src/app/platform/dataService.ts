@@ -579,7 +579,7 @@ export async function updateArticle(id: string, isCommentingEnabled: boolean, is
 
 export async function updateUser(user: IUserModel) {
   const url = serviceURL('simple', `/user/update/${user.id}`);
-  const attributes = pick(user.toJS(), ['name', 'email', 'group', 'isActive']);
+  const attributes = pick(user, ['name', 'email', 'group', 'isActive']);
   await axios.post(url, attributes);
 }
 

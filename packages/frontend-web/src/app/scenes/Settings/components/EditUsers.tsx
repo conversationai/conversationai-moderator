@@ -78,8 +78,15 @@ export class EditUsers extends React.Component<IEditUsersProps, IEditUsersState>
   }
 
   @autobind
-  onInputChange(inputType: string, value: string) {
-    const editedUser = this.state.editedUser.set(inputType, value);
+  onInputChange(inputType: 'name' | 'email' | 'group' | 'isActive', value: string | boolean) {
+    const editedUser = {...this.state.editedUser};
+    if (inputType === 'isActive') {
+      editedUser[inputType] = value as boolean;
+    }
+    else {
+      editedUser[inputType] = value as string;
+    }
+
     this.setState({
       editedUser,
       isDisabled: !this.isUserValid(editedUser),

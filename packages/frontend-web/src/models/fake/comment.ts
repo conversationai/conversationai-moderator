@@ -46,7 +46,7 @@ export function fakeCommentModel(overrides: Partial<ICommentAttributes> = {}): I
     unresolvedFlagsCount: faker.random.number(),
     sourceCreatedAt: faker.date.recent().toISOString(),
     sentForScoring: faker.random.boolean(),
-    articleId: article.get('id') && undefined,
+    articleId: article.id && undefined,
     article,
     updatedAt: faker.date.recent().toISOString(),
     ...overrides,

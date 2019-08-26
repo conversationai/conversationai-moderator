@@ -152,7 +152,7 @@ export function EditYouTubeUser(props: IEditYouTubeUserProps) {
 
   async function onIsActiveChange() {
     setChangingActive(true);
-    await props.onUserUpdate(user.set('isActive', !user.isActive));
+    await props.onUserUpdate({...user, isActive: !user.isActive});
     setChangingActive(false);
   }
 

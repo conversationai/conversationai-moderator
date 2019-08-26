@@ -58,7 +58,7 @@ export function getCurrentUser(state: IAppStateRecord): IUserModel | null {
 }
 
 export function userIsAdmin(user: IUserModel | null): boolean {
-  return user && user.get('group') === 'admin';
+  return user && user.group === 'admin';
 }
 
 export function getCurrentUserIsAdmin(state: IAppStateRecord): boolean {
