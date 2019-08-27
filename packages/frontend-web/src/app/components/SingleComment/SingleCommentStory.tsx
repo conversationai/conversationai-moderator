@@ -15,6 +15,8 @@ limitations under the License.
 */
 import faker from 'faker';
 import { fromJS, List } from 'immutable';
+import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
@@ -66,6 +68,9 @@ const STORY_STYLES = {
 };
 
 storiesOf('SingleComment', module)
+  .addDecorator((story) => (
+    <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
+  ))
   .add('base', () => {
     return (
       <div {...css(STORY_STYLES.base)}>

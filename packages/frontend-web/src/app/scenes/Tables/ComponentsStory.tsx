@@ -17,6 +17,7 @@ limitations under the License.
 import { storiesOf } from '@storybook/react';
 import faker from 'faker';
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { fakeArticleModel, fakeCategoryModel } from '../../../models/fake';
 import { css } from '../../utilx';
@@ -47,6 +48,9 @@ const article4 = fakeArticleModel({
 });
 
 storiesOf('TableComponents', module)
+  .addDecorator((story) => (
+    <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
+  ))
   .add('Title cell', () => {
     return (
       <table {...css(ARTICLE_TABLE_STYLES.dataTable)} style={{maxWidth: '500px'}}>

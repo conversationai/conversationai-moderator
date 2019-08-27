@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-module.exports = async ({config}) => {
-  config.module.rules.push({
-      test:/\.css$/,
-      use:['style-loader','css-loader']
-    });
-  config.resolve.alias['aphrodite'] =  'aphrodite/no-important';
+const custom = require('../webpack.config.js');
 
-  return config;
+module.exports = async ({config}) => {
+  return {
+    ...config,
+    module: {...config.module, rules: custom.module.rules},
+    resolve: custom.resolve
+  };
 };

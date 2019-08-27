@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Link, MemoryRouter } from 'react-router-dom';
 
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
@@ -57,25 +58,28 @@ const STORY_STYLES = {
 };
 
 storiesOf('Header', module)
-.add('main header', () => {
-  return (
-    <Header onSearchClick={action('clicked search')}>
-      <Link to="/" {...css(STORY_STYLES.pageTitle)}>Moderator</Link>
-    </Header>
-  );
-})
-.add('article header', () => {
-  return (
-    <Header onSearchClick={action('clicked search')}>
-      <div {...css(STORY_STYLES.main)}>
-        <Link to="/">
-          <span {...css(VISUALLY_HIDDEN)}>Home</span>
-          <HomeIcon size={24} />
-        </Link>
-        <h1 {...css(STORY_STYLES.articleTitle)}>
-          At Hiroshima Memorial, Obama Says Nuclear Arms Require Moral Revolution
-        </h1>
-      </div>
-    </Header>
-  );
-});
+  .addDecorator((story) => (
+    <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
+  ))
+  .add('main header', () => {
+    return (
+      <Header onSearchClick={action('clicked search')}>
+        <Link to="/" {...css(STORY_STYLES.pageTitle)}>Moderator</Link>
+      </Header>
+    );
+  })
+  .add('article header', () => {
+    return (
+      <Header onSearchClick={action('clicked search')}>
+        <div {...css(STORY_STYLES.main)}>
+          <Link to="/">
+            <span {...css(VISUALLY_HIDDEN)}>Home</span>
+            <HomeIcon size={24}/>
+          </Link>
+          <h1 {...css(STORY_STYLES.articleTitle)}>
+            At Hiroshima Memorial, Obama Says Nuclear Arms Require Moral Revolution
+          </h1>
+        </div>
+      </Header>
+    );
+  });

@@ -16,6 +16,8 @@ limitations under the License.
 
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
+import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { fakeTagModel } from '../../../models/fake';
 import { DARK_COLOR, MEDIUM_COLOR } from '../../styles';
@@ -48,6 +50,9 @@ const SNAPSHOT_WIDTH = 264;
 const SNAPSHOT_HEIGHT = 76;
 
 storiesOf('TagLabelRow', module)
+  .addDecorator((story) => (
+    <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
+  ))
   .add('Default', () => (
     <div>
       <button
