@@ -46,7 +46,6 @@ export * from './SplashRoot';
 export * from './TagLabelRow';
 export * from './ThemeRoot';
 export * from './Toast';
-export * from './Toggle';
 export * from './ToolTip';
 export * from './article_controls';
 export * from './HeaderBar';
