@@ -32,8 +32,6 @@ const LoadingStateFactory = makeTypedFactory<ILoadingState, ILoadingStateRecord>
   hasLoaded: false,
 });
 
-export type ILoadingExecutor = (dispatch?: any, getState?: any) => Promise<any>;
-
 // Return infered
 export function makeLoadingReducer(prefix: Array<string>) {
   loadingReducer += 1;

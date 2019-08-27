@@ -22,7 +22,6 @@ export * from './makeAJAXAction';
 export * from './makeCheckedSelectionStore';
 export * from './makeCurrentPagingIdentifierReducer';
 export * from './makeLoadingReducer';
-export * from './makePagedRecordStore';
 export * from './makeRecordListReducer';
 export * from './makeSingleRecordReducer';
 export * from './makeQueuedModelStore';
