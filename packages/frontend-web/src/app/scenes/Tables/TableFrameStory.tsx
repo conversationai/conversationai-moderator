@@ -17,6 +17,7 @@ limitations under the License.
 import { storiesOf } from '@storybook/react';
 import faker from 'faker';
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { fakeCategoryModel, fakeUserModel } from '../../../models/fake';
 import { HeaderBar } from '../../components';
@@ -67,6 +68,9 @@ const categoriesShort = [
 const singleCategory = fakeCategoryModel({label: 'ChuChu TV Nursery Rhymes & Kids Songs', unmoderatedCount: 2999});
 
 storiesOf('TableFrame', module)
+  .addDecorator((story) => (
+    <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
+  ))
   .add('Category sidebar overlay', () => {
     function hide() { console.log('hide clicked'); }
     return (

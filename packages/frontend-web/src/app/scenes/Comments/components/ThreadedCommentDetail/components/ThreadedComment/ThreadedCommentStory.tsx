@@ -16,6 +16,8 @@ limitations under the License.
 
 import { storiesOf } from '@storybook/react';
 import { List } from 'immutable';
+import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { AuthorModelRecord, IAuthorModel } from '../../../../../../../models';
 import { fakeCommentModel } from '../../../../../../../models/fake';
@@ -111,6 +113,9 @@ const STORY_STYLES = {
 };
 
 storiesOf('ThreadedComment', module)
+  .addDecorator((story) => (
+    <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
+  ))
   .add('default list', () => {
     return (
       <div {...css(STORY_STYLES.base)}>
