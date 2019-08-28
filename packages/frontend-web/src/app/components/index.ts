@@ -33,6 +33,7 @@ export * from './Header';
 export * from './Icons';
 export * from './LazyCommentList';
 export * from './LazyLoadComment';
+export * from './MagicTimestamp';
 export * from './ModerateButtons';
 export * from './NavigationTab';
 export * from './OverflowContainer';

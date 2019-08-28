@@ -21,7 +21,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { fakeArticleModel, fakeCategoryModel } from '../../../models/fake';
 import { css } from '../../utilx';
-import { MagicTimestamp, SimpleTitleCell, TitleCell } from './components';
+import { SimpleTitleCell, TitleCell } from './components';
 import { ARTICLE_TABLE_STYLES } from './styles';
 
 faker.seed(456);
@@ -80,23 +80,6 @@ storiesOf('TableComponents', module)
           </td>
         </tr>
       </table>
-    );
-  })
-  .add('Magic timestamps', () => {
-    const now = Date.now();
-
-    return (
-      <div>
-        <MagicTimestamp timestamp={(new Date(now - 20 * 1000)).toISOString()}/>
-        <MagicTimestamp timestamp={(new Date(now - 100 * 1000)).toISOString()}/>
-        <MagicTimestamp timestamp={(new Date(now - 30 * 60000)).toISOString()}/>
-        <MagicTimestamp timestamp={(new Date(now - 100 * 60000)).toISOString()}/>
-        <MagicTimestamp timestamp={(new Date(now - 12 * 3600000)).toISOString()}/>
-        <MagicTimestamp timestamp={(new Date(now - 36 * 3600000)).toISOString()}/>
-        <MagicTimestamp timestamp={(new Date(now - 50 * 3600000)).toISOString()}/>
-        <MagicTimestamp timestamp={'2019-01-01T12:30:00Z'}/>
-        <MagicTimestamp timestamp={'2017-06-24T12:30:00Z'}/>
-      </div>
     );
   })
 ;

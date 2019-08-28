@@ -28,7 +28,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import { getMyUserId } from '../../auth';
-import { ArticleControlIcon, AssignModerators } from '../../components';
+import { ArticleControlIcon, AssignModerators, MagicTimestamp } from '../../components';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
 import {
@@ -59,7 +59,7 @@ import {
   NEW_COMMENTS_DEFAULT_TAG,
   newCommentsPageLink,
 } from '../routes';
-import { MagicTimestamp, ModeratorsWidget, SimpleTitleCell, TitleCell } from './components';
+import { ModeratorsWidget, SimpleTitleCell, TitleCell } from './components';
 import { FilterSidebar } from './FilterSidebar';
 import { ARTICLE_TABLE_STYLES, CELL_HEIGHT } from './styles';
 import {

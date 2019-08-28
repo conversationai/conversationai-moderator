@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,120 +22,11 @@ import { Link } from 'react-router-dom';
 import { OpenInNew } from '@material-ui/icons/';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
+import { MagicTimestamp } from '../../components';
 import * as icons from '../../components/Icons';
 import { NICE_MIDDLE_BLUE } from '../../styles';
 import { COMMON_STYLES, ICON_STYLES } from '../../stylesx';
 import { css, stylesheet } from '../../utilx';
-
-export interface IMagicTimestampProps {
-  timestamp: string;
-  inFuture?: boolean;
-}
-
-function maybeS(val: number) {
-  return val > 1 ? 's' : '';
-}
-
-export class MagicTimestamp extends React.Component<IMagicTimestampProps> {
-  timeoutId?: ReturnType<typeof setTimeout>;
-
-  render() {
-    const then = new Date(this.props.timestamp);
-    const now = Date.now();
-
-    let diff = Math.round((now - then.getTime()) / 1000);
-
-    if (this.props.inFuture) {
-      diff = -diff;
-    }
-
-    let text;
-    let redrawIn = 0;
-    let isRelative = true;
-
-    if (diff < 0 || diff > 60 * 60 * 24 * 7) {
-      // Just use the date
-      const monthNames = [
-        'Jan', 'Feb', 'March',
-        'April', 'May', 'June', 'July',
-        'Aug', 'Sept', 'Oct',
-        'Nov', 'Dec',
-      ];
-
-      const day = then.getDate();
-      const monthIndex = then.getMonth();
-      const year = then.getFullYear();
-
-      text = `${monthNames[monthIndex]} ${day}`;
-      if (year !== (new Date(now)).getFullYear()) {
-        text += `, ${year}`;
-      }
-      isRelative = false;
-    }
-    else if (diff < 60) {
-      text = `a few seconds`;
-      redrawIn = 60 - diff;
-    }
-    else if (diff < 60 * 60) {
-      const mins = Math.floor(diff / 60);
-      if (this.props.inFuture) {
-        redrawIn = diff - mins * 60 + 1;
-      }
-      else {
-        redrawIn = (mins + 1) * 60 - diff + 1;
-      }
-      text = `${mins} minute${maybeS(mins)}`;
-    }
-    else if (diff < 60 * 60 * 24) {
-      const hours = Math.floor(diff / 60 / 60);
-      if (this.props.inFuture) {
-        redrawIn = diff - hours * 60 * 60 + 1;
-      }
-      else {
-        redrawIn = (hours + 1) * 60 * 60 - diff + 1;
-      }
-      text = `${hours} hour${maybeS(hours)}`;
-    }
-    else if (diff < 60 * 60 * 24 * 7) {
-      const days = Math.floor(diff / 60 / 60 / 24);
-      if (this.props.inFuture) {
-        redrawIn = diff - days * 60 * 60 + 1;
-      }
-      else {
-        redrawIn = (days + 1) * 60 * 60 - diff + 1;
-      }
-      text = `${days} day${maybeS(days)}`;
-    }
-
-    if (redrawIn > 0 && !this.timeoutId) {
-      this.timeoutId = setTimeout(this.doUpdate, redrawIn * 1000);
-    }
-
-    if (isRelative) {
-      if (this.props.inFuture) {
-        text = `in ` + text;
-      }
-      else {
-        text += ` ago`;
-      }
-    }
-
-    return (<span>{text}</span>);
-  }
-
-  @autobind
-  doUpdate() {
-    this.timeoutId = undefined;
-    this.forceUpdate();
-  }
-
-  componentWillUnmount() {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = undefined;
-    }
-  }
-}
 
 interface ISmallUserIconProps {
   user: IUserModel;
@@ -233,11 +124,11 @@ export class ModeratorsWidget extends React.Component<IModeratorsWidgetProps> {
       ret.push(<SmallUserIcon user={moderators[i]}/>);
     }
     if (extra) {
-      ret.push(
+      ret.push((
         <div key="extra" style={{display: 'inline-block', margin: '1px'}}>
           <div {...css(ICON_STYLES.textCenterSmall)}>+{moderators.length - 3}</div>
-        </div>,
-      );
+        </div>
+      ));
     }
 
     return (
@@ -295,11 +186,11 @@ export class TitleCell extends React.Component<ITitleCellProps> {
       supertext.push(<span key="label" {...css(TITLE_CELL_STYLES.categoryLabel)}>{category.label}</span>);
     }
     if (article.sourceCreatedAt) {
-      supertext.push(
+      supertext.push((
         <span key="timestamp">
           <MagicTimestamp timestamp={article.sourceCreatedAt} inFuture={false}/>
-        </span>,
-      );
+        </span>
+      ));
     }
 
     return (
