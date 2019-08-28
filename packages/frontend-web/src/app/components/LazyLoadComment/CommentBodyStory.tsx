@@ -15,20 +15,21 @@ limitations under the License.
 */
 
 import { storiesOf } from '@storybook/react';
+import faker from 'faker';
 import { List } from 'immutable';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { AuthorModelRecord, IAuthorModel } from '../../../models';
+import { IAuthorModel } from '../../../models';
 import { fakeCommentModel } from '../../../models/fake';
-import { BasicBody, LinkedBasicBody } from '../LazyLoadComment';
+import { BasicBody, LinkedBasicBody } from './LazyLoadComment';
 
-const author = AuthorModelRecord({
+const author = {
   email: 'name@email.com',
   location: 'NYC',
   name: 'Bridie Skiles V',
-  avatar: 'https://s3.amazonaws.com/pimage.example.com/4405/3468/cropped-44053468.jpg',
-}) as IAuthorModel;
+  avatar: faker.internet.avatar(),
+} as IAuthorModel;
 
 const comment = fakeCommentModel({
   id: '-1',

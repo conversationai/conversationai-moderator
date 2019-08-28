@@ -19,18 +19,18 @@ import { List } from 'immutable';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { AuthorModelRecord, IAuthorModel } from '../../../../../../../models';
+import { IAuthorModel } from '../../../../../../../models';
 import { fakeCommentModel } from '../../../../../../../models/fake';
 import { css } from '../../../../../../utilx';
 import { ThreadedComment } from './ThreadedComment';
 
 async function doNothing() {/**/}
 
-const author = AuthorModelRecord({
+const author = {
   email: 'name@email.com',
   location: 'NYC',
   name: 'Bridie Skiles IV',
-}) as IAuthorModel;
+} as IAuthorModel;
 
 const comment = fakeCommentModel({
   isAccepted: true,

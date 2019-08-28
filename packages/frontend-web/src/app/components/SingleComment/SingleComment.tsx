@@ -64,6 +64,7 @@ import {
   WHITE_COLOR,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
+import { Avatar } from '../Avatar';
 import { Button } from '../Button';
 import {
   ApproveIcon,
@@ -313,15 +314,11 @@ const PROFILE_STYLES = stylesheet({
   },
 
   nameColumn: {
+    marginLeft: '35px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
     flex: 1,
-  },
-
-  avatarColumn: {
-    marginRight: 18,
-    display: 'flex',
   },
 
   name: {
@@ -728,17 +725,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
           )}
         >
           <div {...css(PROFILE_STYLES.header)}>
-            { author.avatar && (
-              <div key="avatarColumn" {...css(PROFILE_STYLES.avatarColumn)}>
-                <img
-                  src={author.avatar}
-                  {...css(PROFILE_STYLES.avatar)}
-                  alt={author.name}
-                  width={AVATAR_SIZE}
-                  height={AVATAR_SIZE}
-                />
-              </div>
-            )}
+            {author.avatar && <Avatar key="avatarColumn" target={author} size={60}/>}
             <div key="nameColumn" {...css(PROFILE_STYLES.nameColumn)}>
               <div {...css(PROFILE_STYLES.name)}>
                 {!inEditMode ? (

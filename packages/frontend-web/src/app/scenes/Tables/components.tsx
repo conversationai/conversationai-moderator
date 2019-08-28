@@ -19,38 +19,12 @@ import { Map, Set } from 'immutable';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { OpenInNew } from '@material-ui/icons/';
+import { OpenInNew, PersonAdd } from '@material-ui/icons/';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
-import { MagicTimestamp } from '../../components';
-import * as icons from '../../components/Icons';
-import { NICE_MIDDLE_BLUE } from '../../styles';
-import { COMMON_STYLES, ICON_STYLES } from '../../stylesx';
+import { Avatar, MagicTimestamp, PseudoAvatar } from '../../components';
+import { COMMON_STYLES, IMAGE_BASE } from '../../stylesx';
 import { css, stylesheet } from '../../utilx';
-
-interface ISmallUserIconProps {
-  user: IUserModel;
-}
-
-export class SmallUserIcon extends React.Component<ISmallUserIconProps> {
-  render() {
-    const user = this.props.user;
-    if (user.avatarURL) {
-      return (<img alt={user.name} key={user.id} src={user.avatarURL} {...css(ICON_STYLES.xsmallImage, {margin: '1px'})}/>);
-    }
-    else {
-      return (
-        <div key={user.id} {...css(ICON_STYLES.small, {display: 'inline-block', margin: '1px'})}>
-          <div {...css(ICON_STYLES.iconBackgroundCircleSmall)}>
-            <div {...css(ICON_STYLES.iconCenter)}>
-              <icons.UserIcon {...css(ICON_STYLES.small, {color: NICE_MIDDLE_BLUE})}/>
-            </div>
-          </div>
-        </div>
-      );
-    }
-  }
-}
 
 interface IModeratorsWidgetProps {
   users: Map<string, IUserModel>;
@@ -77,37 +51,21 @@ export class ModeratorsWidget extends React.Component<IModeratorsWidgetProps> {
 
     if (moderators.length === 0) {
       return (
-        <div onClick={this.openModeratorsDlg} {...css(ICON_STYLES.iconBackgroundCircle)}>
-          <div {...css(ICON_STYLES.iconCenter)} >
-            <icons.UserPlusIcon
-              {...css(ICON_STYLES.smallIcon, {width: `${30}px`, height: `${30}px`})}
-              onClick={this.openModeratorsDlg}
-            />
-          </div>
+        <div onClick={this.openModeratorsDlg}>
+          <PseudoAvatar size={IMAGE_BASE}>
+            <PersonAdd/>
+          </PseudoAvatar>
         </div>
       );
     }
 
     if (moderators.length === 1) {
       const u = moderators[0];
-      if (u.avatarURL) {
-        return (
-          <img
-            alt={u.name}
-            src={u.avatarURL}
-            onClick={this.openModeratorsDlg}
-            {...css(ICON_STYLES.smallImage)}
-          />
-        );
-      } else {
-        return (
-          <div onClick={this.openModeratorsDlg} {...css(ICON_STYLES.iconBackgroundCircle)}>
-            <div {...css(ICON_STYLES.iconCenter)} >
-              <icons.UserIcon {...css(ICON_STYLES.smallIcon, {color: NICE_MIDDLE_BLUE})}/>
-            </div>
-          </div>
-        );
-      }
+      return (
+        <div onClick={this.openModeratorsDlg}>
+          <Avatar target={u} size={IMAGE_BASE}/>
+        </div>
+      );
     }
 
     const ret = [];
@@ -121,14 +79,10 @@ export class ModeratorsWidget extends React.Component<IModeratorsWidgetProps> {
     }
 
     for (let i = 0; i < limit; i++) {
-      ret.push(<SmallUserIcon user={moderators[i]}/>);
+      ret.push(<Avatar target={moderators[i]} size={IMAGE_BASE / 2}/>);
     }
     if (extra) {
-      ret.push((
-        <div key="extra" style={{display: 'inline-block', margin: '1px'}}>
-          <div {...css(ICON_STYLES.textCenterSmall)}>+{moderators.length - 3}</div>
-        </div>
-      ));
+      ret.push(<PseudoAvatar size={IMAGE_BASE / 2}>+{moderators.length - 3}</PseudoAvatar>);
     }
 
     return (

@@ -15,22 +15,24 @@ limitations under the License.
 */
 
 import { storiesOf } from '@storybook/react';
+import faker from 'faker';
 import { List, Set } from 'immutable';
+
 import { fakeUserModel } from '../../../models/fake';
 import { AssignModerators } from './AssignModerators';
 
 const users = List([
   fakeUserModel({
     name: 'Person One',
-    avatarURL: 'https://s3.amazonaws.com/uifaces/faces/twitter/curiousoffice/128.jpg',
+    avatarURL: faker.internet.avatar(),
   }),
   fakeUserModel({
     name: 'Person Two',
-    avatarURL: 'https://s3.amazonaws.com/uifaces/faces/twitter/curiousoffice/128.jpg',
+    avatarURL: faker.internet.avatar(),
   }),
   fakeUserModel({
     name: 'Person Three',
-    avatarURL: 'https://s3.amazonaws.com/uifaces/faces/twitter/curiousoffice/128.jpg',
+    avatarURL: faker.internet.avatar(),
   }),
 ]);
 

@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,5 +13,24 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+// tslint:disable:no-bitwise
 
-export { Avatar, PseudoAvatar } from './Avatar';
+function hashCode(str: string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return hash;
+}
+
+function intToRGB(i: number) {
+  const c = (i & 0x00FFFFFF)
+    .toString(16)
+    .toUpperCase();
+
+  return '00000'.substring(0, 6 - c.length) + c;
+}
+
+export function randomDarkColor(seed: string) {
+  return intToRGB(hashCode(seed) & 0x007F7F7F);
+}

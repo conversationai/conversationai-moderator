@@ -14,15 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import { storiesOf } from '@storybook/react';
+import faker from 'faker';
 
 import { fakeUserModel } from '../../../models/fake';
 import { CheckboxRow } from './CheckboxRow';
 
 const user = fakeUserModel({
   name: 'Person One',
-  avatarURL: 'https://s3.amazonaws.com/uifaces/faces/twitter/curiousoffice/128.jpg',
+  avatarURL: faker.internet.avatar(),
 });
 
 storiesOf('CheckboxRow', module)

@@ -21,7 +21,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 
-import { AuthorModelRecord, IAuthorModel, ITagModel } from '../../../models';
+import { IAuthorModel, ITagModel } from '../../../models';
 import { fakeCommentFlagModel, fakeCommentModel, fakeTagModel } from '../../../models/fake';
 import { css } from '../../utilx';
 import { SingleComment } from './SingleComment';
@@ -30,12 +30,12 @@ const date = new Date(2016, 10, 30);
 
 faker.seed(789);
 
-const author = AuthorModelRecord({
+const author = {
   email: 'name@email.com',
   location: 'NYC',
   name: 'Bridie Skiles IV',
-  avatar: 'https://s3.amazonaws.com/pimage.example.com/7778/5652/cropped-77785652.jpg',
-}) as IAuthorModel;
+  avatar: faker.internet.avatar(),
+} as IAuthorModel;
 
 const comment = fakeCommentModel({
   authorSourceId: 'test',
