@@ -25,7 +25,7 @@ export interface IAuthorAttributes {
   name: string;
 }
 
-export interface IAuthorModel extends TypedRecord<IAuthorModel>, IAuthorAttributes {}
+export type IAuthorModel = Readonly<IAuthorAttributes>;
 
 export interface IAuthorCountsAttributes {
   approvedCount: number;
@@ -94,31 +94,21 @@ const CommentModelRecord = Record({
   maxSummaryScoreTagId: null,
 });
 
-export const AuthorModelRecord = Record({
-  avatar: null,
-  email: null,
-  location: null,
-  name: null,
-});
+export function CommentModel(keyValuePairs?: ICommentAttributes | Map<string, any>): ICommentModel {
+  let author: any = (keyValuePairs as ICommentAttributes).author  || (keyValuePairs as Map<string, any>).get('author');
 
-export function CommentModel(keyValuePairs?: ICommentAttributes): ICommentModel {
-  let immutableKeyValuePairs = fromJS(keyValuePairs);
-
-  if (typeof immutableKeyValuePairs.get('author') === 'string') {
-    immutableKeyValuePairs = immutableKeyValuePairs.update('author', (author: any) => {
-      const parsedAuthor = JSON.parse(author);
-
-      if (parsedAuthor.user_name) {
-        parsedAuthor.name = parsedAuthor.user_name;
-      }
-
-      if (parsedAuthor.image_uri) {
-        parsedAuthor.avatar = parsedAuthor.image_uri;
-      }
-
-      return AuthorModelRecord(parsedAuthor) as IAuthorModel;
-    });
+  if (typeof author === 'string') {
+    author = JSON.parse(author);
   }
 
+  if (author.user_name) {
+    author.name = author.user_name;
+  }
+
+  if (author.image_uri) {
+    author.avatar = author.image_uri;
+  }
+
+  const immutableKeyValuePairs = fromJS(keyValuePairs).set('author', author);
   return new CommentModelRecord(immutableKeyValuePairs) as ICommentModel;
 }

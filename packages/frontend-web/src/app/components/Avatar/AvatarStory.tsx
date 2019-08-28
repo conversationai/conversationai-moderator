@@ -15,29 +15,35 @@ limitations under the License.
 */
 
 import { storiesOf } from '@storybook/react';
-import { AuthorModelRecord, IAuthorModel } from '../../../models';
+import faker from 'faker';
+import React from 'react';
+
+import { IAuthorModel } from '../../../models';
 import { fakeUserModel } from '../../../models/fake';
-import { Avatar } from '../Avatar';
+import { Avatar } from './Avatar';
 
-const authorWithAvatar = AuthorModelRecord({
+const authorWithAvatar = {
   email: 'name@email.com',
   location: 'NYC',
   name: 'Bridie Skiles V',
-  avatar: 'https://s3.amazonaws.com/pimage.example.com/4405/3468/cropped-44053468.jpg',
-}) as IAuthorModel;
+  avatar: faker.internet.avatar(),
+} as IAuthorModel;
 
-const authorWithoutAvatar = AuthorModelRecord({
+const authorWithoutAvatar = {
   email: 'name@email.com',
   location: 'NYC',
   name: 'Bridie Skiles V',
-}) as IAuthorModel;
+} as IAuthorModel;
 
 const user = fakeUserModel({
   name: 'Test Person',
-  avatarURL: 'https://s3.amazonaws.com/uifaces/faces/twitter/xtopherpaul/128.jpg',
+  avatarURL: faker.internet.avatar(),
 });
 
 storiesOf('Avatar', module)
+  .addDecorator((story) => (
+    <div style={{margin: '50px'}}>{story()}</div>
+  ))
   .add('commenter', () => {
     return (
       <Avatar size={54} target={authorWithAvatar} />
@@ -56,5 +62,10 @@ storiesOf('Avatar', module)
   .add('36x36', () => {
     return (
       <Avatar size={36} target={user} />
+    );
+  })
+  .add('30x30 no avatar', () => {
+    return (
+      <Avatar size={30} target={authorWithoutAvatar}/>
     );
   });

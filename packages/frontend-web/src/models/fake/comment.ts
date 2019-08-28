@@ -15,18 +15,18 @@ limitations under the License.
 */
 
 import faker from 'faker';
-import { AuthorModelRecord, CommentModel, IAuthorModel, ICommentAttributes, ICommentModel } from '../comment';
+import { CommentModel, IAuthorModel, ICommentAttributes, ICommentModel } from '../comment';
 import { CommentFlagModel, ICommentFlagAttributes, ICommentFlagModel } from '../commentFlag';
 import { fakeArticleModel } from './article';
 
 export function fakeCommentModel(overrides: Partial<ICommentAttributes> = {}): ICommentModel {
   const article = (overrides && overrides['article']) || fakeArticleModel();
-  const author = AuthorModelRecord({
+  const author = {
     email: faker.internet.email(),
     location: faker.address.city(),
     name: faker.name.findName(),
     avatar: faker.internet.avatar(),
-  }) as IAuthorModel;
+  } as IAuthorModel;
 
   return CommentModel({
     id: faker.random.number().toString(),

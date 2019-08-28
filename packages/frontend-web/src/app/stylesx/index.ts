@@ -35,9 +35,6 @@ export const small = {
 };
 
 export const ICON_STYLES = stylesheet({
-  big: big,
-  small: small,
-
   iconCenter: {
     width: `100%`,
     height: `100%`,
@@ -63,21 +60,10 @@ export const ICON_STYLES = stylesheet({
     height: `${IMAGE_BASE + 6}px`,
   },
 
-  xsmallIcon: {
-    width: `${IMAGE_BASE / 2 + 3}px`,
-    height: `${IMAGE_BASE / 2 + 3}px`,
-  },
-
   smallImage: {
     width: `${IMAGE_BASE}px`,
     height: `${IMAGE_BASE}px`,
     borderRadius: `${(IMAGE_BASE / 2)}px`,
-  },
-
-  xsmallImage: {
-    width: `${IMAGE_BASE / 2}px`,
-    height: `${IMAGE_BASE / 2}px`,
-    borderRadius: `${IMAGE_BASE / 4}px`,
   },
 
   textCenterSmall: {
