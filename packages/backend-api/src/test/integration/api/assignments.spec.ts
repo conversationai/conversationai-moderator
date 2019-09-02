@@ -17,10 +17,6 @@ limitations under the License.
 import * as chai from 'chai';
 
 import {
-  denormalizeCommentCountsForArticle,
-} from '@conversationai/moderator-backend-core';
-
-import {
   Article,
   Category,
   Comment,
@@ -35,6 +31,9 @@ import {
 } from '@conversationai/moderator-backend-core';
 
 import { REPLY_SUCCESS_VALUE } from '../../../api/constants';
+import {
+  denormalizeCommentCountsForArticle,
+} from '../../../domain';
 import {
   expect,
   makeArticle,

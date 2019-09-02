@@ -17,6 +17,7 @@ limitations under the License.
 import * as faker from 'faker';
 import { random, sample } from 'lodash';
 import { underscored } from 'underscore.string';
+
 import {
   Article,
   Category,
@@ -24,7 +25,11 @@ import {
   CommentScore,
   CommentScoreRequest,
   CommentSummaryScore,
-  ENDPOINT_TYPE_PROXY,
+  ModerationRule,
+  Tag,
+  User,
+} from '@conversationai/moderator-backend-core';
+import {
   IArticleAttributes,
   IArticleInstance,
   ICategoryAttributes,
@@ -43,15 +48,15 @@ import {
   ITagInstance,
   IUserAttributes,
   IUserInstance,
+} from '@conversationai/moderator-backend-core';
+import {
+  ENDPOINT_TYPE_PROXY,
   MODERATION_RULE_ACTION_TYPES,
-  ModerationRule,
   SCORE_SOURCE_TYPES,
-  Tag,
-  User,
   USER_GROUP_MODERATOR,
   USER_GROUP_SERVICE,
-} from '../../../models';
-import { sequelize } from '../../../sequelize';
+} from '@conversationai/moderator-backend-core';
+import { sequelize } from '@conversationai/moderator-backend-core';
 
 // Category
 export function getCategoryData(data: Partial<ICategoryAttributes> = {}): ICategoryAttributes {

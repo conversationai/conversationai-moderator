@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as Bluebird from 'bluebird';
 import { maxBy } from 'lodash';
+
 import {
   CommentScore,
   CommentTopScore,
@@ -23,7 +24,7 @@ import {
   ICommentScoreInstance,
   ITagInstance,
   Tag,
-} from '../../models';
+} from '@conversationai/moderator-backend-core';
 
 /**
  * Describes a top score for a set of comment scores in a tag.

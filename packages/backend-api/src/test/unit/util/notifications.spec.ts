@@ -14,9 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// TODO: This unit test should really be in core.  But so much happens outside core that it isn't really possible.
-//       Refactor required?
-
 import * as chai from 'chai';
 
 import {
@@ -37,12 +34,12 @@ import {
 } from '@conversationai/moderator-backend-core';
 import {
   clearInterested,
-  denormalizeCommentCountsForArticle,
   partialUpdateHappened,
   registerInterest,
   updateHappened,
 } from '@conversationai/moderator-backend-core';
 
+import { denormalizeCommentCountsForArticle } from '../../../domain';
 import {
   makeArticle,
   makeCategory,

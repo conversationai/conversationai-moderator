@@ -16,39 +16,40 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-import { denormalizeCommentCountsForCategory } from '../../domain/categories';
-import { logger } from '../../logger';
+import { logger } from '@conversationai/moderator-backend-core';
 import {
   Article,
-  Category,
-} from '../../models';
+  Comment,
+} from '@conversationai/moderator-backend-core';
 
-export const command = 'articles:delete';
-export const describe = 'Delete all articles from the database.';
+import { denormalizeCommentCountsForArticle } from '../../domain';
+
+export const command = 'comments:delete';
+export const describe = 'Delete all comments from the database.';
 
 export function builder(args: yargs.Argv) {
   return args
-    .usage('Usage: node $0 articles:delete');
+    .usage('Usage: node $0 comments:delete');
 }
 
 export async function handler() {
-  logger.info(`Deleting articles`);
+  logger.info(`Deleting comments`);
 
   try {
-    await Article.destroy({where: {}});
-    const categories = await Category.findAll();
-    for (const c of categories) {
-      logger.info('Denormalizing category ' + c.id);
-      denormalizeCommentCountsForCategory(c);
+    await Comment.destroy({where: {}});
+    const articles = await Article.findAll();
+    for (const a of articles) {
+      logger.info('Denormalizing article ' + a.id);
+      denormalizeCommentCountsForArticle(a, false);
     }
 
   }
   catch (err) {
-    logger.error('Delete articles error: ', err.name, err.message);
+    logger.error('Delete comments error: ', err.name, err.message);
     logger.error(err.errors);
     process.exit(1);
   }
 
-  logger.info('Articles successfully deleted');
+  logger.info('Comments successfully deleted');
   process.exit(0);
 }

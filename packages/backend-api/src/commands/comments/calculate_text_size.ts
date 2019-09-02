@@ -14,19 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Bluebird from 'bluebird';
 import * as yargs from 'yargs';
 
-import { cacheTextSize } from '../../domain/comments';
-import { logger } from '../../logger';
-import { Comment, CommentSize } from '../../models';
+import { logger } from '@conversationai/moderator-backend-core';
+import { Comment } from '@conversationai/moderator-backend-core';
 
-export const command = 'comments:recalculate-text-sizes';
-export const describe = 'Using node-canvas, recalculate comment heights at a given width.';
+import { calculateTextSize } from '../../domain';
+
+export const command = 'comments:calculate-text-size';
+export const describe = 'Using node-canvas, calculate a single comment height at a given width.';
 
 export function builder(args: yargs.Argv) {
   return args
-      .usage('Usage: node $0 comments:recalculate-text-sizes')
+      .usage('Usage: node $0 comments:calculate-text-size')
+      .demand('comment-id')
+      .number('comment-id')
+      .describe('comment-id', 'The comment id')
       .demand('width')
       .number('width')
       .describe('width', 'The text width');
@@ -34,27 +37,26 @@ export function builder(args: yargs.Argv) {
 
 export async function handler(argv: any) {
   const width = argv.width;
-  logger.info(`Recalculating comment text sizes at ${width}`);
+  const commentId = argv.commentId;
+  logger.info(`Calculating comment (${commentId}) text size at ${width}`);
 
   try {
-    // Clear table.
-    await CommentSize.destroy({
-      truncate: true,
-    });
-
-    const comments = await Comment.findAll({
+    const comment = await Comment.findById(commentId, {
       attributes: ['id', 'text'],
     });
 
-    await Bluebird.mapSeries(comments, async (comment) => {
-      return cacheTextSize(comment, width);
-    });
+    if (!comment) {
+      logger.error(`No such comment: ${commentId}`);
+      return;
+    }
+
+    const height = await calculateTextSize(comment, width);
+    console.log(`Height in pixels`, height);
   } catch (err) {
-    logger.error('Recalculate comment text sizes error: ', err.name, err.message);
+    logger.error('Calculate comment text size error: ', err.name, err.message);
     logger.error(err.errors);
     process.exit(1);
   }
 
-  logger.info('Comment text successfully recalculated');
   process.exit(0);
 }

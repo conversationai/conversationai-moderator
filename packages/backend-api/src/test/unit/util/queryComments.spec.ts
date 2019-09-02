@@ -15,10 +15,6 @@ limitations under the License.
 */
 
 import {
-  cacheCommentTopScores,
-  calculateTopScores,
-} from '@conversationai/moderator-backend-core';
-import {
   Article, Category, Comment, Tag, TaggingSensitivity,
 } from '@conversationai/moderator-backend-core';
 import {
@@ -26,7 +22,6 @@ import {
   ICommentInstance,
   ICommentScoreInstance,
   ITagInstance,
-  ITopScores,
 } from '@conversationai/moderator-backend-core';
 
 import {
@@ -42,6 +37,11 @@ import {
 import {
   filterTopScoresByTaggingSensitivity,
 } from '../../../api/util/queryComments';
+import {
+  cacheCommentTopScores,
+  calculateTopScores,
+  ITopScores,
+} from '../../../domain';
 
 describe('queryComments Functions', () => {
   describe('filterTopScoresByTaggingSensitivity', () => {

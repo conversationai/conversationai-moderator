@@ -13,10 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 import { expect } from 'chai';
+
+import { CommentScore } from '@conversationai/moderator-backend-core';
+
 import { calculateTopScore } from '../../../domain/commentScores';
-import { CommentScore } from '../../../models';
 
 // tslint:disable no-import-side-effect
 import '../../test_helper';

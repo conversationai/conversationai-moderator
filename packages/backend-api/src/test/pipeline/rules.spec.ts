@@ -28,6 +28,12 @@ import {
   ModerationRule,
   Tag,
 } from '@conversationai/moderator-backend-core';
+
+import {
+  compileScores,
+  processRulesForComment,
+  resolveComment,
+} from '../../pipeline/rules';
 import {
   createArticle,
   createCategory,
@@ -37,13 +43,7 @@ import {
   createTag,
   getCommentSummaryScoreData,
   getTagData,
-} from '@conversationai/moderator-backend-core/src/test/domain/comments/fixture';
-
-import {
-  compileScores,
-  processRulesForComment,
-  resolveComment,
-} from '../../pipeline/rules';
+} from '../domain/comments/fixture';
 
 describe('Pipeline Rules Tests', () => {
   beforeEach(async () => {

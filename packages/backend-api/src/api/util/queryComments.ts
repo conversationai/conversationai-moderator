@@ -19,11 +19,11 @@ import {
   Comment,
   IArticleInstance,
   ICommentInstance,
-  ITopScores,
   TaggingSensitivity,
 } from '@conversationai/moderator-backend-core';
 import * as Bluebird from 'bluebird';
 
+import { ITopScores } from '../../domain';
 import { IFields, IListDetails }from '../jsonapi';
 import { list } from './SequelizeHandler';
 

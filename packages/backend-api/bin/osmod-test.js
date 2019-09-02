@@ -22,7 +22,8 @@ const path = require('path');
 const yargs = require('yargs');
 
 yargs
-  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'exec')))
+  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'tests', 'youtube')))
+  .command(require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'generate')))
   .demand(1)
   .usage('Usage: $0')
   .help()

@@ -25,10 +25,13 @@ import {
   IResolution,
 } from '@conversationai/moderator-backend-core';
 import {
-  denormalizeCommentCountsForArticle,
-  denormalizeCountsForComment,
   logger,
 } from '@conversationai/moderator-backend-core';
+
+import {
+  denormalizeCommentCountsForArticle,
+  denormalizeCountsForComment,
+} from '../../domain';
 
 export async function getUser(userId?: number | null | undefined) {
   if (!userId) {

@@ -18,11 +18,14 @@ import {
   Article,
   Comment,
   CommentFlag,
-  denormalizeCommentCountsForArticle,
-  denormalizeCountsForComment,
   logger,
 } from '@conversationai/moderator-backend-core';
-import {enqueue, registerTask} from '../util';
+
+import {
+  denormalizeCommentCountsForArticle,
+  denormalizeCountsForComment,
+} from '../../domain';
+import { enqueue, registerTask } from '../util';
 
 export interface IProcessTagData {
   type: 'recommendation' | 'flag';
