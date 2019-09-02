@@ -17,15 +17,15 @@ limitations under the License.
 import * as Bluebird from 'bluebird';
 import * as yargs from 'yargs';
 
-import { denormalizeCountsForComment } from '../domain/comments';
-import { denormalizeCommentCountsForArticle } from '../domain/articles';
-import { logger } from '../logger';
+import { logger } from '@conversationai/moderator-backend-core';
 import {
   Article,
   Comment,
   IArticleInstance,
   ICommentInstance,
-} from '../models';
+} from '@conversationai/moderator-backend-core';
+
+import { denormalizeCommentCountsForArticle, denormalizeCountsForComment } from '../domain';
 
 export const command = 'denormalize';
 export const describe = 'Re-run denormalize counts';

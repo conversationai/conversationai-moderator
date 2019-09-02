@@ -21,7 +21,6 @@ import {
   User,
   UserSocialAuth,
 } from '@conversationai/moderator-backend-core';
-import { createUser } from '@conversationai/moderator-backend-core/src/test/domain/comments/fixture';
 
 import {
   ensureFirstUser,
@@ -29,6 +28,7 @@ import {
   isFirstUserInitialised,
   isValidUser,
 } from '../../auth/users';
+import { createUser } from '../domain/comments/fixture';
 
 const assert = chai.assert;
 

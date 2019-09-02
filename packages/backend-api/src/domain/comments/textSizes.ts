@@ -14,12 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as opentype from 'opentype.js';
 import * as path from 'path';
-const opentype = require('opentype.js');
+
 import {
   CommentSize,
   ICommentInstance,
-} from '../../models';
+} from '@conversationai/moderator-backend-core';
 
 const FONT_FAMILY = 'Georgia';
 const TYPE_DEF = {

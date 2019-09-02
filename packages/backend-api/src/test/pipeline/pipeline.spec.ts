@@ -31,17 +31,6 @@ import {
   Tag,
 } from '@conversationai/moderator-backend-core';
 import { ITagInstance } from '@conversationai/moderator-backend-core';
-import {
-  createArticle,
-  createCategory,
-  createComment,
-  createCommentScoreRequest,
-  createCommentSummaryScore,
-  createModerationRule,
-  createModeratorUser,
-  createTag,
-  createUser,
-} from '@conversationai/moderator-backend-core/src/test/domain/comments/fixture';
 
 import {
   compileScoresData,
@@ -54,6 +43,17 @@ import {
 } from '../../pipeline';
 import { IScores, ISummaryScores } from '../../pipeline/shim';
 import { getIsDoneScoring } from '../../pipeline/state';
+import {
+  createArticle,
+  createCategory,
+  createComment,
+  createCommentScoreRequest,
+  createCommentSummaryScore,
+  createModerationRule,
+  createModeratorUser,
+  createTag,
+  createUser,
+} from '../domain/comments/fixture';
 
 describe('Pipeline Tests', () => {
   beforeEach(async () => {

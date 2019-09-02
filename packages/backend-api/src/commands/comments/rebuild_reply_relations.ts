@@ -17,8 +17,7 @@ limitations under the License.
 import * as Bluebird from 'bluebird';
 import * as yargs from 'yargs';
 
-import { logger } from '../../logger';
-import { sequelize } from '../../sequelize';
+import { logger, sequelize } from '@conversationai/moderator-backend-core';
 
 export const command = 'comments:rebuild-reply-relations';
 export const describe = 'Rebuild the join table for comment relations';

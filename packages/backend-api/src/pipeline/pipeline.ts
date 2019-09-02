@@ -46,11 +46,13 @@ import {
   USER_GROUP_MODERATOR,
 } from '@conversationai/moderator-backend-core';
 import { sequelize } from '@conversationai/moderator-backend-core';
-import { denormalizeCommentCountsForArticle } from '@conversationai/moderator-backend-core';
-import { cacheCommentTopScores } from '@conversationai/moderator-backend-core';
-import { denormalizeCountsForComment } from '@conversationai/moderator-backend-core';
-import { cacheTextSize } from '@conversationai/moderator-backend-core';
 
+import {
+  cacheCommentTopScores,
+  cacheTextSize,
+  denormalizeCommentCountsForArticle,
+  denormalizeCountsForComment,
+} from '../domain';
 import { processRulesForComment } from './rules';
 import { IScoreData, IScores, IShim, ISummaryScores } from './shim';
 import { getIsDoneScoring } from './state';

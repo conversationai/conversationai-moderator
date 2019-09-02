@@ -24,7 +24,7 @@ import {
   Tag,
 } from '@conversationai/moderator-backend-core';
 
-import { cacheCommentTopScores } from '@conversationai/moderator-backend-core';
+import { cacheCommentTopScores } from '../../../domain';
 
 import {
   expect,

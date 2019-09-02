@@ -20,7 +20,7 @@ import {
   ICommentInstance,
   RECOMMENDATIONS_COUNT,
   UNRESOLVED_FLAGS_COUNT,
-} from '../../models';
+} from '@conversationai/moderator-backend-core';
 
 export async function denormalizeCountsForComment(comment: ICommentInstance) {
   let unresolvedFlagsCount = 0;

@@ -29,11 +29,11 @@ import {
   ICommentInstance,
   IUserInstance,
 } from '@conversationai/moderator-backend-core';
+
 import {
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
-} from '@conversationai/moderator-backend-core';
-
+} from '../../../domain';
 import {
   expect,
   makeArticle,

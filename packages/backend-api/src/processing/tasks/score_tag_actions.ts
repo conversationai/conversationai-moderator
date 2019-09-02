@@ -15,11 +15,13 @@ limitations under the License.
 */
 import {
   CommentScore,
-  denormalizeCommentCountsForArticle,
-  denormalizeCountsForComment,
   logger,
 } from '@conversationai/moderator-backend-core';
 
+import {
+  denormalizeCommentCountsForArticle,
+  denormalizeCountsForComment,
+} from '../../domain';
 import { enqueue, registerTask } from '../util';
 
 interface IAddTagData {

@@ -25,13 +25,6 @@ import {
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
 } from '@conversationai/moderator-backend-core';
-import {
-  createArticle,
-  createComment,
-  createCommentScoreRequest,
-  createModeratorUser,
-  createUser,
-} from '@conversationai/moderator-backend-core/src/test/domain/comments/fixture';
 
 import {
   approve,
@@ -42,6 +35,13 @@ import {
   scoresComplete,
   setCommentState,
 } from '../../pipeline/state';
+import {
+  createArticle,
+  createComment,
+  createCommentScoreRequest,
+  createModeratorUser,
+  createUser,
+} from '../domain/comments/fixture';
 
 // tslint:disable no-import-side-effect
 import '../test_helper';

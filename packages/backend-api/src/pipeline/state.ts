@@ -32,9 +32,8 @@ import {
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
 } from '@conversationai/moderator-backend-core';
-import { denormalizeCommentCountsForArticle } from '@conversationai/moderator-backend-core';
-import { denormalizeCountsForComment } from '@conversationai/moderator-backend-core';
 
+import { denormalizeCommentCountsForArticle, denormalizeCountsForComment } from '../domain';
 import { recordDecision } from './pipeline';
 
 export interface IDecision {

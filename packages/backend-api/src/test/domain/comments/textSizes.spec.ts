@@ -15,12 +15,14 @@ limitations under the License.
 */
 
 import * as chai from 'chai';
-import {
-  cacheTextSize,
-} from '../../../domain/comments/textSizes';
+
 import {
   CommentSize,
-} from '../../../models';
+} from '@conversationai/moderator-backend-core';
+
+import {
+  cacheTextSize,
+} from '../../../domain';
 import {
   createArticle,
   createComment,
