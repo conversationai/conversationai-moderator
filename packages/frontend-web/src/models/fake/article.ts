@@ -36,6 +36,9 @@ export function fakeArticleModel(overrides: Partial<IArticleAttributes> = {}): I
     deferredCount: faker.random.number(),
     flaggedCount: faker.random.number(),
     batchedCount: faker.random.number(),
+    lastModeratedAt: faker.date.recent().toString(),
+    isAutoModerated: faker.random.boolean(),
+    isCommentingEnabled: faker.random.boolean(),
     ...overrides,
   } as IArticleAttributes);
 }
