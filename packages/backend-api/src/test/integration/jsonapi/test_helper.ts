@@ -41,7 +41,7 @@ const server: express.Application = serverStuff.app;
 const fakeUsers = [];
 
 for (let i = 0; i < 10; i++) {
-  const data = (fakeUserModel() as any).toJS();
+  const data = fakeUserModel() as any;
   data.type = 'users';
   fakeUsers.push(data);
 }
@@ -50,7 +50,7 @@ const fakeComments = [];
 const fakeArticles = [];
 
 for (let i = 0; i < 20; i++) {
-  const data = (fakeArticleModel() as any).toJS();
+  const data = fakeArticleModel() as any;
   data.type = 'articles';
 
   data.comments = [];
@@ -98,8 +98,8 @@ const models: {
   articles: {
     all: fakeArticles,
     spec: fakeArticles[0],
-    // id, type, updatedAt, comments, assignedModerators
-    numberOfKeys: Object.keys(fakeArticles[0]).length - 5,
+    // id, type, comments, assignedModerators
+    numberOfKeys: Object.keys(fakeArticles[0]).length - 4,
     include: ['comments', 'comments'],
   },
   // 'users': {
