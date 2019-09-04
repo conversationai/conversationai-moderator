@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import FocusTrap from 'focus-trap-react';
 import { List, Map } from 'immutable';
 import { generate } from 'randomstring';
 import React from 'react';
@@ -28,8 +27,6 @@ import {
 } from '@material-ui/core';
 import {
   Add,
-  Input,
-  SaveAlt,
 } from '@material-ui/icons';
 
 import {
@@ -62,12 +59,17 @@ import {
 } from '../../stores/users';
 import { partial, setCSRF } from '../../util';
 import { css, stylesheet } from '../../utilx';
-import { AddUsers } from './components/AddUsers';
-import { EditUsers } from './components/EditUsers';
-import { EditYouTubeUser } from './components/EditYouTubeUser';
 import { LabelSettings } from './components/LabelSettings';
-import { ModeratorUserRow, ServiceUserRow, UserRow, YoutubeUserRow } from './components/rows';
 import { RuleRow } from './components/RuleRow';
+import {
+  AddUserScrim,
+  EditUserScrim,
+  EditYouTubeScrim,
+  ModeratorSettings,
+  ServiceUserSettings,
+  UserSettings,
+  YouTubeUsersSettings,
+} from './components/users';
 
 import {
   ARTICLE_CATEGORY_TYPE,
@@ -75,7 +77,6 @@ import {
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
   MEDIUM_COLOR,
-  PALE_COLOR,
   SCRIM_STYLE,
   VISUALLY_HIDDEN,
   WHITE_COLOR,
@@ -115,21 +116,6 @@ const STYLES: any = stylesheet({
     background: WHITE_COLOR,
     paddingBottom: `${GUTTER_DEFAULT_SPACING}px`,
   },
-  heading: {
-    backgroundColor: PALE_COLOR,
-    color: MEDIUM_COLOR,
-    padding: `8px ${GUTTER_DEFAULT_SPACING}px`,
-  },
-  headingText: {
-    fontSize: 14,
-  },
-  section: {
-    paddingTop: `${GUTTER_DEFAULT_SPACING}px`,
-    paddingLeft: `${GUTTER_DEFAULT_SPACING}px`,
-    paddingRight: `${GUTTER_DEFAULT_SPACING}px`,
-    paddingBottom: `${GUTTER_DEFAULT_SPACING * 2}px`,
-    backgroundColor: WHITE_COLOR,
-  },
   labelTitle: {
     width: 200,
     marginRight: `${GUTTER_DEFAULT_SPACING}px`,
@@ -145,11 +131,6 @@ const STYLES: any = stylesheet({
   summaryTitle: {
     width: '100px',
     marginRight: `${GUTTER_DEFAULT_SPACING}px`,
-  },
-  buttonGroup: {
-    display: 'flex',
-    flexDirection: 'row',
-    padding: `${GUTTER_DEFAULT_SPACING}px`,
   },
   pluginLink: {
     display: 'inline-block',
@@ -641,171 +622,13 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     this.setState({ homeIsFocused: false });
   }
 
-  renderUsers() {
-    const { users } = this.props;
-    const sortedUsers = users.valueSeq().sort((a, b) => a.name.localeCompare(b.name));
-
-    return (
-      <div key="editUsersSection">
-        <div key="heading" {...css(STYLES.heading)}>
-          <h2 {...css(STYLES.headingText)}>Users</h2>
-        </div>
-        <div key="body" {...css(STYLES.section)}>
-          <div {...css(SETTINGS_STYLES.row)}>
-            <table>
-              <thead>
-              <tr>
-                <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
-                  Name
-                </th>
-                <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
-                  Email
-                </th>
-                <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
-                  Role
-                </th>
-                <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
-                  Is Active
-                </th>
-                <th key="5" {...css(SETTINGS_STYLES.userTableCell)}/>
-              </tr>
-              </thead>
-              <tbody>
-              {sortedUsers.map((u) => (
-                <UserRow key={u.id} user={u} handleEditUser={this.handleEditUser}/>
-              ))}
-              </tbody>
-            </table>
-          </div>
-          <Tooltip title="Add a user">
-            <Fab color="primary" onClick={this.handleAddUserGeneral}>
-              <Add/>
-            </Fab>
-          </Tooltip>
-        </div>
-      </div>
-    );
-  }
-
-  renderModeratorUsers() {
-    const {
-      moderatorUsers,
-    } = this.props;
-
-    if (!moderatorUsers || moderatorUsers.count() === 0) {
-      return (<p>None configured</p>);
-    }
-    return (
-      <div key="moderatorUsersSection">
-        <table>
-          <thead>
-          <tr>
-            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
-              Name
-            </th>
-            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
-              Type
-            </th>
-            <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
-              Endpoint
-            </th>
-            <th key="5" {...css(SETTINGS_STYLES.userTableCell)}>
-              Is Active
-            </th>
-            <th key="6" {...css(SETTINGS_STYLES.userTableCell)}/>
-          </tr>
-          </thead>
-          <tbody>
-          {moderatorUsers.map((u) => (
-            <ModeratorUserRow key={u.id} user={u}/>
-          ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
-
-  renderServiceUsers() {
-    const {
-      serviceUsers,
-    } = this.props;
-
-    if (!serviceUsers || serviceUsers.count() === 0) {
-      return (<p>None configured</p>);
-    }
-    return (
-      <div key="serviceUsersSection">
-        <table>
-          <thead>
-          <tr>
-            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
-              ID
-            </th>
-            <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
-              Name
-            </th>
-            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
-              JWT Authentication token
-            </th>
-            <th/>
-            <th key="6" {...css(SETTINGS_STYLES.userTableCell)}/>
-          </tr>
-          </thead>
-          <tbody>
-          {serviceUsers.map((u) => (
-            <ServiceUserRow key={u.id} user={u} handleEditUser={this.handleEditUser}/>
-          ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
-
-  renderYouTubeUsers() {
-    const {
-      youtubeUsers,
-    } = this.props;
-
-    if (!youtubeUsers || youtubeUsers.count() === 0) {
-      return (<p>None configured</p>);
-    }
-
-    return (
-      <div key="youtubeUsersSection">
-        <table>
-          <thead>
-          <tr>
-            <th key="1" {...css(SETTINGS_STYLES.userTableCell)}>
-              Name
-            </th>
-            <th key="2" {...css(SETTINGS_STYLES.userTableCell)}>
-              Email
-            </th>
-            <th key="3" {...css(SETTINGS_STYLES.userTableCell)}>
-              Is Active
-            </th>
-            <th key="4" {...css(SETTINGS_STYLES.userTableCell)}>
-              Last Error
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          {youtubeUsers.map((u) => (
-            <YoutubeUserRow key={u.id} user={u} handleEditUser={this.handleEditYoutube}/>
-          ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
-
   renderTags(tags: List<ITagModel>) {
     return (
       <div key="editTagsSection">
-        <div key="heading" {...css(STYLES.heading)}>
-          <h2 {...css(STYLES.headingText)}>Tags</h2>
+        <div key="heading" {...css(SETTINGS_STYLES.heading)}>
+          <h2 {...css(SETTINGS_STYLES.headingText)}>Tags</h2>
         </div>
-        <div key="body" {...css(STYLES.section)}>
+        <div key="body" {...css(SETTINGS_STYLES.section)}>
           <div {...css(SETTINGS_STYLES.row, {padding: 0})}>
             <p {...css(STYLES.labelTitle, SMALLER_SCREEN && {width: '184px', marginRight: '20px'})}>Label</p>
             <p {...css(STYLES.descriptionTitle)}>Description</p>
@@ -842,10 +665,10 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
 
     return (
       <div key="editRulesSection">
-        <div key="heading" {...css(STYLES.heading)}>
-          <h2 {...css(STYLES.headingText)}>Automated Rules</h2>
+        <div key="heading" {...css(SETTINGS_STYLES.heading)}>
+          <h2 {...css(SETTINGS_STYLES.headingText)}>Automated Rules</h2>
         </div>
-        <div key="body" {...css(STYLES.section)}>
+        <div key="body" {...css(SETTINGS_STYLES.section)}>
           {rules && rules.map((rule, i) => (
             <RuleRow
               key={i}
@@ -882,10 +705,10 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     } = this.state;
     return (
       <div key="editSensitivitiesSection">
-        <div key="heading" {...css(STYLES.heading)}>
-          <h2 {...css(STYLES.headingText)}>Tagging Sensitivity (determines at what score range a tag will appear in the UI)</h2>
+        <div key="heading" {...css(SETTINGS_STYLES.heading)}>
+          <h2 {...css(SETTINGS_STYLES.headingText)}>Tagging Sensitivity (determines at what score range a tag will appear in the UI)</h2>
         </div>
-        <div key="body" {...css(STYLES.section)}>
+        <div key="body" {...css(SETTINGS_STYLES.section)}>
           {taggingSensitivities && taggingSensitivities.map((ts, i) => (
             <RuleRow
               key={i}
@@ -919,12 +742,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     } = this.state;
     return (
       <div key="editRangesSection">
-        <div key="heading" {...css(STYLES.heading)}>
-          <h2 {...css(STYLES.headingText)}>
+        <div key="heading" {...css(SETTINGS_STYLES.heading)}>
+          <h2 {...css(SETTINGS_STYLES.headingText)}>
             Preselected Batch Ranges (sets the default score range on a per category basis for tags in the batch selection view)
           </h2>
         </div>
-        <div key="body" {...css(STYLES.section)}>
+        <div key="body" {...css(SETTINGS_STYLES.section)}>
           {preselects && preselects.map((preselect, i) => (
             <RuleRow
               key={i}
@@ -949,94 +772,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           </Tooltip>
         </div>
       </div>
-    );
-  }
-
-  renderAddUserScrim() {
-    return (
-      <Scrim
-        key="addUserScrim"
-        scrimStyles={SCRIM_STYLE.scrim}
-        isVisible={this.state.isAddUserScrimVisible}
-        onBackgroundClick={this.closeScrims}
-      >
-        <FocusTrap
-          focusTrapOptions={{
-            clickOutsideDeactivates: true,
-          }}
-        >
-          <div
-            key="addUserContainer"
-            tabIndex={0}
-            {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})}
-          >
-            <AddUsers
-              userType={this.state.addUserType}
-              onClickDone={this.saveAddedUser}
-              onClickClose={this.closeScrims}
-            />
-          </div>
-        </FocusTrap>
-      </Scrim>
-    );
-  }
-
-  renderEditUserScrim() {
-    return (
-      <Scrim
-        key="editUserScrim"
-        scrimStyles={SCRIM_STYLE.scrim}
-        isVisible={this.state.isEditUserScrimVisible}
-        onBackgroundClick={this.closeScrims}
-      >
-        <FocusTrap
-          focusTrapOptions={{
-            clickOutsideDeactivates: true,
-          }}
-        >
-          <div
-            key="editUserContainer"
-            tabIndex={0}
-            {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})}
-          >
-            <EditUsers
-              userToEdit={this.state.selectedUser}
-              onClickDone={this.saveEditedUser}
-              onClickClose={this.closeScrims}
-            />
-          </div>
-        </FocusTrap>
-      </Scrim>
-    );
-  }
-
-  renderEditYouTubeScrim() {
-    return (
-      <Scrim
-        key="editYouTubeScrim"
-        scrimStyles={SCRIM_STYLE.scrim}
-        isVisible={this.state.isEditYouTubeScrimVisible}
-        onBackgroundClick={this.closeScrims}
-      >
-        <FocusTrap
-          focusTrapOptions={{
-            clickOutsideDeactivates: true,
-          }}
-        >
-          <div
-            key="editYouTubeContainer"
-            tabIndex={0}
-            {...css(SCRIM_STYLE.popup, {position: 'relative', width: '77vh'})}
-          >
-            <EditYouTubeUser
-              categories={this.props.categories}
-              user={this.state.selectedUser}
-              onUserUpdate={this.saveYouTubeSettings}
-              onClickClose={this.closeScrims}
-            />
-          </div>
-        </FocusTrap>
-      </Scrim>
     );
   }
 
@@ -1092,13 +827,17 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
         <HeaderBar homeLink title="Settings"/>
         <div {...css(STYLES.body)}>
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings</h1>
-          {this.renderUsers()}
+          <UserSettings
+            users={this.props.users}
+            handleEdit={this.handleEditUser}
+            handleAdd={this.handleAddUserGeneral}
+          />
           <form {...css(STYLES.formContainer)}>
             {this.renderTags(tagsNoSummary)}
             {this.renderRules(tags, categoriesWithAll)}
             {this.renderSensitivities(tagsWithAllNoSummary, categoriesWithAll)}
             {this.renderPreselects(tagsWithAll, categoriesWithAll)}
-            <div key="submitSection" {...css(STYLES.buttonGroup)}>
+            <div key="submitSection" {...css(SETTINGS_STYLES.buttonGroup)}>
               <div style={{paddingRight: '30px'}}>
                 <Button variant="outlined" onClick={this.onCancelPress} style={{width: '150px'}}>
                   Cancel
@@ -1111,55 +850,29 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               </div>
             </div>
           </form>
-          <div key="serviceUsersHeader" {...css(STYLES.heading)}>
-            <h2 {...css(STYLES.headingText)}>
+          <div key="serviceUsersHeader" {...css(SETTINGS_STYLES.heading)}>
+            <h2 {...css(SETTINGS_STYLES.headingText)}>
               System accounts
             </h2>
           </div>
-          <div key="serviceUsers" {...css(STYLES.section)}>
-            <h3>Service accounts</h3>
-            <p>These accounts are used to access the OSMod API.</p>
-            {this.renderServiceUsers()}
-            <Tooltip title="Add a service user">
-              <Fab color="primary" onClick={this.handleAddUserService}>
-                <Add/>
-              </Fab>
-            </Tooltip>
-
-          </div>
-          <div key="moderatorUsers" {...css(STYLES.section)}>
-            <h3>Moderator accounts</h3>
-            <p>These accounts are responsible for sending comments to the Perspective API scorer.</p>
-            {this.renderModeratorUsers()}
-          </div>
+          <ServiceUserSettings
+            users={this.props.serviceUsers}
+            handleEdit={this.handleEditUser}
+            handleAdd={this.handleAddUserService}
+          />
+          <ModeratorSettings users={this.props.moderatorUsers}/>
           <div>
-            <div key="pluginsHeader" {...css(STYLES.heading)}>
-              <h2 {...css(STYLES.headingText)}>
+            <div key="pluginsHeader" {...css(SETTINGS_STYLES.heading)}>
+              <h2 {...css(SETTINGS_STYLES.headingText)}>
                 Plugins
               </h2>
             </div>
-            <div key="pluginsContent" {...css(STYLES.section)}>
-              <h3>YouTube accounts</h3>
-              {this.renderYouTubeUsers()}
-              <div key="youtubeButtons" {...css(STYLES.buttonGroup)}>
-                <div style={{paddingRight: '30px'}}>
-                  <Tooltip title="Connect an account">
-                    <Fab color="primary" onClick={this.connectYouTubeAccount}>
-                      <Input/>
-                    </Fab>
-                  </Tooltip>
-                </div>
-                <div style={{paddingRight: '30px'}}>
-                  <Tooltip title="Check for new channels">
-                    <Fab color="primary" onClick={this.kickYouTubeProcessor}>
-                      <SaveAlt/>
-                    </Fab>
-                  </Tooltip>
-                </div>
-              </div>
-              <p>To connect a YouTube account, click the button above, and select a Google user and YouTube account.</p>
-              <p>We'll then start syncing comments with the channels and videos in that account.</p>
-              <p>If you are seeing errors above, then try reconnecting to your account.</p>
+            <YouTubeUsersSettings
+              users={this.props.youtubeUsers}
+              handleEdit={this.handleEditYoutube}
+              connect={this.connectYouTubeAccount}
+              kick={this.kickYouTubeProcessor}
+            />
               {/*<p>&nbsp;</p>*/}
               {/*<h3>Wordpress</h3>*/}
               {/*<p>Install the Wordpress plugin to use Moderator with your Wordpress blog.</p>*/}
@@ -1179,13 +892,28 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               {/*  <a href="https://github.com/Jigsaw-Code/moderator-reddit" {...css(STYLES.pluginLink)}>Get started →</a>*/}
               {/*</p>*/}
               {/*<p>&nbsp;</p>*/}
-            </div>
           </div>
         </div>
         {this.renderStatusScrim()}
-        {this.renderAddUserScrim()}
-        {this.renderEditUserScrim()}
-        {this.renderEditYouTubeScrim()}
+        <AddUserScrim
+          type={this.state.addUserType}
+          visible={this.state.isAddUserScrimVisible}
+          close={this.closeScrims}
+          save={this.saveAddedUser}
+        />
+        <EditUserScrim
+          user={this.state.selectedUser}
+          visible={this.state.isEditUserScrimVisible}
+          close={this.closeScrims}
+          save={this.saveEditedUser}
+        />
+        <EditYouTubeScrim
+          categories={this.props.categories}
+          user={this.state.selectedUser}
+          visible={this.state.isEditYouTubeScrimVisible}
+          close={this.closeScrims}
+          save={this.saveYouTubeSettings}
+        />
       </div>
     );
   }
