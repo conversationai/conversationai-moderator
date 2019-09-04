@@ -84,13 +84,13 @@ export interface ICategoriesState {
 }
 
 export const reducer = handleActions<Readonly<ICategoriesState>, Array<ICategoryModel>>( {
-  [categoriesLoaded.toString()]: (_state: Readonly<ICategoriesState>, { payload }: Action<Array<ICategoryModel>>) => {
+  [categoriesLoaded.toString()]: (_state, { payload }: Action<Array<ICategoryModel>>) => {
     const index = new Map<ModelId, ICategoryModel>(payload.map((v) => ([v.id, v])));
     const array = Array.from(index.values());
     const active = array.filter((c) => c.isActive);
     return {index, array, active};
   },
-  [categoriesUpdated.toString()]: (state: Readonly<ICategoriesState>, { payload }: Action<Array<ICategoryModel>>) => {
+  [categoriesUpdated.toString()]: (state, { payload }: Action<Array<ICategoryModel>>) => {
     const index: Map<ModelId, ICategoryModel> = state.index;
     for (const category of payload) {
       index.set(category.id, category);

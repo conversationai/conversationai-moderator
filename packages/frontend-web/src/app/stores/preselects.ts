@@ -16,35 +16,27 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import { IPreselectModel } from '../../models';
 import { IAppStateRecord } from './appstate';
 
 const STATE_ROOT = ['global', 'preselects'];
-const PRESELECTS_DATA = [...STATE_ROOT, 'items'];
 
 export const preselectsUpdated = createAction(
   'all-preselects/UPDATED',
 );
 
 export function getPreselects(state: IAppStateRecord): List<IPreselectModel> {
-  return state.getIn(PRESELECTS_DATA);
+  return state.getIn(STATE_ROOT).items;
 }
 
 export interface IPreselectsState {
   items: List<IPreselectModel>;
 }
 
-export interface IPreselectsStateRecord extends TypedRecord<IPreselectsStateRecord>, IPreselectsState {}
-
-const StateFactory = makeTypedFactory<IPreselectsState, IPreselectsStateRecord>({
+const reducer = handleActions<Readonly<IPreselectsState>, List<IPreselectModel>>( {
+  [preselectsUpdated.toString()]: (_state, { payload }: Action<List<IPreselectModel>>) => ({items:  payload}),
+}, {
   items: List<IPreselectModel>(),
 });
-
-const reducer = handleActions<IPreselectsStateRecord, List<IPreselectModel>>( {
-  [preselectsUpdated.toString()]: (state: IPreselectsStateRecord, { payload }: Action<List<IPreselectModel>>) => {
-    return state.set('items', payload);
-  },
-}, StateFactory());
 
 export { reducer };

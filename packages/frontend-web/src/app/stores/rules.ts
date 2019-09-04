@@ -16,36 +16,28 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { IRuleModel } from '../../models';
 import { IAppStateRecord } from './appstate';
 
 const STATE_ROOT = ['global', 'rules'];
-const RULES_DATA = [...STATE_ROOT, 'items'];
 
 export const rulesUpdated = createAction(
   'all-rules/UPDATED',
 );
 
 export function getRules(state: IAppStateRecord): List<IRuleModel> {
-  return state.getIn(RULES_DATA);
+  return state.getIn(STATE_ROOT).items;
 }
 
 export interface IRulesState {
   items: List<IRuleModel>;
 }
 
-export interface IRulesStateRecord extends TypedRecord<IRulesStateRecord>, IRulesState {}
-
-const StateFactory = makeTypedFactory<IRulesState, IRulesStateRecord>({
+const reducer = handleActions<Readonly<IRulesState>, List<IRuleModel>>( {
+  [rulesUpdated.toString()]: (_state, { payload }: Action<List<IRuleModel>>) => ({items: payload}),
+}, {
   items: List<IRuleModel>(),
 });
-
-const reducer = handleActions<IRulesStateRecord, List<IRuleModel>>( {
-  [rulesUpdated.toString()]: (state: IRulesStateRecord, { payload }: Action<List<IRuleModel>>) => {
-    return state.set('items', payload);
-  },
-}, StateFactory());
 
 export { reducer };

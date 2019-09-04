@@ -16,40 +16,32 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { ITagModel } from '../../models';
 import { IAppStateRecord } from './appstate';
 
 const STATE_ROOT = ['global', 'tags'];
-const TAGS_DATA = [...STATE_ROOT, 'items'];
 
 export const tagsUpdated = createAction<object>(
   'all-tags/UPDATED',
 );
 
 export function getTags(state: IAppStateRecord): List<ITagModel> {
-  return state.getIn(TAGS_DATA);
+  return state.getIn(STATE_ROOT).items;
 }
 
-export function getTaggableTags(state: IAppStateRecord): List<ITagModel> {
-  return state.getIn(TAGS_DATA).filter((tag: ITagModel) => tag.isTaggable);
+export function getTaggableTags(state: IAppStateRecord) {
+  return List(getTags(state).filter((tag: ITagModel) => tag.isTaggable));
 }
 
 export interface ITagsState {
   items: List<ITagModel>;
 }
 
-export interface ITagsStateRecord extends TypedRecord<ITagsStateRecord>, ITagsState {}
-
-const StateFactory = makeTypedFactory<ITagsState, ITagsStateRecord>({
+const reducer = handleActions<Readonly<ITagsState>, List<ITagModel>>( {
+  [tagsUpdated.toString()]: (_state, { payload }: Action<List<ITagModel>>) => ({items: payload}),
+}, {
   items: List<ITagModel>(),
 });
-
-const reducer = handleActions<ITagsStateRecord, List<ITagModel>>( {
-  [tagsUpdated.toString()]: (state: ITagsStateRecord, { payload }: Action<List<ITagModel>>) => {
-    return state.set('items', payload);
-  },
-}, StateFactory());
 
 export { reducer };

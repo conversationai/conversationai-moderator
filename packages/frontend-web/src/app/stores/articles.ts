@@ -42,12 +42,12 @@ export interface IArticlesState {
 }
 
 const reducer = handleActions<Readonly<IArticlesState>, Array<IArticleModel>>( {
-  [articlesLoaded.toString()]: (_state: Readonly<IArticlesState>, { payload }: Action<Array<IArticleModel>>) => {
+  [articlesLoaded.toString()]: (_state, { payload }: Action<Array<IArticleModel>>) => {
     const index = new Map<ModelId, IArticleModel>(payload.map((v) => ([v.id, v])));
     const array = Array.from(index.values());
     return {index, array};
   },
-  [articlesUpdated.toString()]: (state: Readonly<IArticlesState>, { payload }: Action<Array<IArticleModel>>) => {
+  [articlesUpdated.toString()]: (state, { payload }: Action<Array<IArticleModel>>) => {
     const index: Map<ModelId, IArticleModel> = state.index;
     for (const article of payload) {
       index.set(article.id, article);
