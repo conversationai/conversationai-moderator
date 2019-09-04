@@ -22,7 +22,7 @@ import {
   GUTTER_DEFAULT_SPACING,
   INPUT_DROP_SHADOW,
   MEDIUM_COLOR,
-  PALE_COLOR,
+  PALE_COLOR, WHITE_COLOR,
 } from '../../styles';
 
 const ARROW_SIZE = 6;
@@ -113,5 +113,27 @@ export const SETTINGS_STYLES = {
   userTableCell: {
     textAlign: 'left',
     padding: '5px 30px',
+  },
+
+  heading: {
+    backgroundColor: PALE_COLOR,
+    color: MEDIUM_COLOR,
+    padding: `8px ${GUTTER_DEFAULT_SPACING}px`,
+  },
+  headingText: {
+    fontSize: 14,
+  },
+  section: {
+    paddingTop: `${GUTTER_DEFAULT_SPACING}px`,
+    paddingLeft: `${GUTTER_DEFAULT_SPACING}px`,
+    paddingRight: `${GUTTER_DEFAULT_SPACING}px`,
+    paddingBottom: `${GUTTER_DEFAULT_SPACING * 2}px`,
+    backgroundColor: WHITE_COLOR,
+  },
+
+  buttonGroup: {
+    display: 'flex',
+    flexDirection: 'row',
+    padding: `${GUTTER_DEFAULT_SPACING}px`,
   },
 };
