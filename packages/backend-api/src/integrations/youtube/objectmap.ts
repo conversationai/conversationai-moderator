@@ -17,14 +17,11 @@ limitations under the License.
 import { pick } from 'lodash';
 
 import { logger } from '@conversationai/moderator-backend-core';
-import { Article, Category, Comment, Decision, updateHappened } from '@conversationai/moderator-backend-core';
+import { Article, Category, Comment, updateHappened } from '@conversationai/moderator-backend-core';
 import {
   IAuthorAttributes,
-  ICommentInstance,
-  IDecisionInstance,
   IUserInstance,
 } from '@conversationai/moderator-backend-core';
-import { sequelize } from '@conversationai/moderator-backend-core';
 
 import { postProcessComment, sendForScoring } from '../../pipeline';
 
@@ -295,27 +292,4 @@ export async function mapCommentThreadToComments(
       await mapCommentToComment(owner, articleId, c, thread.snippet.topLevelComment.id);
     }
   }
-}
-
-export async function foreachPendingDecision(
-  owner: IUserInstance,
-  callback: (decision: IDecisionInstance, comment: ICommentInstance) => Promise<void>,
-) {
-  const decisions = await Decision.findAll({
-    where: {
-      sentBackToPublisher: null,
-      isCurrentDecision: true,
-    } as any,
-    include: [{model: Comment, required: true, where: {ownerId: owner.id}}],
-  });
-
-  for (const d of decisions) {
-    await callback(d, await d.getComment());
-  }
-}
-
-export async function markDecisionExecuted(decision: IDecisionInstance) {
-  decision.set('sentBackToPublisher', sequelize.fn('now')).save();
-  const comment = (await decision.getComment())!;
-  comment.set('sentBackToPublisher', sequelize.fn('now')).save();
 }
