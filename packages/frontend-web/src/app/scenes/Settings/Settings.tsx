@@ -81,6 +81,12 @@ import {
   WHITE_COLOR,
 } from '../../styles';
 import { SETTINGS_STYLES } from './settingsStyles';
+import {
+  updatePreselects,
+  updateRules,
+  updateTaggingSensitivities,
+  updateTags,
+} from './store';
 
 function validateColor(color: string): boolean {
   const div = document.createElement('div') as HTMLDivElement;
@@ -165,18 +171,8 @@ export interface ISettingsProps extends RouteComponentProps<{}>  {
   reloadServiceUsers?(): Promise<void>;
   reloadModeratorUsers?(): Promise<void>;
   reloadYoutubeUsers?(): Promise<void>;
-  updatePreselects?(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>): void;
-  updateRules?(oldRules: List<IRuleModel>, newRules: List<IRuleModel>): void;
-  updateTaggingSensitivities?(oldTaggingSensitivities: List<ITaggingSensitivityModel>, newTaggingSensitivities: List<ITaggingSensitivityModel>): void;
-  updateTags?(oldTags: List<ITagModel>, newTags: List<ITagModel>): void;
   addUser?(user: IUserModel): Promise<void>;
   modifyUser?(user: IUserModel): Promise<void>;
-  submitForm?(
-    newPreselects: List<IPreselectModel>,
-    newRules: List<IRuleModel>,
-    newTaggingSensitivities: List<ITaggingSensitivityModel>,
-    newTags: List<ITagModel>,
-  ): Error;
 }
 
 export interface ISettingsState {
@@ -238,24 +234,28 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       this.setState({
         baseTags: nextProps.tags,
         tags: nextProps.tags,
+        isStatusScrimVisible: false,
       });
     }
     if (!this.props.rules.equals(nextProps.rules)) {
       this.setState({
         baseRules: nextProps.rules,
         rules: nextProps.rules,
+        isStatusScrimVisible: false,
       });
     }
     if (!this.props.taggingSensitivities.equals(nextProps.taggingSensitivities)) {
       this.setState({
         baseTaggingSensitivities: nextProps.taggingSensitivities,
         taggingSensitivities: nextProps.taggingSensitivities,
+        isStatusScrimVisible: false,
       });
     }
     if (!this.props.preselects.equals(nextProps.preselects)) {
       this.setState({
         basePreselects: nextProps.preselects,
         preselects: nextProps.preselects,
+        isStatusScrimVisible: false,
       });
     }
   }
@@ -390,49 +390,16 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       submitStatus: 'Saving changes...',
     });
 
-    const {
-      tags: tagsNew,
-      rules: rulesNew,
-      preselects: preselectsNew,
-      taggingSensitivities: taggingSensitivitiesNew,
-    } = this.state;
-
-    const submitErrorStatus = await this.props.submitForm(
-      preselectsNew,
-      rulesNew,
-      taggingSensitivitiesNew,
-      tagsNew,
-    );
-
-    if (submitErrorStatus) {
+    try {
+      await updateTags(this.state.baseTags, this.state.tags);
+      await updateRules(this.state.baseRules, this.state.rules);
+      await updatePreselects(this.state.basePreselects, this.state.preselects);
+      await updateTaggingSensitivities(this.state.baseTaggingSensitivities, this.state.taggingSensitivities);
+    } catch (exception) {
       this.setState({
-        submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${submitErrorStatus.message}`,
+        submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${exception.message}`,
       });
-
-      return false;
     }
-
-    // set the current saved value to base so you can diff the changes again after submit
-    // then make sure to go get latest from the server so that the id for the rule will be correct
-    this.setState({
-      baseTags: tagsNew,
-      baseRules: rulesNew,
-      basePreselects: preselectsNew,
-      baseTaggingSensitivities: taggingSensitivitiesNew,
-    });
-    this.closeStatusScrim();
-  }
-
-  closeStatusScrim() {
-    // Add some delay so that users know that saving action was taken
-    setTimeout(
-      () => {
-        this.setState({
-          isStatusScrimVisible: false,
-        });
-      },
-      600,
-    );
   }
 
   @autobind

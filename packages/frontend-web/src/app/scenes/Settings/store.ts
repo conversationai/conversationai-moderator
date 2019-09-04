@@ -31,7 +31,6 @@ import {
   updateModel,
   updateUser,
 } from '../../platform/dataService';
-import { IThunkAction } from '../../stores';
 
 function diff<T extends Map<string, any>>(original: List<T>, current: List<T>): {
   modified: List<T>,
@@ -88,15 +87,13 @@ async function deleteTag(tag: ITagModel): Promise<void> {
   );
 }
 
-export function updateTags(oldTags: List<ITagModel>, newTags: List<ITagModel>): IThunkAction<void> {
-  return async (): Promise<void> => {
-    const { modified, added, removed } = diff<ITagModel>(oldTags, newTags);
-    await Promise.all([
-      Promise.all(modified.map(modifyTag).toArray()),
-      Promise.all(added.map(addTag).toArray()),
-      Promise.all(removed.map(deleteTag).toArray()),
-    ]);
-  };
+export async function updateTags(oldTags: List<ITagModel>, newTags: List<ITagModel>) {
+  const { modified, added, removed } = diff<ITagModel>(oldTags, newTags);
+  await Promise.all([
+    Promise.all(modified.map(modifyTag).toArray()),
+    Promise.all(added.map(addTag).toArray()),
+    Promise.all(removed.map(deleteTag).toArray()),
+  ]);
 }
 
 async function addRule(rule: IRuleModel): Promise<void> {
@@ -121,15 +118,13 @@ async function deleteRule(rule: IRuleModel): Promise<void> {
   );
 }
 
-export function updateRules(oldRules: List<IRuleModel>, newRules: List<IRuleModel>): IThunkAction<void> {
-  return async (): Promise<void> => {
-    const { modified, added, removed } = diff<IRuleModel>(oldRules, newRules);
-    await Promise.all([
-      Promise.all(modified.map(modifyRule).toArray()),
-      Promise.all(added.map(addRule).toArray()),
-      Promise.all(removed.map(deleteRule).toArray()),
-    ]);
-  };
+export async function updateRules(oldRules: List<IRuleModel>, newRules: List<IRuleModel>) {
+  const { modified, added, removed } = diff<IRuleModel>(oldRules, newRules);
+  await Promise.all([
+    Promise.all(modified.map(modifyRule).toArray()),
+    Promise.all(added.map(addRule).toArray()),
+    Promise.all(removed.map(deleteRule).toArray()),
+  ]);
 }
 
 async function addPreselect(preselect: IPreselectModel): Promise<void> {
@@ -154,15 +149,13 @@ async function deletePreselect(preselect: IPreselectModel): Promise<void> {
   );
 }
 
-export function updatePreselects(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>): IThunkAction<void> {
-  return async (): Promise<void> => {
-    const { modified, added, removed } = diff<IPreselectModel>(oldPreselects, newPreselects);
-    await Promise.all([
-      Promise.all(modified.map(modifyPreselect).toArray()),
-      Promise.all(added.map(addPreselect).toArray()),
-      Promise.all(removed.map(deletePreselect).toArray()),
-    ]);
-  };
+export async function updatePreselects(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>) {
+  const { modified, added, removed } = diff<IPreselectModel>(oldPreselects, newPreselects);
+  await Promise.all([
+    Promise.all(modified.map(modifyPreselect).toArray()),
+    Promise.all(added.map(addPreselect).toArray()),
+    Promise.all(removed.map(deletePreselect).toArray()),
+  ]);
 }
 
 async function addTaggingSensitivity(taggingSensitivity: ITaggingSensitivityModel): Promise<void> {
@@ -187,13 +180,11 @@ async function deleteTaggingSensitivity(taggingSensitivity: ITaggingSensitivityM
   );
 }
 
-export function updateTaggingSensitivities(oldRules: List<ITaggingSensitivityModel>, newRules: List<ITaggingSensitivityModel>): IThunkAction<void> {
-  return async (): Promise<void> => {
-    const { modified, added, removed } = diff<ITaggingSensitivityModel>(oldRules, newRules);
-    await Promise.all([
-      Promise.all(modified.map(modifyTaggingSensitivity).toArray()),
-      Promise.all(added.map(addTaggingSensitivity).toArray()),
-      Promise.all(removed.map(deleteTaggingSensitivity).toArray()),
-    ]);
-  };
+export async function updateTaggingSensitivities(oldRules: List<ITaggingSensitivityModel>, newRules: List<ITaggingSensitivityModel>) {
+  const { modified, added, removed } = diff<ITaggingSensitivityModel>(oldRules, newRules);
+  await Promise.all([
+    Promise.all(modified.map(modifyTaggingSensitivity).toArray()),
+    Promise.all(added.map(addTaggingSensitivity).toArray()),
+    Promise.all(removed.map(deleteTaggingSensitivity).toArray()),
+  ]);
 }
