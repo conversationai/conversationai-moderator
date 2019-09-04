@@ -17,9 +17,14 @@ limitations under the License.
 import { ICommentInstance, IUserInstance } from '@conversationai/moderator-backend-core';
 
 import { IPipelineHook } from '../../pipeline/hooks';
+import { getDecisionForComment } from '../decisions';
+import { for_one_youtube_user } from './authenticate';
+import { implement_moderation_decision } from './comments';
 
 export const youtubeHooks: IPipelineHook = {
-  async commentModerated(_owner: IUserInstance, _comment: ICommentInstance) {
-    console.log('***** Youtube: CommentModerated');
+  async commentModerated(owner: IUserInstance, comment: ICommentInstance) {
+    await for_one_youtube_user(owner, async (_, auth) => {
+      await implement_moderation_decision(auth, comment, await getDecisionForComment(comment));
+    });
   },
 };
