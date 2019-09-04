@@ -16,36 +16,29 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { ITaggingSensitivityModel } from '../../models';
 import { IAppStateRecord } from './appstate';
 
 const STATE_ROOT = ['global', 'taggingSensitivities'];
-const TAGGING_SENSITIVITIES_DATA = [...STATE_ROOT, 'items'];
 
 export const taggingSensitivitiesUpdated = createAction(
   'all-taggingSensitivities/UPDATED',
 );
 
 export function getTaggingSensitivities(state: IAppStateRecord): List<ITaggingSensitivityModel> {
-  return state.getIn(TAGGING_SENSITIVITIES_DATA);
+  return state.getIn(STATE_ROOT).items;
 }
 
 export interface ITaggingSensitivitiesState {
   items: List<ITaggingSensitivityModel>;
 }
 
-export interface ITaggingSensitivitiesStateRecord extends TypedRecord<ITaggingSensitivitiesStateRecord>, ITaggingSensitivitiesState {}
-
-const StateFactory = makeTypedFactory<ITaggingSensitivitiesState, ITaggingSensitivitiesStateRecord>({
+const reducer = handleActions<Readonly<ITaggingSensitivitiesState>, List<ITaggingSensitivityModel>>( {
+  [taggingSensitivitiesUpdated.toString()]:
+    (_state, { payload }: Action<List<ITaggingSensitivityModel>>) => ({items:  payload}),
+}, {
   items: List<ITaggingSensitivityModel>(),
 });
-
-const reducer = handleActions<ITaggingSensitivitiesStateRecord, List<ITaggingSensitivityModel>>( {
-  [taggingSensitivitiesUpdated.toString()]: (state: ITaggingSensitivitiesStateRecord, { payload }: Action<List<ITaggingSensitivityModel>>) => {
-    return state.set('items', payload);
-  },
-}, StateFactory());
 
 export { reducer };

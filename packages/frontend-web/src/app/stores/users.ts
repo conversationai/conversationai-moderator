@@ -16,14 +16,12 @@ limitations under the License.
 
 import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { IUserModel, ModelId } from '../../models';
 import { getMyUserId } from '../auth';
 import { IAppStateRecord } from './appstate';
 
 const STATE_ROOT = ['global', 'users'];
-const USERS_DATA = [...STATE_ROOT, 'humans'];
 
 export const USER_GROUP_GENERAL = 'general';
 export const USER_GROUP_ADMIN = 'admin';
@@ -42,7 +40,7 @@ export const systemUsersLoaded = createAction<ILoadSystemUsers>(
 );
 
 export function getUsers(state: IAppStateRecord): Map<ModelId, IUserModel> {
-  return state.getIn(USERS_DATA);
+  return state.getIn(STATE_ROOT)['humans'];
 }
 
 export function getUser(state: IAppStateRecord, id: ModelId): IUserModel | null {
@@ -69,40 +67,36 @@ export function getSystemUsers(type: string, state: IAppStateRecord): List<IUser
   if (type === USER_GROUP_SERVICE ||
     type === USER_GROUP_MODERATOR ||
     type === USER_GROUP_YOUTUBE) {
-    return state.getIn([...STATE_ROOT, type]);
+    return state.getIn(STATE_ROOT)[type];
   }
   return List<IUserModel>();
 }
 
 export interface IUsersState {
-  humans: List<IUserModel>;
+  humans: Map<ModelId, IUserModel>;
   [USER_GROUP_SERVICE]: List<IUserModel>;
   [USER_GROUP_MODERATOR]: List<IUserModel>;
   [USER_GROUP_YOUTUBE]: List<IUserModel>;
 }
 
-export interface IUsersStateRecord extends TypedRecord<IUsersStateRecord>, IUsersState {}
-
-const StateFactory = makeTypedFactory<IUsersState, IUsersStateRecord>({
-  humans: List<IUserModel>(),
+const reducer = handleActions<Readonly<IUsersState>, List<IUserModel> | ILoadSystemUsers>( {
+  [usersUpdated.toString()]: (state: Readonly<IUsersState>, { payload }: Action<List<IUserModel>>) => {
+    const users = Map<ModelId, IUserModel>(payload.map((v) => ([v.id, v])));
+    return {...state, humans: users};
+  },
+  [systemUsersLoaded.toString()]: (state: Readonly<IUsersState>, { payload }: Action<ILoadSystemUsers>) => {
+    if (payload.type === USER_GROUP_SERVICE ||
+      payload.type === USER_GROUP_MODERATOR ||
+      payload.type === USER_GROUP_YOUTUBE) {
+      return {...state, [payload.type]: payload.users};
+    }
+    return state;
+  },
+}, {
+  humans: Map<ModelId, IUserModel>(),
   [USER_GROUP_SERVICE]: List<IUserModel>(),
   [USER_GROUP_MODERATOR]: List<IUserModel>(),
   [USER_GROUP_YOUTUBE]: List<IUserModel>(),
 });
-
-const reducer = handleActions<IUsersStateRecord, List<IUserModel> | ILoadSystemUsers>( {
-  [usersUpdated.toString()]: (state: IUsersStateRecord, { payload }: Action<List<IUserModel>>) => {
-    const users = Map<ModelId, IUserModel>(payload.map((v) => ([v.id, v])));
-    return state.set('humans', users);
-  },
-  [systemUsersLoaded.toString()]: (state: IUsersStateRecord, { payload }: Action<ILoadSystemUsers>) => {
-    if (payload.type === USER_GROUP_SERVICE ||
-      payload.type === USER_GROUP_MODERATOR ||
-      payload.type === USER_GROUP_YOUTUBE) {
-      state = state.set(payload.type, payload.users);
-    }
-    return state;
-  },
-}, StateFactory());
 
 export { reducer };
