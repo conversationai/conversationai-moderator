@@ -795,7 +795,7 @@ export async function listAuthorCounts(
     { data: authorSourceIds },
   );
 
-  return Map<string | number, IAuthorCountsModel>(response.data.data);
+  return Map<string, IAuthorCountsModel>(response.data.data);
 }
 
 export async function listSystemUsers(type: string): Promise<List<IUserModel>> {
