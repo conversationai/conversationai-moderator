@@ -32,7 +32,7 @@ export interface IAuthorCountsAttributes {
   rejectedCount: number;
 }
 
-export interface IAuthorCountsModel extends TypedRecord<IAuthorCountsModel>, IAuthorCountsAttributes {}
+export type IAuthorCountsModel = Readonly<IAuthorCountsAttributes>;
 
 export interface ICommentAttributes {
   id: string;
