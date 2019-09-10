@@ -59,10 +59,6 @@ export const BODY_TEXT_TYPE =
 export const COMMENT_DETAIL_BODY_TEXT_TYPE =
   makeTypeStyle(BODY_FONT_STACK, 16, 400, 1.7);
 
-  // Franklin Gothic Bold
-export const BODY_TEXT_BOLD_TYPE =
-  makeTypeStyle(BODY_FONT_STACK, 16, 800);
-
 // FRANKLIN GOTHIC MEDIUM
 export const ARTICLE_CATEGORY_TYPE =
   makeTypeStyle('LibreFranklin-Medium, sans-serif', 14, 400);

@@ -18,7 +18,6 @@ import { autobind } from 'core-decorators';
 import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import { List, Set } from 'immutable';
 import React from 'react';
-const Linkify = require('react-linkify').default;
 import { Link } from 'react-router-dom';
 
 import { OpenInNew } from '@material-ui/icons';
@@ -40,7 +39,6 @@ import {
 } from '../../scenes/routes';
 import {
   ARTICLE_HEADLINE_TYPE,
-  BODY_TEXT_BOLD_TYPE,
   DARK_COLOR,
   MEDIUM_COLOR,
 } from '../../styles';
@@ -48,6 +46,7 @@ import { COMMON_STYLES } from '../../stylesx';
 import { maybeCallback, partial } from '../../util';
 import { css } from '../../utilx';
 import { Avatar } from '../Avatar';
+import { CommentText } from '../CommentText';
 import {
   ConfirmationCircle,
 } from '../ConfirmationCircle';
@@ -161,46 +160,6 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
 
     const actionsAreVisible = this.state.hover || this.state.popupOpen;
     const activeButtons = this.getActiveButtons();
-
-    let currentIndex = 0;
-    let output = [];
-
-    if (topScore) {
-      const startIndex =
-          topScore.start < currentIndex ? currentIndex : topScore.start;
-
-      function addRange(
-        originalString: string,
-        start: number,
-        end: number,
-        isTag?: boolean,
-      ) {
-        currentIndex = end;
-        const str = originalString.slice(start, end);
-        if (str.length > 0) {
-          if (isTag) {
-            return (
-              <span
-                key={currentIndex}
-                data-status={status}
-                {...css(BODY_TEXT_BOLD_TYPE)}
-              >
-                {str}
-              </span>
-            );
-          } else {
-            return <span>{str}</span>;
-          }
-        }
-
-        return null;
-      }
-      output.push(addRange(comment.text, currentIndex, startIndex));
-      output.push(addRange(comment.text, currentIndex, topScore.end, true));
-      output.push(addRange(comment.text, currentIndex, comment.text.length));
-    } else {
-      output = [<span key={comment.id}>{comment.text}</span>];
-    }
 
     return(
       <div
@@ -342,19 +301,17 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
           )}
         </div>
         <div key="text" {...css(ROW_STYLES.commentContainer)}>
-          <Linkify properties={{target: '_blank'}}>
-            <div {...css(ROW_STYLES.comment)}>
-              { commentLinkTarget ? (
-                <div {...css({ display: 'flex', flexDirection: 'column' })}>
-                  <p>
-                    {output}
-                  </p>
-                </div>
-              ) :
-                output
-              }
-            </div>
-          </Linkify>
+          <div {...css(ROW_STYLES.comment)}>
+            { commentLinkTarget ? (
+              <div {...css({ display: 'flex', flexDirection: 'column' })}>
+                <p>
+                  <CommentText text={comment.text} highlight={topScore}/>
+                </p>
+              </div>
+            ) :
+              <CommentText text={comment.text} highlight={topScore}/>
+            }
+          </div>
         </div>
       </div>
     );
