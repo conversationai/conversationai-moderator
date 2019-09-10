@@ -31,7 +31,6 @@ import {
 } from '../../../models';
 import { DATE_FORMAT_LONG } from '../../config';
 import { editAndRescoreComment } from '../../platform/dataService';
-import { FlagsSummary } from '../../scenes/Comments/components/FlagsSummary';
 import { searchLink } from '../../scenes/routes';
 import { ICommentSummaryScore } from '../../stores/commentSummaryScores';
 import {
@@ -66,6 +65,7 @@ import {
 import { css, stylesheet } from '../../utilx';
 import { Avatar } from '../Avatar';
 import { Button } from '../Button';
+import { FlagsSummary } from '../FlagsSummary';
 import {
   ApproveIcon,
   EditIcon,
