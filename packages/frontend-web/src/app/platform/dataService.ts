@@ -16,7 +16,7 @@ limitations under the License.
 
 import axios from 'axios';
 import { fromJS, List, Map } from 'immutable';
-import { isNaN, pick } from 'lodash';
+import { pick } from 'lodash';
 import qs from 'qs';
 
 import {
@@ -86,20 +86,6 @@ function validateModelName(name: string): void {
 let userId: string;
 export function setUserId(id: string) {
   userId = id;
-}
-
-export function validateID(id: any, valueName: string): void {
-  // Article ids can be non-numeric to allow for flexibility with matching upstream publisher article ids
-  if (valueName === 'articleId') {
-    // A legal id contains only alphanumeric characters, hyphens or dashes
-    if (/^[a-z0-9_\-]+$/i.test(id) === false) {
-      throw new Error(`Invalid ${valueName} ${id}. Only alphanumeric characters, dashes and underscores are allowed in ${valueName}. Might be an attempted exploit.`);
-    }
-
-  // All other ids must be integers
-  } else if (isNaN(parseInt(id, 10))) {
-    throw new Error(`Invalid ${valueName} (${parseInt(id, 10)} typeof ${typeof id}) was not a number as expected. Might be an attempted exploit.`);
-  }
 }
 
 export interface ISingleResponse<T> {
@@ -180,9 +166,7 @@ function modelURL(type: IValidModelNames, id: string, params?: Partial<IParams>)
  */
 export function relatedURL(type: IValidModelNames, id: string, relationship: string, params?: Partial<IParams>): string {
   validateModelName(type);
-  const parsedId = id !== 'all' ? parseInt(id, 10) : id;
-
-  return `${API_URL}${REST_URL}/${type}/${parsedId}/${relationship}${serializeParams(params)}`;
+  return `${API_URL}${REST_URL}/${type}/${id}/${relationship}${serializeParams(params)}`;
 }
 
 /**
@@ -228,12 +212,8 @@ export async function listHistogramScoresByArticle(
   tagId: string | 'DATE',
   sort: Array<string>,
 ): Promise<List<ICommentScoredModel>> {
-  validateID(articleId, `articleId`);
-  validateID(tagId, `tagId`);
-
   const response: any = await axios.get(
     serviceURL('histogramScores', `/articles/${articleId}/tags/${tagId}`, { sort }),
-
   );
 
   return List(
@@ -245,11 +225,8 @@ export async function listMaxSummaryScoreByArticle(
   articleId: string,
   sort: Array<string>,
 ): Promise<List<ICommentScoredModel>> {
-  validateID(articleId, `articleId`);
-
   const response: any = await axios.get(
     serviceURL('histogramScores', `/articles/${articleId}/summaryScore`, { sort }),
-
   );
 
   return List(
@@ -261,11 +238,8 @@ export async function listHistogramScoresByArticleByDate(
   articleId: string,
   sort: Array<string>,
 ): Promise<List<ICommentDatedModel>> {
-  validateID(articleId, `articleId`);
-
   const response: any = await axios.get(
     serviceURL('histogramScores', `/articles/${articleId}/byDate`, { sort }),
-
   );
 
   return List(
@@ -281,12 +255,6 @@ export async function listHistogramScoresByCategory(
   tagId: string,
   sort: Array<string>,
 ): Promise<List<ICommentScoredModel>> {
-  if (categoryId !== 'all') {
-    validateID(categoryId, `categoryId`);
-  }
-
-  validateID(tagId, `tagId`);
-
   const response: any = await axios.get(
     serviceURL('histogramScores', `/categories/${categoryId}/tags/${tagId}`, { sort }),
   );
@@ -300,9 +268,6 @@ export async function listMaxHistogramScoresByCategory(
   categoryId: string | 'all',
   sort: Array<string>,
 ): Promise<List<ICommentScoredModel>> {
-  if (categoryId !== 'all') {
-    validateID(categoryId, `categoryId`);
-  }
   const response: any = await axios.get(
     serviceURL('histogramScores', `/categories/${categoryId}/summaryScore`, { sort }),
   );
@@ -316,9 +281,6 @@ export async function listHistogramScoresByCategoryByDate(
   categoryId: string | 'all',
   sort: Array<string>,
 ): Promise<List<ICommentDatedModel>> {
-  if (categoryId !== 'all') {
-    validateID(categoryId, `categoryId`);
-  }
   const response: any = await axios.get(
     serviceURL('histogramScores', `/categories/${categoryId}/byDate`, { sort }),
   );
@@ -334,8 +296,6 @@ export async function listHistogramScoresByCategoryByDate(
 export async function listCommentsById(
   commentIds: List<string>,
 ): Promise<List<ICommentModel>> {
-  commentIds.forEach((commentId, index) => validateID(commentId, `comment Id ${index}`));
-
   const { data } = await axios.post(
     serviceURL(
       'commentsById',
@@ -354,7 +314,6 @@ export async function listCommentSummaryScoresById(
   commentId: string,
   params?: Partial<IParams>,
 ): Promise<List<ICommentSummaryScoreModel>> {
-  validateID(commentId, `comment Id ${parseInt(commentId, 10)}`);
   const { data } = await axios.get(
     listURL(
       'comment_summary_scores',
@@ -375,13 +334,10 @@ export async function loadTopScoresForTag(
   commentIds: List<string>,
   tagId: string,
 ): Promise<Map<number, ITopScore>> {
-  commentIds.forEach((commentId, index) => validateID(parseInt(commentId, 10), `comment Id ${index}`));
-  validateID(tagId, `tagId`);
-
   const { data }: any = await axios.post(
     serviceURL(
       'topScores',
-      `/tag/${parseInt(tagId, 10)}`,
+      `/tag/${tagId}`,
     ),
     {
       data: commentIds.toArray(),
@@ -400,10 +356,6 @@ export async function loadTopScoresForSummaryScores(
     commentId: string,
   }>,
 ): Promise<Map<number, ITopScore>> {
-  summaryScores.forEach((summaryScore, index) => {
-    validateID(parseInt(summaryScore.commentId, 10), `comment Id ${index}`);
-  });
-
   const { data }: any = await axios.post(
     serviceURL(
       'topScores',
@@ -448,7 +400,6 @@ export async function editAndRescoreComment(
   authorLocation: string,
   params?: Partial<IParams>,
 ): Promise<void> {
-
   await axios.patch(
     serviceURL(
       'editComment',
@@ -465,7 +416,7 @@ export async function editAndRescoreComment(
 }
 
 export async function updateCategoryModerators(categoryId: ModelId, moderatorIds: Array<ModelId>): Promise<void> {
-  const url = serviceURL('assignments', `/categories/${parseInt(categoryId, 10)}`);
+  const url = serviceURL('assignments', `/categories/${categoryId}`);
   await axios.post(url, { data: moderatorIds });
 }
 
@@ -488,8 +439,6 @@ export async function getModeratedCommentIdsForArticle(
   articleId: string,
   sort: Array<string>,
 ): Promise<IModeratedComments> {
-  validateID(articleId, `articleId`);
-
   const { data }: any = await axios.get(
     serviceURL('moderatedCounts', `/articles/${articleId}`, { sort }),
   );
@@ -501,13 +450,8 @@ export async function getModeratedCommentIdsForCategory(
   categoryId: string | 'all',
   sort: Array<string>,
 ): Promise<IModeratedComments> {
-  const parsedCategoryId = categoryId !== 'all' ? parseInt(categoryId, 10) : categoryId;
-  if (categoryId !== 'all') {
-    validateID(categoryId, `categoryId`);
-  }
-
   const { data }: any = await axios.get(
-    serviceURL('moderatedCounts', `/categories/${parsedCategoryId}`, { sort }),
+    serviceURL('moderatedCounts', `/categories/${categoryId}`, { sort }),
   );
 
   return data.data;
@@ -648,8 +592,6 @@ export async function checkAuthorization(): Promise<void> {
 async function makeCommentAction(path: string, ids: Array<string>): Promise<void> {
   if (ids.length <= 0) { return; }
   const idUserArray =  ids.map((commentId) => {
-    validateID(parseInt(commentId, 10), `commentId`);
-
     return {
       commentId,
       userId,
@@ -666,92 +608,61 @@ async function makeCommentActionForId(path: string, commentId: string): Promise<
 }
 
 export async function deleteCommentTagRequest(commentId: string, commentScoreId: string): Promise<void> {
-  validateID(commentId, `commentId`);
-  validateID(commentScoreId, `commentScoreId`);
-
-  const url = serviceURL('commentActions', `/${parseInt(commentId, 10)}/scores/${parseInt(commentScoreId, 10)}`);
+  const url = serviceURL('commentActions', `/${commentId}/scores/${commentScoreId}`);
   await axios.delete(url);
 }
 
 export function highlightCommentsRequest(ids: Array<string>): Promise<void> {
-  ids.forEach((id) => validateID(id, `commentId`));
-
   return makeCommentAction('/highlight', ids);
 }
 
 export function resetCommentsRequest(ids: Array<string>): Promise<void> {
-  ids.forEach((id) => validateID(id, `commentId`));
-
   return makeCommentAction('/reset', ids);
 }
 
 export function approveCommentsRequest(ids: Array<string>): Promise<void> {
-  ids.forEach((id) => validateID(id, `commentId`));
-
   return makeCommentAction('/approve', ids);
 }
 
 export function approveFlagsAndCommentsRequest(ids: Array<string>): Promise<void> {
-  ids.forEach((id) => validateID(id, `commentId`));
-
   return makeCommentAction('/approve-flags', ids);
 }
 
 export function resolveFlagsRequest(ids: Array<string>): Promise<void> {
-  ids.forEach((id) => validateID(id, `commentId`));
-
   return makeCommentAction('/resolve-flags', ids);
 }
 
 export function deferCommentsRequest(ids: Array<string>): Promise<void> {
-  ids.forEach((id) => validateID(id, `commentId`));
-
   return makeCommentAction('/defer', ids);
 }
 
 export function rejectCommentsRequest(ids: Array<string>): Promise<void> {
-  ids.forEach((id) => validateID(id, `commentId`));
-
   return makeCommentAction('/reject', ids);
 }
 
 export function rejectFlagsAndCommentsRequest(ids: Array<string>): Promise<void> {
-  ids.forEach((id) => validateID(id, `commentId`));
-
   return makeCommentAction('/reject-flags', ids);
 }
 
 export function tagCommentsRequest(ids: Array<string>, tagId: string): Promise<void> {
-  ids.forEach((id) => validateID(id, `commentId`));
-
-  return makeCommentAction(`/tag/${parseInt(tagId, 10)}`, ids);
+  return makeCommentAction(`/tag/${tagId}`, ids);
 }
 
 export function tagCommentSummaryScoresRequest(ids: Array<string>, tagId: string): Promise<void> {
-  ids.forEach((id) => validateID(id, `commentId`));
-
-  return makeCommentAction(`/tagCommentSummaryScores/${parseInt(tagId, 10)}`, ids);
+  return makeCommentAction(`/tagCommentSummaryScores/${tagId}`, ids);
 }
 
 export async function confirmCommentSummaryScoreRequest(commentId: string, tagId: string): Promise<void> {
-  validateID(commentId, `commentId`);
-  validateID(tagId, `tagId`);
-  validateID(userId, `userId`);
-
   return makeCommentActionForId(
-    `/${parseInt(commentId, 10)}/tagCommentSummaryScores/${parseInt(tagId, 10)}/confirm`, commentId);
+    `/${commentId}/tagCommentSummaryScores/${tagId}/confirm`, commentId);
 }
 
 export async function rejectCommentSummaryScoreRequest(commentId: string, tagId: string): Promise<void> {
-  validateID(commentId, `commentId`);
-  validateID(tagId, `tagId`);
-  validateID(userId, `userId`);
-
-  return makeCommentActionForId(`/${parseInt(commentId, 10)}/tagCommentSummaryScores/${parseInt(tagId, 10)}/reject`, commentId);
+  return makeCommentActionForId(`/${commentId}/tagCommentSummaryScores/${tagId}/reject`, commentId);
 }
 
 export async function tagCommentsAnnotationRequest(commentId: string, tagId: string, start: number, end: number): Promise<void> {
-  const url = serviceURL('commentActions', `/${parseInt(commentId, 10)}/scores`);
+  const url = serviceURL('commentActions', `/${commentId}/scores`);
 
   await axios.post(url, {
     data: {
@@ -763,33 +674,23 @@ export async function tagCommentsAnnotationRequest(commentId: string, tagId: str
 }
 
 export async function confirmCommentScoreRequest(commentId: string, commentScoreId: string): Promise<void> {
-  validateID(commentId, `commentId`);
-  validateID(commentScoreId, `commentScoreId`);
-
-  const url = serviceURL('commentActions', `/${parseInt(commentId, 10)}/scores/${parseInt(commentScoreId, 10)}/confirm`);
+  const url = serviceURL('commentActions', `/${commentId}/scores/${commentScoreId}/confirm`);
   await axios.post(url);
 }
 
 export async function rejectCommentScoreRequest(commentId: string, commentScoreId: string): Promise<void> {
-  validateID(commentId, `commentId`);
-  validateID(commentScoreId, `commentScoreId`);
-
-  const url = serviceURL('commentActions', `/${parseInt(commentId, 10)}/scores/${parseInt(commentScoreId, 10)}/reject`);
+  const url = serviceURL('commentActions', `/${commentId}/scores/${commentScoreId}/reject`);
   await axios.post(url);
 }
 
 export async function resetCommentScoreRequest(commentId: string, commentScoreId: string): Promise<void> {
-  validateID(commentId, `commentId`);
-  validateID(commentScoreId, `commentScoreId`);
-
-  const url = serviceURL('commentActions', `/${parseInt(commentId, 10)}/scores/${parseInt(commentScoreId, 10)}/reset`);
+  const url = serviceURL('commentActions', `/${commentId}/scores/${commentScoreId}/reset`);
   await axios.post(url);
 }
 
 export async function listAuthorCounts(
   authorSourceIds: Array<string | number>,
 ): Promise<Map<string | number, IAuthorCountsModel>> {
-
   const response: any = await axios.post(
     serviceURL('authorCounts'),
     { data: authorSourceIds },
