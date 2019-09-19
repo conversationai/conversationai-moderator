@@ -18,6 +18,7 @@ import { storiesOf } from '@storybook/react';
 import faker from 'faker';
 import { List, Set } from 'immutable';
 
+import { ModelId } from '../../../models';
 import { fakeUserModel } from '../../../models/fake';
 import { AssignModerators } from './AssignModerators';
 
@@ -36,7 +37,7 @@ const users = List([
   }),
 ]);
 
-const moderatorIds = Set<number|string>([users.get(0).id]);
+const moderatorIds = Set<ModelId>([users.get(0).id]);
 
 storiesOf('AssignModerators', module)
     .add('Default', () => (
