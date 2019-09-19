@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,8 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
 import React from 'react';
+
+import {
+  Radio,
+} from '@material-ui/core';
+
 import { IUserModel } from '../../../models';
 import {
   ARTICLE_CATEGORY_TYPE,
@@ -24,7 +28,6 @@ import {
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
 import { Avatar } from '../Avatar';
-import { Checkbox } from '../Checkbox';
 
 const AVATAR_SIZE = 46;
 
@@ -50,10 +53,7 @@ const STYLES = stylesheet({
   },
 
   avatar: {
-    height: AVATAR_SIZE,
     marginRight: '28px',
-    overflow: 'hidden',
-    width: AVATAR_SIZE,
   },
 
   name: {
@@ -77,49 +77,31 @@ export interface ICheckboxRowProps {
   onChange?(): void;
 }
 
-export class CheckboxRow
-    extends React.Component<ICheckboxRowProps> {
-
-  render() {
-    const { label, user, isSelected, isDisabled } = this.props;
-
-    const id = label.replace(/\s/g, '');
-
-    return (
-      <div {...css(STYLES.base)}>
-        <div {...css(STYLES.row, isDisabled ? STYLES.rowDisabled : {})}>
-          <label
-            htmlFor={id}
-            onClick={this.handleClick}
-            {...css(STYLES.center)}
-          >
-            {user && (
-              <span {...css(STYLES.avatar)} aria-hidden="true">
-                <Avatar size={AVATAR_SIZE} target={user} />
-              </span>
-            )}
-            <span {...css(STYLES.name)}>{label}</span>
-            <Checkbox
-              onCheck={this.onCheckboxClick}
-              inputId={id}
-              isSelected={isSelected}
-            />
-          </label>
-        </div>
-      </div>
-    );
-  }
-
-  @autobind
-  handleClick(e: any) {
+export function CheckboxRow(props: ICheckboxRowProps) {
+  const {label, user, isSelected, isDisabled} = props;
+  const id = label.replace(/\s/g, '');
+  function handleClick(e: any) {
     e.preventDefault();
-    this.props.onChange();
+    props.onChange();
   }
 
-  @autobind
-  onCheckboxClick() {
-    if (this.props.onChange) {
-      this.props.onChange();
-    }
-  }
+  return (
+    <div {...css(STYLES.base)}>
+      <div {...css(STYLES.row, isDisabled ? STYLES.rowDisabled : {})}>
+        <label
+          htmlFor={id}
+          onClick={handleClick}
+          {...css(STYLES.center)}
+        >
+          {user && (
+            <span {...css(STYLES.avatar)} aria-hidden="true">
+              <Avatar size={AVATAR_SIZE} target={user}/>
+            </span>
+          )}
+          <span {...css(STYLES.name)}>{label}</span>
+          <Radio color="primary" checked={isSelected}/>
+        </label>
+      </div>
+    </div>
+  );
 }
