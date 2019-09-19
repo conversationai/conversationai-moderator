@@ -14,10 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as winston from 'winston';
+
 import {
-  logger,
   sequelize,
 } from '@conversationai/moderator-backend-core';
+
+import { logger } from '../logger';
 
 const TEST_ENVS = ['test', 'circle_ci'];
 
@@ -25,7 +28,14 @@ function isTestEnv() {
   return TEST_ENVS.indexOf(process.env.NODE_ENV || '') > -1;
 }
 
-logger.setTestMode(isTestEnv());
+logger.configure({
+  level: 'error',
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    }),
+  ],
+});
 
 function cleanDatabase(done: any) {
   if (!isTestEnv()) {

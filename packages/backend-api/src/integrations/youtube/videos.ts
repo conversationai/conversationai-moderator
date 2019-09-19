@@ -17,8 +17,9 @@ limitations under the License.
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
-import { logger } from '@conversationai/moderator-backend-core';
 import { Article, Category, ICategoryInstance, IUserInstance } from '@conversationai/moderator-backend-core';
+
+import { logger } from '../../logger';
 import { get_playlist_for_channel } from './channels';
 import { mapVideoItemToArticle, saveError } from './objectmap';
 
@@ -50,7 +51,7 @@ async function sync_page_of_videos(
       const nextPageToken = response!.data.nextPageToken;
 
       if (videos.length === 0) {
-        logger.info('Couldn\'t find any videos in playlist %s.', playlist);
+        logger.info(`Couldn't find any videos in playlist ${playlist}.`);
         resolve(undefined);
         return;
       }
@@ -68,7 +69,7 @@ export async function sync_playlists(
   owner: IUserInstance,
   auth: OAuth2Client,
 ) {
-  logger.info('Syncing videos for user %s.', owner.get('email'));
+  logger.info(`Syncing videos for user ${owner.get('email')}.`);
   const categories = await Category.findAll({
     where: {
       ownerId: owner.id,
@@ -81,14 +82,14 @@ export async function sync_playlists(
     const channelId = category.get('sourceId');
 
     const playlist = await get_playlist_for_channel(owner, auth, channelId);
-    logger.info('Syncing channel %s (%s/%s)', category.get('label'), channelId, playlist);
+    logger.info(`Syncing channel ${category.get('label')} (${channelId}/${playlist})`);
 
     let next_page;
     do {
       next_page = await sync_page_of_videos(owner, auth, category, playlist, next_page);
     } while (next_page);
 
-    logger.info('Done sync of %s.', category.get('label'));
+    logger.info(`Done sync of ${category.get('label')}.`);
   }
 }
 
@@ -145,7 +146,7 @@ export async function sync_known_videos(
   owner: IUserInstance,
   auth: OAuth2Client,
 ) {
-  logger.info('Syncing known videos for user %s.', owner.get('email'));
+  logger.info(`Syncing known videos for user ${owner.get('email')}.`);
   const articles = await Article.findAll({
     where: {
       ownerId: owner.id,

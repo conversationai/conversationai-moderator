@@ -40,7 +40,9 @@ import {
   ITagInstance,
   IUserInstance,
 } from '@conversationai/moderator-backend-core';
-import { logger, registerInterest } from '@conversationai/moderator-backend-core';
+import { registerInterest } from '@conversationai/moderator-backend-core';
+
+import { logger } from '../../logger';
 
 const TAG_FIELDS = ['id', 'color', 'description', 'key', 'label', 'isInBatchView', 'inSummaryScore', 'isTaggable'];
 const RANGE_FIELDS = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'tagId'];

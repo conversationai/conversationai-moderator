@@ -17,10 +17,10 @@ limitations under the License.
 import * as Bluebird from 'bluebird';
 import * as yargs from 'yargs';
 
-import { logger } from '@conversationai/moderator-backend-core';
 import { Comment, CommentSize } from '@conversationai/moderator-backend-core';
 
 import { cacheTextSize } from '../../domain/comments';
+import { logger } from '../../logger';
 
 export const command = 'comments:recalculate-text-sizes';
 export const describe = 'Using node-canvas, recalculate comment heights at a given width.';

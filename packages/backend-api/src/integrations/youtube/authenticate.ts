@@ -17,9 +17,10 @@ limitations under the License.
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
-import { config } from '@conversationai/moderator-config';
-import { logger } from '@conversationai/moderator-backend-core';
 import { IUserInstance, User, USER_GROUP_YOUTUBE } from '@conversationai/moderator-backend-core';
+import { config } from '@conversationai/moderator-config';
+
+import { logger } from '../../logger';
 
 export const SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl'];
 

@@ -14,8 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { logger } from '@conversationai/moderator-backend-core';
-
+import { logger } from '../../logger';
 import { getQueueSingleton, processKnownTasks } from '../util';
 
 export function startProcessing() {
@@ -24,19 +23,19 @@ export function startProcessing() {
   processKnownTasks();
 
   queue.on('job enqueue', (id: number, type: string) => {
-    logger.info('%s Job queued: %s', type, id);
+    logger.info(`${type} Job queued: ${id}`);
   });
 
   queue.on('job complete', (id: number) => {
-    logger.info('Job complete: %s', id);
+    logger.info(`Job complete: ${id}`);
   });
 
   queue.on('job failed', (err: any) => {
-    logger.error('Job failed: %s', err);
+    logger.error(`Job failed: ${err}`);
   });
 
   queue.on('error', (err: any) => {
-    logger.error('Worker queue error: %s', err);
+    logger.error(`Worker queue error: ${err}`);
   });
 
   // Check for stuck jobs every 10 seconds
@@ -48,7 +47,7 @@ export function startProcessing() {
   process.once('SIGTERM', () => {
     queue.shutdown(10000, '', (err: any) => {
       if (err) {
-        logger.error('Worker queue shutdown error: %s', err);
+        logger.error(`Worker queue shutdown error: ${err}`);
       } else {
         logger.info('Worker queue shut down successfully');
       }

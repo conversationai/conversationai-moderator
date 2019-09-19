@@ -16,11 +16,11 @@ limitations under the License.
 
 import {
     Comment,
-    logger,
 } from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 import * as Joi from 'joi';
 
+import { logger } from '../../logger';
 import { enqueueSendCommentForScoringTask } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import { validateRequest } from '../util/validation';

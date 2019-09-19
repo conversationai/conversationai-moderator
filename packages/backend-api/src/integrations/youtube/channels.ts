@@ -17,9 +17,9 @@ limitations under the License.
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
-import { logger } from '@conversationai/moderator-backend-core';
 import { Article, Category, ICategoryInstance, IUserInstance } from '@conversationai/moderator-backend-core';
 
+import { logger } from '../../logger';
 import { mapChannelToCategory, saveError, setChannelActive } from './objectmap';
 
 const service = google.youtube('v3');
@@ -61,7 +61,7 @@ export async function sync_channels(
   owner: IUserInstance,
   auth: OAuth2Client,
 ) {
-  logger.info('Syncing channels for user %s.', owner.get('email'));
+  logger.info(`Syncing channels for user ${owner.get('email')}`);
   let next_page;
   do {
     next_page = await sync_page_of_channels(owner, auth, next_page);
@@ -88,7 +88,7 @@ export async function activate_channel(
       }
 
       if (response!.data.items.length === 0) {
-        logger.warn('Couldn\'t find channel %s.', channelId);
+        logger.warn(`Couldn't find channel ${channelId}`);
         reject('Couldn\'t find corresponding youtube channel.');
         return;
       }
@@ -131,7 +131,7 @@ export async function get_playlist_for_channel(owner: IUserInstance, auth: OAuth
         return;
       }
       if (response!.data.items.length === 0) {
-        logger.warn('Couldn\'t find channel %s.', channelId);
+        logger.warn(`Couldn't find channel ${channelId}`);
         reject('Couldn\'t find corresponding youtube channel.');
         return;
       }

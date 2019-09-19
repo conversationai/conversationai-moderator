@@ -19,7 +19,6 @@ import * as requestRaw from 'request';
 import * as striptags  from 'striptags';
 import { rtrim } from 'underscore.string';
 
-import { logger } from '@conversationai/moderator-backend-core';
 import {
   Article,
   ICommentInstance,
@@ -27,6 +26,7 @@ import {
 } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
+import { logger } from '../logger';
 import { IScoreData } from './shim';
 
 const request = Bluebird.promisify(requestRaw) as any;
@@ -152,8 +152,8 @@ export function createShim(
       logger.info(`Assistant Endpoint Response :: ${response.statusCode}`);
 
       if (response.statusCode !== 200) {
-        logger.error('Error posting comment id %d for scoring.', comment.id, +
-          ' Server responded with status ', response.statusCode, response.body);
+        logger.error(`Error posting comment id ${comment.id} for scoring. ` +
+          `Server responded with status ${response.statusCode}: ${response.body}`);
         throw new Error(`Comment ${comment.id}: server failed to score.`);
       }
 

@@ -18,10 +18,10 @@ import {
   Article,
   Comment,
   ICommentInstance,
-  logger,
 } from '@conversationai/moderator-backend-core';
 import * as Bluebird from 'bluebird';
 
+import { logger } from '../../logger';
 import { postProcessComment } from '../../pipeline';
 import { enqueueSendCommentForScoringTask } from '../../processing';
 

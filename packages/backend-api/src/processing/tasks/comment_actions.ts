@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import {
-  logger,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_REJECT,
 } from '@conversationai/moderator-backend-core';
 
+import { logger } from '../../logger';
 import { approve, defer, highlight, reject, reset } from '../../pipeline/state';
 import { enqueue, registerTask } from '../util';
 import { getComment, getUser, resolveComment, resolveCommentAndFlags, resolveFlagsAndDenormalize } from './db_operations';

@@ -18,11 +18,38 @@ import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as cors from 'cors';
 import * as express from 'express';
+import * as expressWinston from 'express-winston';
 import * as expressWs from 'express-ws';
 import * as helmet from 'helmet';
 import { Server } from 'http';
+import * as winston from 'winston';
 
-import { logger } from '@conversationai/moderator-backend-core';
+// Logger to capture all requests and output them to the console.
+export const requestLogger = expressWinston.logger({
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    }),
+  ],
+  meta: false,
+  ignoredRoutes: [
+    '/_ah/health',
+  ],
+});
+
+// Logger to capture any top-level errors and output json diagnostic info.
+export const errorLogger = expressWinston.errorLogger({
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.simple(),
+    }),
+  ],
+  format: winston.format.combine(
+    winston.format.json(),
+  ),
+  requestWhitelist: ['body'],
+});
+
 
 export function getExpressAppWithPreprocessors(testMode?: boolean) {
   const app = express();
@@ -42,7 +69,7 @@ export function getExpressAppWithPreprocessors(testMode?: boolean) {
     app.options('*', cors());
 
     app.use(helmet());
-    app.use(logger.requestLogger);
+    app.use(requestLogger);
   }
 
   return app;
@@ -53,7 +80,7 @@ export function applyCommonPostprocessors(app: express.Application, testMode?: b
     // Add the error logger after all middleware and routes so that
     // it can log errors from the whole application. Any custom error
     // handlers should go after this.
-    app.use(logger.errorLogger);
+    app.use(errorLogger);
 
     // Basic 404 handler
     app.use((_req: express.Request, res: express.Response) => {

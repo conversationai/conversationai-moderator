@@ -20,7 +20,6 @@ import * as moment from 'moment';
 import { FindOrInitializeOptions } from 'sequelize';
 import { humanize, titleize, trim } from 'underscore.string';
 
-import { logger } from '@conversationai/moderator-backend-core';
 import {
   Article,
   Comment,
@@ -53,6 +52,7 @@ import {
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
 } from '../domain';
+import { logger } from '../logger';
 import { processRulesForComment } from './rules';
 import { IScoreData, IScores, IShim, ISummaryScores } from './shim';
 import { getIsDoneScoring } from './state';
@@ -105,7 +105,7 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
     await shim.sendToScorer(comment, csr.id);
   }
   catch (err) {
-    logger.error('Error posting comment id %d for scoring: ', comment.id, err);
+    logger.error(`Error posting comment id ${comment.id} for scoring: ${err}`);
   }
 }
 
@@ -181,7 +181,7 @@ export async function getCommentsToResendForScoring(
  * Resend a comment to be scored again.
  */
 export async function resendForScoring(comment: ICommentInstance): Promise<void> {
-  logger.info('Re-sending comment id %s for scoring', comment.id);
+  logger.info(`Re-sending comment id ${comment.id} for scoring`);
   await sendForScoring(comment);
 }
 
