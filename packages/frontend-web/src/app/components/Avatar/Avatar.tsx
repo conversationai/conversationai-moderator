@@ -24,6 +24,8 @@ import {
 } from '../../../models';
 import { randomDarkColor } from '../../util/color';
 
+const AVATAR_TEXT_SCALE_FACTOR = 2;
+
 const MyTooltip = withStyles((theme) => ({
   tooltip: {
     fontSize: 14,
@@ -57,9 +59,9 @@ export function Avatar(props: {
           style={{
             width: `${size}px`,
             height: `${size}px`,
-            backgroundColor: `#${color}`,
+            backgroundColor: color,
             color: 'white',
-            fontSize: `${size / 2}px`,
+            fontSize: `${size / AVATAR_TEXT_SCALE_FACTOR}px`,
           }}
         >
           {ins}

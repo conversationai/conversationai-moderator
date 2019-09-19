@@ -24,11 +24,7 @@ function hashCode(str: string) {
 }
 
 function intToRGB(i: number) {
-  const c = (i & 0x00FFFFFF)
-    .toString(16)
-    .toUpperCase();
-
-  return '00000'.substring(0, 6 - c.length) + c;
+  return `rgb(${(i >> 16) & 0xFF}, ${(i >> 8) & 0xFF}, ${i & 0xFF})`;
 }
 
 export function randomDarkColor(seed: string) {
