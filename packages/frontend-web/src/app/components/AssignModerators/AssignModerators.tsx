@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
-import React from 'react';
-import { IUserModel } from '../../../models';
-import { partial } from '../../util';
+import React, { useState } from 'react';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+
+import { IUserModel, ModelId } from '../../../models';
 import { css, stylesheet } from '../../utilx';
 
 import {
@@ -36,8 +36,6 @@ const STYLES = stylesheet({
     paddingLeft: 0,
     paddingRight: `${GUTTER_DEFAULT_SPACING / 2}px`,
     paddingBottom: 0,
-    overflowY: 'scroll',
-    WebkitOverflowScrolling: 'touch',
   },
 
   listItem: {
@@ -49,45 +47,66 @@ const STYLES = stylesheet({
   },
 });
 
-export type ModelId = string | number;
+function ModeratorListItem(props: {
+  user: IUserModel,
+  moderatorIds: Set<ModelId>;
+  categoryModeratorIds?: Set<ModelId>;
+  onModeratorStatusChange?(userId: string, checked: boolean): void;
+}) {
+  const {
+    user,
+    moderatorIds,
+    categoryModeratorIds,
+    onModeratorStatusChange,
+  } = props;
 
-export interface IModeratorListProps {
+  const isDisabled = categoryModeratorIds && categoryModeratorIds.includes(user.id);
+  const isSelected = moderatorIds && moderatorIds.includes(user.id) || isDisabled;
+  function onChange() {
+    onModeratorStatusChange(user.id, isSelected);
+  }
+
+  return (
+    <li {...css(STYLES.listItem)} key={user.id}>
+      <CheckboxRow
+        label={user.name}
+        user={user}
+        isSelected={isSelected}
+        isDisabled={isDisabled}
+        onChange={onChange}
+      />
+    </li>
+  );
+}
+
+function ModeratorList(props: {
   users: List<IUserModel>;
   moderatorIds: Set<ModelId>;
   categoryModeratorIds?: Set<ModelId>;
   onModeratorStatusChange?(userId: string, checked: boolean): void;
-}
+}) {
+  const {
+    users,
+    moderatorIds,
+    categoryModeratorIds,
+    onModeratorStatusChange,
+  } = props;
 
-class ModeratorList extends React.Component<IModeratorListProps> {
-  render() {
-    const {
-      users,
-      moderatorIds,
-      categoryModeratorIds,
-      onModeratorStatusChange,
-    } = this.props;
-
-    return (
+  return (
+    <PerfectScrollbar>
       <ul {...css(STYLES.list)}>
-        {users.map((user) => {
-          const isDisabled = categoryModeratorIds && categoryModeratorIds.includes(user.id);
-          const isSelected = moderatorIds && moderatorIds.includes(user.id) || isDisabled;
-
-          return (
-            <li {...css(STYLES.listItem)} key={user.id}>
-              <CheckboxRow
-                label={user.name}
-                user={user}
-                isSelected={isSelected}
-                isDisabled={isDisabled}
-                onChange={partial(onModeratorStatusChange, user.id, isSelected)}
-              />
-            </li>
-          );
-        })}
+        {users.map((user) => (
+          <ModeratorListItem
+            key={user.id}
+            user={user}
+            moderatorIds={moderatorIds}
+            categoryModeratorIds={categoryModeratorIds}
+            onModeratorStatusChange={onModeratorStatusChange}
+          />
+        ))}
       </ul>
-    );
-  }
+    </PerfectScrollbar>
+  );
 }
 
 export interface IAssignModeratorsProps {
@@ -102,64 +121,45 @@ export interface IAssignModeratorsProps {
   onRemoveModerator?(userId: string): any;
 }
 
-export interface IAssignModeratorsState {
-  users: List<IUserModel>;
-}
+export function AssignModerators(props: IAssignModeratorsProps) {
+  const [users, ] = useState(props.users);
 
-export class AssignModerators
-    extends React.Component<IAssignModeratorsProps, IAssignModeratorsState> {
+  const {
+    label,
+    moderatorIds,
+    superModeratorIds,
+    isReady,
+    onClickClose,
+    onClickDone,
+  } = props;
 
-  state: IAssignModeratorsState = {
-    users: List<IUserModel>(),
-  };
+  if (!isReady) {
+    return null;
+  }
 
-  componentDidMount() {
-    if (this.props.users) {
-      this.setState({
-        users: this.props.users,
-      });
+  function onModeratorStatusChange(userid: string, checked: boolean) {
+    if (checked && props.onAddModerator) {
+      props.onRemoveModerator(userid);
+    }
+    else if (!checked && props.onRemoveModerator) {
+      props.onAddModerator(userid);
     }
   }
 
-  render() {
-    const {
-      label,
-      moderatorIds,
-      superModeratorIds,
-      isReady,
-      onClickClose,
-      onClickDone,
-    } = this.props;
-
-    if (!isReady) {
-      return null;
-    }
-
-    return (
-      <OverflowContainer
-        header={<ContainerHeader onClickClose={onClickClose}>{label}</ContainerHeader>}
-        body={(
-          <div {...css({ marginTop: `${GUTTER_DEFAULT_SPACING}px`, marginBottom: `${GUTTER_DEFAULT_SPACING}px`, })}>
-            <ModeratorList
-              users={this.state.users}
-              moderatorIds={moderatorIds}
-              categoryModeratorIds={superModeratorIds}
-              onModeratorStatusChange={this.onModeratorStatusChange}
-            />
-          </div>
-        )}
-        footer={<ContainerFooter onClick={onClickDone} />}
-      />
-    );
-  }
-
-  @autobind
-  onModeratorStatusChange(userid: string, checked: boolean) {
-    if (checked && this.props.onAddModerator) {
-      this.props.onRemoveModerator(userid);
-    }
-    else if (!checked && this.props.onRemoveModerator) {
-      this.props.onAddModerator(userid);
-    }
-  }
+  return (
+    <OverflowContainer
+      header={<ContainerHeader onClickClose={onClickClose}>{label}</ContainerHeader>}
+      body={(
+        <div {...css({ marginTop: `${GUTTER_DEFAULT_SPACING}px`, marginBottom: `${GUTTER_DEFAULT_SPACING}px`, })}>
+          <ModeratorList
+            users={users}
+            moderatorIds={moderatorIds}
+            categoryModeratorIds={superModeratorIds}
+            onModeratorStatusChange={onModeratorStatusChange}
+          />
+        </div>
+      )}
+      footer={<ContainerFooter onClick={onClickDone} />}
+    />
+  );
 }
