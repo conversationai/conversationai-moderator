@@ -24,14 +24,12 @@ import {
   ICommentInstance,
   IResolution,
 } from '@conversationai/moderator-backend-core';
-import {
-  logger,
-} from '@conversationai/moderator-backend-core';
 
 import {
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
 } from '../../domain';
+import { logger } from '../../logger';
 
 export async function getUser(userId?: number | null | undefined) {
   if (!userId) {

@@ -16,10 +16,10 @@ limitations under the License.
 
 import {
   CommentScoreRequest,
-  logger,
 } from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 
+import { logger } from '../../logger';
 import { IScoreData } from '../../pipeline/shim';
 import {
   enqueueProcessMachineScoreTask,

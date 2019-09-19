@@ -16,7 +16,6 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-import { logger } from '@conversationai/moderator-backend-core';
 import {
   Article,
   Comment,
@@ -24,6 +23,7 @@ import {
   USER_GROUP_MODERATOR,
 } from '@conversationai/moderator-backend-core';
 
+import { logger } from '../../logger';
 import { checkScoringDone, sendToScorer } from '../../pipeline';
 
 export const command = 'comments:send-to-scorer';

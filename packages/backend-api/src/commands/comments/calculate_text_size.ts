@@ -16,10 +16,10 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-import { logger } from '@conversationai/moderator-backend-core';
 import { Comment } from '@conversationai/moderator-backend-core';
 
 import { calculateTextSize } from '../../domain';
+import { logger } from '../../logger';
 
 export const command = 'comments:calculate-text-size';
 export const describe = 'Using node-canvas, calculate a single comment height at a given width.';

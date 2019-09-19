@@ -18,13 +18,13 @@ import {
   Article,
   Comment,
   CommentFlag,
-  logger,
 } from '@conversationai/moderator-backend-core';
 
 import {
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
 } from '../../domain';
+import { logger } from '../../logger';
 import { enqueue, registerTask } from '../util';
 
 export interface IProcessTagData {

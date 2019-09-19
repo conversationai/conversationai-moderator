@@ -17,7 +17,6 @@ limitations under the License.
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
-import { logger } from '@conversationai/moderator-backend-core';
 import {
   ICommentInstance,
   IDecisionInstance,
@@ -26,11 +25,11 @@ import {
   MODERATION_ACTION_DEFER,
 } from '@conversationai/moderator-backend-core';
 
+import { logger } from '../../logger';
 import { foreachPendingDecision, markDecisionExecuted } from '../decisions';
 import { for_each_active_channel } from './channels';
 import { mapCommentThreadToComments } from './objectmap';
 import { get_article_id_from_youtube_id } from './videos';
-import { } from '@conversationai/moderator-backend-core/src';
 
 const service = google.youtube('v3');
 
@@ -63,7 +62,7 @@ async function sync_page_of_comments(
       const nextPageToken = response!.data.nextPageToken;
 
       if (comments.length === 0) {
-        logger.info('Couldn\'t find any threads for channel %s.', channelId);
+        logger.info(`Couldn't find any threads for channel ${channelId}`);
         resolve(undefined);
         return;
       }
@@ -95,7 +94,7 @@ export async function sync_comment_threads_for_channel(
   all: boolean,
   count?: number,
 ) {
-  logger.info('Syncing comments for channel %s', channelId);
+  logger.info(`Syncing comments for channel ${channelId}`);
 
   let left = count || 10000;
   let next_page;
@@ -104,7 +103,7 @@ export async function sync_comment_threads_for_channel(
     left -= 10;
   } while (next_page && left > 0);
 
-  logger.info('Done sync of comments for channel %s.', channelId);
+  logger.info(`Done sync of comments for channel ${channelId}`);
 }
 
 export async function sync_comment_threads(
@@ -127,13 +126,13 @@ export async function implement_moderation_decision(
   const status = decision.get('status');
 
   if (status === MODERATION_ACTION_DEFER) {
-    logger.info('Not syncing comment %s:%s - in deferred state', comment.id, sourceId);
+    logger.info(`Not syncing comment ${comment.id}:${sourceId} - in deferred state`);
     markDecisionExecuted(decision);
     return;
   }
 
   const moderationStatus = (status === MODERATION_ACTION_ACCEPT) ? 'published' : 'rejected';
-  logger.info('Syncing comment %s:%s to %s (%s) ', comment.id, sourceId, moderationStatus, decision.id);
+  logger.info(  `Syncing comment ${comment.id}:${sourceId} to ${moderationStatus} (${decision.id})`);
   service.comments.setModerationStatus({
       auth: auth,
       id: sourceId,

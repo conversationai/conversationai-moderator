@@ -16,9 +16,10 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-import { logger, User } from '@conversationai/moderator-backend-core';
+import { User } from '@conversationai/moderator-backend-core';
 
 import { createToken } from '../../auth/tokens';
+import { logger } from '../../logger';
 
 export const command = 'users:get-token';
 
@@ -47,7 +48,7 @@ export function builder(args: yargs.Argv) {
 export async function handler(argv: any) {
   if (!argv.email) {
     const token = await createToken(argv.id);
-    logger.info('JWT token for id: %d:\n\n\t%s', argv.id, token);
+    logger.info(`JWT token for id: ${argv.id}:\n\n\t${token}`);
     process.exit(0);
   }
 
@@ -61,7 +62,7 @@ export async function handler(argv: any) {
       process.exit(1);
     }
     const token = await createToken(user.id, user.get('email'));
-    logger.info('JWT token for "%s" (id: %d):\n\n\t%s', user.get('name'), user.id, user.get('email'), token);
+    logger.info(`JWT token for "${user.get('name')}" (id: ${user.id}):\n\t${token}`);
     process.exit(0);
   } catch (err) {
     logger.error('Error creating token for user: ', err.name, err.message);

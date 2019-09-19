@@ -13,12 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { logger } from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 
+import { logger } from '../../logger';
 import {
-  enqueueCommentAction,
   CommentActions,
+  enqueueCommentAction,
 } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import { commentActionSchema } from '../services/commentActions';

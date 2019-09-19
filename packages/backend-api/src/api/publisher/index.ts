@@ -17,17 +17,17 @@ limitations under the License.
 import {
   Article,
   Decision,
-  logger,
   sequelize,
 } from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 import * as Joi from 'joi';
 
+import { logger } from '../../logger';
 import {
   enqueueProcessTagAdditionTask,
   enqueueProcessTagRevocationTask,
-  IProcessTagData,
   IProcessTagAdditionData,
+  IProcessTagData,
 } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import * as JSONAPI from '../jsonapi';

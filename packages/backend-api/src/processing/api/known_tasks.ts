@@ -14,9 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { logger } from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 import * as Joi from 'joi';
+
+import { logger } from '../../logger';
 import { knownTasks } from '../util';
 
 const schema = Joi.object({

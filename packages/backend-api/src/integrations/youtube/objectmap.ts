@@ -16,13 +16,13 @@ limitations under the License.
 
 import { pick } from 'lodash';
 
-import { logger } from '@conversationai/moderator-backend-core';
 import { Article, Category, Comment, updateHappened } from '@conversationai/moderator-backend-core';
 import {
   IAuthorAttributes,
   IUserInstance,
 } from '@conversationai/moderator-backend-core';
 
+import { logger } from '../../logger';
 import { postProcessComment, sendForScoring } from '../../pipeline';
 
 let testOnly = false;
@@ -79,12 +79,12 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
     });
 
     if (created) {
-      logger.info('Category created for channel "%s" (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
+      logger.info(`Category created for channel "${category.get('label')}" (local id: ${category.id} -> remote id: ${channel.id})`);
     }
     else {
       category.set(categoryDefaults);
       await category.save();
-      logger.info('Category updated for channel "%s" (local id: %s -> remote id: %s)', category.get('label'), category.id, channel.id);
+      logger.info(`Category updated for channel "${category.get('label')}" (local id: ${category.id} -> remote id: ${channel.id})`);
     }
 
     // Create an article to store comments for the channel itself.
@@ -112,16 +112,16 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
     });
 
     if (acreated) {
-      logger.info('Article created for channel "%s" (local id: %s -> remote id: %s)', article.get('title'), article.id, channel.id);
+      logger.info(`Article created for channel "${article.get('title')}" (local id: ${article.id} -> remote id: ${channel.id})`);
     }
     else {
       article.set(defaults);
       await article.save();
-      logger.info('Article updated for channel "%s" (local id: %s -> remote id: %s)', article.get('title'), article.id, channel.id);
+      logger.info(`Article updated for channel "${article.get('title')}" (local id: ${article.id} -> remote id: ${channel.id})`);
     }
   }
   catch (error) {
-    logger.error('Failed update of article for channel "%s": "%s"', channel.snippet!.title, error);
+    logger.error(`Failed update of article for channel "${channel.snippet!.title}": "${error}"`);
   }
 }
 
@@ -175,7 +175,7 @@ export async function mapVideoItemToArticle(
     return 0;
   }
 
-  logger.info('Got video "%s" (%s)', snippet.title, videoId);
+  logger.info(`Got video "${snippet.title}" (${videoId})`);
 
   const defaults = {
     title: snippet.title.substring(0, 255),
@@ -202,17 +202,17 @@ export async function mapVideoItemToArticle(
     });
 
     if (created) {
-      logger.info('Created article %s for video %s', article.id, article.get('sourceId'));
+      logger.info(`Created article ${article.id} for video ${article.get('sourceId')}`);
     }
     else {
       article.set(defaults);
       await article.save();
-      logger.info('Updated article %s for video %s', article.id, article.get('sourceId'));
+      logger.info(`Updated article ${article.id} for video ${article.get('sourceId')}`);
     }
     return article.id;
   }
   catch (error) {
-    logger.error('Failed update of video %s: %s', videoId, error);
+    logger.error(`Failed update of video ${videoId}: ${error}`);
     return null;
   }
 }
@@ -258,26 +258,26 @@ async function mapCommentToComment(
     });
 
     if (created) {
-      logger.info('Created comment %s (%s)', comment.id, comment.get('sourceId'));
+      logger.info(`Created comment ${comment.id} (${comment.get('sourceId')})`);
     }
     else if (comment.get('sourceCreatedAt').getTime() === sourceCreatedAt.getTime()) {
-      logger.info('Comment %s (%s) unchanged', comment.id, comment.get('sourceId'));
+      logger.info(`Comment ${comment.id} (${comment.get('sourceId')}) unchanged`);
       return;
     }
     comment.set(defaults);
     await comment.save();
-    logger.info('Updated comment %s (%s)', comment.id, comment.get('sourceId'));
+    logger.info(`Updated comment ${comment.id} (${comment.get('sourceId')})`);
 
     try {
       await postProcessComment(comment);
       await sendForScoring(comment);
     }
     catch (error) {
-      logger.error('Failed sendForScoring of comment %s: %s', comment.id, error);
+      logger.error(`Failed sendForScoring of comment ${comment.id}: ${error}`);
     }
   }
   catch (error) {
-    logger.error('Failed update of comment %s: %s', ytcomment.id, error);
+    logger.error(`Failed update of comment ${ytcomment.id}: ${error}`);
   }
 }
 

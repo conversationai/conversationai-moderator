@@ -16,9 +16,9 @@ limitations under the License.
 
 import {
   CommentSummaryScore,
-  logger,
 } from '@conversationai/moderator-backend-core';
 
+import { logger } from '../../logger';
 import { addScore } from '../../pipeline/state';
 import { enqueue, registerTask} from '../util';
 import {
