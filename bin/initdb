@@ -20,7 +20,7 @@ CREATE USER '${DATABASE_USER}' IDENTIFIED BY '${DATABASE_PASSWORD}';
 GRANT ALL on ${DATABASE_NAME}.* to ${DATABASE_USER};
 EOF
 
-  $mysqlx ${DATABASE_NAME} < ${basename}/../packages/backend-core/seed/initial-database.sql
+  $mysqlx ${DATABASE_NAME} < ${basename}/../seed/initial-database.sql
 fi
 
 echo "Running migrations."

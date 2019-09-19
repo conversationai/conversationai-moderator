@@ -47,5 +47,5 @@ export SQL_CONNECTION=`gcloud sql instances describe $SQL_INSTANCE_NAME --format
 mysql --socket=/cloudsql/$SQL_CONNECTION --user=root --password=$DATABASE_PASSWORD << EOF
 GRANT ALL on $DATABASE_NAME.* to $DATABASE_USER
 EOF
-mysql --socket=/cloudsql/$SQL_CONNECTION --user=$DATABASE_USER --password=$DATABASE_PASSWORD $DATABASE_NAME < packages/backend-core/seed/initial-database.sql
+mysql --socket=/cloudsql/$SQL_CONNECTION --user=$DATABASE_USER --password=$DATABASE_PASSWORD $DATABASE_NAME < seed/initial-database.sql
 

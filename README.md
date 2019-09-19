@@ -77,8 +77,8 @@ CREATE USER '$DATABASE_USER' IDENTIFIED BY '$DATABASE_PASSWORD';
 GRANT ALL on $DATABASE_NAME.* to $DATABASE_USER;
 EOF
 
-cd packages/backend-core
 mysql -u root -p $DATABASE_NAME < seed/initial-database.sql
+cd packages/backend-core
 npx sequelize db:migrate
 cd -
 
@@ -129,12 +129,14 @@ where `command` is one of
 
 * `users:create`                     Create new OS Moderator users
 * `users:get-token`                  Get a JWT token for a user specified by id or email
-* `denormalize`                      Re-run denormalize counts
-* `exec`                             Run a subcommand with app.yaml environment
-* `comments:recalculate-text-sizes`  Using node-canvas, recalculate comment heights at a given width.
-* `comments:calculate-text-size`     Using node-canvas, calculate a single comment height at a given width.
-* `comments:recalculate-top-scores`  Recalculate comment top scores.
 * `comments:rescore`                 Rescore comment.
+* `comments:send-to-scorer`          Send comments to Endpoint of user object to get scored.
+* `comments:calculate-text-size`     Using node-canvas, calculate a single comment height at a given width.
+* `comments:recalculate-text-sizes`  Using node-canvas, recalculate comment heights at a given width.
+* `comments:recalculate-top-scores`  Recalculate comment top scores.
+* `comments:flag`                    Flag comments.
+* `comments:delete`                  Delete all comments from the database.
+* `denormalize`                      Re-run denormalize counts
 
 
 #### Managing Users
@@ -149,48 +151,20 @@ Create a human user:
 ./bin/osmod users:create --group general --name "Name" --email "$EMAIL_OF_USER"
 ```
 
-Create an admin user:
+Replace `general` with `admin` if you want to create an administrator.
 
-```bash
-./bin/osmod users:create --group admin --name "Name" --email "$EMAIL_OF_USER"
-```
 
-Create a service user:
+To create a service user - i.e., one that can connect via the API but not via the UI:
 
 ```bash
 ./bin/osmod users:create --group service --name "Robot"
 ```
 
-Add a service user that can talk to the Perspective API directly:
-
-```bash
-./bin/osmod users:create --group moderator --name "PerspectiveAPI" --moderator-type "perspective-api"
-```
-
-Add a (legacy)sr   service user for the Perspective API proxy:
-
-```bash
-./bin/osmod users:create --group moderator --name "PerspectiveProxy" --moderator-type "perspective-proxy" --endpoint=<proxy URL>
-```
-
-where `<proxy URL>` is the URL of [The Perspective API proxy] you plan on using.
-
-
-Get a JWT token for an existing user:
-
-* By user id:
+Service users will require a JWT token.  You can get this via the UI, or via running the following command:
 
 ```bash
 ./bin/osmod users:get-token --id 4
 ```
-
-* By email:
-
-```bash
-./bin/osmod users:get-token --email "email@example.com"
-```
-
-
 
 ### Management commands
 
@@ -198,14 +172,6 @@ To run a local server on `:8080` and front-end on `:8000`
 
 ```bash
 ./bin/watch
-```
-
-### Publish
-
-Uses Lerna to publish to the different npm packages
-
-```bash
-./bin/publish
 ```
 
 ### Lint
@@ -222,11 +188,14 @@ optionally you can run lint-fix to attempt auto-fixing most lint errors
 
 ### Storybook
 
-Diffs storyshots of the current code against the last saved.
+To preview individual widgets and components used by the the OSMod UI:
 
 ```bash
 ./bin/storybook
 ```
+
+The frontend unit tests also use storybook to generate a HTML snapshot of the resulting widgets.  
+It then compares this snapshot to a stored version, allowing you to review and approve any changes. 
 
 To update stories that need new snapshots, go to `packages/frontend-web` and run
 
@@ -336,4 +305,3 @@ Then use `http://localhost:8081/api/score-comment` as the proxy URL when creatin
 your service user.
 
 TODO: Move GOOGLE_SCORE_AUTH and other configuration into the proxy service user's config and document here
-
