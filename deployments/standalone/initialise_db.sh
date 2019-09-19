@@ -18,7 +18,7 @@ CREATE USER 'os_moderator' IDENTIFIED BY '$DATABASE_PASSWORD';
 GRANT ALL on os_moderator.* to os_moderator;
 EOF
 
-mysql os_moderator < packages/backend-core/seed/initial-database.sql
+mysql os_moderator < seed/initial-database.sql
 
 mysql -u root << EOF
 UPDATE mysql.user SET Password=PASSWORD('$DATABASE_PASSWORD') WHERE User='root';

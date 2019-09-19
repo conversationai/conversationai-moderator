@@ -11,7 +11,7 @@ To connect to your SQL instance. You'll need to create the username from the
 
 ## The SQL Data Model
 
-[The SQL table construction file](https://github.com/conversationai/conversationai-moderator/blob/master/packages/backend-core/seed/initial-database.sql)
+[The SQL table construction file](https://github.com/conversationai/conversationai-moderator/blob/master/seed/initial-database.sql)
 
 Default database name: `os_moderator`
 
