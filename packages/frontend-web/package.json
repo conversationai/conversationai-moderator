@@ -32,8 +32,8 @@
     "preset": "ts-jest"
   },
   "dependencies": {
-    "@types/express": "4.16.0",
-    "express": "4.16.4",
+    "@types/express": "4.17.1",
+    "express": "4.17.1",
     "immutable": "3.8.1",
     "typed-immutable-record": "0.0.6"
   },

@@ -120,7 +120,7 @@ export async function createToken(userId: number, email?: string): Promise<strin
 export async function verifyToken(token: string): Promise<ITokenPayload | null> {
   const c = await getTokenConfiguration();
   try {
-    const decoded = jwt.verify(token, c.secret);
+    const decoded = jwt.verify(token, c.secret) as ITokenPayload;
     if (isValidToken(decoded)) {
       return decoded;
     }
