@@ -24,6 +24,7 @@ import {
   getTokenConfiguration,
   isExpired,
   ITokenConfiguration,
+  ITokenPayload,
   refreshToken,
   verifyToken,
 } from '../../auth/tokens';
@@ -104,7 +105,7 @@ describe('Auth Domain Token Tests', () => {
       assert.isNotNull(token);
 
       assert.doesNotThrow(() => {
-        const decoded = jwt.verify(token, config.secret);
+        const decoded = jwt.verify(token, config.secret) as ITokenPayload;
         assert.equal(decoded.user, userId);
       });
     });
@@ -154,7 +155,7 @@ describe('Auth Domain Token Tests', () => {
       const refreshed = await refreshToken(token);
       assert.isNotNull(refreshed);
       if (refreshed) {
-        const decoded = jwt.verify(refreshed, config.secret);
+        const decoded = jwt.verify(refreshed, config.secret) as ITokenPayload;
 
         assert.isString(refreshed);
         assert.isObject(decoded);
