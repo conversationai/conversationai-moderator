@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { USER_GROUP_YOUTUBE } from '@conversationai/moderator-backend-core/src';
+import { USER_GROUP_YOUTUBE } from '@conversationai/moderator-backend-core';
 
 import { youtubeHooks } from '../integrations/youtube/hooks';
 import { registerHooks } from '../pipeline/hooks';
