@@ -16,10 +16,9 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-import { User } from '@conversationai/moderator-backend-core';
-
 import { createToken } from '../../auth/tokens';
 import { logger } from '../../logger';
+import { User } from '../../models';
 
 export const command = 'users:get-token';
 

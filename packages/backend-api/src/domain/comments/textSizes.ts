@@ -20,7 +20,7 @@ import * as path from 'path';
 import {
   CommentSize,
   ICommentInstance,
-} from '@conversationai/moderator-backend-core';
+} from '../../models';
 
 const FONT_FAMILY = 'Georgia';
 const TYPE_DEF = {

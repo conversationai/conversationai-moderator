@@ -16,7 +16,7 @@ limitations under the License.
 
 import { for_all_youtube_users } from './authenticate';
 import { sync_channels } from './channels';
-import {implement_moderation_decisions, sync_comment_threads} from './comments';
+import { implement_moderation_decisions, sync_comment_threads } from './comments';
 import { clearError } from './objectmap';
 import { sync_known_videos } from './videos';
 

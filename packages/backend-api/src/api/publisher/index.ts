@@ -14,21 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-  Article,
-  Decision,
-  sequelize,
-} from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 import * as Joi from 'joi';
 
 import { logger } from '../../logger';
+import {
+  Article,
+  Decision,
+} from '../../models';
 import {
   enqueueProcessTagAdditionTask,
   enqueueProcessTagRevocationTask,
   IProcessTagAdditionData,
   IProcessTagData,
 } from '../../processing';
+import { sequelize } from '../../sequelize';
 import { REPLY_SUCCESS } from '../constants';
 import * as JSONAPI from '../jsonapi';
 import { list } from '../util/SequelizeHandler';

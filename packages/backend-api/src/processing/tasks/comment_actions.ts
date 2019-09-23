@@ -13,12 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {
-  MODERATION_ACTION_ACCEPT,
-  MODERATION_ACTION_REJECT,
-} from '@conversationai/moderator-backend-core';
-
 import { logger } from '../../logger';
+import { MODERATION_ACTION_ACCEPT, MODERATION_ACTION_REJECT } from '../../models';
 import { approve, defer, highlight, reject, reset } from '../../pipeline/state';
 import { enqueue, registerTask } from '../util';
 import { getComment, getUser, resolveComment, resolveCommentAndFlags, resolveFlagsAndDenormalize } from './db_operations';

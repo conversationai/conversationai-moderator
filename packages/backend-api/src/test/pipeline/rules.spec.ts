@@ -27,8 +27,7 @@ import {
   MODERATION_ACTION_REJECT,
   ModerationRule,
   Tag,
-} from '@conversationai/moderator-backend-core';
-
+} from '../../models';
 import {
   compileScores,
   processRulesForComment,

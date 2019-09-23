@@ -22,6 +22,8 @@ limitations under the License.
 import * as express from 'express';
 import { pick } from 'lodash';
 
+import { createToken } from '../../auth/tokens';
+import { clearError } from '../../integrations';
 import {
   Article,
   User,
@@ -29,14 +31,11 @@ import {
   USER_GROUP_GENERAL,
   USER_GROUP_SERVICE,
   USER_GROUP_YOUTUBE,
-} from '@conversationai/moderator-backend-core';
+} from '../../models';
 import {
   partialUpdateHappened,
   updateHappened,
-} from '@conversationai/moderator-backend-core';
-
-import { createToken } from '../../auth/tokens';
-import { clearError } from '../../integrations';
+} from '../../models';
 import { REPLY_SUCCESS } from '../constants';
 
 const userFields = ['id', 'name', 'email', 'group', 'isActive', 'extra'];

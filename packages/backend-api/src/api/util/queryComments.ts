@@ -14,16 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as Bluebird from 'bluebird';
+
+import { ITopScores } from '../../domain';
 import {
   Article,
   Comment,
   IArticleInstance,
   ICommentInstance,
   TaggingSensitivity,
-} from '@conversationai/moderator-backend-core';
-import * as Bluebird from 'bluebird';
-
-import { ITopScores } from '../../domain';
+} from '../../models';
 import { IFields, IListDetails }from '../jsonapi';
 import { list } from './SequelizeHandler';
 

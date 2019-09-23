@@ -78,7 +78,7 @@ GRANT ALL on $DATABASE_NAME.* to $DATABASE_USER;
 EOF
 
 mysql -u root -p $DATABASE_NAME < seed/initial-database.sql
-cd packages/backend-core
+cd packages/backend-api
 npx sequelize db:migrate
 cd -
 
@@ -223,7 +223,7 @@ export DATABASE_USER=root
 NODE_ENV=test bin/test
 
 # or you can run individual tests:
-cd packages/backend-core
+cd packages/backend-api
 NODE_ENV=test npm run test
 NODE_ENV=test ../../node_modules/.bin/mocha 'dist/test/domain/comments/*.spec.js' --recursive --timeout 10000
 ```

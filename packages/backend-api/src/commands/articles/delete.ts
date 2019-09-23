@@ -16,13 +16,10 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-import {
-  Article,
-  Category,
-} from '@conversationai/moderator-backend-core';
 
 import { denormalizeCommentCountsForCategory } from '../../domain';
 import { logger } from '../../logger';
+import { Article, Category } from '../../models';
 
 export const command = 'articles:delete';
 export const describe = 'Delete all articles from the database.';

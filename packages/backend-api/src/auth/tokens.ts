@@ -24,7 +24,7 @@ import {
   getConfigItem,
   IUserInstance,
   setConfigItem,
-} from '@conversationai/moderator-backend-core';
+} from '../models';
 
 export interface ITokenConfiguration {
   secret: string;

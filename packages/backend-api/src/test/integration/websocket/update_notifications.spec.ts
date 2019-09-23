@@ -16,9 +16,9 @@ limitations under the License.
 
 import * as chai from 'chai';
 
-import { Article, Category, User } from '@conversationai/moderator-backend-core';
-import { IArticleInstance, ICategoryInstance, IUserInstance } from '@conversationai/moderator-backend-core';
-import { clearInterested } from '@conversationai/moderator-backend-core';
+import { Article, Category, User } from '../../../models';
+import { IArticleInstance, ICategoryInstance, IUserInstance } from '../../../models';
+import { clearInterested } from '../../../models';
 
 import { REPLY_SUCCESS_VALUE } from '../../../api/constants';
 import { destroyUpdateNotificationService } from '../../../api/services/updateNotifications';

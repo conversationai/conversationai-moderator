@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Comment, Decision } from '@conversationai/moderator-backend-core';
+import { Comment, Decision } from '../models';
 import {
   ICommentInstance,
   IDecisionInstance,
   IUserInstance,
-} from '@conversationai/moderator-backend-core';
-import { sequelize } from '@conversationai/moderator-backend-core';
+} from '../models';
+import { sequelize } from '../sequelize';
 
 export async function getDecisionForComment(
   comment: ICommentInstance,

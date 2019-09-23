@@ -21,7 +21,7 @@ import {
   ModeratorAssignment,
   updateHappened,
   UserCategoryAssignment,
-} from '@conversationai/moderator-backend-core';
+} from '../../models';
 
 export interface IArticleOptionallyCreated {
   article: IArticleInstance;

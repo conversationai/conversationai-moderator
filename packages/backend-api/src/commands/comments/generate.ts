@@ -18,9 +18,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as yargs from 'yargs';
 
-import { Article, Category, Comment, IAuthorAttributes, updateHappened } from '@conversationai/moderator-backend-core';
-
 import { logger } from '../../logger';
+import { Article, Category, Comment, IAuthorAttributes, updateHappened } from '../../models';
 import { postProcessComment, sendForScoring } from '../../pipeline';
 
 const PREEXISTING_CATEGORIES = 5;

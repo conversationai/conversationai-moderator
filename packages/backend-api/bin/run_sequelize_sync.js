@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
 Copyright 2019 Google Inc.
 
@@ -14,5 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './models';
-export * from './sequelize';
+'use strict';
+const { sequelize } = require('../dist/sequelize-sync');
+sequelize.sync({ force: true });

@@ -17,15 +17,14 @@ limitations under the License.
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
+import { logger } from '../../logger';
 import {
   ICommentInstance,
   IDecisionInstance,
   IUserInstance,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
-} from '@conversationai/moderator-backend-core';
-
-import { logger } from '../../logger';
+} from '../../models';
 import { foreachPendingDecision, markDecisionExecuted } from '../decisions';
 import { for_each_active_channel } from './channels';
 import { mapCommentThreadToComments } from './objectmap';

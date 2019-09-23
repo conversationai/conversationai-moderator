@@ -14,8 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ICategoryInstance, IUserInstance } from '@conversationai/moderator-backend-core';
-
+import { ICategoryInstance, IUserInstance } from '../../models';
 import { for_one_youtube_user } from './authenticate';
 import { activate_channel, get_article_id_map_for_channel } from './channels';
 import { sync_comment_threads_for_channel } from './comments';

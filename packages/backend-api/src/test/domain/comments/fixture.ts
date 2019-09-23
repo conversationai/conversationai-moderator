@@ -28,7 +28,7 @@ import {
   ModerationRule,
   Tag,
   User,
-} from '@conversationai/moderator-backend-core';
+} from '../../../models';
 import {
   IArticleAttributes,
   IArticleInstance,
@@ -48,15 +48,15 @@ import {
   ITagInstance,
   IUserAttributes,
   IUserInstance,
-} from '@conversationai/moderator-backend-core';
+} from '../../../models';
 import {
   ENDPOINT_TYPE_PROXY,
   MODERATION_RULE_ACTION_TYPES,
   SCORE_SOURCE_TYPES,
   USER_GROUP_MODERATOR,
   USER_GROUP_SERVICE,
-} from '@conversationai/moderator-backend-core';
-import { sequelize } from '@conversationai/moderator-backend-core';
+} from '../../../models';
+import { sequelize } from '../../../sequelize';
 
 // Category
 export function getCategoryData(data: Partial<ICategoryAttributes> = {}): ICategoryAttributes {

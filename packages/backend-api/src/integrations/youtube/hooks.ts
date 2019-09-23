@@ -14,8 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ICommentInstance, IUserInstance } from '@conversationai/moderator-backend-core';
-
+import { ICommentInstance, IUserInstance } from '../../models';
 import { IPipelineHook } from '../../pipeline/hooks';
 import { getDecisionForComment } from '../decisions';
 import { for_one_youtube_user } from './authenticate';

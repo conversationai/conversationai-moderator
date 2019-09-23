@@ -14,12 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-  CommentSize,
-  ICommentSizeInstance,
-} from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 import * as Joi from 'joi';
+
+import { CommentSize, ICommentSizeInstance } from '../../models';
 import { validateAndSendResponse, validateRequest } from '../util/validation';
 
 const validateTextSizesRequest = validateRequest(Joi.object({

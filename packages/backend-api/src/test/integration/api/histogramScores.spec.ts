@@ -16,16 +16,15 @@ limitations under the License.
 
 import * as chai from 'chai';
 
+
+import { cacheCommentTopScores } from '../../../domain';
 import {
   Article,
   Category,
   Comment,
   CommentSummaryScore,
   Tag,
-} from '@conversationai/moderator-backend-core';
-
-import { cacheCommentTopScores } from '../../../domain';
-
+} from '../../../models';
 import {
   expect,
   makeArticle,

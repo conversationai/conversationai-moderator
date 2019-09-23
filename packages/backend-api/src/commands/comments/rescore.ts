@@ -16,9 +16,8 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-import { Comment } from '@conversationai/moderator-backend-core';
-
 import { logger } from '../../logger';
+import { Comment } from '../../models';
 import { resendForScoring } from '../../pipeline';
 
 export const command = 'comments:rescore';

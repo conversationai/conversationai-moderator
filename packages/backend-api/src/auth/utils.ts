@@ -18,7 +18,7 @@ import * as express from 'express';
 import * as moment from 'moment';
 import { generate } from 'randomstring';
 
-import { CSRF } from '@conversationai/moderator-backend-core';
+import { CSRF } from '../models';
 
 export async function generateServerCSRF(req: express.Request, res: express.Response, next: express.NextFunction) {
   const clientCSRF = req.query.csrf;

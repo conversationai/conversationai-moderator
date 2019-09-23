@@ -16,15 +16,14 @@ limitations under the License.
 
 import * as express from 'express';
 
+import { youtubeActivateChannel, youtubeSynchronizeChannel } from '../../integrations';
 import {
   Category,
   ICategoryInstance,
   IUserInstance,
   User,
   USER_GROUP_YOUTUBE,
-} from '@conversationai/moderator-backend-core';
-
-import { youtubeActivateChannel, youtubeSynchronizeChannel } from '../../integrations';
+} from '../../models';
 import { enqueue, registerTask } from '../../processing/util';
 import { REPLY_SUCCESS } from '../constants';
 

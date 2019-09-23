@@ -16,10 +16,9 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-import { Comment, CommentTopScore, Tag } from '@conversationai/moderator-backend-core';
-
 import { cacheCommentTopScore } from '../../domain';
 import { logger } from '../../logger';
+import { Comment, CommentTopScore, Tag } from '../../models';
 
 export const command = 'comments:recalculate-top-scores';
 export const describe = 'Recalculate comment top scores.';

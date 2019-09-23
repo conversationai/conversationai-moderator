@@ -17,7 +17,7 @@ limitations under the License.
 import * as chai from 'chai';
 import * as express from 'express';
 
-import { IUserInstance } from '@conversationai/moderator-backend-core';
+import { IUserInstance } from '../../../models';
 
 const chaiHttp = require('chai-http');
 

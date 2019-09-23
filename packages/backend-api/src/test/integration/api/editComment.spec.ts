@@ -17,7 +17,7 @@ import * as chai from 'chai';
 
 import {
   Comment,
-} from '@conversationai/moderator-backend-core';
+} from '../../../models';
 
 import {
   expect,

@@ -14,12 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-  Article,
-  Comment,
-} from '@conversationai/moderator-backend-core';
-
 import { logger } from '../../logger';
+import { Article, Comment } from '../../models';
 import { sendForScoring } from '../../pipeline';
 import { enqueue, registerTask } from '../util';
 

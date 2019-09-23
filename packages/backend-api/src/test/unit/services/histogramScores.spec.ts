@@ -24,7 +24,7 @@ import {
   IArticleInstance,
   ICategoryInstance,
   Tag,
-} from '@conversationai/moderator-backend-core';
+} from '../../../models';
 
 import {
   expect,

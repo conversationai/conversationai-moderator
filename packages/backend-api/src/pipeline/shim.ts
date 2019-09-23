@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ICommentInstance } from '@conversationai/moderator-backend-core';
+import { ICommentInstance } from '../models';
 
 export interface IScore {
   score: number;

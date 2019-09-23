@@ -16,6 +16,7 @@ limitations under the License.
 
 import { groupBy, omit } from 'lodash';
 
+import { denormalizeCommentCountsForArticle, denormalizeCountsForComment } from '../domain';
 import {
   CommentScore,
   CommentScoreRequest,
@@ -31,9 +32,7 @@ import {
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
-} from '@conversationai/moderator-backend-core';
-
-import { denormalizeCommentCountsForArticle, denormalizeCountsForComment } from '../domain';
+} from '../models';
 import { recordDecision } from './pipeline';
 
 export interface IDecision {

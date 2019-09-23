@@ -14,13 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-    Comment,
-} from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 import * as Joi from 'joi';
 
 import { logger } from '../../logger';
+import { Comment } from '../../models';
 import { enqueueSendCommentForScoringTask } from '../../processing';
 import { REPLY_SUCCESS } from '../constants';
 import { validateRequest } from '../util/validation';

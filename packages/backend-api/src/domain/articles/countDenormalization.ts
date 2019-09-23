@@ -18,9 +18,8 @@ import {
   Category,
   Comment,
   partialUpdateHappened,
-} from '@conversationai/moderator-backend-core';
-import { IArticleAttributes, IArticleInstance } from '@conversationai/moderator-backend-core';
-
+} from '../../models';
+import { IArticleAttributes, IArticleInstance } from '../../models';
 import {
   denormalizeCommentCountsForCategory,
 } from '../categories';

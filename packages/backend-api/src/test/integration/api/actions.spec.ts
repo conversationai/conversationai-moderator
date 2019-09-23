@@ -17,23 +17,22 @@ limitations under the License.
 import * as chai from 'chai';
 
 import {
+  denormalizeCommentCountsForArticle,
+  denormalizeCountsForComment,
+} from '../../../domain';
+import {
   Article,
   Category,
   Comment,
   CommentFlag,
   User,
-} from '@conversationai/moderator-backend-core';
+} from '../../../models';
 import {
   IArticleInstance,
   ICommentFlagInstance,
   ICommentInstance,
   IUserInstance,
-} from '@conversationai/moderator-backend-core';
-
-import {
-  denormalizeCommentCountsForArticle,
-  denormalizeCountsForComment,
-} from '../../../domain';
+} from '../../../models';
 import {
   expect,
   makeArticle,

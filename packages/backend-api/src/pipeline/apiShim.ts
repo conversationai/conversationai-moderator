@@ -19,12 +19,11 @@ import { google } from 'googleapis';
 import * as requestRaw from 'request';
 import * as striptags  from 'striptags';
 
+import { logger } from '../logger';
 import {
   ICommentInstance,
   IUserInstance,
-} from '@conversationai/moderator-backend-core';
-
-import { logger } from '../logger';
+} from '../models';
 import { IScoreData } from './shim';
 
 const request = Bluebird.promisify(requestRaw) as any;

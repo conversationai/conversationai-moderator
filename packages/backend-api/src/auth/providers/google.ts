@@ -19,8 +19,7 @@ limitations under the License.
 
 import { config } from '@conversationai/moderator-config';
 
-import { IUserInstance, User } from '@conversationai/moderator-backend-core';
-
+import { IUserInstance, User } from '../../models';
 import { ensureFirstUser, findOrCreateUserSocialAuth, isFirstUserInitialised } from '../users';
 
 const Strategy = require('passport-google-oauth20').Strategy;

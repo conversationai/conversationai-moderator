@@ -16,7 +16,7 @@ limitations under the License.
 
 import {
   Comment,
-} from '@conversationai/moderator-backend-core';
+} from '../../../models';
 
 import {
   expect,
