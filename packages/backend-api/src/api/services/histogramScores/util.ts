@@ -16,14 +16,10 @@ limitations under the License.
 
 const { Canvas } = require('canvas');
 
-import {
-  Article,
-  Category,
-  sequelize as sequelizeInstance,
-  Tag,
-} from '@conversationai/moderator-backend-core';
 import { DotChartRenderer, groupByDateColumns, groupByScoreColumns } from '@conversationai/moderator-frontend-web';
 
+import { Article, Category, Tag } from '../../../models';
+import { sequelize as sequelizeInstance } from '../../../sequelize';
 import * as JSONAPI from '../../jsonapi';
 import { sort } from '../../util/SequelizeHandler';
 

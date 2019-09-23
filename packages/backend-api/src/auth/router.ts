@@ -18,9 +18,9 @@ import * as express from 'express';
 import * as passport from 'passport';
 import * as qs from 'qs';
 
-import { IUserInstance } from '@conversationai/moderator-backend-core';
 import { config } from '@conversationai/moderator-config';
 
+import { IUserInstance } from '../models';
 import { createToken } from './tokens';
 import { isFirstUserInitialised } from './users';
 import { generateServerCSRF, getClientCSRF } from './utils';

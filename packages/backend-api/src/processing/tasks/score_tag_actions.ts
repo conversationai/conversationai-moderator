@@ -14,13 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import {
-  CommentScore,
-} from '@conversationai/moderator-backend-core';
-
-import {
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
 } from '../../domain';
+import { CommentScore } from '../../models';
 import { logger } from '../../logger';
 import { enqueue, registerTask } from '../util';
 

@@ -17,17 +17,13 @@ limitations under the License.
 import * as chai from 'chai';
 
 import {
-  sequelize,
-  User,
-  UserSocialAuth,
-} from '@conversationai/moderator-backend-core';
-
-import {
   ensureFirstUser,
   findOrCreateUserSocialAuth,
   isFirstUserInitialised,
   isValidUser,
 } from '../../auth/users';
+import { User, UserSocialAuth } from '../../models';
+import { sequelize } from '../../sequelize';
 import { createUser } from '../domain/comments/fixture';
 
 const assert = chai.assert;

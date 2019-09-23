@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Comment } from '@conversationai/moderator-backend-core';
 import * as Bluebird from 'bluebird';
 import * as express from 'express';
 import * as Joi from 'joi';
+
+import { Comment } from '../../models';
 import { validateAndSendResponse, validateRequest } from '../util/validation';
 
 const validateInput = validateRequest(Joi.object({

@@ -29,9 +29,8 @@ import {
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_REJECT,
   Tag,
-} from '@conversationai/moderator-backend-core';
-import { ITagInstance } from '@conversationai/moderator-backend-core';
-
+} from '../../models';
+import { ITagInstance } from '../../models';
 import {
   compileScoresData,
   compileSummaryScoresData,

@@ -14,10 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Article, Category, Comment } from '@conversationai/moderator-backend-core';
 import * as express from 'express';
 import * as Joi from 'joi';
 import { mapValues } from 'lodash';
+
+import { Article, Category, Comment } from '../../models';
 import { sort } from '../util/SequelizeHandler';
 import { validateAndSendResponse } from '../util/validation';
 

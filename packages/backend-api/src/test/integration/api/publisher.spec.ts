@@ -15,11 +15,8 @@ limitations under the License.
 */
 import * as chai from 'chai';
 
-import {
-  Article, Comment,
-} from '@conversationai/moderator-backend-core';
-
 import { createArticleIfNonExistant, IArticleData } from '../../../api/publisher/articles';
+import { Article, Comment } from '../../../models';
 import {
   expect,
   makeArticle,

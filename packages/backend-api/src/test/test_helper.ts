@@ -16,11 +16,8 @@ limitations under the License.
 
 import * as winston from 'winston';
 
-import {
-  sequelize,
-} from '@conversationai/moderator-backend-core';
-
 import { logger } from '../logger';
+import { sequelize } from '../sequelize';
 
 const TEST_ENVS = ['test', 'circle_ci'];
 

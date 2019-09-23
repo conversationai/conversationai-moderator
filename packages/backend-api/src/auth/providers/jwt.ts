@@ -16,8 +16,7 @@ limitations under the License.
 
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { IUserInstance, User } from '@conversationai/moderator-backend-core';
-
+import { IUserInstance, User } from '../../models';
 import { getTokenConfiguration, isValidToken } from '../tokens';
 import { isValidUser } from '../users';
 

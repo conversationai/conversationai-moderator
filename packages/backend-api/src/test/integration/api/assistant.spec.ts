@@ -19,13 +19,12 @@ import * as chai from 'chai';
 import {
   Comment,
   CommentScoreRequest,
-  sequelize,
   User,
-} from '@conversationai/moderator-backend-core';
+} from '../../../models';
 import {
   ICommentScoreRequestInstance,
-} from '@conversationai/moderator-backend-core';
-
+} from '../../../models';
+import { sequelize } from '../../../sequelize';
 import {
   expect,
   makeComment,

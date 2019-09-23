@@ -24,7 +24,7 @@ import {
   ICommentScoreInstance,
   ITagInstance,
   Tag,
-} from '@conversationai/moderator-backend-core';
+} from '../../models';
 
 /**
  * Describes a top score for a set of comment scores in a tag.

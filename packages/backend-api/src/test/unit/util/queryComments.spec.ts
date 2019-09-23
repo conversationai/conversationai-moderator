@@ -16,13 +16,13 @@ limitations under the License.
 
 import {
   Article, Category, Comment, Tag, TaggingSensitivity,
-} from '@conversationai/moderator-backend-core';
+} from '../../../models';
 import {
   ICategoryInstance,
   ICommentInstance,
   ICommentScoreInstance,
   ITagInstance,
-} from '@conversationai/moderator-backend-core';
+} from '../../../models';
 
 import {
   expect,

@@ -14,22 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import {
+  denormalizeCommentCountsForArticle,
+  denormalizeCountsForComment,
+} from '../../domain';
+import { logger } from '../../logger';
+import {
   Article,
   Comment,
   CommentFlag,
   Tag,
   User,
-} from '@conversationai/moderator-backend-core';
+} from '../../models';
 import {
   ICommentInstance,
   IResolution,
-} from '@conversationai/moderator-backend-core';
-
-import {
-  denormalizeCommentCountsForArticle,
-  denormalizeCountsForComment,
-} from '../../domain';
-import { logger } from '../../logger';
+} from '../../models';
 
 export async function getUser(userId?: number | null | undefined) {
   if (!userId) {

@@ -16,13 +16,12 @@ limitations under the License.
 
 import { pick } from 'lodash';
 
-import { Article, Category, Comment, updateHappened } from '@conversationai/moderator-backend-core';
+import { logger } from '../../logger';
+import { Article, Category, Comment, updateHappened } from '../../models';
 import {
   IAuthorAttributes,
   IUserInstance,
-} from '@conversationai/moderator-backend-core';
-
-import { logger } from '../../logger';
+} from '../../models';
 import { postProcessComment, sendForScoring } from '../../pipeline';
 
 let testOnly = false;

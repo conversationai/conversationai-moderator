@@ -17,7 +17,7 @@ limitations under the License.
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
 
-import {IServerAction, ModelId} from './common';
+import { IServerAction, ModelId } from './common';
 
 export interface IRuleAttributes {
   id: ModelId;

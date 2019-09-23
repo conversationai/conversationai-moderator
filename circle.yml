@@ -15,7 +15,6 @@ dependencies:
   cache_directories:
     - node_modules
     - packages/backend-api/node_modules
-    - packages/backend-core/node_modules
     - packages/config/node_modules
     - packages/frontend-web/node_modules
 

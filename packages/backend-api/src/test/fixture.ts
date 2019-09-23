@@ -19,7 +19,7 @@ import * as WebSocket from 'ws';
 
 import {
   MODERATION_ACTION_ACCEPT,
-} from '@conversationai/moderator-backend-core';
+} from '../models';
 import {
   IArticleInstance,
   ICategoryInstance,
@@ -33,7 +33,7 @@ import {
   ITaggingSensitivityInstance,
   ITagInstance,
   IUserInstance,
-} from '@conversationai/moderator-backend-core';
+} from '../models';
 import {
   Article,
   Category,
@@ -46,7 +46,7 @@ import {
   Tag,
   TaggingSensitivity,
   User,
-} from '@conversationai/moderator-backend-core';
+} from '../models';
 
 const expect = chai.expect;
 export { expect };

@@ -15,9 +15,8 @@ limitations under the License.
 */
 import { expect } from 'chai';
 
-import { CommentScore } from '@conversationai/moderator-backend-core';
-
 import { calculateTopScore } from '../../../domain/commentScores';
+import { CommentScore } from '../../../models';
 
 // tslint:disable no-import-side-effect
 import '../../test_helper';

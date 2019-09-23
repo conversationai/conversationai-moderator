@@ -24,8 +24,7 @@ import {
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
-} from '@conversationai/moderator-backend-core';
-
+} from '../../models';
 import {
   approve,
   defer,

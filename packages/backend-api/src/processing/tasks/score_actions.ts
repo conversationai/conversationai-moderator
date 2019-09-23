@@ -14,11 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {
-  CommentSummaryScore,
-} from '@conversationai/moderator-backend-core';
-
 import { logger } from '../../logger';
+import { CommentSummaryScore } from '../../models';
 import { addScore } from '../../pipeline/state';
 import { enqueue, registerTask} from '../util';
 import {

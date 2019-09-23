@@ -24,6 +24,6 @@ EOF
 fi
 
 echo "Running migrations."
-cd ${basename}/../packages/backend-core
+cd ${basename}/../packages/backend-api
 npx sequelize db:migrate
 cd -

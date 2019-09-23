@@ -16,13 +16,14 @@ limitations under the License.
 
 import * as chai from 'chai';
 
+import { denormalizeCommentCountsForArticle } from '../../../domain';
 import {
   IModerationRuleInstance,
   IPreselectInstance,
   ITaggingSensitivityInstance,
   ITagInstance,
   IUserInstance,
-} from '@conversationai/moderator-backend-core';
+} from '../../../models';
 import {
   Article,
   Category,
@@ -31,15 +32,13 @@ import {
   Tag,
   TaggingSensitivity,
   User,
-} from '@conversationai/moderator-backend-core';
+} from '../../../models';
 import {
   clearInterested,
   partialUpdateHappened,
   registerInterest,
   updateHappened,
-} from '@conversationai/moderator-backend-core';
-
-import { denormalizeCommentCountsForArticle } from '../../../domain';
+} from '../../../models';
 import {
   makeArticle,
   makeCategory,

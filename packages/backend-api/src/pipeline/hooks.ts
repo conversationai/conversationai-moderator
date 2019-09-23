@@ -14,8 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Comment, ICommentInstance, IUserInstance, User } from '@conversationai/moderator-backend-core';
-
+import { Comment, ICommentInstance, IUserInstance, User } from '../models';
 import { enqueue, registerTask } from '../processing/util';
 
 export interface IPipelineHook {

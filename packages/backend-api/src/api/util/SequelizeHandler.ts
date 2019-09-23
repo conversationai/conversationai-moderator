@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { byType } from '@conversationai/moderator-backend-core';
 import * as Bluebird from 'bluebird';
 import { isObject, isString, uniq, uniqWith } from 'lodash';
 
+import { byType } from '../../models';
 import {
   IFilters,
   IItemDetails,

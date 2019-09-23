@@ -22,6 +22,7 @@ import { isEqual, pick } from 'lodash';
 import * as Sequelize from 'sequelize';
 import * as WebSocket from 'ws';
 
+import { logger } from '../../logger';
 import {
   Article,
   Category,
@@ -30,7 +31,7 @@ import {
   Tag,
   TaggingSensitivity,
   User,
-} from '@conversationai/moderator-backend-core';
+} from '../../models';
 import {
   IArticleInstance,
   ICategoryInstance,
@@ -39,10 +40,8 @@ import {
   ITaggingSensitivityInstance,
   ITagInstance,
   IUserInstance,
-} from '@conversationai/moderator-backend-core';
-import { registerInterest } from '@conversationai/moderator-backend-core';
-
-import { logger } from '../../logger';
+} from '../../models';
+import { registerInterest } from '../../models';
 
 const TAG_FIELDS = ['id', 'color', 'description', 'key', 'label', 'isInBatchView', 'inSummaryScore', 'isTaggable'];
 const RANGE_FIELDS = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'tagId'];

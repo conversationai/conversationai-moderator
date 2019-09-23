@@ -16,8 +16,8 @@ limitations under the License.
 
 import * as WebSocket from 'ws';
 
-import { User } from '@conversationai/moderator-backend-core';
-import { clearInterested } from '@conversationai/moderator-backend-core';
+import { User } from '../../../models';
+import { clearInterested } from '../../../models';
 
 import { destroyUpdateNotificationService } from '../../../api/services/updateNotifications';
 import { makeServer } from '../../../api/util/server';

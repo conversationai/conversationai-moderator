@@ -16,8 +16,8 @@ limitations under the License.
 
 import {
   Article,
-} from '@conversationai/moderator-backend-core';
-import { ICategoryInstance } from '@conversationai/moderator-backend-core';
+} from '../../models';
+import { ICategoryInstance } from '../../models';
 
 export async function denormalizeCommentCountsForCategory(category: ICategoryInstance) {
   const query = { where: { categoryId: category.id } };

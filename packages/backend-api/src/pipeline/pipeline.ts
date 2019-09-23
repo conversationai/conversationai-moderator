@@ -43,8 +43,8 @@ import {
   Tag,
   User,
   USER_GROUP_MODERATOR,
-} from '@conversationai/moderator-backend-core';
-import { sequelize } from '@conversationai/moderator-backend-core';
+} from '../models';
+import { sequelize } from '../sequelize';
 
 import {
   cacheCommentTopScores,

@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as Bluebird from 'bluebird';
+
+import { logger } from '../../logger';
 import {
   Article,
   Comment,
   ICommentInstance,
-} from '@conversationai/moderator-backend-core';
-import * as Bluebird from 'bluebird';
-
-import { logger } from '../../logger';
+} from '../../models';
 import { postProcessComment } from '../../pipeline';
 import { enqueueSendCommentForScoringTask } from '../../processing';
 

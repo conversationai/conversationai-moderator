@@ -16,9 +16,8 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-import { Comment, CommentFlag } from '@conversationai/moderator-backend-core';
-
 import { denormalizeCommentCountsForArticle, denormalizeCountsForComment } from '../../domain';
+import { Comment, CommentFlag } from '../../models';
 
 export const command = 'comments:flag';
 

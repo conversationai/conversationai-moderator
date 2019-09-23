@@ -24,6 +24,6 @@ mysql -u root << EOF
 UPDATE mysql.user SET Password=PASSWORD('$DATABASE_PASSWORD') WHERE User='root';
 EOF
 
-cd ${basename}/../packages/backend-core
+cd ${basename}/../packages/backend-api
 npx sequelize db:migrate
 cd -

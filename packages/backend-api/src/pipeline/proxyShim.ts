@@ -19,14 +19,14 @@ import * as requestRaw from 'request';
 import * as striptags  from 'striptags';
 import { rtrim } from 'underscore.string';
 
+import { config } from '@conversationai/moderator-config';
+
+import { logger } from '../logger';
 import {
   Article,
   ICommentInstance,
   IUserInstance,
-} from '@conversationai/moderator-backend-core';
-import { config } from '@conversationai/moderator-config';
-
-import { logger } from '../logger';
+} from '../models';
 import { IScoreData } from './shim';
 
 const request = Bluebird.promisify(requestRaw) as any;

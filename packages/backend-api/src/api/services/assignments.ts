@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import * as express from 'express';
+
 import {
   Article,
   IArticleInstance,
@@ -25,9 +27,7 @@ import {
   updateHappened,
   User,
   UserCategoryAssignment,
-} from '@conversationai/moderator-backend-core';
-import * as express from 'express';
-
+} from '../../models';
 import { REPLY_SUCCESS } from '../constants';
 import * as JSONAPI from '../jsonapi';
 import { list } from '../util/SequelizeHandler';
