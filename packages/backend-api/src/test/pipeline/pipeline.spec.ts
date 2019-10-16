@@ -504,7 +504,7 @@ describe('Pipeline Tests', () => {
 
       const tagsByKey = groupBy(tags, (tag: ITagInstance) => {
         return tag.get('key');
-      }) as any;
+      });
 
       const [comment, serviceUser] = await Promise.all([
         createComment(),
@@ -572,7 +572,7 @@ describe('Pipeline Tests', () => {
 
       const tagsByKey = groupBy(tags, (tag: ITagInstance) => {
         return tag.get('key');
-      }) as any;
+      });
 
       const comment = await createComment();
 

@@ -200,7 +200,7 @@ describe('Auth Domain Users Tests', function() {
     };
 
     async function assertUser(user: any) {
-      const dbu = await User.findOne({where: {email: user.email}});
+      const dbu = (await User.findOne({where: {email: user.email}}))!;
       assert.equal(dbu.get('name'), user.name);
       assert.equal(dbu.get('group'), user.group);
       assert.equal(dbu.get('isActive'), user.isActive);

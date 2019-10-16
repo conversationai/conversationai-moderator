@@ -106,6 +106,10 @@ export async function resolveFlagsAndDenormalize(
 ): Promise<void> {
   await resolveFlags(commentId, userId);
   const comment = await Comment.findById(commentId);
+  if (!comment) {
+    throw new Error(`No such comment ${commentId}`);
+  }
+
   const article = await comment.getArticle();
   await denormalizeCountsForComment(comment);
   await denormalizeCommentCountsForArticle(article, true);
