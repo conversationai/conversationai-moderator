@@ -30,6 +30,10 @@ export interface IHookData {
 
 async function getOwnerData(ownerId: number) {
   const owner = await User.findById(ownerId);
+  if (!owner) {
+    throw new Error(`No such user ${ownerId}`);
+  }
+
   const ownerType = owner.get('group');
   const hook = hooks.get(ownerType);
   return {owner, ownerType, hook};
@@ -39,6 +43,9 @@ async function executeCommentModeratedTask(data: IHookData) {
   const { owner, hook } = await getOwnerData(data.ownerId);
   if (hook && hook.commentModerated) {
     const comment = await Comment.findById(data['commentId']);
+    if (!comment) {
+      throw new Error(`No such comment ${data['commentId']}`);
+    }
     await hook.commentModerated(owner, comment);
   }
 }

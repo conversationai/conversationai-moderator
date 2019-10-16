@@ -23,7 +23,11 @@ import { implement_moderation_decision } from './comments';
 export const youtubeHooks: IPipelineHook = {
   async commentModerated(owner: IUserInstance, comment: ICommentInstance) {
     await for_one_youtube_user(owner, async (_, auth) => {
-      await implement_moderation_decision(auth, comment, await getDecisionForComment(comment));
+      const decision = await getDecisionForComment(comment);
+      if (!decision) {
+        return;
+      }
+      await implement_moderation_decision(auth, comment, decision);
     });
   },
 };
