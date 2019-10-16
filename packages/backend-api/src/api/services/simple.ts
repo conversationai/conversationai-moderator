@@ -76,6 +76,12 @@ export function createSimpleRESTService(): express.Router {
   router.post('/user/update/:id', async (req, res, next) => {
     const userId = parseInt(req.params.id, 10);
     const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).send('Not found');
+      next();
+      return;
+    }
+
     const group = await user.get('group');
 
     function isRealUser(g: string) {
@@ -105,10 +111,16 @@ export function createSimpleRESTService(): express.Router {
 
   router.post('/article/update/:id', async (req, res, next) => {
     const articleId = parseInt(req.params.id, 10);
-    const a = await Article.findById(articleId);
-    a.set('isCommentingEnabled', req.body.isCommentingEnabled);
-    a.set('isAutoModerated', req.body.isAutoModerated);
-    await a.save();
+    const article = await Article.findById(articleId);
+    if (!article) {
+      res.status(404).send('Not found');
+      next();
+      return;
+    }
+
+    article.set('isCommentingEnabled', req.body.isCommentingEnabled);
+    article.set('isAutoModerated', req.body.isAutoModerated);
+    await article.save();
 
     res.json(REPLY_SUCCESS);
     partialUpdateHappened(articleId);
@@ -117,8 +129,13 @@ export function createSimpleRESTService(): express.Router {
 
   router.get('/article/:id/text', async (req, res, next) => {
     const articleId = parseInt(req.params.id, 10);
-    const a = await Article.findById(articleId);
-    const text = a.get('text');
+    const article = await Article.findById(articleId);
+    if (!article) {
+      res.status(404).send('Not found');
+      next();
+      return;
+    }
+    const text = article.get('text');
     res.json({text: text});
     next();
   });

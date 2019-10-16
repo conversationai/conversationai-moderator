@@ -59,6 +59,7 @@ export async function handler(argv: any) {
     if (!user) {
       logger.error('User not found');
       process.exit(1);
+      return;
     }
     const token = await createToken(user.id, user.get('email'));
     logger.info(`JWT token for "${user.get('name')}" (id: ${user.id}):\n\t${token}`);

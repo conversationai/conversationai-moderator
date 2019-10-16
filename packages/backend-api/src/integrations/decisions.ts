@@ -24,13 +24,13 @@ import { sequelize } from '../sequelize';
 
 export async function getDecisionForComment(
   comment: ICommentInstance,
-): Promise<IDecisionInstance> {
+): Promise<IDecisionInstance | null> {
   return await Decision.findOne({
     where: {
       commentId: comment.id,
-      sentBackToPublisher: null,
+      sentBackToPublisher: { $eq: null },
       isCurrentDecision: true,
-    } as any,
+    },
   });
 }
 
@@ -40,9 +40,9 @@ export async function foreachPendingDecision(
 ) {
   const decisions = await Decision.findAll({
     where: {
-      sentBackToPublisher: null,
+      sentBackToPublisher: { $eq: null },
       isCurrentDecision: true,
-    } as any,
+    },
     include: [{model: Comment, required: true, where: {ownerId: owner.id}}],
   });
 

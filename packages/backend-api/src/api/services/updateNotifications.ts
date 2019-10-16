@@ -193,7 +193,7 @@ async function getArticleUpdate(articleId: number) {
     {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
   );
 
-  const cData = serialiseObject(category, CATEGORY_FIELDS);
+  const cData = category  ? serialiseObject(category, CATEGORY_FIELDS) : undefined;
 
   return {
     type: 'article-update',
