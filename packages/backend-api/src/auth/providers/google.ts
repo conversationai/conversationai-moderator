@@ -14,9 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// TODO: Passport seems to be a dead project.  Keep an eye on what is happening
-//     And consider replacing it with passport-next or something else.
-
 import { config } from '@conversationai/moderator-config';
 
 import { IUserInstance, User } from '../../models';

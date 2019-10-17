@@ -21,6 +21,7 @@ import * as qs from 'qs';
 import { config } from '@conversationai/moderator-config';
 
 import { IUserInstance } from '../models';
+import { restartService } from '../server-management';
 import { createToken } from './tokens';
 import { isFirstUserInitialised } from './users';
 import { generateServerCSRF, getClientCSRF } from './utils';
@@ -65,6 +66,25 @@ export function createHealthcheckRouter(): express.Router {
         return;
       }
       res.status(218).send('init_first_user');
+    },
+  );
+
+  return router;
+}
+
+export function createAuthConfigRouter(): express.Router {
+  const router = express.Router({
+    caseSensitive: true,
+    mergeParams: true,
+  });
+
+  router.get(
+    '/auth/config',
+    async (_req, res, next) => {
+      restartService();
+      res.send('ok');
+      next();
+      return;
     },
   );
 

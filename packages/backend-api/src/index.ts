@@ -16,13 +16,19 @@ limitations under the License.
 
 import * as express from 'express';
 import * as expressWs from 'express-ws';
+// TODO: Passport seems to be a dead project.  Keep an eye on what is happening
+//     And consider replacing it with passport-next or something else.
 import * as passport from 'passport';
 
 import { config } from '@conversationai/moderator-config';
 
 import { createApiRouter } from './api/router';
 import { getGoogleStrategy, getJwtStrategy } from './auth/providers';
-import { createAuthRouter, createHealthcheckRouter } from './auth/router';
+import {
+  createAuthConfigRouter,
+  createAuthRouter,
+  createHealthcheckRouter,
+} from './auth/router';
 import { createYouTubeRouter } from './auth/youtube';
 
 export async function mountAPI(testMode?: boolean): Promise<express.Express> {
@@ -62,6 +68,7 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
   });
 
   app.use('/', createHealthcheckRouter());
+  app.use('/', createAuthConfigRouter());
   app.use('/', createAuthRouter());
   app.use('/', createYouTubeRouter(jwtAuthenticator));
   app.use('/', createApiRouter(jwtAuthenticator));

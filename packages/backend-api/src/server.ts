@@ -45,6 +45,7 @@ import { mountAPI } from '.';
 import { applyCommonPostprocessors, getExpressAppWithPreprocessors } from './api/util/server';
 import { logger } from './logger';
 import { mountQueueDashboard } from './processing';
+import { registerInit, registerServer } from './server-management';
 
 const frontend_url = config.get('frontend_url');
 if (!frontend_url) {
@@ -102,6 +103,9 @@ async function init() {
   console.log(`Binding to ${pUrl.protocol} ${pUrl.hostname} : ${port}`);
   await server.listen({host: '0.0.0.0', port});
   console.log(`Started server in ${STANDALONE ? 'standalone' : 'API only'} mode`);
+
+  registerServer(server);
 }
 
+registerInit(init);
 init();
