@@ -126,6 +126,11 @@ function serializeParams(originalParams?: Partial<IParams> | null): string {
 }
 
 /**
+ * Base AUTH API Path
+ */
+const AUTH_URL = `/auth`;
+
+/**
  * Base REST API Path
  */
 const REST_URL = `/rest`;
@@ -570,7 +575,7 @@ export function getCommentFlags(commentId: string) {
 
 export async function checkServerStatus(): Promise<ServerStates> {
   const response = await axios.get(
-    `${API_URL}/auth/healthcheck`,
+    `${API_URL}${AUTH_URL}/healthcheck`,
   );
   if (response.status === 218) {
     if (response.data === 'init_first_user') {
@@ -585,7 +590,7 @@ export async function checkServerStatus(): Promise<ServerStates> {
  */
 export async function checkAuthorization(): Promise<void> {
   await axios.get(
-    `${API_URL}/auth/test`,
+    `${API_URL}${AUTH_URL}/test`,
   );
 }
 
@@ -717,4 +722,8 @@ export async function activateCommentSource(categoryId: ModelId, activate: boole
 
 export async function syncCommentSource(categoryId: ModelId): Promise<void> {
   await axios.get(serviceURL('comment_sources', `/sync/${categoryId}`));
+}
+
+export async function getOAuthConfig(): Promise<void> {
+  await axios.get(`${API_URL}${AUTH_URL}/config`);
 }

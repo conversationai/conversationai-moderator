@@ -424,7 +424,6 @@ export function createUpdateNotificationService(): express.Router {
   return router;
 }
 
-// Used in testing
 export function destroyUpdateNotificationService() {
   lastAllArticlesMessage = null;
   for (const si of socketItems.values()) {
