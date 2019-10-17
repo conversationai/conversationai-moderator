@@ -87,7 +87,7 @@ export async function getIsDoneScoring(commentId: number) {
     where: {
       commentId: commentId,
     },
-    order: 'sentAt DESC',
+    order: [['sentAt', 'DESC']],
   });
 
   return scoresComplete(commentScoreRequests);
