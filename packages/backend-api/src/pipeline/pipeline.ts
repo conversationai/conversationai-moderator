@@ -203,7 +203,7 @@ export async function processMachineScore(
       commentId,
       userId: serviceUserId,
     },
-    order: 'sentAt DESC',
+    order: [['sentAt', 'DESC']],
   });
 
   if (!commentScoreRequest) {

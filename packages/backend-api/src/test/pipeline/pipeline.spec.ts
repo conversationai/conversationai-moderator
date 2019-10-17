@@ -389,7 +389,7 @@ describe('Pipeline Tests', () => {
           commentId: comment.id,
         },
         include: [Comment],
-        order: 'id ASC',
+        order: [['id', 'ASC']],
       });
 
       assert.lengthOf(commentScoreRequests, 2);
