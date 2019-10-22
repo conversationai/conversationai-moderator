@@ -23,10 +23,12 @@ import { RouteComponentProps } from 'react-router';
 import {
   Button,
   Fab,
+  IconButton,
   Tooltip,
 } from '@material-ui/core';
 import {
   Add,
+  Edit,
 } from '@material-ui/icons';
 
 import {
@@ -50,7 +52,7 @@ import {
   Scrim,
 } from '../../components';
 import { API_URL } from '../../config';
-import { kickProcessor } from '../../platform/dataService';
+import {getOAuthConfig, IApiConfiguration, kickProcessor, updateOAuthConfig} from '../../platform/dataService';
 import { getToken } from '../../platform/localStore';
 import { IAppDispatch } from '../../stores';
 import {
@@ -81,6 +83,7 @@ import {
   VISUALLY_HIDDEN,
   WHITE_COLOR,
 } from '../../styles';
+import { EditOAuthScrim } from './components/OAuthConfig';
 import { SETTINGS_STYLES } from './settingsStyles';
 import {
   updatePreselects,
@@ -138,6 +141,20 @@ const STYLES: any = stylesheet({
   },
 });
 
+function StatusScrim(props: {visible: boolean, submitStatus: string}) {
+  return (
+    <Scrim
+      key="statusScrim"
+      scrimStyles={SCRIM_STYLE.scrim}
+      isVisible={props.visible}
+    >
+      <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})} tabIndex={0}>
+        <p>{props.submitStatus}</p>
+      </div>
+    </Scrim>
+  );
+}
+
 export interface ISettingsProps extends RouteComponentProps<{}>  {
   users?: Map<ModelId, IUserModel>;
   serviceUsers?: List<IUserModel>;
@@ -173,6 +190,8 @@ export interface ISettingsState {
   selectedUser?: IUserModel;
   homeIsFocused?: boolean;
   submitStatus?: string;
+  isOAuthScrimVisible?: boolean;
+  oauthConfig?: IApiConfiguration;
 }
 
 export class Settings extends React.Component<ISettingsProps, ISettingsState> {
@@ -502,6 +521,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
   }
 
   @autobind
+  async handleEditOAuth() {
+    const config = await getOAuthConfig();
+    this.setState({oauthConfig: config, isOAuthScrimVisible: true});
+  }
+
+  @autobind
   onCancelPress() {
     this.props.history.goBack();
   }
@@ -512,6 +537,7 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       isAddUserScrimVisible: false,
       isEditUserScrimVisible: false,
       isEditYouTubeScrimVisible: false,
+      isOAuthScrimVisible: false,
     });
   }
 
@@ -576,6 +602,29 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
       user = this.props.youtubeUsers.find((u) => (u.id === userId));
       this.setState({
         selectedUser: user,
+      });
+    }
+    catch (e) {
+      this.setState({
+        isEditYouTubeScrimVisible: false,
+        isStatusScrimVisible: true,
+        submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${e.message}`,
+      });
+    }
+  }
+
+  @autobind
+  async saveOAuthSettings(config: IApiConfiguration) {
+    await this.setState({
+      isOAuthScrimVisible: false,
+      isStatusScrimVisible: true,
+      submitStatus: 'Saving changes...',
+    });
+
+    try {
+      await updateOAuthConfig(config);
+      await this.setState({
+        isStatusScrimVisible: false,
       });
     }
     catch (e) {
@@ -775,20 +824,6 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
     );
   }
 
-  renderStatusScrim() {
-    return (
-      <Scrim
-        key="statusScrim"
-        scrimStyles={SCRIM_STYLE.scrim}
-        isVisible={this.state.isStatusScrimVisible}
-      >
-        <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: 450})} tabIndex={0}>
-          <p>{this.state.submitStatus}</p>
-        </div>
-      </Scrim>
-    );
-  }
-
   render() {
     const {
       categories,
@@ -861,18 +896,17 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
             handleAdd={this.handleAddUserService}
           />
           <ModeratorSettings users={this.props.moderatorUsers}/>
-          <div>
-            <div key="pluginsHeader" {...css(SETTINGS_STYLES.heading)}>
-              <h2 {...css(SETTINGS_STYLES.headingText)}>
-                Plugins
-              </h2>
-            </div>
-            <YouTubeUsersSettings
-              users={this.props.youtubeUsers}
-              handleEdit={this.handleEditYoutube}
-              connect={this.connectYouTubeAccount}
-              kick={this.kickYouTubeProcessor}
-            />
+          <div key="pluginsHeader" {...css(SETTINGS_STYLES.heading)}>
+            <h2 {...css(SETTINGS_STYLES.headingText)}>
+              Plugins
+            </h2>
+          </div>
+          <YouTubeUsersSettings
+            users={this.props.youtubeUsers}
+            handleEdit={this.handleEditYoutube}
+            connect={this.connectYouTubeAccount}
+            kick={this.kickYouTubeProcessor}
+          />
               {/*<p>&nbsp;</p>*/}
               {/*<h3>Wordpress</h3>*/}
               {/*<p>Install the Wordpress plugin to use Moderator with your Wordpress blog.</p>*/}
@@ -892,9 +926,25 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
               {/*  <a href="https://github.com/Jigsaw-Code/moderator-reddit" {...css(STYLES.pluginLink)}>Get started →</a>*/}
               {/*</p>*/}
               {/*<p>&nbsp;</p>*/}
+          <div key="patformSettingsHeader" {...css(SETTINGS_STYLES.heading)}>
+            <h2 {...css(SETTINGS_STYLES.headingText)}>
+              Platform settings
+            </h2>
+          </div>
+          <div {...css(SETTINGS_STYLES.section)}>
+            <p>Configure OAuth:
+              <Tooltip title="Edit this user">
+                <IconButton onClick={this.handleEditOAuth}>
+                  <Edit color="primary"/>
+                </IconButton>
+              </Tooltip>
+            </p>
           </div>
         </div>
-        {this.renderStatusScrim()}
+        <StatusScrim
+          visible={this.state.isStatusScrimVisible}
+          submitStatus={this.state.submitStatus}
+        />
         <AddUserScrim
           type={this.state.addUserType}
           visible={this.state.isAddUserScrimVisible}
@@ -913,6 +963,12 @@ export class Settings extends React.Component<ISettingsProps, ISettingsState> {
           visible={this.state.isEditYouTubeScrimVisible}
           close={this.closeScrims}
           save={this.saveYouTubeSettings}
+        />
+        <EditOAuthScrim
+          visible={this.state.isOAuthScrimVisible}
+          config={this.state.oauthConfig}
+          close={this.closeScrims}
+          save={this.saveOAuthSettings}
         />
       </div>
     );

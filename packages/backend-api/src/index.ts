@@ -25,7 +25,6 @@ import { config } from '@conversationai/moderator-config';
 import { createApiRouter } from './api/router';
 import { getGoogleStrategy, getJwtStrategy } from './auth/providers';
 import {
-  createAuthConfigRouter,
   createAuthRouter,
   createHealthcheckRouter,
 } from './auth/router';
@@ -68,7 +67,6 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
   });
 
   app.use('/', createHealthcheckRouter());
-  app.use('/', createAuthConfigRouter());
   app.use('/', createAuthRouter());
   app.use('/', createYouTubeRouter(jwtAuthenticator));
   app.use('/', createApiRouter(jwtAuthenticator));

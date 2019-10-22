@@ -724,6 +724,16 @@ export async function syncCommentSource(categoryId: ModelId): Promise<void> {
   await axios.get(serviceURL('comment_sources', `/sync/${categoryId}`));
 }
 
-export async function getOAuthConfig(): Promise<void> {
-  await axios.get(`${API_URL}${AUTH_URL}/config`);
+export interface IApiConfiguration {
+  id: string;
+  secret: string;
+}
+
+export async function getOAuthConfig(): Promise<IApiConfiguration> {
+  const response: any = await axios.get(`${API_URL}${AUTH_URL}/config`);
+  return response.data.google_oauth_config as IApiConfiguration;
+}
+
+export async function updateOAuthConfig(config: IApiConfiguration): Promise<void> {
+  await axios.post(`${API_URL}${AUTH_URL}/config`, {data: config});
 }

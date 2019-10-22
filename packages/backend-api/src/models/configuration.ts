@@ -28,6 +28,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 
 export const CONFIGURATION_TOKEN = 'token';
+export const CONFIGURATION_GOOGLE_OAUTH = 'google-oauth';
 
 interface IConfigurationAttributes {
   data: any;
