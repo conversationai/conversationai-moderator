@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as express from 'express';
 
+import { createAuthConfigRouter } from '../auth/router';
 import { createAssistantRouter } from './assistant';
 import { createPublisherRouter } from './publisher';
 import { createRESTRouter } from './rest';
@@ -34,6 +35,8 @@ export function createApiRouter(authenticator: any) {
       (router as any)[method]('*', authenticator);
     });
   }
+
+  router.use('/', createAuthConfigRouter());
 
   // The REST API provides standard CRUD operations on our database models using
   // the JSONAPI scheme format.

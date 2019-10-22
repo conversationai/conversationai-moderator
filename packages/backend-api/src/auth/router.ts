@@ -22,6 +22,7 @@ import { config } from '@conversationai/moderator-config';
 
 import { IUserInstance } from '../models';
 import { restartService } from '../server-management';
+import { getOAuthConfiguration, IGoogleOAuthConfiguration, setOAuthConfiguration } from './config';
 import { createToken } from './tokens';
 import { isFirstUserInitialised } from './users';
 import { generateServerCSRF, getClientCSRF } from './utils';
@@ -81,10 +82,24 @@ export function createAuthConfigRouter(): express.Router {
   router.get(
     '/auth/config',
     async (_req, res, next) => {
+      const data = await getOAuthConfiguration();
+      const id = (data && data.id) ? data.id : '';
+      const secret = (data && data.secret) ? 'X'.repeat(data.secret.length - 5) + data.secret.substr(-5) : '';
+      res.json({ google_oauth_config: {
+        id: id,
+        secret: secret,
+      }});
+      next();
+    },
+  );
+
+  router.post(
+    '/auth/config',
+    async (req, res, next) => {
+      await setOAuthConfiguration(req.body.data as IGoogleOAuthConfiguration);
       restartService();
       res.send('ok');
       next();
-      return;
     },
   );
 
