@@ -37,6 +37,7 @@ export interface IOAuthConfigProps extends IApiConfiguration {
 const useStyles = makeStyles((_theme) => ({
   textField: {
     width: '40vw',
+    maxWidth: '600px',
   },
 }));
 
@@ -60,7 +61,7 @@ export function OAuthConfig(props: IOAuthConfigProps) {
           target="_blank"
           style={{color: 'inherit', fontWeight: 'bold', textDecoration: 'underline'}}
         >the Google API console</a>.
-        If you haven't yet got an appropriate <b>OAuth Client ID</b> yet, or want to allocate a new one,
+        If you don't yet have an <b>OAuth Client ID</b>, or want to allocate a new one,
         you can do so by clicking the <b>Create Credentials</b> button and selecting the <b>OAuth</b> entry.
       </p>
       <p>
@@ -104,7 +105,7 @@ export function OAuthConfig(props: IOAuthConfigProps) {
           variant="contained"
           color="primary"
           onClick={submitHandler}
-          disabled={!(id.length > 0 && secret.length > 0)}
+          disabled={!id || !secret}
         >
           Save Configuration
         </Button>
