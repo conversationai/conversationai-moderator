@@ -19,7 +19,6 @@ import { CONFIGURATION_GOOGLE_OAUTH, getConfigItem, setConfigItem } from '../mod
 export interface IGoogleOAuthConfiguration {
   id: string;
   secret: string;
-  knownBad?: boolean;
 }
 
 export async function getOAuthConfiguration() {
@@ -28,4 +27,14 @@ export async function getOAuthConfiguration() {
 
 export async function setOAuthConfiguration(oauthConfig: IGoogleOAuthConfiguration) {
   return await setConfigItem(CONFIGURATION_GOOGLE_OAUTH, oauthConfig);
+}
+
+let oauthGood = false;
+
+export async function setOAuthGood(isGood: boolean) {
+  oauthGood = isGood;
+}
+
+export async function isOAuthGood() {
+  return oauthGood;
 }
