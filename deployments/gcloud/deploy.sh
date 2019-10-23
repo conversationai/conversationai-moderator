@@ -12,8 +12,6 @@ kubectl create secret generic moderator-configuration \
   --from-literal=DATABASE_USER=$DATABASE_USER \
   --from-literal=DATABASE_PASSWORD=$DATABASE_PASSWORD \
   --from-literal=GOOGLE_SCORE_AUTH=$GOOGLE_SCORE_AUTH \
-  --from-literal=GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
-  --from-literal=GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
   --from-literal=SQL_CONNECTION=$SQL_CONNECTION
 
 envsubst < kubernetes-deployment.yaml | kubectl apply -f -

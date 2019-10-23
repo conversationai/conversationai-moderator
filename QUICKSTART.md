@@ -21,6 +21,8 @@ http://<domain name from step 0>/api/auth/callback/google
 http://<domain name from step 0>/api/youtube/callback
 ```
 
+You'll be asked to enter this information when you first log into OS Moderator.
+
 Step 2:
 -------
 
@@ -57,8 +59,6 @@ Step 5:
 Set the following environment variables
 ```
 export MODERATOR_URL=http://<domain name from step 0>
-export GOOGLE_CLIENT_ID=<Client ID from step 1>
-export GOOGLE_CLIENT_SECRET=<Client secret from step 1>
 export GOOGLE_CLOUD_API_KEY=<API key from step 4>
 export DATABASE_PASSWORD=password
 

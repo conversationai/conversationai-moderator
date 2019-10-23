@@ -40,16 +40,6 @@ spec:
                 secretKeyRef:
                   name: moderator-configuration
                   key: GOOGLE_SCORE_AUTH
-            - name: GOOGLE_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: moderator-configuration
-                  key: GOOGLE_CLIENT_ID
-            - name: GOOGLE_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: moderator-configuration
-                  key: GOOGLE_CLIENT_SECRET
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.11
           command: ["/cloud_sql_proxy"]

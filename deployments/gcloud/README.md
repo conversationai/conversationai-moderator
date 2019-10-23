@@ -108,17 +108,6 @@ DATABASE_SOCKET=/cloudsql/$SQL_CONNECTION bin/osmod users:create --group general
 mysql --socket=/cloudsql/$SQL_CONNECTION --user=root --password=$DATABASE_PASSWORD
 ```
 
-### Configure OAuth authentication
-
-To configure the Google OAuth authenticator for your app, visit
-[Google API console](https://console.developers.google.com/apis/credentials),
-and OAuth2.0 Client ID entry.  (Make sure the correct project is selected.)
-Set the Authorised redirect URI to `http://<domain name or IP address>:8080/auth/callback/google`.
-
-(Unfortunately, there does not seem to be a way to configure this via the
-commandline.  If Google add the necessary features, we'll update this document
-accordingly.)
-
 ## Do the deployment
 
 ### Generate a docker file and upload it to a registry
@@ -143,8 +132,6 @@ docker run --publish 8080:8080 --publish 8000:8000 \
    --env DATABASE_USER=$DATABASE_USER \
    --env DATABASE_PASSWORD=$DATABASE_PASSWORD \
    --env GOOGLE_SCORE_AUTH=$GOOGLE_SCORE_AUTH \
-   --env GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
-   --env GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
    --mount type=bind,source=/cloudsql,destination=/cloudsql/
    $MODERATOR_IMAGE_ID
 ```
@@ -166,8 +153,6 @@ export BILLING=<as set above>
 export DATABASE_NAME=os_moderator
 export DATABASE_USER=os_moderator
 export DATABASE_PASSWORD=password
-export GOOGLE_CLIENT_ID=<as retrieved when setting up OAuth>
-export GOOGLE_CLIENT_SECRET=<as retrieved when setting up OAuth>
 export GOOGLE_SCORE_AUTH=<get this from Jigsaw/Perspective team>
 export FRONTEND_URL=http://<hostname or IP address>/
 export API_URL=http://<hostname or IP address>:8080/
@@ -217,7 +202,6 @@ kubectl describe deployments conversationai-moderator
  - Integrate statically allocated IP address
    e.g., https://cloud.google.com/kubernetes-engine/docs/tutorials/configuring-domain-name-static-ip
  - Separate frontend and api into separate containers?
- - Work out how to automate configuration of GOOGLE_CLIENT_*
  - Enable SSH in the load balancer
 
 
