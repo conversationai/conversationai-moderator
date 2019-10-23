@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2019 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,11 +19,28 @@ import qs from 'query-string';
 import { generate } from 'randomstring';
 import React from 'react';
 
-import { SPLASH_STYLES, SplashRoot } from '../../components';
+import { Bubbles, SPLASH_STYLES, SplashFrame, SplashRoot } from '../../components';
 import { API_URL } from '../../config';
 import { COMMON_STYLES } from '../../stylesx';
 import { IReturnURL, setCSRF, setReturnURL } from '../../util';
-import { css } from '../../utilx';
+import { css, stylesheet } from '../../utilx';
+
+export const STYLES = stylesheet({
+  frame: {
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  content: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: '2vh',
+    padding: '2vh 5vh 3vh 5vh',
+  },
+});
 
 export interface ILoginProps {
   errorMessage?: string;
@@ -56,40 +73,62 @@ export function Login(props: ILoginProps) {
     window.location.href = url;
   }
 
-  function contents() {
-    if (errorMessage) {
+  function oauthBack() {
+    if (!props.backToOAuth) {
+      return '';
+    }
+    return (
+      <p key="back" style={{fontSize: '1vh'}}>
+        If you are having problems logging in,
+        check your <a onClick={props.backToOAuth} {...css(SPLASH_STYLES.inlineLink)}>OAuth configuration.</a>
+      </p>
+    );
+  }
+
+  if (errorMessage) {
+    return (
+      <SplashRoot>
       return (
         <div key="login-errors" {...css(SPLASH_STYLES.errors, COMMON_STYLES.fadeIn)}>
           <p key="message">{errorMessage}</p>
           <p key="action" {...css(SPLASH_STYLES.errorsTryAgain)}>
             <a key="try-again" onClick={redirectToLogin} {...css(SPLASH_STYLES.link)}>Try Again</a>
           </p>
+          {oauthBack()}
         </div>
-      );
-    }
-    if (props.firstUser) {
-      return (
-        <div key="first-user" {...css(SPLASH_STYLES.errors, COMMON_STYLES.fadeIn)}>
-          <p key="message">There are no administrators registered yet.</p>
-          <p key="message2">The first person to log in will become the administrator.<br/>
-          Once the first user has registered, the system will be locked down.<br/>
-          Additional users can be added on the settings pages.</p>
-          <p key="action" {...css(SPLASH_STYLES.errorsTryAgain)}>
-            <a onClick={redirectToLogin} {...css(SPLASH_STYLES.link)}>Create First User</a>
-          </p>
-        </div>
-      );
-    }
+      </SplashRoot>
+    );
+  }
+
+  if (props.firstUser) {
     return (
-      <div key="signin" {...css(SPLASH_STYLES.signIn, COMMON_STYLES.fadeIn)}>
-        <a onClick={redirectToLogin} {...css(SPLASH_STYLES.link)}>Sign In</a>
-      </div>
+      <SplashFrame>
+        <div key="frame" {...css(STYLES.frame, COMMON_STYLES.fadeIn)}>
+          <Bubbles/>
+          <div key="first-user" {...css(STYLES.content)}>
+            <p key="message">There are no administrators registered yet.</p>
+            <p key="message2">The first person to log in will become the administrator.<br/>
+              Once the first user has registered, the system will be locked down.<br/>
+              Additional users can be added on the settings pages.</p>
+            <p key="action" {...css(SPLASH_STYLES.errorsTryAgain)}>
+              <a onClick={redirectToLogin} {...css(SPLASH_STYLES.link)}>Create First User</a>
+            </p>
+            <p key="back">
+              This also tests out the OAuth configuration you have just set.<br/>If you are having
+              problems, you may need to revisit the <a onClick={props.backToOAuth} {...css(SPLASH_STYLES.inlineLink)}>OAuth configuration page</a>
+            </p>
+          </div>
+        </div>
+      </SplashFrame>
     );
   }
 
   return (
     <SplashRoot>
-      {contents()}
+      <div key="signin" {...css(SPLASH_STYLES.signIn, COMMON_STYLES.fadeIn)}>
+        <a onClick={redirectToLogin} {...css(SPLASH_STYLES.link)}>Sign In</a>
+        {oauthBack()}
+      </div>
     </SplashRoot>
   );
 }

@@ -50,6 +50,14 @@ export const SPLASH_STYLES = stylesheet({
     },
   },
 
+  inlineLink: {
+    color: 'white',
+    textDecoration: 'underline',
+    ':hover': {
+      textDecoration: 'underline',
+    },
+  },
+
   header2Tag: {
     position: 'absolute',
     top: '2vh',

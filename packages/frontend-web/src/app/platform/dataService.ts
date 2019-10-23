@@ -583,6 +583,8 @@ export async function checkServerStatus(): Promise<ServerStates> {
         return 's_init_oauth';
       case 'init_first_user':
         return 's_init_first_user';
+      case 'init_check_oauth':
+        return 's_init_check_oauth';
     }
   }
   return 's_gtg';

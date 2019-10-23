@@ -23,7 +23,7 @@ import * as passport from 'passport';
 import { config } from '@conversationai/moderator-config';
 
 import { createApiRouter } from './api/router';
-import { getOAuthConfiguration } from './auth/config';
+import { getOAuthConfiguration, isOAuthGood } from './auth/config';
 import { getGoogleStrategy, getJwtStrategy } from './auth/providers';
 import {
   createAuthConfigRouter,
@@ -45,7 +45,7 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
   // (Authenticator doesn't have a well-defined type...)
   let jwtAuthenticator: any;
   const oauthConfig = await getOAuthConfiguration();
-  const oauthOk = oauthConfig != null && !oauthConfig.knownBad;
+  const oauthOk = oauthConfig != null && await isOAuthGood();
 
   if (!testMode) {
     passport.use(await getJwtStrategy());

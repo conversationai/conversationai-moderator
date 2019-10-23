@@ -22,7 +22,12 @@ import { config } from '@conversationai/moderator-config';
 
 import { IUserInstance } from '../models';
 import { restartService } from '../server-management';
-import { getOAuthConfiguration, IGoogleOAuthConfiguration, setOAuthConfiguration } from './config';
+import {
+  getOAuthConfiguration,
+  IGoogleOAuthConfiguration,
+  isOAuthGood,
+  setOAuthConfiguration, setOAuthGood,
+} from './config';
 import { createToken } from './tokens';
 import { isFirstUserInitialised } from './users';
 import { generateServerCSRF, getClientCSRF } from './utils';
@@ -62,11 +67,14 @@ export function createHealthcheckRouter(oauthConfig: IGoogleOAuthConfiguration |
   router.get(
     '/auth/healthcheck',
     async (_req, res, next) => {
-      if (oauthConfig == null || oauthConfig.knownBad) {
+      if (oauthConfig == null) {
         res.status(218).send('init_oauth');
       }
       else if (!await isFirstUserInitialised()) {
         res.status(218).send('init_first_user');
+      }
+      else if (!await isOAuthGood()) {
+        res.status(218).send('init_check_oauth');
       }
       else {
         res.send('ok');
@@ -104,6 +112,7 @@ export function createAuthConfigRouter(): express.Router {
       await setOAuthConfiguration(req.body.data as IGoogleOAuthConfiguration);
       res.send('ok');
       next();
+      await setOAuthGood(false);
       restartService();
     },
   );

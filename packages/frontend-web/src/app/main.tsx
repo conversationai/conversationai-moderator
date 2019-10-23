@@ -113,6 +113,8 @@ function _Root(props: React.PropsWithChildren<RouteComponentProps<{}>>) {
         setState('s_init_oauth');
       }
       return <Login firstUser backToOAuth={backToOAuth}/>;
+    case 's_init_check_oauth':
+      return <Login backToOAuth={backToOAuth}/>;
   }
 
   switch (authState) {

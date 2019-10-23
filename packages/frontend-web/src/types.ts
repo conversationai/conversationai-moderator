@@ -20,6 +20,7 @@ export type ServerStates =
   's_init_oauth' |
   's_init_first_user' |
   's_init_perspective' |
+  's_init_check_oauth' |
   's_gtg';
 export type AuthenticationStates = 'initialising' | 'check_token' | 'unauthenticated' | 'gtg';
 export type WebsocketStates = 'ws_connecting' | 'ws_gtg';
