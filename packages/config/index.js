@@ -119,20 +119,6 @@ const config = convict({
     }
   },
 
-  google_client_id: {
-    doc: 'The Google OAuth web client id, found at https://console.developers.google.com',
-    format: String,
-    default: undefined,
-    env: 'GOOGLE_CLIENT_ID'
-  },
-
-  google_client_secret: {
-    doc: 'The Google OAuth web client secret, found at https://console.developers.google.com',
-    format: String,
-    default: undefined,
-    env: 'GOOGLE_CLIENT_SECRET'
-  },
-
   require_reason_to_reject: {
     doc: 'Flag to require moderator to select a reason (tag) to reject a comment',
     format: Boolean,

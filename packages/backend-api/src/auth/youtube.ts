@@ -19,10 +19,14 @@ import { google } from 'googleapis';
 
 import { config } from '@conversationai/moderator-config';
 
+import { IGoogleOAuthConfiguration } from './config';
 import { saveYouTubeUserToken } from './users';
 import { generateServerCSRF, getClientCSRF } from './utils';
 
-export function createYouTubeRouter(authenticator: any): express.Router {
+export function createYouTubeRouter(
+  oauthConfig: IGoogleOAuthConfiguration,
+  authenticator: any,
+): express.Router {
   const router = express.Router({
     caseSensitive: true,
     mergeParams: true,
@@ -43,8 +47,8 @@ export function createYouTubeRouter(authenticator: any): express.Router {
       }
 
       const oauth2Client = new google.auth.OAuth2(
-        config.get('google_client_id'),
-        config.get('google_client_secret'),
+        oauthConfig.id,
+        oauthConfig.secret,
         `${config.get('api_url')}/youtube/callback`);
       const authUrl = oauth2Client.generateAuthUrl({
         access_type: 'offline',
@@ -74,8 +78,8 @@ export function createYouTubeRouter(authenticator: any): express.Router {
       }
 
       const oauth2Client = new google.auth.OAuth2(
-        config.get('google_client_id'),
-        config.get('google_client_secret'),
+        oauthConfig.id,
+        oauthConfig.secret,
         `${config.get('api_url')}/youtube/callback`, );
       const tokenRsp = await oauth2Client.getToken(req.query.code);
       const token = tokenRsp.tokens;
