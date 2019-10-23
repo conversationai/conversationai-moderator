@@ -88,14 +88,11 @@ export function Bubbles() {
   );
 }
 
-export function SplashRoot(props: React.PropsWithChildren<{}>) {
+export function SplashFrame(props: React.PropsWithChildren<{}>) {
   return (
     <div>
       <div key="header" className="landing_headerTag">
         Moderator
-      </div>
-      <div key="root" className="landing_centerOnPage">
-        <Bubbles/>
       </div>
       <div key="footer" className="landing_footerTag">
         <a
@@ -108,5 +105,16 @@ export function SplashRoot(props: React.PropsWithChildren<{}>) {
       </div>
       {props.children}
     </div>
+  );
+}
+
+export function SplashRoot(props: React.PropsWithChildren<{}>) {
+  return (
+    <SplashFrame>
+      <div key="root" className="landing_centerOnPage">
+        <Bubbles/>
+      </div>
+      {props.children}
+    </SplashFrame>
   );
 }
