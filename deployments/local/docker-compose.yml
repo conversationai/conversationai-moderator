@@ -28,8 +28,6 @@ services:
       DATABASE_USER: 'os_moderator'
       DATABASE_PASSWORD: "${DATABASE_PASSWORD}"
       REDIS_URL: 'redis://redis:6379'
-      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID}"
-      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET}"
       HTTPS_LINKS_ONLY: 'false'
       APP_NAME: 'Moderator'
       GOOGLE_CLOUD_API_KEY: "${GOOGLE_CLOUD_API_KEY}"

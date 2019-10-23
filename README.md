@@ -15,14 +15,6 @@ must be set in the environment before anything will work.
 * `DATABASE_NAME`: The MySQL database name, e.g., 'os_moderator'.
 * `DATABASE_USER`: The MySQL database user, e.g., 'os_moderator'.
 * `DATABASE_PASSWORD`: The MySQL database password.
-* `GOOGLE_CLIENT_ID`: Google OAuth API client id.
-* `GOOGLE_CLIENT_SECRET`:  Google OAuth API secret.
-
-To get values for the `GOOGLE_CLIENT_*` parameters, create an OAuth2.0 Client ID
-entry for your app in the [Google API console](https://console.developers.google.com/apis/credentials).
-Set the Authorised redirect URI to `http://localhost:8080/auth/callback/google`.
-(Replace localhost with the address of your server if you are not running
-locally.)
 
 In a production setting, you'll also have to set the following:
 
