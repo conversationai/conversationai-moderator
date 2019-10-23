@@ -40,7 +40,7 @@ import {
 import { ErrorRoot, SPLASH_STYLES, SplashRoot, ThemeRoot } from './components';
 import { APP_NAME } from './config';
 import { AppRoot, reducer as scenesReducer } from './scenes';
-import { Login } from './scenes/Login';
+import { ConfigureOAuth, Login } from './scenes/Login';
 import { reducer as globalReducer} from './stores';
 import { COMMON_STYLES } from './stylesx';
 import { css } from './utilx';
@@ -106,8 +106,13 @@ function _Root(props: React.PropsWithChildren<RouteComponentProps<{}>>) {
       return message('Connecting');
     case 's_unavailable':
       return <ErrorRoot errorMessage="Server unavailable" retry={retry}/>;
+    case 's_init_oauth':
+      return <ConfigureOAuth restart={retry}/>;
     case 's_init_first_user':
-      return <Login firstUser/>;
+      function backToOAuth() {
+        setState('s_init_oauth');
+      }
+      return <Login firstUser backToOAuth={backToOAuth}/>;
   }
 
   switch (authState) {
@@ -131,7 +136,7 @@ ReactDOM.render(
   <Provider store={store}>
     <ThemeRoot>
       <BrowserRouter>
-        <Root/>;
+        <Root/>
       </BrowserRouter>
     </ThemeRoot>
   </Provider>,

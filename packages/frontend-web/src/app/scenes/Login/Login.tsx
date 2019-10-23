@@ -28,6 +28,7 @@ import { css } from '../../utilx';
 export interface ILoginProps {
   errorMessage?: string;
   firstUser?: boolean;
+  backToOAuth?(): void;
 }
 
 export function Login(props: ILoginProps) {

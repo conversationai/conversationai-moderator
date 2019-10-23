@@ -578,8 +578,11 @@ export async function checkServerStatus(): Promise<ServerStates> {
     `${API_URL}${AUTH_URL}/healthcheck`,
   );
   if (response.status === 218) {
-    if (response.data === 'init_first_user') {
-      return 's_init_first_user';
+    switch (response.data) {
+      case 'init_oauth':
+        return 's_init_oauth';
+      case 'init_first_user':
+        return 's_init_first_user';
     }
   }
   return 's_gtg';

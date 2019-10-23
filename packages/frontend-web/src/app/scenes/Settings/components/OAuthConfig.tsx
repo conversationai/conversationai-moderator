@@ -31,6 +31,7 @@ import { css } from '../../../utilx';
 
 export interface IOAuthConfigProps extends IApiConfiguration {
   onClickDone(config: IApiConfiguration): any;
+  showLogoutWarning?: boolean;
 }
 
 const useStyles = makeStyles((_theme) => ({
@@ -89,9 +90,11 @@ export function OAuthConfig(props: IOAuthConfigProps) {
           variant="outlined"
         />
       </div>
+      {props.showLogoutWarning &&
       <p>
         <b>WARNING:</b> Changing OAuth configuration will log everyone out.
       </p>
+      }
       <p>
         The server will take a few seconds to reconfigure itself after the OAuth configuration has changed,
         and during this time, it will not be available.  If you have login issues, please try again after a few seconds.
@@ -129,7 +132,7 @@ export function EditOAuthScrim(props: {
       <div {...css(SCRIM_STYLE.popup, {position: 'relative', width: '75vw', maxWidth: '800px'})}>
         <OverflowContainer
           header={<ContainerHeader onClickClose={props.close}>OAuth Config</ContainerHeader>}
-          body={<OAuthConfig onClickDone={props.save} id={id} secret={secret}/>}
+          body={<OAuthConfig onClickDone={props.save} id={id} secret={secret} showLogoutWarning/>}
         />
       </div>
     </Scrim>

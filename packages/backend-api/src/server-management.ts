@@ -20,6 +20,7 @@ import { destroyUpdateNotificationService } from './api/services/updateNotificat
 
 let server: https.Server | http.Server;
 let init: () => void;
+let closing = false;
 
 export function registerServer(iserver: https.Server | http.Server) {
   server = iserver;
@@ -30,8 +31,13 @@ export function registerInit(iinit: () => void) {
 }
 
 export function restartService() {
+  if (closing) {
+    return;
+  }
+  closing = true;
   console.log('*** closing server');
   server.close(() => {
+    closing = false;
     init();
   });
   destroyUpdateNotificationService();

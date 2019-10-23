@@ -23,8 +23,10 @@ import * as passport from 'passport';
 import { config } from '@conversationai/moderator-config';
 
 import { createApiRouter } from './api/router';
+import { getOAuthConfiguration } from './auth/config';
 import { getGoogleStrategy, getJwtStrategy } from './auth/providers';
 import {
+  createAuthConfigRouter,
   createAuthRouter,
   createHealthcheckRouter,
 } from './auth/router';
@@ -42,6 +44,9 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
   // Initialize auth strategies and Passport
   // (Authenticator doesn't have a well-defined type...)
   let jwtAuthenticator: any;
+  const oauthConfig = await getOAuthConfiguration();
+  const oauthOk = oauthConfig != null && !oauthConfig.knownBad;
+
   if (!testMode) {
     passport.use(await getJwtStrategy());
     passport.use(await getGoogleStrategy());
@@ -66,7 +71,13 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
     next();
   });
 
-  app.use('/', createHealthcheckRouter());
+  app.use('/', createHealthcheckRouter(oauthConfig));
+
+  if (!testMode && !oauthOk) {
+    console.log('*** Starting in bootstrap mode ***');
+    app.use('/', createAuthConfigRouter());
+  }
+
   app.use('/', createAuthRouter());
   app.use('/', createYouTubeRouter(jwtAuthenticator));
   app.use('/', createApiRouter(jwtAuthenticator));

@@ -19,7 +19,7 @@ import { CONFIGURATION_GOOGLE_OAUTH, getConfigItem, setConfigItem } from '../mod
 export interface IGoogleOAuthConfiguration {
   id: string;
   secret: string;
-  knownGood: boolean;
+  knownBad?: boolean;
 }
 
 export async function getOAuthConfiguration() {

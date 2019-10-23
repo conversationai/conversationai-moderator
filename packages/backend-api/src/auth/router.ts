@@ -53,7 +53,7 @@ function redirectToFrontend(
   res.redirect(`${redirectHost}?${queryString}`);
 }
 
-export function createHealthcheckRouter(): express.Router {
+export function createHealthcheckRouter(oauthConfig: IGoogleOAuthConfiguration | null): express.Router {
   const router = express.Router({
     caseSensitive: true,
     mergeParams: true,
@@ -61,12 +61,17 @@ export function createHealthcheckRouter(): express.Router {
 
   router.get(
     '/auth/healthcheck',
-    async (_1, res, _2) => {
-      if (await isFirstUserInitialised()) {
-        res.send('ok');
-        return;
+    async (_req, res, next) => {
+      if (oauthConfig == null || oauthConfig.knownBad) {
+        res.status(218).send('init_oauth');
       }
-      res.status(218).send('init_first_user');
+      else if (!await isFirstUserInitialised()) {
+        res.status(218).send('init_first_user');
+      }
+      else {
+        res.send('ok');
+      }
+      next();
     },
   );
 
@@ -97,9 +102,9 @@ export function createAuthConfigRouter(): express.Router {
     '/auth/config',
     async (req, res, next) => {
       await setOAuthConfiguration(req.body.data as IGoogleOAuthConfiguration);
-      restartService();
       res.send('ok');
       next();
+      restartService();
     },
   );
 
