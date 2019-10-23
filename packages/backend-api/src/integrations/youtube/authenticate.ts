@@ -17,8 +17,7 @@ limitations under the License.
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 
-import { config } from '@conversationai/moderator-config';
-
+import { getOAuthConfiguration } from '../../auth/config';
 import { logger } from '../../logger';
 import { IUserInstance, User, USER_GROUP_YOUTUBE } from '../../models';
 
@@ -28,7 +27,12 @@ export async function for_one_youtube_user(
   user: IUserInstance,
   callback: (owner: IUserInstance, client: OAuth2Client) => Promise<void>,
 ) {
-  const oauth2Client = new google.auth.OAuth2(config.get('google_client_id'), config.get('google_client_secret'));
+  const oauthConfig = await getOAuthConfiguration();
+  if (!oauthConfig || oauthConfig.knownBad) {
+    return;
+  }
+
+  const oauth2Client = new google.auth.OAuth2(oauthConfig.id, oauthConfig.secret);
   logger.info(`Youtube: Authenticating as: ${user.id}:${user.get('email')} (${user.get('name')})`);
   const extra = JSON.parse(user.get('extra'));
   oauth2Client.setCredentials(extra.token);

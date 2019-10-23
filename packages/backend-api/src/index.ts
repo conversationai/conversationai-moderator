@@ -49,7 +49,9 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
 
   if (!testMode) {
     passport.use(await getJwtStrategy());
-    passport.use(await getGoogleStrategy());
+    if (oauthConfig) {
+      passport.use(getGoogleStrategy(oauthConfig));
+    }
     app.use(passport.initialize());
     jwtAuthenticator = passport.authenticate('jwt', { session: false });
   }
@@ -79,7 +81,9 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
   }
 
   app.use('/', createAuthRouter());
-  app.use('/', createYouTubeRouter(jwtAuthenticator));
+  if (oauthOk) {
+    app.use('/', createYouTubeRouter(oauthConfig!, jwtAuthenticator));
+  }
   app.use('/', createApiRouter(jwtAuthenticator));
 
   return app;
