@@ -14,8 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { config } from '@conversationai/moderator-config';
-
+import { config } from '../../config';
 import { IUserInstance, User } from '../../models';
 import { IGoogleOAuthConfiguration, setOAuthGood } from '../config';
 import { ensureFirstUser, findOrCreateUserSocialAuth, isFirstUserInitialised } from '../users';

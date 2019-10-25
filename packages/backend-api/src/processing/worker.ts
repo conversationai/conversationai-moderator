@@ -35,8 +35,7 @@ limitations under the License.
 import { createClient, RedisClient } from 'redis';
 import { promisify } from 'util';
 
-import { config } from '@conversationai/moderator-config';
-
+import { config } from '../config';
 import { logger } from '../logger';
 
 // a minute in milliseconds

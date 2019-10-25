@@ -17,8 +17,7 @@ limitations under the License.
 import * as express from 'express';
 import { google } from 'googleapis';
 
-import { config } from '@conversationai/moderator-config';
-
+import { config } from '../config';
 import { IGoogleOAuthConfiguration } from './config';
 import { saveYouTubeUserToken } from './users';
 import { generateServerCSRF, getClientCSRF } from './utils';
