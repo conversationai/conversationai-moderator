@@ -18,8 +18,7 @@ import * as express from 'express';
 import * as passport from 'passport';
 import * as qs from 'qs';
 
-import { config } from '@conversationai/moderator-config';
-
+import { config } from '../config';
 import { IUserInstance } from '../models';
 import { restartService } from '../server-management';
 import {

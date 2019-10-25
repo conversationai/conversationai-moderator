@@ -14,8 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { config } from '@conversationai/moderator-config';
 import * as Sequelize from 'sequelize';
+
+import { config } from './config';
 
 export const dialect = 'mysql';
 export const host = config.get('database_host');
