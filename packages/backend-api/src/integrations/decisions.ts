@@ -28,7 +28,7 @@ export async function getDecisionForComment(
   return await Decision.findOne({
     where: {
       commentId: comment.id,
-      sentBackToPublisher: null,
+      sentBackToPublisher: { $eq: null },
       isCurrentDecision: true,
     },
   });
@@ -40,7 +40,7 @@ export async function foreachPendingDecision(
 ) {
   const decisions = await Decision.findAll({
     where: {
-      sentBackToPublisher: null,
+      sentBackToPublisher: { $eq: null },
       isCurrentDecision: true,
     },
     include: [{model: Comment, required: true, where: {ownerId: owner.id}}],
