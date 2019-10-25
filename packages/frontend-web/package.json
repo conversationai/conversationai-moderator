@@ -1,8 +1,8 @@
 {
   "name": "@conversationai/moderator-frontend-web",
   "version": "1.1.0",
-  "main": "dist-commonjs/index.js",
-  "types": "./dist-commonjs/index.d.ts",
+  "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
   "description": "OSMod project React.js frontend",
   "scripts": {
     "build": "npm run compile",
@@ -14,10 +14,9 @@
     "storybook:build": "build-storybook -c tooling/storybook -s public -o build/storybook",
     "storybook:test": "jest -c tooling/storybook/jest.config.json tooling/storybook/Storyshots.test.js",
     "compile": "npm run compile:lib && npm run compile:web",
-    "compile:dist": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --importHelpers",
-    "compile:lib": "rm -rf dist-commonjs && ../../node_modules/.bin/tsc --sourceMap --outDir dist-commonjs --declaration --module commonjs && npm run compile:lib:cleanup",
-    "compile:lib:cleanup": "find dist-commonjs -type f -exec sed -i -e 's/_1\\.default(/_1(/g' {} \\; && find dist-commonjs -type f -exec sed -i -e 's/_1\\.default\\./_1\\./g' {} \\;",
-    "compile:lib:watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist-commonjs --declaration --module commonjs --watch",
+    "compile:lib": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration && npm run compile:lib:cleanup",
+    "compile:lib:cleanup": "find dist -type f -exec sed -i -e 's/_1\\.default(/_1(/g' {} \\; && find dist -type f -exec sed -i -e 's/_1\\.default\\./_1\\./g' {} \\;",
+    "compile:lib:watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --watch",
     "compile:web": "webpack --bail --progress --profile --colors --config tooling/webpack.config.production.js",
     "watch": "webpack-dev-server --config tooling/webpack.config.js --progress --colors --host 0.0.0.0"
   },

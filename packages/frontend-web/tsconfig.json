@@ -1,23 +1,18 @@
 {
   "compilerOptions": {
-    "module": "es6",
-    "moduleResolution": "node",
     "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "jsx": "preserve",
-    "sourceMap": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "strictPropertyInitialization": false,
     "noImplicitAny": true,
     "noUnusedParameters": true,
-    "noUnusedLocals": true,
-    "outDir": ".tmp"
+    "noUnusedLocals": true
   },
   "exclude": [
-    ".tmp",
     "node_modules",
     "build",
-    "dist",
-    "dist-commonjs"
+    "dist"
   ]
 }
