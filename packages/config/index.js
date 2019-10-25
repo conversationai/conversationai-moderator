@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const path = require('path');
 const convict = require('convict');
 
 /**
@@ -147,14 +146,6 @@ const config = convict({
     env: 'SUBMIT_FEEDBACK_URL'
   },
 });
-
-// Try to load (env name).json config file (defaults to 'local.json')
-
-const env = config.get('env');
-
-try {
-  config.loadFile(path.join(__dirname, env + '.json'));
-} catch(e) { }
 
 config.validate({ allowed: 'strict' });
 
