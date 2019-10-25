@@ -14,87 +14,87 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-const convict = require('convict');
+import * as convict from 'convict';
 
 /**
  * Default/base configuration settings for OS Moderator
  */
-const config = convict({
+export const config = convict({
   env: {
     doc: 'The current application environment',
     format: ['production', 'development', 'local', 'test', 'circle_ci'],
     default: 'local',
-    env: 'NODE_ENV'
+    env: 'NODE_ENV',
   },
 
   app_name: {
     doc: 'The name of the project displayed on the frontend.',
     format: String,
     default: 'Moderator',
-    env: 'APP_NAME'
+    env: 'APP_NAME',
   },
 
   api_url: {
     doc: 'The public URL for the API',
     format: String,
     default: 'http://localhost:8000/api',
-    env: 'API_URL'
+    env: 'API_URL',
   },
 
   frontend_url: {
     doc: 'The public URL for the web frontend',
     format: String,
     default: 'http://localhost:8000',
-    env: 'FRONTEND_URL'
+    env: 'FRONTEND_URL',
   },
 
   database_host: {
     doc: 'Database host',
     format: String,
     default: 'localhost',
-    env: 'DATABASE_HOST'
+    env: 'DATABASE_HOST',
   },
 
   database_port: {
     doc: 'Database port',
     format: Number,
     default: 3306,
-    env: 'DATABASE_PORT'
+    env: 'DATABASE_PORT',
   },
 
   database_name: {
     doc: 'Database name',
     format: String,
     default: 'os_moderator',
-    env: 'DATABASE_NAME'
+    env: 'DATABASE_NAME',
   },
 
   database_user: {
     doc: 'Database user',
     format: String,
     default: 'os_moderator',
-    env: 'DATABASE_USER'
+    env: 'DATABASE_USER',
   },
 
   database_password: {
     doc: 'Database password',
     format: String,
-    default: undefined,
-    env: 'DATABASE_PASSWORD'
+    default: '',
+    env: 'DATABASE_PASSWORD',
   },
 
   database_socket: {
     doc: 'Database socket',
     format: String,
     default: undefined,
-    env: 'DATABASE_SOCKET'
+    env: 'DATABASE_SOCKET',
   },
 
   redis_url: {
     doc: 'The Redis config URL used by the worker queue',
     format: String,
     default: 'redis://localhost:6379',
-    env: 'REDIS_URL'
+    env: 'REDIS_URL',
   },
 
   worker: {
@@ -115,38 +115,36 @@ const config = convict({
       format: Number,
       default: (5 * 60) * 1000, // 5 minutes.
       env: 'WORKER_TASK_TTL',
-    }
+    },
   },
 
   require_reason_to_reject: {
     doc: 'Flag to require moderator to select a reason (tag) to reject a comment',
     format: Boolean,
     default: true,
-    env: 'REQUIRE_REASON_TO_REJECT'
+    env: 'REQUIRE_REASON_TO_REJECT',
   },
 
   restrict_to_session: {
     doc: 'Flag to restrict auth to the user session',
     format: Boolean,
     default: true,
-    env: 'RESTRICT_TO_SESSION'
+    env: 'RESTRICT_TO_SESSION',
   },
 
   moderator_guidelines_url: {
     doc: 'URL for moderator guidelines',
     format: String,
     default: '',
-    env: 'MODERATOR_GUIDELINES_URL'
+    env: 'MODERATOR_GUIDELINES_URL',
   },
 
   submit_feedback_url: {
     doc: 'URL for submit feedback mechanism',
     format: String,
     default: '',
-    env: 'SUBMIT_FEEDBACK_URL'
+    env: 'SUBMIT_FEEDBACK_URL',
   },
 });
 
 config.validate({ allowed: 'strict' });
-
-module.exports = { config: config };

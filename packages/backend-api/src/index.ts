@@ -20,8 +20,6 @@ import * as expressWs from 'express-ws';
 //     And consider replacing it with passport-next or something else.
 import * as passport from 'passport';
 
-import { config } from '@conversationai/moderator-config';
-
 import { createApiRouter } from './api/router';
 import { getOAuthConfiguration, isOAuthGood } from './auth/config';
 import { getGoogleStrategy, getJwtStrategy } from './auth/providers';
@@ -31,6 +29,7 @@ import {
   createHealthcheckRouter,
 } from './auth/router';
 import { createYouTubeRouter } from './auth/youtube';
+import { config } from './config';
 
 export async function mountAPI(testMode?: boolean): Promise<express.Express> {
   const app = express();

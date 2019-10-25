@@ -38,11 +38,11 @@ import { readFileSync } from 'fs';
 import * as http from 'http';
 import * as https from 'https';
 
-import { config } from '@conversationai/moderator-config';
 import { mountWebFrontend } from '@conversationai/moderator-frontend-web';
 
 import { mountAPI } from '.';
 import { applyCommonPostprocessors, getExpressAppWithPreprocessors } from './api/util/server';
+import { config } from './config';
 import { logger } from './logger';
 import { mountQueueDashboard } from './processing';
 import { registerInit, registerServer } from './server-management';

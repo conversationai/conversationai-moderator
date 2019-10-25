@@ -19,8 +19,7 @@ import * as requestRaw from 'request';
 import * as striptags  from 'striptags';
 import { rtrim } from 'underscore.string';
 
-import { config } from '@conversationai/moderator-config';
-
+import { config } from '../config';
 import { logger } from '../logger';
 import {
   Article,
