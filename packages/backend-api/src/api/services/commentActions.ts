@@ -177,7 +177,7 @@ export function createCommentActionsService(): express.Router {
 
   router.post('/:commentid/scores/:commentscoreid/reset',
     async ({ body, params}, res, next) => {
-      await enqueueResetTagTask(params.commentscoreid, body.runImmediately);
+      await enqueueResetTagTask(parseInt(params.commentscoreid, 10), body.runImmediately);
       res.json(REPLY_SUCCESS);
       next();
     },
@@ -185,7 +185,7 @@ export function createCommentActionsService(): express.Router {
 
   router.post('/:commentid/scores/:commentscoreid/confirm',
     async ({ body, params, user}, res, next) => {
-      await enqueueConfirmTagTask(user && user.id, params.commentscoreid, body.runImmediately);
+      await enqueueConfirmTagTask(user && user.id, parseInt(params.commentscoreid, 10), body.runImmediately);
       res.json(REPLY_SUCCESS);
       next();
     },
@@ -193,7 +193,7 @@ export function createCommentActionsService(): express.Router {
 
   router.post('/:commentid/scores/:commentscoreid/reject',
     async ({ body, params, user}, res, next) => {
-      await enqueueRejectTagTask(user && user.id, params.commentscoreid, body.runImmediately);
+      await enqueueRejectTagTask(user && user.id, parseInt(params.commentscoreid, 10), body.runImmediately);
       res.json(REPLY_SUCCESS);
       next();
     },
@@ -201,7 +201,7 @@ export function createCommentActionsService(): express.Router {
 
   router.delete('/:commentid/scores/:commentscoreid',
     async ({ body, params}, res, next) => {
-      await enqueueRemoveTagTask(params.commentscoreid, body.runImmediately);
+      await enqueueRemoveTagTask(parseInt(params.commentscoreid, 10), body.runImmediately);
       res.json(REPLY_SUCCESS);
       next();
     },
