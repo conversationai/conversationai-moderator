@@ -13,26 +13,21 @@
     "start": "bin/run"
   },
   "devDependencies": {
-    "@types/bluebird": "3.5.27",
     "@types/chai": "4.1.7",
     "@types/chai-http": "3.0.5",
     "@types/expect": "1.20.4",
     "@types/faker": "4.1.4",
-    "@types/mocha": "5.2.7",
     "@types/node": "12.7.1",
     "@types/sinon": "5.0.3",
-    "bluebird": "3.5.5",
     "chai": "4.2.0",
     "chai-http": "4.2.1",
     "faker": "4.1.0",
     "lerna": "3.16.4",
-    "mocha": "6.2.0",
     "nsp": "3.2.1",
     "sinon": "7.2.2",
     "tslib": "1.10.0",
     "tslint": "5.18.0",
     "tslint-react": "4.0.0",
-    "ts-mocha": "6.0.0",
     "typescript": "3.5.3"
   }
 }
