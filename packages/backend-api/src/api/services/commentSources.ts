@@ -49,9 +49,13 @@ async function _youtubeSynchronizeChannel(
 registerTask<ISynchronizeChannelData>('youtubeSynchronizeChannel', async (data: ISynchronizeChannelData) => {
   const owner = await User.findById(data.ownerId);
   const channel = await Category.findById(data.channelId);
-  if (!owner || !channel) {
-    throw new Error('Bad data');
+  if (!owner) {
+    throw new Error(`Youtube Sync failed: Owner ${data.ownerId} does not exist`);
   }
+  if (!channel) {
+    throw new Error(`Youtube Sync failed: Channel ${data.channelId} does not exist`);
+  }
+
   await youtubeSynchronizeChannel(owner, channel);
 });
 
