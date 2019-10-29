@@ -19,7 +19,7 @@ import { Action } from 'redux-actions';
 import { ICommentModel } from '../../models';
 import { listCommentsById } from '../platform/dataService';
 import { ILoadCompletePayload, IQueuedModelStateRecord, makeQueuedModelStore } from '../util';
-import { IAppStateRecord, IThunkAction } from './appstate';
+import { IAppDispatch, IAppStateRecord, IThunkAction } from './appstate';
 
 const queueModelStore = makeQueuedModelStore<string, ICommentModel>(
   async (commentIds: List<string>) => {
@@ -44,10 +44,8 @@ const setComment: (payload: ILoadCompletePayload<string, ICommentModel>) => Acti
 
 export type IState = IQueuedModelStateRecord<number, ICommentModel>;
 
-function updateComment(comment: ICommentModel): IThunkAction<void> {
-  return async (dispatch) => {
-    dispatch(setComment({ key: comment.id, model: comment }));
-  };
+async function updateComment(dispatch: IAppDispatch, comment: ICommentModel) {
+  await dispatch(setComment({ key: comment.id, model: comment }));
 }
 
 function approveComment(commentIds: Array<string>): IThunkAction<void> {

@@ -108,7 +108,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): Partial<INewCommentsProps> 
     toggleSingleItem: ({ id }: { id: string }) => dispatch(toggleSingleItem({ id })),
 
     loadData: async (params: INewCommentsPathParams, pos1: number, pos2: number, sort: string): Promise<void> => {
-      await dispatch(executeCommentListLoader(params, pos1, pos2, sort));
+      await executeCommentListLoader(dispatch, params, pos1, pos2, sort);
     },
   };
 }

@@ -17,7 +17,7 @@ limitations under the License.
 import { List } from 'immutable';
 import { Reducer } from 'redux-actions';
 import { ITagModel } from '../../../../../../models';
-import { IAppStateRecord, IThunkAction } from '../../../../../stores';
+import { IAppDispatch, IAppStateRecord, IThunkAction } from '../../../../../stores';
 import { getTags } from '../../../../../stores/tags';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
@@ -56,18 +56,20 @@ function loadCommentList(
         : commentSortDefinitions['tag'].sortInfo;
 
     if (isArticleContext(params)) {
-      await dispatch(loadCommentScoresForArticle(
+      await loadCommentScoresForArticle(
+        dispatch,
         params.contextId,
         tagId,
         sortDef,
-      ));
+      );
     }
     else {
-      await dispatch(loadCommentScoresForCategory(
+      await loadCommentScoresForCategory(
+        dispatch,
         params.contextId,
         tagId,
         sortDef,
-      ));
+      );
     }
 
     const commentScores = getCommentScores(getState());
@@ -100,18 +102,18 @@ const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingRedu
 const getCommentListIsLoading: (state: IAppStateRecord) => boolean = loadingReducer.getIsLoading;
 const getCommentListHasLoaded: (state: IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
 
-function executeCommentListLoader(
+export async function executeCommentListLoader(
+  dispatch: IAppDispatch,
   params: INewCommentsPathParams,
   pos1: number,
   pos2: number,
   sort: string,
-): IThunkAction<void> {
-  return loadingReducer.execute(loadCommentList(params, pos1, pos2, sort));
+) {
+  await loadingReducer.execute(dispatch, loadCommentList(params, pos1, pos2, sort));
 }
 
 export {
   commentListLoaderReducer,
-  executeCommentListLoader,
   getCommentListIsLoading,
   getCommentListHasLoaded,
 };

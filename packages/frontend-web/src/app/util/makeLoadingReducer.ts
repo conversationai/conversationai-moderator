@@ -16,7 +16,7 @@ limitations under the License.
 
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
-import { IAppStateRecord, IThunkAction } from '../stores';
+import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
 
 let loadingReducer = 0;
 
@@ -42,11 +42,9 @@ export function makeLoadingReducer(prefix: Array<string>) {
   const startEvent: () => Action<void> = createAction(`loading-store-${loadingReducer}/START`);
   const endEvent: () => Action<void> = createAction(`loading-store-${loadingReducer}/END`);
 
-  const execute = (callback: () => IThunkAction<void>) => async (dispatch: any) => {
+  const execute = async (dispatch: IAppDispatch, callback: () => IThunkAction<void>) => {
     dispatch(startEvent());
-
     await dispatch(callback());
-
     dispatch(endEvent());
   };
 

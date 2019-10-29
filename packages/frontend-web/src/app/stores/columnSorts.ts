@@ -19,7 +19,7 @@ import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import { getStoreItem, saveStoreItem } from '../platform/localStore';
-import { IAppStateRecord, IThunkAction } from './appstate';
+import { IAppStateRecord } from './appstate';
 
 export interface IColumnSortGroupAttributes {
   defaultValue: string;
@@ -190,9 +190,3 @@ export const reducer = handleActions<
     return updatedState;
   },
 }, loadFromLocalStorage());
-
-export function fetchCurrentColumnSort(section: string, key: string): IThunkAction<string> {
-  return (_, getState) => {
-    return getCurrentColumnSort(getState(), section, key);
-  };
-}

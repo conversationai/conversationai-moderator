@@ -16,7 +16,7 @@ limitations under the License.
 
 import { Reducer } from 'redux-actions';
 
-import { IAppStateRecord, IThunkAction } from '../../../../../stores';
+import { IAppDispatch, IAppStateRecord, IThunkAction } from '../../../../../stores';
 import { getCurrentColumnSort } from '../../../../../stores/columnSorts';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
@@ -80,13 +80,12 @@ const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingRedu
 const getCommentListIsLoading: (state: IAppStateRecord) => boolean = loadingReducer.getIsLoading;
 const getCommentListHasLoaded: (state: IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
 
-function executeCommentListLoader(params: IModeratedCommentsPathParams): IThunkAction<void> {
-  return loadingReducer.execute(loadCommentList(params));
+export async function executeCommentListLoader(dispatch: IAppDispatch, params: IModeratedCommentsPathParams) {
+  await loadingReducer.execute(dispatch, loadCommentList(params));
 }
 
 export {
   commentListLoaderReducer,
-  executeCommentListLoader,
   getCommentListIsLoading,
   getCommentListHasLoaded,
 };
