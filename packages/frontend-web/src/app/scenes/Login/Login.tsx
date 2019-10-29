@@ -80,7 +80,7 @@ export function Login(props: ILoginProps) {
     return (
       <p key="back" style={{fontSize: '1vh'}}>
         If you are having problems logging in,
-        check your <a onClick={props.backToOAuth} {...css(SPLASH_STYLES.inlineLink)}>OAuth configuration.</a>
+        check your <a key="backlink" onClick={props.backToOAuth} {...css(SPLASH_STYLES.inlineLink)}>OAuth configuration.</a>
       </p>
     );
   }
@@ -126,7 +126,7 @@ export function Login(props: ILoginProps) {
   return (
     <SplashRoot>
       <div key="signin" {...css(SPLASH_STYLES.signIn, COMMON_STYLES.fadeIn)}>
-        <a onClick={redirectToLogin} {...css(SPLASH_STYLES.link)}>Sign In</a>
+        <a key="signin" onClick={redirectToLogin} {...css(SPLASH_STYLES.link)}>Sign In</a>
         {oauthBack()}
       </div>
     </SplashRoot>
