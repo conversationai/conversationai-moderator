@@ -164,16 +164,14 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
   return {
     loadData: (commentId: string) => {
       return Promise.all([
-        dispatch(loadComment(commentId)),
-        dispatch(loadScores(commentId)),
-        dispatch(loadFlags(commentId)),
-        dispatch(loadCommentSummaryScores(commentId)),
+        loadComment(dispatch, commentId),
+        loadScores(dispatch, commentId),
+        loadFlags(dispatch, commentId),
+        loadCommentSummaryScores(dispatch, commentId),
       ]);
     },
 
-    loadScores: (commentId: string) => (
-      dispatch(loadScores(commentId))
-    ),
+    loadScores: (commentId: string) => loadScores(dispatch, commentId),
 
     onUpdateCommentScore: (commentScore: ICommentScoreModel) => (
       dispatch(updateCommentScore(commentScore))

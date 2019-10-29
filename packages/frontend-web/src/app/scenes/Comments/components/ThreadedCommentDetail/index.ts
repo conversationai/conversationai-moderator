@@ -113,7 +113,7 @@ const mapStateToProps = createStructuredSelector({
 function mapDispatchToProps(dispatch: IAppDispatch): any {
   return {
     loadData: (commentId: string) => {
-      dispatch(loadComment(commentId));
+      loadComment(dispatch, commentId);
     },
 
     dispatchAction: (action: IConfirmationAction, idsToDispatch: Array<string>) =>

@@ -18,7 +18,6 @@ export * from './csrf';
 export * from './DotChartRenderer';
 export * from './createImmutableSelector';
 export * from './groupByColumn';
-export * from './makeAJAXAction';
 export * from './makeCheckedSelectionStore';
 export * from './makeCurrentPagingIdentifierReducer';
 export * from './makeLoadingReducer';
