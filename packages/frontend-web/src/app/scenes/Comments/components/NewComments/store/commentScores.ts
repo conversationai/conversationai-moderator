@@ -17,7 +17,7 @@ limitations under the License.
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
-import { IAppStateRecord, IThunkAction } from '../../../../../stores';
+import { IAppDispatch, IAppStateRecord } from '../../../../../stores';
 import { DATA_PREFIX } from './reduxPrefix';
 
 import {
@@ -53,50 +53,56 @@ const removeCommentScore: (payload: Array<string>) => Action<Array<string>> = cr
   'article-detail-new/REMOVE_COMMENT_SCORES',
 );
 
-export function loadCommentScoresForArticle(articleId: string, tagId:  string | 'DATE' | 'SUMMARY_SCORE', sort: Array<string>): IThunkAction<Promise<void>> {
-  return async (dispatch) => {
-    await dispatch(loadCommentScoresStart());
+export async function loadCommentScoresForArticle(
+  dispatch: IAppDispatch,
+  articleId: string,
+  tagId:  string | 'DATE' | 'SUMMARY_SCORE',
+  sort: Array<string>,
+) {
+  await dispatch(loadCommentScoresStart());
 
-    let scores;
+  let scores;
 
-    switch (tagId) {
-      case undefined:
-        break;
-      case 'DATE':
-        scores = await listHistogramScoresByArticleByDate(articleId, sort);
-        break;
-      case 'SUMMARY_SCORE':
-        scores = await listMaxSummaryScoreByArticle(articleId, sort);
-        break;
-      default:
-        scores = await listHistogramScoresByArticle(articleId, tagId, sort);
-    }
+  switch (tagId) {
+    case undefined:
+      break;
+    case 'DATE':
+      scores = await listHistogramScoresByArticleByDate(articleId, sort);
+      break;
+    case 'SUMMARY_SCORE':
+      scores = await listMaxSummaryScoreByArticle(articleId, sort);
+      break;
+    default:
+      scores = await listHistogramScoresByArticle(articleId, tagId, sort);
+  }
 
-    await dispatch(loadCommentScoresComplete({ scores }));
-  };
+  await dispatch(loadCommentScoresComplete({ scores }));
 }
 
-export function loadCommentScoresForCategory(categoryId: string | 'all', tagId: string | 'DATE' | 'SUMMARY_SCORE', sort: Array<string>): IThunkAction<Promise<void>> {
-  return async (dispatch) => {
-    await dispatch(loadCommentScoresStart());
+export async function loadCommentScoresForCategory(
+  dispatch: IAppDispatch,
+  categoryId: string | 'all',
+  tagId: string | 'DATE' | 'SUMMARY_SCORE',
+  sort: Array<string>,
+) {
+  await dispatch(loadCommentScoresStart());
 
-    let scores;
+  let scores;
 
-    switch (tagId) {
-      case undefined:
-        break;
-      case 'DATE':
-        scores = await listHistogramScoresByCategoryByDate(categoryId, sort);
-        break;
-      case 'SUMMARY_SCORE':
-        scores = await listMaxHistogramScoresByCategory(categoryId, sort);
-        break;
-      default:
-        scores = await listHistogramScoresByCategory(categoryId, tagId, sort);
-    }
+  switch (tagId) {
+    case undefined:
+      break;
+    case 'DATE':
+      scores = await listHistogramScoresByCategoryByDate(categoryId, sort);
+      break;
+    case 'SUMMARY_SCORE':
+      scores = await listMaxHistogramScoresByCategory(categoryId, sort);
+      break;
+    default:
+      scores = await listHistogramScoresByCategory(categoryId, tagId, sort);
+  }
 
-    await dispatch(loadCommentScoresComplete({ scores }));
-  };
+  await dispatch(loadCommentScoresComplete({ scores }));
 }
 
 export interface ICommentScoresState {

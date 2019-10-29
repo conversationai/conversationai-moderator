@@ -19,7 +19,7 @@ import { Action } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { loadTopScoresForSummaryScores, loadTopScoresForTag } from '../platform/dataService';
 import { IQueuedModelStateRecord, makeQueuedModelStore } from '../util';
-import { IAppStateRecord, IThunkAction } from './appstate';
+import { IAppDispatch, IAppStateRecord } from './appstate';
 
 export interface ITopScoreState {
   commentId: string;
@@ -94,8 +94,8 @@ export function getTopScoreForComment(state: IAppStateRecord, commentId: string,
   return topScores.get(TopScoresKey({ commentId, tagId }));
 }
 
-export function loadTopScore(commentId: string, tagId: string): IThunkAction<void> {
-  return loadTopScoreByKey(TopScoresKey({ commentId, tagId }));
+export async function loadTopScore(dispatch: IAppDispatch, commentId: string, tagId: string) {
+  await dispatch(loadTopScoreByKey(TopScoresKey({ commentId, tagId })));
 }
 
 // Separate out Summary Scores because they need to be accessed differently
@@ -129,8 +129,8 @@ export function getTopSummaryScoreForComment(state: IAppStateRecord, commentId: 
   return topScores.get(TopSummaryScoresKey({ commentId }));
 }
 
-export function loadTopSummaryScore(commentId: string): IThunkAction<void> {
-  return loadTopSummaryScoreByKey(TopSummaryScoresKey({ commentId }));
+export async function loadTopSummaryScore(dispatch: IAppDispatch, commentId: string) {
+  await dispatch(loadTopSummaryScoreByKey(TopSummaryScoresKey({ commentId })));
 }
 
 export {

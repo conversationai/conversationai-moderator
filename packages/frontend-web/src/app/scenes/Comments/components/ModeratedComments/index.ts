@@ -126,7 +126,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsPro
 
   return {
     loadData: (params: IModeratedCommentsPathParams) => {
-      dispatch(executeCommentListLoader(params));
+      executeCommentListLoader(dispatch, params);
     },
 
     tagComments: (ids: Array<string>, tagId: string) =>
@@ -151,7 +151,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsPro
         key: newSort,
       }));
 
-      await dispatch(executeCommentListLoader(params));
+      await executeCommentListLoader(dispatch, params);
     },
   };
 }

@@ -192,7 +192,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
     onUpdateComment: (comment: ICommentModel) => {
       return Promise.all([
         dispatch(updateComment(comment)),
-        dispatch(updateCommentState(comment)),
+        updateCommentState(dispatch, comment),
       ]); },
 
     onAddCommentScore: (commentScore: ICommentScoreModel) => (

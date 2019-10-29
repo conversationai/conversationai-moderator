@@ -41,7 +41,7 @@ const mapStateToProps = createStructuredSelector({
 function mapDispatchToProps(dispatch: IAppDispatch): Partial<ISearchProps> {
   return {
     onSearch: async (newScope: ISearchScope)  => {
-      dispatch(executeCommentListLoader(newScope));
+      await executeCommentListLoader(dispatch, newScope);
     },
 
     resetCommentIds: () => dispatch(resetCommentIds()),

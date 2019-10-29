@@ -19,7 +19,7 @@ import { pick } from 'lodash';
 import { Reducer } from 'redux-actions';
 
 import { search } from '../../../platform/dataService';
-import { IAppStateRecord, IThunkAction } from '../../../stores';
+import { IAppDispatch, IAppStateRecord, IThunkAction } from '../../../stores';
 import { loadTextSizesByIds } from '../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../util';
 import { storeCommentPagingOptions } from '../../Comments/components/CommentDetail/store';
@@ -69,17 +69,15 @@ const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingRedu
 const getCommentListIsLoading: (state: IAppStateRecord) => boolean = loadingReducer.getIsLoading;
 const getCommentListHasLoaded: (state: IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
 
-function executeCommentListLoader(
+export async function executeCommentListLoader(
+  dispatch: IAppDispatch,
   scope: ISearchScope,
-): IThunkAction<void> {
-  return loadingReducer.execute(loadCommentList(
-    scope,
-  ));
+) {
+  await loadingReducer.execute(dispatch, loadCommentList(scope));
 }
 
 export {
   commentListLoaderReducer,
-  executeCommentListLoader,
   getCommentListIsLoading,
   getCommentListHasLoaded,
 };

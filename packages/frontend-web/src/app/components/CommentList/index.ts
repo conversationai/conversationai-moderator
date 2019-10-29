@@ -206,10 +206,10 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: ICommentListProps)
         case 'DATE':
           break;
         case 'SUMMARY_SCORE':
-          await dispatch(loadTopSummaryScore(commentId));
+          await loadTopSummaryScore(dispatch, commentId);
           break;
         default:
-          await dispatch(loadTopScore(commentId, selectedTag.id));
+          await loadTopScore(dispatch, commentId, selectedTag.id);
       }
 
       return comment;
