@@ -691,16 +691,10 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
             isVisible={isConfirmationModalVisible}
             onBackgroundClick={this.closeToast}
           >
-            <FocusTrap
-              focusTrapOptions={{
-                clickOutsideDeactivates: true,
-              }}
-            >
-              <div id={CONFIRMATION_POPUP_ID} tabIndex={0} {...css(STYLES.confirmationPopup)}>
-                {/* Confirmation popup */}
-                <ConfirmationCircle backgroundColor={DARK_COLOR} action={confirmationAction} size={120} iconSize={40} />
-              </div>
-            </FocusTrap>
+            <div id={CONFIRMATION_POPUP_ID} tabIndex={0} {...css(STYLES.confirmationPopup)}>
+              {/* Confirmation popup */}
+              <ConfirmationCircle backgroundColor={DARK_COLOR} action={confirmationAction} size={120} iconSize={40} />
+            </div>
           </Scrim>
 
           {/* ToolTip and Scrim */}
