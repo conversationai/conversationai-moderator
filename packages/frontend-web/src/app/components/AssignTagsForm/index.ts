@@ -41,7 +41,7 @@ const mapStateToProps = createStructuredSelector({
 function mapDispatchToProps(dispatch: IAppDispatch) {
   return {
     loadScoresForCommentId: async (id: string) => {
-      await dispatch(loadCommentSummaryScores(id));
+      await loadCommentSummaryScores(dispatch, id);
     },
   };
 }

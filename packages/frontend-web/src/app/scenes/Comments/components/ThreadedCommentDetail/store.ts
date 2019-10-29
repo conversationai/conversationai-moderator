@@ -16,13 +16,13 @@ limitations under the License.
 
 import { Action, createAction } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
+
 import {
   ICommentModel,
 } from '../../../../../models';
 import { getModel } from '../../../../platform/dataService';
-import { IAppStateRecord, IThunkAction } from '../../../../stores';
+import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import {
-  makeAJAXAction,
   makeSingleRecordReducer,
 } from '../../../../util';
 
@@ -35,12 +35,11 @@ const loadCommentStart =
 const loadCommentComplete =
   createAction<object>('threaded-comment-detail/LOAD_COMMENT_COMPLETE');
 
-export function loadComment(id: string): IThunkAction<void> {
-  return makeAJAXAction(
-    () => getModel('comments', id, { include: ['replies'] }),
-    loadCommentStart,
-    loadCommentComplete,
-  );
+export async function loadComment(dispatch: IAppDispatch, id: string) {
+  await dispatch(loadCommentStart());
+  const result = await getModel('comments', id, {include: ['replies']});
+  const data = result.response;
+  await dispatch(loadCommentComplete(data));
 }
 
 // need to make an update replies store thinger

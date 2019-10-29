@@ -32,10 +32,9 @@ import {
   getCommentScores,
   listAuthorCounts,
 } from '../../../../platform/dataService';
-import { IThunkAction } from '../../../../stores';
+import { IAppDispatch } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
 import {
-  makeAJAXAction,
   makeRecordListReducer,
   makeSingleRecordReducer,
 } from '../../../../util';
@@ -82,38 +81,31 @@ type IStoreAuthorCountsPayload = {
 const storeAuthorCounts =
   createAction<IStoreAuthorCountsPayload>('comment-detail/STORE_AUTHOR_COUNTS');
 
-export function loadComment(id: string): IThunkAction<Promise<void>> {
-  return async (dispatch, getState) => {
-    await dispatch(makeAJAXAction(
-      () => getCommentSvc(id),
-      loadCommentStart,
-      loadCommentComplete,
-    ));
+export async function loadComment(dispatch: IAppDispatch, id: string) {
+  await dispatch(loadCommentStart());
+  const result = await getCommentSvc(id);
+  const data = result.response;
+  await dispatch(loadCommentComplete(data));
 
-    const comment = getComment(getState());
-
-    if (comment) {
-      const { authorSourceId } = comment;
-      const authorCounts = await listAuthorCounts([authorSourceId]);
-      dispatch(storeAuthorCounts({ authorCounts }));
-    }
-  };
+  if (data.data && data.data.attributes.authorSourceId) {
+    const authorSourceId = data.data.attributes.authorSourceId;
+    const authorCounts = await listAuthorCounts([authorSourceId]);
+    dispatch(storeAuthorCounts({authorCounts}));
+  }
 }
 
-export function loadScores(id: string): IThunkAction<Promise<void>> {
-  return makeAJAXAction(
-    () => getCommentScores(id),
-    loadCommentScoresStart,
-    loadCommentScoresComplete,
-  );
+export async function loadScores(dispatch: IAppDispatch, id: string) {
+  await dispatch(loadCommentScoresStart());
+  const result = await getCommentScores(id);
+  const data = result.response;
+  await dispatch(loadCommentScoresComplete(data));
 }
 
-export function loadFlags(id: string): IThunkAction<Promise<void>> {
-  return makeAJAXAction(
-    () => getCommentFlags(id),
-    loadCommentFlagsStart,
-    loadCommentFlagsComplete,
-  );
+export async function loadFlags(dispatch: IAppDispatch, id: string) {
+  await dispatch(loadCommentFlagsStart());
+  const result = await getCommentFlags(id);
+  const data = result.response;
+  await dispatch(loadCommentFlagsComplete(data));
 }
 
 const {

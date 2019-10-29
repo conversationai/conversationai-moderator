@@ -18,7 +18,7 @@ import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { listCommentSummaryScoresById } from '../platform/dataService';
-import { IAppStateRecord, IThunkAction } from './appstate';
+import { IAppDispatch, IAppStateRecord } from './appstate';
 
 export interface ICommentSummaryScore {
   tagId: string;
@@ -74,18 +74,16 @@ export const reducer = handleActions<
   ),
 }, StateFactory());
 
-export function loadCommentSummaryScores(commentId: string): IThunkAction<Promise<void>> {
-  return async (dispatch) => {
-    await dispatch(loadCommentSummaryScoresStart());
-    const scores = await listCommentSummaryScoresById(commentId);
-    const mappedScores = scores.reduce((sum, score) => {
-      const existingList = sum.get(commentId) ? sum.get(commentId) : List<ICommentSummaryScoreStateRecord>();
+export async function loadCommentSummaryScores(dispatch: IAppDispatch, commentId: string) {
+  await dispatch(loadCommentSummaryScoresStart());
+  const scores = await listCommentSummaryScoresById(commentId);
+  const mappedScores = scores.reduce((sum, score) => {
+    const existingList = sum.get(commentId) ? sum.get(commentId) : List<ICommentSummaryScoreStateRecord>();
 
-      return sum.set(score.commentId, existingList.push(CommentSummaryScore(score)));
-    }, Map<string, List<ICommentSummaryScoreStateRecord>>());
+    return sum.set(score.commentId, existingList.push(CommentSummaryScore(score)));
+  }, Map<string, List<ICommentSummaryScoreStateRecord>>());
 
-    await dispatch(loadCommentSummaryScoresComplete(mappedScores));
-  };
+  await dispatch(loadCommentSummaryScoresComplete(mappedScores));
 }
 
 export function getSummaryScores(state: IAppStateRecord): ICommentSummaryScores {
