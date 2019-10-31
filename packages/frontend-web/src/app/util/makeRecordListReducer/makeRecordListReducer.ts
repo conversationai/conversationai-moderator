@@ -16,28 +16,22 @@ limitations under the License.
 
 import { fromJS, List } from 'immutable';
 import { Action, createAction, handleActions} from 'redux-actions';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 import { convertItemFromJSONAPI } from '../makeSingleRecordReducer';
 
 let recordListStores = 0;
 
 export function convertArrayFromJSONAPI<T>(result: any): List<T> {
   const resultData = fromJS(result);
-
-  return resultData.get('data').map((d: any) => (
+  return List(resultData.get('data').map((d: any) => (
     convertItemFromJSONAPI(d, resultData.get('included'))
-  ));
+  )));
 }
 
-export interface IRecordListState<T> {
+export type IRecordListState<T>  = Readonly<{
   hasData: boolean;
   isFetching: boolean;
   items: List<T>;
-}
-
-export interface IRecordListStateRecord<T> extends TypedRecord<IRecordListStateRecord<T>>, IRecordListState<T> {}
-
-export type IEndEventPayload = object;
+}>;
 
 // Return types infered.
 export function makeRecordListReducer<T extends { id: string }>(
@@ -46,13 +40,11 @@ export function makeRecordListReducer<T extends { id: string }>(
 ) {
   recordListStores += 1;
 
-  const StateFactory = makeTypedFactory<IRecordListState<T>, IRecordListStateRecord<T>>({
+  const initialState = {
     hasData: false,
     isFetching: false,
     items: List<T>(),
-  });
-
-  const initialState = StateFactory();
+  };
 
   // These local state actions are scoped to each recordListStores that is created
 
@@ -69,49 +61,42 @@ export function makeRecordListReducer<T extends { id: string }>(
   );
 
   const reducer = handleActions<
-    IRecordListStateRecord<T>,
+    IRecordListState<T>,
     void   | // startEvent
     object | // endEvent
     T        // addRecord, updateRecord, removeRecord
   >( {
-    [startEvent]: (state: IRecordListStateRecord<T>) => (
-      state
-          .set('isFetching', true)
-    ),
+    [startEvent]: (state: IRecordListState<T>) => ({ ...state, isFetching: true }),
 
-    [endEvent]: (state: IRecordListStateRecord<T>, { payload }: Action<object>) => (
-      state
-          .set('hasData', true)
-          .set('isFetching', false)
-          .set('items', convertArrayFromJSONAPI<T>(fromJS(payload)))
-    ),
+    [endEvent]: (_state: IRecordListState<T>, { payload }: Action<object>) => ({
+      hasData: true,
+      isFetching: false,
+      items: convertArrayFromJSONAPI<T>(payload),
+    }),
 
-    [addRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: Action<T>) => (
-      state
-          .update('items', (items: List<T>) => items.push(payload))
-    ),
+    [addRecord.toString()]: (state: IRecordListState<T>, { payload }: Action<T>) => ({
+      ...state,
+      items: state.items.push(payload),
+    }),
 
-    [updateRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: Action<T>) => (
-      state
-          .update('items', (items: List<T>) => {
-            const index = items.findIndex((item: any) => item.id === payload.id);
+    [updateRecord.toString()]: (state: IRecordListState<T>, { payload }: Action<T>) => {
+      const index = state.items.findIndex((item: T) => (item.id === payload.id));
+      return {
+        ...state,
+        items: state.items.set(index, payload),
+      };
+    },
 
-            return items.set(index, payload);
-          })
-    ),
-
-    [removeRecord.toString()]: (state: IRecordListStateRecord<T>, { payload }: Action<T>) => (
-      state
-          .update('items', (items: List<T>) => {
-            const index = items.findIndex((item: any) => item.id === payload.id);
-
-            if ( index !== -1 ) {
-              return items.splice(index, 1);
-            }
-
-            return items;
-          })
-    ),
+    [removeRecord.toString()]: (state: IRecordListState<T>, { payload }: Action<T>) => {
+      const index = state.items.findIndex((item: T) => (item.id === payload.id));
+      if (index < 0) {
+        return state;
+      }
+      return {
+        ...state,
+        items: List(state.items.splice(index, 1)),
+      };
+    },
   }, initialState);
 
   return {
