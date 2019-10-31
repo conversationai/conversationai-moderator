@@ -16,7 +16,6 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 import { IAppDispatch, IAppStateRecord } from '../../../../../stores';
 import { DATA_PREFIX } from './reduxPrefix';
 
@@ -33,10 +32,6 @@ import {
   listMaxHistogramScoresByCategory,
   listMaxSummaryScoreByArticle,
 } from '../../../../../platform/dataService';
-
-const SCORES_HAS_DATA = [...DATA_PREFIX, 'commentScores', 'hasData'];
-const SCORES_DATA = [...DATA_PREFIX, 'commentScores', 'scores'];
-const SCORES_IS_LOADING = [...DATA_PREFIX, 'commentScores', 'isLoading'];
 
 const loadCommentScoresStart = createAction(
   'article-detail-new/LOAD_COMMENTS_SCORES_START',
@@ -105,67 +100,46 @@ export async function loadCommentScoresForCategory(
   await dispatch(loadCommentScoresComplete({ scores }));
 }
 
-export interface ICommentScoresState {
+export type ICommentScoresState = Readonly<{
   isLoading: boolean;
   hasData: boolean;
   scores: List<ICommentScoredModel | ICommentDatedModel>;
-}
+}>;
 
-export interface ICommentScoresStateRecord extends TypedRecord<ICommentScoresStateRecord>, ICommentScoresState {}
-
-const CommentScoresStateFactory = makeTypedFactory<ICommentScoresState, ICommentScoresStateRecord>({
+const initailState = {
   isLoading: true,
   hasData: false,
   scores: List<ICommentScoredModel | ICommentDatedModel>(),
-});
+};
 
 export const commentScoresReducer = handleActions<
-  ICommentScoresStateRecord,
+  ICommentScoresState,
   void                                       | // loadCommentScoresStart
   ILoadCommentScoresCompletePayload          | // loadCommentScoresComplete
   Array<string>                                // removeCommentScore
 >({
-  [loadCommentScoresStart.toString()]: (state) => (
-    state
-        .set('isLoading', true)
-        .set('hasData', false)
-  ),
+  [loadCommentScoresStart.toString()]: (state) => ({...state, isLoading: true, hasData: false }),
 
-  [loadCommentScoresComplete.toString()]: (state, { payload }: Action<ILoadCommentScoresCompletePayload>) => {
+  [loadCommentScoresComplete.toString()]: (_state, { payload }: Action<ILoadCommentScoresCompletePayload>) => {
     const { scores } = payload;
-    return state
-        .set('isLoading', false)
-        .set('scores', scores)
-        .set('hasData', true);
+    return { isLoading: false, hasData: true, scores};
   },
 
-  [removeCommentScore.toString()]: (state, { payload }: Action<Array<string>>) => (
-    state
-        .updateIn(['scores'], (scores: List<ICommentScoredModel | ICommentDatedModel>) => {
-          return scores.filter((score: ICommentScoredModel | ICommentDatedModel) => {
-            const index = payload.findIndex((id: string) => id === score.commentId);
+  [removeCommentScore.toString()]: (state, { payload }: Action<Array<string>>) => ({
+    ...state,
+    scores: List(state.scores.filter((score: ICommentScoredModel | ICommentDatedModel) => {
+          const index = payload.findIndex((id: string) => id === score.commentId);
+          return index === -1;
+        })),
+    }),
+}, initailState);
 
-            return index === -1;
-          });
-        })
-    ),
-}, CommentScoresStateFactory());
-
-function getCommentScoresHasData(state: IAppStateRecord): boolean {
-  return state.getIn(SCORES_HAS_DATA);
-}
-
-function getCommentScores(state: IAppStateRecord): List<ICommentScoredModel | ICommentDatedModel> {
-  return state.getIn(SCORES_DATA);
-}
-
-function getCommentScoresIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(SCORES_IS_LOADING);
+function getCommentScores(state: IAppStateRecord) {
+  const storeRecord = state.getIn([...DATA_PREFIX, 'commentScores']) as ICommentScoresState;
+  return storeRecord && storeRecord.scores;
 }
 
 export {
-  getCommentScoresHasData,
   getCommentScores,
-  getCommentScoresIsLoading,
   removeCommentScore,
 };
