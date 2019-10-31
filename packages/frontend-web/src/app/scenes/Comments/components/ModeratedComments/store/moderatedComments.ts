@@ -16,7 +16,6 @@ limitations under the License.
 
 import { fromJS, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import {
   getModeratedCommentIdsForArticle as fetchModeratedCommentIdsForArticle,
@@ -53,10 +52,6 @@ const ACTION_PLURAL: {
   reject: 'rejected',
   tag: 'tagged',
 };
-
-const MODERATED_COMMENTS_FOR_ARTICLE_DATA = [...DATA_PREFIX, 'moderatedComments', 'articles'];
-const MODERATED_COMMENTS_FOR_CATEGORY_DATA = [...DATA_PREFIX, 'moderatedComments', 'categories'];
-const MODERATED_COMMENTS_IS_LOADING = [...MODERATED_COMMENTS_FOR_ARTICLE_DATA, 'isLoading'];
 
 const loadModeratedCommentsStart = createAction(
   'article-detail-moderatored/LOAD_MODERATED_COMMENTS_START',
@@ -132,52 +127,41 @@ export function setCommentsModerationForCategory(category: string, commentIds: A
   };
 }
 
-export interface IModeratedCommentsState {
+export type IModeratedCommentsState = Readonly<{
   isLoading: boolean;
-  articles: Map<string, Map<string, List<number>>>;
-  categories: Map<string, Map<string, List<number>>>;
-}
+  articles: Map<string, Map<string, List<string>>>;
+  categories: Map<string, Map<string, List<string>>>;
+}>;
 
-export interface IModeratedCommentsStateRecord extends TypedRecord<IModeratedCommentsStateRecord>, IModeratedCommentsState {}
-
-const StateFactory = makeTypedFactory<IModeratedCommentsState, IModeratedCommentsStateRecord>({
+const initialState = {
   isLoading: true,
-  articles: Map<string, Map<string, List<number>>>(),
-  categories: Map<string, Map<string, List<number>>>(),
-});
-
-const initialState = StateFactory();
+  articles: Map<string, Map<string, List<string>>>(),
+  categories: Map<string, Map<string, List<string>>>(),
+};
 
 export const moderatedCommentsReducer = handleActions<
-  IModeratedCommentsStateRecord,
+  IModeratedCommentsState,
   void                                               | // loadModeratedCommentsStart
   ILoadModeratedCommentsForArticleCompletePayload    | // loadModeratedCommentsForArticleComplete
   ILoadModeratedCommentsForCategoriesCompletePayload | // loadModeratedCommentsForCategoryComplete
   ISetCommentsModerationForArticlesPayload           | // setCommentsModerationForArticlesAction
   ISetCommentsModerationForCategoriesPayload
 >({
-  [loadModeratedCommentsStart.toString()]: (state) => (
-    state
-      .set('isLoading', true)
-  ),
+  [loadModeratedCommentsStart.toString()]: (state) => ({...state, isLoading: true}),
 
   [loadModeratedCommentsForArticleComplete.toString()]: (state, { payload }: Action<ILoadModeratedCommentsForArticleCompletePayload>) => {
     const { articleId, moderatedComments } = payload;
-    return state
-      .set('isLoading', false)
-      .setIn(['articles', articleId], fromJS(moderatedComments));
+    return { ...state, isLoading: false, articles: state.articles.set(articleId, fromJS(moderatedComments))};
   },
 
   [loadModeratedCommentsForCategoryComplete.toString()]: (state, { payload }: Action<ILoadModeratedCommentsForCategoriesCompletePayload>) => {
     const { category, moderatedComments } = payload;
-    return state
-      .set('isLoading', false)
-      .setIn(['categories', category.toString()], fromJS(moderatedComments));
+    return { ...state, isLoading: false, categories: state.categories.set(category, fromJS(moderatedComments))};
   },
 
   [setCommentsModerationForArticlesAction.toString()]: (state, { payload }: Action<ISetCommentsModerationForArticlesPayload>) => {
     const { articleId, commentIds, moderationAction, currentModeration } = payload;
-    let newState = state;
+    const newState = {...state};
     commentIds.forEach((commentId: string) => {
       const shouldRemoveFromList =
           currentModeration !== 'batched' &&
@@ -186,37 +170,33 @@ export const moderatedCommentsReducer = handleActions<
           (currentModeration !== 'highlighted' && moderationAction !== 'highlight'));
 
       if (shouldRemoveFromList) {
-        newState = newState.updateIn(['articles', articleId, currentModeration],
+        newState.articles = newState.articles.updateIn([articleId, currentModeration],
             (moderated) => moderated.delete(moderated.findIndex((item: string) => item === commentId)));
       }
 
       switch (moderationAction) {
         case 'reject' || 'defer':
-          return ( newState =
-            newState
-              .updateIn(['articles', articleId, ACTION_PLURAL[moderationAction]],
-                  (item) => item.push(commentId))
-          );
+          newState.articles.updateIn([articleId, ACTION_PLURAL[moderationAction]],
+                  (item) => item.push(commentId));
+          break;
         case 'highlight':
           if (currentModeration === 'highlighted' && moderationAction === 'highlight') {
-            return newState;
+            break;
           }
 
-          return ( newState =
-            newState
-              .updateIn(['articles', articleId, ACTION_PLURAL[moderationAction]],
+          newState.articles = newState.articles
+            .updateIn([ articleId, ACTION_PLURAL[moderationAction]],
                   (item) => item.push(commentId))
-              .updateIn(['articles', articleId, 'approved'],
-                  (item) => item.push(commentId))
-          );
+            .updateIn(['articles', articleId, 'approved'],
+                  (item) => item.push(commentId));
+          break;
         case 'reset':
-          return newState;
+          break;
         default:
-          return ( newState =
-            newState
-              .updateIn(['articles', articleId, ACTION_PLURAL[moderationAction]],
-                  (item) => item.push(commentId))
-          );
+          newState.articles
+            .updateIn([articleId, ACTION_PLURAL[moderationAction]],
+                (item) => item.push(commentId));
+          break;
       }
     });
 
@@ -225,45 +205,42 @@ export const moderatedCommentsReducer = handleActions<
 
   [setCommentsModerationForCategoriesAction.toString()]: (state, { payload }: Action<ISetCommentsModerationForCategoriesPayload>) => {
     const { category, commentIds, moderationAction, currentModeration } = payload;
-    let newState = state;
+    const newState = {...state};
     commentIds.forEach((commentId: string) => {
-      const shouldRemoveFromList = 
+      const shouldRemoveFromList =
           currentModeration !== 'batched' &&
           currentModeration !== 'automated' &&
           ((currentModeration === 'highlighted' && moderationAction === 'highlight') ||
           (currentModeration !== 'highlighted' && moderationAction !== 'highlight'));
 
       if (shouldRemoveFromList) {
-        newState = newState.updateIn(['categories', category.toString(), currentModeration],
+        newState.categories = newState.categories.updateIn([category.toString(), currentModeration],
             (moderated) => moderated.delete(moderated.findIndex((item: string) => item === commentId)));
       }
       switch (moderationAction) {
         case 'reject' || 'defer':
-          return ( newState =
-            newState
-              .updateIn(['categories', category, ACTION_PLURAL[moderationAction]],
-                  (item) => item.push(commentId))
-          );
+          newState.categories = newState.categories
+            .updateIn([category, ACTION_PLURAL[moderationAction]],
+                (item) => item.push(commentId));
+          break;
         case 'highlight':
           if (currentModeration === 'highlighted' && moderationAction === 'highlight') {
-            return newState;
+            break;
           }
 
-          return ( newState =
-            newState
-              .updateIn(['categories', category, ACTION_PLURAL[moderationAction]],
-                  (item) => item.push(commentId))
-              .updateIn(['categories', category, 'approved'],
-                  (item) => item.push(commentId))
-          );
+          newState.categories = newState.categories
+            .updateIn([category, ACTION_PLURAL[moderationAction]],
+                (item) => item.push(commentId))
+            .updateIn([category, 'approved'],
+                (item) => item.push(commentId));
+          break;
         case 'reset':
-          return newState;
+          break;
         default:
-          return ( newState =
-            newState
-              .updateIn(['categories', category, ACTION_PLURAL[moderationAction]],
-                  (item) => item.push(commentId))
-          );
+          newState.categories = newState.categories
+            .updateIn([category, ACTION_PLURAL[moderationAction]],
+                (item) => item.push(commentId));
+          break;
       }
     });
 
@@ -271,16 +248,18 @@ export const moderatedCommentsReducer = handleActions<
   },
 }, initialState);
 
+function getRecord(state: IAppStateRecord) {
+  return state.getIn([...DATA_PREFIX, 'moderatedComments']) as IModeratedCommentsState;
+}
+
 export function getModeratedCommentsForArticle(state: IAppStateRecord): Map<string, Map<string, List<string>>> {
-  return state.getIn(MODERATED_COMMENTS_FOR_ARTICLE_DATA);
+  const stateRecord = getRecord(state);
+  return stateRecord && stateRecord.articles;
 }
 
 export function getModeratedCommentsForCategory(state: IAppStateRecord): Map<string, Map<string, List<string>>> {
-  return state.getIn(MODERATED_COMMENTS_FOR_CATEGORY_DATA);
-}
-
-export function getModeratedCommentsIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(MODERATED_COMMENTS_IS_LOADING);
+  const stateRecord = getRecord(state);
+  return stateRecord && stateRecord.categories;
 }
 
 export function getModeratedComments(state: IAppStateRecord, params: IModeratedCommentsPathParams): Map<string, List<string>> {
