@@ -16,7 +16,6 @@ limitations under the License.
 
 import { fromJS, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import {
   ArticleModel,
@@ -111,28 +110,25 @@ export function convertFromJSONAPI<T>(result: any): T {
   return convertItemFromJSONAPI<T>(dataItem, resultData.get('included'));
 }
 
-export interface ISingleRecordState<T> {
+export type ISingleRecordState<T> = Readonly<{
   hasData: boolean;
   isFetching: boolean;
   shouldWait: boolean;
   item: T | null;
-}
-
-export interface ISingleRecordStateRecord<T> extends TypedRecord<ISingleRecordStateRecord<T>>, ISingleRecordState<T> {}
+}>;
 
 // Return type infered.
 export function makeSingleRecordReducer<T>(
   startEvent: string,
   endEvent: string,
 ) {
-  const StateFactory = makeTypedFactory<ISingleRecordState<T>, ISingleRecordStateRecord<T>>({
+
+  const initialState: ISingleRecordState<T> = {
     hasData: false,
     isFetching: false,
     shouldWait: true,
     item: null,
-  });
-
-  const initialState = StateFactory();
+  };
 
   singleRecordStores += 1;
 
@@ -140,28 +136,30 @@ export function makeSingleRecordReducer<T>(
     `single-record-store-${singleRecordStores}/UPDATE`,
   );
 
-  function onStart(state: ISingleRecordStateRecord<T>) {
-    return state
-        .set('hasData', false)
-        .set('isFetching', true)
-        .set('shouldWait', true);
+  function onStart(state: ISingleRecordState<T>) {
+    return {
+      ...state,
+      hasData: false,
+      isFetching: true,
+      shouldWait: true,
+    };
   }
 
-  function onEnd(state: ISingleRecordStateRecord<T>, { payload }: Action<object>) {
-    return state
-        .set('hasData', true)
-        .set('isFetching', false)
-        .set('shouldWait', false)
-        .set('item', convertFromJSONAPI<T>(fromJS(payload)));
+  function onEnd(_state: ISingleRecordState<T>, { payload }: Action<object>) {
+    return {
+      hasData: true,
+      isFetching: false,
+      shouldWait: false,
+      item: convertFromJSONAPI<T>(fromJS(payload)),
+    };
   }
 
-  function updateRecord(state: ISingleRecordStateRecord<T>, { payload }: Action<T>) {
-    return state
-        .set('item', payload);
+  function updateRecord(state: ISingleRecordState<T>, { payload }: Action<T>) {
+    return { ...state, item: payload };
   }
 
   const reducer = handleActions<
-    ISingleRecordStateRecord<T>,
+    ISingleRecordState<T>,
     void   | // startEvent
     object | // endEvent
     T        // updateRecordAction

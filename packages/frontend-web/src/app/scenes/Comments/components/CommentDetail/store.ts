@@ -17,14 +17,14 @@ limitations under the License.
 import { fromJS, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { combineReducers } from 'redux-immutable';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import {
   IAuthorCountsModel,
   ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
-  ITaggingSensitivityModel, ModelId,
+  ITaggingSensitivityModel,
+  ModelId,
 } from '../../../../../models';
 import {
   getComment as getCommentSvc,
@@ -32,31 +32,22 @@ import {
   getCommentScores,
   listAuthorCounts,
 } from '../../../../platform/dataService';
-import { IAppDispatch } from '../../../../stores';
+import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
 import {
+  IRecordListState,
+  ISingleRecordState,
   makeRecordListReducer,
   makeSingleRecordReducer,
 } from '../../../../util';
 
 import { getTaggingSensitivities } from '../../../../stores/taggingSensitivities';
 
-const COMMENT_DATA_PREFIX = ['scenes', 'commentsIndex', 'commentDetail', 'comment'];
-const COMMENT_DATA = [...COMMENT_DATA_PREFIX, 'item'];
-const LOADING_STATUS = [...COMMENT_DATA_PREFIX, 'isFetching'];
-const COMMENT_SCORES_DATA_PREFIX = ['scenes', 'commentsIndex', 'commentDetail', 'scores'];
-const COMMENT_SCORES_DATA = [...COMMENT_SCORES_DATA_PREFIX, 'items'];
-const COMMENT_FLAGS_DATA_PREFIX = ['scenes', 'commentsIndex', 'commentDetail', 'flags'];
-const COMMENT_FLAGS_DATA = [...COMMENT_FLAGS_DATA_PREFIX, 'items'];
-const COMMENT_PAGING_PREFIX = ['scenes', 'commentsIndex', 'commentDetail', 'paging'];
-const COMMENT_PAGING_SOURCE = [...COMMENT_PAGING_PREFIX, 'source'];
-const COMMENT_PAGING_LINK = [...COMMENT_PAGING_PREFIX, 'link'];
-const COMMENT_PAGING_HASH = [...COMMENT_PAGING_PREFIX, 'hash'];
-const COMMENT_PAGING_IDS = [...COMMENT_PAGING_PREFIX, 'commentIds'];
-const COMMENT_PAGING_INDEXES = [...COMMENT_PAGING_PREFIX, 'indexById'];
-const COMMENT_PAGING_FROM_BATCH = [...COMMENT_PAGING_PREFIX, 'fromBatch'];
+const COMMENT_DATA = ['scenes', 'commentsIndex', 'commentDetail', 'comment'];
+const COMMENT_SCORES_DATA = ['scenes', 'commentsIndex', 'commentDetail', 'scores'];
+const COMMENT_FLAGS_DATA = ['scenes', 'commentsIndex', 'commentDetail', 'flags'];
+const COMMENT_PAGING = ['scenes', 'commentsIndex', 'commentDetail', 'paging'];
 const COMMENT_AUTHOR_COUNTS = ['scenes', 'commentsIndex', 'commentDetail', 'authorCounts'];
-const COMMENT_AUTHOR_COUNTS_DATA = [...COMMENT_AUTHOR_COUNTS, 'authorCounts'];
 
 const loadCommentStart =
   createAction('comment-detail/LOAD_COMMENT_START');
@@ -76,7 +67,7 @@ const internalStoreCommentPagingOptions =
   createAction<ICommentPagingState>('comment-detail/STORE_COMMENT_PAGING_OPTIONS');
 
 type IStoreAuthorCountsPayload = {
-  authorCounts: Map<string | number, IAuthorCountsModel>;
+  authorCounts: Map<string, IAuthorCountsModel>;
 };
 const storeAuthorCounts =
   createAction<IStoreAuthorCountsPayload>('comment-detail/STORE_AUTHOR_COUNTS');
@@ -141,19 +132,19 @@ export interface ICommentPagingState {
   source: string;
   link: string;
   hash?: string;
-  indexById?: Map<number, number>;
+  indexById?: Map<string, number>;
 }
 
-export interface ICommentPagingStateRecord extends TypedRecord<ICommentPagingStateRecord>, ICommentPagingState {}
+export type ICommentPagingStateRecord = Readonly<ICommentPagingState>;
 
-const StateFactory = makeTypedFactory<ICommentPagingState, ICommentPagingStateRecord>({
+const initialState: ICommentPagingStateRecord = {
   commentIds: null,
   fromBatch: null,
   source: null,
   hash: null,
-  indexById: Map<number, number>(),
+  indexById: Map<string, number>(),
   link: null,
-});
+};
 
 // tslint:disable no-bitwise
 function hashString(str: string): string {
@@ -189,55 +180,57 @@ export const commentPagingReducer = handleActions<
   void                | // clearCommentPagingOptions
   ICommentPagingState   // internalStoreCommentPagingOptions
 >({
-  [clearCommentPagingOptions.toString()]: () => StateFactory(),
+  [clearCommentPagingOptions.toString()]: () => initialState,
 
   [internalStoreCommentPagingOptions.toString()]: (_, { payload }: Action<ICommentPagingState>) => {
-    const state = StateFactory(payload);
-
-    const indexById = (state.get('commentIds') as List<number>)
-        .reduce((sum, id, index) => {
-          return sum.set(id, index);
-        }, Map<number, number>());
-
-    return state.set('indexById', indexById);
+    const indexById = payload['commentIds'].reduce((sum, id, index) => sum.set(id, index), Map<string, number>());
+    return { ...payload, indexById };
   },
-}, StateFactory());
+}, initialState);
 
-export function getPagingIsFromBatch(state: any): boolean | null {
-  return state.getIn(COMMENT_PAGING_FROM_BATCH);
+export function getCommentPagingRecord(state: IAppStateRecord) {
+  return state.getIn(COMMENT_PAGING) as ICommentPagingStateRecord;
 }
 
-export function getPagingSource(state: any, currentHash: string): string | null {
+export function getPagingIsFromBatch(state: IAppStateRecord) {
+  const commentPaging =  getCommentPagingRecord(state);
+  return commentPaging && commentPaging.fromBatch;
+}
+
+export function getPagingSource(state: IAppStateRecord, currentHash: string) {
+  const hash = getPagingHash(state);
+  if (hash !== currentHash) { return; }
+  const commentPaging =  getCommentPagingRecord(state);
+  return commentPaging && commentPaging.source;
+}
+
+export function getPagingLink(state: IAppStateRecord, currentHash: string) {
+  const hash = getPagingHash(state);
+  if (hash !== currentHash) { return; }
+  const commentPaging =  getCommentPagingRecord(state);
+  return commentPaging && commentPaging.link;
+}
+
+export function getPagingHash(state: IAppStateRecord) {
+  const commentPaging =  getCommentPagingRecord(state);
+  return commentPaging && commentPaging.hash;
+}
+
+export function getPagingCommentIds(state: IAppStateRecord) {
+  const commentPaging = getCommentPagingRecord(state);
+  return commentPaging && commentPaging.commentIds;
+}
+
+export function getPagingCommentIndexes(state: IAppStateRecord) {
+  const commentPaging =  getCommentPagingRecord(state);
+  return commentPaging && commentPaging.indexById;
+}
+
+export function getCurrentCommentIndex(state: IAppStateRecord, currentHash: string, commentId: string) {
   const hash = getPagingHash(state);
   if (hash !== currentHash) { return; }
 
-  return state.getIn(COMMENT_PAGING_SOURCE);
-}
-
-export function getPagingLink(state: any, currentHash: string): string | null {
-  const hash = getPagingHash(state);
-  if (hash !== currentHash) { return; }
-
-  return state.getIn(COMMENT_PAGING_LINK);
-}
-
-export function getPagingHash(state: any): string | null {
-  return state.getIn(COMMENT_PAGING_HASH);
-}
-
-export function getPagingCommentIds(state: any): List<number> | null {
-  return state.getIn(COMMENT_PAGING_IDS);
-}
-
-export function getPagingCommentIndexes(state: any): Map<number, number> {
-  return state.getIn(COMMENT_PAGING_INDEXES);
-}
-
-export function getCurrentCommentIndex(state: any, currentHash: string, commentId: string): number | null {
-  const hash = getPagingHash(state);
-  if (hash !== currentHash) { return; }
-
-  const index = getPagingCommentIndexes(state).get(parseInt(commentId, 10));
+  const index = getPagingCommentIndexes(state).get(commentId);
 
   if (typeof index !== 'undefined') {
     return index;
@@ -246,12 +239,12 @@ export function getCurrentCommentIndex(state: any, currentHash: string, commentI
   }
 }
 
-export function getNextCommentId(state: any, currentHash: string, commentId: string): number | null {
+export function getNextCommentId(state: IAppStateRecord, currentHash: string, commentId: string) {
   const hash = getPagingHash(state);
   if (hash !== currentHash) { return; }
 
   const ids = getPagingCommentIds(state);
-  const index = getPagingCommentIndexes(state).get(parseInt(commentId, 10));
+  const index = getPagingCommentIndexes(state).get(commentId);
 
   if (typeof index !== 'undefined') {
     const nextIndex = index + 1;
@@ -262,12 +255,12 @@ export function getNextCommentId(state: any, currentHash: string, commentId: str
   }
 }
 
-export function getPreviousCommentId(state: any, currentHash: string, commentId: string): number | null {
+export function getPreviousCommentId(state: IAppStateRecord, currentHash: string, commentId: string) {
   const hash = getPagingHash(state);
   if (hash !== currentHash) { return; }
 
   const ids = getPagingCommentIds(state);
-  const index = getPagingCommentIndexes(state).get(parseInt(commentId, 10));
+  const index = getPagingCommentIndexes(state).get(commentId);
 
   if (typeof index !== 'undefined') {
     const nextIndex = index - 1;
@@ -279,23 +272,27 @@ export function getPreviousCommentId(state: any, currentHash: string, commentId:
 }
 
 export interface IAuthorCountsState {
-  authorCounts: Map<string | number, IAuthorCountsModel>;
+  authorCounts: Map<string, IAuthorCountsModel>;
 }
 
-export interface IAuthorCountsStateRecord extends TypedRecord<IAuthorCountsStateRecord>, IAuthorCountsState {}
-
-const AuthorCountsStateFactory = makeTypedFactory<IAuthorCountsState, IAuthorCountsStateRecord>({
-  authorCounts: Map<string | number, IAuthorCountsModel>(),
-});
+export type IAuthorCountsStateRecord = Readonly<IAuthorCountsState>;
 
 export const authorCountsReducer = handleActions<
   IAuthorCountsStateRecord,
   IStoreAuthorCountsPayload // storeAuthorCounts
 >({
   [storeAuthorCounts.toString()]: (state, { payload: { authorCounts } }: Action<IStoreAuthorCountsPayload>) => {
-    return state.mergeIn(['authorCounts'], Map(authorCounts));
+    return {
+      authorCounts: state['authorCounts'].merge(Map(authorCounts)),
+    };
   },
-}, AuthorCountsStateFactory());
+}, {
+  authorCounts: Map<string, IAuthorCountsModel>(),
+});
+
+export function getAuthorCountsRecord(state: IAppStateRecord) {
+  return state.getIn(COMMENT_AUTHOR_COUNTS) as IAuthorCountsStateRecord;
+}
 
 export const reducer: any = combineReducers({
   comment: commentReducer,
@@ -311,23 +308,27 @@ export const addCommentScore: (payload: ICommentScoreModel) => Action<ICommentSc
 export const updateCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = updateCommentScoreRecord;
 export const removeCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = removeCommentScoreRecord;
 
-export function getComment(state: any): ICommentModel {
-  return state.getIn(COMMENT_DATA);
+export function getComment(state: IAppStateRecord) {
+  const commentRecord = state.getIn(COMMENT_DATA) as ISingleRecordState<ICommentModel>;
+  return commentRecord && commentRecord.item;
 }
 
-export function getScores(state: any): List<ICommentScoreModel> {
-  return state.getIn(COMMENT_SCORES_DATA);
+export function getScores(state: IAppStateRecord) {
+  const commentScoreRecord = state.getIn(COMMENT_SCORES_DATA) as IRecordListState<ICommentScoreModel>;
+  return commentScoreRecord && commentScoreRecord.items;
 }
 
-export function getFlags(state: any): List<ICommentFlagModel> {
-  return state.getIn(COMMENT_FLAGS_DATA);
+export function getFlags(state: IAppStateRecord) {
+  const commentFlagRecord = state.getIn(COMMENT_FLAGS_DATA) as IRecordListState<ICommentFlagModel>;
+  return commentFlagRecord && commentFlagRecord.items;
 }
 
-export function getIsLoading(state: any): boolean {
-  return state.getIn(LOADING_STATUS);
+export function getIsLoading(state: IAppStateRecord) {
+  const commentRecord = state.getIn(COMMENT_DATA) as ISingleRecordState<ICommentModel>;
+  return commentRecord && commentRecord.isFetching;
 }
 
-export function getTaggingSensitivitiesInCategory(state: any): List<ITaggingSensitivityModel> {
+export function getTaggingSensitivitiesInCategory(state: IAppStateRecord): List<ITaggingSensitivityModel> {
   let categoryId = 'na';
   const comment = getComment(state);
   if (comment) {
@@ -398,10 +399,7 @@ export function getReducedScoresBelowThreshold(taggingSensitivities: List<ITaggi
   return dedupeScoreTypes(getScoresBelowThreshold(taggingSensitivities, scores));
 }
 
-export function getAuthorCounts(state: any): IAuthorCountsStateRecord {
-  return state.get(COMMENT_AUTHOR_COUNTS_DATA);
-}
-
-export function getAuthorCountsById(state: any, id: string | string): IAuthorCountsModel | undefined {
-  return state.getIn([...COMMENT_AUTHOR_COUNTS_DATA, id]);
+export function getAuthorCountsById(state: IAppStateRecord, id: string) {
+  const authorCountsRecord = getAuthorCountsRecord(state);
+  return authorCountsRecord.authorCounts.get(id);
 }

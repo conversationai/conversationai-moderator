@@ -699,8 +699,8 @@ export async function resetCommentScoreRequest(commentId: string, commentScoreId
 }
 
 export async function listAuthorCounts(
-  authorSourceIds: Array<string | number>,
-): Promise<Map<string | number, IAuthorCountsModel>> {
+  authorSourceIds: Array<string>,
+): Promise<Map<string, IAuthorCountsModel>> {
   const response: any = await axios.post(
     serviceURL('authorCounts'),
     { data: authorSourceIds },

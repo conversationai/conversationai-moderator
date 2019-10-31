@@ -94,65 +94,37 @@ const testData = Map({
 describe('makeRecordListReducer reducer', () => {
   it('should detect an event has started', () => {
     const testState = reducer(testMakeRecordListReducer.initialState, testStartEvent(''));
-    expect(
-      testState.getIn(['isFetching']),
-    ).to.be.true;
+    expect(testState.isFetching).to.be.true;
   });
 
   it('should detect an event has ended', () => {
     let testState = reducer(testMakeRecordListReducer.initialState, testStartEvent(''));
-    expect(
-      testState.getIn(['isFetching']),
-    ).to.be.true;
+    expect(testState.isFetching).to.be.true;
 
     testState = reducer(testState, testEndEvent(testData));
-    expect(
-      testState.getIn(['isFetching']),
-    ).to.be.false;
-
-    expect(
-      testState.getIn(['hasData']),
-    ).to.be.true;
-
-    expect(
-      testState.getIn(['items'], 0).id,
-    ).to.equal(
+    expect(testState.isFetching).to.be.false;
+    expect(testState.hasData).to.be.true;
+    expect(testState.items.get(0).id).to.equal(
       testData.getIn(['data'], 0).id,
     );
   });
 
   it('should add a record', () => {
     const testState = reducer(testMakeRecordListReducer.initialState, testMakeRecordListReducer.addRecord(testData));
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      1,
-    );
+    expect(testState.items.size).to.equal(1);
   });
 
   it('should add a second record', () => {
     let testState = reducer(testMakeRecordListReducer.initialState, testMakeRecordListReducer.addRecord(testData));
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      1,
-    );
+    expect(testState.items.size).to.equal(1);
 
     testState = reducer(testState, testMakeRecordListReducer.addRecord(testData));
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      2,
-    );
+    expect(testState.items.size).to.equal(2);
   });
 
   it('should update a record', () => {
     let testState = reducer(testMakeRecordListReducer.initialState, testMakeRecordListReducer.addRecord(testData));
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      1,
-    );
+    expect(testState.items.size).to.equal(1);
 
     const testRecord = Map({
       id: 3,
@@ -187,7 +159,7 @@ describe('makeRecordListReducer reducer', () => {
 
     let checkedRecord = null;
 
-    testState.getIn(['items']).forEach((item: any) => {
+    testState.items.forEach((item: any) => {
       if (item.get('id') === 3) {
         checkedRecord = item;
       }
@@ -200,11 +172,7 @@ describe('makeRecordListReducer reducer', () => {
 
   it('should remove a record', () => {
     let testState = reducer(testMakeRecordListReducer.initialState, testMakeRecordListReducer.addRecord(testData));
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      1,
-    );
+    expect(testState.items.size).to.equal(1);
 
     const testRecord = Map({
       id: 3,
@@ -236,29 +204,15 @@ describe('makeRecordListReducer reducer', () => {
     });
 
     testState = reducer(testState, testMakeRecordListReducer.addRecord(testRecord));
-
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      2,
-    );
+    expect(testState.items.size).to.equal(2);
 
     testState = reducer(testState, testMakeRecordListReducer.removeRecord(testRecord));
-
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      1,
-    );
+    expect(testState.items.size).to.equal(1);
   });
 
   it('should remove a second record', () => {
     let testState = reducer(testMakeRecordListReducer.initialState, testMakeRecordListReducer.addRecord(testData));
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      1,
-    );
+    expect(testState.items.size).to.equal(1);
 
     const testRecordOne = Map({
       id: 3,
@@ -291,12 +245,7 @@ describe('makeRecordListReducer reducer', () => {
     });
 
     testState = reducer(testState, testMakeRecordListReducer.addRecord(testRecordOne));
-
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      2,
-    );
+    expect(testState.items.size).to.equal(2);
 
     const testRecordTwo = Map({
       id: 4,
@@ -329,23 +278,15 @@ describe('makeRecordListReducer reducer', () => {
 
     testState = reducer(testState, testMakeRecordListReducer.addRecord(testRecordTwo));
 
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      3,
-    );
+    expect(testState.items.size).to.equal(3);
 
     testState = reducer(testState, testMakeRecordListReducer.removeRecord(testRecordOne));
 
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      2,
-    );
+    expect(testState.items.size).to.equal(2);
 
     let expectedItem = null;
 
-    testState.getIn(['items']).forEach((item: any) => {
+    testState.items.forEach((item: any) => {
       if (item.get('id') === 4) {
         expectedItem = item;
       }
@@ -356,11 +297,6 @@ describe('makeRecordListReducer reducer', () => {
     ).to.be.true;
 
     testState = reducer(testState, testMakeRecordListReducer.removeRecord(testRecordTwo));
-
-    expect(
-      testState.getIn(['items']).size,
-    ).to.equal(
-      1,
-    );
+    expect(testState.items.size).to.equal(1);
   });
 });

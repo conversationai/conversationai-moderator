@@ -23,12 +23,11 @@ import {
 import { getModel } from '../../../../platform/dataService';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import {
+  ISingleRecordState,
   makeSingleRecordReducer,
 } from '../../../../util';
 
-const DATA_PREFIX = ['scenes', 'commentsIndex', 'threadedCommentDetail', 'comment'];
-const COMMENT_DATA = [...DATA_PREFIX, 'item'];
-const LOADING_STATUS = [...DATA_PREFIX, 'isFetching'];
+const COMMENT_DATA = ['scenes', 'commentsIndex', 'threadedCommentDetail', 'comment'];
 
 const loadCommentStart =
   createAction('threaded-comment-detail/LOAD_COMMENT_START');
@@ -58,10 +57,12 @@ export const reducer: any = combineReducers({
   comment: commentReducer,
 });
 
-export function getComment(state: IAppStateRecord): ICommentModel {
-  return state.getIn(COMMENT_DATA);
+export function getComment(state: IAppStateRecord) {
+  const commentRecord = state.getIn(COMMENT_DATA) as ISingleRecordState<ICommentModel>;
+  return commentRecord && commentRecord.item;
 }
 
-export function getIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(LOADING_STATUS);
+export function getIsLoading(state: IAppStateRecord) {
+  const commentRecord = state.getIn(COMMENT_DATA) as ISingleRecordState<ICommentModel>;
+  return commentRecord && commentRecord.isFetching;
 }
