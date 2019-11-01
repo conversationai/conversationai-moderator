@@ -19,12 +19,12 @@ import { TypedRecord } from 'typed-immutable-record';
 import { IArticlesState } from './articles';
 import { ICategoriesState } from './categories';
 import { IState as ICommentsState } from './comments';
-import { ICommentSummaryScoresStateRecord } from './commentSummaryScores';
+import { ICommentSummaryScoresState } from './commentSummaryScores';
 import { IPreselectsState } from './preselects';
 import { IRulesState } from './rules';
 import { ITaggingSensitivitiesState } from './taggingSensitivities';
 import { ITagsState } from './tags';
-import { ITextSizesStateRecord } from './textSizes';
+import { ITextSizesState } from './textSizes';
 import { IState as ITopScoresState, ISummaryState as ITopSummaryScoresState } from './topScores';
 import { IUsersState } from './users';
 
@@ -32,13 +32,13 @@ export interface IGlobalState {
   categories: ICategoriesState;
   articles: IArticlesState;
   comments: ICommentsState;
-  commentSummaryScores: ICommentSummaryScoresStateRecord;
+  commentSummaryScores: ICommentSummaryScoresState;
   users: IUsersState;
   tags: ITagsState;
   rules: IRulesState;
   preselects: IPreselectsState;
   taggingSensitivities: ITaggingSensitivitiesState;
-  textSizes: ITextSizesStateRecord;
+  textSizes: ITextSizesState;
   topScores: ITopScoresState;
   topSummaryScores: ITopSummaryScoresState;
 }

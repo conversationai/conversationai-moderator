@@ -16,15 +16,11 @@ limitations under the License.
 
 import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import { IAppStateRecord, IThunkAction } from '../appstate';
 import { listTextSizesByIds } from '../platform/dataService';
 
 const DATA_PREFIX = ['global', 'textSizes'];
-const TEXT_SIZES_HAS_DATA = [...DATA_PREFIX, 'hasData'];
-const TEXT_SIZES_DATA = [...DATA_PREFIX, 'textSizes'];
-const TEXT_SIZES_IS_LOADING = [...DATA_PREFIX, 'isLoading'];
 
 const loadTextSizesStart = createAction(
   'text-sizes/LOAD_TEXT_SIZES_START',
@@ -37,49 +33,47 @@ const loadTextSizesComplete = createAction<ILoadTestSizesCompletePayload>(
   'text-sizes/LOAD_TEXT_SIZES_COMPLETE',
 );
 
-interface ITextSizesState {
+export type ITextSizesState = Readonly<{
   isLoading: boolean;
   hasData: boolean;
-  textSizes: Map<number, number>;
-}
-
-interface ITextSizesStateRecord extends TypedRecord<ITextSizesStateRecord>, ITextSizesState {}
-
-const TextSizesStateFactory = makeTypedFactory<ITextSizesState, ITextSizesStateRecord>({
-  isLoading: true,
-  hasData: false,
-  textSizes: Map<number, number>(),
-});
+  textSizes: Map<string, number>;
+}>;
 
 const textSizesReducer = handleActions<
-  ITextSizesStateRecord,
+  ITextSizesState,
   void                          | // loadTextSizesStart
   ILoadTestSizesCompletePayload   // loadTextSizesComplete
 >({
-  [loadTextSizesStart.toString()]: (state) => (
-    state
-        .set('isLoading', true)
-  ),
+  [loadTextSizesStart.toString()]: (state) => ({...state, isLoading: true}),
 
-  [loadTextSizesComplete.toString()]: (state, { payload: { textSizes } }: Action<ILoadTestSizesCompletePayload>) => (
-    state
-        .set('isLoading', false)
-        .set('hasData', true)
-        .mergeIn(['textSizes'], textSizes)
-  ),
+  [loadTextSizesComplete.toString()]: (state, { payload: { textSizes } }: Action<ILoadTestSizesCompletePayload>) => ({
+    isLoading: false,
+    hasData: true,
+    textSizes: state.textSizes.merge(textSizes),
+  }),
+}, {
+  isLoading: true,
+  hasData: false,
+  textSizes: Map<string, number>(),
+});
 
-}, TextSizesStateFactory());
-
-function getTextSizesHasData(state: IAppStateRecord): boolean {
-  return state.getIn(TEXT_SIZES_HAS_DATA);
+function getStateRecord(state: IAppStateRecord) {
+  return state.getIn(DATA_PREFIX) as ITextSizesState;
 }
 
-function getTextSizes(state: IAppStateRecord): Map<string, number> {
-  return state.getIn(TEXT_SIZES_DATA);
+function getTextSizesHasData(state: IAppStateRecord) {
+  const stateRecord = getStateRecord(state);
+  return stateRecord && stateRecord.hasData;
 }
 
-function getTextSizesIsLoading(state: IAppStateRecord): boolean {
-  return state.getIn(TEXT_SIZES_IS_LOADING);
+function getTextSizes(state: IAppStateRecord) {
+  const stateRecord = getStateRecord(state);
+  return stateRecord && stateRecord.textSizes;
+}
+
+function getTextSizesIsLoading(state: IAppStateRecord) {
+  const stateRecord = getStateRecord(state);
+  return stateRecord && stateRecord.isLoading;
 }
 
 function loadTextSizesByIds(ids: List<string>, width: number): IThunkAction<Promise<void>> {
@@ -102,8 +96,6 @@ function loadTextSizesByIds(ids: List<string>, width: number): IThunkAction<Prom
 }
 
 export {
-  ITextSizesState,
-  ITextSizesStateRecord,
   textSizesReducer,
   getTextSizesHasData,
   getTextSizes,
