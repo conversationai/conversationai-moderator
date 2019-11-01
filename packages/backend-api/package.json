@@ -62,7 +62,7 @@
     "randomstring": "1.1.5",
     "redis": "2.7.1",
     "request": "2.87.0",
-    "sequelize": "3.35.1",
+    "sequelize": "5.21.2",
     "sequelize-cli": "2.8.0",
     "striptags": "3.1.1",
     "ts-node-dev": "1.0.0-pre.32",
