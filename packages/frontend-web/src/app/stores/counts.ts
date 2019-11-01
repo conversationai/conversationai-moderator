@@ -15,36 +15,29 @@ limitations under the License.
 */
 
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
+
 import { IAppStateRecord } from '../appstate';
 
 const STATE_ROOT = ['global', 'counts'];
-const ASSIGNMENTS = [...STATE_ROOT, 'assignments'];
 
 export const assignmentCountUpdated = createAction<number>('global/ASSIGNMENT_COUNT_UPDATED');
 
-export function getAssignments(state: IAppStateRecord): any {
-  return state.getIn(ASSIGNMENTS);
-}
-
-export interface ICountsState {
+export type ICountsState = Readonly<{
   assignments: number;
+}>;
+
+export function getAssignments(state: IAppStateRecord): any {
+  const stateRecord = state.getIn(STATE_ROOT) as ICountsState;
+  return stateRecord && stateRecord.assignments;
 }
-
-export interface ICountsStateRecord extends TypedRecord<ICountsStateRecord>, ICountsState {}
-
-const StateFactory = makeTypedFactory<ICountsState, ICountsStateRecord>({
-  assignments: 0,
-});
 
 export const reducer = handleActions<
-  ICountsStateRecord,
+  ICountsState,
   number
   >({
-  [assignmentCountUpdated.toString()]: (state, { payload }: Action<number>) => {
-    return state.setIn(
-      ['assignments'],
-      payload,
-    );
+  [assignmentCountUpdated.toString()]: (_state, { payload }: Action<number>) => {
+    return {assignments: payload};
   },
-}, StateFactory());
+}, {
+  assignments: 0,
+});
