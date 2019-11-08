@@ -17,25 +17,20 @@ limitations under the License.
 import * as Sequelize from 'sequelize';
 
 import { sequelize } from '../sequelize';
-import {ICommentInstance} from './comment';
+import { ICommentInstance } from './comment';
+import { IBaseAttributes, IBaseInstance } from './constants';
 
-export interface ICommentScoreRequestAttributes {
-  id?: number;
+export interface ICommentScoreRequestAttributes extends IBaseAttributes {
   commentId: number;
   userId: number;
-  sentAt: Date | string | Sequelize.fn;
-  doneAt?: Date | string | null | Sequelize.fn;
+  sentAt: Date | Sequelize.fn;
+  doneAt?: Date | Sequelize.fn | null;
 }
 
-export interface ICommentScoreRequestInstance
-    extends Sequelize.Instance<
-      ICommentScoreRequestAttributes
-    > {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
+export type ICommentScoreRequestInstance = Sequelize.Instance<ICommentScoreRequestAttributes> &
+  ICommentScoreRequestAttributes & IBaseInstance & {
   getComment: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
-}
+};
 
 /**
  * CommentScoreRequest model

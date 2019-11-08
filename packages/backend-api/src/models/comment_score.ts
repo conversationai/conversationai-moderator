@@ -17,6 +17,7 @@ limitations under the License.
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 import { ICommentInstance } from './comment';
+import { IBaseAttributes, IBaseInstance } from './constants';
 import { ITagInstance } from './tag';
 
 export const SCORE_SOURCE_TYPES = [
@@ -25,8 +26,7 @@ export const SCORE_SOURCE_TYPES = [
   'Machine',
 ];
 
-export interface ICommentScoreAttributes {
-  id?: number;
+export interface ICommentScoreAttributes extends IBaseAttributes {
   commentId: number | null;
   confirmedUserId?: number;
   commentScoreRequestId?: number;
@@ -41,14 +41,11 @@ export interface ICommentScoreAttributes {
   extra?: any | null;
 }
 
-export interface ICommentScoreInstance extends Sequelize.Instance<ICommentScoreAttributes> {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-
+export type ICommentScoreInstance = Sequelize.Instance<ICommentScoreAttributes> &
+  ICommentScoreAttributes & IBaseInstance & {
   getComment: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
   getTag: Sequelize.BelongsToGetAssociationMixin<ITagInstance>;
-}
+};
 
 /**
  * CommentScore model

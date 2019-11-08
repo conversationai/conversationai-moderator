@@ -15,11 +15,12 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+
 import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
 import { ITagInstance } from './tag';
 
-export interface ICommentSummaryScoreAttributes {
-  id?: number;
+export interface ICommentSummaryScoreAttributes extends IBaseAttributes{
   commentId: number;
   tagId: number;
   score: number;
@@ -27,8 +28,8 @@ export interface ICommentSummaryScoreAttributes {
   confirmedUserId?: number | null;
 }
 
-export interface ICommentSummaryScoreInstance
-    extends Sequelize.Instance<ICommentSummaryScoreAttributes> {
+export type ICommentSummaryScoreInstance = Sequelize.Instance<ICommentSummaryScoreAttributes> &
+  ICommentSummaryScoreAttributes & IBaseInstance & {
   getTag: Sequelize.BelongsToGetAssociationMixin<ITagInstance>;
 }
 

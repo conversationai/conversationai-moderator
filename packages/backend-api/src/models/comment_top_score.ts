@@ -15,18 +15,18 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
-import { sequelize } from '../sequelize';
 
-export interface ICommentTopScoreAttributes {
-  id?: number;
+import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
+
+export interface ICommentTopScoreAttributes extends IBaseAttributes {
   commentId: number;
   tagId: number;
   commentScoreId: number;
 }
 
-export interface ICommentTopScoreInstance
-    extends Sequelize.Instance<ICommentTopScoreAttributes> {
-}
+export type ICommentTopScoreInstance = Sequelize.Instance<ICommentTopScoreAttributes> &
+  ICommentTopScoreAttributes & IBaseInstance;
 
 /**
  * Category model

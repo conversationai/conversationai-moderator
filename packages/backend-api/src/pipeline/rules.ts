@@ -49,11 +49,11 @@ export interface ICompiledScores {
  * are scores in those tags. If there are multiple scores for the same tag, we take the max.
  */
 export function compileScores(commentScores: Array<ICommentSummaryScoreInstance>): ICompiledScores {
-  const grouped = groupBy(commentScores, (score) => score.get('tagId'));
+  const grouped = groupBy(commentScores, (score) => score.tagId);
 
   return mapValues(grouped, (scores) => {
     // Pull out `score` field values and return their average
-    return max(scores.map((score: ICommentSummaryScoreInstance) => score.get('score')));
+    return max(scores.map((score: ICommentSummaryScoreInstance) => score.score)) || 0;
   });
 }
 
@@ -86,7 +86,7 @@ export async function resolveComment(
     const tempSummaryScore = CommentSummaryScore.build({
       commentId: comment.id,
       tagId: summaryScoreTag.id,
-      score: comment.get('maxSummaryScore'),
+      score: comment.maxSummaryScore!,
     });
 
     compiledScores = compileScores([tempSummaryScore, ...scores]);
@@ -101,16 +101,16 @@ export async function resolveComment(
   const article = await (comment as any).getArticle();
 
   const matchingRules = rules.filter((r) => {
-    const score = compiledScores[r.get('tagId')];
+    const score = compiledScores[r.tagId];
 
-    return score && score >= r.get('lowerThreshold') && score <= r.get('upperThreshold');
+    return score && score >= r.lowerThreshold && score <= r.upperThreshold;
   });
 
-  const globalRules = matchingRules.filter((r) => !r.get('categoryId'));
-  const categoryRules = matchingRules.filter((r) => article && r.get('categoryId') === article.get('categoryId'));
+  const globalRules = matchingRules.filter((r) => !r.categoryId);
+  const categoryRules = matchingRules.filter((r) => article && r.categoryId === article.categoryId);
 
   function isThereConsensus(testRules: Array<IModerationRuleInstance>): boolean {
-    const actions = testRules.map((r) => r.get('action').toLowerCase());
+    const actions = testRules.map((r) => r.action.toLowerCase());
 
     // Replace highlight with accept.
     const replacedActions = actions.map((a) => a === 'highlight' ? 'accept' : a);
@@ -126,7 +126,7 @@ export async function resolveComment(
   if ((globalRules.length > 0) && (categoryRules.length <= 0)) {
     consensus = isThereConsensus(globalRules);
     appliedRule = globalRules[globalRules.length - 1];
-    wasHighlighted = globalRules.some((r) => r.get('action').toLowerCase() === 'highlight');
+    wasHighlighted = globalRules.some((r) => r.action.toLowerCase() === 'highlight');
   }
 
   else if (
@@ -138,7 +138,7 @@ export async function resolveComment(
   ) {
     consensus = isThereConsensus(categoryRules);
     appliedRule = categoryRules[categoryRules.length - 1];
-    wasHighlighted = categoryRules.some((r) => r.get('action').toLowerCase() === 'highlight');
+    wasHighlighted = categoryRules.some((r) => r.action.toLowerCase() === 'highlight');
   }
 
   // Nothing applies
@@ -149,7 +149,8 @@ export async function resolveComment(
   // If there's no consensus or everything is "defer", defer the comment
   if (!consensus) {
     await defer(comment, null);
-    await comment.set('isAutoResolved', true).save();
+    comment.isAutoResolved = true;
+    await comment.save();
 
     return {
       resolution: MODERATION_ACTION_DEFER,
@@ -157,7 +158,7 @@ export async function resolveComment(
     };
   }
 
-  const appliedAction = appliedRule.get('action').toLowerCase();
+  const appliedAction = appliedRule.action.toLowerCase();
   const replacedAction = appliedAction === 'highlight' ? 'accept' : appliedAction;
 
   // If all actions are equal, we have consensus and we can approve or reject
@@ -166,7 +167,8 @@ export async function resolveComment(
     const extra = wasHighlighted ? getHighlightStateData() : {};
 
     await approve(comment, appliedRule, extra);
-    await comment.set('isAutoResolved', true).save();
+    comment.isAutoResolved = true;
+    await comment.save();
 
     return {
       resolution: MODERATION_ACTION_ACCEPT,
@@ -175,7 +177,8 @@ export async function resolveComment(
   } else if (replacedAction === 'reject') {
     // Reject a comment if all actions equal "reject" and "highlight" hasn't been set
     await reject(comment, appliedRule);
-    await comment.set('isAutoResolved', true).save();
+    comment.isAutoResolved = true;
+    await comment.save();
 
     return {
       resolution: MODERATION_ACTION_REJECT,
@@ -184,7 +187,8 @@ export async function resolveComment(
   } else if (replacedAction === 'defer') {
     // Defer a comment
     await defer(comment, appliedRule);
-    await comment.set('isAutoResolved', true).save();
+    comment.isAutoResolved = true;
+    await comment.save();
 
     return {
       resolution: MODERATION_ACTION_DEFER,
@@ -203,7 +207,7 @@ export async function resolveComment(
 export async function processRulesForComment(comment: ICommentInstance): Promise<IDecision | null> {
   const article = await comment.getArticle();
 
-  if (article && !article.get('isAutoModerated')) {
+  if (article && !article.isAutoModerated) {
     return null;
   }
 

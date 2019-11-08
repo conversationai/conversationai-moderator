@@ -35,7 +35,7 @@ function redirectToFrontend(
   res: express.Response,
   success: boolean,
   params: object = {},
-  referrer?: string,
+  referrer?: string | null,
 ): void {
   let redirectHost;
 

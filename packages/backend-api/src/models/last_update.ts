@@ -16,17 +16,13 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
 
-export interface ILastUpdateAttributes {
-  id: number;
+export interface ILastUpdateAttributes extends IBaseAttributes {
   lastUpdate: number;
 }
 
-export interface ILastUpdateInstance
-  extends Sequelize.Instance<ILastUpdateAttributes> {
-  id: number;
-  updatedAt: string;
-}
+export type ILastUpdateInstance = Sequelize.Instance<ILastUpdateAttributes> & ILastUpdateAttributes & IBaseInstance;
 
 /**
  * Category model
@@ -61,8 +57,8 @@ async function getInstance() {
 
 async function updateLastUpdate() {
   const instance = await getInstance();
-  lastUpdateLocal = instance.get('lastUpdate') + 1;
-  instance.set('lastUpdate', lastUpdateLocal);
+  lastUpdateLocal = instance.lastUpdate + 1;
+  instance.lastUpdate = lastUpdateLocal;
   await instance.save();
 }
 export async function partialUpdateHappened(articleId: number) {
@@ -91,7 +87,7 @@ export function registerInterest(interestListener: IInterestListener, testing = 
 // Exporting for test purposes, but should really be unexported
 export async function maybeNotifyInterested() {
   const instance = await getInstance();
-  const lastUpdate = instance.get('lastUpdate');
+  const lastUpdate = instance.lastUpdate;
   if (lastUpdate !== lastUpdateLocal) {
     lastUpdateLocal = lastUpdate;
     for (const i of interested) {

@@ -22,7 +22,6 @@ import { rtrim } from 'underscore.string';
 import { config } from '../config';
 import { logger } from '../logger';
 import {
-  Article,
   ICommentInstance,
   IUserInstance,
 } from '../models';
@@ -78,18 +77,18 @@ export function createShim(
     processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>,
     ) {
   const serviceUserId = scorer.id;
-  const extra: any = JSON.parse(scorer.get('extra'));
+  const extra: any = JSON.parse(scorer.extra);
   const endpoint = extra.endpoint;
   const apiURL = rtrim(config.get('api_url'), '/');
   const apiKey = extra.apiKey;
 
   return {
     sendToScorer: async (comment: ICommentInstance, correlator: string | number) => {
-      const article = await Article.findById(comment.get('articleId'));
+      const article = await comment.getArticle();
 
       // Ensure data is present, otherwise an error will throw.
       if (!article) {
-        logger.error(`sendToScorer: Article ${comment.get('articleId')} not found for comment ${comment.id}.`);
+        logger.error(`sendToScorer: Article ${comment.articleId} not found for comment ${comment.id}.`);
         throw new Error(`No article for comment ${comment.id}.  Can't score.`);
       }
 
@@ -99,8 +98,8 @@ export function createShim(
 
         comment: {
           commentId: comment.id,
-          plainText: striptags(comment.get('text')),
-          htmlText: comment.get('text'),
+          plainText: striptags(comment.text),
+          htmlText: comment.text,
           links: {
             self: apiURL + '/rest/comments/' + comment.id,
           },
@@ -108,7 +107,7 @@ export function createShim(
 
         article: {
           articleId: article.id,
-          plainText: striptags(article.get('text')),
+          plainText: striptags(article.text),
           links: {
             self: apiURL + '/rest/articles/' + article.id,
           },
@@ -124,8 +123,8 @@ export function createShim(
       if (replyTo) {
         postData.inReplyToComment = {
           commentId: replyTo.id,
-          plainText: striptags(replyTo.get('text')),
-          htmlText: replyTo.get('text'),
+          plainText: striptags(replyTo.text),
+          htmlText: replyTo.text,
           links: {
             self: apiURL + '/rest/comments/' + replyTo.id,
           },

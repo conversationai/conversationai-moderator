@@ -24,6 +24,7 @@ import {
   MODERATION_ACTION_HIGHLIGHT,
   MODERATION_ACTION_REJECT,
 } from './constants';
+import { IBaseAttributes, IBaseInstance } from './constants';
 import { updateHappened } from './last_update';
 
 export const MODERATION_RULE_ACTION_TYPES = [
@@ -33,7 +34,7 @@ export const MODERATION_RULE_ACTION_TYPES = [
   MODERATION_ACTION_HIGHLIGHT,
 ];
 
-export interface IModerationRuleAttributes {
+export interface IModerationRuleAttributes extends IBaseAttributes {
   tagId: number;
   categoryId?: number;
   createdBy?: number;
@@ -42,14 +43,8 @@ export interface IModerationRuleAttributes {
   action: IAction;
 }
 
-export interface IModerationRuleInstance
-    extends Sequelize.Instance<
-      IModerationRuleAttributes
-    > {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
+export type IModerationRuleInstance = Sequelize.Instance<IModerationRuleAttributes> &
+  IModerationRuleAttributes & IBaseInstance;
 
 /**
  * ModerationRule model
@@ -131,5 +126,5 @@ export function isModerationRule(instance: any) {
   //       Hopefully fixed in later sequelize.
   //       Instead check for an attribute unique to this object.
   // return instance instanceof ModerationRule.Instance;
-  return instance && instance.get && !!instance.get('action');
+  return instance && instance.get && !!instance.action;
 }

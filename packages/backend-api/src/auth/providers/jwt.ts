@@ -35,11 +35,11 @@ export async function verifyJWT(jwtPayload: any): Promise<IUserInstance> {
 
   if (user) {
     if (isValidUser(user)) {
-      if (user.get('email')) {
-        if (user.get('email') === jwtPayload.email) {
+      if (user.email) {
+        if (user.email === jwtPayload.email) {
           return user;
         } else {
-          throw new Error(`User email does not match token: ${user.get('email')} === ${jwtPayload.email}`);
+          throw new Error(`User email does not match token: ${user.email} === ${jwtPayload.email}`);
         }
       } else {
         return user;

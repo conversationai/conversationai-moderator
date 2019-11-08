@@ -80,7 +80,7 @@ function createAction(actionId: string): express.RequestHandler {
       return;
     }
 
-    const action = ACTIONS.get(actionId)!.get(await owner.get('group'));
+    const action = ACTIONS.get(actionId)!.get(owner.group);
     if (!action) {
       res.status(400).json({error: `Category does not support action ${action}`});
       next();

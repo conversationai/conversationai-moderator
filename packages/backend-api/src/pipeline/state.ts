@@ -65,7 +65,7 @@ export function scoresComplete(commentScoreRequests: Array<ICommentScoreRequestI
         // score requests have `doneAt` set
 
         return grouped[key].some((item: ICommentScoreRequestInstance) => {
-          return !!item.get('doneAt');
+          return !!item.doneAt;
         });
       })
       .every((item: boolean) => {
@@ -250,7 +250,7 @@ export async function highlight(
   source: IUserInstance | IModerationRuleInstance | null,
 ): Promise<ICommentInstance> {
   let updated = comment;
-  if (comment.get('isHighlighted') === true) {
+  if (comment.isHighlighted) {
     updated = await setCommentState(comment, source, {
       ...getApproveStateData(),
       ...getUnHighlightStateData(),

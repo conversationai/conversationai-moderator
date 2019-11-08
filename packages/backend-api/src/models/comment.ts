@@ -18,6 +18,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
 import { IArticleInstance } from './article';
 import { ICommentSummaryScoreInstance } from './comment_summary_score';
+import { IBaseAttributes, IBaseInstance } from './constants';
 import { IDecisionInstance } from './decision';
 
 export interface IAuthorAttributes {
@@ -35,8 +36,7 @@ export interface IFlagSummary {
   [key: string]: Array<number>;
 }
 
-export interface ICommentAttributes {
-  id?: number;
+export interface ICommentAttributes extends IBaseAttributes {
   ownerId?: number;
   sourceId: string;
   articleId: number | null;
@@ -65,15 +65,12 @@ export interface ICommentAttributes {
   maxSummaryScoreTagId?: string | null;
 }
 
-export interface ICommentInstance extends Sequelize.Instance<ICommentAttributes> {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
+export type ICommentInstance = Sequelize.Instance<ICommentAttributes> & ICommentAttributes & IBaseInstance & {
   getArticle: Sequelize.BelongsToGetAssociationMixin<IArticleInstance>;
   getDecisions: Sequelize.HasManyGetAssociationsMixin<IDecisionInstance>;
   getCommentSummaryScores: Sequelize.HasManyGetAssociationsMixin<ICommentSummaryScoreInstance>;
   getReplyTo: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
-}
+};
 
 /**
  * Comment model

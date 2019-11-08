@@ -87,16 +87,16 @@ describe('queryComments Functions', () => {
 
       expect(Object.keys(results)).to.be.lengthOf(2);
       expect(results[comment1.id]).to.deep.equal({
-        commentId: comment1Top.get('commentId'),
-        score: comment1Top.get('score'),
-        start: comment1Top.get('annotationStart'),
-        end: comment1Top.get('annotationEnd'),
+        commentId: comment1Top.commentId,
+        score: comment1Top.score,
+        start: comment1Top.annotationStart,
+        end: comment1Top.annotationEnd,
       });
       expect(results[comment2.id]).to.deep.equal({
-        commentId: comment2Top.get('commentId'),
-        score: comment2Top.get('score'),
-        start: comment2Top.get('annotationStart'),
-        end: comment2Top.get('annotationEnd'),
+        commentId: comment2Top.commentId,
+        score: comment2Top.score,
+        start: comment2Top.annotationStart,
+        end: comment2Top.annotationEnd,
       });
     });
 
@@ -107,10 +107,10 @@ describe('queryComments Functions', () => {
       expect(Object.keys(results)).to.be.lengthOf(1);
 
       expect(results[comment2.id]).to.deep.equal({
-        commentId: comment2Top.get('commentId'),
-        score: comment2Top.get('score'),
-        start: comment2Top.get('annotationStart'),
-        end: comment2Top.get('annotationEnd'),
+        commentId: comment2Top.commentId,
+        score: comment2Top.score,
+        start: comment2Top.annotationStart,
+        end: comment2Top.annotationEnd,
       });
     });
 
@@ -126,10 +126,10 @@ describe('queryComments Functions', () => {
       expect(Object.keys(results)).to.be.lengthOf(1);
 
       expect(results[comment1.id]).to.deep.equal({
-        commentId: comment1Top.get('commentId'),
-        score: comment1Top.get('score'),
-        start: comment1Top.get('annotationStart'),
-        end: comment1Top.get('annotationEnd'),
+        commentId: comment1Top.commentId,
+        score: comment1Top.score,
+        start: comment1Top.annotationStart,
+        end: comment1Top.annotationEnd,
       });
     });
 
@@ -145,10 +145,10 @@ describe('queryComments Functions', () => {
       expect(Object.keys(results)).to.be.lengthOf(1);
 
       expect(results[comment1.id]).to.deep.equal({
-        commentId: comment1Top.get('commentId'),
-        score: comment1Top.get('score'),
-        start: comment1Top.get('annotationStart'),
-        end: comment1Top.get('annotationEnd'),
+        commentId: comment1Top.commentId,
+        score: comment1Top.score,
+        start: comment1Top.annotationStart,
+        end: comment1Top.annotationEnd,
       });
     });
 
@@ -170,10 +170,10 @@ describe('queryComments Functions', () => {
       expect(Object.keys(results)).to.be.lengthOf(1);
 
       expect(results[comment1.id]).to.deep.equal({
-        commentId: comment1Top.get('commentId'),
-        score: comment1Top.get('score'),
-        start: comment1Top.get('annotationStart'),
-        end: comment1Top.get('annotationEnd'),
+        commentId: comment1Top.commentId,
+        score: comment1Top.score,
+        start: comment1Top.annotationStart,
+        end: comment1Top.annotationEnd,
       });
     });
   });

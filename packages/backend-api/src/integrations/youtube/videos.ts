@@ -68,7 +68,7 @@ export async function sync_playlists(
   owner: IUserInstance,
   auth: OAuth2Client,
 ) {
-  logger.info(`Syncing videos for user ${owner.get('email')}.`);
+  logger.info(`Syncing videos for user ${owner.email}.`);
   const categories = await Category.findAll({
     where: {
       ownerId: owner.id,
@@ -78,17 +78,17 @@ export async function sync_playlists(
   });
 
   for (const category of categories) {
-    const channelId = category.get('sourceId');
+    const channelId = category.sourceId!;
 
     const playlist = await get_playlist_for_channel(owner, auth, channelId);
-    logger.info(`Syncing channel ${category.get('label')} (${channelId}/${playlist})`);
+    logger.info(`Syncing channel ${category.label} (${channelId}/${playlist})`);
 
     let next_page;
     do {
       next_page = await sync_page_of_videos(owner, auth, category, playlist, next_page);
     } while (next_page);
 
-    logger.info(`Done sync of ${category.get('label')}.`);
+    logger.info(`Done sync of ${category.label}.`);
   }
 }
 
@@ -145,7 +145,7 @@ export async function sync_known_videos(
   owner: IUserInstance,
   auth: OAuth2Client,
 ) {
-  logger.info(`Syncing known videos for user ${owner.get('email')}.`);
+  logger.info(`Syncing known videos for user ${owner.email}.`);
   const articles = await Article.findAll({
     where: {
       ownerId: owner.id,
@@ -158,7 +158,7 @@ export async function sync_known_videos(
 
   let videoIds: Array<string> = [];
   for (const article of articles) {
-    videoIds.push(await article.get('sourceId'));
+    videoIds.push(article.sourceId);
     if (videoIds.length === 10) {
       await sync_individual_videos(owner, auth, videoIds);
       videoIds = [];

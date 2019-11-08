@@ -32,7 +32,7 @@ export async function filterTopScoresByTaggingSensitivity(maxScores: ITopScores,
   const allTaggingSensitivities = await TaggingSensitivity.findAll();
 
   const globalTaggingSensitivity = allTaggingSensitivities.find((ts) => {
-    return !ts.get('categoryId') && !ts.get('tagId');
+    return !ts.categoryId && !ts.tagId;
   });
 
   // Prefetch the associated article
@@ -54,22 +54,22 @@ export async function filterTopScoresByTaggingSensitivity(maxScores: ITopScores,
     const id = parseInt(commentId, 10);
     const scoreDetails = maxScores[id];
     const comment = comments.find((c) => (c != null && c.id === id)) as ICommentInstance;
-    const tagIdToFilter = tagId || comment.get('maxSummaryScoreTagId');
+    const tagIdToFilter = tagId || comment.maxSummaryScoreTagId;
 
     const categoryTaggingSensitivity = allTaggingSensitivities.find((ts) => {
       // We've prefetched the assoicated article, so we can use 'get' to fetch it.
       // But that requires some munging of the sequelize types.
       const article = (comment.get as (key: string) => IArticleInstance)('article');
-      return article && ts.get('categoryId') === article.get('categoryId') && !ts.get('tagId');
+      return article && ts.categoryId === article.categoryId && !ts.tagId;
     });
 
     const completeTaggingSensitivity = allTaggingSensitivities.find((ts) => {
       const article = (comment.get as (key: string) => IArticleInstance)('article');
-      return article && ts.get('categoryId') === article.get('categoryId') && ts.get('tagId') === tagIdToFilter;
+      return article && ts.categoryId === article.categoryId && ts.tagId === tagIdToFilter;
     });
 
     const tagTaggingSensitivity = allTaggingSensitivities.find((ts) => {
-      return !ts.get('categoryId') && ts.get('tagId') === tagIdToFilter;
+      return !ts.categoryId && ts.tagId === tagIdToFilter;
     });
 
     const matchesSensitivity = completeTaggingSensitivity || categoryTaggingSensitivity || tagTaggingSensitivity || globalTaggingSensitivity;
@@ -77,8 +77,8 @@ export async function filterTopScoresByTaggingSensitivity(maxScores: ITopScores,
     if (
       matchesSensitivity &&
       (
-        scoreDetails.score < matchesSensitivity.get('lowerThreshold') ||
-        scoreDetails.score > matchesSensitivity.get('upperThreshold')
+        scoreDetails.score < matchesSensitivity.lowerThreshold ||
+        scoreDetails.score > matchesSensitivity.upperThreshold
       )
     ) {
       // Remove comment from set.

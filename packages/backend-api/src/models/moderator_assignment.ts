@@ -16,20 +16,15 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
 
-export interface IModeratorAssignmentAttributes {
+export interface IModeratorAssignmentAttributes extends  IBaseAttributes {
   userId: number;
   articleId: number;
 }
 
-export interface IModeratorAssignmentInstance
-    extends Sequelize.Instance<
-      IModeratorAssignmentAttributes
-    > {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
+export type IModeratorAssignmentInstance = Sequelize.Instance<IModeratorAssignmentAttributes> &
+  IModeratorAssignmentAttributes & IBaseInstance;
 
 /**
  * Article model

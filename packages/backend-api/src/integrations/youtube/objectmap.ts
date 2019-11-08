@@ -17,7 +17,7 @@ limitations under the License.
 import { pick } from 'lodash';
 
 import { logger } from '../../logger';
-import { Article, Category, Comment, updateHappened } from '../../models';
+import { Article, Category, Comment, RESET_COUNTS, updateHappened } from '../../models';
 import {
   IAuthorAttributes,
   IUserInstance,
@@ -36,17 +36,17 @@ export async function saveError(owner: IUserInstance, error: Error) {
     testCallback('error', error);
     return;
   }
-  const extra = JSON.parse(owner.get('extra'));
+  const extra = JSON.parse(owner.extra);
   extra.lastError = pick(error, ['name', 'message']);
-  owner.set('isActive', false);
-  owner.set('extra', extra);
+  owner.isActive = false;
+  owner.extra = extra;
   await owner.save();
 }
 
 export async function clearError(owner: IUserInstance) {
-  const extra = JSON.parse(owner.get('extra'));
+  const extra = JSON.parse(owner.extra);
   delete extra.lastError;
-  owner.set('extra', extra);
+  owner.extra = extra;
   await owner.save();
 }
 
@@ -74,16 +74,17 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
         ...categoryDefaults,
         ownerId: owner.id,
         sourceId: channelId,
+        ...RESET_COUNTS,
       },
     });
 
     if (created) {
-      logger.info(`Category created for channel "${category.get('label')}" (local id: ${category.id} -> remote id: ${channel.id})`);
+      logger.info(`Category created for channel "${category.label}" (local id: ${category.id} -> remote id: ${channel.id})`);
     }
     else {
       category.set(categoryDefaults);
       await category.save();
-      logger.info(`Category updated for channel "${category.get('label')}" (local id: ${category.id} -> remote id: ${channel.id})`);
+      logger.info(`Category updated for channel "${category.label}" (local id: ${category.id} -> remote id: ${channel.id})`);
     }
 
     // Create an article to store comments for the channel itself.
@@ -107,16 +108,17 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
         sourceId: channelId,
         isCommentingEnabled: true,
         isAutoModerated: true,
+        ...RESET_COUNTS,
       },
     });
 
     if (acreated) {
-      logger.info(`Article created for channel "${article.get('title')}" (local id: ${article.id} -> remote id: ${channel.id})`);
+      logger.info(`Article created for channel "${article.title}" (local id: ${article.id} -> remote id: ${channel.id})`);
     }
     else {
       article.set(defaults);
       await article.save();
-      logger.info(`Article updated for channel "${article.get('title')}" (local id: ${article.id} -> remote id: ${channel.id})`);
+      logger.info(`Article updated for channel "${article.title}" (local id: ${article.id} -> remote id: ${channel.id})`);
     }
   }
   catch (error) {
@@ -144,8 +146,8 @@ export async function foreachActiveChannel(owner: IUserInstance, callback: (chan
   });
 
   for (const category of categories) {
-    const categoryId = category.get('id');
-    const channelId = category.get('sourceId');
+    const categoryId = category.id;
+    const channelId = category.sourceId!;
 
     const articles = await Article.findAll({
       where: {
@@ -156,7 +158,7 @@ export async function foreachActiveChannel(owner: IUserInstance, callback: (chan
 
     const articleIdMap = new Map<string, number>();
     for (const a of articles) {
-      articleIdMap.set(a.get('sourceId'), a.id);
+      articleIdMap.set(a.sourceId, a.id);
     }
 
     await callback(channelId, articleIdMap);
@@ -197,16 +199,17 @@ export async function mapVideoItemToArticle(
         categoryId: categoryId,
         isCommentingEnabled: true,
         isAutoModerated: true,
+        ...RESET_COUNTS,
       },
     });
 
     if (created) {
-      logger.info(`Created article ${article.id} for video ${article.get('sourceId')}`);
+      logger.info(`Created article ${article.id} for video ${article.sourceId}`);
     }
     else {
       article.set(defaults);
       await article.save();
-      logger.info(`Updated article ${article.id} for video ${article.get('sourceId')}`);
+      logger.info(`Updated article ${article.id} for video ${article.sourceId}`);
     }
     return article.id;
   }
@@ -257,15 +260,15 @@ async function mapCommentToComment(
     });
 
     if (created) {
-      logger.info(`Created comment ${comment.id} (${comment.get('sourceId')})`);
+      logger.info(`Created comment ${comment.id} (${comment.sourceId})`);
     }
-    else if (comment.get('sourceCreatedAt').getTime() === sourceCreatedAt.getTime()) {
-      logger.info(`Comment ${comment.id} (${comment.get('sourceId')}) unchanged`);
+    else if (Date.parse(comment.sourceCreatedAt! as string) === sourceCreatedAt.getTime()) {
+      logger.info(`Comment ${comment.id} (${comment.sourceId}) unchanged`);
       return;
     }
     comment.set(defaults);
     await comment.save();
-    logger.info(`Updated comment ${comment.id} (${comment.get('sourceId')})`);
+    logger.info(`Updated comment ${comment.id} (${comment.sourceId})`);
 
     try {
       await postProcessComment(comment);

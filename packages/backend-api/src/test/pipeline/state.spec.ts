@@ -21,6 +21,7 @@ import {
   CommentScoreRequest,
   Decision,
   ICommentInstance,
+  IResolution,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
@@ -48,7 +49,11 @@ import '../test_helper';
 
 const assert = chai.assert;
 
-async function shouldRecordDecision(comment: ICommentInstance, status: string, source: string, userId: number) {
+async function shouldRecordDecision(
+  comment: ICommentInstance,
+  status: IResolution,
+  source: 'User' | 'Rule',
+  userId: number) {
   const foundDecisions = await Decision.findAll({
     where: {
       commentId: comment.id,
@@ -59,13 +64,13 @@ async function shouldRecordDecision(comment: ICommentInstance, status: string, s
 
   const firstDecision = foundDecisions[0];
 
-  assert.equal(firstDecision.get('commentId'), comment.id);
-  assert.equal(firstDecision.get('userId'), userId);
-  assert.equal(firstDecision.get('source'), source);
-  assert.equal(firstDecision.get('status'), status);
-  assert.isTrue(firstDecision.get('isCurrentDecision'));
+  assert.equal(firstDecision.commentId, comment.id);
+  assert.equal(firstDecision.userId, userId);
+  assert.equal(firstDecision.source, source);
+  assert.equal(firstDecision.status, status);
+  assert.isTrue(firstDecision.isCurrentDecision);
   const article = await comment.getArticle();
-  assert.isNotNull(article.get('lastModeratedAt'));
+  assert.isNotNull(article.lastModeratedAt);
 
 }
 
@@ -248,7 +253,7 @@ describe('Pipeline States Tests', () => {
       const updated = await setCommentState(comment, null, { isAccepted: true });
 
       assert.equal(comment.id, updated.id);
-      assert.isTrue(updated.get('isAccepted'));
+      assert.isTrue(updated.isAccepted);
     });
 
     it('should include optional data and exclude conflicting keys with state', async () => {
@@ -260,10 +265,10 @@ describe('Pipeline States Tests', () => {
       );
 
       assert.equal(comment.id, updated.id);
-      assert.isTrue(updated.get('isHighlighted'));
-      assert.isTrue(updated.get('isBatchResolved'));
+      assert.isTrue(updated.isHighlighted);
+      assert.isTrue(updated.isBatchResolved);
       const updatedArticle = await updated.getArticle();
-      assert.isNull(updatedArticle.get('lastModeratedAt'));
+      assert.isNull(updatedArticle.lastModeratedAt);
     });
   });
 
@@ -273,8 +278,8 @@ describe('Pipeline States Tests', () => {
       const updated = await approve(comment, user);
 
       assert.equal(comment.id, updated.id);
-      assert.isTrue(updated.get('isAccepted'));
-      assert.isFalse(updated.get('isDeferred'));
+      assert.isTrue(updated.isAccepted);
+      assert.isFalse(updated.isDeferred);
 
       await shouldRecordDecision(updated, MODERATION_ACTION_ACCEPT, 'User', user.id);
     });
@@ -284,8 +289,8 @@ describe('Pipeline States Tests', () => {
       const updated = await approve(comment, user);
 
       assert.equal(comment.id, updated.id);
-      assert.isTrue(updated.get('isAccepted'));
-      assert.isFalse(updated.get('isDeferred'));
+      assert.isTrue(updated.isAccepted);
+      assert.isFalse(updated.isDeferred);
 
       await shouldRecordDecision(updated, MODERATION_ACTION_ACCEPT, 'User', user.id);
     });
@@ -297,8 +302,8 @@ describe('Pipeline States Tests', () => {
       const updated = await reject(comment, user);
 
       assert.equal(comment.id, updated.id);
-      assert.isFalse(updated.get('isAccepted'));
-      assert.isFalse(updated.get('isDeferred'));
+      assert.isFalse(updated.isAccepted);
+      assert.isFalse(updated.isDeferred);
 
       await shouldRecordDecision(updated, MODERATION_ACTION_REJECT, 'User', user.id);
     });
@@ -310,8 +315,8 @@ describe('Pipeline States Tests', () => {
       const updated = await defer(comment, user);
 
       assert.equal(comment.id, updated.id);
-      assert.isNull(updated.get('isAccepted'));
-      assert.isTrue(updated.get('isDeferred'));
+      assert.isNull(updated.isAccepted);
+      assert.isTrue(updated.isDeferred);
 
       await shouldRecordDecision(updated, MODERATION_ACTION_DEFER, 'User', user.id);
     });
@@ -323,7 +328,7 @@ describe('Pipeline States Tests', () => {
       const updated = await highlight(comment, user);
 
       assert.equal(comment.id, updated.id);
-      assert.isTrue(updated.get('isHighlighted'));
+      assert.isTrue(updated.isHighlighted);
     });
   });
 });

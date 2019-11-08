@@ -211,43 +211,43 @@ describe('Pipeline Tests', () => {
       // Assertions against test data
 
       for (const score of scores) {
-        assert.equal(score.get('sourceType'), 'Machine');
-        assert.equal(score.get('userId'), serviceUser.id);
+        assert.equal(score.sourceType, 'Machine');
+        assert.equal(score.userId, serviceUser.id);
 
-        if (score.get('score') === 0.2) {
-          assert.equal(score.get('annotationStart'), 0);
-          assert.equal(score.get('annotationEnd'), 62);
-          assert.equal((await score.getTag())!.get('key'), 'ATTACK_ON_COMMENTER');
+        if (score.score === 0.2) {
+          assert.equal(score.annotationStart, 0);
+          assert.equal(score.annotationEnd, 62);
+          assert.equal((await score.getTag())!.key, 'ATTACK_ON_COMMENTER');
         }
 
-        if (score.get('score') === 0.4) {
-          assert.equal(score.get('annotationStart'), 0);
-          assert.equal(score.get('annotationEnd'), 62);
-          assert.equal((await score.getTag())!.get('key'), 'INFLAMMATORY');
+        if (score.score === 0.4) {
+          assert.equal(score.annotationStart, 0);
+          assert.equal(score.annotationEnd, 62);
+          assert.equal((await score.getTag())!.key, 'INFLAMMATORY');
         }
 
-        if (score.get('score') === 0.7) {
-          assert.equal(score.get('annotationStart'), 63);
-          assert.equal(score.get('annotationEnd'), 66);
-          assert.equal((await score.getTag())!.get('key'), 'INFLAMMATORY');
+        if (score.score === 0.7) {
+          assert.equal(score.annotationStart, 63);
+          assert.equal(score.annotationEnd, 66);
+          assert.equal((await score.getTag())!.key, 'INFLAMMATORY');
         }
       }
 
       for (const score of summaryScores) {
-        if (score.get('score') === 0.2) {
-          assert.equal((await score.getTag())!.get('key'), 'ATTACK_ON_COMMENTER');
+        if (score.score === 0.2) {
+          assert.equal((await score.getTag())!.key, 'ATTACK_ON_COMMENTER');
         }
 
-        if (score.get('score') === 0.55) {
-          assert.equal((await score.getTag())!.get('key'), 'INFLAMMATORY');
+        if (score.score === 0.55) {
+          assert.equal((await score.getTag())!.key, 'INFLAMMATORY');
         }
       }
 
       // Request assertions
       assert.isNotNull(request);
-      assert.isOk(request!.get('doneAt'));
-      assert.equal(request!.get('commentId'), comment.id);
-      assert.isTrue((await request!.getComment())!.get('isScored'));
+      assert.isOk(request!.doneAt);
+      assert.equal(request!.commentId, comment.id);
+      assert.isTrue((await request!.getComment())!.isScored);
     });
 
     it('should short-circuit if error key is present and not falsy in the scoreData', async () => {
@@ -396,13 +396,13 @@ describe('Pipeline Tests', () => {
 
       commentScoreRequests.forEach((request) => {
         if (request.id === commentScoreRequest1.id) {
-          assert.isOk(request.get('doneAt'));
+          assert.isOk(request.doneAt);
         } else {
-          assert.isNull(request.get('doneAt'));
+          assert.isNull(request.doneAt);
         }
       });
 
-      assert.isFalse((await commentScoreRequests[0].getComment())!.get('isScored'));
+      assert.isFalse((await commentScoreRequests[0].getComment())!.isScored);
     });
   });
 
@@ -432,15 +432,15 @@ describe('Pipeline Tests', () => {
       const updatedArticle = (await Article.findById(article.id))!;
       const updatedComment = (await Comment.findById(comment.id))!;
 
-      assert.isTrue(updatedComment.get('isAutoResolved'), 'comment isAutoResolved');
-      assert.equal(updatedComment.get('unresolvedFlagsCount'), 0, 'comment unresolvedFlagsCount');
+      assert.isTrue(updatedComment.isAutoResolved, 'comment isAutoResolved');
+      assert.equal(updatedComment.unresolvedFlagsCount, 0, 'comment unresolvedFlagsCount');
 
-      assert.equal(updatedCategory.get('moderatedCount'), 1, 'category moderatedCount');
-      assert.equal(updatedCategory.get('rejectedCount'), 1, 'category rejectedCount');
+      assert.equal(updatedCategory.moderatedCount, 1, 'category moderatedCount');
+      assert.equal(updatedCategory.rejectedCount, 1, 'category rejectedCount');
 
-      assert.equal(updatedArticle.get('moderatedCount'), 1, 'article moderatedCount');
-      assert.equal(updatedArticle.get('rejectedCount'), 1, 'article rejectedCount');
-      assert.isNull(updatedArticle.get('lastModeratedAt')); // last moderated doesn't get updated by machine ops
+      assert.equal(updatedArticle.moderatedCount, 1, 'article moderatedCount');
+      assert.equal(updatedArticle.rejectedCount, 1, 'article rejectedCount');
+      assert.isNull(updatedArticle.lastModeratedAt); // last moderated doesn't get updated by machine ops
     });
 
     it('should record the Reject decision from a rule', async () => {
@@ -470,9 +470,9 @@ describe('Pipeline Tests', () => {
         },
       }))!;
 
-      assert.equal(decision.get('status'), MODERATION_ACTION_REJECT);
-      assert.equal(decision.get('source'), 'Rule');
-      assert.equal(decision.get('moderationRuleId'), rule.id);
+      assert.equal(decision.status, MODERATION_ACTION_REJECT);
+      assert.equal(decision.source, 'Rule');
+      assert.equal(decision.moderationRuleId, rule.id);
     });
   });
 
@@ -503,7 +503,7 @@ describe('Pipeline Tests', () => {
       const tags = await findOrCreateTagsByKey(Object.keys(scoreData));
 
       const tagsByKey = groupBy(tags, (tag: ITagInstance) => {
-        return tag.get('key');
+        return tag.key;
       });
 
       const [comment, serviceUser] = await Promise.all([
@@ -571,7 +571,7 @@ describe('Pipeline Tests', () => {
       const tags = await findOrCreateTagsByKey(Object.keys(summarScoreData));
 
       const tagsByKey = groupBy(tags, (tag: ITagInstance) => {
-        return tag.get('key');
+        return tag.key;
       });
 
       const comment = await createComment();
@@ -604,8 +604,8 @@ describe('Pipeline Tests', () => {
       assert.lengthOf(results, 1);
 
       const tag = results[0];
-      assert.equal(tag.get('key'), keys[0]);
-      assert.equal(tag.get('label'), 'Attack On Author');
+      assert.equal(tag.key, keys[0]);
+      assert.equal(tag.label, 'Attack On Author');
 
       const instance = (await Tag.findOne({
         where: {
@@ -614,8 +614,8 @@ describe('Pipeline Tests', () => {
       }))!;
 
       assert.equal(tag.id, instance.id);
-      assert.equal(tag.get('key'), instance.get('key'));
-      assert.equal(tag.get('label'), instance.get('label'));
+      assert.equal(tag.key, instance.key);
+      assert.equal(tag.label, instance.label);
     });
 
     it('should find existing tags and resolve their data', async () => {
@@ -632,8 +632,8 @@ describe('Pipeline Tests', () => {
 
       const tag = results[0];
       assert.equal(tag.id, dbTag.id);
-      assert.equal(tag.get('key'), key);
-      assert.equal(tag.get('label'), 'Spam');
+      assert.equal(tag.key, key);
+      assert.equal(tag.label, 'Spam');
     });
 
     it('should resolve a mix of existing and new tags', async () => {
@@ -649,12 +649,12 @@ describe('Pipeline Tests', () => {
       assert.lengthOf(results, keys.length);
 
       results.forEach((tag) => {
-        if (tag.get('key') === 'INCOHERENT') {
+        if (tag.key === 'INCOHERENT') {
           assert.equal(tag.id, dbTag.id);
         } else {
           assert.isNumber(tag.id);
-          assert.equal(tag.get('key'), 'OFF_TOPIC');
-          assert.equal(tag.get('label'), 'Off Topic');
+          assert.equal(tag.key, 'OFF_TOPIC');
+          assert.equal(tag.label, 'Off Topic');
         }
       });
     });
@@ -676,11 +676,11 @@ describe('Pipeline Tests', () => {
 
       const firstDecision = foundDecisions[0];
 
-      assert.equal(firstDecision.get('commentId'), comment.id);
-      assert.equal(firstDecision.get('source'), 'User');
-      assert.equal(firstDecision.get('userId'), user.id);
-      assert.equal(firstDecision.get('status'), MODERATION_ACTION_ACCEPT);
-      assert.isTrue(firstDecision.get('isCurrentDecision'));
+      assert.equal(firstDecision.commentId, comment.id);
+      assert.equal(firstDecision.source, 'User');
+      assert.equal(firstDecision.userId, user.id);
+      assert.equal(firstDecision.status, MODERATION_ACTION_ACCEPT);
+      assert.isTrue(firstDecision.isCurrentDecision);
     });
 
     it('should clear old decisions', async () => {
@@ -717,11 +717,11 @@ describe('Pipeline Tests', () => {
 
       const firstDecision = currentDecisions[0];
 
-      assert.equal(firstDecision.get('commentId'), comment.id);
-      assert.equal(firstDecision.get('source'), 'Rule');
-      assert.equal(firstDecision.get('moderationRuleId'), rule.id);
-      assert.equal(firstDecision.get('status'), MODERATION_ACTION_REJECT);
-      assert.isTrue(firstDecision.get('isCurrentDecision'));
+      assert.equal(firstDecision.commentId, comment.id);
+      assert.equal(firstDecision.source, 'Rule');
+      assert.equal(firstDecision.moderationRuleId, rule.id);
+      assert.equal(firstDecision.status, MODERATION_ACTION_REJECT);
+      assert.isTrue(firstDecision.isCurrentDecision);
     });
   });
 });

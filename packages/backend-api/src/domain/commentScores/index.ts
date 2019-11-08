@@ -48,19 +48,19 @@ export interface ITopScores {
  */
 export function calculateTopScore(scores: Array<ICommentScoreInstance>): ICommentScoreInstance | null {
   const scoresWithRange = scores.filter((s) => {
-    return s.get('annotationStart') !== null && s.get('annotationEnd') !== null;
+    return s.annotationStart !== null && s.annotationEnd !== null;
   });
 
   if (scoresWithRange.length <= 0) { return null; }
 
-  return maxBy(scoresWithRange, (s) => s.get('score')) || null;
+  return maxBy(scoresWithRange, (s) => s.score) || null;
 }
 
 /**
  * Get all the scores for a set of comments.
  */
 export async function calculateTopScores(comments: Array<ICommentInstance>, tagId: number): Promise<ITopScores> {
-  return await Bluebird.reduce(comments, async (sum, comment) => {
+  return Bluebird.reduce(comments, async (sum, comment) => {
     const topScore = await CommentTopScore.findOne({
       where: {
         commentId: comment.id,
@@ -70,15 +70,15 @@ export async function calculateTopScores(comments: Array<ICommentInstance>, tagI
 
     if (!topScore) { return sum; }
 
-    const score = await CommentScore.findById(topScore.get('commentScoreId'));
+    const score = await CommentScore.findById(topScore.commentScoreId);
 
     if (!score) { return sum; }
 
     sum[comment.id] = {
-      commentId: score.get('commentId'),
-      score: score.get('score'),
-      start: score.get('annotationStart'),
-      end: score.get('annotationEnd'),
+      commentId: score.commentId,
+      score: score.score,
+      start: score.annotationStart,
+      end: score.annotationEnd,
     };
 
     return sum;

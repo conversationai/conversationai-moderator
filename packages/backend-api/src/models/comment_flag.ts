@@ -18,10 +18,10 @@ import * as Sequelize from 'sequelize';
 
 import { sequelize } from '../sequelize';
 import { Comment } from './comment';
+import { IBaseAttributes, IBaseInstance } from './constants';
 import { User } from './user';
 
-export interface ICommentFlagAttributes {
-  id?: number;
+export interface ICommentFlagAttributes extends IBaseAttributes {
   label: string;
   detail?: string;
   isRecommendation: boolean;
@@ -34,11 +34,7 @@ export interface ICommentFlagAttributes {
   extra?: any;
 }
 
-export interface ICommentFlagInstance extends Sequelize.Instance<ICommentFlagAttributes> {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
+export type ICommentFlagInstance = Sequelize.Instance<ICommentFlagAttributes> & ICommentFlagAttributes & IBaseInstance;
 
 /**
  * CommentFlag model

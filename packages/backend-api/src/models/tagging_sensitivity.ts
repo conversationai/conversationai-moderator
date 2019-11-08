@@ -15,11 +15,12 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+
 import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
 import { updateHappened } from './last_update';
 
-export interface ITaggingSensitivityAttributes {
-  id?: number;
+export interface ITaggingSensitivityAttributes extends IBaseAttributes{
   tagId?: number;
   categoryId?: number;
   createdBy?: number;
@@ -27,14 +28,8 @@ export interface ITaggingSensitivityAttributes {
   upperThreshold: number;
 }
 
-export interface ITaggingSensitivityInstance
-    extends Sequelize.Instance<
-      ITaggingSensitivityAttributes
-    > {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
+export type ITaggingSensitivityInstance = Sequelize.Instance<ITaggingSensitivityAttributes> &
+  ITaggingSensitivityAttributes & IBaseInstance;
 
 /**
  * TaggingSensitivity model

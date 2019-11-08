@@ -86,7 +86,7 @@ export async function createShim(
     processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>,
     ) {
   const serviceUserId = scorer.id;
-  const extra: any = JSON.parse(scorer.get('extra'));
+  const extra: any = JSON.parse(scorer.extra);
   const discoveryURL = extra.endpoint;
   const apiKey = extra.apiKey;
   const attributes = extra.attributes;
@@ -94,7 +94,7 @@ export async function createShim(
 
   async function packPerspectiveApiRequest(comment: ICommentInstance, reqId: string | number) {
     const req: IAnalyzeCommentRequest = {
-      comment: {text: striptags(comment.get('text'))},
+      comment: {text: striptags(comment.text)},
       context: {entries: []},
       requestedAttributes: attributes,
       languages: ['en'],
@@ -104,12 +104,12 @@ export async function createShim(
 
     const article = await comment.getArticle();
     if (article) {
-      req.context.entries.push({text: striptags(article.get('text'))});
+      req.context.entries.push({text: striptags(article.text)});
     }
 
     const replyTo = await comment.getReplyTo();
     if (replyTo) {
-      req.context.entries.push({text: striptags(replyTo.get('text'))});
+      req.context.entries.push({text: striptags(replyTo.text)});
     }
 
     return req;
@@ -134,7 +134,7 @@ export async function createShim(
         if (!unpackedData.scores[unversionedName]) {
           // Not got a spanScores entry, so make one up from the summary
           const begin = 0;
-          const end = comment.get('text').length;
+          const end = comment.text.length;
           const value = attributeScore.summaryScore.value;
           unpackedData.scores[unversionedName] = [{begin, end, score: value}];
         }

@@ -81,7 +81,7 @@ export function isValidToken(tokenPayload: ITokenPayload): boolean {
  * @return {boolean}
  */
 export async function isExpired(user: IUserInstance, tokenPayload: ITokenPayload): Promise<boolean> {
-  if (user.get('group') === 'service') {
+  if (user.group === 'service') {
     return false;
   }
 

@@ -15,18 +15,17 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
-import { sequelize } from '../sequelize';
 
-export interface IUserCategoryAssignmentAttributes {
+import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
+
+export interface IUserCategoryAssignmentAttributes extends IBaseAttributes {
   categoryId: number;
   userId: number;
 }
 
-export interface IUserCategoryAssignmentInstance
-    extends Sequelize.Instance<IUserCategoryAssignmentAttributes> {
-  createdAt: string;
-  updatedAt: string;
-}
+export type IUserCategoryAssignmentInstance = Sequelize.Instance<IUserCategoryAssignmentAttributes> &
+  IUserCategoryAssignmentAttributes & IBaseInstance;
 
 /**
  * Category model

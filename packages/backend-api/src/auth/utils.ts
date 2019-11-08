@@ -42,7 +42,7 @@ export async function generateServerCSRF(req: express.Request, res: express.Resp
 }
 
 export async function getClientCSRF(req: express.Request):
-  Promise<{clientCSRF: string|undefined, referrer: string|undefined, errorMessage: string|undefined}> {
+  Promise<{clientCSRF: string|undefined, referrer: string|null|undefined, errorMessage: string|undefined}> {
   const serverCSRF = req.query.state;
   if (!serverCSRF) {
     return {clientCSRF: undefined, referrer: undefined, errorMessage: 'CSRF missing.'};
@@ -57,9 +57,9 @@ export async function getClientCSRF(req: express.Request):
   }
 
   const maxAge = moment().subtract(5, 'minutes').toDate();
-  const age = csrf.get('createdAt');
-  const clientCSRF = csrf.get('clientCSRF');
-  const referrer = csrf.get('referrer');
+  const age = csrf.createdAt;
+  const clientCSRF = csrf.clientCSRF;
+  const referrer = csrf.referrer;
   await csrf.destroy();
 
   if (age < maxAge) {

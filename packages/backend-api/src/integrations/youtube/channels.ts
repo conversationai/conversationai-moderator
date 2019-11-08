@@ -60,7 +60,7 @@ export async function sync_channels(
   owner: IUserInstance,
   auth: OAuth2Client,
 ) {
-  logger.info(`Syncing channels for user ${owner.get('email')}`);
+  logger.info(`Syncing channels for user ${owner.email}`);
   let next_page;
   do {
     next_page = await sync_page_of_channels(owner, auth, next_page);
@@ -151,7 +151,7 @@ export async function get_article_id_map_for_channel(
 
   const articleIdMap = new Map<string, number>();
   for (const a of articles) {
-    articleIdMap.set(a.get('sourceId'), a.id);
+    articleIdMap.set(a.sourceId, a.id);
   }
   return articleIdMap;
 }
@@ -169,7 +169,7 @@ export async function for_each_active_channel(
   });
 
   for (const category of categories) {
-    const channelId = category.get('sourceId');
+    const channelId = category.sourceId!;
     const articleIdMap = await get_article_id_map_for_channel(category);
     await callback(channelId, articleIdMap);
   }

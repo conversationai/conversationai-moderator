@@ -19,7 +19,7 @@ import * as path from 'path';
 import * as yargs from 'yargs';
 
 import { logger } from '../../logger';
-import { Article, Category, Comment, IAuthorAttributes, updateHappened } from '../../models';
+import { Article, Category, Comment, IAuthorAttributes, RESET_COUNTS, updateHappened } from '../../models';
 import { postProcessComment, sendForScoring } from '../../pipeline';
 
 const PREEXISTING_CATEGORIES = 5;
@@ -199,9 +199,10 @@ export async function handler(argv: any) {
         sourceCreatedAt: new Date(Date.now()),
         isCommentingEnabled: true,
         isAutoModerated: true,
+        ...RESET_COUNTS,
       });
 
-      logger.info(`Generated article ${new_article.id}: ${new_article.get('title')}`);
+      logger.info(`Generated article ${new_article.id}: ${new_article.title}`);
       articles.push(new_article);
       await generate_comments();
     }
@@ -211,9 +212,10 @@ export async function handler(argv: any) {
     for (let i = 0; i < argv.categories; i++) {
       const new_category = await Category.create({
         label: get_words(data, 5),
+        ...RESET_COUNTS,
       });
 
-      logger.info(`Generated category ${new_category.id}: ${new_category.get('label')}`);
+      logger.info(`Generated category ${new_category.id}: ${new_category.label}`);
       categories.push(new_category);
 
       if (argv.articles !== 0) {

@@ -75,7 +75,7 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
 
     let shim = shims.get(scorer.id);
     if (!shim) {
-      const extra: any = JSON.parse(scorer.get('extra'));
+      const extra: any = JSON.parse(scorer.extra);
 
       if (!extra) {
         logger.error(`Missing endpoint config for scorer ${scorer.id}`);
@@ -111,9 +111,8 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
 
 export async function checkScoringDone(comment: ICommentInstance): Promise<void> {
   // Mark timestamp for when comment was last sent for scoring
-  await comment
-    .set('sentForScoring', sequelize.fn('now'))
-    .save();
+  comment.sentForScoring = sequelize.fn('now');
+  await comment.save();
 
   const isDoneScoring = await getIsDoneScoring(comment.id);
   if (isDoneScoring) {
@@ -253,9 +252,8 @@ export async function processMachineScore(
   await updateMaxSummaryScore(comment);
 
   // Mark the comment score request as done
-  await commentScoreRequest
-    .set('doneAt', sequelize.fn('now'))
-    .save();
+  commentScoreRequest.doneAt = sequelize.fn('now');
+  await commentScoreRequest.save();
 }
 
 export async function updateMaxSummaryScore(comment: ICommentInstance): Promise<void> {
@@ -277,12 +275,12 @@ export async function updateMaxSummaryScore(comment: ICommentInstance): Promise<
     return;
   }
 
-  const maxSummaryScores = maxBy(summaryScores, (score) => score.get('score'));
+  const maxSummaryScores = maxBy(summaryScores, (score) => score.score);
   await comment.update({
     // TODO(ldixon): investigate typing to avoid `maxSummaryScores` being
     // undefined and needing the type hack here.
-    maxSummaryScore: maxSummaryScores!.get('score'),
-    maxSummaryScoreTagId: maxSummaryScores!.get('tagId'),
+    maxSummaryScore: maxSummaryScores!.score,
+    maxSummaryScoreTagId: maxSummaryScores!.tagId,
   });
 }
 
@@ -294,7 +292,8 @@ export async function completeMachineScoring(commentId: number): Promise<void> {
     include: [Article],
   }))!;
 
-  await comment.set('isScored', true).save();
+  comment.isScored = true;
+  await comment.save();
 
   await cacheCommentTopScores(comment);
   await processRulesForComment(comment);
@@ -309,7 +308,7 @@ export async function completeMachineScoring(commentId: number): Promise<void> {
 export function compileScoresData(sourceType: string, userId: number, scoreData: IScores, modelData: any): Array<ICommentScoreAttributes> {
   sourceType = sourceType || 'Machine';
 
-  const tagsByKey = groupBy(modelData.tags, (tag: ITagInstance) => tag.get('key'));
+  const tagsByKey = groupBy(modelData.tags, (tag: ITagInstance) => tag.key);
 
   const data: Array<ICommentScoreAttributes> = [];
 
@@ -338,7 +337,7 @@ export function compileScoresData(sourceType: string, userId: number, scoreData:
  * bulk create comment summary scores with
  */
 export function compileSummaryScoresData(scoreData: ISummaryScores, comment: ICommentInstance, tags: Array<ITagInstance>): Array<ICommentSummaryScoreAttributes> {
-  const tagsByKey = groupBy(tags, (tag: ITagInstance) => tag.get('key'));
+  const tagsByKey = groupBy(tags, (tag: ITagInstance) => tag.key);
 
   const data: Array<ICommentSummaryScoreAttributes> = [];
 
@@ -436,7 +435,7 @@ export async function postProcessComment(comment: ICommentInstance): Promise<voi
   await cacheTextSize(comment, 696);
 
   // Try to create reply, return if not a reply
-  const replyToSourceId = comment.get('replyToSourceId');
+  const replyToSourceId = comment.replyToSourceId;
   if (!replyToSourceId) { return; }
 
   // Find a parent id

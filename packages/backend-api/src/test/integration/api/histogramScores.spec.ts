@@ -16,7 +16,6 @@ limitations under the License.
 
 import * as chai from 'chai';
 
-
 import { cacheCommentTopScores } from '../../../domain';
 import {
   Article,
@@ -76,12 +75,12 @@ describe(BASE_URL, () => {
 
       expect(body.data).to.deep.include({
         commentId: comment1.id.toString(),
-        score: commentSummaryScore1.get('score'),
+        score: commentSummaryScore1.score,
       });
 
       expect(body.data).to.deep.include({
         commentId: comment2.id.toString(),
-        score: commentSummaryScore2.get('score'),
+        score: commentSummaryScore2.score,
       });
     });
 
@@ -155,12 +154,12 @@ describe(BASE_URL, () => {
 
       expect(body.data).to.deep.include({
         commentId: comment1.id.toString(),
-        score: commentSummaryScore1.get('score'),
+        score: commentSummaryScore1.score,
       });
 
       expect(body.data).to.deep.include({
         commentId: comment2.id.toString(),
-        score: commentSummaryScore2.get('score'),
+        score: commentSummaryScore2.score,
       });
     });
 

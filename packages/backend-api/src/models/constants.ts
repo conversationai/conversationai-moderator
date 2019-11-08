@@ -22,3 +22,24 @@ export const MODERATION_ACTION_HIGHLIGHT = 'Highlight';
 export type IResolution = 'Accept' | 'Reject' | 'Defer';
 
 export type IAction = 'Accept' | 'Reject' | 'Defer' | 'Highlight';
+
+export interface IBaseInstance {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type IBaseAttributes = Partial<IBaseInstance>;
+
+export const RESET_COUNTS = {
+  allCount: 0,
+  unprocessedCount: 0,
+  moderatedCount: 0,
+  unmoderatedCount: 0,
+  highlightedCount: 0,
+  approvedCount: 0,
+  rejectedCount: 0,
+  deferredCount: 0,
+  flaggedCount: 0,
+  batchedCount: 0,
+};

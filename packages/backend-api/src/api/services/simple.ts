@@ -61,7 +61,7 @@ export function createSimpleRESTService(): express.Router {
         simple.extra = {jwt: token};
       }
       else {
-        simple.extra = JSON.parse(u.get('extra'));
+        simple.extra = JSON.parse(u.extra);
         // Make sure we don't send any access tokens out.
         delete simple.extra.token;
       }
@@ -82,22 +82,22 @@ export function createSimpleRESTService(): express.Router {
       return;
     }
 
-    const group = await user.get('group');
+    const group = await user.group;
 
     function isRealUser(g: string) {
       return g === USER_GROUP_ADMIN || g === USER_GROUP_GENERAL;
     }
 
     if (isRealUser(group) || group === USER_GROUP_SERVICE) {
-      user.set('name', req.body.name);
+      user.name = req.body.name;
     }
     if (isRealUser(group)) {
       if (isRealUser(req.body.group)) {
-        user.set('group', req.body.group);
+        user.group = req.body.group;
       }
-      user.set('email', req.body.email);
+      user.email = req.body.email;
     }
-    user.set('isActive', req.body.isActive);
+    user.isActive = req.body.isActive;
     await user.save();
 
     if (group === USER_GROUP_YOUTUBE && req.body.isActive) {
@@ -118,8 +118,8 @@ export function createSimpleRESTService(): express.Router {
       return;
     }
 
-    article.set('isCommentingEnabled', req.body.isCommentingEnabled);
-    article.set('isAutoModerated', req.body.isAutoModerated);
+    article.isCommentingEnabled = req.body.isCommentingEnabled;
+    article.isAutoModerated = req.body.isAutoModerated;
     await article.save();
 
     res.json(REPLY_SUCCESS);
@@ -135,7 +135,7 @@ export function createSimpleRESTService(): express.Router {
       next();
       return;
     }
-    const text = article.get('text');
+    const text = article.text;
     res.json({text: text});
     next();
   });

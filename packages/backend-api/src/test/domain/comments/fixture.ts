@@ -26,6 +26,7 @@ import {
   CommentScoreRequest,
   CommentSummaryScore,
   ModerationRule,
+  RESET_COUNTS,
   Tag,
   User,
 } from '../../../models';
@@ -62,6 +63,7 @@ import { sequelize } from '../../../sequelize';
 export function getCategoryData(data: Partial<ICategoryAttributes> = {}): ICategoryAttributes {
   return {
     label: faker.lorem.words(1),
+    ...RESET_COUNTS,
     ...data,
   };
 }
@@ -80,6 +82,7 @@ export function getArticleData(data: Partial<IArticleAttributes> = {}): IArticle
     sourceCreatedAt: '2012-10-29T21:54:07.609Z',
     isCommentingEnabled: true,
     isAutoModerated: true,
+    ...RESET_COUNTS,
     ...data,
   };
 }

@@ -34,7 +34,7 @@ async function getOwnerData(ownerId: number) {
     throw new Error(`No user with ID ${ownerId}`);
   }
 
-  const ownerType = owner.get('group');
+  const ownerType = owner.group;
   const hook = hooks.get(ownerType);
   return {owner, ownerType, hook};
 }
@@ -56,7 +56,7 @@ export function registerHooks(ownerType: string, hook: IPipelineHook) {
 }
 
 export async function commentModeratedHook(comment: ICommentInstance) {
-  const ownerId = comment.get('ownerId');
+  const ownerId = comment.ownerId;
   if (!ownerId) {
     return;
   }

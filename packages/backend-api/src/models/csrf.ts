@@ -16,19 +16,15 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
 
-export interface ICSRFAttributes {
-  id?: number;
+export interface ICSRFAttributes extends IBaseAttributes {
   clientCSRF: string;
   serverCSRF: string;
   referrer: string | null;
 }
 
-export interface ICSRFInstance extends Sequelize.Instance<ICSRFAttributes> {
-  id: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type ICSRFInstance = Sequelize.Instance<ICSRFAttributes> & ICSRFAttributes & IBaseInstance;
 
 /**
  * CSRF model

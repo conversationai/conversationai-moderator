@@ -150,7 +150,7 @@ export function createAssignmentsService(): express.Router {
     });
 
     const userIdsToBeRemoved = assignmentsForCategory.reduce((prev: Array<number>, current: IUserCategoryAssignmentInstance): Array<number> => {
-      const assignmentUserId: number = current.get('userId');
+      const assignmentUserId: number = current.userId;
       const isInAssignment = userIds.some((userId) => (userId === assignmentUserId));
       if (isInAssignment) {
         return prev;
@@ -206,7 +206,7 @@ export function createAssignmentsService(): express.Router {
     const toRemove = new Array<number>();
 
     for (const a of assignments) {
-      const id = a.get('userId');
+      const id = a.userId;
       if (userIds.has(id)) {
         userIds.delete(id);
       }
