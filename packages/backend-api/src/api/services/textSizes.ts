@@ -71,7 +71,7 @@ export function createTextSizesService(): express.Router {
         }, {});
 
         const sizingData = commentSizes.reduce((sum, commentSize: ICommentSizeInstance) => {
-          sum[commentSize.get('commentId').toString()] = commentSize.get('height');
+          sum[commentSize.commentId.toString()] = commentSize.height;
 
           return sum;
         }, defaultData);

@@ -29,7 +29,7 @@ import { IUserSocialAuthAttributes, IUserSocialAuthInstance } from '../models';
  * @param {object} user User model instance
  */
 export function isValidUser(user: IUserInstance): boolean {
-  return user.get('isActive');
+  return user.isActive;
 }
 
 /**
@@ -82,11 +82,13 @@ export async function ensureFirstUser({name, email}: {name: string, email: strin
 
   if (!created) {
     // We are repurposing an existing user.  So ensure they have the correct properties
-    if (!await user.get('isActive')) {
-      await user.set('isActive', true).save();
+    if (!await user.isActive) {
+      user.isActive = true;
+      await user.save();
     }
-    if (await user.get('group') !== USER_GROUP_ADMIN) {
-      await user.set('group', USER_GROUP_ADMIN).save();
+    if (await user.group !== USER_GROUP_ADMIN) {
+      user.group = USER_GROUP_ADMIN;
+      await user.save();
     }
   }
 
@@ -104,10 +106,11 @@ export async function saveYouTubeUserToken({name, email}: {name: string, email: 
   });
 
   if (!created) {
-    if (!await user.get('isActive')) {
-      await user.set('isActive', true).save();
+    if (!await user.isActive) {
+      user.isActive = true;
     }
   }
 
-  await user.set('extra', {token: token}).save();
+  user.extra = {token: token};
+  await user.save();
 }

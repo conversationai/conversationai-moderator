@@ -16,19 +16,16 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
 
-export interface ICommentSizeAttributes {
-  id?: number;
+export interface ICommentSizeAttributes extends IBaseAttributes {
   commentId: number;
   width: number;
   height: number;
 }
 
-export interface ICommentSizeInstance
-    extends Sequelize.Instance<ICommentSizeAttributes> {
-  createdAt: string;
-  updatedAt: string;
-}
+export type ICommentSizeInstance = Sequelize.Instance<ICommentSizeAttributes> &
+  ICommentSizeAttributes & IBaseInstance;
 
 /**
  * Category model

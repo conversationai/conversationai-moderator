@@ -61,8 +61,8 @@ export async function handler(argv: any) {
       process.exit(1);
       return;
     }
-    const token = await createToken(user.id, user.get('email'));
-    logger.info(`JWT token for "${user.get('name')}" (id: ${user.id}):\n\t${token}`);
+    const token = await createToken(user.id, user.email);
+    logger.info(`JWT token for "${user.name}" (id: ${user.id}):\n\t${token}`);
     process.exit(0);
   } catch (err) {
     logger.error('Error creating token for user: ', err.name, err.message);

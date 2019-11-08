@@ -98,7 +98,7 @@ export async function verifyGoogleToken(accessToken: string, refreshToken: strin
     throw new AuthError(`User ${userData.email} is not yet registered with Moderator.`);
   }
 
-  if (!user.get('isActive')) {
+  if (!user.isActive) {
     throw new AuthError(`User ${userData.email} has been deactivated.`);
   }
 

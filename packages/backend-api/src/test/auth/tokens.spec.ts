@@ -17,7 +17,6 @@ limitations under the License.
 import * as chai from 'chai';
 import * as jwt from 'jsonwebtoken';
 import * as moment from 'moment';
-import * as sinon from 'sinon';
 
 import {
   createToken,
@@ -28,6 +27,14 @@ import {
   refreshToken,
   verifyToken,
 } from '../../auth/tokens';
+import {
+  IUserInstance,
+  User,
+  USER_GROUP_ADMIN,
+  USER_GROUP_GENERAL,
+  USER_GROUP_SERVICE,
+} from '../../models';
+import { makeUser } from '../fixture';
 
 const assert = chai.assert;
 
@@ -47,17 +54,19 @@ describe('Auth Domain Token Tests', () => {
       .unix();
   }
 
-  const fakeGeneralUser = {
-    get: sinon.stub().withArgs('group').returns('general'),
-  } as any;
+  let fakeGeneralUser: IUserInstance;
+  let fakeAdminUser: IUserInstance;
+  let fakeServiceUser: IUserInstance;
 
-  const fakeAdminUser = {
-    get: sinon.stub().withArgs('group').returns('admin'),
-  } as any;
+  beforeEach(async () => {
+    fakeGeneralUser = await makeUser({group: USER_GROUP_GENERAL});
+    fakeAdminUser = await makeUser({group: USER_GROUP_ADMIN});
+    fakeServiceUser = await makeUser({group: USER_GROUP_SERVICE});
+  });
 
-  const fakeServiceUser = {
-    get: sinon.stub().withArgs('group').returns('service'),
-  } as any;
+  afterEach(async () => {
+    await User.destroy({where: {}});
+  });
 
   describe('isExpired', () => {
     it('should return false for an unexpired token', async () => {

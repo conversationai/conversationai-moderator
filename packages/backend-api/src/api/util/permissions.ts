@@ -24,7 +24,7 @@ export function onlyAdmin(req: express.Request, res: express.Response, next: exp
   }
 
   // TODO(ldixon): check that user is always defined; and if so update types.
-  if (['admin'].indexOf(req.user!.get('group')) === -1) {
+  if (['admin'].indexOf(req.user!.group) === -1) {
     res.status(403).json({ error: 'Only admin users can access this API.' });
   } else {
     next();
@@ -39,7 +39,7 @@ export function onlyServices(req: express.Request, res: express.Response, next: 
   }
 
   // TODO(ldixon): check that user is always defined; and if so update types.
-  if (['service'].indexOf(req.user!.get('group')) === -1) {
+  if (['service'].indexOf(req.user!.group) === -1) {
     res.status(403).json({ error: 'Only service users can access this API.' });
   } else {
     next();
@@ -54,7 +54,7 @@ export function onlyAdminAndServices(req: express.Request, res: express.Response
   }
 
   // TODO(ldixon): check that user is always defined; and if so update types.
-  if (['service', 'admin'].indexOf(req.user!.get('group')) === -1) {
+  if (['service', 'admin'].indexOf(req.user!.group) === -1) {
     res.status(403).json({ error: 'General users cannot acces this API.' });
   } else {
     next();

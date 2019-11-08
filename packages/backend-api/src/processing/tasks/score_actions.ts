@@ -79,7 +79,7 @@ async function executeConfirmCommentSummaryScoreTask(data: ITagCommentsData) {
 
   if (!cs) { return; }
 
-  logger.info(`Confirm tag for comment_score commentId: ${cs.get('commentId')}`);
+  logger.info(`Confirm tag for comment_score commentId: ${cs.commentId}`);
 
   return cs.update({
     isConfirmed: true,
@@ -101,7 +101,7 @@ async function executeRejectCommentSummaryScoreTask(data: ITagCommentsData) {
 
   if (!cs) { return; }
 
-  logger.info(`Confirm tag for comment_score commentId: ${cs.get('commentId')}`);
+  logger.info(`Confirm tag for comment_score commentId: ${cs.commentId}`);
 
   return cs.update({
     isConfirmed: false,

@@ -31,13 +31,13 @@ export const CONFIGURATION_TOKEN = 'token';
 export const CONFIGURATION_GOOGLE_OAUTH = 'google-oauth';
 
 interface IConfigurationAttributes {
+  id?: string;
+  createdAt?: string;
+  updatedAt?: string;
   data: any;
 }
 
-interface IConfigurationInstance extends Sequelize.Instance<IConfigurationAttributes> {
-  id: number;
-  updatedAt: string;
-}
+type IConfigurationInstance = Sequelize.Instance<IConfigurationAttributes> & IConfigurationAttributes;
 
 const Configuration = sequelize.define<IConfigurationInstance, IConfigurationAttributes>('configuration_items', {
   id: {
@@ -67,6 +67,7 @@ export async function setConfigItem(itemId: string, data: object): Promise<void>
   });
 
   if (!created) {
-    await item.set('data', data).save();
+    item.data = data;
+    await item.save();
   }
 }

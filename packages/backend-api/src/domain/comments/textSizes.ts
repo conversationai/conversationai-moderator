@@ -92,7 +92,7 @@ function wordWrap(text: string, wordWrapWidth: number): Array<string> {
 }
 
 export async function calculateTextSize(comment: ICommentInstance, width: number): Promise<number> {
-  const lines = await wordWrap(comment.get('text'), width);
+  const lines = await wordWrap(comment.text, width);
 
   return getTextHeight(lines, width, TYPE_DEF);
 }

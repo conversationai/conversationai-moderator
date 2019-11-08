@@ -81,10 +81,10 @@ describe('Auth Domain Users Tests', function() {
       const [userSocialAuth, created] = await findOrCreateUserSocialAuth(createdUser, userSocialAuthData);
 
       assert.isTrue(created);
-      assert.equal(userSocialAuth.get('userId'), createdUser.id);
-      assert.equal(userSocialAuth.get('provider'), userSocialAuthData.provider);
-      assert.equal(userSocialAuth.get('socialId'), userSocialAuthData.socialId);
-      assert.deepEqual(userSocialAuth.get('extra'), userSocialAuthData.extra);
+      assert.equal(userSocialAuth.userId, createdUser.id);
+      assert.equal(userSocialAuth.provider, userSocialAuthData.provider);
+      assert.equal(userSocialAuth.socialId, userSocialAuthData.socialId);
+      assert.deepEqual(userSocialAuth.extra, userSocialAuthData.extra);
     });
 
     it('should resolve to an existing social auth if present', async () => {
@@ -116,10 +116,10 @@ describe('Auth Domain Users Tests', function() {
 
       assert.isFalse(created);
       assert.equal(userSocialAuth.id, createdSocialAuth.id);
-      assert.equal(userSocialAuth.get('userId'), createdUser.id);
-      assert.equal(userSocialAuth.get('provider'), userSocialAuthData.provider);
-      assert.equal(userSocialAuth.get('socialId'), userSocialAuthData.socialId);
-      assert.deepEqual(JSON.parse(userSocialAuth.get('extra')), userSocialAuthData.extra);
+      assert.equal(userSocialAuth.userId, createdUser.id);
+      assert.equal(userSocialAuth.provider, userSocialAuthData.provider);
+      assert.equal(userSocialAuth.socialId, userSocialAuthData.socialId);
+      assert.deepEqual(JSON.parse(userSocialAuth.extra), userSocialAuthData.extra);
     });
 
     it('should not allow multiple social auth records for the same user from the same provider', async () => {
@@ -159,7 +159,7 @@ describe('Auth Domain Users Tests', function() {
       const [createdSocialAuth1, created] = await findOrCreateUserSocialAuth(createdUser1, userSocialAuthData1);
 
       assert.isTrue(created);
-      assert.equal(createdUser1.id, createdSocialAuth1.get('userId'));
+      assert.equal(createdUser1.id, createdSocialAuth1.userId);
 
       try {
         await findOrCreateUserSocialAuth(createdUser2, userSocialAuthData2);
@@ -201,9 +201,9 @@ describe('Auth Domain Users Tests', function() {
 
     async function assertUser(user: any) {
       const dbu = (await User.findOne({where: {email: user.email}}))!;
-      assert.equal(dbu.get('name'), user.name);
-      assert.equal(dbu.get('group'), user.group);
-      assert.equal(dbu.get('isActive'), user.isActive);
+      assert.equal(dbu.name, user.name);
+      assert.equal(dbu.group, user.group);
+      assert.equal(dbu.isActive, user.isActive);
     }
 
     it('Make sure nothing happens if we already have a first user', async () => {

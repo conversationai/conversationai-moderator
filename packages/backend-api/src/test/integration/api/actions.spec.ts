@@ -63,10 +63,10 @@ describe(BASE_URL, () => {
     flagsCount: number,
   ) {
     const a1 = (await Article.findById(article.id))!;
-    expect(a1.get('unmoderatedCount'), `${x} article newCount`).equal(newCount);
-    expect(a1.get('approvedCount'), `${x} article approvedCount`).equal(approvedCount);
-    expect(a1.get('rejectedCount'), `${x} article rejectedCount`).equal(rejectedCount);
-    expect(a1.get('flaggedCount'), `${x} article flaggedCount`).equal(flagsCount);
+    expect(a1.unmoderatedCount, `${x} article newCount`).equal(newCount);
+    expect(a1.approvedCount, `${x} article approvedCount`).equal(approvedCount);
+    expect(a1.rejectedCount, `${x} article rejectedCount`).equal(rejectedCount);
+    expect(a1.flaggedCount, `${x} article flaggedCount`).equal(flagsCount);
   }
 
   async function checkComment(
@@ -78,22 +78,22 @@ describe(BASE_URL, () => {
   ) {
     const c = (await Comment.findById(id))!;
     if (state === 'new') {
-      expect(c.get('isModerated'), `${x} comment ${id} is moderated`).equal(false);
+      expect(c.isModerated, `${x} comment ${id} is moderated`).equal(false);
     }
     else {
-      expect(c.get('isModerated'), `${x} comment ${id} is moderated`).equal(true);
-      expect(c.get('isAccepted'),  `${x} comment ${id} is accepted`).equal(state === 'accepted');
+      expect(c.isModerated, `${x} comment ${id} is moderated`).equal(true);
+      expect(c.isAccepted,  `${x} comment ${id} is accepted`).equal(state === 'accepted');
     }
 
-    expect(c.get('unresolvedFlagsCount'), `${x} comment ${id} unresolved`).equals(unresolved);
-    const s = JSON.parse(c.get('flagsSummary'));
+    expect(c.unresolvedFlagsCount, `${x} comment ${id} unresolved`).equals(unresolved);
+    const s = JSON.parse(c.flagsSummary! as string);
     expect(s, `${x} comment ${id} summary`).deep.equal(summary);
   }
 
   async function checkFlag(x: string, id: number, resolved: boolean, resolvedById: number | null) {
     const f = (await CommentFlag.findById(id))!;
-    expect(f.get('isResolved'), `${x} flag ${id} isResolved`).equal(resolved);
-    expect(f.get('resolvedById'), `${x} flag ${id} resolvedById`).equal(resolvedById);
+    expect(f.isResolved, `${x} flag ${id} isResolved`).equal(resolved);
+    expect(f.resolvedById, `${x} flag ${id} resolvedById`).equal(resolvedById);
   }
 
   async function actOnAComment(url: string) {

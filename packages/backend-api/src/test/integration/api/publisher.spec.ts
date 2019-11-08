@@ -164,7 +164,7 @@ describe('Publisher API', () => {
     describe('/articles/:sourceId', () => {
       it('should update an article', async () => {
         const article = await makeArticle({ title: 'Title One' });
-        const url = prefixed(`articles/${article.get('sourceId')}`);
+        const url = prefixed(`articles/${article.sourceId}`);
 
         let was200 = false;
 
@@ -181,9 +181,9 @@ describe('Publisher API', () => {
           expect(status).to.be.equal(200);
           was200 = true;
 
-          const updatedArticle = (await Article.findOne({ where: { sourceId: article.get('sourceId') }}))!;
+          const updatedArticle = (await Article.findOne({ where: { sourceId: article.sourceId }}))!;
 
-          expect(updatedArticle.get('title')).to.equal('Title Two');
+          expect(updatedArticle.title).to.equal('Title Two');
         } finally {
           expect(was200).to.be.true;
         }

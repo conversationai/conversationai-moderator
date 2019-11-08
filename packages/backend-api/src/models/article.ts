@@ -18,11 +18,11 @@ import * as Sequelize from 'sequelize';
 
 import { sequelize } from '../sequelize';
 import { ICategoryInstance } from './category';
+import { IBaseAttributes, IBaseInstance } from './constants';
 import { updateHappened } from './last_update';
 import { IUserInstance } from './user';
 
-export interface IArticleAttributes {
-  id?: number;
+export interface IArticleAttributes extends IBaseAttributes {
   ownerId?: number;
   sourceId: string;
   categoryId?: number;
@@ -33,29 +33,24 @@ export interface IArticleAttributes {
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
   extra?: any | null;
-  allCount?: number;
-  unprocessedCount?: number;
-  unmoderatedCount?: number;
-  moderatedCount?: number;
-  highlightedCount?: number;
-  approvedCount?: number;
-  rejectedCount?: number;
-  deferredCount?: number;
-  flaggedCount?: number;
-  batchedCount?: number;
+  allCount: number;
+  unprocessedCount: number;
+  unmoderatedCount: number;
+  moderatedCount: number;
+  highlightedCount: number;
+  approvedCount: number;
+  rejectedCount: number;
+  deferredCount: number;
+  flaggedCount: number;
+  batchedCount: number;
   lastModeratedAt?: string | Date;
 }
 
-export interface IArticleInstance
-    extends Sequelize.Instance<IArticleAttributes> {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-
+export type IArticleInstance = Sequelize.Instance<IArticleAttributes> & IArticleAttributes & IBaseInstance & {
   getCategory: Sequelize.BelongsToGetAssociationMixin<ICategoryInstance>;
   getAssignedModerators: Sequelize.BelongsToManyGetAssociationsMixin<IUserInstance>;
   countAssignedModerators: Sequelize.BelongsToManyCountAssociationsMixin;
-}
+};
 
 /**
  * Article model

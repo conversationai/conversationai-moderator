@@ -57,10 +57,10 @@ describe('Pipeline Rules Tests', () => {
   describe('compileScores', () => {
     it('should return an object of scores keyed by tag id', () => {
       const tag1 = Tag.build(getTagData());
-      tag1.set('id', 1);
+      tag1.id = 1;
 
       const tag2 = Tag.build(getTagData());
-      tag2.set('id', 2);
+      tag2.id =2;
 
       const score1 = CommentSummaryScore.build(getCommentSummaryScoreData({tagId: 1, score: 0.57}));
       const score2 = CommentSummaryScore.build(getCommentSummaryScoreData({tagId: 2, score: 0.75}));
@@ -76,10 +76,10 @@ describe('Pipeline Rules Tests', () => {
 
     it('should get the max scores with the same tag', () => {
       const tag1 = Tag.build(getTagData());
-      tag1.set('id', 1);
+      tag1.id = 1;
 
       const tag2 = Tag.build(getTagData());
-      tag2.set('id', 2);
+      tag2.id = 2 ;
 
       const score1 = CommentSummaryScore.build(getCommentSummaryScoreData({tagId: 1, score: 0.5}));
       const score2 = CommentSummaryScore.build(getCommentSummaryScoreData({tagId: 2, score: 0.6}));
@@ -130,16 +130,16 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isTrue(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isFalse(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isTrue(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isFalse(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         // Rules shouldn't updated lastModeratedAt
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -153,7 +153,7 @@ describe('Pipeline Rules Tests', () => {
         CommentSummaryScore.build({
           commentId: comment.id,
           tagId: summaryTag.id,
-          score: comment.get('maxSummaryScore'),
+          score: comment.maxSummaryScore,
         }),
       ];
 
@@ -171,15 +171,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isTrue(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isFalse(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isTrue(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isFalse(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -222,15 +222,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isTrue(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isFalse(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isTrue(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isFalse(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -270,15 +270,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isTrue(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isTrue(updated.get('isHighlighted'));
-        assert.isFalse(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isTrue(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isTrue(updated.isHighlighted);
+        assert.isFalse(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -318,15 +318,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isNull(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isTrue(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isNull(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isTrue(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -353,15 +353,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isFalse(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isFalse(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isFalse(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isFalse(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -401,15 +401,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isFalse(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isFalse(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isFalse(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isFalse(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -436,15 +436,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isNull(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isTrue(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isNull(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isTrue(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -493,15 +493,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isNull(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isTrue(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isNull(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isTrue(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -554,15 +554,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isNull(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isTrue(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isNull(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isTrue(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -602,15 +602,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isTrue(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isTrue(updated.get('isHighlighted'));
-        assert.isFalse(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isTrue(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isTrue(updated.isHighlighted);
+        assert.isFalse(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -656,15 +656,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isNull(updated.get('isAccepted'), 'isAccepted');
-        assert.isTrue(updated.get('isAutoResolved'), 'isAutoResolved');
-        assert.isFalse(updated.get('isHighlighted'), 'isHighlighted');
-        assert.isTrue(updated.get('isDeferred'), 'isDeferred');
-        assert.isTrue(updated.get('isModerated'), 'isModerated');
-        assert.isFalse(updated.get('isScored'), 'isScored');
+        assert.isNull(updated.isAccepted, 'isAccepted');
+        assert.isTrue(updated.isAutoResolved, 'isAutoResolved');
+        assert.isFalse(updated.isHighlighted, 'isHighlighted');
+        assert.isTrue(updated.isDeferred, 'isDeferred');
+        assert.isTrue(updated.isModerated, 'isModerated');
+        assert.isFalse(updated.isScored, 'isScored');
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -719,15 +719,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isNull(updated.get('isAccepted'), 'isAccepted');
-        assert.isTrue(updated.get('isAutoResolved'), 'isAutoResolved');
-        assert.isFalse(updated.get('isHighlighted'), 'isHighlighted');
-        assert.isTrue(updated.get('isDeferred'), 'isDeferred');
-        assert.isTrue(updated.get('isModerated'), 'isModerated');
-        assert.isFalse(updated.get('isScored'), 'isScored');
+        assert.isNull(updated.isAccepted, 'isAccepted');
+        assert.isTrue(updated.isAutoResolved, 'isAutoResolved');
+        assert.isFalse(updated.isHighlighted, 'isHighlighted');
+        assert.isTrue(updated.isDeferred, 'isDeferred');
+        assert.isTrue(updated.isModerated, 'isModerated');
+        assert.isFalse(updated.isScored, 'isScored');
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -767,15 +767,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isNull(updated.get('isAccepted'), 'isAccepted');
-        assert.isFalse(updated.get('isAutoResolved'), 'isAutoResolved');
-        assert.isFalse(updated.get('isHighlighted'), 'isHighlighted');
-        assert.isFalse(updated.get('isDeferred'), 'isDeferred');
-        assert.isFalse(updated.get('isModerated'), 'isModerated');
-        assert.isFalse(updated.get('isScored'), 'isScored');
+        assert.isNull(updated.isAccepted, 'isAccepted');
+        assert.isFalse(updated.isAutoResolved, 'isAutoResolved');
+        assert.isFalse(updated.isHighlighted, 'isHighlighted');
+        assert.isFalse(updated.isDeferred, 'isDeferred');
+        assert.isFalse(updated.isModerated, 'isModerated');
+        assert.isFalse(updated.isScored, 'isScored');
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
   });
@@ -791,15 +791,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isNull(updated.get('isAccepted'));
-        assert.isFalse(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isFalse(updated.get('isDeferred'));
-        assert.isFalse(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isNull(updated.isAccepted);
+        assert.isFalse(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isFalse(updated.isDeferred);
+        assert.isFalse(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -823,12 +823,12 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isNull(updated.get('isAccepted'));
-        assert.isFalse(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isFalse(updated.get('isDeferred'));
-        assert.isFalse(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isNull(updated.isAccepted);
+        assert.isFalse(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isFalse(updated.isDeferred);
+        assert.isFalse(updated.isModerated);
+        assert.isFalse(updated.isScored);
       }
     });
 
@@ -877,15 +877,15 @@ describe('Pipeline Rules Tests', () => {
       assert.isNotNull(updated);
 
       if (updated) {
-        assert.isTrue(updated.get('isAccepted'));
-        assert.isTrue(updated.get('isAutoResolved'));
-        assert.isFalse(updated.get('isHighlighted'));
-        assert.isFalse(updated.get('isDeferred'));
-        assert.isTrue(updated.get('isModerated'));
-        assert.isFalse(updated.get('isScored'));
+        assert.isTrue(updated.isAccepted);
+        assert.isTrue(updated.isAutoResolved);
+        assert.isFalse(updated.isHighlighted);
+        assert.isFalse(updated.isDeferred);
+        assert.isTrue(updated.isModerated);
+        assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.get('lastModeratedAt'));
+        assert.isNull(updatedArticle.lastModeratedAt);
       }
     });
 
@@ -933,7 +933,7 @@ describe('Pipeline Rules Tests', () => {
       const updated = await Comment.findById(comment.id);
       assert.isNotNull(updated);
       if (updated) {
-        assert.isNull(updated.get('isAccepted'));
+        assert.isNull(updated.isAccepted);
       }
     });
   });

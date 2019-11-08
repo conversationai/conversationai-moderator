@@ -15,38 +15,34 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+
 import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
 import { IUserInstance } from './user';
 
-export interface ICategoryAttributes {
-  id?: number;
+export interface ICategoryAttributes extends IBaseAttributes {
   label: string;
   ownerId?: number;
   sourceId?: string;
   isActive?: boolean;
   extra?: any;
-  allCount?: number;
-  unprocessedCount?: number;
-  unmoderatedCount?: number;
-  moderatedCount?: number;
-  highlightedCount?: number;
-  approvedCount?: number;
-  rejectedCount?: number;
-  deferredCount?: number;
-  flaggedCount?: number;
-  batchedCount?: number;
+  allCount: number;
+  unprocessedCount: number;
+  unmoderatedCount: number;
+  moderatedCount: number;
+  highlightedCount: number;
+  approvedCount: number;
+  rejectedCount: number;
+  deferredCount: number;
+  flaggedCount: number;
+  batchedCount: number;
 }
 
-export interface ICategoryInstance
-    extends Sequelize.Instance<ICategoryAttributes> {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-
+export type ICategoryInstance = Sequelize.Instance<ICategoryAttributes> & ICategoryAttributes & IBaseInstance & {
   getAssignedModerators: Sequelize.BelongsToManyGetAssociationsMixin<IUserInstance>;
   countAssignedModerators: Sequelize.BelongsToManyCountAssociationsMixin;
   getOwner: Sequelize.BelongsToGetAssociationMixin<IUserInstance>;
-}
+};
 
 /**
  * Category model

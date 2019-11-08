@@ -75,8 +75,8 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
 
   await article.update(update);
 
-  if (article.get('categoryId')) {
-    const category = (await Category.findById(article.get('categoryId')))!;
+  if (article.categoryId) {
+    const category = (await Category.findById(article.categoryId))!;
     await denormalizeCommentCountsForCategory(category);
   }
 

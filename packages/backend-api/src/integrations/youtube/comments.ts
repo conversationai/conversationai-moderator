@@ -121,8 +121,8 @@ export async function implement_moderation_decision(
   comment: ICommentInstance,
   decision: IDecisionInstance,
 ) {
-  const sourceId = comment.get('sourceId') as string;
-  const status = decision.get('status');
+  const sourceId = comment.sourceId;
+  const status = decision.status;
 
   if (status === MODERATION_ACTION_DEFER) {
     logger.info(`Not syncing comment ${comment.id}:${sourceId} - in deferred state`);

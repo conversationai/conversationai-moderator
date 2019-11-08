@@ -56,6 +56,7 @@ export async function createArticleIfNonExistant(item: IArticleData): Promise<IA
       extra: (item.extra) ? item.extra : null,
       isCommentingEnabled: true,
       isAutoModerated: true,
+      allCount: 0,
       unprocessedCount: 0,
       unmoderatedCount: 0,
       moderatedCount: 0,
@@ -79,7 +80,7 @@ export async function createArticleIfNonExistant(item: IArticleData): Promise<IA
     for (const assignment of subscribedUsers) {
       await ModeratorAssignment.create({
         articleId: article.id,
-        userId: assignment.get('userId'),
+        userId: assignment.userId,
       });
     }
     updateHappened();
@@ -122,6 +123,7 @@ async function createCategory(categoryLabel: string): Promise<number> {
     defaults: {
       label: categoryLabel,
       isActive: true,
+      allCount: 0,
       unprocessedCount: 0,
       moderatedCount: 0,
       unmoderatedCount: 0,

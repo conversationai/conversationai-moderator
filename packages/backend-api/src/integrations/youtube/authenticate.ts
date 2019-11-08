@@ -33,8 +33,8 @@ export async function for_one_youtube_user(
   }
 
   const oauth2Client = new google.auth.OAuth2(oauthConfig.id, oauthConfig.secret);
-  logger.info(`Youtube: Authenticating as: ${user.id}:${user.get('email')} (${user.get('name')})`);
-  const extra = JSON.parse(user.get('extra'));
+  logger.info(`Youtube: Authenticating as: ${user.id}:${user.email} (${user.name})`);
+  const extra = JSON.parse(user.extra);
   oauth2Client.setCredentials(extra.token);
   await callback(user, oauth2Client);
 }

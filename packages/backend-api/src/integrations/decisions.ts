@@ -52,7 +52,9 @@ export async function foreachPendingDecision(
 }
 
 export async function markDecisionExecuted(decision: IDecisionInstance) {
-  decision.set('sentBackToPublisher', sequelize.fn('now')).save();
+  decision.sentBackToPublisher = sequelize.fn('now');
+  await decision.save();
   const comment = (await decision.getComment())!;
-  comment.set('sentBackToPublisher', sequelize.fn('now')).save();
+  comment.sentBackToPublisher = sequelize.fn('now');
+  await comment.save();
 }

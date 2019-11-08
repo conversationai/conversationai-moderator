@@ -18,7 +18,7 @@ import * as chai from 'chai';
 import * as WebSocket from 'ws';
 
 import {
-  MODERATION_ACTION_ACCEPT,
+  MODERATION_ACTION_ACCEPT, RESET_COUNTS,
 } from '../models';
 import {
   IArticleInstance,
@@ -61,15 +61,7 @@ export async function makeArticle(obj = {}): Promise<IArticleInstance> {
     sourceCreatedAt: '2012-10-29T21:54:07.609Z',
     isCommentingEnabled: true,
     isAutoModerated: true,
-    unprocessedCount: 0,
-    unmoderatedCount: 0,
-    moderatedCount: 0,
-    highlightedCount: 0,
-    approvedCount: 0,
-    rejectedCount: 0,
-    deferredCount: 0,
-    flaggedCount: 0,
-    batchedCount: 0,
+    ...RESET_COUNTS,
     ...obj,
   });
 }
@@ -79,6 +71,7 @@ export async function makeUser(obj = {}): Promise<IUserInstance> {
     group: 'general',
     name: 'Name',
     email: 'email@example.com',
+    isActive: true,
     ...obj,
   });
 }
@@ -138,15 +131,7 @@ export async function makeCommentSummaryScore(obj: Pick<ICommentSummaryScoreAttr
 export async function makeCategory(obj = {}): Promise<ICategoryInstance> {
   return await Category.create({
     label: 'something',
-    unprocessedCount: 0,
-    unmoderatedCount: 0,
-    moderatedCount: 0,
-    highlightedCount: 0,
-    approvedCount: 0,
-    rejectedCount: 0,
-    deferredCount: 0,
-    flaggedCount: 0,
-    batchedCount: 0,
+    ...RESET_COUNTS,
     ...obj,
   });
 }

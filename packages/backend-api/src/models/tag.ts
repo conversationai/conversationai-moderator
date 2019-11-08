@@ -15,11 +15,12 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+
 import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
 import { updateHappened } from './last_update';
 
-export interface ITagAttributes {
-  id?: number;
+export interface ITagAttributes extends IBaseAttributes {
   key: string;
   label: string;
   color?: string;
@@ -29,12 +30,7 @@ export interface ITagAttributes {
   inSummaryScore?: boolean;
 }
 
-export interface ITagInstance
-    extends Sequelize.Instance<ITagAttributes> {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
+export type ITagInstance = Sequelize.Instance<ITagAttributes> & ITagAttributes & IBaseInstance;
 
 /**
  * Tag model

@@ -89,7 +89,8 @@ async function executeDeferCommentsTask(data: ICommentActionData) {
 
   // update batch action
   logger.info('defer comment : ',  comment.id );
-  await comment.set('isBatchResolved', data.isBatchAction).save();
+  comment.isBatchResolved = data.isBatchAction;
+  await comment.save();
   return defer(comment, user);
 }
 
@@ -98,7 +99,8 @@ async function executeHighlightCommentsTask(data: ICommentActionData)  {
   const comment = await getComment(data.commentId);
 
   logger.info('highlight comment : ', comment.id);
-  await comment.set('isBatchResolved', data.isBatchAction).save();
+  comment.isBatchResolved = data.isBatchAction;
+  await comment.save();
   return highlight(comment, user);
 }
 

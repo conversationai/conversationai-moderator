@@ -23,9 +23,9 @@ import {
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
 } from './constants';
+import { IBaseAttributes, IBaseInstance } from './constants';
 
-export interface IDecisionAttributes {
-  id?: number;
+export interface IDecisionAttributes extends IBaseAttributes {
   commentId?: number;
   userId?: number;
   moderationRuleId?: number;
@@ -35,14 +35,9 @@ export interface IDecisionAttributes {
   sentBackToPublisher?: Date | string | Sequelize.fn;
 }
 
-export interface IDecisionInstance
-    extends Sequelize.Instance<IDecisionAttributes> {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-
+export type IDecisionInstance = Sequelize.Instance<IDecisionAttributes> & IDecisionAttributes & IBaseInstance & {
   getComment: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
-}
+};
 
 /**
  * Decision model

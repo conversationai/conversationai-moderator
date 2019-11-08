@@ -15,24 +15,19 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
-import { sequelize } from '../sequelize';
 
-export interface IUserSocialAuthAttributes {
-  id?: number;
+import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
+
+export interface IUserSocialAuthAttributes extends IBaseAttributes {
   userId?: number;
   socialId: string;
   provider: string;
   extra?: any;
 }
 
-export interface IUserSocialAuthInstance
-    extends Sequelize.Instance<
-      IUserSocialAuthAttributes
-    > {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type IUserSocialAuthInstance = Sequelize.Instance<IUserSocialAuthAttributes> &
+  IUserSocialAuthAttributes & IBaseInstance;
 
 export const UserSocialAuth = sequelize.define<
   IUserSocialAuthInstance,

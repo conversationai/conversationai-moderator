@@ -189,7 +189,7 @@ async function getArticleUpdate(articleId: number) {
   const aData = serialiseObject(article, ARTICLE_FIELDS);
 
   const category = await Category.findById(
-    await article.get('categoryId'),
+    article.categoryId,
     {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
   );
 

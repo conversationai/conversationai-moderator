@@ -69,7 +69,8 @@ export async function executeProcessTagAdditionTask(data: IProcessTagAdditionDat
     const [instance, created] = await CommentFlag.findOrCreate(options);
 
     if (!created) {
-      instance.set('extra', extra).save();
+      instance.extra = extra;
+      await instance.save();
     }
 
     await denormalizeCountsForComment(comment);

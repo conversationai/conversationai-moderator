@@ -15,11 +15,12 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+
 import { sequelize } from '../sequelize';
+import { IBaseAttributes, IBaseInstance } from './constants';
 import { updateHappened } from './last_update';
 
-export interface IPreselectAttributes {
-  id?: number;
+export interface IPreselectAttributes extends IBaseAttributes{
   tagId?: number;
   categoryId?: number;
   createdBy?: number;
@@ -27,14 +28,7 @@ export interface IPreselectAttributes {
   upperThreshold: number;
 }
 
-export interface IPreselectInstance
-    extends Sequelize.Instance<
-      IPreselectAttributes
-    > {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
+export type IPreselectInstance = Sequelize.Instance<IPreselectAttributes> & IPreselectAttributes & IBaseInstance;
 
 /**
  * Preselect model

@@ -25,7 +25,7 @@ export async function youtubeActivateChannel(
   args: {[key: string]: boolean},
 ) {
   await for_one_youtube_user(owner, async (_, auth) => {
-    await activate_channel(owner, auth, await channel.get('sourceId'), args.activate);
+    await activate_channel(owner, auth, channel.sourceId!, args.activate);
   });
 }
 
@@ -38,7 +38,7 @@ export async function youtubeSynchronizeChannel(
     await sync_comment_threads_for_channel(
       owner,
       auth,
-      await channel.get('sourceId'),
+      channel.sourceId!,
       articleIdMap,
       true,
       1000,

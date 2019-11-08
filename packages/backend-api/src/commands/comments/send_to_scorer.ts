@@ -66,7 +66,7 @@ export async function handler(argv: any) {
       return;
     }
 
-    if (user.get('group') !== USER_GROUP_MODERATOR) {
+    if (user.group !== USER_GROUP_MODERATOR) {
       logger.error(`User is not a moderator`);
       return;
     }

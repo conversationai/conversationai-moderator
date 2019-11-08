@@ -16,9 +16,11 @@ limitations under the License.
 
 import * as Joi from 'joi';
 import * as Sequelize from 'sequelize';
+
 import { sequelize } from '../sequelize';
 import { IArticleInstance } from './article';
 import { ICategoryInstance } from './category';
+import { IBaseAttributes, IBaseInstance } from './constants';
 import { updateHappened } from './last_update';
 
 export const USER_GROUP_GENERAL = 'general';
@@ -39,27 +41,21 @@ export const USER_GROUPS = [
 export const ENDPOINT_TYPE_PROXY = 'perspective-proxy';
 export const ENDPOINT_TYPE_API = 'perspective-api';
 
-export interface IUserAttributes {
-  id?: number;
+export interface IUserAttributes extends IBaseAttributes {
   group: string;
   email?: string;
   name: string;
-  isActive?: boolean;
+  isActive: boolean;
   extra?: any;
 }
 
-export interface IUserInstance extends Sequelize.Instance<IUserAttributes> {
-  id: number;
-  createdAt: Date;
-  updatedAt: Date;
-
+export type  IUserInstance = Sequelize.Instance<IUserAttributes> & IUserAttributes & IBaseInstance & {
   getAssignedArticles: Sequelize.BelongsToManyGetAssociationsMixin<IArticleInstance>;
   countAssignedArticles: Sequelize.BelongsToManyCountAssociationsMixin;
   countAssignments(): number;
-
   getAssignedCategories: Sequelize.BelongsToManyGetAssociationsMixin<ICategoryInstance>;
   countAssignedCategories: Sequelize.BelongsToManyCountAssociationsMixin;
-}
+};
 
 export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
   id: {
@@ -119,9 +115,9 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
      * Require an email address for non-service users
      */
     requireEmailForHumans() {
-      const group = this.get('group');
+      const group = this.group;
       if (group === USER_GROUP_GENERAL || group === USER_GROUP_ADMIN) {
-        const validEmail = Joi.validate(this.get('email'), Joi.string().email().required(), { convert: false });
+        const validEmail = Joi.validate(this.email, Joi.string().email().required(), { convert: false });
         if (validEmail.error) {
           throw new Error('Email address required for human users');
         }
@@ -175,7 +171,7 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
   instanceMethods: {
     async countAssignments() {
       const articles: Array<IArticleInstance> = await this.getAssignedArticles();
-      return articles.reduce((sum, a) => sum + a.get('unmoderatedCount'), 0);
+      return articles.reduce((sum, a) => sum + a.unmoderatedCount, 0);
     },
   },
 });
@@ -185,5 +181,5 @@ export function isUser(instance: any) {
   //       Hopefully fixed in later sequelize.
   //       Instead check for an attribute unique to this object.
   // return instance instanceof User.Instance;
-  return instance && instance.get && !!instance.get('group');
+  return instance && instance.get && !!instance.group;
 }
