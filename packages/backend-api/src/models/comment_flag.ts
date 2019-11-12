@@ -30,7 +30,7 @@ export interface ICommentFlagAttributes extends IBaseAttributes {
   authorSourceId?: string;
   isResolved: boolean;
   resolvedById?: number;
-  resolvedAt?: Date | string;
+  resolvedAt?: Date | null;
   extra?: any;
 }
 

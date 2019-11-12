@@ -29,7 +29,7 @@ export interface IArticleAttributes extends IBaseAttributes {
   title: string;
   text: string;
   url: string;
-  sourceCreatedAt: Date | string | null;
+  sourceCreatedAt?: Date | null;
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
   extra?: any | null;
@@ -43,7 +43,7 @@ export interface IArticleAttributes extends IBaseAttributes {
   deferredCount: number;
   flaggedCount: number;
   batchedCount: number;
-  lastModeratedAt?: string | Date;
+  lastModeratedAt?: Date | null;
 }
 
 export type IArticleInstance = Sequelize.Instance<IArticleAttributes> & IArticleAttributes & IBaseInstance & {

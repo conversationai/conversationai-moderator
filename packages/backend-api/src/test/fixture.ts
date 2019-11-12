@@ -58,7 +58,7 @@ export async function makeArticle(obj = {}): Promise<IArticleInstance> {
     title: 'An article',
     text: 'Text',
     url: 'https://example.com',
-    sourceCreatedAt: '2012-10-29T21:54:07.609Z',
+    sourceCreatedAt: new Date('2012-10-29T21:54:07.609Z'),
     isCommentingEnabled: true,
     isAutoModerated: true,
     ...RESET_COUNTS,
@@ -103,7 +103,7 @@ export async function makeComment(obj = {}): Promise<ICommentInstance> {
       name: 'Joe Bloggs',
     },
     unresolvedFlagsCount: 0,
-    sourceCreatedAt: '2012-10-29T21:54:07.609Z',
+    sourceCreatedAt: new Date('2012-10-29T21:54:07.609Z'),
     isScored: true,
     ...obj,
   });
