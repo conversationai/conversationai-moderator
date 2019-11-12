@@ -51,7 +51,7 @@ export async function createArticleIfNonExistant(item: IArticleData): Promise<IA
       sourceId: item.sourceId,
       title: item.title,
       text: item.text,
-      sourceCreatedAt: item.createdAt,
+      sourceCreatedAt: new Date(Date.parse(item.createdAt)),
       url: (item.url) ? item.url : '',
       extra: (item.extra) ? item.extra : null,
       isCommentingEnabled: true,

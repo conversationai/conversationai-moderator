@@ -262,7 +262,8 @@ async function mapCommentToComment(
     if (created) {
       logger.info(`Created comment ${comment.id} (${comment.sourceId})`);
     }
-    else if (Date.parse(comment.sourceCreatedAt! as string) === sourceCreatedAt.getTime()) {
+    else if (Math.floor((comment.sourceCreatedAt as Date).getTime() / 1000) ===
+             Math.floor(sourceCreatedAt.getTime() / 1000)) {
       logger.info(`Comment ${comment.id} (${comment.sourceId}) unchanged`);
       return;
     }

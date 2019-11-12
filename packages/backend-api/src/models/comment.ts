@@ -57,7 +57,7 @@ export interface ICommentAttributes extends IBaseAttributes {
   isAutoResolved?: boolean | null;
   unresolvedFlagsCount?: number;
   flagsSummary?: string | IFlagSummary;
-  sourceCreatedAt: Date | string | null | Sequelize.fn;
+  sourceCreatedAt: Date | null | Sequelize.fn;
   sentForScoring?: string | null | Sequelize.fn;
   sentBackToPublisher?: Date | null | Sequelize.fn;
   extra?: any | null;
