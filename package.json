@@ -18,17 +18,14 @@
     "@types/expect": "1.20.4",
     "@types/faker": "4.1.4",
     "@types/node": "12.7.1",
-    "@types/sinon": "5.0.3",
     "chai": "4.2.0",
     "chai-http": "4.2.1",
     "faker": "4.1.0",
     "lerna": "3.18.3",
     "nsp": "3.2.1",
-    "sinon": "7.2.2",
     "tslib": "1.10.0",
     "tslint": "5.20.0",
     "tslint-react": "4.1.0",
-    "ts-mocha": "6.0.0",
     "typescript": "3.5.3"
   }
 }
