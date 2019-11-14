@@ -78,16 +78,14 @@ export const CommentSummaryScore = sequelize.define<
       unique: true,
     },
   ],
-
-  classMethods: {
-    associate(models: any) {
-      CommentSummaryScore.belongsTo(models.Comment, {
-        onDelete: 'CASCADE',
-      });
-
-      CommentSummaryScore.belongsTo(models.Tag, {
-        onDelete: 'CASCADE',
-      });
-    },
-  },
 });
+
+CommentSummaryScore.associate = (models) => {
+  CommentSummaryScore.belongsTo(models.Comment, {
+    onDelete: 'CASCADE',
+  });
+
+  CommentSummaryScore.belongsTo(models.Tag, {
+    onDelete: 'CASCADE',
+  });
+};

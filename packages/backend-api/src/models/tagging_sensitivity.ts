@@ -48,28 +48,6 @@ export const TaggingSensitivity = sequelize.define<
     allowNull: false,
   },
 }, {
-  classMethods: {
-    associate(models: any) {
-      TaggingSensitivity.belongsTo(models.Category, {
-        onDelete: 'CASCADE',
-        foreignKey: {
-          allowNull: true,
-        },
-      });
-
-      TaggingSensitivity.belongsTo(models.Tag, {
-        onDelete: 'CASCADE',
-        foreignKey: {
-          allowNull: true,
-        },
-      });
-
-      TaggingSensitivity.belongsTo(models.User, {
-        foreignKey: 'createdBy',
-        constraints: false,
-      });
-    },
-  },
   hooks: {
     afterCreate: updateHappened,
     afterDestroy: updateHappened,
@@ -79,3 +57,24 @@ export const TaggingSensitivity = sequelize.define<
     afterBulkDestroy: updateHappened,
   },
 });
+
+TaggingSensitivity.associate = (models) => {
+  TaggingSensitivity.belongsTo(models.Category, {
+    onDelete: 'CASCADE',
+    foreignKey: {
+      allowNull: true,
+    },
+  });
+
+  TaggingSensitivity.belongsTo(models.Tag, {
+    onDelete: 'CASCADE',
+    foreignKey: {
+      allowNull: true,
+    },
+  });
+
+  TaggingSensitivity.belongsTo(models.User, {
+    foreignKey: 'createdBy',
+    constraints: false,
+  });
+};

@@ -54,18 +54,9 @@ export const CommentScoreRequest = sequelize.define<
     type: Sequelize.DATE,
     allowNull: true,
   },
-}, {
-  classMethods: {
-
-    /**
-     * CommentScoreRequest relationships
-     */
-    associate(models: any) {
-      CommentScoreRequest.belongsTo(models.Comment);
-
-      // Related service user
-
-      CommentScoreRequest.belongsTo(models.User);
-    },
-  },
 });
+
+CommentScoreRequest.associate = (models) => {
+  CommentScoreRequest.belongsTo(models.Comment);
+  CommentScoreRequest.belongsTo(models.User);
+};

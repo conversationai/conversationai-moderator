@@ -56,18 +56,11 @@ export const CommentSize = sequelize.define<
       fields: ['commentId', 'width'],
       unique: true,
     },
-  ],
+  ]},
+);
 
-  classMethods: {
-
-    /**
-     * Article relationships
-     */
-    associate(models: any) {
-      CommentSize.belongsTo(models.Comment, {
-        onDelete: 'CASCADE',
-      });
-    },
-  },
-
-});
+CommentSize.associate = (models) => {
+  CommentSize.belongsTo(models.Comment, {
+    onDelete: 'CASCADE',
+  });
+};

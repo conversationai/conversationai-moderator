@@ -141,29 +141,23 @@ export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>
       unique: true,
     },
   ],
-
-  classMethods: {
-
-    /**
-     * Category relationships
-     */
-    associate(models: any) {
-      Category.belongsTo(models.User, {as: 'owner'});
-      Category.hasMany(models.Article, {
-        // These work around a weird sequelize bug which adds a unique constraint
-        // only on article for seemingly no reason.
-        constraints: false,
-        foreignKeyConstraint: false,
-      });
-
-      Category.belongsToMany(models.User, {
-        through: {
-          model: models.UserCategoryAssignment,
-          unique: false,
-        },
-        foreignKey: 'categoryId',
-        as: 'assignedModerators',
-      });
-    },
-  },
 });
+
+Category.associate = (models) => {
+  Category.belongsTo(models.User, {as: 'owner'});
+  Category.hasMany(models.Article, {
+    // These work around a weird sequelize bug which adds a unique constraint
+    // only on article for seemingly no reason.
+    constraints: false,
+    foreignKeyConstraint: false,
+  });
+
+  Category.belongsToMany(models.User, {
+    through: {
+      model: models.UserCategoryAssignment,
+      unique: false,
+    },
+    foreignKey: 'categoryId',
+    as: 'assignedModerators',
+  });
+};
