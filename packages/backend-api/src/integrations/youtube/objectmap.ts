@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import { pick } from 'lodash';
+import { Op } from 'sequelize';
 
 import { logger } from '../../logger';
 import { Article, Category, Comment, RESET_COUNTS, updateHappened } from '../../models';
@@ -140,7 +141,7 @@ export async function foreachActiveChannel(owner: IUserInstance, callback: (chan
   const categories = await Category.findAll({
     where: {
       ownerId: owner.id,
-      sourceId: {ne: null},
+      sourceId: {[Op.ne]: null},
       isActive: true,
     },
   });

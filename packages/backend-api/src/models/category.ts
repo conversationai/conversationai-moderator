@@ -48,12 +48,6 @@ export type ICategoryInstance = Sequelize.Instance<ICategoryAttributes> & ICateg
  * Category model
  */
 export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>('category', {
-  id: {
-    type: Sequelize.INTEGER.UNSIGNED,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-
   ownerId: {
     type: Sequelize.INTEGER.UNSIGNED,
     allowNull: true,

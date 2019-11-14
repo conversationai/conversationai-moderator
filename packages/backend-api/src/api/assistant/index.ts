@@ -52,8 +52,8 @@ export function createAssistant(): express.Router {
 
       if (scoreRequest) {
         await enqueueProcessMachineScoreTask(
-          scoreRequest.commentId,
-          scoreRequest.userId,
+          scoreRequest.commentId!,
+          scoreRequest.userId!,
           scoreData,
           runImmediately);
         res.json(REPLY_SUCCESS);

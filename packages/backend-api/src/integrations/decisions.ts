@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { Op } from 'sequelize';
+
 import { Comment, Decision } from '../models';
 import {
   ICommentInstance,
@@ -28,7 +30,7 @@ export async function getDecisionForComment(
   return await Decision.findOne({
     where: {
       commentId: comment.id,
-      sentBackToPublisher: { $eq: null },
+      sentBackToPublisher: {  [Op.eq]: null },
       isCurrentDecision: true,
     },
   });
@@ -40,14 +42,14 @@ export async function foreachPendingDecision(
 ) {
   const decisions = await Decision.findAll({
     where: {
-      sentBackToPublisher: { $eq: null },
+      sentBackToPublisher: { [Op.eq]: null },
       isCurrentDecision: true,
     },
     include: [{model: Comment, required: true, where: {ownerId: owner.id}}],
   });
 
   for (const d of decisions) {
-    await callback(d, await d.getComment());
+    await callback(d, (await d.getComment())!);
   }
 }
 

@@ -36,12 +36,6 @@ export type ITagInstance = Sequelize.Instance<ITagAttributes> & ITagAttributes &
  * Tag model
  */
 export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
-  id: {
-    type: Sequelize.INTEGER.UNSIGNED,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-
   key: {
     type: Sequelize.CHAR(255),
     allowNull: false,

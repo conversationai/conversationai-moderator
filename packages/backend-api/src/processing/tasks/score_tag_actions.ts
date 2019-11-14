@@ -17,8 +17,8 @@ import {
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
 } from '../../domain';
-import { CommentScore } from '../../models';
 import { logger } from '../../logger';
+import { CommentScore } from '../../models';
 import { enqueue, registerTask } from '../util';
 
 interface IAddTagData {
@@ -60,9 +60,9 @@ async function executeAddTagTask(data: IAddTagData) {
   });
 
   const comment = await cs.getComment();
-  const article = await comment.getArticle();
+  const article = await comment!.getArticle();
 
-  await denormalizeCountsForComment(comment);
+  await denormalizeCountsForComment(comment!);
   await denormalizeCommentCountsForArticle(article, false);
 
   return cs;
@@ -78,7 +78,7 @@ async function executeRemoveTagTask(data: ICommentScoreData) {
   }
 
   const comment = await cs.getComment();
-  const article = await comment.getArticle();
+  const article = await comment!.getArticle();
 
   // Remove
   await CommentScore.destroy({
@@ -87,7 +87,7 @@ async function executeRemoveTagTask(data: ICommentScoreData) {
     },
   });
 
-  await denormalizeCountsForComment(comment);
+  await denormalizeCountsForComment(comment!);
   await denormalizeCommentCountsForArticle(article, false);
 
   logger.info(`Remove comment score ${commentScoreId}`);

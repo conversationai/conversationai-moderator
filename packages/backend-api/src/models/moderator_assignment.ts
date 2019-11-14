@@ -35,12 +35,6 @@ export const ModeratorAssignment = sequelize.define<
 >(
   'moderator_assignment',
   {
-    id: {
-      type: Sequelize.INTEGER.UNSIGNED,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-
     userId: {
       type: Sequelize.INTEGER.UNSIGNED,
       allowNull: false,

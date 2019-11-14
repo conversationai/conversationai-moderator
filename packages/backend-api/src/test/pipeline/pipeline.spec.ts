@@ -25,7 +25,7 @@ import {
   CommentScore,
   CommentScoreRequest,
   CommentSummaryScore,
-  Decision,
+  Decision, ICommentScoreRequestInstance,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_REJECT,
   Tag,
@@ -394,7 +394,7 @@ describe('Pipeline Tests', () => {
 
       assert.lengthOf(commentScoreRequests, 2);
 
-      commentScoreRequests.forEach((request) => {
+      commentScoreRequests.forEach((request: ICommentScoreRequestInstance) => {
         if (request.id === commentScoreRequest1.id) {
           assert.isOk(request.doneAt);
         } else {
