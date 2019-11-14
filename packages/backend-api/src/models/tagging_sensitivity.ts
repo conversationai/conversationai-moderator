@@ -72,7 +72,7 @@ export const TaggingSensitivity = sequelize.define<
   },
   hooks: {
     afterCreate: updateHappened,
-    afterDelete: updateHappened,
+    afterDestroy: updateHappened,
     afterUpdate: updateHappened,
     afterBulkCreate: updateHappened,
     afterBulkUpdate: updateHappened,

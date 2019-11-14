@@ -100,7 +100,7 @@ export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
   },
   hooks: {
     afterCreate: updateHappened,
-    afterDelete: updateHappened,
+    afterDestroy: updateHappened,
     afterUpdate: updateHappened,
     afterBulkCreate: updateHappened,
     afterBulkUpdate: updateHappened,
