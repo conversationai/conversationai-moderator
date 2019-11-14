@@ -89,9 +89,7 @@ export async function verifyGoogleToken(accessToken: string, refreshToken: strin
   await setOAuthGood(true);
 
   const user = await User.findOne({
-    where: {
-      email: userData.email,
-    },
+    where: { email: userData.email },
   });
 
   if (!user) {

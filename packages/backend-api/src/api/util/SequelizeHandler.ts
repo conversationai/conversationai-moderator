@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as Bluebird from 'bluebird';
 import { isObject, isString, uniq, uniqWith } from 'lodash';
+import { Op } from 'sequelize';
 
 import { byType } from '../../models';
 import {
@@ -57,7 +58,7 @@ export async function sort(
 
   const filters = {
     id: {
-      $in: ids,
+      [Op.in]: ids,
     },
   } as IFilters;
 

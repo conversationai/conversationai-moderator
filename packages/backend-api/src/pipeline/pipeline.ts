@@ -17,7 +17,7 @@ limitations under the License.
 import * as Bluebird from 'bluebird';
 import { groupBy, maxBy } from 'lodash';
 import * as moment from 'moment';
-import { FindOrInitializeOptions } from 'sequelize';
+import { FindOrInitializeOptions, Op } from 'sequelize';
 import { humanize, titleize, trim } from 'underscore.string';
 
 import {
@@ -164,7 +164,7 @@ export async function getCommentsToResendForScoring(
     where: {
       isAccepted: null,
       isScored: false,
-      sentForScoring: { $lt: resendCutoff() },
+      sentForScoring: { [Op.lt]: resendCutoff() },
     },
     include: [Article],
   } as any;
@@ -268,7 +268,7 @@ export async function updateMaxSummaryScore(comment: ICommentInstance): Promise<
     where: {
       commentId: comment.id,
       tagId: {
-        $in: tagsInSummaryScore.map((tag) => tag.id),
+        [Op.in]: tagsInSummaryScore.map((tag) => tag.id),
       },
     },
   });
@@ -375,9 +375,7 @@ export async function findOrCreateTagsByKey(
     const label = titleize(humanize(cleanKey));
 
     const [instance] = await Tag.findOrCreate({
-      where: {
-        key: cleanKey,
-      },
+      where: { key: cleanKey },
 
       defaults: {
         key: cleanKey,
@@ -401,9 +399,7 @@ export async function recordDecision(
 ): Promise<IDecisionInstance> {
   // Find out if we're overriding a previous decision.
   const previousDecisions = await comment.getDecisions({
-    where: {
-      isCurrentDecision: true,
-    },
+    where: { isCurrentDecision: true },
   });
 
   // Set previous active decisions to `isCurrentDecision` false.
@@ -441,11 +437,7 @@ export async function postProcessComment(comment: ICommentInstance): Promise<voi
   if (!replyToSourceId) { return; }
 
   // Find a parent id
-  const parent = await Comment.findOne({
-    where: {
-      sourceId: replyToSourceId,
-    },
-  });
+  const parent = await Comment.findOne({ where: { sourceId: replyToSourceId } });
 
   // If the parent cannot be found, then return
   if (!parent) { return; }

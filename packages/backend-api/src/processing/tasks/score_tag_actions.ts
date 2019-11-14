@@ -82,9 +82,7 @@ async function executeRemoveTagTask(data: ICommentScoreData) {
 
   // Remove
   await CommentScore.destroy({
-    where: {
-      id: commentScoreId,
-    },
+    where: { id: commentScoreId },
   });
 
   await denormalizeCountsForComment(comment!);

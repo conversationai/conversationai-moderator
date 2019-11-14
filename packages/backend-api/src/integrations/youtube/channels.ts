@@ -144,9 +144,7 @@ export async function get_article_id_map_for_channel(
   category: ICategoryInstance,
 ) {
   const articles = await Article.findAll({
-    where: {
-      categoryId: category.id,
-    },
+    where: { categoryId: category.id },
     attributes: ['id', 'sourceId'],
   });
 

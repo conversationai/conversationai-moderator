@@ -20,6 +20,7 @@ const SEND_TEST_UPDATE_PACKETS = false;
 import * as express from 'express';
 import { isEqual, pick } from 'lodash';
 import * as Sequelize from 'sequelize';
+import { Op } from 'sequelize';
 import * as WebSocket from 'ws';
 
 import { logger } from '../../logger';
@@ -89,7 +90,7 @@ interface IMessage {
 }
 
 async function getSystemData() {
-  const users = await User.findAll({where: {group: ['admin', 'general']}});
+  const users = await User.findAll({where: {group: {[Op.in]: ['admin', 'general']}}});
   const userdata = users.map((u: IUserInstance) => {
     return serialiseObject(u, USER_FIELDS);
   });
@@ -162,7 +163,7 @@ async function getAllArticlesData() {
   });
 
   const articles = await Article.findAll({
-    where: {$or: [{categoryId: null}, {categoryId: categoryIds}]},
+    where: {[Op.or]: [{categoryId: null}, {categoryId: categoryIds}]},
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
   const articledata = articles.map((a: IArticleInstance) => {

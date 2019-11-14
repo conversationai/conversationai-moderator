@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+import { Op } from 'sequelize';
 
 import {
   Category,
@@ -29,32 +30,21 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
     return;
   }
 
-  const [
-    allCount,
-    unprocessedCount,
-    unmoderatedCount,
-    moderatedCount,
-    highlightedCount,
-    approvedCount,
-    rejectedCount,
-    deferredCount,
-    flaggedCount,
-    batchedCount,
-  ] = await Promise.all([
-    Comment.count({ where: { articleId: article.id } }),
-    Comment.count({ where: { articleId: article.id, isScored: false } }),
-    Comment.count({ where: { articleId: article.id, isScored: true, isModerated: false, isDeferred: false } }),
-    Comment.count({ where: { articleId: article.id, isScored: true,
-                             $or: { isModerated: true, isDeferred: true } } }),
-    Comment.count({ where: { articleId: article.id, isHighlighted: true } }),
-    Comment.count({ where: { articleId: article.id, isAccepted: true } }),
-    Comment.count({ where: { articleId: article.id, isAccepted: false, isHighlighted: false } }),
-    Comment.count({ where: { articleId: article.id, isDeferred: true } }),
-    Comment.count({ where: { articleId: article.id,
-        $or: [{ isModerated: false }, { isAccepted: true }],
-        unresolvedFlagsCount: { $gt: 0 } } }),
-    Comment.count({ where: { articleId: article.id, isModerated: true, isBatchResolved: true } }),
-  ]);
+  const allCount = await Comment.count({ where: { articleId: article.id } });
+  const unprocessedCount = await Comment.count({ where: { articleId: article.id, isScored: false } });
+  const unmoderatedCount = await Comment.count({ where: { articleId: article.id,
+      isScored: true, isModerated: false, isDeferred: false } });
+  const moderatedCount = await Comment.count({ where: { articleId: article.id,
+      isScored: true, [Op.or]: { isModerated: true, isDeferred: true } } });
+  const highlightedCount = await Comment.count({ where: { articleId: article.id, isHighlighted: true } });
+  const approvedCount = await Comment.count({ where: { articleId: article.id, isAccepted: true } });
+  const rejectedCount = await Comment.count({ where: { articleId: article.id,
+      isAccepted: false, isHighlighted: false } });
+  const deferredCount = await Comment.count({ where: { articleId: article.id, isDeferred: true } });
+  const flaggedCount = await Comment.count({ where: { articleId: article.id,
+      [Op.or]: [{ isModerated: false }, { isAccepted: true }],
+      unresolvedFlagsCount: { [Op.gt]: 0 } } })
+  const batchedCount = await Comment.count({ where: { articleId: article.id, isModerated: true, isBatchResolved: true } });
 
   const update: Partial<IArticleAttributes> = {
     allCount,

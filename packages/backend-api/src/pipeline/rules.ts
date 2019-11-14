@@ -75,9 +75,7 @@ export async function resolveComment(
 ): Promise<IDecision | null> {
   // Add a fake score for SUMMARY_SCORE so that rules can be written against it.
   const summaryScoreTag = await Tag.findOne({
-    where: {
-      key: 'SUMMARY_SCORE',
-    },
+    where: { key: 'SUMMARY_SCORE' },
   });
 
   let compiledScores: ICompiledScores;
@@ -213,9 +211,7 @@ export async function processRulesForComment(comment: ICommentInstance): Promise
 
   // Otherwise, fetch all scores and play ball
   const commentSummaryScores = await CommentSummaryScore.findAll({
-    where: {
-      commentId: comment.id,
-    },
+    where: { commentId: comment.id },
     include: [Tag],
   });
 

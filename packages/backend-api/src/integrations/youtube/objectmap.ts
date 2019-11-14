@@ -151,9 +151,7 @@ export async function foreachActiveChannel(owner: IUserInstance, callback: (chan
     const channelId = category.sourceId!;
 
     const articles = await Article.findAll({
-      where: {
-        categoryId: categoryId,
-      },
+      where: { categoryId: categoryId },
       attributes: ['id', 'sourceId'],
     });
 
@@ -189,9 +187,7 @@ export async function mapVideoItemToArticle(
 
   try {
     const [article, created] = await Article.findOrCreate({
-      where: {
-        sourceId: videoId,
-      },
+      where: { sourceId: videoId },
 
       defaults: {
         ...defaults,
@@ -249,9 +245,7 @@ async function mapCommentToComment(
     };
 
     const [comment, created] = await Comment.findOrCreate({
-      where: {
-        sourceId: ytcomment.id,
-      },
+      where: { sourceId: ytcomment.id },
 
       defaults: {
         ownerId: owner.id,

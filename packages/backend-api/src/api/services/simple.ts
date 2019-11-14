@@ -48,9 +48,7 @@ export function createSimpleRESTService(): express.Router {
 
   router.get('/systemUsers/:type', async (req, res, next) => {
     const users = await User.findAll({
-      where: {
-        group: req.params.type,
-      },
+      where: { group: req.params.type },
     });
 
     const userdata: Array<any> = [];

@@ -72,9 +72,7 @@ export async function createArticleIfNonExistant(item: IArticleData): Promise<IA
   // Add category subscribers to the per-article subscription
   if (wasCreated) {
     const subscribedUsers = await UserCategoryAssignment.findAll({
-      where: {
-        categoryId,
-      },
+      where: { categoryId },
     });
 
     for (const assignment of subscribedUsers) {
@@ -103,9 +101,7 @@ export async function mapArticles(items: Array<IArticleData>): Promise<Array<IAr
 
 async function obtainCategoryIdByLabel(categoryLabel: string): Promise<number> {
   const category = await Category.findOne({
-    where: {
-      label: categoryLabel,
-    },
+    where: { label: categoryLabel },
   });
 
   if (!category) {
@@ -117,9 +113,7 @@ async function obtainCategoryIdByLabel(categoryLabel: string): Promise<number> {
 
 async function createCategory(categoryLabel: string): Promise<number> {
   const [category, wasCreated] = await Category.findOrCreate({
-    where: {
-      label: categoryLabel,
-    },
+    where: { label: categoryLabel },
     defaults: {
       label: categoryLabel,
       isActive: true,

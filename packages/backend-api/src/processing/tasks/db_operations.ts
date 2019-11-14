@@ -45,9 +45,7 @@ export async function getUser(userId?: number | null | undefined) {
 
 export async function getComment(commentId: number) {
   const comment = await Comment.findOne({
-    where: {
-      id: commentId,
-    },
+    where: { id: commentId },
     include: [
       { model: Article, required: true},
     ],

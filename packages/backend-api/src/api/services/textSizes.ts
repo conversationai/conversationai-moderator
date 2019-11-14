@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as express from 'express';
 import * as Joi from 'joi';
+import { Op } from 'sequelize';
 
 import { CommentSize, ICommentSizeInstance } from '../../models';
 import { validateAndSendResponse, validateRequest } from '../util/validation';
@@ -56,7 +57,7 @@ export function createTextSizesService(): express.Router {
         const commentSizes = await CommentSize.findAll({
           where: {
             commentId: {
-              $in: data,
+              [Op.in]: data,
             },
             width: widthNum,
           },
