@@ -94,7 +94,7 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
       title: 'Channel comments',
       text: 'Comments associated with the channel itself.',
       url: 'https://www.youtube.com/channel/' + channelId,
-      sourceCreatedAt: new Date(Date.parse(channel.snippet!.publishedAt!)),
+      sourceCreatedAt: new Date(channel.snippet!.publishedAt!),
     };
     const [article, acreated] = await Article.findOrCreate({
       where: {
@@ -182,7 +182,7 @@ export async function mapVideoItemToArticle(
     title: snippet.title.substring(0, 255),
     text: snippet.description,
     url: 'https://www.youtube.com/watch?v=' + videoId,
-    sourceCreatedAt: new Date(Date.parse(snippet.publishedAt)),
+    sourceCreatedAt: new Date(snippet.publishedAt),
     extra: snippet,
   };
 
@@ -236,7 +236,7 @@ async function mapCommentToComment(
       avatar: ytcomment.snippet.authorProfileImageUrl,
     };
 
-    const sourceCreatedAt = new Date(Date.parse(ytcomment.snippet.publishedAt));
+    const sourceCreatedAt = new Date(ytcomment.snippet.publishedAt);
     const defaults = {
       articleId: articleId,
       authorSourceId: ytcomment.snippet.authorChannelId.value,
