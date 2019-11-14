@@ -16,9 +16,9 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
-import { ICommentInstance } from './comment';
+import {Comment, ICommentInstance} from './comment';
 import { IBaseAttributes, IBaseInstance } from './constants';
-import { ITagInstance } from './tag';
+import { ITagInstance, Tag } from './tag';
 
 export const SCORE_SOURCE_TYPES = [
   'User',
@@ -52,9 +52,25 @@ export type ICommentScoreInstance = Sequelize.Instance<ICommentScoreAttributes> 
  */
 export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScoreAttributes>('comment_score', {
   id: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
+  },
+
+  commentId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    references: { model: Comment, key: 'id' },
+    allowNull: false,
+    onDelete: 'cascade',
+    onUpdate: 'cascade',
+  },
+
+  tagId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    references: { model: Tag, key: 'id' },
+    allowNull: false,
+    onDelete: 'cascade',
+    onUpdate: 'cascade',
   },
 
   sourceType: {

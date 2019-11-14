@@ -18,7 +18,7 @@ import * as Sequelize from 'sequelize';
 
 import { sequelize } from '../sequelize';
 import { IBaseAttributes, IBaseInstance } from './constants';
-import { IUserInstance } from './user';
+import { IUserInstance, User } from './user';
 
 export interface ICategoryAttributes extends IBaseAttributes {
   label: string;
@@ -48,8 +48,15 @@ export type ICategoryInstance = Sequelize.Instance<ICategoryAttributes> & ICateg
  * Category model
  */
 export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>('category', {
+  id: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+
   ownerId: {
     type: Sequelize.INTEGER.UNSIGNED,
+    references: { model: User, key: 'id' },
     allowNull: true,
   },
 

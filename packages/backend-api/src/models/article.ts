@@ -17,10 +17,10 @@ limitations under the License.
 import * as Sequelize from 'sequelize';
 
 import { sequelize } from '../sequelize';
-import { ICategoryInstance } from './category';
+import { Category, ICategoryInstance } from './category';
 import { IBaseAttributes, IBaseInstance } from './constants';
 import { updateHappened } from './last_update';
-import { IUserInstance } from './user';
+import { IUserInstance, User } from './user';
 
 export interface IArticleAttributes extends IBaseAttributes {
   ownerId?: number;
@@ -56,8 +56,15 @@ export type IArticleInstance = Sequelize.Instance<IArticleAttributes> & IArticle
  * Article model
  */
 export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('article', {
+  id: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+
   ownerId: {
     type: Sequelize.INTEGER.UNSIGNED,
+    references: { model: User, key: 'id' },
     allowNull: true,
   },
 
@@ -68,6 +75,7 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
 
   categoryId: {
     type: Sequelize.INTEGER.UNSIGNED,
+    references: { model: Category, key: 'id' },
     allowNull: true,
   },
 

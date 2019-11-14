@@ -47,7 +47,7 @@ export const Decision = sequelize.define<
   IDecisionAttributes
 >('decision', {
   id: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
