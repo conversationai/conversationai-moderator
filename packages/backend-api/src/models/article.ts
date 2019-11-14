@@ -56,12 +56,6 @@ export type IArticleInstance = Sequelize.Instance<IArticleAttributes> & IArticle
  * Article model
  */
 export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('article', {
-  id: {
-    type: Sequelize.BIGINT.UNSIGNED,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-
   ownerId: {
     type: Sequelize.INTEGER.UNSIGNED,
     allowNull: true,

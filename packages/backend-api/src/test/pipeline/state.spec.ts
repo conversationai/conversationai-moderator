@@ -70,7 +70,7 @@ async function shouldRecordDecision(
   assert.equal(firstDecision.status, status);
   assert.isTrue(firstDecision.isCurrentDecision);
   const article = await comment.getArticle();
-  assert.isNotNull(article.lastModeratedAt);
+  assert.isNotNull(article!.lastModeratedAt);
 
 }
 
@@ -268,7 +268,7 @@ describe('Pipeline States Tests', () => {
       assert.isTrue(updated.isHighlighted);
       assert.isTrue(updated.isBatchResolved);
       const updatedArticle = await updated.getArticle();
-      assert.isNull(updatedArticle.lastModeratedAt);
+      assert.isNull(updatedArticle!.lastModeratedAt);
     });
   });
 

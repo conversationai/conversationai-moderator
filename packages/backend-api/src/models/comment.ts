@@ -77,9 +77,9 @@ export type ICommentInstance = Sequelize.Instance<ICommentAttributes> & IComment
  */
 export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('comment', {
   id: {
-    type: Sequelize.BIGINT.UNSIGNED,
-    primaryKey: true,
-    autoIncrement: true,
+   type: Sequelize.BIGINT.UNSIGNED,
+   primaryKey: true,
+   autoIncrement: true,
   },
 
   ownerId: {

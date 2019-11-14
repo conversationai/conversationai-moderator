@@ -21,8 +21,8 @@ import { ICommentInstance } from './comment';
 import { IBaseAttributes, IBaseInstance } from './constants';
 
 export interface ICommentScoreRequestAttributes extends IBaseAttributes {
-  commentId: number;
-  userId: number;
+  commentId?: number;
+  userId?: number;
   sentAt: Date | Sequelize.fn;
   doneAt?: Date | Sequelize.fn | null;
 }

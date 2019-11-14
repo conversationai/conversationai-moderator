@@ -16,6 +16,7 @@ limitations under the License.
 
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
+import { Op } from 'sequelize';
 
 import { logger } from '../../logger';
 import { Article, Category, ICategoryInstance, IUserInstance } from '../../models';
@@ -72,7 +73,7 @@ export async function sync_playlists(
   const categories = await Category.findAll({
     where: {
       ownerId: owner.id,
-      sourceId: {ne: null},
+      sourceId: {[Op.ne]: null},
       isActive: true,
     },
   });

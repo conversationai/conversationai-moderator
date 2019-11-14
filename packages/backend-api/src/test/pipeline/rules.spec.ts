@@ -60,7 +60,7 @@ describe('Pipeline Rules Tests', () => {
       tag1.id = 1;
 
       const tag2 = Tag.build(getTagData());
-      tag2.id =2;
+      tag2.id = 2;
 
       const score1 = CommentSummaryScore.build(getCommentSummaryScoreData({tagId: 1, score: 0.57}));
       const score2 = CommentSummaryScore.build(getCommentSummaryScoreData({tagId: 2, score: 0.75}));
@@ -139,7 +139,7 @@ describe('Pipeline Rules Tests', () => {
 
         // Rules shouldn't updated lastModeratedAt
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -179,7 +179,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -230,7 +230,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -278,7 +278,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -326,7 +326,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -361,7 +361,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -409,7 +409,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -444,7 +444,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -501,7 +501,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -562,7 +562,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -610,7 +610,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -664,7 +664,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored, 'isScored');
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -727,7 +727,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored, 'isScored');
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -775,7 +775,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored, 'isScored');
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
   });
@@ -799,7 +799,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 
@@ -885,7 +885,7 @@ describe('Pipeline Rules Tests', () => {
         assert.isFalse(updated.isScored);
 
         const updatedArticle = await updated.getArticle();
-        assert.isNull(updatedArticle.lastModeratedAt);
+        assert.isNull(updatedArticle!.lastModeratedAt);
       }
     });
 

@@ -244,7 +244,9 @@ export async function processMachineScore(
   await sequelize.transaction(async (t) => {
     await Promise.all(
       commentSummaryScoresData.map((c: ICommentSummaryScoreAttributes) =>
-        CommentSummaryScore.insertOrUpdate(c, { transaction: t }),
+        // TODO: Set returning works around bug in the typescript.
+        //       Maybe fixed in later sequelize?
+        CommentSummaryScore.insertOrUpdate(c, { transaction: t, returning: false }),
       ),
     );
   });

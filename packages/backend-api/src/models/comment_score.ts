@@ -27,10 +27,10 @@ export const SCORE_SOURCE_TYPES = [
 ];
 
 export interface ICommentScoreAttributes extends IBaseAttributes {
-  commentId: number | null;
+  commentId?: number | null;
   confirmedUserId?: number;
   commentScoreRequestId?: number;
-  tagId: number | null;
+  tagId?: number | null;
   userId?: number;
   sourceType: string;
   sourceId?: string | null;

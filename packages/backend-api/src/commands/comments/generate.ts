@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { Op } from 'sequelize';
 import * as yargs from 'yargs';
 
 import { logger } from '../../logger';
@@ -148,7 +149,7 @@ export async function handler(argv: any) {
   const categories = await Category.findAll({
     where: {
       isActive: true,
-      ownerId: {$eq: null},
+      ownerId: {[Op.eq]: null},
     },
     order: [['createdAt', 'DESC']],
     limit: PREEXISTING_CATEGORIES,
@@ -156,7 +157,7 @@ export async function handler(argv: any) {
 
   const articles = await Article.findAll({
     where: {
-      ownerId: {$eq: null},
+      ownerId: {[Op.eq]: null},
     },
     order: [['createdAt', 'DESC']],
     limit: PREEXISTING_ARTICLES,
