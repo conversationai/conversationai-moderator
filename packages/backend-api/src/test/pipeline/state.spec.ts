@@ -55,9 +55,7 @@ async function shouldRecordDecision(
   source: 'User' | 'Rule',
   userId: number) {
   const foundDecisions = await Decision.findAll({
-    where: {
-      commentId: comment.id,
-    },
+    where: { commentId: comment.id },
   });
 
   assert.lengthOf(foundDecisions, 1);

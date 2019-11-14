@@ -184,21 +184,15 @@ describe('Pipeline Tests', () => {
 
       // Get scores and score requests from the database
       const scores = await CommentScore.findAll({
-          where: {
-            commentId: comment.id,
-          },
+          where: { commentId: comment.id },
           include: [Tag],
         });
       const request = await CommentScoreRequest.findOne({
-          where: {
-            id: commentScoreRequest.id,
-          },
+          where: { id: commentScoreRequest.id },
           include: [Comment],
         });
       const summaryScores = await CommentSummaryScore.findAll({
-          where: {
-            commentId: comment.id,
-          },
+          where: { commentId: comment.id },
           include: [Tag],
         });
 
@@ -385,9 +379,7 @@ describe('Pipeline Tests', () => {
       await processMachineScore(comment.id, serviceUser1.id, fakeScoreData);
 
       const commentScoreRequests = await CommentScoreRequest.findAll({
-        where: {
-          commentId: comment.id,
-        },
+        where: { commentId: comment.id },
         include: [Comment],
         order: [['id', 'ASC']],
       });
@@ -465,9 +457,7 @@ describe('Pipeline Tests', () => {
       await completeMachineScoring(comment.id);
 
       const decision = (await Decision.findOne({
-        where: {
-          commentId: comment.id,
-        },
+        where: { commentId: comment.id },
       }))!;
 
       assert.equal(decision.status, MODERATION_ACTION_REJECT);
@@ -608,9 +598,7 @@ describe('Pipeline Tests', () => {
       assert.equal(tag.label, 'Attack On Author');
 
       const instance = (await Tag.findOne({
-        where: {
-          key: keys[0],
-        },
+        where: { key: keys[0] },
       }))!;
 
       assert.equal(tag.id, instance.id);
@@ -667,9 +655,7 @@ describe('Pipeline Tests', () => {
       await recordDecision(comment, MODERATION_ACTION_ACCEPT, user);
 
       const foundDecisions = await Decision.findAll({
-        where: {
-          commentId: comment.id,
-        },
+        where: { commentId: comment.id },
       });
 
       assert.lengthOf(foundDecisions, 1);
@@ -699,9 +685,7 @@ describe('Pipeline Tests', () => {
       await recordDecision(comment, MODERATION_ACTION_REJECT, rule);
 
       const foundDecisions = await Decision.findAll({
-        where: {
-          commentId: comment.id,
-        },
+        where: { commentId: comment.id },
       });
 
       assert.lengthOf(foundDecisions, 2);

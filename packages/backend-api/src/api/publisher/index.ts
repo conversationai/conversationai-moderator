@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as express from 'express';
 import * as Joi from 'joi';
+import { Op } from 'sequelize';
 
 import { logger } from '../../logger';
 import {
@@ -90,11 +91,7 @@ export function createPublisherService(): express.Router {
   router.patch('/articles/:sourceId',
     validateDataSchema(articleUpdateSchema),
     async ({ body, params: { sourceId } }, res, next) => {
-      const article = await Article.findOne({
-        where: {
-          sourceId,
-        },
-      });
+      const article = await Article.findOne({ where: { sourceId }});
 
       if (article) {
         await article.update(body.data.attributes);
@@ -221,7 +218,7 @@ export function createPublisherService(): express.Router {
         }, {
           where: {
             id: {
-              $in: decisionIds,
+              [Op.in]: decisionIds,
             },
           },
         });

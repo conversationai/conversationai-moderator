@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { Op } from 'sequelize';
 import * as yargs from 'yargs';
 
 import { denormalizeCommentCountsForArticle, denormalizeCountsForComment } from '../../domain';
@@ -37,7 +38,7 @@ export function builder(args: yargs.Argv) {
 }
 
 export async function handler(argv: any) {
-  const comments = await Comment.findAll({where: {id: {$in: [argv._.slice(1)] }}});
+  const comments = await Comment.findAll({where: {id: {[Op.in]: [argv._.slice(1)] }}});
   for (const c of comments) {
     console.log(`Flagging ${c.id}`);
     await CommentFlag.create({

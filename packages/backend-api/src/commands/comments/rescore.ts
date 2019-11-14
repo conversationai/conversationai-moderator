@@ -35,9 +35,7 @@ export async function handler() {
     // Clear tables
     const comments = await Comment.findAll({
       attributes: ['id'],
-      where: {
-        isModerated: false,
-      },
+      where: { isModerated: false },
     });
 
     for (const c of comments) {

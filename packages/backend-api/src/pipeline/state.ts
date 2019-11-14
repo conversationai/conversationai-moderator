@@ -84,9 +84,7 @@ export function scoresComplete(commentScoreRequests: Array<ICommentScoreRequestI
 export async function getIsDoneScoring(commentId: number) {
   // Find and count all comment score requests
   const commentScoreRequests = await CommentScoreRequest.findAll({
-    where: {
-      commentId: commentId,
-    },
+    where: { commentId: commentId },
     order: [['sentAt', 'DESC']],
   });
 

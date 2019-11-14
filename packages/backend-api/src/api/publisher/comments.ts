@@ -33,9 +33,7 @@ import { enqueueSendCommentForScoringTask } from '../../processing';
 async function createCommentIfNew(commentData: any): Promise<ICommentInstance> {
   // Verify article existence
   const article = await Article.findOne({
-    where: {
-      sourceId: commentData.articleId,
-    },
+    where: { sourceId: commentData.articleId },
   });
 
   if (!article) {
@@ -53,9 +51,7 @@ async function createCommentIfNew(commentData: any): Promise<ICommentInstance> {
 
   // If article exists, find/create comment
   const [instance, created] = await Comment.findOrCreate({
-    where: {
-      sourceId: commentData.sourceId,
-    },
+    where: { sourceId: commentData.sourceId },
     defaults: commentData,
   });
 

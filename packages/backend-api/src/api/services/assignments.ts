@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as express from 'express';
+import { Op } from 'sequelize';
 
 import {
   Article,
@@ -100,10 +101,10 @@ export function createAssignmentsService(): express.Router {
     await ModeratorAssignment.destroy({
       where: {
         userId: {
-          $in: userIds,
+          [Op.in]: userIds,
         },
         articleId: {
-          $in: articleIdsInCategory,
+          [Op.in]: articleIdsInCategory,
         },
       },
     });
@@ -135,18 +136,14 @@ export function createAssignmentsService(): express.Router {
     const userIds: Array<number> = req.body.data.map((s: any) => parseInt(s, 10));
 
     const articlesInCategory: Array<IArticleInstance> = await Article.findAll({
-      where: {
-        categoryId,
-      },
+      where: { categoryId },
     });
 
     const articleIdsInCategory = articlesInCategory.map((article) => article.id);
 
     // Get assignments for the category
     const assignmentsForCategory = await UserCategoryAssignment.findAll({
-      where: {
-        categoryId,
-      },
+      where: { categoryId },
     });
 
     const userIdsToBeRemoved = assignmentsForCategory.reduce((prev: Array<number>, current: IUserCategoryAssignmentInstance): Array<number> => {
@@ -178,7 +175,7 @@ export function createAssignmentsService(): express.Router {
       await UserCategoryAssignment.destroy({
         where: {
           userId: {
-            $in: userIdsToBeRemoved,
+            [Op.in]: userIdsToBeRemoved,
           },
         },
       });
@@ -198,9 +195,7 @@ export function createAssignmentsService(): express.Router {
 
     // Get assignments for the category
     const assignments = await ModeratorAssignment.findAll({
-      where: {
-        articleId,
-      },
+      where: { articleId },
     });
 
     const toRemove = new Array<number>();
@@ -216,7 +211,7 @@ export function createAssignmentsService(): express.Router {
     }
 
     await ModeratorAssignment.bulkCreate(getArticleAssignmentArray(Array.from(userIds), [articleId]));
-    await ModeratorAssignment.destroy({where: {id: {$in: toRemove }}});
+    await ModeratorAssignment.destroy({where: {id: {[Op.in]: toRemove }}});
 
     res.json(REPLY_SUCCESS);
     partialUpdateHappened(articleId);
