@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 // Set true to send test update packets
+
 const SEND_TEST_UPDATE_PACKETS = false;
 
 import * as express from 'express';
@@ -43,6 +44,7 @@ import {
   IUserInstance,
 } from '../../models';
 import { registerInterest } from '../../models';
+import { countAssignments } from './assignments';
 
 const TAG_FIELDS = ['id', 'color', 'description', 'key', 'label', 'isInBatchView', 'inSummaryScore', 'isTaggable'];
 const RANGE_FIELDS = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'tagId'];
@@ -207,7 +209,7 @@ async function getArticleUpdate(articleId: number) {
 
 async function getPerUserData(userId: number) {
   const user = (await User.findById(userId))!;
-  const assignments = await user.countAssignments();
+  const assignments = await countAssignments(user);
 
   return {
     type: 'user',

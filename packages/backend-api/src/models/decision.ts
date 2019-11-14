@@ -72,26 +72,24 @@ export const Decision = sequelize.define<
     type: Sequelize.DATE,
     allowNull: true,
   },
-}, {
-  classMethods: {
-    associate(models: any) {
-      Decision.belongsTo(models.Comment, {
-        onDelete: 'CASCADE',
-      });
-
-      Decision.belongsTo(models.User, {
-        onDelete: 'SET NULL',
-        foreignKey: {
-          allowNull: true,
-        },
-      });
-
-      Decision.belongsTo(models.ModerationRule, {
-        onDelete: 'SET NULL',
-        foreignKey: {
-          allowNull: true,
-        },
-      });
-    },
-  },
 });
+
+Decision.associate = (models) => {
+  Decision.belongsTo(models.Comment, {
+    onDelete: 'CASCADE',
+  });
+
+  Decision.belongsTo(models.User, {
+    onDelete: 'SET NULL',
+    foreignKey: {
+      allowNull: true,
+    },
+  });
+
+  Decision.belongsTo(models.ModerationRule, {
+    onDelete: 'SET NULL',
+    foreignKey: {
+      allowNull: true,
+    },
+  });
+};

@@ -53,7 +53,6 @@ export interface IUserAttributes extends IBaseAttributes {
 export type  IUserInstance = Sequelize.Instance<IUserAttributes> & IUserAttributes & IBaseInstance & {
   getAssignedArticles: Sequelize.BelongsToManyGetAssociationsMixin<IArticleInstance>;
   countAssignedArticles: Sequelize.BelongsToManyCountAssociationsMixin;
-  countAssignments(): number;
   getAssignedCategories: Sequelize.BelongsToManyGetAssociationsMixin<ICategoryInstance>;
   countAssignedCategories: Sequelize.BelongsToManyCountAssociationsMixin;
 };
@@ -120,40 +119,6 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
     },
   },
 
-  classMethods: {
-
-    /**
-     * User relationships
-     */
-    associate(models: any) {
-      User.belongsToMany(models.Category, {
-        through: {
-          model: models.UserCategoryAssignment,
-          unique: false,
-        },
-        foreignKey: 'userId',
-      });
-
-      User.belongsToMany(models.Article, {
-        through: {
-          model: models.ModeratorAssignment,
-          unique: false,
-        },
-        foreignKey: 'userId',
-        as: 'assignedArticles',
-      });
-
-      User.belongsToMany(models.Category, {
-        through: {
-          model: models.UserCategoryAssignment,
-          unique: false,
-        },
-        foreignKey: 'userId',
-        as: 'assignedCategories',
-      });
-    },
-  },
-
   hooks: {
     afterCreate: updateHappened,
     afterDestroy: updateHappened,
@@ -162,14 +127,35 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
     afterBulkUpdate: updateHappened,
     afterBulkDestroy: updateHappened,
   },
-
-  instanceMethods: {
-    async countAssignments() {
-      const articles: Array<IArticleInstance> = await this.getAssignedArticles();
-      return articles.reduce((sum, a) => sum + a.unmoderatedCount, 0);
-    },
-  },
 });
+
+User.associate = (models: any) => {
+  User.belongsToMany(models.Category, {
+    through: {
+      model: models.UserCategoryAssignment,
+      unique: false,
+    },
+    foreignKey: 'userId',
+  });
+
+  User.belongsToMany(models.Article, {
+    through: {
+      model: models.ModeratorAssignment,
+      unique: false,
+    },
+    foreignKey: 'userId',
+    as: 'assignedArticles',
+  });
+
+  User.belongsToMany(models.Category, {
+    through: {
+      model: models.UserCategoryAssignment,
+      unique: false,
+    },
+    foreignKey: 'userId',
+    as: 'assignedCategories',
+  });
+};
 
 export function isUser(instance: any) {
   // TODO: instanceof doesn't work under some circumstances that I don't really understand.

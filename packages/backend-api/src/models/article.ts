@@ -181,29 +181,23 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     },
   ],
 
-  classMethods: {
-
-    /**
-     * Article relationships
-     */
-    associate(models: any) {
-      Article.belongsTo(models.User, {as: 'owner'});
-      Article.belongsTo(models.Category);
-      Article.hasMany(models.Comment);
-
-      Article.belongsToMany(models.User, {
-        through: {
-          model: models.ModeratorAssignment,
-          unique: false,
-        },
-        foreignKey: 'articleId',
-        as: 'assignedModerators',
-      });
-    },
-
-  },
   hooks: {
     afterCreate: updateHappened,
     afterBulkCreate: updateHappened,
   },
 });
+
+Article.associate = (models) => {
+  Article.belongsTo(models.User, {as: 'owner'});
+  Article.belongsTo(models.Category);
+  Article.hasMany(models.Comment);
+
+  Article.belongsToMany(models.User, {
+    through: {
+      model: models.ModeratorAssignment,
+      unique: false,
+    },
+    foreignKey: 'articleId',
+    as: 'assignedModerators',
+  });
+};

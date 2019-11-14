@@ -60,16 +60,10 @@ export const UserSocialAuth = sequelize.define<
       unique: true,
     },
   ],
-
-  classMethods: {
-
-    /**
-     * Comment relationships
-     */
-    associate(models: any) {
-      UserSocialAuth.belongsTo(models.User, {
-        onDelete: 'CASCADE',
-      });
-    },
-  },
 });
+
+UserSocialAuth.associate = (models) => {
+  UserSocialAuth.belongsTo(models.User, {
+    onDelete: 'CASCADE',
+  });
+};

@@ -57,17 +57,15 @@ export const ModeratorAssignment = sequelize.define<
         fields: ['userId'],
       },
     ],
-
-    classMethods: {
-      associate(models: any) {
-        ModeratorAssignment.belongsTo(models.User, {
-          onDelete: 'CASCADE',
-        });
-
-        ModeratorAssignment.belongsTo(models.Article, {
-          onDelete: 'CASCADE',
-        });
-      },
-    },
   },
 );
+
+ModeratorAssignment.associate = (models) => {
+  ModeratorAssignment.belongsTo(models.User, {
+    onDelete: 'CASCADE',
+  });
+
+  ModeratorAssignment.belongsTo(models.Article, {
+    onDelete: 'CASCADE',
+  });
+};

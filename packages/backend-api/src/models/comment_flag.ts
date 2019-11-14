@@ -101,11 +101,10 @@ export const CommentFlag = sequelize.define<ICommentFlagInstance, ICommentFlagAt
   },
 }, {
   charset: 'utf8',
-  classMethods: {
-    associate(models: any) {
-      CommentFlag.belongsTo(models.Comment, {
-        onDelete: 'CASCADE',
-      });
-    },
-  },
 });
+
+CommentFlag.associate = (models) => {
+  CommentFlag.belongsTo(models.Comment, {
+    onDelete: 'CASCADE',
+  });
+};

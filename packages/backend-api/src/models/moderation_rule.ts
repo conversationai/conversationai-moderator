@@ -83,28 +83,6 @@ export const ModerationRule = sequelize.define<
     allowNull: false,
   },
 }, {
-  classMethods: {
-    associate(models: any) {
-      ModerationRule.belongsTo(models.Category, {
-        onDelete: 'CASCADE',
-        foreignKey: {
-          allowNull: true,
-        },
-      });
-
-      ModerationRule.belongsTo(models.Tag, {
-        onDelete: 'CASCADE',
-        foreignKey: {
-          allowNull: false,
-        },
-      });
-
-      ModerationRule.belongsTo(models.User, {
-        foreignKey: 'createdBy',
-        constraints: false,
-      });
-    },
-  },
   hooks: {
     afterCreate: updateHappened,
     afterDestroy: updateHappened,
@@ -122,3 +100,24 @@ export function isModerationRule(instance: any) {
   // return instance instanceof ModerationRule.Instance;
   return instance && instance.get && !!instance.action;
 }
+
+ModerationRule.associate = (models) => {
+  ModerationRule.belongsTo(models.Category, {
+    onDelete: 'CASCADE',
+    foreignKey: {
+      allowNull: true,
+    },
+  });
+
+  ModerationRule.belongsTo(models.Tag, {
+    onDelete: 'CASCADE',
+    foreignKey: {
+      allowNull: false,
+    },
+  });
+
+  ModerationRule.belongsTo(models.User, {
+    foreignKey: 'createdBy',
+    constraints: false,
+  });
+};

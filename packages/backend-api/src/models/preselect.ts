@@ -47,28 +47,6 @@ export const Preselect = sequelize.define<
     allowNull: false,
   },
 }, {
-  classMethods: {
-    associate(models: any) {
-      Preselect.belongsTo(models.Category, {
-        onDelete: 'CASCADE',
-        foreignKey: {
-          allowNull: true,
-        },
-      });
-
-      Preselect.belongsTo(models.Tag, {
-        onDelete: 'CASCADE',
-        foreignKey: {
-          allowNull: true,
-        },
-      });
-
-      Preselect.belongsTo(models.User, {
-        foreignKey: 'createdBy',
-        constraints: false,
-      });
-    },
-  },
   hooks: {
     afterCreate: updateHappened,
     afterDestroy: updateHappened,
@@ -78,3 +56,24 @@ export const Preselect = sequelize.define<
     afterBulkDestroy: updateHappened,
   },
 });
+
+Preselect.associate = (models) => {
+  Preselect.belongsTo(models.Category, {
+    onDelete: 'CASCADE',
+    foreignKey: {
+      allowNull: true,
+    },
+  });
+
+  Preselect.belongsTo(models.Tag, {
+    onDelete: 'CASCADE',
+    foreignKey: {
+      allowNull: true,
+    },
+  });
+
+  Preselect.belongsTo(models.User, {
+    foreignKey: 'createdBy',
+    constraints: false,
+  });
+};

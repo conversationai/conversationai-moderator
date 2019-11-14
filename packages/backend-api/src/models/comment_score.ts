@@ -112,22 +112,20 @@ export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScor
       fields: ['commentId', 'score', 'tagId'],
     },
   ],
-
-  classMethods: {
-    associate(models: any) {
-      CommentScore.belongsTo(models.Comment, {
-        onDelete: 'CASCADE',
-      });
-      CommentScore.belongsTo(models.CommentScoreRequest, {
-        as: 'commentScoreRequest',
-        onDelete: 'CASCADE',
-      });
-      CommentScore.belongsTo(models.Tag, {
-        onDelete: 'CASCADE',
-      });
-      CommentScore.belongsTo(models.User, {
-        onDelete: 'SET NULL',
-      });
-    },
-  },
 });
+
+CommentScore.associate = (models) => {
+  CommentScore.belongsTo(models.Comment, {
+    onDelete: 'CASCADE',
+  });
+  CommentScore.belongsTo(models.CommentScoreRequest, {
+    as: 'commentScoreRequest',
+    onDelete: 'CASCADE',
+  });
+  CommentScore.belongsTo(models.Tag, {
+    onDelete: 'CASCADE',
+  });
+  CommentScore.belongsTo(models.User, {
+    onDelete: 'SET NULL',
+  });
+};

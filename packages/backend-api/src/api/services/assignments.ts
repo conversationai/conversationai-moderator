@@ -23,6 +23,7 @@ import {
   IModeratorAssignmentAttributes,
   IUserCategoryAssignmentAttributes,
   IUserCategoryAssignmentInstance,
+  IUserInstance,
   ModeratorAssignment,
   partialUpdateHappened,
   updateHappened,
@@ -32,6 +33,11 @@ import {
 import { REPLY_SUCCESS } from '../constants';
 import * as JSONAPI from '../jsonapi';
 import { list } from '../util/SequelizeHandler';
+
+export async function countAssignments(user: IUserInstance) {
+  const articles: Array<IArticleInstance> = await user.getAssignedArticles();
+  return articles.reduce((sum, a) => sum + a.unmoderatedCount, 0);
+}
 
 export function createAssignmentsService(): express.Router {
   const router = express.Router({
@@ -63,7 +69,7 @@ export function createAssignmentsService(): express.Router {
 
   router.get('/users/:id/count', async (req, res, next) => {
     const user = await User.findById(req.params.id);
-    const count = user ? await user.countAssignments() : 0;
+    const count = user ? await countAssignments(user) : 0;
 
     // So simple, not worth validating the schema.
     res.json({ count });

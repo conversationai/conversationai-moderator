@@ -255,61 +255,46 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
       name: 'maxSummaryScoreTagId_index',
       fields: ['maxSummaryScoreTagId'],
     },
+    {
+      name: 'comments_text',
+      type: 'FULLTEXT',
+      fields: ['text'],
+    },
   ],
+});
 
-  classMethods: {
-    addFullTextIndex() {
-      return sequelize.getQueryInterface().addIndex('comments', ['text'], {
-        indicesType: 'FULLTEXT',
-      } as any);
-    },
+Comment.associate = (models) => {
+  Comment.belongsTo(models.User, {as: 'owner'});
+  Comment.belongsTo(models.Article);
 
-    /**
-     * Comment relationships
-     */
-    associate(models: any) {
-      Comment.belongsTo(models.User, {as: 'owner'});
-      Comment.belongsTo(models.Article);
+  Comment.hasMany(models.CommentFlag, {
+    as: 'commentFlags',
+  });
 
-      Comment.hasMany(models.CommentFlag, {
-        as: 'commentFlags',
-      });
+  Comment.hasMany(models.CommentScore, {
+    as: 'commentScores',
+  });
 
-      Comment.hasMany(models.CommentScore, {
-        as: 'commentScores',
-      });
+  Comment.hasMany(models.CommentSummaryScore, {
+    as: 'commentSummaryScores',
+  });
 
-      Comment.hasMany(models.CommentSummaryScore, {
-        as: 'commentSummaryScores',
-      });
+  Comment.hasMany(models.Decision, {
+    as: 'decisions',
+  });
 
-      Comment.hasMany(models.Decision, {
-        as: 'decisions',
-      });
+  Comment.hasMany(models.CommentSize, {
+    as: 'commentSizes',
+  });
 
-      Comment.hasMany(models.CommentSize, {
-        as: 'commentSizes',
-      });
+  Comment.belongsTo(models.Comment, {
+    foreignKey: 'replyId',
+    onDelete: 'SET NULL',
+    as: 'replyTo',
+  });
 
-      Comment.belongsTo(models.Comment, {
-        foreignKey: 'replyId',
-        onDelete: 'SET NULL',
-        as: 'replyTo',
-      });
-
-      Comment.hasMany(models.Comment, {
-        foreignKey: 'replyId',
-        as: 'replies',
-      });
-
-      Comment.belongsToMany(models.Category, {
-        through: {
-          model: models.Article,
-          unique: false,
-        },
-        foreignKey: 'categoryId',
-      });
-    },
-
-  },
-}) as Sequelize.Model<ICommentInstance, ICommentAttributes> & { addFullTextIndex(): any };
+  Comment.hasMany(models.Comment, {
+    foreignKey: 'replyId',
+    as: 'replies',
+  });
+};
