@@ -46,6 +46,7 @@ export interface IUserAttributes extends IBaseAttributes {
   email?: string;
   name: string;
   isActive: boolean;
+  avatarURL?: string | null;
   extra?: any;
 }
 
