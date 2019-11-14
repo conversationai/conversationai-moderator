@@ -26,16 +26,20 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
-import {IBaseInstance} from './constants';
 
 export const CONFIGURATION_TOKEN = 'token';
 export const CONFIGURATION_GOOGLE_OAUTH = 'google-oauth';
 
 interface IConfigurationAttributes {
+  id?: string;
   data: any;
 }
 
-type IConfigurationInstance = Sequelize.Instance<IConfigurationAttributes> & IConfigurationAttributes & IBaseInstance;
+type IConfigurationInstance = Sequelize.Instance<IConfigurationAttributes> & IConfigurationAttributes & {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 const Configuration = sequelize.define<IConfigurationInstance, IConfigurationAttributes>('configuration_items', {
   id: {
