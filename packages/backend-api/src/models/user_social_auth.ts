@@ -18,6 +18,7 @@ import * as Sequelize from 'sequelize';
 
 import { sequelize } from '../sequelize';
 import { IBaseAttributes, IBaseInstance } from './constants';
+import { User } from './user';
 
 export interface IUserSocialAuthAttributes extends IBaseAttributes {
   userId?: number;
@@ -33,6 +34,12 @@ export const UserSocialAuth = sequelize.define<
   IUserSocialAuthInstance,
   IUserSocialAuthAttributes
 >('user_social_auth', {
+  userId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    references: { model: User, key: 'id' },
+    allowNull: false,
+  },
+
   socialId: {
     type: Sequelize.CHAR(255),
     allowNull: false,

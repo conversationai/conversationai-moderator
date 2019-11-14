@@ -31,7 +31,7 @@ export interface ICommentSummaryScoreAttributes extends IBaseAttributes{
 export type ICommentSummaryScoreInstance = Sequelize.Instance<ICommentSummaryScoreAttributes> &
   ICommentSummaryScoreAttributes & IBaseInstance & {
   getTag: Sequelize.BelongsToGetAssociationMixin<ITagInstance>;
-}
+};
 
 /**
  * Category model
@@ -41,7 +41,7 @@ export const CommentSummaryScore = sequelize.define<
   ICommentSummaryScoreAttributes
 >('comment_summary_score', {
   commentId: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     primaryKey: true,
   },
@@ -80,12 +80,19 @@ export const CommentSummaryScore = sequelize.define<
   ],
 });
 
+CommentSummaryScore.removeAttribute('id');
+
 CommentSummaryScore.associate = (models) => {
   CommentSummaryScore.belongsTo(models.Comment, {
     onDelete: 'CASCADE',
   });
 
   CommentSummaryScore.belongsTo(models.Tag, {
+    onDelete: 'CASCADE',
+  });
+
+  CommentSummaryScore.belongsTo(models.User, {
+    as: 'confirmedUser',
     onDelete: 'CASCADE',
   });
 };

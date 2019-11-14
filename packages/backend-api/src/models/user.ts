@@ -58,6 +58,12 @@ export type  IUserInstance = Sequelize.Instance<IUserAttributes> & IUserAttribut
 };
 
 export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
+  id: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+
   group: {
     type: Sequelize.ENUM(USER_GROUPS),
     allowNull: false,
@@ -90,6 +96,10 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
   },
 }, {
   indexes: [
+    {
+      name: 'users_email',
+      fields: ['email'],
+    },
     {
       name: 'group_index',
       fields: ['group'],

@@ -40,9 +40,19 @@ export const CommentScoreRequest = sequelize.define<
   ICommentScoreRequestAttributes
 >('comment_score_request', {
   id: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
+  },
+
+  commentId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: false,
+  },
+
+  userId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: false,
   },
 
   sentAt: {

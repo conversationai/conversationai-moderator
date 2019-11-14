@@ -16,10 +16,11 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
-import { IArticleInstance } from './article';
+import {Article, IArticleInstance} from './article';
 import { ICommentSummaryScoreInstance } from './comment_summary_score';
 import { IBaseAttributes, IBaseInstance } from './constants';
 import { IDecisionInstance } from './decision';
+import {User} from './user';
 
 export interface IAuthorAttributes {
   name: string;
@@ -77,13 +78,14 @@ export type ICommentInstance = Sequelize.Instance<ICommentAttributes> & IComment
  */
 export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('comment', {
   id: {
-   type: Sequelize.BIGINT.UNSIGNED,
+   type: Sequelize.INTEGER.UNSIGNED,
    primaryKey: true,
    autoIncrement: true,
   },
 
   ownerId: {
     type: Sequelize.INTEGER.UNSIGNED,
+    references: { model: User, key: 'id' },
     allowNull: true,
   },
 
@@ -93,9 +95,9 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
   },
 
   articleId: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: true,
-    // references: { model: Article },
+    references: { model: Article, key: 'id' },
   },
 
   replyToSourceId: {
@@ -104,7 +106,7 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
   },
 
   replyId: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
@@ -202,7 +204,7 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
   },
 
   maxSummaryScoreTagId: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: true,
   },
 }, {

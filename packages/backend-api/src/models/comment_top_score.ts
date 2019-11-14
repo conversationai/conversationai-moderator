@@ -36,7 +36,7 @@ export const CommentTopScore = sequelize.define<
   ICommentTopScoreAttributes
 >('comment_top_score', {
   commentId: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     primaryKey: true,
   },
@@ -48,7 +48,7 @@ export const CommentTopScore = sequelize.define<
   },
 
   commentScoreId: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: true,
   },
 }, {

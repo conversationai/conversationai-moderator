@@ -35,7 +35,7 @@ export const CommentSize = sequelize.define<
   ICommentSizeAttributes
 >('comment_size', {
   commentId: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
     primaryKey: true,
   },
@@ -58,6 +58,8 @@ export const CommentSize = sequelize.define<
     },
   ]},
 );
+
+CommentSize.removeAttribute('id');
 
 CommentSize.associate = (models) => {
   CommentSize.belongsTo(models.Comment, {

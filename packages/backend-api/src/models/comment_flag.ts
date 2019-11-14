@@ -41,7 +41,7 @@ export type ICommentFlagInstance = Sequelize.Instance<ICommentFlagAttributes> & 
  */
 export const CommentFlag = sequelize.define<ICommentFlagInstance, ICommentFlagAttributes>('comment_flag', {
   id: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
@@ -62,7 +62,7 @@ export const CommentFlag = sequelize.define<ICommentFlagInstance, ICommentFlagAt
   },
 
   commentId: {
-    type: Sequelize.BIGINT.UNSIGNED,
+    type: Sequelize.INTEGER.UNSIGNED,
     references: { model: Comment, key: 'id' },
     onDelete: 'cascade',
     onUpdate: 'cascade',

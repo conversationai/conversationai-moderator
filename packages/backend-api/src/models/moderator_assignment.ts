@@ -41,7 +41,7 @@ export const ModeratorAssignment = sequelize.define<
     },
 
     articleId: {
-      type: Sequelize.BIGINT.UNSIGNED,
+      type: Sequelize.INTEGER.UNSIGNED,
       allowNull: false,
     },
   },
