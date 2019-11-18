@@ -96,7 +96,7 @@ export async function cacheCommentTopScore(comment: ICommentInstance, tag: ITagI
   const topScore = calculateTopScore(scores);
 
   if (topScore) {
-    await CommentTopScore.insertOrUpdate({
+    await CommentTopScore.upsert({
       commentId: comment.id,
       tagId: tag.id,
       commentScoreId: topScore.id,

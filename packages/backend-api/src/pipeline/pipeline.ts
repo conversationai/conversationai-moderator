@@ -246,7 +246,7 @@ export async function processMachineScore(
       commentSummaryScoresData.map((c: ICommentSummaryScoreAttributes) =>
         // TODO: Set returning works around bug in the typescript.
         //       Maybe fixed in later sequelize?
-        CommentSummaryScore.insertOrUpdate(c, { transaction: t, returning: false }),
+        CommentSummaryScore.upsert(c, { transaction: t, returning: false }),
       ),
     );
   });
