@@ -16,6 +16,7 @@ limitations under the License.
 
 import {
   Comment,
+  CommentScoreRequest,
 } from '../../../models';
 
 import {
@@ -29,6 +30,7 @@ import {
 
 describe('authorCounts Functions', () => {
   beforeEach(async () => {
+    await CommentScoreRequest.destroy({where: {}});
     await Comment.destroy({where: {}});
   });
 

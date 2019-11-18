@@ -17,6 +17,7 @@ limitations under the License.
 import * as winston from 'winston';
 
 import { logger } from '../logger';
+import { quit } from '../redis';
 import { sequelize } from '../sequelize';
 
 const TEST_ENVS = ['test', 'circle_ci'];
@@ -34,19 +35,21 @@ logger.configure({
   ],
 });
 
-function cleanDatabase(done: any) {
+async function cleanDatabase() {
   if (!isTestEnv()) {
     throw new Error('Refusing to destroy database if NODE_ENV is not `test`.');
   }
 
-  sequelize.sync({ force: true }).then(() => done(), (e) => done(e));
+  await sequelize.sync({ force: true });
 }
 
-function dropDatabase(done: any) {
+async function dropDatabase() {
   if (!isTestEnv()) {
     throw new Error('Refusing to destroy database if NODE_ENV is not `test`.');
   }
-  sequelize.drop().then(done(), (e) => done(e));
+  await sequelize.drop();
+  await sequelize.close();
+  await quit();
 }
 
 before('Clean database before', cleanDatabase);

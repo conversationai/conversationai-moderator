@@ -37,14 +37,12 @@ import { promisify } from 'util';
 
 import { config } from '../config';
 import { logger } from '../logger';
+import { publish } from '../redis';
 
 // a minute in milliseconds
 const WORK_POLL_INTERVAL = 60 * 1000;
 const REDIS_WORK_TRIGGER_CHANNEL = 'work_trigger';
 export type REDIS_WORK_TRIGGER_TYPE = 'kick' | 'start' | 'reset' | 'stop';
-
-const redisClient: RedisClient = createClient(config.get('redis_url'));
-const publish = promisify(redisClient.publish).bind(redisClient);
 
 const workItems = new Map<string, (tick: number) => Promise<void>>();
 
