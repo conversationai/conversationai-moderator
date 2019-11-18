@@ -182,7 +182,7 @@ async function getAllArticlesData() {
 }
 
 async function getArticleUpdate(articleId: number) {
-  const article = await Article.findById(
+  const article = await Article.findByPk(
     articleId,
     {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
   );
@@ -191,7 +191,7 @@ async function getArticleUpdate(articleId: number) {
   }
   const aData = serialiseObject(article, ARTICLE_FIELDS);
 
-  const category = await Category.findById(
+  const category = await Category.findByPk(
     article.categoryId,
     {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
   );
@@ -208,7 +208,7 @@ async function getArticleUpdate(articleId: number) {
 }
 
 async function getPerUserData(userId: number) {
-  const user = (await User.findById(userId))!;
+  const user = (await User.findByPk(userId))!;
   const assignments = await countAssignments(user);
 
   return {

@@ -60,7 +60,7 @@ export async function handler(argv: any) {
   }
 
   try {
-    const user = await User.findById(argv.userId);
+    const user = await User.findByPk(argv.userId);
     if (!user) {
       logger.error(`No such user`);
       return;

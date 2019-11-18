@@ -62,7 +62,7 @@ describe(BASE_URL, () => {
     rejectedCount: number,
     flagsCount: number,
   ) {
-    const a1 = (await Article.findById(article.id))!;
+    const a1 = (await Article.findByPk(article.id))!;
     expect(a1.unmoderatedCount, `${x} article newCount`).equal(newCount);
     expect(a1.approvedCount, `${x} article approvedCount`).equal(approvedCount);
     expect(a1.rejectedCount, `${x} article rejectedCount`).equal(rejectedCount);
@@ -76,7 +76,7 @@ describe(BASE_URL, () => {
     unresolved: number,
     summary: {[key: string]: Array<number>},
   ) {
-    const c = (await Comment.findById(id))!;
+    const c = (await Comment.findByPk(id))!;
     if (state === 'new') {
       expect(c.isModerated, `${x} comment ${id} is moderated`).equal(false);
     }
@@ -91,7 +91,7 @@ describe(BASE_URL, () => {
   }
 
   async function checkFlag(x: string, id: number, resolved: boolean, resolvedById: number | null) {
-    const f = (await CommentFlag.findById(id))!;
+    const f = (await CommentFlag.findByPk(id))!;
     expect(f.isResolved, `${x} flag ${id} isResolved`).equal(resolved);
     expect(f.resolvedById, `${x} flag ${id} resolvedById`).equal(resolvedById);
   }

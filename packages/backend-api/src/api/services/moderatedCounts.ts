@@ -117,7 +117,7 @@ export function createModeratedCountsService(): express.Router {
     let model;
 
     try {
-      model = await Article.findById(id);
+      model = await Article.findByPk(id);
     } catch (e) {
       return Promise.reject({ error: 404 });
     }
@@ -143,7 +143,7 @@ export function createModeratedCountsService(): express.Router {
       let model;
 
       try {
-        model = await Category.findById(id);
+        model = await Category.findByPk(id);
       } catch (e) {
         return Promise.reject({ error: 404 });
       }

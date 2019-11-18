@@ -29,7 +29,7 @@ export interface IHookData {
 }
 
 async function getOwnerData(ownerId: number) {
-  const owner = await User.findById(ownerId);
+  const owner = await User.findByPk(ownerId);
   if (!owner) {
     throw new Error(`No user with ID ${ownerId}`);
   }
@@ -42,7 +42,7 @@ async function getOwnerData(ownerId: number) {
 async function executeCommentModeratedTask(data: IHookData) {
   const { owner, hook } = await getOwnerData(data.ownerId);
   if (hook && hook.commentModerated) {
-    const comment = await Comment.findById(data['commentId']);
+    const comment = await Comment.findByPk(data['commentId']);
     if (!comment) {
       throw new Error(`No comment with ID ${data['commentId']}`);
     }

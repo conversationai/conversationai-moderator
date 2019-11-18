@@ -34,7 +34,7 @@ export async function getUser(userId?: number | null | undefined) {
   if (!userId) {
     return null;
   }
-  const user = await User.findById(userId);
+  const user = await User.findByPk(userId);
 
   if (!user) {
     throw new Error(`User not found, id: ${userId}`);
@@ -59,7 +59,7 @@ export async function getComment(commentId: number) {
 }
 
 export async function getTag(tagId: number) {
-  const tag = await Tag.findById(tagId);
+  const tag = await Tag.findByPk(tagId);
 
   if (!tag) {
     throw new Error(`Tag not found, id: ${tagId}`);
@@ -104,7 +104,7 @@ export async function resolveFlagsAndDenormalize(
   userId?: number,
 ): Promise<void> {
   await resolveFlags(commentId, userId);
-  const comment = await Comment.findById(commentId);
+  const comment = await Comment.findByPk(commentId);
   if (!comment) {
     throw new Error(`No such comment ${commentId}`);
   }

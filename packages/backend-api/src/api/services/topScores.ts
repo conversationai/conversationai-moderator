@@ -71,7 +71,7 @@ export function createTopScoresService(): express.Router {
 
         const tagIdNumber = parseInt(tagId, 10);
 
-        const tag = await Tag.findById(tagIdNumber);
+        const tag = await Tag.findByPk(tagIdNumber);
         if (!tag) { throw new JSONAPI.NotFoundError(`Could not find tag ${tagId}`); }
 
         if (commentIds.length <= 0) {
