@@ -7,15 +7,16 @@ export API_URL=http://localhost:8080
 if [ -z "$1" ]; then
   FRONTEND=1
   BACKEND=1
+  PROCESSING=1
 else
   while [ -n "$1" ]; do
     if [ "$1" == frontend ]; then
       FRONTEND=1
     elif [ "$1" == backend ]; then
       BACKEND=1
-    elif [ "$1" == justweb ]; then
+    elif [ "$1" == processing ]; then
       BACKEND=1
-      JUSTWEB=1
+      PROCESSING=1
     fi
     shift
   done
@@ -33,7 +34,7 @@ if [ -n "$BACKEND" ]; then
   cd -
   cd packages/backend-api
   npx ts-node-dev --inspect=5858 src/server.ts &
-  if [ -z "$JUSTWEB" ]; then
+  if [ -n "$PROCESSING" ]; then
     npx ts-node-dev --inspect=5857 src/processor.ts &
     npx ts-node-dev --inspect=5856 src/worker.ts &
   fi

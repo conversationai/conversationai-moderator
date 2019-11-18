@@ -217,7 +217,7 @@ NODE_ENV=test bin/test
 # or you can run individual tests:
 cd packages/backend-api
 NODE_ENV=test npm run test
-NODE_ENV=test ../../node_modules/.bin/mocha 'dist/test/domain/comments/*.spec.js' --recursive --timeout 10000
+NODE_ENV=test ../../node_modules/.bin/ts-mocha 'src/test/domain/comments/*.spec.js' --recursive --timeout 10000
 ```
 
 The `bin/test` script uses lerna to first compile all the typescript to javascript,
