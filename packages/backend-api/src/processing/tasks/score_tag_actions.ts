@@ -71,7 +71,7 @@ async function executeAddTagTask(data: IAddTagData) {
 async function executeRemoveTagTask(data: ICommentScoreData) {
   const { commentScoreId } = data;
 
-  const cs = await CommentScore.findById(commentScoreId);
+  const cs = await CommentScore.findByPk(commentScoreId);
 
   if (!cs) {
     throw new Error(`Comment Score Not found, id: ${commentScoreId}`);
@@ -97,7 +97,7 @@ export async function executeResetTagTask(data: ICommentScoreData) {
   const { commentScoreId } = data;
 
   // Confirm Comment Score Exists
-  const cs = await CommentScore.findById(commentScoreId);
+  const cs = await CommentScore.findByPk(commentScoreId);
 
   if (!cs) { return; }
 
@@ -112,7 +112,7 @@ export async function executeConfirmTagTask(data: IUserCommentScoreData) {
   const { commentScoreId, userId } = data;
 
   // Confirm Comment Score Exists
-  const cs = await CommentScore.findById(commentScoreId);
+  const cs = await CommentScore.findByPk(commentScoreId);
 
   if (!cs) { return; }
 
@@ -127,7 +127,7 @@ export async function executeConfirmTagTask(data: IUserCommentScoreData) {
 export async function executeRejectTagTask(data: IUserCommentScoreData) {
   const { commentScoreId, userId } = data;
 
-  const cs = await CommentScore.findById(commentScoreId);
+  const cs = await CommentScore.findByPk(commentScoreId);
 
   if (!cs) { return; }
 

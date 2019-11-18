@@ -70,7 +70,7 @@ export async function calculateTopScores(comments: Array<ICommentInstance>, tagI
 
     if (!topScore) { return sum; }
 
-    const score = await CommentScore.findById(topScore.commentScoreId);
+    const score = await CommentScore.findByPk(topScore.commentScoreId);
 
     if (!score) { return sum; }
 

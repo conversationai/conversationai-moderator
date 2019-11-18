@@ -420,9 +420,9 @@ describe('Pipeline Tests', () => {
 
       await completeMachineScoring(comment.id);
 
-      const updatedCategory = (await Category.findById(category.id))!;
-      const updatedArticle = (await Article.findById(article.id))!;
-      const updatedComment = (await Comment.findById(comment.id))!;
+      const updatedCategory = (await Category.findByPk(category.id))!;
+      const updatedArticle = (await Article.findByPk(article.id))!;
+      const updatedComment = (await Comment.findByPk(comment.id))!;
 
       assert.isTrue(updatedComment.isAutoResolved, 'comment isAutoResolved');
       assert.equal(updatedComment.unresolvedFlagsCount, 0, 'comment unresolvedFlagsCount');

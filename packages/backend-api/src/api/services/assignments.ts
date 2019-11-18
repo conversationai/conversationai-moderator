@@ -47,7 +47,7 @@ export function createAssignmentsService(): express.Router {
 
   router.get('/users/:id', JSONAPI.handleGet(
     async ({ params: { id } }, paging, include, filters, sort, fields) => {
-      const user = await User.findById(id);
+      const user = await User.findByPk(id);
 
       return await list(
         'articles', {
@@ -68,7 +68,7 @@ export function createAssignmentsService(): express.Router {
   ));
 
   router.get('/users/:id/count', async (req, res, next) => {
-    const user = await User.findById(req.params.id);
+    const user = await User.findByPk(req.params.id);
     const count = user ? await countAssignments(user) : 0;
 
     // So simple, not worth validating the schema.
@@ -79,7 +79,7 @@ export function createAssignmentsService(): express.Router {
 
   router.get('/articles/:id', JSONAPI.handleGet(
     async ({ params: { id } }, paging, include, filters, sort, fields) => {
-      const article = await Article.findById(id);
+      const article = await Article.findByPk(id);
 
       return await list(
         'users',

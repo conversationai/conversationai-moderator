@@ -68,7 +68,7 @@ export async function sortComments<T extends ICommentScoredOrDated>(data: Array<
  * Get the max score for each comment across all categories given a tag.
  */
 export async function getHistogramScoresForAllCategories(tagId: number): Promise<Array<ICommentScored>> {
-  const tag = await Tag.findById(tagId);
+  const tag = await Tag.findByPk(tagId);
   if (!tag) { throw new JSONAPI.NotFoundError(`Could not find tag ${tagId}`); }
 
   return sequelizeInstance.query(
@@ -111,10 +111,10 @@ export async function getHistogramScoresForCategory(categoryId: number | 'all', 
     return getHistogramScoresForAllCategories(tagId);
   }
 
-  const category = await Category.findById(categoryId);
+  const category = await Category.findByPk(categoryId);
   if (!category) { throw new JSONAPI.NotFoundError(`Could not find category ${categoryId}`); }
 
-  const tag = await Tag.findById(tagId);
+  const tag = await Tag.findByPk(tagId);
   if (!tag) { throw new JSONAPI.NotFoundError(`Could not find tag ${tagId}`); }
 
   return sequelizeInstance.query(
@@ -146,7 +146,7 @@ export async function getHistogramScoresForCategoryByDate(categoryId: number | '
     return getHistogramScoresForAllCategoriesByDate();
   }
 
-  const category = await Category.findById(categoryId);
+  const category = await Category.findByPk(categoryId);
   if (!category) { throw new JSONAPI.NotFoundError(`Could not find category ${categoryId}`); }
 
   return sequelizeInstance.query(
@@ -185,7 +185,7 @@ export async function getAllCommentsForCategory(categoryId: number | 'all'): Pro
     return getAllCommentsForAllCategories();
   }
 
-  const category = await Category.findById(categoryId);
+  const category = await Category.findByPk(categoryId);
   if (!category) { throw new JSONAPI.NotFoundError(`Could not find category ${categoryId}`); }
 
   return sequelizeInstance.query(
@@ -206,10 +206,10 @@ export async function getAllCommentsForCategory(categoryId: number | 'all'): Pro
  * Get the max score for each comment in an article given a tag.
  */
 export async function getHistogramScoresForArticle(articleId: number, tagId: number): Promise<Array<ICommentScored>> {
-  const article = await Article.findById(articleId);
+  const article = await Article.findByPk(articleId);
   if (!article) { throw new JSONAPI.NotFoundError(`Could not find article ${articleId}`); }
 
-  const tag = await Tag.findById(tagId);
+  const tag = await Tag.findByPk(tagId);
   if (!tag) { throw new JSONAPI.NotFoundError(`Could not find tag ${tagId}`); }
 
   return sequelizeInstance.query(
@@ -235,7 +235,7 @@ export async function getHistogramScoresForArticle(articleId: number, tagId: num
  * Get the max score for each comment in an article, regardless of state or tag.
  */
 export async function getHistogramScoresForArticleByDate(articleId: number): Promise<Array<ICommentDated>> {
-  const article = await Article.findById(articleId);
+  const article = await Article.findByPk(articleId);
   if (!article) { throw new JSONAPI.NotFoundError(`Could not find article ${articleId}`); }
 
   return sequelizeInstance.query(
@@ -256,7 +256,7 @@ export async function getHistogramScoresForArticleByDate(articleId: number): Pro
  * Get all comment ids that are in an article.
  */
 export async function getAllCommentsForArticle(articleId: number): Promise<Array<ICommentScored>> {
-  const article = await Article.findById(articleId);
+  const article = await Article.findByPk(articleId);
   if (!article) { throw new JSONAPI.NotFoundError(`Could not find article ${articleId}`); }
 
   return sequelizeInstance.query(
@@ -276,7 +276,7 @@ export async function getAllCommentsForArticle(articleId: number): Promise<Array
  * Get the max summary score for each comment in an article, regardless of state or tag.
  */
 export async function getMaxSummaryScoreForArticle(articleId: number): Promise<Array<ICommentScored>> {
-  const article = await Article.findById(articleId);
+  const article = await Article.findByPk(articleId);
   if (!article) { throw new JSONAPI.NotFoundError(`Could not find article ${articleId}`); }
 
   return sequelizeInstance.query(
@@ -322,7 +322,7 @@ export async function getMaxSummaryScoreForCategory(categoryId: number | 'all'):
     return getMaxHistogramScoresForAllCategories();
   }
 
-  const category = await Category.findById(categoryId);
+  const category = await Category.findByPk(categoryId);
   if (!category) { throw new JSONAPI.NotFoundError(`Could not find category ${categoryId}`); }
 
   return sequelizeInstance.query(

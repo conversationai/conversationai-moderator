@@ -48,7 +48,7 @@ export function createEditCommentTextService(): express.Router {
       try {
         const { commentId, text, authorName, authorLocation } = body.data;
         const parsedCommentId = parseInt(commentId, 10);
-        const comment = await Comment.findById(parsedCommentId);
+        const comment = await Comment.findByPk(parsedCommentId);
 
         if (!comment) {
           res.status(404).json({ status: 'error', errors: 'comment not found' });

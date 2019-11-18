@@ -28,7 +28,7 @@ async function executeSendCommentForScoringTask(data: ISendCommentForScoringTask
 
   logger.info(`sendCommentForScoringTask: Looking for ${commentId}`);
 
-  const comment = await Comment.findById(commentId, {
+  const comment = await Comment.findByPk(commentId, {
     include: [
       Article,
       {

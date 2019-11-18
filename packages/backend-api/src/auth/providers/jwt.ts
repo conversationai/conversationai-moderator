@@ -31,7 +31,7 @@ export async function verifyJWT(jwtPayload: any): Promise<IUserInstance> {
     throw new Error('Invalid token');
   }
 
-  const user = await User.findById(jwtPayload.user);
+  const user = await User.findByPk(jwtPayload.user);
 
   if (user) {
     if (isValidUser(user)) {

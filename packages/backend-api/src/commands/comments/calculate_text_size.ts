@@ -40,7 +40,7 @@ export async function handler(argv: any) {
   logger.info(`Calculating comment (${commentId}) text size at ${width}`);
 
   try {
-    const comment = await Comment.findById(commentId, {
+    const comment = await Comment.findByPk(commentId, {
       attributes: ['id', 'text'],
     });
 

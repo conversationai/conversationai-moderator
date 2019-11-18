@@ -39,7 +39,7 @@ export async function filterTopScoresByTaggingSensitivity(maxScores: ITopScores,
   const fetchComment = getComment || (async (commentId: string): Promise<ICommentInstance | null> => {
     const id = parseInt(commentId, 10);
 
-    return Comment.findById(
+    return Comment.findByPk(
       parseInt(maxScores[id].commentId.toString(), 10),
       { include: [Article] },
     );

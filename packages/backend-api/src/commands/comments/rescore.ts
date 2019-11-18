@@ -39,7 +39,7 @@ export async function handler() {
     });
 
     for (const c of comments) {
-      const comment = (await Comment.findById(c.id))!;
+      const comment = (await Comment.findByPk(c.id))!;
       await resendForScoring(comment);
 
       logger.info(`Rescored comment ${c.id}`);

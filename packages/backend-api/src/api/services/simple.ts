@@ -73,7 +73,7 @@ export function createSimpleRESTService(): express.Router {
 
   router.post('/user/update/:id', async (req, res, next) => {
     const userId = parseInt(req.params.id, 10);
-    const user = await User.findById(userId);
+    const user = await User.findByPk(userId);
     if (!user) {
       res.status(404).send('Not found');
       next();
@@ -109,7 +109,7 @@ export function createSimpleRESTService(): express.Router {
 
   router.post('/article/update/:id', async (req, res, next) => {
     const articleId = parseInt(req.params.id, 10);
-    const article = await Article.findById(articleId);
+    const article = await Article.findByPk(articleId);
     if (!article) {
       res.status(404).send('Not found');
       next();
@@ -127,7 +127,7 @@ export function createSimpleRESTService(): express.Router {
 
   router.get('/article/:id/text', async (req, res, next) => {
     const articleId = parseInt(req.params.id, 10);
-    const article = await Article.findById(articleId);
+    const article = await Article.findByPk(articleId);
     if (!article) {
       res.status(404).send('Not found');
       next();

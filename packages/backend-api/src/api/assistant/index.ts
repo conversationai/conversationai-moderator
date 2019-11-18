@@ -48,7 +48,7 @@ export function createAssistant(): express.Router {
       };
 
       // Obtain information about the score request by ID
-      const scoreRequest = await CommentScoreRequest.findById(id);
+      const scoreRequest = await CommentScoreRequest.findByPk(id);
 
       if (scoreRequest) {
         await enqueueProcessMachineScoreTask(

@@ -126,7 +126,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -167,7 +167,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -218,7 +218,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -266,7 +266,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -314,7 +314,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -349,7 +349,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -397,7 +397,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -432,7 +432,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = (await Comment.findById(comment.id));
+      const updated = (await Comment.findByPk(comment.id));
       assert.isNotNull(updated);
 
       if (updated) {
@@ -489,7 +489,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -550,7 +550,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -598,7 +598,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -652,7 +652,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -715,7 +715,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -763,7 +763,7 @@ describe('Pipeline Rules Tests', () => {
       ];
 
       await resolveComment(comment, scores, rules);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -787,7 +787,7 @@ describe('Pipeline Rules Tests', () => {
       const comment = await createComment({ articleId: article.id });
 
       await processRulesForComment(comment);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -819,7 +819,7 @@ describe('Pipeline Rules Tests', () => {
       ]);
 
       await processRulesForComment(comment);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -873,7 +873,7 @@ describe('Pipeline Rules Tests', () => {
       ]);
 
       await processRulesForComment(comment);
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
 
       if (updated) {
@@ -930,7 +930,7 @@ describe('Pipeline Rules Tests', () => {
 
       await processRulesForComment(comment);
 
-      const updated = await Comment.findById(comment.id);
+      const updated = await Comment.findByPk(comment.id);
       assert.isNotNull(updated);
       if (updated) {
         assert.isNull(updated.isAccepted);

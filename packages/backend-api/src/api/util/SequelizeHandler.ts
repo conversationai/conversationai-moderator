@@ -165,7 +165,7 @@ export async function get(
 
   let row;
   try {
-    row = await model.findById(id, {
+    row = await model.findByPk(id, {
       include: includesForModel(model, include),
       attributes: { exclude: fields['extra'] ? EXCLUDED_ATTRIBUTES_WITHOUT_EXTRA : EXCLUDED_ATTRIBUTES },
     });
@@ -204,7 +204,7 @@ export async function listRelationships(
 
   let modelInstance;
   try {
-    modelInstance = await model.findById(id, {
+    modelInstance = await model.findByPk(id, {
       attributes: { exclude: fields['extra'] ? EXCLUDED_ATTRIBUTES_WITHOUT_EXTRA : EXCLUDED_ATTRIBUTES },
     });
   } catch (e) {
@@ -328,7 +328,7 @@ export async function addRelationships(
 
   let modelInstance;
   try {
-    modelInstance = await model.findById(id, {
+    modelInstance = await model.findByPk(id, {
       attributes: { exclude: EXCLUDED_ATTRIBUTES },
     });
   } catch (e) {
@@ -349,7 +349,7 @@ export async function update(
 
   let modelInstance;
   try {
-    modelInstance = await model.findById(id, {
+    modelInstance = await model.findByPk(id, {
       attributes: { EXCLUDED_ATTRIBUTES },
     });
   } catch (e) {
@@ -382,7 +382,7 @@ export async function updateRelationships(
 
   let modelInstance;
   try {
-    modelInstance = await model.findById(id, {
+    modelInstance = await model.findByPk(id, {
       attributes: { EXCLUDED_ATTRIBUTES },
     });
   } catch (e) {
@@ -405,7 +405,7 @@ export async function destroy(type: string, id: string): Promise<void> {
 
   let modelInstance;
   try {
-    modelInstance = await model.findById(id, {
+    modelInstance = await model.findByPk(id, {
       attributes: { EXCLUDED_ATTRIBUTES },
     });
   } catch (e) {
@@ -433,7 +433,7 @@ export async function destroyRelationships(
 
   let modelInstance;
   try {
-    modelInstance = await model.findById(id, {
+    modelInstance = await model.findByPk(id, {
       attributes: { EXCLUDED_ATTRIBUTES },
     });
   } catch (e) {
