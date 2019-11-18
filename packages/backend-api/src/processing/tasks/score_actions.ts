@@ -54,7 +54,7 @@ async function executeTagCommentSummaryScoresTask(data: ITagCommentsData) {
 
   logger.info(`Run tag comment process with comment id ${comment.id} and tag id ${tag.id}`);
 
-  await CommentSummaryScore.insertOrUpdate({
+  await CommentSummaryScore.upsert({
     commentId: comment.id,
     tagId: tag.id,
     score: 1,
