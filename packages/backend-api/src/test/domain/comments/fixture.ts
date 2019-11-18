@@ -151,6 +151,7 @@ export async function createModeratorUser(data: Partial<IUserAttributes> = {}): 
     extra: {
       endpointType: ENDPOINT_TYPE_PROXY,
       endpoint: 'http://www.google.com',
+      apiKey: 'sdf',
     },
     ...data,
   });

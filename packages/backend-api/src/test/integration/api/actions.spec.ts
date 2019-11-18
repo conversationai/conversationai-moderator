@@ -86,7 +86,7 @@ describe(BASE_URL, () => {
     }
 
     expect(c.unresolvedFlagsCount, `${x} comment ${id} unresolved`).equals(unresolved);
-    const s = JSON.parse(c.flagsSummary! as string);
+    const s = c.flagsSummary;
     expect(s, `${x} comment ${id} summary`).deep.equal(summary);
   }
 

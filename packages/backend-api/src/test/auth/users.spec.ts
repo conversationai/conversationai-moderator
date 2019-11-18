@@ -119,7 +119,7 @@ describe('Auth Domain Users Tests', function() {
       assert.equal(userSocialAuth.userId, createdUser.id);
       assert.equal(userSocialAuth.provider, userSocialAuthData.provider);
       assert.equal(userSocialAuth.socialId, userSocialAuthData.socialId);
-      assert.deepEqual(JSON.parse(userSocialAuth.extra), userSocialAuthData.extra);
+      assert.deepEqual(userSocialAuth.extra, userSocialAuthData.extra);
     });
 
     it('should not allow multiple social auth records for the same user from the same provider', async () => {

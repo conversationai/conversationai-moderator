@@ -24,7 +24,7 @@ export interface IUserSocialAuthAttributes extends IBaseAttributes {
   userId?: number;
   socialId: string;
   provider: string;
-  extra?: any;
+  extra?: object | null;
 }
 
 export type IUserSocialAuthInstance = Sequelize.Instance<IUserSocialAuthAttributes> &

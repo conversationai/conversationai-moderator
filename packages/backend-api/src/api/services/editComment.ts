@@ -56,7 +56,7 @@ export function createEditCommentTextService(): express.Router {
           return;
         }
 
-        const author = JSON.parse(comment.author as string);
+        const author = comment.author;
         author.name =  authorName ? authorName : author.name;
         author.location = authorLocation ? authorLocation : author.location;
 

@@ -19,7 +19,7 @@ import * as yargs from 'yargs';
 import { logger } from '../../logger';
 import {
   ENDPOINT_TYPE_API,
-  ENDPOINT_TYPE_PROXY,
+  ENDPOINT_TYPE_PROXY, IScorerExtra,
   User,
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
@@ -69,8 +69,9 @@ export async function handler(argv: any) {
   };
 
   if (data.group === USER_GROUP_MODERATOR) {
-    const extra: any = {};
-    extra.endpointType = argv.moderatorType;
+    const extra: Partial<IScorerExtra> = {
+      endpointType: argv.moderatorType,
+    };
 
     if (extra.endpointType !== ENDPOINT_TYPE_API && extra.endpointType !== ENDPOINT_TYPE_PROXY) {
       console.log(`User creation error: unknown moderator-type: ${extra.endpointType}\n`);

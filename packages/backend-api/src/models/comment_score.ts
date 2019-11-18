@@ -16,7 +16,7 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
-import {Comment, ICommentInstance} from './comment';
+import { Comment, ICommentInstance } from './comment';
 import { IBaseAttributes, IBaseInstance } from './constants';
 import { ITagInstance, Tag } from './tag';
 
@@ -38,7 +38,7 @@ export interface ICommentScoreAttributes extends IBaseAttributes {
   annotationStart?: number | null;
   annotationEnd?: number | null;
   isConfirmed?: boolean | null;
-  extra?: any | null;
+  extra?: object | null;
 }
 
 export type ICommentScoreInstance = Sequelize.Instance<ICommentScoreAttributes> &

@@ -77,7 +77,7 @@ export function createShim(
     processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>,
     ) {
   const serviceUserId = scorer.id;
-  const extra: any = JSON.parse(scorer.extra);
+  const extra: any = scorer.extra;
   const endpoint = extra.endpoint;
   const apiURL = rtrim(config.get('api_url'), '/');
   const apiKey = extra.apiKey;

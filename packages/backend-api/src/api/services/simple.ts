@@ -58,8 +58,8 @@ export function createSimpleRESTService(): express.Router {
         const token = await createToken(u.id);
         simple.extra = {jwt: token};
       }
-      else {
-        simple.extra = JSON.parse(u.extra);
+      else if (u.extra) {
+        simple.extra = u.extra as object;
         // Make sure we don't send any access tokens out.
         delete simple.extra.token;
       }

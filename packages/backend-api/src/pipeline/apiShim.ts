@@ -21,7 +21,7 @@ import * as striptags  from 'striptags';
 
 import { logger } from '../logger';
 import {
-  ICommentInstance,
+  ICommentInstance, IRequestedAttributes, IScorerExtra,
   IUserInstance,
 } from '../models';
 import { IScoreData } from './shim';
@@ -32,13 +32,6 @@ Bluebird.promisifyAll(request);
 // Perspective API request types.
 interface ITextEntry {
   text: string;
-}
-
-interface IRequestedAttributes {
-  [attribute: string]:  {
-    scoreType?: string;
-    scoreThreshold?: number;
-  };
 }
 
 interface IAnalyzeCommentRequest {
@@ -86,7 +79,7 @@ export async function createShim(
     processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>,
     ) {
   const serviceUserId = scorer.id;
-  const extra: any = JSON.parse(scorer.extra);
+  const extra = scorer.extra as IScorerExtra;
   const discoveryURL = extra.endpoint;
   const apiKey = extra.apiKey;
   const attributes = extra.attributes;
@@ -96,7 +89,7 @@ export async function createShim(
     const req: IAnalyzeCommentRequest = {
       comment: {text: striptags(comment.text)},
       context: {entries: []},
-      requestedAttributes: attributes,
+      requestedAttributes: attributes!,
       languages: ['en'],
       clientToken: userAgent + '_request' + reqId,
       spanAnnotations: true,

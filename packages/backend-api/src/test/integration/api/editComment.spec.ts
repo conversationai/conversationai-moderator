@@ -88,7 +88,7 @@ describe(URL, () => {
             });
 
             const updatedComment = await Comment.findOne({ where: { id: comment.id }});
-            const { name, location } = JSON.parse(updatedComment!.author as string);
+            const { name, location } = updatedComment!.author;
 
             expect(status).to.be.equal(200);
             expect(updatedComment!.text).to.be.equal(updatedText);

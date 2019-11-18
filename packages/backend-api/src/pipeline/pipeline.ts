@@ -34,7 +34,7 @@ import {
   ICommentSummaryScoreAttributes,
   IDecisionInstance,
   IModerationRuleInstance,
-  IResolution,
+  IResolution, IScorerExtra,
   isModerationRule,
   isUser,
   ITagAttributes,
@@ -75,7 +75,7 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
 
     let shim = shims.get(scorer.id);
     if (!shim) {
-      const extra: any = JSON.parse(scorer.extra);
+      const extra = scorer.extra as IScorerExtra;
 
       if (!extra) {
         logger.error(`Missing endpoint config for scorer ${scorer.id}`);
@@ -89,7 +89,7 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
         shim = await createProxyShim(scorer, processMachineScore);
       }
       else {
-        logger.error(`Unknown moderator endpoint type: ${extra['endpoint']} for scorer ${scorer.id}`);
+        logger.error(`Unknown moderator endpoint type: ${extra.endpoint} for scorer ${scorer.id}`);
         return;
       }
       shims.set(scorer.id, shim);

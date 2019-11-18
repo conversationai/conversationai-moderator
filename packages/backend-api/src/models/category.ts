@@ -25,7 +25,7 @@ export interface ICategoryAttributes extends IBaseAttributes {
   ownerId?: number;
   sourceId?: string;
   isActive?: boolean;
-  extra?: any;
+  extra?: object | null;
   allCount: number;
   unprocessedCount: number;
   unmoderatedCount: number;
