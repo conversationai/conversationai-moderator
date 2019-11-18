@@ -18,7 +18,7 @@ import { pick } from 'lodash';
 import { Op } from 'sequelize';
 
 import { logger } from '../../logger';
-import { Article, Category, Comment, RESET_COUNTS, updateHappened } from '../../models';
+import {Article, Category, Comment, IIntegrationExtra, RESET_COUNTS, updateHappened} from '../../models';
 import {
   IAuthorAttributes,
   IUserInstance,
@@ -37,7 +37,7 @@ export async function saveError(owner: IUserInstance, error: Error) {
     testCallback('error', error);
     return;
   }
-  const extra = JSON.parse(owner.extra);
+  const extra = owner.extra as IIntegrationExtra;
   extra.lastError = pick(error, ['name', 'message']);
   owner.isActive = false;
   owner.extra = extra;
@@ -45,7 +45,7 @@ export async function saveError(owner: IUserInstance, error: Error) {
 }
 
 export async function clearError(owner: IUserInstance) {
-  const extra = JSON.parse(owner.extra);
+  const extra = owner.extra as IIntegrationExtra;
   delete extra.lastError;
   owner.extra = extra;
   await owner.save();

@@ -32,7 +32,7 @@ export interface IArticleAttributes extends IBaseAttributes {
   sourceCreatedAt?: Date | null;
   isCommentingEnabled: boolean;
   isAutoModerated: boolean;
-  extra?: any | null;
+  extra?: object | null;
   allCount: number;
   unprocessedCount: number;
   unmoderatedCount: number;

@@ -31,7 +31,7 @@ export interface ICommentFlagAttributes extends IBaseAttributes {
   isResolved: boolean;
   resolvedById?: number;
   resolvedAt?: Date | null;
-  extra?: any;
+  extra?: object | null;
 }
 
 export type ICommentFlagInstance = Sequelize.Instance<ICommentFlagAttributes> & ICommentFlagAttributes & IBaseInstance;

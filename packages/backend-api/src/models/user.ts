@@ -41,13 +41,38 @@ export const USER_GROUPS = [
 export const ENDPOINT_TYPE_PROXY = 'perspective-proxy';
 export const ENDPOINT_TYPE_API = 'perspective-api';
 
+export interface IRequestedAttributes {
+  [attribute: string]:  {
+    scoreType?: string;
+    scoreThreshold?: number;
+  };
+}
+
+export interface IScorerExtra {
+  endpointType: string;
+  apiKey: string;
+  endpoint: string;
+  userAgent?: string;
+  attributes?: IRequestedAttributes;
+}
+
+export interface IIntegrationExtra {
+  token?: any;
+  lastError?: {name: string, message: string};
+  isActive?: boolean;
+}
+
+export interface IServiceExtra {
+  jwt: any;
+}
+
 export interface IUserAttributes extends IBaseAttributes {
   group: string;
   email?: string;
   name: string;
   isActive: boolean;
   avatarURL?: string | null;
-  extra?: any;
+  extra?: IScorerExtra | IIntegrationExtra | IServiceExtra | null;
 }
 
 export type  IUserInstance = Sequelize.Instance<IUserAttributes> & IUserAttributes & IBaseInstance & {

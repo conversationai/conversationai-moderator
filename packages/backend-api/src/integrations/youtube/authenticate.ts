@@ -19,7 +19,7 @@ import { google } from 'googleapis';
 
 import { getOAuthConfiguration } from '../../auth/config';
 import { logger } from '../../logger';
-import { IUserInstance, User, USER_GROUP_YOUTUBE } from '../../models';
+import { IIntegrationExtra, IUserInstance, User, USER_GROUP_YOUTUBE } from '../../models';
 
 export const SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl'];
 
@@ -34,7 +34,7 @@ export async function for_one_youtube_user(
 
   const oauth2Client = new google.auth.OAuth2(oauthConfig.id, oauthConfig.secret);
   logger.info(`Youtube: Authenticating as: ${user.id}:${user.email} (${user.name})`);
-  const extra = JSON.parse(user.extra);
+  const extra = user.extra as IIntegrationExtra;
   oauth2Client.setCredentials(extra.token);
   await callback(user, oauth2Client);
 }

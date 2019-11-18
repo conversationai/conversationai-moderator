@@ -558,14 +558,6 @@ async function serializeRow(row: any, relationships: any, fields: any, include?:
 
   const data = row.toJSON();
 
-  if (data['extra']) {
-    data['extra'] = JSON.parse(data['extra']);
-  }
-
-  if (data['flagsSummary']) {
-    data['flagsSummary'] = JSON.parse(data['flagsSummary']);
-  }
-
   const rels = Object.keys(relationships).map((key) => {
     if (relationships[key].isMultiAssociation) {
       const isRequested = include && include.indexOf(key) !== -1;

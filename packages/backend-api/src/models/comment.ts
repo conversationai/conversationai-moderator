@@ -16,11 +16,11 @@ limitations under the License.
 
 import * as Sequelize from 'sequelize';
 import { sequelize } from '../sequelize';
-import {Article, IArticleInstance} from './article';
+import { Article, IArticleInstance } from './article';
 import { ICommentSummaryScoreInstance } from './comment_summary_score';
 import { IBaseAttributes, IBaseInstance } from './constants';
 import { IDecisionInstance } from './decision';
-import {User} from './user';
+import { User } from './user';
 
 export interface IAuthorAttributes {
   name: string;
@@ -45,10 +45,7 @@ export interface ICommentAttributes extends IBaseAttributes {
   replyId?: number | null;
   authorSourceId: string;
   text: string;
-  author: string | IAuthorAttributes;
-               // TODO:  Actually, this must be an IAuthorAttributes, or client will not be happy.
-               //        But current version of Sequelize fetches JSON data as strings that we have to decode
-               //        May be able to fix this in a later version of Sequelize
+  author: IAuthorAttributes;
   isModerated?: boolean;
   isScored?: boolean;
   isAccepted?: boolean | null;
@@ -57,11 +54,11 @@ export interface ICommentAttributes extends IBaseAttributes {
   isBatchResolved?: boolean | null;
   isAutoResolved?: boolean | null;
   unresolvedFlagsCount?: number;
-  flagsSummary?: string | IFlagSummary;
+  flagsSummary?: IFlagSummary | null;
   sourceCreatedAt: Date | null | Sequelize.fn;
   sentForScoring?: string | null | Sequelize.fn;
   sentBackToPublisher?: Date | null | Sequelize.fn;
-  extra?: any | null;
+  extra?: object | null;
   maxSummaryScore?: number | null;
   maxSummaryScoreTagId?: string | null;
 }

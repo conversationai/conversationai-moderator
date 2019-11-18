@@ -32,7 +32,7 @@ export const CONFIGURATION_GOOGLE_OAUTH = 'google-oauth';
 
 interface IConfigurationAttributes {
   id?: string;
-  data: any;
+  data: object;
 }
 
 type IConfigurationInstance = Sequelize.Instance<IConfigurationAttributes> & IConfigurationAttributes & {
@@ -59,7 +59,7 @@ export async function getConfigItem(itemId: string): Promise<object | null> {
     return null;
   }
 
-  return JSON.parse(item.get('data'));
+  return item.data;
 }
 
 export async function setConfigItem(itemId: string, data: object): Promise<void> {
