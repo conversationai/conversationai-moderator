@@ -17,9 +17,9 @@ limitations under the License.
 'use strict';
 
 module.exports = {
-  up: function (queryInterface, Sequelize) {
+  up: async function (queryInterface, Sequelize) {
   },
 
-  down: function (queryInterface, Sequelize) {
+  down: async function (queryInterface, Sequelize) {
   }
 };

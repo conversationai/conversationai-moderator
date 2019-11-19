@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = {
-  up: function (queryInterface, Sequelize) {
-    queryInterface.addColumn(
+  up: async function (queryInterface, Sequelize) {
+    await queryInterface.addColumn(
       'categories',
       'sourceId',
       {
@@ -12,7 +12,7 @@ module.exports = {
     );
   },
 
-  down: function (queryInterface, Sequelize) {
-    queryInterface.removeColumn('categories', 'sourceId');
+  down: async function (queryInterface, Sequelize) {
+    await queryInterface.removeColumn('categories', 'sourceId');
   }
 };
