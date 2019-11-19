@@ -18,4 +18,7 @@ limitations under the License.
 
 'use strict';
 const { sequelize } = require('../dist/sequelize-sync');
-sequelize.sync({ force: true });
+(async () => {
+  await sequelize.sync({ force: true });
+  await sequelize.close();
+})();
