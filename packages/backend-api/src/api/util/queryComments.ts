@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as Bluebird from 'bluebird';
+import { Op } from 'sequelize';
 
 import { ITopScores } from '../../domain';
 import {
@@ -110,7 +111,7 @@ export async function handleQueryComments(
       include,
       filters: {
         id: {
-          $in: commentIds,
+          [Op.in]: commentIds,
         },
       },
       fields,
@@ -120,7 +121,7 @@ export async function handleQueryComments(
       params.where = {
         ...params.where,
         id: {
-          $in: commentIds,
+          [Op.in]: commentIds,
         },
       };
 
