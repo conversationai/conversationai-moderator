@@ -537,20 +537,20 @@ function pullOutIncludes(rows: Array<any>, relationships: any, include?: Array<a
   }, []);
 
   // Only return 1 of each appearance of a included model
-  return uniqWith(allIncludes, (a: any, b: any) => (a.id === b.id) && (a.Model === b.Model));
+  return uniqWith(allIncludes, (a: any, b: any) => (a.id === b.id) && (a.constructor === b.constructor));
 }
 
 function serializeIncludes(includes: Array<any>, fields: any) {
   return includes.map((modelInstance) => {
     const data = modelInstance.toJSON();
-    data['type'] = nameOfModel(modelInstance.Model);
+    data['type'] = nameOfModel(modelInstance.constructor);
 
     return serializersByType[data['type']].serialize(data, fields);
   });
 }
 
 async function serializeRow(row: any, relationships: any, fields: any, include?: any): Promise<IResourceComplete> {
-  const type = nameOfModel(row.Model);
+  const type = nameOfModel(row.constructor);
 
   if (!type) {
     throw new Error('Could not find a name for model');
@@ -591,7 +591,7 @@ function nameOfModel(modelClass: any) {
 function toIdentifier(modelInstance: any) {
   return {
     id: modelInstance.id,
-    type: nameOfModel(modelInstance.Model),
+    type: nameOfModel(modelInstance.constructor),
   };
 }
 
