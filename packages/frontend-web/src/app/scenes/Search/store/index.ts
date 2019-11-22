@@ -13,13 +13,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+import { combineReducers } from 'redux';
 
-import { combineReducers } from 'redux-immutable';
+import { ICheckedSelectionState, ICurrentPagingIdentifierState } from '../../../util';
 import { checkedSelectionReducer } from './checkedSelection';
 import { currentPagingIdentifierReducer } from './currentPagingIdentifier';
-import { allCommentIdsReducer } from './searchResults';
+import { allCommentIdsReducer, IAllCommentIDsState } from './searchResults';
 
-export const searchReducer: any = combineReducers({
+export type ISearchState = Readonly<{
+  currentPagingIdentifier: ICurrentPagingIdentifierState,
+  checkedSelection: ICheckedSelectionState,
+  allCommentIds: IAllCommentIDsState,
+}>;
+
+export const searchReducer = combineReducers<ISearchState>({
   currentPagingIdentifier: currentPagingIdentifierReducer,
   checkedSelection: checkedSelectionReducer,
   allCommentIds: allCommentIdsReducer,

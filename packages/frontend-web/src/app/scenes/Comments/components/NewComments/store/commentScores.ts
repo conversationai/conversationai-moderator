@@ -16,8 +16,7 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { IAppDispatch, IAppStateRecord } from '../../../../../appstate';
-import { DATA_PREFIX } from './reduxPrefix';
+import { IAppDispatch, IAppState } from '../../../../../appstate';
 
 import {
   ICommentDatedModel,
@@ -134,16 +133,16 @@ export const commentScoresReducer = handleActions<
     }),
 }, initailState);
 
-function getStoreRecord(state: IAppStateRecord) {
-  return state.getIn([...DATA_PREFIX, 'commentScores']) as ICommentScoresState;
+function getStoreRecord(state: IAppState) {
+  return state.scenes.commentsIndex.newComments.commentScores;
 }
 
-export function getIsLoading(state: IAppStateRecord) {
+export function getIsLoading(state: IAppState) {
   const storeRecord = getStoreRecord(state);
   return storeRecord && storeRecord.isLoading;
 }
 
-export function getCommentScores(state: IAppStateRecord) {
+export function getCommentScores(state: IAppState) {
   const storeRecord = getStoreRecord(state);
   return storeRecord && storeRecord.scores;
 }

@@ -20,7 +20,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { ICommentAction } from '../../../../../types';
-import { IAppDispatch, IAppStateRecord } from '../../../../appstate';
+import { IAppDispatch, IAppState } from '../../../../appstate';
 import { getArticle } from '../../../../stores/articles';
 import {
   approveComments,
@@ -65,9 +65,9 @@ type IModeratedCommentsDispatchProps = Pick<
 >;
 
 const mapStateToProps = createStructuredSelector({
-  isLoading: (state: IAppStateRecord) => (getIsLoading(state) || getTextSizesIsLoading(state)),
+  isLoading: (state: IAppState) => (getIsLoading(state) || getTextSizesIsLoading(state)),
 
-  article: (state: IAppStateRecord, { match: { params }}: IModeratedCommentsProps) => {
+  article: (state: IAppState, { match: { params }}: IModeratedCommentsProps) => {
     if (isArticleContext(params)) {
       return getArticle(state, params.contextId);
     }
@@ -77,9 +77,9 @@ const mapStateToProps = createStructuredSelector({
 
   areAllSelected: getAreAllSelected,
 
-  isItemChecked: (state: IAppStateRecord) => (id: string) => getIsItemChecked(state, id),
+  isItemChecked: (state: IAppState) => (id: string) => getIsItemChecked(state, id),
 
-  moderatedComments: (state: IAppStateRecord, props: IModeratedCommentsProps) => (
+  moderatedComments: (state: IAppState, props: IModeratedCommentsProps) => (
     getModeratedComments(state, props.match.params)
   ),
 

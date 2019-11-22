@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
 
-import { IAppDispatch, IAppState, IAppStateRecord } from '../../appstate';
+import { IAppDispatch, IAppState } from '../../appstate';
 import { listSystemUsers } from '../../platform/dataService';
 import { getCategories } from '../../stores/categories';
 import { getPreselects } from '../../stores/preselects';
@@ -62,10 +62,10 @@ export type ISettingsDispatchProps = Pick<
 >;
 
 const mapStateToProps = createStructuredSelector({
-  users: (state: IAppStateRecord) => getUsers(state),
-  serviceUsers: (state: IAppStateRecord) => getSystemUsers(USER_GROUP_SERVICE, state),
-  moderatorUsers: (state: IAppStateRecord) => getSystemUsers(USER_GROUP_MODERATOR, state),
-  youtubeUsers: (state: IAppStateRecord) => getSystemUsers(USER_GROUP_YOUTUBE, state),
+  users: getUsers,
+  serviceUsers: (state) => getSystemUsers(USER_GROUP_SERVICE, state),
+  moderatorUsers: (state) => getSystemUsers(USER_GROUP_MODERATOR, state),
+  youtubeUsers: (state) => getSystemUsers(USER_GROUP_YOUTUBE, state),
   tags: getTags,
   categories: getCategories,
   rules: getRules,

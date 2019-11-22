@@ -17,10 +17,8 @@ limitations under the License.
 import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
-import { IAppStateRecord, IThunkAction } from '../appstate';
+import { IAppState, IThunkAction } from '../appstate';
 import { listTextSizesByIds } from '../platform/dataService';
-
-const DATA_PREFIX = ['global', 'textSizes'];
 
 const loadTextSizesStart = createAction(
   'text-sizes/LOAD_TEXT_SIZES_START',
@@ -57,21 +55,21 @@ const textSizesReducer = handleActions<
   textSizes: Map<string, number>(),
 });
 
-function getStateRecord(state: IAppStateRecord) {
-  return state.getIn(DATA_PREFIX) as ITextSizesState;
+function getStateRecord(state: IAppState) {
+  return state.global.textSizes;
 }
 
-function getTextSizesHasData(state: IAppStateRecord) {
+function getTextSizesHasData(state: IAppState) {
   const stateRecord = getStateRecord(state);
   return stateRecord && stateRecord.hasData;
 }
 
-function getTextSizes(state: IAppStateRecord) {
+function getTextSizes(state: IAppState) {
   const stateRecord = getStateRecord(state);
   return stateRecord && stateRecord.textSizes;
 }
 
-function getTextSizesIsLoading(state: IAppStateRecord) {
+function getTextSizesIsLoading(state: IAppState) {
   const stateRecord = getStateRecord(state);
   return stateRecord && stateRecord.isLoading;
 }

@@ -15,14 +15,14 @@ limitations under the License.
 */
 import { Action } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
-import { TypedRecord } from 'typed-immutable-record';
 
-export interface IAppState {
-  global: any;
-  scenes: any;
-}
+import { IScenesState } from './scenes/appstate';
+import { IGlobalState } from './stores/appstate';
 
-export interface IAppStateRecord extends TypedRecord<IAppStateRecord>, IAppState {}
+export type IAppState = Readonly<{
+  global: IGlobalState;
+  scenes: IScenesState;
+}>;
 
-export type IThunkAction<R> = ThunkAction<R, IAppStateRecord, undefined, Action>;
-export type IAppDispatch = ThunkDispatch<IAppStateRecord, undefined, Action>;
+export type IThunkAction<R> = ThunkAction<R, IAppState, undefined, Action>;
+export type IAppDispatch = ThunkDispatch<IAppState, undefined, Action>;

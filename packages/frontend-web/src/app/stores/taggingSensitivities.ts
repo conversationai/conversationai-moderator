@@ -18,16 +18,14 @@ import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import { ITaggingSensitivityModel } from '../../models';
-import { IAppStateRecord } from '../appstate';
-
-const STATE_ROOT = ['global', 'taggingSensitivities'];
+import { IAppState } from '../appstate';
 
 export const taggingSensitivitiesUpdated = createAction(
   'all-taggingSensitivities/UPDATED',
 );
 
-export function getTaggingSensitivities(state: IAppStateRecord): List<ITaggingSensitivityModel> {
-  return state.getIn(STATE_ROOT).items;
+export function getTaggingSensitivities(state: IAppState): List<ITaggingSensitivityModel> {
+  return state.global.taggingSensitivities.items;
 }
 
 export interface ITaggingSensitivitiesState {

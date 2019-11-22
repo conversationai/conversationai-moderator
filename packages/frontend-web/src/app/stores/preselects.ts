@@ -17,16 +17,14 @@ limitations under the License.
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { IPreselectModel } from '../../models';
-import { IAppStateRecord } from '../appstate';
-
-const STATE_ROOT = ['global', 'preselects'];
+import { IAppState } from '../appstate';
 
 export const preselectsUpdated = createAction(
   'all-preselects/UPDATED',
 );
 
-export function getPreselects(state: IAppStateRecord): List<IPreselectModel> {
-  return state.getIn(STATE_ROOT).items;
+export function getPreselects(state: IAppState): List<IPreselectModel> {
+  return state.global.preselects.items;
 }
 
 export interface IPreselectsState {

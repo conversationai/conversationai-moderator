@@ -18,16 +18,14 @@ import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import { IRuleModel } from '../../models';
-import { IAppStateRecord } from '../appstate';
-
-const STATE_ROOT = ['global', 'rules'];
+import { IAppState } from '../appstate';
 
 export const rulesUpdated = createAction(
   'all-rules/UPDATED',
 );
 
-export function getRules(state: IAppStateRecord): List<IRuleModel> {
-  return state.getIn(STATE_ROOT).items;
+export function getRules(state: IAppState): List<IRuleModel> {
+  return state.global.rules.items;
 }
 
 export interface IRulesState {

@@ -14,14 +14,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { combineReducers } from 'redux-immutable';
+import { combineReducers } from 'redux';
+
+import { ICheckedSelectionState, ICurrentPagingIdentifierState } from '../../../../../util';
 import { checkedSelectionReducer } from './checkedSelection';
 import { currentPagingIdentifierReducer } from './currentPagingIdentifier';
-import { moderatedCommentsReducer } from './moderatedComments';
+import { IModeratedCommentsState, moderatedCommentsReducer } from './moderatedComments';
 
-export const reducer: any = combineReducers({
-  checkedSelection: checkedSelectionReducer,
+export type IModeratedCommentsGlobalState = Readonly<{
+  currentPagingIdentifier: ICurrentPagingIdentifierState,
+  checkedSelection: ICheckedSelectionState,
+  moderatedComments: IModeratedCommentsState,
+}>;
+
+export const reducer = combineReducers<IModeratedCommentsGlobalState>({
   currentPagingIdentifier: currentPagingIdentifierReducer,
+  checkedSelection: checkedSelectionReducer,
   moderatedComments: moderatedCommentsReducer,
 });
 

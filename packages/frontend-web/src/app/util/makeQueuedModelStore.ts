@@ -18,7 +18,7 @@ import { List, Map, OrderedMap } from 'immutable';
 import { throttle } from 'lodash';
 import { Action, createAction, handleActions } from 'redux-actions';
 
-import { IAppDispatch, IAppStateRecord, IThunkAction } from '../appstate';
+import { IAppDispatch, IAppState, IThunkAction } from '../appstate';
 
 let queuedModelStores = 0;
 
@@ -39,7 +39,7 @@ export function makeQueuedModelStore<S, T>(
   getModelsByKey: (keys: List<S>) => Promise<Map<S, T>>,
   queueFlushThrottleMs: number,
   maxItems: number,
-  getStateRecord: (state: IAppStateRecord) => IQueuedModelState<S, T>,
+  getStateRecord: (state: IAppState) => IQueuedModelState<S, T>,
 ) {
   queuedModelStores += 1;
 
@@ -67,17 +67,17 @@ export function makeQueuedModelStore<S, T>(
     byKey: Map<S, T>(),
   };
 
-  function getModels(state: IAppStateRecord) {
+  function getModels(state: IAppState) {
     const localState = getStateRecord(state);
     return localState && localState.byKey;
   }
 
-  function getQueued(state: IAppStateRecord) {
+  function getQueued(state: IAppState) {
     const localState = getStateRecord(state);
     return localState && localState.queued;
   }
 
-  function getModel(state: IAppStateRecord, key: S): T {
+  function getModel(state: IAppState, key: S): T {
     return getModels(state).get(key);
   }
 

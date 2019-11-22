@@ -18,7 +18,7 @@ import { List, Map } from 'immutable';
 import { Action } from 'redux-actions';
 
 import { ICommentModel } from '../../models';
-import { IAppDispatch, IAppStateRecord, IThunkAction } from '../appstate';
+import { IAppDispatch, IAppState, IThunkAction } from '../appstate';
 import { listCommentsById } from '../platform/dataService';
 import { ILoadCompletePayload, IQueuedModelState, makeQueuedModelStore } from '../util';
 
@@ -32,7 +32,7 @@ const queueModelStore = makeQueuedModelStore<string, ICommentModel>(
   },
   300,
   12,
-  (state: IAppStateRecord) => state.getIn(['global', 'comments']),
+  (state: IAppState) => state.global.comments,
 );
 
 const {
@@ -40,10 +40,10 @@ const {
   loadModel: loadComment,
 } = queueModelStore;
 
-const getComment: (state: IAppStateRecord, key: string) => ICommentModel = queueModelStore.getModel;
+const getComment: (state: IAppState, key: string) => ICommentModel = queueModelStore.getModel;
 const setComment: (payload: ILoadCompletePayload<string, ICommentModel>) => Action<ILoadCompletePayload<string, ICommentModel>> = queueModelStore.setModel;
 
-export type IState = IQueuedModelState<number, ICommentModel>;
+export type ICommentsState = IQueuedModelState<string, ICommentModel>;
 
 async function updateComment(dispatch: IAppDispatch, comment: ICommentModel) {
   await dispatch(setComment({ key: comment.id, model: comment }));

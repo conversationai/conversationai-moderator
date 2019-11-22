@@ -16,7 +16,7 @@ limitations under the License.
 
 import { Action, createAction, handleAction } from 'redux-actions';
 
-import { IAppStateRecord } from '../appstate';
+import { IAppState } from '../appstate';
 
 let currentPagingIdentifierReducer = 0;
 
@@ -31,7 +31,7 @@ const initialState: ICurrentPagingIdentifierState = {
 export type ICurrentPagingIdentifierPayload = { currentPagingIdentifier: string };
 // Return infered
 export function makeCurrentPagingIdentifierReducer(
-  getStateRecord: (state: IAppStateRecord) => ICurrentPagingIdentifierState,
+  getStateRecord: (state: IAppState) => ICurrentPagingIdentifierState,
 ) {
   currentPagingIdentifierReducer += 1;
 
@@ -46,7 +46,7 @@ export function makeCurrentPagingIdentifierReducer(
     initialState,
   );
 
-  function getCurrentPagingIdentifier(state: IAppStateRecord) {
+  function getCurrentPagingIdentifier(state: IAppState) {
     const localState = getStateRecord(state);
     return localState && localState.currentPagingIdentifier;
   }

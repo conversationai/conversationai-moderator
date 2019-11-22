@@ -17,22 +17,20 @@ limitations under the License.
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import { IArticleModel, ModelId } from '../../models';
-import { IAppStateRecord } from '../appstate';
-
-const STATE_ROOT = ['global', 'articles'];
+import { IAppState } from '../appstate';
 
 export const articlesLoaded = createAction<Array<IArticleModel>>('global/ARTICLES_LOADED');
 export const articlesUpdated = createAction<Array<IArticleModel>>('global/ARTICLES_UPDATED');
 
-export function getArticleMap(state: IAppStateRecord): Map<ModelId, IArticleModel> {
-  return state.getIn(STATE_ROOT).index;
+export function getArticleMap(state: IAppState): Map<ModelId, IArticleModel> {
+  return state.global.articles.index;
 }
 
-export function getArticles(state: IAppStateRecord): Array<IArticleModel> {
-  return state.getIn(STATE_ROOT).array;
+export function getArticles(state: IAppState): Array<IArticleModel> {
+  return state.global.articles.array;
 }
 
-export function getArticle(state: IAppStateRecord, articleId: ModelId): IArticleModel {
+export function getArticle(state: IAppState, articleId: ModelId): IArticleModel {
   return getArticleMap(state).get(articleId);
 }
 

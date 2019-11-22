@@ -15,29 +15,26 @@ limitations under the License.
 */
 
 import { Action, Reducer } from 'redux-actions';
-import { IAppStateRecord } from '../../../appstate';
+import { IAppState } from '../../../appstate';
 import { ICheckedSelectionPayloads, ICheckedSelectionState, IOverrides, makeCheckedSelectionStore } from '../../../util';
-import { DATA_PREFIX } from './reduxPrefix';
-
-const CHECKED_SELECTION_DATA = [...DATA_PREFIX, 'checkedSelection'];
 
 const checkedSelectionStore = makeCheckedSelectionStore(
-  (state: IAppStateRecord) => {
-    return state.getIn(CHECKED_SELECTION_DATA) as ICheckedSelectionState;
+  (state: IAppState) => {
+    return state.scenes.search.checkedSelection;
   },
   { defaultSelectionState: false },
 );
 
 const checkedSelectionReducer: Reducer<ICheckedSelectionState, ICheckedSelectionPayloads> = checkedSelectionStore.reducer;
 
-const getAreAllSelected: (state: IAppStateRecord) => boolean = checkedSelectionStore.getAreAllSelected;
-const getAreAnyCommentsSelected: (state: IAppStateRecord) => boolean = checkedSelectionStore.getAreAnyCommentsSelected;
-const getOverrides: (state: IAppStateRecord) => IOverrides = checkedSelectionStore.getOverrides;
-const getIsItemChecked: (state: IAppStateRecord, id: string) => boolean = checkedSelectionStore.getIsItemChecked;
+const getAreAllSelected: (state: IAppState) => boolean = checkedSelectionStore.getAreAllSelected;
+const getAreAnyCommentsSelected: (state: IAppState) => boolean = checkedSelectionStore.getAreAnyCommentsSelected;
+const getOverrides: (state: IAppState) => IOverrides = checkedSelectionStore.getOverrides;
+const getIsItemChecked: (state: IAppState, id: string) => boolean = checkedSelectionStore.getIsItemChecked;
 const toggleSelectAll: () => Action<void> = checkedSelectionStore.toggleSelectAll;
 const toggleSingleItem: (payload: { id: string }) => Action<{ id: string }> = checkedSelectionStore.toggleSingleItem;
 
-export function getSelectedCount(state: IAppStateRecord): number {
+export function getSelectedCount(state: IAppState): number {
   return getOverrides(state).size;
 }
 

@@ -27,7 +27,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
-import { IAppStateRecord } from '../../appstate';
+import { IAppState } from '../../appstate';
 import { getMyUserId } from '../../auth';
 import { ArticleControlIcon, AssignModerators, MagicTimestamp } from '../../components';
 import * as icons from '../../components/Icons';
@@ -701,7 +701,7 @@ export class PureArticleTable extends React.Component<IArticleTableProps, IArtic
 const baseSelector = createStructuredSelector({
   myUserId: getMyUserId,
   categories: getCategoryMap,
-  selectedCategory: (state: IAppStateRecord, { match: { params }}: IArticleTableProps) => {
+  selectedCategory: (state: IAppState, { match: { params }}: IArticleTableProps) => {
     const m = /category=(\d+)/.exec(params.filter);
     if (!m) {
       return null;

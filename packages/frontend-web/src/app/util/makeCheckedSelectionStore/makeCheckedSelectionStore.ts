@@ -17,7 +17,7 @@ limitations under the License.
 import { Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
-import { IAppStateRecord } from '../../appstate';
+import { IAppState } from '../../appstate';
 
 let checkedSelectionStores = 0;
 
@@ -39,7 +39,7 @@ export type ICheckedSelectionPayloads =
 
 // Return is infered
 export function makeCheckedSelectionStore(
-  getStateRecord: (state: IAppStateRecord) => ICheckedSelectionState,
+  getStateRecord: (state: IAppState) => ICheckedSelectionState,
   {
     defaultSelectionState,
   }: ICheckedSelectionStoreOptions,
@@ -94,17 +94,17 @@ export function makeCheckedSelectionStore(
     },
   }, initialState);
 
-  function getDefaultSelectionState(state: IAppStateRecord) {
+  function getDefaultSelectionState(state: IAppState) {
     const stateRecord = getStateRecord(state);
     return stateRecord && stateRecord.defaultSelectionState;
   }
 
-  function getAreAllSelected(state: IAppStateRecord) {
+  function getAreAllSelected(state: IAppState) {
     const stateRecord = getStateRecord(state);
     return stateRecord && stateRecord.areAllSelected;
   }
 
-  function getOverrides(state: IAppStateRecord) {
+  function getOverrides(state: IAppState) {
     const stateRecord = getStateRecord(state);
     return stateRecord && stateRecord.overrides;
   }
@@ -119,13 +119,13 @@ export function makeCheckedSelectionStore(
     return isCheckedByDefault;
   }
 
-  function getIsItemChecked(state: IAppStateRecord, id: string): boolean {
+  function getIsItemChecked(state: IAppState, id: string): boolean {
     const overrides = getOverrides(state);
 
     return getItemCheckedState(overrides, id, getDefaultSelectionState(state));
   }
 
-  function getAreAnyCommentsSelected(state: IAppStateRecord): boolean {
+  function getAreAnyCommentsSelected(state: IAppState): boolean {
     return (
       !getDefaultSelectionState(state) &&
       getOverrides(state) &&

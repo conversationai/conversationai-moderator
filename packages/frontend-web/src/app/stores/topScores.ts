@@ -16,9 +16,9 @@ limitations under the License.
 
 import { List, Map } from 'immutable';
 import { Action } from 'redux-actions';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
-import { IAppDispatch, IAppStateRecord } from '../appstate';
+import { IAppDispatch, IAppState } from '../appstate';
 import { loadTopScoresForSummaryScores, loadTopScoresForTag } from '../platform/dataService';
 import { IQueuedModelState, makeQueuedModelStore } from '../util';
 
@@ -75,11 +75,11 @@ const queuedModelStore = makeQueuedModelStore<ITopScoresKeyState, ITopScoreState
   },
   300,
   12,
-  (state: IAppStateRecord) => state.getIn(['global', 'topScores']),
+  (state: IAppState) => state.global.topScores,
 );
 
 const {
-  reducer: scoreReducer,
+  reducer: topScoresReducer,
   loadModel: loadTopScoreByKey,
   getModels: getTopScores,
   getModel: getTopScore,
@@ -87,9 +87,9 @@ const {
 
 const setTopScore: (payload: any) => Action<any> = queuedModelStore.setModel;
 
-export type IState = IQueuedModelState<ITopScoresKeyState, ITopScoreStateRecord>;
+export type ITopScoresState = IQueuedModelState<ITopScoresKeyState, ITopScoreStateRecord>;
 
-export function getTopScoreForComment(state: IAppStateRecord, commentId: string, tagId: string): ITopScoreState {
+export function getTopScoreForComment(state: IAppState, commentId: string, tagId: string): ITopScoreState {
   const topScores = getTopScores(state);
 
   return topScores.get(TopScoresKey({ commentId, tagId }));
@@ -102,7 +102,7 @@ export async function loadTopScore(dispatch: IAppDispatch, commentId: string, ta
 // Separate out Summary Scores because they need to be accessed differently
 
 const {
-  reducer: summaryScoreReducer,
+  reducer: topScoresSummaryReducer,
   loadModel: loadTopSummaryScoreByKey,
   getModels: getTopSummaryScores,
   getModel: getTopSummaryScore,
@@ -119,12 +119,12 @@ const {
   },
   300,
   12,
-  (state: IAppStateRecord) => state.getIn(['global', 'topSummaryScores']),
+  (state: IAppState) => state.global.topScoresSummary,
 );
 
-export type ISummaryState = IQueuedModelState<ITopSummaryScoresKeyState, ITopScoreStateRecord>;
+export type ITopScoresSummaryState = IQueuedModelState<ITopSummaryScoresKeyState, ITopScoreStateRecord>;
 
-export function getTopSummaryScoreForComment(state: IAppStateRecord, commentId: string): ITopScoreState {
+export function getTopSummaryScoreForComment(state: IAppState, commentId: string): ITopScoreState {
   const topScores = getTopSummaryScores(state);
 
   return topScores.get(TopSummaryScoresKey({ commentId }));
@@ -135,8 +135,8 @@ export async function loadTopSummaryScore(dispatch: IAppDispatch, commentId: str
 }
 
 export {
-  scoreReducer,
-  summaryScoreReducer,
+  topScoresReducer,
+  topScoresSummaryReducer,
   getTopScore,
   setTopScore,
   setTopSummaryScore,

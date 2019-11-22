@@ -20,7 +20,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { ICommentAction } from '../../../../types';
-import { IAppDispatch, IAppStateRecord } from '../../../appstate';
+import { IAppDispatch, IAppState } from '../../../appstate';
 import {
   approveComments,
   deferComments,
@@ -75,9 +75,9 @@ const actionMap: IActionMap = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  totalCommentCount: (state: IAppStateRecord) => getAllCommentIds(state).size,
-  isLoading: (state: IAppStateRecord) => (getIsLoading(state) || getTextSizesIsLoading(state)),
-  isItemChecked: (state: IAppStateRecord) => (id: string) => getIsItemChecked(state, id),
+  totalCommentCount: (state: IAppState) => getAllCommentIds(state).size,
+  isLoading: (state: IAppState) => (getIsLoading(state) || getTextSizesIsLoading(state)),
+  isItemChecked: (state: IAppState) => (id: string) => getIsItemChecked(state, id),
   areNoneSelected: getAreAnyCommentsSelected,
   areAllSelected: getAreAllSelected,
   selectedCount: getSelectedCount,

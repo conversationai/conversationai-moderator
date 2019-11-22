@@ -20,7 +20,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { ICommentAction } from '../../../../../types';
-import { IAppDispatch, IAppStateRecord } from '../../../../appstate';
+import { IAppDispatch, IAppState } from '../../../../appstate';
 import { getArticle } from '../../../../stores/articles';
 import {
   approveComments,
@@ -113,7 +113,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): Partial<INewCommentsProps> 
 }
 
 const mapStateToProps = createStructuredSelector({
-  article: (state: IAppStateRecord, { match: { params }}: INewCommentsProps) => {
+  article: (state: IAppState, { match: { params }}: INewCommentsProps) => {
     if (isArticleContext(params)) {
       return getArticle(state, params.contextId);
     }
@@ -121,23 +121,23 @@ const mapStateToProps = createStructuredSelector({
 
   preselects: getPreselects,
 
-  getComment: (state: IAppStateRecord) => (id: string) => (getComment(state, id)),
+  getComment: (state: IAppState) => (id: string) => (getComment(state, id)),
 
   commentScores: getCommentScores,
 
-  isLoading: (state: IAppStateRecord) => getIsLoading(state) || getTextSizesIsLoading(state),
+  isLoading: (state: IAppState) => getIsLoading(state) || getTextSizesIsLoading(state),
 
   areNoneSelected: getAreAnyCommentsSelected,
 
   areAllSelected: getAreAllSelected,
 
-  isItemChecked: (state: IAppStateRecord) => (id: string) => getIsItemChecked(state, id),
+  isItemChecked: (state: IAppState) => (id: string) => getIsItemChecked(state, id),
 
   textSizes: getTextSizes,
 
   tags: getTaggableTags,
 
-  selectedTag: (state: IAppStateRecord, { match: { params }}: INewCommentsProps) => {
+  selectedTag: (state: IAppState, { match: { params }}: INewCommentsProps) => {
     return getSelectedTag(state, params.tag);
   },
 

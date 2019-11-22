@@ -16,11 +16,12 @@ limitations under the License.
 
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router';
-import { combineReducers } from 'redux-immutable';
+import { combineReducers } from 'redux';
 
-import { IAppStateRecord } from '../appstate';
+import { IAppState } from '../appstate';
 import { SplashRoot } from '../components';
 import { getCurrentUserIsAdmin } from '../stores/users';
+import { IScenesState } from './appstate';
 import {
   Comments,
   reducer as commentsIndexReducer,
@@ -37,7 +38,7 @@ import { searchReducer } from './Search';
 import { Settings } from './Settings';
 import { TableFrame } from './Tables/TableFrame';
 
-export const reducer: any = combineReducers({
+export const reducer = combineReducers<IScenesState>({
   commentsIndex: commentsIndexReducer,
   search: searchReducer,
 });
@@ -65,7 +66,7 @@ function _AppRoot(props: {isAdmin: boolean}) {
 }
 
 // TODO: Replace with a hook when we upgrade react-redux and fixed type errors.
-export const AppRoot = connect((state: IAppStateRecord) => {
+export const AppRoot = connect((state: IAppState) => {
   return {
     isAdmin: getCurrentUserIsAdmin(state),
   };
