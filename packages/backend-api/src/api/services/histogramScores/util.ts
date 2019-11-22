@@ -165,44 +165,6 @@ export async function getHistogramScoresForCategoryByDate(categoryId: number | '
 }
 
 /**
- * Get comment ids across all categories.
- */
-export async function getAllCommentsForAllCategories(): Promise<Array<ICommentScored>> {
-  return sequelizeInstance.query(
-    'SELECT NULL AS score, comments.id AS commentId ' +
-    'FROM comments',
-    {
-      type: sequelizeInstance.QueryTypes.SELECT,
-    },
-  );
-}
-
-/**
- * Get all comments for a category.
- */
-export async function getAllCommentsForCategory(categoryId: number | 'all'): Promise<Array<ICommentScored>> {
-  if (categoryId === 'all') {
-    return getAllCommentsForAllCategories();
-  }
-
-  const category = await Category.findByPk(categoryId);
-  if (!category) { throw new JSONAPI.NotFoundError(`Could not find category ${categoryId}`); }
-
-  return sequelizeInstance.query(
-    'SELECT NULL AS score, comments.id AS commentId ' +
-    'FROM comments ' +
-    'JOIN articles ON articles.id = comments.articleId ' +
-    'WHERE articles.categoryId = :categoryId',
-    {
-      replacements: {
-        categoryId,
-      },
-      type: sequelizeInstance.QueryTypes.SELECT,
-    },
-  );
-}
-
-/**
  * Get the max score for each comment in an article given a tag.
  */
 export async function getHistogramScoresForArticle(articleId: number, tagId: number): Promise<Array<ICommentScored>> {
@@ -243,26 +205,6 @@ export async function getHistogramScoresForArticleByDate(articleId: number): Pro
     'FROM comments ' +
     'WHERE comments.articleId = :articleId ' +
     'AND comments.isModerated = false ',
-    {
-      replacements: {
-        articleId,
-      },
-      type: sequelizeInstance.QueryTypes.SELECT,
-    },
-  );
-}
-
-/**
- * Get all comment ids that are in an article.
- */
-export async function getAllCommentsForArticle(articleId: number): Promise<Array<ICommentScored>> {
-  const article = await Article.findByPk(articleId);
-  if (!article) { throw new JSONAPI.NotFoundError(`Could not find article ${articleId}`); }
-
-  return sequelizeInstance.query(
-    'SELECT NULL AS score, comments.id AS commentId ' +
-    'FROM comments ' +
-    'WHERE comments.articleId = :articleId',
     {
       replacements: {
         articleId,

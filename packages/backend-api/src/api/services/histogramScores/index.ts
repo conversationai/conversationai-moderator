@@ -116,7 +116,8 @@ export function createHistogramScoresService(): express.Router {
 
   router.get('/categories/:id/byDate', async ({ params: { id }, query: { sort }}, res, next) => {
     try {
-      const data = await getHistogramScoresForCategoryByDate(parseInt(id, 10));
+      const categoryId = id === 'all' ? id : parseInt(id, 10);
+      const data = await getHistogramScoresForCategoryByDate(categoryId);
       const sortedData = await sortComments(data, sort);
 
       validateDatedCommentsAndSendResponse(stringifyIds(sortedData), res, next);
@@ -133,15 +134,16 @@ export function createHistogramScoresService(): express.Router {
   router.get('/categories/:id/byDate/chart', async (req, res, next) => {
     return scoresToChart('date', () => {
       const { params: { id }} = req;
-
-      return getHistogramScoresForCategoryByDate(parseInt(id, 10));
+      const categoryId = id === 'all' ? id : parseInt(id, 10);
+      return getHistogramScoresForCategoryByDate(categoryId);
     }, req, res, next);
   });
 
   router.get('/categories/:id/tags/:tagId', async ({ params: { id, tagId }, query: { sort }}, res, next) => {
     try {
+      const categoryId = id === 'all' ? id : parseInt(id, 10);
       const tagIdNumber = parseInt(tagId, 10);
-      const data = await getHistogramScoresForCategory(parseInt(id, 10), tagIdNumber);
+      const data = await getHistogramScoresForCategory(categoryId, tagIdNumber);
       const sortedData = await sortComments(data, sort);
 
       validateScoredCommentsAndSendResponse(stringifyIds(sortedData), res, next);
@@ -157,7 +159,8 @@ export function createHistogramScoresService(): express.Router {
 
   router.get('/categories/:id/summaryScore', async ({ params: { id }, query: { sort }}, res, next) => {
     try {
-      const data = await getMaxSummaryScoreForCategory(parseInt(id, 10));
+      const categoryId = id === 'all' ? id : parseInt(id, 10);
+      const data = await getMaxSummaryScoreForCategory(categoryId);
       const sortedData = await sortComments(data, sort);
 
       validateScoredCommentsAndSendResponse(stringifyIds(sortedData), res, next);
@@ -174,7 +177,7 @@ export function createHistogramScoresService(): express.Router {
   router.get('/categories/:id/tags/:tagId/chart', async (req, res, next) => {
     return scoresToChart('score', () => {
       const { params: { id, tagId }} = req;
-      const categoryId = parseInt(id, 10)
+      const categoryId = id === 'all' ? id : parseInt(id, 10);
       if (tagId === 'SUMMARY_SCORE') {
         return getMaxSummaryScoreForCategory(categoryId);
       }
