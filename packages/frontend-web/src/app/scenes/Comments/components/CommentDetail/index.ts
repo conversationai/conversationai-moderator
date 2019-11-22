@@ -26,7 +26,7 @@ import {
   ICommentScoreModel,
 } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
-import { IAppDispatch, IAppStateRecord } from '../../../../appstate';
+import { IAppDispatch, IAppState } from '../../../../appstate';
 import {
   approveComments,
   confirmCommentScore,
@@ -120,43 +120,43 @@ const mapStateToProps = createStructuredSelector({
   taggingSensitivitiesInCategory: getTaggingSensitivitiesInCategory,
   flags: getFlags,
 
-  summaryScores: (state: IAppStateRecord, ownProps: ICommentDetailOwnProps) => {
+  summaryScores: (state: IAppState, ownProps: ICommentDetailOwnProps) => {
     return getSummaryScoresById(state, ownProps.match.params.commentId);
   },
 
   currentCommentIndex: (
-    state: IAppStateRecord,
+    state: IAppState,
     { match: { params: { commentId }}, location }: ICommentDetailOwnProps,
   ) => {
     return getCurrentCommentIndex(state, getPagingIdentifier(location), commentId);
   },
 
   nextCommentId: (
-    state: IAppStateRecord,
+    state: IAppState,
     { match: { params: { commentId }}, location }: ICommentDetailOwnProps,
   ) => {
     return getNextCommentId(state, getPagingIdentifier(location), commentId);
   },
 
   previousCommentId: (
-    state: IAppStateRecord, { match: { params: { commentId }}, location }: ICommentDetailOwnProps,
+      state: IAppState, { match: { params: { commentId }}, location }: ICommentDetailOwnProps,
   ) => {
     return getPreviousCommentId(state, getPagingIdentifier(location), commentId);
   },
 
-  detailSource: (state: IAppStateRecord, { location }: ICommentDetailOwnProps) => {
+  detailSource: (state: IAppState, { location }: ICommentDetailOwnProps) => {
     return getPagingSource(state, getPagingIdentifier(location));
   },
 
-  linkBackToList: (state: IAppStateRecord, { location }: ICommentDetailOwnProps) => {
+  linkBackToList: (state: IAppState, { location }: ICommentDetailOwnProps) => {
     return getPagingLink(state, getPagingIdentifier(location));
   },
 
   isFromBatch: getPagingIsFromBatch,
 
-  authorCountById: (state: IAppStateRecord) => (id: string) => getAuthorCountsById(state, id),
+  authorCountById: (state: IAppState) => (id: string) => getAuthorCountsById(state, id),
 
-  getUserById: (state: IAppStateRecord) => (userId: string) => getUser(state, userId),
+  getUserById: (state: IAppState) => (userId: string) => getUser(state, userId),
 
   currentUser: getCurrentUser,
 });

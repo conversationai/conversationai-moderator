@@ -18,19 +18,17 @@ import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import { ITagModel } from '../../models';
-import { IAppStateRecord } from '../appstate';
-
-const STATE_ROOT = ['global', 'tags'];
+import { IAppState } from '../appstate';
 
 export const tagsUpdated = createAction<object>(
   'all-tags/UPDATED',
 );
 
-export function getTags(state: IAppStateRecord): List<ITagModel> {
-  return state.getIn(STATE_ROOT).items;
+export function getTags(state: IAppState): List<ITagModel> {
+  return state.global.tags.items;
 }
 
-export function getTaggableTags(state: IAppStateRecord) {
+export function getTaggableTags(state: IAppState) {
   return List(getTags(state).filter((tag: ITagModel) => tag.isTaggable));
 }
 

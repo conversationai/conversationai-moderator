@@ -14,29 +14,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { combineReducers } from 'redux-immutable';
+import { combineReducers } from 'redux';
 
-import { IAppStateRecord } from '../appstate';
+import { IGlobalState } from './appstate';
 import { reducer as articleReducer } from './articles';
 import { reducer as categoriesReducer } from './categories';
 import { reducer as commentsReducer } from './comments';
 import { reducer as commentSummaryScoresReducer } from './commentSummaryScores';
+import { reducer as countsReducer } from './counts';
 import { reducer as preselectsReducer } from './preselects';
 import { reducer as rulesReducer } from './rules';
 import { reducer as taggingSensitivitiesReducer } from './taggingSensitivities';
 import { reducer as tagsReducer } from './tags';
 import { reducer as textSizesReducer } from './textSizes';
-import {
-  scoreReducer as topScoresReducer,
-  summaryScoreReducer as topSummaryScoresReducer,
-} from './topScores';
+import { topScoresReducer, topScoresSummaryReducer } from './topScores';
 import { reducer as usersReducer } from './users';
 
-export const reducer: any = combineReducers<IAppStateRecord>({
+export const reducer = combineReducers<IGlobalState>({
   categories: categoriesReducer,
   articles: articleReducer,
   comments: commentsReducer,
   commentSummaryScores: commentSummaryScoresReducer,
+  counts: countsReducer,
   users: usersReducer,
   tags: tagsReducer,
   rules: rulesReducer,
@@ -44,5 +43,5 @@ export const reducer: any = combineReducers<IAppStateRecord>({
   taggingSensitivities: taggingSensitivitiesReducer,
   textSizes: textSizesReducer,
   topScores: topScoresReducer,
-  topSummaryScores: topSummaryScoresReducer,
+  topScoresSummary: topScoresSummaryReducer,
 });

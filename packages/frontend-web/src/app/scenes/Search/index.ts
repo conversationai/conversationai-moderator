@@ -19,7 +19,7 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { IAppDispatch, IAppStateRecord } from '../../appstate';
+import { IAppDispatch, IAppState } from '../../appstate';
 import { getArticleMap } from '../../stores/articles';
 import {ISearchProps, Search as PureSearch} from './Search';
 import {
@@ -33,7 +33,7 @@ export { SearchResults } from './components/SearchResults';
 export { searchReducer } from './store';
 
 const mapStateToProps = createStructuredSelector({
-  totalCommentCount: (state: IAppStateRecord) => getAllCommentIds(state).size,
+  totalCommentCount: (state: IAppState) => getAllCommentIds(state).size,
   allCommentIds: getAllCommentIds,
   articleMap: getArticleMap,
 });

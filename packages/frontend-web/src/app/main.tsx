@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import Immutable from 'immutable';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -22,10 +21,10 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 import {
   applyMiddleware,
+  combineReducers,
   compose,
   createStore,
 } from 'redux';
-import { combineReducers } from 'redux-immutable';
 import thunk from 'redux-thunk';
 
 import {
@@ -51,7 +50,7 @@ const store = createStore(
     scenes: scenesReducer,
     global: globalReducer,
   }),
-  Immutable.Map(),
+  {},
   compose(
     applyMiddleware(thunk),
     // TODO: Make this toggle based on environment

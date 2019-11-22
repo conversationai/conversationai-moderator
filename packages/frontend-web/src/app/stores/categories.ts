@@ -17,26 +17,24 @@ limitations under the License.
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import { ICategoryModel, ModelId } from '../../models';
-import { IAppStateRecord } from '../appstate';
-
-const STATE_ROOT = ['global', 'categories'];
+import { IAppState } from '../appstate';
 
 export const categoriesLoaded = createAction<Array<ICategoryModel>>('global/CATEGORIES_LOADED');
 export const categoriesUpdated = createAction<Array<ICategoryModel>>('global/CATEGORIES_UPDATED');
 
-export function getCategoryMap(state: IAppStateRecord): Map<ModelId, ICategoryModel> {
-  return state.getIn(STATE_ROOT).index;
+export function getCategoryMap(state: IAppState): Map<ModelId, ICategoryModel> {
+  return state.global.categories.index;
 }
 
-export function getCategories(state: IAppStateRecord): Array<ICategoryModel> {
-  return state.getIn(STATE_ROOT).array;
+export function getCategories(state: IAppState): Array<ICategoryModel> {
+  return state.global.categories.array;
 }
 
-export function getActiveCategories(state: IAppStateRecord): Array<ICategoryModel> {
-  return state.getIn(STATE_ROOT).active;
+export function getActiveCategories(state: IAppState): Array<ICategoryModel> {
+  return state.global.categories.active;
 }
 
-export function getCategory(state: IAppStateRecord, categoryId: ModelId): ICategoryModel {
+export function getCategory(state: IAppState, categoryId: ModelId): ICategoryModel {
   return getCategoryMap(state).get(categoryId);
 }
 
@@ -51,7 +49,7 @@ export interface ISummaryCounts {
   batchedCount: number;
 }
 
-export function getGlobalCounts(state: IAppStateRecord): ISummaryCounts {
+export function getGlobalCounts(state: IAppState): ISummaryCounts {
   const categories = getCategories(state);
   const counts: ISummaryCounts = {
     unmoderatedCount: 0,

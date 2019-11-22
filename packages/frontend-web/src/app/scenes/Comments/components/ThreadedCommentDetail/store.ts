@@ -14,20 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { combineReducers } from 'redux';
 import { Action, createAction } from 'redux-actions';
-import { combineReducers } from 'redux-immutable';
 
 import {
   ICommentModel,
 } from '../../../../../models';
-import { IAppDispatch, IAppStateRecord } from '../../../../appstate';
+import { IAppDispatch, IAppState } from '../../../../appstate';
 import { getModel } from '../../../../platform/dataService';
 import {
   ISingleRecordState,
   makeSingleRecordReducer,
 } from '../../../../util';
-
-const COMMENT_DATA = ['scenes', 'commentsIndex', 'threadedCommentDetail', 'comment'];
 
 const loadCommentStart =
   createAction('threaded-comment-detail/LOAD_COMMENT_START');
@@ -53,16 +51,18 @@ const {
 
 export const updateComment: (payload: ICommentModel) => Action<ICommentModel> = updateCommentRecord;
 
-export const reducer: any = combineReducers({
+export type IThreadedCommentDetailState = Readonly<{
+  comment: ISingleRecordState<ICommentModel>;
+}>;
+
+export const reducer = combineReducers<IThreadedCommentDetailState>({
   comment: commentReducer,
 });
 
-export function getComment(state: IAppStateRecord) {
-  const commentRecord = state.getIn(COMMENT_DATA) as ISingleRecordState<ICommentModel>;
-  return commentRecord && commentRecord.item;
+export function getComment(state: IAppState) {
+  return state.scenes.commentsIndex.threadedCommentDetail.comment.item;
 }
 
-export function getIsLoading(state: IAppStateRecord) {
-  const commentRecord = state.getIn(COMMENT_DATA) as ISingleRecordState<ICommentModel>;
-  return commentRecord && commentRecord.isFetching;
+export function getIsLoading(state: IAppState) {
+  return state.scenes.commentsIndex.threadedCommentDetail.comment.isFetching;
 }

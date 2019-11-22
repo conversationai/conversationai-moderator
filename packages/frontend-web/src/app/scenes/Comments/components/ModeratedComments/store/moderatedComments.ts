@@ -17,7 +17,7 @@ limitations under the License.
 import { fromJS, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
-import { IAppDispatch, IAppStateRecord } from '../../../../../appstate';
+import { IAppDispatch, IAppState } from '../../../../../appstate';
 import {
   getModeratedCommentIdsForArticle as fetchModeratedCommentIdsForArticle,
   getModeratedCommentIdsForCategory as fetchModeratedCommentIdsForCategory,
@@ -31,7 +31,6 @@ import {
   resetComment,
 } from '../../../../../stores/comments';
 import { IModeratedCommentsPathParams, isArticleContext } from '../../../../routes';
-import { DATA_PREFIX } from './reduxPrefix';
 
 export const updateCommentStateAction: {
   [key: string]: any;
@@ -256,26 +255,26 @@ export const moderatedCommentsReducer = handleActions<
   },
 }, initialState);
 
-function getRecord(state: IAppStateRecord) {
-  return state.getIn([...DATA_PREFIX, 'moderatedComments']) as IModeratedCommentsState;
+function getRecord(state: IAppState) {
+  return state.scenes.commentsIndex.moderatedComments.moderatedComments;
 }
 
-export function getIsLoading(state: IAppStateRecord) {
+export function getIsLoading(state: IAppState) {
   const stateRecord = getRecord(state);
   return stateRecord && stateRecord.isLoading;
 }
 
-export function getModeratedCommentsForArticle(state: IAppStateRecord): Map<string, Map<string, List<string>>> {
+export function getModeratedCommentsForArticle(state: IAppState): Map<string, Map<string, List<string>>> {
   const stateRecord = getRecord(state);
   return stateRecord && stateRecord.articles;
 }
 
-export function getModeratedCommentsForCategory(state: IAppStateRecord): Map<string, Map<string, List<string>>> {
+export function getModeratedCommentsForCategory(state: IAppState): Map<string, Map<string, List<string>>> {
   const stateRecord = getRecord(state);
   return stateRecord && stateRecord.categories;
 }
 
-export function getModeratedComments(state: IAppStateRecord, params: IModeratedCommentsPathParams): Map<string, List<string>> {
+export function getModeratedComments(state: IAppState, params: IModeratedCommentsPathParams): Map<string, List<string>> {
   if (isArticleContext(params)) {
     const articles = getModeratedCommentsForArticle(state);
     const articleId = params.contextId;

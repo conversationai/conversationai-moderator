@@ -16,23 +16,22 @@ limitations under the License.
 
 import { Action, Reducer } from 'redux-actions';
 
-import { IAppStateRecord } from '../../../../../appstate';
+import { IAppState } from '../../../../../appstate';
 import {
   ICurrentPagingIdentifierPayload,
   ICurrentPagingIdentifierState,
   makeCurrentPagingIdentifierReducer,
 } from '../../../../../util';
-import { DATA_PREFIX } from './reduxPrefix';
 
 const currentPagingIdentifier = makeCurrentPagingIdentifierReducer(
-  (state: IAppStateRecord) => {
-    return state.getIn([...DATA_PREFIX, 'currentPagingIdentifier']) as ICurrentPagingIdentifierState;
+  (state: IAppState) => {
+    return state.scenes.commentsIndex.moderatedComments.currentPagingIdentifier;
   },
 );
 
 const currentPagingIdentifierReducer: Reducer<ICurrentPagingIdentifierState, ICurrentPagingIdentifierPayload> = currentPagingIdentifier.reducer;
 const setCurrentPagingIdentifier: (payload: ICurrentPagingIdentifierPayload) => Action<ICurrentPagingIdentifierPayload> = currentPagingIdentifier.setCurrentPagingIdentifier;
-const getCurrentPagingIdentifier: (state: IAppStateRecord) => string = currentPagingIdentifier.getCurrentPagingIdentifier;
+const getCurrentPagingIdentifier: (state: IAppState) => string = currentPagingIdentifier.getCurrentPagingIdentifier;
 
 export {
   currentPagingIdentifierReducer,

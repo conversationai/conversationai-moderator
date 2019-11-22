@@ -15,24 +15,21 @@ limitations under the License.
 */
 
 import { Action, Reducer } from 'redux-actions';
-import { IAppStateRecord } from '../../../../../appstate';
+import { IAppState } from '../../../../../appstate';
 import { ICheckedSelectionPayloads, ICheckedSelectionState, makeCheckedSelectionStore } from '../../../../../util';
-import { DATA_PREFIX } from './reduxPrefix';
-
-const CHECKED_SELECTION_DATA = [...DATA_PREFIX, 'checkedSelection'];
 
 const checkedSelectionStore = makeCheckedSelectionStore(
-  (state: IAppStateRecord) => {
-    return state.getIn(CHECKED_SELECTION_DATA) as ICheckedSelectionState;
+  (state: IAppState) => {
+    return state.scenes.commentsIndex.newComments.checkedSelection;
   },
   { defaultSelectionState: true },
 );
 
 const checkedSelectionReducer: Reducer<ICheckedSelectionState, ICheckedSelectionPayloads> = checkedSelectionStore.reducer;
 
-const getAreAllSelected: (state: IAppStateRecord) => boolean = checkedSelectionStore.getAreAllSelected;
-const getAreAnyCommentsSelected: (state: IAppStateRecord) => boolean = checkedSelectionStore.getAreAnyCommentsSelected;
-const getIsItemChecked: (state: IAppStateRecord, id: string) => boolean = checkedSelectionStore.getIsItemChecked;
+const getAreAllSelected: (state: IAppState) => boolean = checkedSelectionStore.getAreAllSelected;
+const getAreAnyCommentsSelected: (state: IAppState) => boolean = checkedSelectionStore.getAreAnyCommentsSelected;
+const getIsItemChecked: (state: IAppState, id: string) => boolean = checkedSelectionStore.getIsItemChecked;
 const toggleSelectAll: () => Action<void> = checkedSelectionStore.toggleSelectAll;
 const toggleSingleItem: (payload: { id: string }) => Action<{ id: string }> = checkedSelectionStore.toggleSingleItem;
 

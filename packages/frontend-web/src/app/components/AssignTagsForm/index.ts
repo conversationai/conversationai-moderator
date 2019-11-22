@@ -19,7 +19,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { IAppDispatch, IAppStateRecord } from '../../appstate';
+import { IAppDispatch, IAppState } from '../../appstate';
 import { getTaggingSensitivitiesInCategory } from '../../scenes/Comments/store';
 import { getSummaryScoresById, loadCommentSummaryScores } from '../../stores/commentSummaryScores';
 import { getTaggableTags } from '../../stores/tags';
@@ -29,12 +29,12 @@ import {
 } from './AssignTagsForm';
 
 const mapStateToProps = createStructuredSelector({
-  tags: (state: IAppStateRecord) => getTaggableTags(state),
+  tags: (state: IAppState) => getTaggableTags(state),
 
-  sensitivities: (state: IAppStateRecord, { comment }: IPureAssignTagsFormProps) =>
+  sensitivities: (state: IAppState, { comment }: IPureAssignTagsFormProps) =>
     getTaggingSensitivitiesInCategory(state, null, comment.articleId),
 
-  summaryScores: (state: IAppStateRecord, { comment }: IPureAssignTagsFormProps) =>
+  summaryScores: (state: IAppState, { comment }: IPureAssignTagsFormProps) =>
     getSummaryScoresById(state, comment.id),
 });
 

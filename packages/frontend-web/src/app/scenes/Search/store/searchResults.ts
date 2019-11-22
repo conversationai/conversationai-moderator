@@ -16,8 +16,7 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { IAppStateRecord } from '../../../appstate';
-import { DATA_PREFIX } from './reduxPrefix';
+import { IAppState } from '../../../appstate';
 
 export const loadAllCommentIdsStart: () => Action<void> = createAction(
   'search/LOAD_ALL_COMMENT_IDS',
@@ -60,14 +59,14 @@ export const allCommentIdsReducer = handleActions<
   initialState,
 );
 
-function getStateRecord(state: IAppStateRecord) {
-  return state.getIn([...DATA_PREFIX, 'allCommentIds']) as IAllCommentIDsState;
+function getStateRecord(state: IAppState) {
+  return state.scenes.search.allCommentIds;
 }
 
-export function getAllCommentIds(state: IAppStateRecord) {
+export function getAllCommentIds(state: IAppState) {
   return getStateRecord(state).ids;
 }
 
-export function getIsLoading(state: IAppStateRecord) {
+export function getIsLoading(state: IAppState) {
   return getStateRecord(state).isLoading;
 }

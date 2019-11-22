@@ -17,21 +17,20 @@ limitations under the License.
 import { List } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { compose } from 'redux';
-import { combineReducers } from 'redux-immutable';
+import { combineReducers, compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { IUserModel } from '../../../models';
-import { IAppStateRecord } from '../../appstate';
+import { IAppState } from '../../appstate';
 import { getArticle } from '../../stores/articles';
 import { getCategory, getGlobalCounts } from '../../stores/categories';
 import { getUsers } from '../../stores/users';
 import { isArticleContext } from '../routes';
 import { Comments as PureComments, ICommentsProps } from './Comments';
-import { reducer as commentDetailReducer } from './components/CommentDetail/store';
-import { reducer as moderatedCommentsReducer } from './components/ModeratedComments';
-import { newCommentsReducer } from './components/NewComments';
-import { reducer as threadedCommentDetailReducer } from './components/ThreadedCommentDetail';
+import { ICommentDetailState, reducer as commentDetailReducer } from './components/CommentDetail/store';
+import { IModeratedCommentsGlobalState, reducer as moderatedCommentsReducer} from './components/ModeratedComments/store';
+import { INewCommentsState, newCommentsReducer } from './components/NewComments/store';
+import { IThreadedCommentDetailState, reducer as threadedCommentDetailReducer } from './components/ThreadedCommentDetail/store';
 
 export { NewComments } from './components/NewComments';
 export { TagSelector } from './components/TagSelector';
@@ -39,7 +38,14 @@ export { ModeratedComments } from './components/ModeratedComments';
 export { CommentDetail } from './components/CommentDetail';
 export { ThreadedCommentDetail } from './components/ThreadedCommentDetail';
 
-export const reducer: any = combineReducers({
+export type ICommentsGlobalState = Readonly<{
+  newComments: INewCommentsState;
+  moderatedComments: IModeratedCommentsGlobalState;
+  commentDetail: ICommentDetailState;
+  threadedCommentDetail: IThreadedCommentDetailState;
+}>;
+
+export const reducer = combineReducers<ICommentsGlobalState>({
   newComments: newCommentsReducer,
   moderatedComments: moderatedCommentsReducer,
   commentDetail: commentDetailReducer,
@@ -48,10 +54,10 @@ export const reducer: any = combineReducers({
 
 export const Comments = compose(
   connect(createStructuredSelector({
-      article: (state: IAppStateRecord, {  match: { params }}: ICommentsProps) => (
+      article: (state: IAppState, {  match: { params }}: ICommentsProps) => (
         isArticleContext(params) && getArticle(state, params.contextId)
       ),
-      category: (state: IAppStateRecord, {  match: { params }}: ICommentsProps) => {
+      category: (state: IAppState, {  match: { params }}: ICommentsProps) => {
         if (isArticleContext(params)) {
           const article = getArticle(state, params.contextId);
           return getCategory(state, article.categoryId);
@@ -60,7 +66,7 @@ export const Comments = compose(
           return getCategory(state, params.contextId);
         }
       },
-      moderators: (state: IAppStateRecord, { match: { params }}: ICommentsProps) => {
+      moderators: (state: IAppState, { match: { params }}: ICommentsProps) => {
         if (!isArticleContext(params)) {
           return List<IUserModel>();
         }

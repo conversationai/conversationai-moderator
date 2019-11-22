@@ -18,10 +18,8 @@ import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import { IUserModel, ModelId } from '../../models';
-import { IAppStateRecord } from '../appstate';
+import { IAppState } from '../appstate';
 import { getMyUserId } from '../auth';
-
-const STATE_ROOT = ['global', 'users'];
 
 export const USER_GROUP_GENERAL = 'general';
 export const USER_GROUP_ADMIN = 'admin';
@@ -39,15 +37,15 @@ export const systemUsersLoaded = createAction<ILoadSystemUsers>(
   'system-users/SYSTEM_USERS_LOADED',
 );
 
-export function getUsers(state: IAppStateRecord): Map<ModelId, IUserModel> {
-  return state.getIn(STATE_ROOT)['humans'];
+export function getUsers(state: IAppState): Map<ModelId, IUserModel> {
+  return state.global.users.humans;
 }
 
-export function getUser(state: IAppStateRecord, id: ModelId): IUserModel | null {
+export function getUser(state: IAppState, id: ModelId): IUserModel | null {
   return getUsers(state).get(id);
 }
 
-export function getCurrentUser(state: IAppStateRecord): IUserModel | null {
+export function getCurrentUser(state: IAppState): IUserModel | null {
   const id = getMyUserId();
   if (!id) {
     return null;
@@ -59,15 +57,15 @@ export function userIsAdmin(user: IUserModel | null): boolean {
   return user && user.group === 'admin';
 }
 
-export function getCurrentUserIsAdmin(state: IAppStateRecord): boolean {
+export function getCurrentUserIsAdmin(state: IAppState): boolean {
   return userIsAdmin(getCurrentUser(state));
 }
 
-export function getSystemUsers(type: string, state: IAppStateRecord): List<IUserModel> {
+export function getSystemUsers(type: string, state: IAppState): List<IUserModel> {
   if (type === USER_GROUP_SERVICE ||
     type === USER_GROUP_MODERATOR ||
     type === USER_GROUP_YOUTUBE) {
-    return state.getIn(STATE_ROOT)[type];
+    return state.global.users[type];
   }
   return List<IUserModel>();
 }

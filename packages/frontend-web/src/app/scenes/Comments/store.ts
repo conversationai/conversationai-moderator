@@ -18,7 +18,7 @@ import { List } from 'immutable';
 import {
   ITaggingSensitivityModel,
 } from '../../../models';
-import { IAppStateRecord } from '../../appstate';
+import { IAppState } from '../../appstate';
 import { getArticle } from '../../stores/articles';
 import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
@@ -64,7 +64,7 @@ export function getSummaryScoresBelowThreshold(
 }
 
 export function getTaggingSensitivitiesInCategory(
-  state: IAppStateRecord,
+  state: IAppState,
   categoryId?: string,
   articleId?: string): List<ITaggingSensitivityModel> {
   if (articleId) {

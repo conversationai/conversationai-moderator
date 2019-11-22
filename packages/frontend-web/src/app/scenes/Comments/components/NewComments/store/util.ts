@@ -22,7 +22,7 @@ import {
   ITagModel,
   TagModel,
 } from '../../../../../../models';
-import { IAppStateRecord } from '../../../../../appstate';
+import { IAppState } from '../../../../../appstate';
 import { COLCOUNT } from '../../../../../config';
 import { getTags } from '../../../../../stores/tags';
 import { groupByDateColumns } from '../../../../../util';
@@ -33,11 +33,11 @@ const dateTag = TagModel({
   color: '',
 }).set('id', 'DATE');
 
-export function getTagsWithDateAndSummary(state: IAppStateRecord): List<ITagModel> {
+export function getTagsWithDateAndSummary(state: IAppState): List<ITagModel> {
   return getTags(state).push(dateTag);
 }
 
-export function getSelectedTag(state: IAppStateRecord, tag?: string): ITagModel | null {
+export function getSelectedTag(state: IAppState, tag?: string): ITagModel | null {
   return tag && getTagsWithDateAndSummary(state).find((t) => t.key === tag);
 }
 

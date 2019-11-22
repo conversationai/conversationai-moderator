@@ -18,7 +18,7 @@ import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
-import { IAppDispatch, IAppStateRecord } from '../appstate';
+import { IAppDispatch, IAppState } from '../appstate';
 import { listCommentSummaryScoresById } from '../platform/dataService';
 
 export interface ICommentSummaryScore {
@@ -42,8 +42,6 @@ const initialState: ICommentSummaryScoresState = {
   isReady: false,
   items: null,
 };
-
-const STATE_ROOT = ['global', 'commentSummaryScores'];
 
 export const loadCommentSummaryScoresStart: () => Action<void> = createAction(
     'comment-summary-scores/LOAD_COMMENT_SUMMARY_SCORES_START',
@@ -78,7 +76,7 @@ export async function loadCommentSummaryScores(dispatch: IAppDispatch, commentId
   await dispatch(loadCommentSummaryScoresComplete(mappedScores));
 }
 
-export function getSummaryScoresById(state: IAppStateRecord, commentId: string) {
-  const stateRecord = state.getIn(STATE_ROOT) as ICommentSummaryScoresState;
+export function getSummaryScoresById(state: IAppState, commentId: string) {
+  const stateRecord = state.global.commentSummaryScores;
   return stateRecord && stateRecord.items && stateRecord.items.get(commentId);
 }

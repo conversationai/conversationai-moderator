@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { IUserModel } from '../../../models';
-import { IAppStateRecord } from '../../appstate';
+import { IAppState } from '../../appstate';
 import { getMyUserId } from '../../auth';
 import { getUsers } from '../../stores/users';
 import {
@@ -43,7 +43,7 @@ type IAssignModeratorsStateProps = Pick<
   'isReady'
 >;
 
-function getSortedUsers (state: IAppStateRecord, props: IAssignModeratorsOwnProps): Array<IUserModel> {
+function getSortedUsers (state: IAppState, props: IAssignModeratorsOwnProps): Array<IUserModel> {
   const userId = getMyUserId();
   const allUsers = getUsers(state);
   const currentUser = [];
@@ -74,7 +74,7 @@ function getSortedUsers (state: IAppStateRecord, props: IAssignModeratorsOwnProp
 const mapStateToProps = createStructuredSelector({
   users: getSortedUsers,
   isReady: () => true,
-}) as (state: IAppStateRecord, ownProps: IAssignModeratorsOwnProps) => IAssignModeratorsStateProps;
+}) as (state: IAppState, ownProps: IAssignModeratorsOwnProps) => IAssignModeratorsStateProps;
 
 export const AssignModerators: React.ComponentClass<IAssignModeratorsOwnProps> = connect(
   mapStateToProps,

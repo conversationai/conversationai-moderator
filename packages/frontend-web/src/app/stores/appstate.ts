@@ -14,25 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { TypedRecord } from 'typed-immutable-record';
-
 import { IArticlesState } from './articles';
 import { ICategoriesState } from './categories';
-import { IState as ICommentsState } from './comments';
+import { ICommentsState } from './comments';
 import { ICommentSummaryScoresState } from './commentSummaryScores';
+import { ICountsState } from './counts';
 import { IPreselectsState } from './preselects';
 import { IRulesState } from './rules';
 import { ITaggingSensitivitiesState } from './taggingSensitivities';
 import { ITagsState } from './tags';
 import { ITextSizesState } from './textSizes';
-import { IState as ITopScoresState, ISummaryState as ITopSummaryScoresState } from './topScores';
+import { ITopScoresState, ITopScoresSummaryState } from './topScores';
 import { IUsersState } from './users';
 
-export interface IGlobalState {
+export type IGlobalState = Readonly<{
   categories: ICategoriesState;
   articles: IArticlesState;
   comments: ICommentsState;
   commentSummaryScores: ICommentSummaryScoresState;
+  counts: ICountsState;
   users: IUsersState;
   tags: ITagsState;
   rules: IRulesState;
@@ -40,7 +40,5 @@ export interface IGlobalState {
   taggingSensitivities: ITaggingSensitivitiesState;
   textSizes: ITextSizesState;
   topScores: ITopScoresState;
-  topSummaryScores: ITopSummaryScoresState;
-}
-
-export interface IGlobalStateRecord extends TypedRecord<IGlobalStateRecord>, IGlobalState {}
+  topScoresSummary: ITopScoresSummaryState;
+}>;

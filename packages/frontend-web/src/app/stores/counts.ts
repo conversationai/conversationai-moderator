@@ -16,9 +16,7 @@ limitations under the License.
 
 import { Action, createAction, handleActions } from 'redux-actions';
 
-import { IAppStateRecord } from '../appstate';
-
-const STATE_ROOT = ['global', 'counts'];
+import { IAppState } from '../appstate';
 
 export const assignmentCountUpdated = createAction<number>('global/ASSIGNMENT_COUNT_UPDATED');
 
@@ -26,9 +24,8 @@ export type ICountsState = Readonly<{
   assignments: number;
 }>;
 
-export function getAssignments(state: IAppStateRecord): any {
-  const stateRecord = state.getIn(STATE_ROOT) as ICountsState;
-  return stateRecord && stateRecord.assignments;
+export function getAssignments(state: IAppState) {
+  return state.global.counts.assignments;
 }
 
 export const reducer = handleActions<
