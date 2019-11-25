@@ -32,14 +32,6 @@ function ColumnSortGroup(keyValuePairs?: IColumnSortGroupAttributes): IColumnSor
   return Record(keyValuePairs)(keyValuePairs) as any;
 }
 
-export type IChangeColumnSortPayload = {
-  group: string;
-  section: string;
-  key: string;
-};
-export const changeColumnSort: (payload: IChangeColumnSortPayload) => Action<IChangeColumnSortPayload> =
-  createAction<IChangeColumnSortPayload>('column-sorts/CHANGE_COLUMN_SORT');
-
 export type IChangeColumnSortGroupDefaultPayload = {
   group: string;
   key: string;
@@ -53,8 +45,6 @@ const SCHEMA_VERSION = 1;
 const STATE_ROOT = ['global', 'columnSorts'];
 
 export interface IColumnSortState {
-  dashboard: IColumnSortGroup;
-  dashboardVisible: IColumnSortGroup;
   commentsIndexModerated: IColumnSortGroup;
   commentsIndexNew: IColumnSortGroup;
 }
@@ -62,26 +52,6 @@ export interface IColumnSortState {
 export interface IColumnSortStateRecord extends TypedRecord<IColumnSortStateRecord>, IColumnSortState {}
 
 const StateFactory = makeTypedFactory<IColumnSortState, IColumnSortStateRecord>({
-  dashboard: ColumnSortGroup({
-    defaultValue: 'newCount',
-
-    overrides: Map<string, string>({
-      deferred: 'deferred',
-    }),
-
-    customized: Map<string, string>(),
-  }),
-
-  dashboardVisible: ColumnSortGroup({
-    defaultValue: 'newest',
-
-    overrides: Map<string, string>({
-      deferred: 'deferred',
-    }),
-
-    customized: Map<string, string>(),
-  }),
-
   commentsIndexModerated: ColumnSortGroup({
     defaultValue: 'updated',
 
@@ -127,8 +97,6 @@ function loadFromLocalStorage(): IColumnSortStateRecord {
   try {
     const parsedData = JSON.parse(stringData);
     const sortState: IColumnSortState = {
-      dashboard: parseGroup(parsedData.dashboard),
-      dashboardVisible: parseGroup(parsedData.dashboardVisible),
       commentsIndexModerated: parseGroup(parsedData.commentsIndexModerated),
       commentsIndexNew: parseGroup(parsedData.commentsIndexNew),
     };
@@ -167,19 +135,8 @@ export function getCurrentColumnSort(state: IAppStateRecord, section: string, ke
 
 export const reducer = handleActions<
   IColumnSortStateRecord,
-  IChangeColumnSortPayload             | // changeColumnSort
   IChangeColumnSortGroupDefaultPayload   // changeColumnSortGroupDefault
 >({
-  [changeColumnSort.toString()]: (state, { payload: { group, section, key } }: Action<IChangeColumnSortPayload>) => {
-    const updatedState = state
-        .update(group, (g?: IColumnSortGroup | null) => g || ColumnSortGroup())
-        .setIn([group, 'customized', section], key);
-
-    writeToLocalStorage(updatedState);
-
-    return updatedState;
-  },
-
   [changeColumnSortGroupDefault.toString()]: (state, { payload: { group, key } }: Action<IChangeColumnSortGroupDefaultPayload>) => {
     const updatedState = state
         .update(group, (g?: IColumnSortGroup | null) => g || ColumnSortGroup())
