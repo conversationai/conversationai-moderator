@@ -19,8 +19,7 @@ limitations under the License.
 const SEND_TEST_UPDATE_PACKETS = false;
 
 import * as express from 'express';
-import { isEqual, pick } from 'lodash';
-import * as Sequelize from 'sequelize';
+import { isEqual } from 'lodash';
 import { Op } from 'sequelize';
 import * as WebSocket from 'ws';
 
@@ -45,22 +44,16 @@ import {
 } from '../../models';
 import { registerInterest } from '../../models';
 import { countAssignments } from './assignments';
-
-const TAG_FIELDS = ['id', 'color', 'description', 'key', 'label', 'isInBatchView', 'inSummaryScore', 'isTaggable'];
-const RANGE_FIELDS = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'tagId'];
-const TAGGING_SENSITIVITY_FIELDS = RANGE_FIELDS;
-const RULE_FIELDS = ['action', 'createdBy', ...RANGE_FIELDS];
-const PRESELECT_FIELDS = RANGE_FIELDS;
-const USER_FIELDS = ['id', 'name', 'email', 'avatarURL', 'group', 'isActive'];
-
-const COMMENTSET_FIELDS = ['id', 'updatedAt', 'allCount', 'unprocessedCount', 'unmoderatedCount', 'moderatedCount',
-  'approvedCount', 'highlightedCount', 'rejectedCount', 'deferredCount', 'flaggedCount',
-  'batchedCount', 'recommendedCount', 'assignedModerators', ];
-const CATEGORY_FIELDS = [...COMMENTSET_FIELDS, 'label', 'ownerId', 'isActive', 'sourceId'];
-const ARTICLE_FIELDS = [...COMMENTSET_FIELDS, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
-  'isCommentingEnabled', 'isAutoModerated'];
-
-const ID_FIELDS = new Set(['categoryId', 'tagId', 'ownerId']);
+import {
+  ARTICLE_FIELDS,
+  CATEGORY_FIELDS,
+  PRESELECT_FIELDS,
+  RULE_FIELDS,
+  serialiseObject,
+  TAG_FIELDS,
+  TAGGING_SENSITIVITY_FIELDS,
+  USER_FIELDS,
+} from './serializer';
 
 // TODO: Can't find a good way to get rid of the any types below.  And typing is generally a mess.
 //       Revisit when sequelize has been updated
@@ -127,31 +120,6 @@ async function getSystemData() {
       preselects: preselectdata,
     },
   } as IMessage;
-}
-
-// Convert IDs to strings, and assignedModerators to arrays of strings.
-function serialiseObject(
-  o: Sequelize.Instance<any>,
-  fields: Array<string>,
-): {[key: string]: {} | Array<string> | string | number} {
-  const serialised = pick(o.toJSON(), fields);
-
-  serialised.id = serialised.id.toString();
-
-  for (const k in serialised) {
-    const v = serialised[k];
-
-    if (ID_FIELDS.has(k) && v) {
-      serialised[k] = v.toString();
-    }
-  }
-
-  if (serialised.assignedModerators) {
-    serialised.assignedModerators = serialised.assignedModerators.map(
-      (i: any) => (i.user_category_assignment ?  i.user_category_assignment.userId.toString() :
-                                                 i.moderator_assignment.userId.toString()));
-  }
-  return serialised;
 }
 
 async function getAllArticlesData() {
