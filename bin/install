@@ -1,18 +1,31 @@
 #!/bin/bash
 set -e
+# Running npm install blats the package-lock.json file, as it doesn't know anything about
+# the sub-packages.
+# So if we are not doing a clean build, we save it off and restore it after installing tools.
 
 basename=`dirname $0`
 cd "${basename}/.."
+
+if [ -f package-lock.json.bak ]; then
+  rm package-lock.json.bak
+fi
 
 if [ "$1" == "clean" ]; then
   echo Removing old packages so we fetch everything from scratch
   for i in . packages/backend-api packages/frontend-web; do
     rm -Rf ${i}/node_modules ${i}/package-lock.json
   done
+else
+  cp package-lock.json package-lock.json.bak
 fi
 
 # Get packages for the root of the system, in particular lerna
 npm install
+
+if [ -f package-lock.json.bak ]; then
+  mv package-lock.json.bak package-lock.json
+fi
 
 # Use lerna to link together sub-modules, then build
 ./bin/link-packages
