@@ -6,11 +6,13 @@ cd "${basename}/.."
 
 if [ "$1" == "clean" ]; then
   echo Removing old packages so we fetch everything from scratch
-  rm -Rf node_modules package-lock.json
+  for i in . packages/backend-api packages/frontend-web; do
+    rm -Rf ${i}/node_modules ${i}/package-lock.json
+  done
 fi
 
 # Get packages for the root of the system, in particular lerna
-NODE_ENV=development npm install
+npm install
 
 # Use lerna to link together sub-modules, then build
 ./bin/link-packages
