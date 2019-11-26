@@ -6,22 +6,24 @@
     "url": "https://github.com/conversationai/conversationai-moderator"
   },
   "engines": {
-    "node": ">=10.14.2",
-    "npm": ">=6.4.1"
+    "node": ">=12.13.1",
+    "npm": ">=6.12.1"
   },
   "scripts": {
     "start": "bin/run"
   },
-  "devDependencies": {
+  "dependencies": {
     "@types/chai": "4.1.7",
     "@types/chai-http": "3.0.5",
     "@types/expect": "1.20.4",
     "@types/faker": "4.1.4",
+    "@types/lodash": "4.14.149",
     "@types/node": "12.7.1",
     "chai": "4.2.0",
     "chai-http": "4.2.1",
     "faker": "4.1.0",
     "lerna": "3.18.3",
+    "lodash": "4.17.15",
     "nsp": "3.2.1",
     "tslib": "1.10.0",
     "tslint": "5.20.0",
