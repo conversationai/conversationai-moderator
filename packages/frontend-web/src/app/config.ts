@@ -85,7 +85,6 @@ export const SUBMIT_FEEDBACK_URL = getString('SUBMIT_FEEDBACK_URL', (typeof ENV_
 export const FOCUS_DATA_ATTR = 'data-focus-id';
 export const DEFAULT_DRAG_HANDLE_POS1 = 0;
 export const DEFAULT_DRAG_HANDLE_POS2 = 0.2;
-export const DEFAULT_SORT = 'highest';
 export const DATE_FORMAT_LONG = 'MMM. D, YYYY h:mm A';
 export const DATE_FORMAT_MDY = 'MMM. D, YYYY';
 export const DATE_FORMAT_HM = 'h:mm A';

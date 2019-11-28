@@ -56,9 +56,9 @@ import {
 import {
   DEFAULT_DRAG_HANDLE_POS1,
   DEFAULT_DRAG_HANDLE_POS2,
-  DEFAULT_SORT,
 } from '../../../../config';
 import { updateArticle } from '../../../../platform/dataService';
+import { getDefaultSort, putDefaultSort } from '../../../../util/savedSorts';
 import {
   ARTICLE_CATEGORY_TYPE,
   BASE_Z_INDEX,
@@ -338,7 +338,13 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     const articleId = (isArticleContext(params)) ? params.contextId : null;
     let defaultPos1: number;
     let defaultPos2: number;
-    let defaultSort: string;
+    let defaultSort;
+    if (tag !== state.tag || !state.defaultSort) {
+      defaultSort = getDefaultSort(categoryId, 'new', tag);
+    }
+    else {
+      defaultSort = state.defaultSort;
+    }
 
     if (tag !== 'DATE') {
       if (props.preselects) {
@@ -357,12 +363,10 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       }
       defaultPos1 = preselect ? preselect.lowerThreshold : DEFAULT_DRAG_HANDLE_POS1;
       defaultPos2 = preselect ? preselect.upperThreshold : DEFAULT_DRAG_HANDLE_POS2;
-      defaultSort = DEFAULT_SORT;
     }
     else {
       defaultPos1 = 0;
       defaultPos2 = 1;
-      defaultSort = 'newest';
     }
 
     const query: INewCommentsQueryParams = qs.parse(props.location.search);
@@ -956,7 +960,9 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
   @autobind
   onSortChange(event: React.FormEvent<any>) {
-    this.setQueryStringParam(this.state.pos1, this.state.pos2, (event.target as any).value);
+    const sort: string = (event.target as any).value;
+    putDefaultSort(this.state.categoryId, 'new', this.state.tag, sort);
+    this.setQueryStringParam(this.state.pos1, this.state.pos2, sort);
   }
 
   @autobind
