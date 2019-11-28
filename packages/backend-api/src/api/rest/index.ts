@@ -30,12 +30,10 @@ export function createRESTRouter(): express.Router {
     'comment_scorers',
     'decisions',
     'moderation_rules',
-    'moderator_assignments',
     'preselects',
     'tags',
     'tagging_sensitivities',
     'users',
-    'user_category_assignments',
   ];
 
   const router = express.Router({

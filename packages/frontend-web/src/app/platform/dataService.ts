@@ -50,12 +50,10 @@ export type IValidModelNames =
     'comment_summary_scores' |
     'comments' |
     'moderation_rules' |
-    'moderator_assignments' |
     'preselects' |
     'tagging_sensitivities' |
     'tags' |
-    'users' |
-    'user_category_assignments';
+    'users';
 
 const VALID_MODEL_NAMES_LOOKUP: {
   [key: string]: boolean;
@@ -66,12 +64,10 @@ const VALID_MODEL_NAMES_LOOKUP: {
   comment_summary_scores: true,
   comments: true,
   moderation_rules: true,
-  moderator_assignments: true,
   preselects: true,
   tagging_sensitivities: true,
   tags: true,
   users: true,
-  user_category_assignments: true,
 };
 
 function validateModelName(name: string): void {
@@ -169,7 +165,7 @@ function modelURL(type: IValidModelNames, id: string, params?: Partial<IParams>)
 /**
  * The URL of a model related.
  */
-export function relatedURL(type: IValidModelNames, id: string, relationship: string, params?: Partial<IParams>): string {
+function relatedURL(type: IValidModelNames, id: string, relationship: string, params?: Partial<IParams>): string {
   validateModelName(type);
   return `${API_URL}${REST_URL}/${type}/${id}/${relationship}${serializeParams(params)}`;
 }

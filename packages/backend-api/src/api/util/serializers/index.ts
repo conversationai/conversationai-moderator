@@ -22,11 +22,9 @@ import { CommentSerializer } from './CommentSerializer';
 import { CommentSummaryScoreSerializer } from './CommentSummaryScoreSerializer';
 import { DecisionSerializer } from './DecisionSerializer';
 import { ModerationRuleSerializer } from './ModerationRuleSerializer';
-import { ModeratorAssignmentSerializer } from './ModeratorAssignmentSerializer';
 import { PreselectSerializer } from './PreselectSerializer';
 import { TaggingSensitivitySerializer } from './TaggingSensitivitySerializer';
 import { TagSerializer } from './TagSerializer';
-import { UserCategoryAssignmentSerializer } from './UserCategoryAssignmentSerializer';
 import { UserSerializer } from './UserSerializer';
 
 export {
@@ -37,12 +35,10 @@ export {
   CommentSummaryScoreSerializer,
   DecisionSerializer,
   ModerationRuleSerializer,
-  ModeratorAssignmentSerializer,
   PreselectSerializer,
   TagSerializer,
   TaggingSensitivitySerializer,
   UserSerializer,
-  UserCategoryAssignmentSerializer,
 };
 
 export const byType: {
@@ -56,10 +52,8 @@ export const byType: {
   comment_summary_scores: CommentSummaryScoreSerializer,
   decisions: DecisionSerializer,
   moderation_rules: ModerationRuleSerializer,
-  moderator_assignments: ModeratorAssignmentSerializer,
   preselects: PreselectSerializer,
   tags: TagSerializer,
   tagging_sensitivities: TaggingSensitivitySerializer,
   users: UserSerializer,
-  user_category_assignments: UserCategoryAssignmentSerializer,
 };
