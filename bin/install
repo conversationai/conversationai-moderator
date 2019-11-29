@@ -14,7 +14,7 @@ fi
 if [ "$1" == "clean" ]; then
   echo Removing old packages so we fetch everything from scratch
   for i in . packages/backend-api packages/frontend-web; do
-    rm -Rf ${i}/node_modules ${i}/package-lock.json
+    rm -Rf "${i}/node_modules" "${i}/package-lock.json"
   done
 else
   cp package-lock.json package-lock.json.bak
