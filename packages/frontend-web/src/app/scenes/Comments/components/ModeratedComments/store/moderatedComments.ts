@@ -22,7 +22,7 @@ import {
   getModeratedCommentIdsForCategory as fetchModeratedCommentIdsForCategory,
   IModeratedComments,
 } from '../../../../../platform/dataService';
-import { IAppStateRecord, IThunkAction } from '../../../../../stores';
+import { IAppDispatch, IAppStateRecord } from '../../../../../stores';
 import {
   approveComment,
   deferComment,
@@ -93,38 +93,46 @@ const setCommentsModerationForCategoriesAction = createAction<ISetCommentsModera
   'article-detail-moderatored/SET_MODERATED_COMMENTS_STATUS_FOR_CATEGORIES',
 );
 
-export function loadModeratedCommentsForArticle(articleId: string, sort: Array<string>): IThunkAction<void> {
-  return async (dispatch) => {
-    dispatch(loadModeratedCommentsStart());
-
-    const moderatedComments = await fetchModeratedCommentIdsForArticle(articleId, sort);
-
-    await dispatch(loadModeratedCommentsForArticleComplete({ articleId, moderatedComments }));
-  };
+export async function loadModeratedCommentsForArticle(
+  dispatch: IAppDispatch,
+  articleId: string,
+  sort: Array<string>,
+) {
+  await dispatch(loadModeratedCommentsStart());
+  const moderatedComments = await fetchModeratedCommentIdsForArticle(articleId, sort);
+  await dispatch(loadModeratedCommentsForArticleComplete({ articleId, moderatedComments }));
 }
 
-export function loadModeratedCommentsForCategory(category: string | 'all', sort: Array<string>): IThunkAction<Promise<void>> {
-  return async (dispatch) => {
-    dispatch(loadModeratedCommentsStart());
-
-    const moderatedComments = await fetchModeratedCommentIdsForCategory(category, sort);
-
-    await dispatch(loadModeratedCommentsForCategoryComplete({ category, moderatedComments }));
-  };
+export async function loadModeratedCommentsForCategory(
+  dispatch: IAppDispatch,
+  category: string | 'all',
+  sort: Array<string>,
+) {
+  await dispatch(loadModeratedCommentsStart());
+  const moderatedComments = await fetchModeratedCommentIdsForCategory(category, sort);
+  await dispatch(loadModeratedCommentsForCategoryComplete({ category, moderatedComments }));
 }
 
-export function setCommentsModerationForArticle(articleId: string, commentIds: Array<string>, moderationAction: string, currentModeration: string): IThunkAction<void> {
-  return (dispatch) => {
-    dispatch(updateCommentStateAction[moderationAction](commentIds));
-    dispatch(setCommentsModerationForArticlesAction({articleId, commentIds, moderationAction, currentModeration}));
-  };
+export function setCommentsModerationForArticle(
+  dispatch: IAppDispatch,
+  articleId: string,
+  commentIds: Array<string>,
+  moderationAction: string,
+  currentModeration: string,
+) {
+  dispatch(updateCommentStateAction[moderationAction](commentIds));
+  dispatch(setCommentsModerationForArticlesAction({articleId, commentIds, moderationAction, currentModeration}));
 }
 
-export function setCommentsModerationForCategory(category: string, commentIds: Array<string>, moderationAction: string, currentModeration: string): IThunkAction<void> {
-  return (dispatch) => {
-    dispatch(updateCommentStateAction[moderationAction](commentIds));
-    dispatch(setCommentsModerationForCategoriesAction({category, commentIds, moderationAction, currentModeration}));
-  };
+export function setCommentsModerationForCategory(
+  dispatch: IAppDispatch,
+  category: string,
+  commentIds: Array<string>,
+  moderationAction: string,
+  currentModeration: string,
+) {
+  dispatch(updateCommentStateAction[moderationAction](commentIds));
+  dispatch(setCommentsModerationForCategoriesAction({category, commentIds, moderationAction, currentModeration}));
 }
 
 export type IModeratedCommentsState = Readonly<{
@@ -250,6 +258,11 @@ export const moderatedCommentsReducer = handleActions<
 
 function getRecord(state: IAppStateRecord) {
   return state.getIn([...DATA_PREFIX, 'moderatedComments']) as IModeratedCommentsState;
+}
+
+export function getIsLoading(state: IAppStateRecord) {
+  const stateRecord = getRecord(state);
+  return stateRecord && stateRecord.isLoading;
 }
 
 export function getModeratedCommentsForArticle(state: IAppStateRecord): Map<string, Map<string, List<string>>> {
