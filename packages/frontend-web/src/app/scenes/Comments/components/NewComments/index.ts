@@ -41,7 +41,7 @@ import {
 import { getPreselects } from '../../../../stores/preselects';
 import { getRules } from '../../../../stores/rules';
 import { getTaggableTags } from '../../../../stores/tags';
-import { getTextSizes } from '../../../../stores/textSizes';
+import { getTextSizes, getTextSizesIsLoading } from '../../../../stores/textSizes';
 import {
   INewCommentsPathParams,
   isArticleContext,
@@ -51,15 +51,14 @@ import {
   NewComments as PureNewComments,
 } from './NewComments';
 import {
-  executeCommentListLoader,
   getAreAllSelected,
   getAreAnyCommentsSelected,
-  getCommentListHasLoaded,
-  getCommentListIsLoading,
   getCommentScores,
   getCurrentPagingIdentifier,
   getIsItemChecked,
+  getIsLoading,
   getSelectedTag,
+  loadCommentList,
   removeCommentScore,
   toggleSelectAll,
   toggleSingleItem,
@@ -108,7 +107,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): Partial<INewCommentsProps> 
     toggleSingleItem: ({ id }: { id: string }) => dispatch(toggleSingleItem({ id })),
 
     loadData: async (params: INewCommentsPathParams, pos1: number, pos2: number, sort: string): Promise<void> => {
-      await executeCommentListLoader(dispatch, params, pos1, pos2, sort);
+      await dispatch(loadCommentList(params, pos1, pos2, sort));
     },
   };
 }
@@ -126,7 +125,7 @@ const mapStateToProps = createStructuredSelector({
 
   commentScores: getCommentScores,
 
-  isLoading: (state: IAppStateRecord) => getCommentListIsLoading(state) || !getCommentListHasLoaded(state),
+  isLoading: (state: IAppStateRecord) => getIsLoading(state) || getTextSizesIsLoading(state),
 
   areNoneSelected: getAreAnyCommentsSelected,
 

@@ -20,7 +20,6 @@ export * from './createImmutableSelector';
 export * from './groupByColumn';
 export * from './makeCheckedSelectionStore';
 export * from './makeCurrentPagingIdentifierReducer';
-export * from './makeLoadingReducer';
 export * from './makeRecordListReducer';
 export * from './makeSingleRecordReducer';
 export * from './makeQueuedModelStore';

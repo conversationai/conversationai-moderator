@@ -44,7 +44,7 @@ const loadCommentScoresComplete = createAction<ILoadCommentScoresCompletePayload
   'article-detail-new/LOAD_COMMENTS_SCORES_COMPLETE',
 );
 
-const removeCommentScore: (payload: Array<string>) => Action<Array<string>> = createAction<Array<string>>(
+export const removeCommentScore: (payload: Array<string>) => Action<Array<string>> = createAction<Array<string>>(
   'article-detail-new/REMOVE_COMMENT_SCORES',
 );
 
@@ -134,12 +134,16 @@ export const commentScoresReducer = handleActions<
     }),
 }, initailState);
 
-function getCommentScores(state: IAppStateRecord) {
-  const storeRecord = state.getIn([...DATA_PREFIX, 'commentScores']) as ICommentScoresState;
-  return storeRecord && storeRecord.scores;
+function getStoreRecord(state: IAppStateRecord) {
+  return state.getIn([...DATA_PREFIX, 'commentScores']) as ICommentScoresState;
 }
 
-export {
-  getCommentScores,
-  removeCommentScore,
-};
+export function getIsLoading(state: IAppStateRecord) {
+  const storeRecord = getStoreRecord(state);
+  return storeRecord && storeRecord.isLoading;
+}
+
+export function getCommentScores(state: IAppStateRecord) {
+  const storeRecord = getStoreRecord(state);
+  return storeRecord && storeRecord.scores;
+}
