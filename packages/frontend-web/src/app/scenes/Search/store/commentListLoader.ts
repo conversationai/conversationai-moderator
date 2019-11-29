@@ -16,68 +16,42 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { pick } from 'lodash';
-import { Reducer } from 'redux-actions';
 
 import { search } from '../../../platform/dataService';
-import { IAppDispatch, IAppStateRecord, IThunkAction } from '../../../stores';
+import { IAppDispatch } from '../../../stores';
 import { loadTextSizesByIds } from '../../../stores/textSizes';
-import { ILoadingStateRecord, makeLoadingReducer } from '../../../util';
 import { storeCommentPagingOptions } from '../../Comments/components/CommentDetail/store';
 import { searchLink } from '../../routes';
 import { ISearchScope } from '../types';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
-import { loadAllCommentIdsComplete } from './searchResults';
+import { loadAllCommentIdsComplete, loadAllCommentIdsStart } from './searchResults';
 
-import { DATA_PREFIX } from './reduxPrefix';
-
-const LOADING_DATA = [...DATA_PREFIX, 'commentListLoader'];
-
-function loadCommentList(
-  scope: ISearchScope,
-): () => IThunkAction<void> {
-  return () => async (dispatch) => {
-    const { term, params } = scope;
-    const commentIds = await search(term, params);
-    const commentIdsList = List(commentIds);
-
-    dispatch(loadAllCommentIdsComplete(commentIdsList));
-
-    const query = {
-      ...pick(params, ['articleId', 'searchByAuthor', 'sort']),
-      term,
-    };
-    const link = searchLink(query);
-
-    const currentPagingIdentifier = await dispatch(storeCommentPagingOptions({
-      commentIds: commentIdsList,
-      fromBatch: true,
-      source: `Comment %i of ${commentIdsList.size} from search for "${term}"`,
-      link,
-    }));
-
-    dispatch(setCurrentPagingIdentifier({ currentPagingIdentifier }));
-
-    const bodyContentWidth = 696;
-
-    await dispatch(loadTextSizesByIds(commentIdsList, bodyContentWidth));
-  };
-}
-
-const loadingReducer = makeLoadingReducer(LOADING_DATA);
-
-const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingReducer.reducer;
-const getCommentListIsLoading: (state: IAppStateRecord) => boolean = loadingReducer.getIsLoading;
-const getCommentListHasLoaded: (state: IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
-
-export async function executeCommentListLoader(
+export async function loadCommentList(
   dispatch: IAppDispatch,
   scope: ISearchScope,
 ) {
-  await loadingReducer.execute(dispatch, loadCommentList(scope));
-}
+  dispatch(loadAllCommentIdsStart);
+  const { term, params } = scope;
+  const commentIds = await search(term, params);
+  const commentIdsList = List(commentIds);
+  dispatch(loadAllCommentIdsComplete(commentIdsList));
 
-export {
-  commentListLoaderReducer,
-  getCommentListIsLoading,
-  getCommentListHasLoaded,
-};
+  const query = {
+    ...pick(params, ['articleId', 'searchByAuthor', 'sort']),
+    term,
+  };
+  const link = searchLink(query);
+
+  const currentPagingIdentifier = await dispatch(storeCommentPagingOptions({
+    commentIds: commentIdsList,
+    fromBatch: true,
+    source: `Comment %i of ${commentIdsList.size} from search for "${term}"`,
+    link,
+  }));
+
+  dispatch(setCurrentPagingIdentifier({ currentPagingIdentifier }));
+
+  const bodyContentWidth = 696;
+
+  await dispatch(loadTextSizesByIds(commentIdsList, bodyContentWidth));
+}
