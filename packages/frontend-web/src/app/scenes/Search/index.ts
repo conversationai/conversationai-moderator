@@ -23,8 +23,8 @@ import { IAppDispatch, IAppStateRecord } from '../../stores';
 import { getArticleMap } from '../../stores/articles';
 import {ISearchProps, Search as PureSearch} from './Search';
 import {
-  executeCommentListLoader,
   getAllCommentIds,
+  loadCommentList,
   resetCommentIds,
 } from './store';
 import { ISearchScope } from './types';
@@ -41,7 +41,7 @@ const mapStateToProps = createStructuredSelector({
 function mapDispatchToProps(dispatch: IAppDispatch): Partial<ISearchProps> {
   return {
     onSearch: async (newScope: ISearchScope)  => {
-      await executeCommentListLoader(dispatch, newScope);
+      await loadCommentList(dispatch, newScope);
     },
 
     resetCommentIds: () => dispatch(resetCommentIds()),

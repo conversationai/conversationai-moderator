@@ -37,14 +37,14 @@ import {
   resetComment,
 } from '../../../stores/comments';
 import { getTaggableTags } from '../../../stores/tags';
-import { getTextSizes } from '../../../stores/textSizes';
+import { getTextSizes, getTextSizesIsLoading } from '../../../stores/textSizes';
 import {
   getAllCommentIds,
   getAreAllSelected,
   getAreAnyCommentsSelected,
-  getCommentListIsLoading,
   getCurrentPagingIdentifier,
   getIsItemChecked,
+  getIsLoading,
   getSelectedCount,
   toggleSelectAll,
   toggleSingleItem,
@@ -76,7 +76,7 @@ const actionMap: IActionMap = {
 
 const mapStateToProps = createStructuredSelector({
   totalCommentCount: (state: IAppStateRecord) => getAllCommentIds(state).size,
-  isLoading: getCommentListIsLoading,
+  isLoading: (state: IAppStateRecord) => (getIsLoading(state) || getTextSizesIsLoading(state)),
   isItemChecked: (state: IAppStateRecord) => (id: string) => getIsItemChecked(state, id),
   areNoneSelected: getAreAnyCommentsSelected,
   areAllSelected: getAreAllSelected,

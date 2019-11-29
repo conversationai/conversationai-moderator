@@ -19,6 +19,10 @@ import { Action, createAction, handleActions } from 'redux-actions';
 import { IAppStateRecord } from '../../../stores';
 import { DATA_PREFIX } from './reduxPrefix';
 
+export const loadAllCommentIdsStart: () => Action<void> = createAction(
+  'search/LOAD_ALL_COMMENT_IDS',
+);
+
 export type ILoadAllCommentIdsCompletePayload = List<string>;
 export const loadAllCommentIdsComplete: (payload: ILoadAllCommentIdsCompletePayload) => Action<ILoadAllCommentIdsCompletePayload> =
   createAction<ILoadAllCommentIdsCompletePayload>(
@@ -30,10 +34,12 @@ export const resetCommentIds: () => Action<void> = createAction(
 );
 
 export type IAllCommentIDsState = Readonly<{
+  isLoading: boolean;
   ids: List<string>;
 }>;
 
 const initialState = {
+  isLoading: false,
   ids: List<string>(),
 };
 
@@ -44,15 +50,24 @@ export const allCommentIdsReducer = handleActions<
 >({
     [resetCommentIds.toString()]: () => initialState,
 
+    [loadAllCommentIdsStart().toString()]: () => ({...initialState, isLoading: true}),
+
     [loadAllCommentIdsComplete.toString()]: (_state, { payload }: Action<ILoadAllCommentIdsCompletePayload>) => (
-      {ids: payload}
+      {isLoading: false, ids: payload}
     ),
   },
 
   initialState,
 );
 
+function getStateRecord(state: IAppStateRecord) {
+  return state.getIn([...DATA_PREFIX, 'allCommentIds']) as IAllCommentIDsState;
+}
+
 export function getAllCommentIds(state: IAppStateRecord) {
-  const commentIds = state.getIn([...DATA_PREFIX, 'allCommentIds']) as IAllCommentIDsState;
-  return commentIds.ids;
+  return getStateRecord(state).ids;
+}
+
+export function getIsLoading(state: IAppStateRecord) {
+  return getStateRecord(state).isLoading;
 }
