@@ -93,6 +93,10 @@ export interface IModeratedCommentsPathParams extends IContextPathParams {
   disposition: string;
 }
 
+export interface IModeratedCommentsQueryParams {
+  sort?: string;
+}
+
 export const articleBase = 'articles';
 export const categoryBase = 'categories';
 export const NEW_COMMENTS_DEFAULT_TAG = 'SUMMARY_SCORE';
@@ -106,8 +110,10 @@ export function newCommentsPageLink(
 
 export function moderatedCommentsPageLink(
   {context, contextId, disposition}: IModeratedCommentsPathParams,
+  query?: IModeratedCommentsQueryParams,
 ) {
-  return `/${context}/${contextId}/moderated/${disposition}`;
+  const queryString = query ? '?' + qs.stringify(query) : '';
+  return `/${context}/${contextId}/moderated/${disposition}${queryString}`;
 }
 
 export interface ITagSelectorPathParams extends IContextPathParams {

@@ -32,11 +32,21 @@ export function getDefaultSort(categoryId: ModelId, page: string, tag: string) {
   const key = `${categoryId}:${page}:${tag}`;
   let sort = defaultSorts.get(key);
   if (!sort) {
-    if (tag === 'DATE') {
-      sort = 'newest';
+    if (page === 'new') {
+      if (tag === 'DATE') {
+        sort = 'newest';
+      }
+      else {
+        sort = 'highest';
+      }
     }
     else {
-      sort = 'highest';
+      if (tag === 'flagged') {
+        sort = 'flagged';
+      }
+      else {
+        sort = 'updated';
+      }
     }
   }
   return sort;

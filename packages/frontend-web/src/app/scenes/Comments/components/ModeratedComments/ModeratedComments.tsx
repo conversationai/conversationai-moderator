@@ -19,6 +19,7 @@ import FocusTrap from 'focus-trap-react';
 import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import { isEqual } from 'lodash';
+import qs from 'query-string';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 
@@ -63,12 +64,14 @@ import {
   WHITE_COLOR,
 } from '../../../../styles';
 import { partial } from '../../../../util';
+import { getDefaultSort, putDefaultSort } from '../../../../util/savedSorts';
 import { css, stylesheet } from '../../../../utilx';
-import { getSortDefault } from '../../../../utilx';
 import {
   commentDetailsPageLink,
   IModeratedCommentsPathParams,
+  IModeratedCommentsQueryParams,
   isArticleContext,
+  moderatedCommentsPageLink,
 } from '../../../routes';
 
 const ARROW_SIZE = 6;
@@ -241,7 +244,6 @@ const NO_COMMENTS_MESSAGING = 'No matching comments found.';
 
 export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedCommentsPathParams> {
   isLoading: boolean;
-  getCurrentColumnSort(key: string): string;
   tags: List<ITagModel>;
   moderatedComments: Map<string, List<number>>;
   isItemChecked(id: string): boolean;
@@ -249,13 +251,12 @@ export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedC
   areAllSelected: boolean;
   pagingIdentifier?: string;
   article?: IArticleModel;
-  loadData?(params: IModeratedCommentsPathParams): void;
+  loadData?(params: IModeratedCommentsPathParams, query: IModeratedCommentsQueryParams): void;
   tagComments?(ids: Array<string>, tagId: string): any;
   dispatchAction?(action: IConfirmationAction, idsToDispatch: Array<string>): any;
   toggleSelectAll?(): any;
   toggleSingleItem({ id }: { id: string }): any;
   textSizes?: Map<number, number>;
-  changeSort(params: IModeratedCommentsPathParams, newSort: string): Promise<void>;
   setCommentModerationStatusForArticle?(
     commentIds: Array<string>,
     moderationAction: IConfirmationAction,
@@ -269,6 +270,7 @@ export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedC
 }
 
 export interface IModeratedCommentsState {
+  categoryId?: ModelId;
   commentIds?: List<string>;
   allModeratedCommentIds?: List<string>;
   isConfirmationModalVisible?: boolean;
@@ -291,6 +293,8 @@ export interface IModeratedCommentsState {
   currentPathParams?: IModeratedCommentsPathParams;
   articleControlOpen: boolean;
   hideHistogram: boolean;
+  defaultSort?: string;
+  sort?: string;
 }
 
 export class ModeratedComments
@@ -329,13 +333,24 @@ export class ModeratedComments
   }
 
   static getDerivedStateFromProps(props: IModeratedCommentsProps, state: IModeratedCommentsState) {
+    const categoryId = (!isArticleContext(props.match.params)) ? props.match.params.contextId : props.article.categoryId;
+    const actionLabel = props.match.params.disposition;
+    let defaultSort = state.sort;
+    let pathParamsChanged = false;
     if (!state.currentPathParams || !isEqual(state.currentPathParams, props.match.params)) {
-      props.loadData(props.match.params);
+      defaultSort = undefined;
+      pathParamsChanged = true;
     }
 
-    const actionLabel = props.match.params.disposition;
-    if (state.actionLabel !== actionLabel) {
-      props.changeSort(props.match.params, getSortDefault(actionLabel));
+    if (!defaultSort) {
+      defaultSort = getDefaultSort(categoryId, 'moderated', actionLabel);
+    }
+
+    const query: IModeratedCommentsQueryParams = qs.parse(props.location.search);
+    const sort = query.sort || defaultSort;
+
+    if (pathParamsChanged || sort !== state.sort) {
+      props.loadData(props.match.params, {sort});
     }
 
     const commentIds = props.moderatedComments.get(props.match.params.disposition);
@@ -343,10 +358,13 @@ export class ModeratedComments
       sum.union(tagList.toSet()), Set());
 
     return {
+      categoryId,
       actionLabel,
       commentIds,
       allModeratedCommentIds,
       currentPathParams: props.match.params,
+      defaultSort,
+      sort,
     };
   }
 
@@ -765,13 +783,23 @@ export class ModeratedComments
 
   @autobind
   getCurrentSort() {
-    const categoryId = isArticleContext(this.props.match.params) ? undefined : this.props.match.params.contextId;
-    return this.props.getCurrentColumnSort(categoryId);
+    return this.state.sort;
   }
 
   @autobind
   onSortChange(event: React.FormEvent<any>) {
-    this.props.changeSort(this.props.match.params, (event.target as any).value);
+    const sort: string = (event.target as any).value;
+    putDefaultSort(this.state.categoryId, 'moderated', this.state.actionLabel, sort);
+
+    if (sort === this.state.sort) {
+      return;
+    }
+
+    const query: IModeratedCommentsQueryParams = {};
+    if (sort !== this.state.defaultSort) {
+      query.sort = sort;
+    }
+    this.props.history.replace(moderatedCommentsPageLink(this.props.match.params, query));
   }
 
   @autobind
@@ -792,26 +820,10 @@ export class ModeratedComments
     return sortOptions;
   }
 
-  applyActionForId(comment: ICommentModel, action: IConfirmationAction) {
-    switch (action) {
-      case 'approve':
-        return comment.set('isAccepted', true).set('isDeferred', false);
-      case 'reject':
-        return comment.set('isAccepted', false).set('isDeferred', false);
-      case 'highlight':
-        return comment.set('isHighlighted', true);
-      case 'defer':
-        return comment.set('isAccepted', null).set('isDeferred', true);
-      default:
-        return comment;
-    }
-  }
-
   @autobind
   onSelectChange(event: React.FormEvent<any>) {
     const currentSelect = (event.target as any).value;
     this.setState({ currentSelect });
-    this.props.changeSort(this.props.match.params, 'newest');
   }
 
   @autobind

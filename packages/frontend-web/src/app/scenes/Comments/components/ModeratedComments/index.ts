@@ -22,10 +22,6 @@ import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
 import {
-  changeColumnSortGroupDefault,
-  getCurrentColumnSort,
-} from '../../../../stores/columnSorts';
-import {
   approveComments,
   approveFlagsAndComments,
   deferComments,
@@ -37,7 +33,7 @@ import {
 } from '../../../../stores/commentActions';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes } from '../../../../stores/textSizes';
-import {IModeratedCommentsPathParams, isArticleContext} from '../../../routes';
+import { IModeratedCommentsPathParams, IModeratedCommentsQueryParams, isArticleContext } from '../../../routes';
 import {
   IModeratedCommentsProps,
   ModeratedComments as PureModeratedComments,
@@ -63,7 +59,6 @@ type IModeratedCommentsDispatchProps = Pick<
   'toggleSingleItem' |
   'setCommentModerationStatusForArticle' |
   'setCommentModerationStatusForCategory' |
-  'changeSort' |
   'loadData' |
   'tagComments' |
   'dispatchAction'
@@ -78,7 +73,6 @@ type IModeratedCommentsStateProps = Pick<
   'isItemChecked' |
   'moderatedComments' |
   'tags' |
-  'getCurrentColumnSort' |
   'textSizes'
 >;
 
@@ -103,10 +97,6 @@ const mapStateToProps = createStructuredSelector({
 
   tags: getTaggableTags,
 
-  getCurrentColumnSort: (state: IAppStateRecord) => {
-    return (key: string) => getCurrentColumnSort(state, 'commentsIndexModerated', key);
-  },
-
   pagingIdentifier: getCurrentPagingIdentifier,
 
   textSizes: getTextSizes,
@@ -125,8 +115,8 @@ function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsPro
   };
 
   return {
-    loadData: (params: IModeratedCommentsPathParams) => {
-      executeCommentListLoader(dispatch, params);
+    loadData: (params: IModeratedCommentsPathParams, query: IModeratedCommentsQueryParams) => {
+      executeCommentListLoader(dispatch, params, query);
     },
 
     tagComments: (ids: Array<string>, tagId: string) =>
@@ -144,15 +134,6 @@ function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsPro
 
     setCommentModerationStatusForCategory: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
         dispatch(setCommentsModerationForCategory(props.match.params.contextId, commentIds, moderationAction, currentModeration)),
-
-    changeSort: async (params: IModeratedCommentsPathParams, newSort: string): Promise<void> => {
-      await dispatch(changeColumnSortGroupDefault({
-        group: 'commentsIndexModerated',
-        key: newSort,
-      }));
-
-      await executeCommentListLoader(dispatch, params);
-    },
   };
 }
 
