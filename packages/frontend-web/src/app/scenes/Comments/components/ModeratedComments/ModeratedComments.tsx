@@ -80,9 +80,6 @@ const MODERATION_CONTAINER_HEIGHT = 269;
 const MODERATION_CONTAINER_HEIGHT_SHORT = 202;
 const TOAST_DELAY = 6000;
 
-const BATCH_SELECT_BY_STATUS = 'status';
-const BATCH_SELECT_BY_DATE = 'date';
-
 const sortOptions = List.of(
   TagModel({
     key: 'newest',
@@ -139,7 +136,7 @@ const STYLES = stylesheet({
 
   topSelectRow: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     width: '100%',
     paddingLeft: `${GUTTER_DEFAULT_SPACING}px`,
@@ -245,7 +242,7 @@ const NO_COMMENTS_MESSAGING = 'No matching comments found.';
 export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedCommentsPathParams> {
   isLoading: boolean;
   tags: List<ITagModel>;
-  moderatedComments: Map<string, List<number>>;
+  moderatedComments: Map<string, List<string>>;
   isItemChecked(id: string): boolean;
   areNoneSelected?: boolean;
   areAllSelected: boolean;
@@ -272,11 +269,9 @@ export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedC
 export interface IModeratedCommentsState {
   categoryId?: ModelId;
   commentIds?: List<string>;
-  allModeratedCommentIds?: List<string>;
   isConfirmationModalVisible?: boolean;
   confirmationAction?: IConfirmationAction;
   selectedItems?: any;
-  currentSelect?: string;
   updateCounter?: number;
   actionLabel: string;
   actionText?: string;
@@ -306,7 +301,6 @@ export class ModeratedComments
     isConfirmationModalVisible: false,
     confirmationAction: null,
     selectedItems: [],
-    currentSelect: BATCH_SELECT_BY_STATUS,
     updateCounter: 0,
     actionLabel: '',
     actionText: '',
@@ -354,14 +348,11 @@ export class ModeratedComments
     }
 
     const commentIds = props.moderatedComments.get(props.match.params.disposition);
-    const allModeratedCommentIds = props.moderatedComments.reduce((sum, tagList) =>
-      sum.union(tagList.toSet()), Set());
 
     return {
       categoryId,
       actionLabel,
       commentIds,
-      allModeratedCommentIds,
       currentPathParams: props.match.params,
       defaultSort,
       sort,
@@ -383,7 +374,6 @@ export class ModeratedComments
 
     const {
       commentIds,
-      allModeratedCommentIds,
       isConfirmationModalVisible,
       isTaggingToolTipMetaVisible,
       taggingToolTipMetaPosition,
@@ -417,18 +407,6 @@ export class ModeratedComments
 
         <Collapse in={!hideHistogram}>
           <div {...css(STYLES.topSelectRow)}>
-            <div {...css(STYLES.dropdown)}>
-              <select
-                value={this.state.currentSelect}
-                onChange={this.onSelectChange}
-                id="sorted-type"
-                {...css(STYLES.select)}
-              >
-                <option value={BATCH_SELECT_BY_DATE}>Date</option>
-                <option value={BATCH_SELECT_BY_STATUS}>Moderation status</option>
-              </select>
-              <span aria-hidden="true" {...css(STYLES.arrow)} />
-            </div>
             {isArticleContext(params) && (
               <ArticleControlIcon
                 article={this.props.article}
@@ -554,7 +532,7 @@ export class ModeratedComments
             <CommentList
               heightOffset={listHeightOffset}
               textSizes={textSizes}
-              commentIds={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds : commentIds}
+              commentIds={commentIds}
               areAllSelected={areAllSelected}
               getCurrentSort={this.getCurrentSort}
               getLinkTarget={getLinkTarget}
@@ -563,7 +541,7 @@ export class ModeratedComments
               onSelectionChange={this.onSelectionChange}
               onSortChange={this.onSortChange}
               sortOptions={this.getSortOptions()}
-              totalItems={this.state.currentSelect === BATCH_SELECT_BY_DATE ? allModeratedCommentIds.size : commentIds.size}
+              totalItems={commentIds.size}
               triggerActionToast={this.triggerActionToast}
               displayArticleTitle={isArticleContext(params)}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
@@ -818,12 +796,6 @@ export class ModeratedComments
     }
 
     return sortOptions;
-  }
-
-  @autobind
-  onSelectChange(event: React.FormEvent<any>) {
-    const currentSelect = (event.target as any).value;
-    this.setState({ currentSelect });
   }
 
   @autobind
