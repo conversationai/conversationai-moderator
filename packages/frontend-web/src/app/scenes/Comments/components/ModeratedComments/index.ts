@@ -32,21 +32,20 @@ import {
   tagCommentSummaryScores,
 } from '../../../../stores/commentActions';
 import { getTaggableTags } from '../../../../stores/tags';
-import { getTextSizes } from '../../../../stores/textSizes';
+import { getTextSizes, getTextSizesIsLoading } from '../../../../stores/textSizes';
 import { IModeratedCommentsPathParams, IModeratedCommentsQueryParams, isArticleContext } from '../../../routes';
 import {
   IModeratedCommentsProps,
   ModeratedComments as PureModeratedComments,
 } from './ModeratedComments';
 import {
-  executeCommentListLoader,
   getAreAllSelected,
   getAreAnyCommentsSelected,
-  getCommentListHasLoaded,
-  getCommentListIsLoading,
   getCurrentPagingIdentifier,
   getIsItemChecked,
+  getIsLoading,
   getModeratedComments,
+  loadCommentList,
   setCommentsModerationForArticle,
   setCommentsModerationForCategory,
   toggleSelectAll,
@@ -77,7 +76,7 @@ type IModeratedCommentsStateProps = Pick<
 >;
 
 const mapStateToProps = createStructuredSelector({
-  isLoading: (state: IAppStateRecord) => getCommentListIsLoading(state) || !getCommentListHasLoaded(state),
+  isLoading: (state: IAppStateRecord) => (getIsLoading(state) || getTextSizesIsLoading(state)),
 
   article: (state: IAppStateRecord, { match: { params }}: IModeratedCommentsProps) => {
     if (isArticleContext(params)) {
@@ -116,7 +115,7 @@ function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsPro
 
   return {
     loadData: (params: IModeratedCommentsPathParams, query: IModeratedCommentsQueryParams) => {
-      executeCommentListLoader(dispatch, params, query);
+      dispatch(loadCommentList(params, query));
     },
 
     tagComments: (ids: Array<string>, tagId: string) =>
@@ -130,10 +129,10 @@ function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsPro
     toggleSingleItem: ({ id }: { id: string }) => dispatch(toggleSingleItem({ id })),
 
     setCommentModerationStatusForArticle: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
-        dispatch(setCommentsModerationForArticle(props.match.params.contextId, commentIds, moderationAction, currentModeration)),
+        setCommentsModerationForArticle(dispatch, props.match.params.contextId, commentIds, moderationAction, currentModeration),
 
     setCommentModerationStatusForCategory: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
-        dispatch(setCommentsModerationForCategory(props.match.params.contextId, commentIds, moderationAction, currentModeration)),
+        setCommentsModerationForCategory(dispatch, props.match.params.contextId, commentIds, moderationAction, currentModeration),
   };
 }
 

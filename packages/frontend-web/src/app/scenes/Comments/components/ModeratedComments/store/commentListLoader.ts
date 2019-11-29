@@ -14,11 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Reducer } from 'redux-actions';
-
-import { IAppDispatch, IAppStateRecord, IThunkAction } from '../../../../../stores';
+import { IThunkAction } from '../../../../../stores';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
-import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
 import { commentSortDefinitions,  } from '../../../../../utilx';
 import {
   IModeratedCommentsPathParams,
@@ -33,28 +30,17 @@ import {
   loadModeratedCommentsForArticle,
   loadModeratedCommentsForCategory,
 } from './moderatedComments';
-import { DATA_PREFIX } from './reduxPrefix';
 
-const LOADING_DATA = [...DATA_PREFIX, 'commentListLoader'];
-
-function loadCommentList(params: IModeratedCommentsPathParams, query: IModeratedCommentsQueryParams): () => IThunkAction<void> {
-  return () => async (dispatch, getState) => {
+export function loadCommentList(
+  params: IModeratedCommentsPathParams,
+  query: IModeratedCommentsQueryParams,
+): IThunkAction<void> {
+  return async (dispatch, getState) => {
     const columnSort = query.sort;
     const sortDef = commentSortDefinitions[columnSort].sortInfo;
     const isArticleDetail = isArticleContext(params);
-    if (isArticleDetail) {
-      await dispatch(loadModeratedCommentsForArticle(
-        params.contextId,
-        sortDef,
-      ));
-    }
-    else {
-      await dispatch(loadModeratedCommentsForCategory(
-        params.contextId,
-        sortDef,
-      ));
-    }
-
+    const loader = isArticleDetail ? loadModeratedCommentsForArticle : loadModeratedCommentsForCategory;
+    await loader(dispatch, params.contextId, sortDef);
     const commentIds = getModeratedComments(getState(), params).get(params.disposition);
 
     const bodyContentWidth = 696;
@@ -73,23 +59,3 @@ function loadCommentList(params: IModeratedCommentsPathParams, query: IModerated
     await dispatch(loadTextSizesByIds(commentIds, bodyContentWidth));
   };
 }
-
-const loadingReducer = makeLoadingReducer(LOADING_DATA);
-
-const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingReducer.reducer;
-const getCommentListIsLoading: (state: IAppStateRecord) => boolean = loadingReducer.getIsLoading;
-const getCommentListHasLoaded: (state: IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
-
-export async function executeCommentListLoader(
-  dispatch: IAppDispatch,
-  params: IModeratedCommentsPathParams,
-  query: IModeratedCommentsQueryParams,
-) {
-  await loadingReducer.execute(dispatch, loadCommentList(params, query));
-}
-
-export {
-  commentListLoaderReducer,
-  getCommentListIsLoading,
-  getCommentListHasLoaded,
-};
