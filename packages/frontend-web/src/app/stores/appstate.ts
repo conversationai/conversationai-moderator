@@ -19,7 +19,6 @@ import { TypedRecord } from 'typed-immutable-record';
 
 import { IArticlesState } from './articles';
 import { ICategoriesState } from './categories';
-import { IColumnSortStateRecord } from './columnSorts';
 import { IState as ICommentsState } from './comments';
 import { ICommentSummaryScoresStateRecord } from './commentSummaryScores';
 import { IFocusStateRecord } from './focus';
@@ -42,7 +41,6 @@ export interface IAppState {
   preselects: IPreselectsState;
   taggingSensitivities: ITaggingSensitivitiesState;
   focus: IFocusStateRecord;
-  columnSorts: IColumnSortStateRecord;
   textSizes: ITextSizesStateRecord;
   topScores: ITopScoresState;
   topSummaryScores: ITopSummaryScoresState;

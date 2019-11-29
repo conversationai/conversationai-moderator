@@ -19,7 +19,6 @@ import { combineReducers } from 'redux-immutable';
 import { IAppStateRecord } from './appstate';
 import { reducer as articleReducer } from './articles';
 import { reducer as categoriesReducer } from './categories';
-import { reducer as columnSortsReducer } from './columnSorts';
 import { reducer as commentsReducer } from './comments';
 import { reducer as commentSummaryScoresReducer } from './commentSummaryScores';
 import { reducer as focusReducer } from './focus';
@@ -47,7 +46,6 @@ export const reducer: any = combineReducers<IAppStateRecord>({
   preselects: preselectsReducer,
   taggingSensitivities: taggingSensitivitiesReducer,
   focus: focusReducer,
-  columnSorts: columnSortsReducer,
   textSizes: textSizesReducer,
   topScores: topScoresReducer,
   topSummaryScores: topSummaryScoresReducer,

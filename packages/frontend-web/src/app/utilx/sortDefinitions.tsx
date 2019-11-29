@@ -89,12 +89,3 @@ export const commentSortDefinitions: {
     sortName: 'score',
   },
 };
-
-export function getSortDefault(actionLabel: string): string {
-  switch (actionLabel) {
-    case 'flagged':
-      return 'flagged';
-    default:
-      return 'updated';
-  }
-}

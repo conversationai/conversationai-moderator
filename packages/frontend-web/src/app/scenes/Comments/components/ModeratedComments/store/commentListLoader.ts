@@ -17,12 +17,12 @@ limitations under the License.
 import { Reducer } from 'redux-actions';
 
 import { IAppDispatch, IAppStateRecord, IThunkAction } from '../../../../../stores';
-import { getCurrentColumnSort } from '../../../../../stores/columnSorts';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
 import { commentSortDefinitions,  } from '../../../../../utilx';
 import {
   IModeratedCommentsPathParams,
+  IModeratedCommentsQueryParams,
   isArticleContext,
   moderatedCommentsPageLink,
 } from '../../../../routes';
@@ -37,9 +37,9 @@ import { DATA_PREFIX } from './reduxPrefix';
 
 const LOADING_DATA = [...DATA_PREFIX, 'commentListLoader'];
 
-function loadCommentList(params: IModeratedCommentsPathParams): () => IThunkAction<void> {
+function loadCommentList(params: IModeratedCommentsPathParams, query: IModeratedCommentsQueryParams): () => IThunkAction<void> {
   return () => async (dispatch, getState) => {
-    const columnSort = getCurrentColumnSort(getState(), 'commentsIndexModerated', params.disposition || 'approved');
+    const columnSort = query.sort;
     const sortDef = commentSortDefinitions[columnSort].sortInfo;
     const isArticleDetail = isArticleContext(params);
     if (isArticleDetail) {
@@ -80,8 +80,12 @@ const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingRedu
 const getCommentListIsLoading: (state: IAppStateRecord) => boolean = loadingReducer.getIsLoading;
 const getCommentListHasLoaded: (state: IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
 
-export async function executeCommentListLoader(dispatch: IAppDispatch, params: IModeratedCommentsPathParams) {
-  await loadingReducer.execute(dispatch, loadCommentList(params));
+export async function executeCommentListLoader(
+  dispatch: IAppDispatch,
+  params: IModeratedCommentsPathParams,
+  query: IModeratedCommentsQueryParams,
+) {
+  await loadingReducer.execute(dispatch, loadCommentList(params, query));
 }
 
 export {
