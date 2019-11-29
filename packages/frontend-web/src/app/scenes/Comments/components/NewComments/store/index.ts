@@ -16,12 +16,10 @@ limitations under the License.
 
 import { combineReducers } from 'redux-immutable';
 import { checkedSelectionReducer } from './checkedSelection';
-import { commentListLoaderReducer } from './commentListLoader';
 import { commentScoresReducer } from './commentScores';
 import { currentPagingIdentifierReducer } from './currentPagingIdentifier';
 
 export const newCommentsReducer: any = combineReducers({
-  commentListLoader: commentListLoaderReducer,
   currentPagingIdentifier: currentPagingIdentifierReducer,
   commentScores: commentScoresReducer,
   checkedSelection: checkedSelectionReducer,

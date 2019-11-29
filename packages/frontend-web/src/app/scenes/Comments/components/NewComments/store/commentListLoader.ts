@@ -15,12 +15,10 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import { Reducer } from 'redux-actions';
 import { ITagModel } from '../../../../../../models';
-import { IAppDispatch, IAppStateRecord, IThunkAction } from '../../../../../stores';
+import { IThunkAction } from '../../../../../stores';
 import { getTags } from '../../../../../stores/tags';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
-import { ILoadingStateRecord, makeLoadingReducer } from '../../../../../util';
 import { commentSortDefinitions } from '../../../../../utilx';
 import {
   INewCommentsPathParams,
@@ -34,18 +32,15 @@ import {
   loadCommentScoresForCategory,
 } from './commentScores';
 import { setCurrentPagingIdentifier } from './currentPagingIdentifier';
-import { DATA_PREFIX } from './reduxPrefix';
 import { getCommentIDsInRange } from './util';
 
-const LOADING_DATA = [...DATA_PREFIX, 'commentListLoader'];
-
-function loadCommentList(
+export function loadCommentList(
   params: INewCommentsPathParams,
   pos1: number,
   pos2: number,
   sort: string,
-): () => IThunkAction<void> {
-  return () => async (dispatch, getState) => {
+): IThunkAction<void> {
+  return async (dispatch, getState) => {
     const tags = getTags(getState()) as List<ITagModel>;
 
     const tagId = (params.tag === 'DATE' || params.tag === 'SUMMARY_SCORE') ? params.tag :
@@ -55,22 +50,8 @@ function loadCommentList(
         ? commentSortDefinitions[sort].sortInfo
         : commentSortDefinitions['tag'].sortInfo;
 
-    if (isArticleContext(params)) {
-      await loadCommentScoresForArticle(
-        dispatch,
-        params.contextId,
-        tagId,
-        sortDef,
-      );
-    }
-    else {
-      await loadCommentScoresForCategory(
-        dispatch,
-        params.contextId,
-        tagId,
-        sortDef,
-      );
-    }
+    const loader = isArticleContext(params) ? loadCommentScoresForArticle : loadCommentScoresForCategory;
+    await loader(dispatch, params.contextId, tagId, sortDef);
 
     const commentScores = getCommentScores(getState());
     const commentIDsInRange = getCommentIDsInRange(
@@ -95,25 +76,3 @@ function loadCommentList(
     await dispatch(loadTextSizesByIds(commentIDsInRange, bodyContentWidth));
   };
 }
-
-const loadingReducer = makeLoadingReducer(LOADING_DATA);
-
-const commentListLoaderReducer: Reducer<ILoadingStateRecord, void> = loadingReducer.reducer;
-const getCommentListIsLoading: (state: IAppStateRecord) => boolean = loadingReducer.getIsLoading;
-const getCommentListHasLoaded: (state: IAppStateRecord) => boolean = loadingReducer.getHasLoaded;
-
-export async function executeCommentListLoader(
-  dispatch: IAppDispatch,
-  params: INewCommentsPathParams,
-  pos1: number,
-  pos2: number,
-  sort: string,
-) {
-  await loadingReducer.execute(dispatch, loadCommentList(params, pos1, pos2, sort));
-}
-
-export {
-  commentListLoaderReducer,
-  getCommentListIsLoading,
-  getCommentListHasLoaded,
-};
