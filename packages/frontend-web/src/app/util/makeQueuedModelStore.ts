@@ -18,7 +18,8 @@ import { List, Map, OrderedMap } from 'immutable';
 import { throttle } from 'lodash';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
-import { IAppDispatch, IAppStateRecord, IThunkAction } from '../stores';
+
+import { IAppDispatch, IAppStateRecord, IThunkAction } from '../appstate';
 
 let queuedModelStores = 0;
 

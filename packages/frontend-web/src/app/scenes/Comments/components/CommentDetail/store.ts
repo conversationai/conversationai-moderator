@@ -26,13 +26,13 @@ import {
   ITaggingSensitivityModel,
   ModelId,
 } from '../../../../../models';
+import { IAppDispatch, IAppStateRecord } from '../../../../appstate';
 import {
   getComment as getCommentSvc,
   getCommentFlags,
   getCommentScores,
   listAuthorCounts,
 } from '../../../../platform/dataService';
-import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import { getArticle } from '../../../../stores/articles';
 import {
   IRecordListState,

@@ -21,7 +21,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { ICommentModel } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
-import { IAppDispatch, IAppState } from '../../../../stores';
+import { IAppDispatch, IAppState } from '../../../../appstate';
 import { getComment, getIsLoading, loadComment, updateComment } from './store';
 import { IThreadedCommentDetailProps, ThreadedCommentDetail as PureThreadedCommentDetail } from './ThreadedCommentDetail';
 export { reducer } from './store';

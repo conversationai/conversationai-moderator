@@ -18,7 +18,7 @@ import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import { ITagModel } from '../../models';
-import { IAppStateRecord } from './appstate';
+import { IAppStateRecord } from '../appstate';
 
 const STATE_ROOT = ['global', 'tags'];
 

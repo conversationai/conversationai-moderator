@@ -16,7 +16,7 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { ITagModel } from '../../../../../../models';
-import { IThunkAction } from '../../../../../stores';
+import { IThunkAction } from '../../../../../appstate';
 import { getTags } from '../../../../../stores/tags';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { commentSortDefinitions } from '../../../../../utilx';

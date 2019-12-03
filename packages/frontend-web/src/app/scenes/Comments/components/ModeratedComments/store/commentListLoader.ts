@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { IThunkAction } from '../../../../../stores';
+import { IThunkAction } from '../../../../../appstate';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { commentSortDefinitions,  } from '../../../../../utilx';
 import {

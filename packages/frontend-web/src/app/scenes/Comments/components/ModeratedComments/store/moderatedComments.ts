@@ -17,12 +17,12 @@ limitations under the License.
 import { fromJS, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
+import { IAppDispatch, IAppStateRecord } from '../../../../../appstate';
 import {
   getModeratedCommentIdsForArticle as fetchModeratedCommentIdsForArticle,
   getModeratedCommentIdsForCategory as fetchModeratedCommentIdsForCategory,
   IModeratedComments,
 } from '../../../../../platform/dataService';
-import { IAppDispatch, IAppStateRecord } from '../../../../../stores';
 import {
   approveComment,
   deferComment,

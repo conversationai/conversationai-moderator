@@ -16,7 +16,7 @@ limitations under the License.
 
 import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { IAppDispatch, IAppStateRecord } from '../../../../../stores';
+import { IAppDispatch, IAppStateRecord } from '../../../../../appstate';
 import { DATA_PREFIX } from './reduxPrefix';
 
 import {

@@ -22,8 +22,8 @@ import {
   ITagModel,
   TagModel,
 } from '../../../../../../models';
+import { IAppStateRecord } from '../../../../../appstate';
 import { COLCOUNT } from '../../../../../config';
-import { IAppStateRecord } from '../../../../../stores';
 import { getTags } from '../../../../../stores/tags';
 import { groupByDateColumns } from '../../../../../util';
 

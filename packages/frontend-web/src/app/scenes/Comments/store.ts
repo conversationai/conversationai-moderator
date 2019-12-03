@@ -18,7 +18,7 @@ import { List } from 'immutable';
 import {
   ITaggingSensitivityModel,
 } from '../../../models';
-import { IAppStateRecord } from '../../stores';
+import { IAppStateRecord } from '../../appstate';
 import { getArticle } from '../../stores/articles';
 import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';

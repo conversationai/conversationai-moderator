@@ -17,8 +17,9 @@ limitations under the License.
 import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
+import { IAppDispatch, IAppStateRecord } from '../appstate';
 import { listCommentSummaryScoresById } from '../platform/dataService';
-import { IAppDispatch, IAppStateRecord } from './appstate';
 
 export interface ICommentSummaryScore {
   tagId: string;

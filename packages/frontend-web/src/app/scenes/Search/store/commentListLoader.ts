@@ -17,8 +17,8 @@ limitations under the License.
 import { List } from 'immutable';
 import { pick } from 'lodash';
 
+import { IAppDispatch } from '../../../appstate';
 import { search } from '../../../platform/dataService';
-import { IAppDispatch } from '../../../stores';
 import { loadTextSizesByIds } from '../../../stores/textSizes';
 import { storeCommentPagingOptions } from '../../Comments/components/CommentDetail/store';
 import { searchLink } from '../../routes';

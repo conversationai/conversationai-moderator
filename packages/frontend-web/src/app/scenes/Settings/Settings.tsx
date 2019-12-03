@@ -47,6 +47,7 @@ import {
   TaggingSensitivityModel,
   TagModel,
 } from '../../../models';
+import { IAppDispatch } from '../../appstate';
 import {
   HeaderBar,
   Scrim,
@@ -54,7 +55,6 @@ import {
 import { API_URL } from '../../config';
 import {getOAuthConfig, IApiConfiguration, kickProcessor, updateOAuthConfig} from '../../platform/dataService';
 import { getToken } from '../../platform/localStore';
-import { IAppDispatch } from '../../stores';
 import {
   USER_GROUP_GENERAL,
   USER_GROUP_SERVICE,

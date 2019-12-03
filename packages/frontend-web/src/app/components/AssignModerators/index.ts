@@ -18,8 +18,8 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { IUserModel } from '../../../models';
+import { IAppStateRecord } from '../../appstate';
 import { getMyUserId } from '../../auth';
-import { IAppStateRecord } from '../../stores';
 import { getUsers } from '../../stores/users';
 import {
   AssignModerators as PureAssignModerators,

@@ -17,7 +17,8 @@ limitations under the License.
 import { Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
-import { IAppStateRecord } from '../../stores';
+
+import { IAppStateRecord } from '../../appstate';
 
 let checkedSelectionStores = 0;
 

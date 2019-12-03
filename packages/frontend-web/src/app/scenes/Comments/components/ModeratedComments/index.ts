@@ -19,7 +19,7 @@ import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
 
 import { ICommentAction } from '../../../../../types';
-import { IAppDispatch, IAppStateRecord } from '../../../../stores';
+import { IAppDispatch, IAppStateRecord } from '../../../../appstate';
 import { getArticle } from '../../../../stores/articles';
 import {
   approveComments,
