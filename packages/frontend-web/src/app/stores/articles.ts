@@ -17,7 +17,7 @@ limitations under the License.
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import { IArticleModel, ModelId } from '../../models';
-import { IAppStateRecord } from './appstate';
+import { IAppStateRecord } from '../appstate';
 
 const STATE_ROOT = ['global', 'articles'];
 

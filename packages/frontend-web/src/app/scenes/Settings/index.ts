@@ -18,8 +18,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
 
+import { IAppDispatch, IAppState, IAppStateRecord } from '../../appstate';
 import { listSystemUsers } from '../../platform/dataService';
-import { IAppDispatch, IAppState, IAppStateRecord } from '../../stores';
 import { getCategories } from '../../stores/categories';
 import { getPreselects } from '../../stores/preselects';
 import { getRules } from '../../stores/rules';

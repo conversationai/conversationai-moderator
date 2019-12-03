@@ -19,7 +19,7 @@ import { Redirect, Route, Switch } from 'react-router';
 import { combineReducers } from 'redux-immutable';
 
 import { FocusRoot, focusRootReducer, SplashRoot} from '../components';
-import { IAppStateRecord } from '../stores';
+import { IAppStateRecord } from '../appstate';
 import { getCurrentUserIsAdmin } from '../stores/users';
 import {
   Comments,

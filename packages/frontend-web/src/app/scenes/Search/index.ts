@@ -19,7 +19,7 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { IAppDispatch, IAppStateRecord } from '../../stores';
+import { IAppDispatch, IAppStateRecord } from '../../appstate';
 import { getArticleMap } from '../../stores/articles';
 import {ISearchProps, Search as PureSearch} from './Search';
 import {

@@ -18,8 +18,8 @@ import { List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import { IUserModel, ModelId } from '../../models';
+import { IAppStateRecord } from '../appstate';
 import { getMyUserId } from '../auth';
-import { IAppStateRecord } from './appstate';
 
 const STATE_ROOT = ['global', 'users'];
 

@@ -17,9 +17,10 @@ limitations under the License.
 import { List, Map } from 'immutable';
 import { Action } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
+
+import { IAppDispatch, IAppStateRecord } from '../appstate';
 import { loadTopScoresForSummaryScores, loadTopScoresForTag } from '../platform/dataService';
 import { IQueuedModelStateRecord, makeQueuedModelStore } from '../util';
-import { IAppDispatch, IAppStateRecord } from './appstate';
 
 export interface ITopScoreState {
   commentId: string;

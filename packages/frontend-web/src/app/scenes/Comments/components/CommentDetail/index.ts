@@ -25,7 +25,7 @@ import {
   ICommentScoreModel,
 } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
-import { IAppDispatch, IAppStateRecord } from '../../../../stores';
+import { IAppDispatch, IAppStateRecord } from '../../../../appstate';
 import {
   approveComments,
   confirmCommentScore,

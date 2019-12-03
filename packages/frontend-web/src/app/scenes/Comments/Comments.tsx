@@ -19,10 +19,10 @@ import React from 'react';
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router';
 
 import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
+import { IAppDispatch } from '../../appstate';
 import {
   HeaderBar,
 } from '../../components';
-import { IAppDispatch } from '../../stores';
 import { ISummaryCounts } from '../../stores/categories';
 import {
   HEADER_HEIGHT,

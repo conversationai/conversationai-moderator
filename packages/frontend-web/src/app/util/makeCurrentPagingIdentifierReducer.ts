@@ -16,7 +16,8 @@ limitations under the License.
 
 import { Action, createAction, handleAction } from 'redux-actions';
 import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
-import { IAppStateRecord } from '../stores';
+
+import { IAppStateRecord } from '../appstate';
 
 let currentPagingIdentifierReducer = 0;
 

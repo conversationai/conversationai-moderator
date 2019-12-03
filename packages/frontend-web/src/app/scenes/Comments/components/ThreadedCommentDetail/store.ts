@@ -20,8 +20,8 @@ import { combineReducers } from 'redux-immutable';
 import {
   ICommentModel,
 } from '../../../../../models';
+import { IAppDispatch, IAppStateRecord } from '../../../../appstate';
 import { getModel } from '../../../../platform/dataService';
-import { IAppDispatch, IAppStateRecord } from '../../../../stores';
 import {
   ISingleRecordState,
   makeSingleRecordReducer,

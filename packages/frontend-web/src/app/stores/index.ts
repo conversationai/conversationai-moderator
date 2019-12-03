@@ -16,7 +16,7 @@ limitations under the License.
 
 import { combineReducers } from 'redux-immutable';
 
-import { IAppStateRecord } from './appstate';
+import { IAppStateRecord } from '../appstate';
 import { reducer as articleReducer } from './articles';
 import { reducer as categoriesReducer } from './categories';
 import { reducer as commentsReducer } from './comments';
@@ -32,8 +32,6 @@ import {
   summaryScoreReducer as topSummaryScoresReducer,
 } from './topScores';
 import { reducer as usersReducer } from './users';
-
-export { IAppDispatch, IAppState, IAppStateRecord, IThunkAction } from './appstate';
 
 export const reducer: any = combineReducers<IAppStateRecord>({
   categories: categoriesReducer,

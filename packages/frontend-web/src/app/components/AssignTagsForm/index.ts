@@ -19,8 +19,8 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
+import { IAppDispatch, IAppStateRecord } from '../../appstate';
 import { getTaggingSensitivitiesInCategory } from '../../scenes/Comments/store';
-import { IAppDispatch, IAppStateRecord } from '../../stores';
 import { getSummaryScoresById, loadCommentSummaryScores } from '../../stores/commentSummaryScores';
 import { getTaggableTags } from '../../stores/tags';
 import {

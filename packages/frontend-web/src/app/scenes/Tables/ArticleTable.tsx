@@ -27,6 +27,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
+import { IAppStateRecord } from '../../appstate';
 import { getMyUserId } from '../../auth';
 import { ArticleControlIcon, AssignModerators, MagicTimestamp } from '../../components';
 import * as icons from '../../components/Icons';
@@ -36,7 +37,6 @@ import {
   updateArticleModerators,
   updateCategoryModerators,
 } from '../../platform/dataService';
-import { IAppStateRecord } from '../../stores';
 import { getArticleMap, getArticles } from '../../stores/articles';
 import { getCategoryMap } from '../../stores/categories';
 import { getUsers } from '../../stores/users';

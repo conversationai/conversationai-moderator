@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { Action, Reducer } from 'redux-actions';
-import { IAppStateRecord } from '../../../stores';
+import { IAppStateRecord } from '../../../appstate';
 import { ICheckedSelectionPayloads, ICheckedSelectionStateRecord, IOverrides, makeCheckedSelectionStore } from '../../../util';
 import { DATA_PREFIX } from './reduxPrefix';
 

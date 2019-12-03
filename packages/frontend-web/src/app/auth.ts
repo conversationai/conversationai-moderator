@@ -21,10 +21,10 @@ import qs from 'query-string';
 import { Dispatch } from 'redux';
 
 import { AuthenticationStates, SystemStates, WebsocketStates } from '../types';
+import { IAppDispatch } from './appstate';
 import { checkAuthorization, checkServerStatus, setUserId } from './platform/dataService';
 import { getToken, saveToken } from './platform/localStore';
 import { connectNotifier, disconnectNotifier, STATUS_RESET, STATUS_UP }  from './platform/websocketService';
-import { IAppDispatch } from './stores';
 import { articlesLoaded, articlesUpdated } from './stores/articles';
 import { categoriesLoaded, categoriesUpdated } from './stores/categories';
 import { assignmentCountUpdated } from './stores/counts';
