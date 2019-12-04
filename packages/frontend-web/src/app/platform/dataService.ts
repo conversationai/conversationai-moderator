@@ -25,6 +25,7 @@ import {
 } from './types';
 
 import {
+  ArticleModel,
   IAuthorCountsModel,
   ICommentDatedModel,
   ICommentModel,
@@ -476,7 +477,13 @@ export async function getModel<T>(
   };
 }
 
-export async function getArticleText(id: string) {
+export async function getArticles(ids: Array<ModelId>) {
+  const url = serviceURL('simple', `/article/get`);
+  const response = await axios.post(url, ids);
+  return response.data.map((a: any) => (ArticleModel(a)));
+}
+
+export async function getArticleText(id: ModelId) {
   const url = serviceURL('simple', `/article/${id}/text`);
   const response = await axios.get(url);
   return response.data.text;
