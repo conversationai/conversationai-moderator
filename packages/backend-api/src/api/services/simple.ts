@@ -21,11 +21,13 @@ limitations under the License.
 
 import * as express from 'express';
 import { pick } from 'lodash';
+import { Op } from 'sequelize';
 
 import { createToken } from '../../auth/tokens';
 import { clearError } from '../../integrations';
 import {
   Article,
+  IArticleInstance,
   User,
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
@@ -37,6 +39,7 @@ import {
   updateHappened,
 } from '../../models';
 import { REPLY_SUCCESS } from '../constants';
+import { ARTICLE_FIELDS, serialiseObject } from './serializer';
 
 const userFields = ['id', 'name', 'email', 'group', 'isActive', 'extra'];
 
@@ -122,6 +125,16 @@ export function createSimpleRESTService(): express.Router {
 
     res.json(REPLY_SUCCESS);
     partialUpdateHappened(articleId);
+    next();
+  });
+
+  router.post('/article/get', async (req, res, next) => {
+    const articles = await Article.findAll({where: {id: {[Op.in]: req.body}}});
+    const articleData = articles.map((a: IArticleInstance) => {
+      return serialiseObject(a, ARTICLE_FIELDS);
+    });
+
+    res.json(articleData);
     next();
   });
 
