@@ -25,7 +25,7 @@ import { IUserModel } from '../../../models';
 import { IAppStateRecord } from '../../appstate';
 import { getArticle } from '../../stores/articles';
 import { getCategory, getGlobalCounts } from '../../stores/categories';
-import { getCurrentUser, getCurrentUserIsAdmin, getUsers } from '../../stores/users';
+import { getUsers } from '../../stores/users';
 import { isArticleContext } from '../routes';
 import { Comments as PureComments, ICommentsProps } from './Comments';
 import { reducer as commentDetailReducer } from './components/CommentDetail/store';
@@ -47,10 +47,7 @@ export const reducer: any = combineReducers({
 });
 
 export const Comments = compose(
-  withRouter,
   connect(createStructuredSelector({
-      user: getCurrentUser,
-      isAdmin: getCurrentUserIsAdmin,
       article: (state: IAppStateRecord, {  match: { params }}: ICommentsProps) => (
         isArticleContext(params) && getArticle(state, params.contextId)
       ),
@@ -75,4 +72,5 @@ export const Comments = compose(
       globalCounts: getGlobalCounts,
     }),
   ),
+  withRouter,
 )(PureComments);
