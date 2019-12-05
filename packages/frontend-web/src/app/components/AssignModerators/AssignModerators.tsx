@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List, Set } from 'immutable';
+import { Set } from 'immutable';
 import React, { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
@@ -80,7 +80,7 @@ function ModeratorListItem(props: {
 }
 
 function ModeratorList(props: {
-  users: List<IUserModel>;
+  users: Array<IUserModel>;
   moderatorIds: Set<ModelId>;
   categoryModeratorIds?: Set<ModelId>;
   onModeratorStatusChange?(userId: string, checked: boolean): void;
@@ -110,7 +110,7 @@ function ModeratorList(props: {
 }
 
 export interface IAssignModeratorsProps {
-  users?: List<IUserModel>;
+  users?: Array<IUserModel>;
   moderatorIds?: Set<ModelId>;
   superModeratorIds?: Set<ModelId>;
   isReady?: boolean;

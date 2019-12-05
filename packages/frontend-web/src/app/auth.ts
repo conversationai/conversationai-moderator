@@ -18,7 +18,6 @@ import axios from 'axios';
 import JwtDecode from 'jwt-decode';
 import { isEmpty } from 'lodash';
 import qs from 'query-string';
-import { Dispatch } from 'redux';
 
 import { AuthenticationStates, SystemStates, WebsocketStates } from '../types';
 import { IAppDispatch } from './appstate';
@@ -129,7 +128,7 @@ function verifyCSRF(csrf?: string): void {
 
 // Returns the final destination to go to after the redirect.
 async function handleLoginRedirect(
-  dispatch: Dispatch<{}>,
+  dispatch: IAppDispatch,
   setState: (state: AuthenticationStates) => void,
   queryString: qs.ParsedQuery,
 ) {
@@ -152,7 +151,7 @@ async function handleLoginRedirect(
 let setAuthenticationState: (state: AuthenticationStates) => void = null;
 
 export async function start(
-  dispatch: Dispatch<{}>,
+  dispatch: IAppDispatch,
   setState: (state: SystemStates) => void,
   setRoute: (route: string) => void,
   setError: (error: string) => void,

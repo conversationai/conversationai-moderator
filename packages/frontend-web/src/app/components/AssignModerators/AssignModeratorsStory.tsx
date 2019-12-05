@@ -16,13 +16,13 @@ limitations under the License.
 
 import { storiesOf } from '@storybook/react';
 import faker from 'faker';
-import { List, Set } from 'immutable';
+import { Set } from 'immutable';
 
 import { ModelId } from '../../../models';
 import { fakeUserModel } from '../../../models/fake';
 import { AssignModerators } from './AssignModerators';
 
-const users = List([
+const users = [
   fakeUserModel({
     name: 'Person One',
     avatarURL: faker.internet.avatar(),
@@ -35,9 +35,9 @@ const users = List([
     name: 'Person Three',
     avatarURL: faker.internet.avatar(),
   }),
-]);
+];
 
-const moderatorIds = Set<ModelId>([users.get(0).id]);
+const moderatorIds = Set<ModelId>([users[0].id]);
 
 storiesOf('AssignModerators', module)
     .add('Default', () => (

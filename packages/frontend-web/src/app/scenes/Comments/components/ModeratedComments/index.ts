@@ -16,6 +16,7 @@ limitations under the License.
 
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { ICommentAction } from '../../../../../types';
@@ -61,18 +62,6 @@ type IModeratedCommentsDispatchProps = Pick<
   'loadData' |
   'tagComments' |
   'dispatchAction'
->;
-
-type IModeratedCommentsStateProps = Pick<
-  IModeratedCommentsProps,
-  'isLoading' |
-  'article' |
-  'areNoneSelected' |
-  'areAllSelected' |
-  'isItemChecked' |
-  'moderatedComments' |
-  'tags' |
-  'textSizes'
 >;
 
 const mapStateToProps = createStructuredSelector({
@@ -137,12 +126,12 @@ function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsPro
 }
 
 // Add Redux data.
-const ConnectedModeratedComments = connect<IModeratedCommentsStateProps , IModeratedCommentsDispatchProps>(
-  mapStateToProps,
-  mapDispatchToProps,
+export const ModeratedComments: React.ComponentClass = compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+  withRouter,
 )(PureModeratedComments);
-
-// Add `router` prop.
-export const ModeratedComments: React.ComponentClass = withRouter(ConnectedModeratedComments);
 
 export * from './store';

@@ -32,7 +32,7 @@ export const STYLES = stylesheet({
 });
 
 export interface IFocusRootProps extends DispatchProp<{}> {
-  currentlyFocused: number;
+  currentlyFocused: string | null;
 }
 
 class PureFocusRoot extends React.Component<IFocusRootProps> {
@@ -88,5 +88,5 @@ const mapStateToProps = createStructuredSelector({
 });
 
 export const FocusRoot: React.ComponentClass = compose(
-  connect<Pick<IFocusRootProps, 'currentlyFocused'>, Pick<IFocusRootProps, 'dispatch'>>(mapStateToProps),
+  connect(mapStateToProps),
 )(PureFocusRoot);

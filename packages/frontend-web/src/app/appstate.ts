@@ -13,7 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { Action, Dispatch } from 'redux';
+import { Action } from 'redux';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { TypedRecord } from 'typed-immutable-record';
 
 export interface IAppState {
@@ -23,9 +24,5 @@ export interface IAppState {
 
 export interface IAppStateRecord extends TypedRecord<IAppStateRecord>, IAppState {}
 
-export type IThunkAction<R> = (dispatch: Dispatch<IAppStateRecord>, getState: () => IAppStateRecord) => R;
-export type IAction<T> = IThunkAction<T> | Action;
-
-export interface IAppDispatch {
-  <R>(action: IAction<R>): R;
-}
+export type IThunkAction<R> = ThunkAction<R, IAppStateRecord, undefined, Action>;
+export type IAppDispatch = ThunkDispatch<IAppStateRecord, undefined, Action>;

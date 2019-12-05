@@ -18,6 +18,7 @@ import { Location } from 'history';
 import qs from 'query-string';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import {
@@ -233,10 +234,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
 }
 
 // Add Redux data.
-const ConnectedCommentDetail = connect(
-  mapStateToProps,
-  mapDispatchToProps,
+export const CommentDetail: React.ComponentClass = compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withRouter,
 )(PureCommentDetail);
-
-// Add `router` prop.
-export const CommentDetail: React.ComponentClass = withRouter(ConnectedCommentDetail);
