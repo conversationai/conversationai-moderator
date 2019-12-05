@@ -19,21 +19,20 @@
     "@types/express": "4.17.2",
     "@types/faker": "4.1.4",
     "@types/lodash": "4.14.149",
-    "@types/node": "12.7.1",
+    "@types/node": "12.12.14",
     "@types/qs": "6.9.0",
     "@types/randomstring": "1.1.6",
     "chai": "4.2.0",
     "chai-http": "4.2.1",
     "express": "4.17.1",
     "faker": "4.1.0",
-    "lerna": "3.18.3",
+    "lerna": "3.19.0",
     "lodash": "4.17.15",
-    "nsp": "3.2.1",
     "qs": "6.9.1",
     "randomstring": "1.1.5",
     "tslib": "1.10.0",
-    "tslint": "5.20.0",
+    "tslint": "5.20.1",
     "tslint-react": "4.1.0",
-    "typescript": "3.5.3"
+    "typescript": "3.7.3"
   }
 }

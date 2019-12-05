@@ -29,5 +29,4 @@ database:
 test:
   override:
     - ./bin/lint
-    - ./bin/check-nsp
     - ./bin/test-no-compile
