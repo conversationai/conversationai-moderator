@@ -1,5 +1,2 @@
 #!/bin/bash
-
-# Don't clean as it regenerates package-lock.json.
-# npx lerna clean --yes
-npx lerna bootstrap --hoist
+npx lerna bootstrap
