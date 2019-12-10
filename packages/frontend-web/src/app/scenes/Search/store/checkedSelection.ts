@@ -16,17 +16,19 @@ limitations under the License.
 
 import { Action, Reducer } from 'redux-actions';
 import { IAppStateRecord } from '../../../appstate';
-import { ICheckedSelectionPayloads, ICheckedSelectionStateRecord, IOverrides, makeCheckedSelectionStore } from '../../../util';
+import { ICheckedSelectionPayloads, ICheckedSelectionState, IOverrides, makeCheckedSelectionStore } from '../../../util';
 import { DATA_PREFIX } from './reduxPrefix';
 
 const CHECKED_SELECTION_DATA = [...DATA_PREFIX, 'checkedSelection'];
 
 const checkedSelectionStore = makeCheckedSelectionStore(
-  CHECKED_SELECTION_DATA,
+  (state: IAppStateRecord) => {
+    return state.getIn(CHECKED_SELECTION_DATA) as ICheckedSelectionState;
+  },
   { defaultSelectionState: false },
 );
 
-const checkedSelectionReducer: Reducer<ICheckedSelectionStateRecord, ICheckedSelectionPayloads> = checkedSelectionStore.reducer;
+const checkedSelectionReducer: Reducer<ICheckedSelectionState, ICheckedSelectionPayloads> = checkedSelectionStore.reducer;
 
 const getAreAllSelected: (state: IAppStateRecord) => boolean = checkedSelectionStore.getAreAllSelected;
 const getAreAnyCommentsSelected: (state: IAppStateRecord) => boolean = checkedSelectionStore.getAreAnyCommentsSelected;

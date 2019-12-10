@@ -19,16 +19,18 @@ import { Action, Reducer } from 'redux-actions';
 import { IAppStateRecord } from '../../../../../appstate';
 import {
   ICurrentPagingIdentifierPayload,
-  ICurrentPagingIdentifierStateRecord,
+  ICurrentPagingIdentifierState,
   makeCurrentPagingIdentifierReducer,
 } from '../../../../../util';
 import { DATA_PREFIX } from './reduxPrefix';
 
 const currentPagingIdentifier = makeCurrentPagingIdentifierReducer(
-  [...DATA_PREFIX, 'currentPagingIdentifier'],
+  (state: IAppStateRecord) => {
+    return state.getIn([...DATA_PREFIX, 'currentPagingIdentifier']) as ICurrentPagingIdentifierState;
+  },
 );
 
-const currentPagingIdentifierReducer: Reducer<ICurrentPagingIdentifierStateRecord, ICurrentPagingIdentifierPayload> = currentPagingIdentifier.reducer;
+const currentPagingIdentifierReducer: Reducer<ICurrentPagingIdentifierState, ICurrentPagingIdentifierPayload> = currentPagingIdentifier.reducer;
 const setCurrentPagingIdentifier: (payload: ICurrentPagingIdentifierPayload) => Action<ICurrentPagingIdentifierPayload> = currentPagingIdentifier.setCurrentPagingIdentifier;
 const getCurrentPagingIdentifier: (state: IAppStateRecord) => string = currentPagingIdentifier.getCurrentPagingIdentifier;
 

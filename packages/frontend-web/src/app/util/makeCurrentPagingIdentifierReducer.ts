@@ -15,44 +15,40 @@ limitations under the License.
 */
 
 import { Action, createAction, handleAction } from 'redux-actions';
-import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import { IAppStateRecord } from '../appstate';
 
 let currentPagingIdentifierReducer = 0;
 
-export interface ICurrentPagingIdentifierState {
+export type ICurrentPagingIdentifierState = Readonly<{
   currentPagingIdentifier: string;
-}
+}>;
 
-export interface ICurrentPagingIdentifierStateRecord extends TypedRecord<ICurrentPagingIdentifierStateRecord>, ICurrentPagingIdentifierState {}
-
-const CurrentPagingIdentifierStateFactory = makeTypedFactory<ICurrentPagingIdentifierState, ICurrentPagingIdentifierStateRecord>({
+const initialState: ICurrentPagingIdentifierState = {
   currentPagingIdentifier: null,
-});
+};
 
 export type ICurrentPagingIdentifierPayload = { currentPagingIdentifier: string };
 // Return infered
-export function makeCurrentPagingIdentifierReducer(prefix: Array<string>) {
+export function makeCurrentPagingIdentifierReducer(
+  getStateRecord: (state: IAppStateRecord) => ICurrentPagingIdentifierState,
+) {
   currentPagingIdentifierReducer += 1;
-
-  const identifierPath = [...prefix, 'currentPagingIdentifier'];
 
   const setCurrentPagingIdentifier: (payload: ICurrentPagingIdentifierPayload) => Action<ICurrentPagingIdentifierPayload> =
     createAction<ICurrentPagingIdentifierPayload>(
       `new-comments-list/SET_CURRENT_PAGING_IDENTIFIER_${currentPagingIdentifierReducer}`,
     );
 
-  const reducer = handleAction<ICurrentPagingIdentifierStateRecord, ICurrentPagingIdentifierPayload>(
+  const reducer = handleAction<ICurrentPagingIdentifierState, ICurrentPagingIdentifierPayload>(
     setCurrentPagingIdentifier.toString(),
-    (state, { payload: { currentPagingIdentifier } }) => (
-      state.set('currentPagingIdentifier', currentPagingIdentifier)
-    ),
-    CurrentPagingIdentifierStateFactory(),
+    (_state, { payload: { currentPagingIdentifier } }) => ({currentPagingIdentifier}),
+    initialState,
   );
 
-  function getCurrentPagingIdentifier(state: IAppStateRecord): string | null {
-    return state.getIn(identifierPath);
+  function getCurrentPagingIdentifier(state: IAppStateRecord) {
+    const localState = getStateRecord(state);
+    return localState && localState.currentPagingIdentifier;
   }
 
   return  {

@@ -16,7 +16,6 @@ limitations under the License.
 
 import { Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
-import { makeTypedFactory, TypedRecord } from 'typed-immutable-record';
 
 import { IAppStateRecord } from '../../appstate';
 
@@ -28,13 +27,11 @@ export interface ICheckedSelectionStoreOptions {
 
 export type IOverrides = Map<string, boolean>;
 
-export interface ICheckedSelectionState {
+export type ICheckedSelectionState = Readonly<{
   defaultSelectionState: boolean;
   areAllSelected: boolean;
   overrides: IOverrides;
-}
-
-export interface ICheckedSelectionStateRecord extends TypedRecord<ICheckedSelectionStateRecord>, ICheckedSelectionState {}
+}>;
 
 export type ICheckedSelectionPayloads =
     void           | // toggleSelectAll
@@ -42,16 +39,12 @@ export type ICheckedSelectionPayloads =
 
 // Return is infered
 export function makeCheckedSelectionStore(
-  statePath: Array<string>,
+  getStateRecord: (state: IAppStateRecord) => ICheckedSelectionState,
   {
     defaultSelectionState,
   }: ICheckedSelectionStoreOptions,
 ) {
   checkedSelectionStores += 1;
-
-  const defaultSelectionStatePath = [...statePath, 'defaultSelectionState'];
-  const areAllSelectedPath = [...statePath, 'areAllSelected'];
-  const overridesPath = [...statePath, 'overrides'];
 
   const toggleSelectAll: () => Action<void> = createAction(
     `checked-selection-${checkedSelectionStores}/TOGGLE_SELECT_ALL`,
@@ -61,62 +54,59 @@ export function makeCheckedSelectionStore(
     `checked-selection-${checkedSelectionStores}/TOGGLE_SINGLE_ITEM`,
   );
 
-  const StateFactory = makeTypedFactory<ICheckedSelectionState, ICheckedSelectionStateRecord>({
+  const initialState = {
     defaultSelectionState,
     areAllSelected: defaultSelectionState,
     overrides: Map<string, boolean>(),
-  });
-
-  const initialState = StateFactory();
+  };
 
   const reducer = handleActions<
-    ICheckedSelectionStateRecord,
+    ICheckedSelectionState,
     ICheckedSelectionPayloads
   >({
-    [toggleSelectAll.toString()]: (state: ICheckedSelectionStateRecord) => {
-      const defaultValue = state.get('defaultSelectionState');
-      const areAllSelected = state.get('areAllSelected');
+    [toggleSelectAll.toString()]: (state: ICheckedSelectionState) => {
+      const defaultValue = state.defaultSelectionState;
+      const areAllSelected = state.areAllSelected;
 
       if (defaultValue === areAllSelected) {
-        return state
-            .set('defaultSelectionState', !defaultValue)
-            .set('areAllSelected', !defaultValue)
-            .set('overrides', initialState.get('overrides'));
+        return {
+         defaultSelectionState: !defaultValue,
+         areAllSelected: !defaultValue,
+         overrides: initialState.overrides,
+        };
       } else {
-        return state
-            .set('areAllSelected', defaultValue)
-            .set('overrides', initialState.get('overrides'));
+        return { ...state, areAllSelected: defaultValue, overrides: initialState.overrides};
       }
     },
 
-    [toggleSingleItem.toString()]: (state: ICheckedSelectionStateRecord, { payload }: Action<ICheckedSelectionPayloads>) => {
+    [toggleSingleItem.toString()]: (state: ICheckedSelectionState, { payload }: Action<ICheckedSelectionPayloads>) => {
       const { id } = payload as { id: string };
-      const defaultValue = state.get('defaultSelectionState');
-      const path = ['overrides', id.toString()];
-      const currentValue = state.getIn(path);
+      const defaultValue = state.defaultSelectionState;
+      const currentValue = state.overrides.get(id);
 
       // Not in list, therefore an override.
-      const newState = ('undefined' === typeof currentValue)
-          ? state.setIn(path, !defaultValue)
-          : state.deleteIn(path);
-
-      return (newState.get('overrides').size <= 0)
-          ? newState.set('areAllSelected', defaultValue)
-          : newState.set('areAllSelected', false);
-
+      const newState = {...state};
+      newState.overrides = ('undefined' === typeof currentValue) ?
+        state.overrides.set(id, !defaultValue) :
+        state.overrides.delete(id);
+      newState.areAllSelected = (newState.overrides.size <= 0) ? defaultValue : false;
+      return newState;
     },
   }, initialState);
 
-  function getDefaultSelectionState(state: IAppStateRecord): boolean {
-    return state.getIn(defaultSelectionStatePath);
+  function getDefaultSelectionState(state: IAppStateRecord) {
+    const stateRecord = getStateRecord(state);
+    return stateRecord && stateRecord.defaultSelectionState;
   }
 
-  function getAreAllSelected(state: IAppStateRecord): boolean {
-    return state.getIn(areAllSelectedPath);
+  function getAreAllSelected(state: IAppStateRecord) {
+    const stateRecord = getStateRecord(state);
+    return stateRecord && stateRecord.areAllSelected;
   }
 
-  function getOverrides(state: IAppStateRecord): IOverrides {
-    return state.getIn(overridesPath);
+  function getOverrides(state: IAppStateRecord) {
+    const stateRecord = getStateRecord(state);
+    return stateRecord && stateRecord.overrides;
   }
 
   function getItemCheckedState(overrides: IOverrides, id: string, isCheckedByDefault: boolean): boolean {
