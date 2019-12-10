@@ -20,7 +20,7 @@ import { makeTypedFactory, TypedRecord} from 'typed-immutable-record';
 
 import { IAppDispatch, IAppStateRecord } from '../appstate';
 import { loadTopScoresForSummaryScores, loadTopScoresForTag } from '../platform/dataService';
-import { IQueuedModelStateRecord, makeQueuedModelStore } from '../util';
+import { IQueuedModelState, makeQueuedModelStore } from '../util';
 
 export interface ITopScoreState {
   commentId: string;
@@ -75,7 +75,7 @@ const queuedModelStore = makeQueuedModelStore<ITopScoresKeyState, ITopScoreState
   },
   300,
   12,
-  ['global', 'topScores'],
+  (state: IAppStateRecord) => state.getIn(['global', 'topScores']),
 );
 
 const {
@@ -87,7 +87,7 @@ const {
 
 const setTopScore: (payload: any) => Action<any> = queuedModelStore.setModel;
 
-export type IState = IQueuedModelStateRecord<ITopScoresKeyState, ITopScoreStateRecord>;
+export type IState = IQueuedModelState<ITopScoresKeyState, ITopScoreStateRecord>;
 
 export function getTopScoreForComment(state: IAppStateRecord, commentId: string, tagId: string): ITopScoreState {
   const topScores = getTopScores(state);
@@ -119,10 +119,10 @@ const {
   },
   300,
   12,
-  ['global', 'topSummaryScores'],
+  (state: IAppStateRecord) => state.getIn(['global', 'topSummaryScores']),
 );
 
-export type ISummaryState = IQueuedModelStateRecord<ITopSummaryScoresKeyState, ITopScoreStateRecord>;
+export type ISummaryState = IQueuedModelState<ITopSummaryScoresKeyState, ITopScoreStateRecord>;
 
 export function getTopSummaryScoreForComment(state: IAppStateRecord, commentId: string): ITopScoreState {
   const topScores = getTopSummaryScores(state);
