@@ -20,7 +20,6 @@ import { IArticlesState } from './articles';
 import { ICategoriesState } from './categories';
 import { IState as ICommentsState } from './comments';
 import { ICommentSummaryScoresStateRecord } from './commentSummaryScores';
-import { IFocusStateRecord } from './focus';
 import { IPreselectsState } from './preselects';
 import { IRulesState } from './rules';
 import { ITaggingSensitivitiesState } from './taggingSensitivities';
@@ -39,7 +38,6 @@ export interface IGlobalState {
   rules: IRulesState;
   preselects: IPreselectsState;
   taggingSensitivities: ITaggingSensitivitiesState;
-  focus: IFocusStateRecord;
   textSizes: ITextSizesStateRecord;
   topScores: ITopScoresState;
   topSummaryScores: ITopSummaryScoresState;

@@ -82,7 +82,6 @@ export const COMMENTS_EDITABLE_FLAG = getBoolean('COMMENTS_EDITABLE_FLAG', (type
 export const RESTRICT_TO_SESSION = getBoolean('RESTRICT_TO_SESSION', (typeof ENV_RESTRICT_TO_SESSION !== 'undefined') ? ENV_RESTRICT_TO_SESSION : false);
 export const MODERATOR_GUIDELINES_URL = getString('MODERATOR_GUIDELINES_URL', (typeof ENV_MODERATOR_GUIDELINES_URL !== 'undefined') ? ENV_MODERATOR_GUIDELINES_URL : '');
 export const SUBMIT_FEEDBACK_URL = getString('SUBMIT_FEEDBACK_URL', (typeof ENV_SUBMIT_FEEDBACK_URL !== 'undefined') ? ENV_SUBMIT_FEEDBACK_URL : '');
-export const FOCUS_DATA_ATTR = 'data-focus-id';
 export const DEFAULT_DRAG_HANDLE_POS1 = 0;
 export const DEFAULT_DRAG_HANDLE_POS2 = 0.2;
 export const DATE_FORMAT_LONG = 'MMM. D, YYYY h:mm A';
