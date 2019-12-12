@@ -21,7 +21,6 @@ import { reducer as articleReducer } from './articles';
 import { reducer as categoriesReducer } from './categories';
 import { reducer as commentsReducer } from './comments';
 import { reducer as commentSummaryScoresReducer } from './commentSummaryScores';
-import { reducer as focusReducer } from './focus';
 import { reducer as preselectsReducer } from './preselects';
 import { reducer as rulesReducer } from './rules';
 import { reducer as taggingSensitivitiesReducer } from './taggingSensitivities';
@@ -43,7 +42,6 @@ export const reducer: any = combineReducers<IAppStateRecord>({
   rules: rulesReducer,
   preselects: preselectsReducer,
   taggingSensitivities: taggingSensitivitiesReducer,
-  focus: focusReducer,
   textSizes: textSizesReducer,
   topScores: topScoresReducer,
   topSummaryScores: topSummaryScoresReducer,

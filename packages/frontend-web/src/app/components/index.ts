@@ -28,7 +28,6 @@ export * from './CommentList';
 export * from './ConfirmationCircle';
 export * from './DotChart';
 export * from './ErrorRoot';
-export * from './FocusRoot';
 export * from './Header';
 export * from './Icons';
 export * from './LazyCommentList';

@@ -18,8 +18,8 @@ import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router';
 import { combineReducers } from 'redux-immutable';
 
-import { FocusRoot, focusRootReducer, SplashRoot} from '../components';
 import { IAppStateRecord } from '../appstate';
+import { SplashRoot } from '../components';
 import { getCurrentUserIsAdmin } from '../stores/users';
 import {
   Comments,
@@ -40,7 +40,6 @@ import { TableFrame } from './Tables/TableFrame';
 export const reducer: any = combineReducers({
   commentsIndex: commentsIndexReducer,
   search: searchReducer,
-  root: focusRootReducer,
 });
 
 function redirect(to: string) {
@@ -51,19 +50,17 @@ function redirect(to: string) {
 
 function _AppRoot(props: {isAdmin: boolean}) {
   return (
-    <FocusRoot>
-      <Switch>
-        <Route exact path="/" render={redirect(`/${dashboardBase}`)} />
-        <Route path={`/${dashboardBase}/:filter?/:sort?`} component={TableFrame}/>
-        {props.isAdmin &&
-        <Route path={`/${settingsBase}`} component={Settings}/>
-        }
-        <Route path={`/${searchBase}`} component={Search}/>
-        <Route path={`/${tagSelectorBase}/:context/:contextId/:tag`} component={TagSelector} />
-        <Route path={'/:context/:contextId'} component={Comments}/>
-        <Route path={'/'} component={SplashRoot}/>
-      </Switch>
-    </FocusRoot>
+    <Switch>
+      <Route exact path="/" render={redirect(`/${dashboardBase}`)} />
+      <Route path={`/${dashboardBase}/:filter?/:sort?`} component={TableFrame}/>
+      {props.isAdmin &&
+      <Route path={`/${settingsBase}`} component={Settings}/>
+      }
+      <Route path={`/${searchBase}`} component={Search}/>
+      <Route path={`/${tagSelectorBase}/:context/:contextId/:tag`} component={TagSelector} />
+      <Route path={'/:context/:contextId'} component={Comments}/>
+      <Route path={'/'} component={SplashRoot}/>
+    </Switch>
   );
 }
 
