@@ -14,11 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
 import React from 'react';
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router';
 
-import { IArticleModel, ICategoryModel, IUserModel } from '../../../models';
+import { IArticleModel, ICategoryModel } from '../../../models';
 import { IAppDispatch } from '../../appstate';
 import {
   HeaderBar,
@@ -57,7 +56,6 @@ export interface ICommentsProps extends RouteComponentProps<IContextPathParams> 
   dispatch?: IAppDispatch;
   article?: IArticleModel;
   category?: ICategoryModel;
-  moderators?: List<IUserModel>;
   globalCounts: ISummaryCounts;
 }
 

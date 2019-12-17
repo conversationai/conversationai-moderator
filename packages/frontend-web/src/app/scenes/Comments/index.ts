@@ -14,17 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { combineReducers, compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { IUserModel } from '../../../models';
 import { IAppState } from '../../appstate';
 import { getArticle } from '../../stores/articles';
 import { getCategory, getGlobalCounts } from '../../stores/categories';
-import { getUsers } from '../../stores/users';
 import { isArticleContext } from '../routes';
 import { Comments as PureComments, ICommentsProps } from './Comments';
 import { ICommentDetailState, reducer as commentDetailReducer } from './components/CommentDetail/store';
@@ -65,15 +62,6 @@ export const Comments = compose(
         else if (params.contextId !== 'all') {
           return getCategory(state, params.contextId);
         }
-      },
-      moderators: (state: IAppState, { match: { params }}: ICommentsProps) => {
-        if (!isArticleContext(params)) {
-          return List<IUserModel>();
-        }
-
-        const article = getArticle(state, params.contextId);
-        const users = getUsers(state);
-        return List<IUserModel>(article.assignedModerators.map((userId) => users.get(userId)));
       },
       globalCounts: getGlobalCounts,
     }),
