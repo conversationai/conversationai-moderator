@@ -134,7 +134,7 @@ export const commentScoresReducer = handleActions<
 }, initailState);
 
 function getStoreRecord(state: IAppState) {
-  return state.scenes.commentsIndex.newComments.commentScores;
+  return state.scenes.comments.newComments.commentScores;
 }
 
 export function getIsLoading(state: IAppState) {

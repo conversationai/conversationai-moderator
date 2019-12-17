@@ -16,15 +16,12 @@ limitations under the License.
 
 import { connect } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router';
-import { combineReducers } from 'redux';
 
 import { IAppState } from '../appstate';
 import { SplashRoot } from '../components';
 import { getCurrentUserIsAdmin } from '../stores/users';
-import { IScenesState } from './appstate';
 import {
   Comments,
-  reducer as commentsIndexReducer,
   TagSelector,
 } from './Comments';
 import {
@@ -34,14 +31,8 @@ import {
   tagSelectorBase,
 } from './routes';
 import { Search } from './Search';
-import { searchReducer } from './Search';
 import { Settings } from './Settings';
 import { TableFrame } from './Tables/TableFrame';
-
-export const reducer = combineReducers<IScenesState>({
-  commentsIndex: commentsIndexReducer,
-  search: searchReducer,
-});
 
 function redirect(to: string) {
   return () => {

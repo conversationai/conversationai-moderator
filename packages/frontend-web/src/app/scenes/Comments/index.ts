@@ -16,7 +16,7 @@ limitations under the License.
 
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { combineReducers, compose } from 'redux';
+import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { IAppState } from '../../appstate';
@@ -24,30 +24,12 @@ import { getArticle } from '../../stores/articles';
 import { getCategory, getGlobalCounts } from '../../stores/categories';
 import { isArticleContext } from '../routes';
 import { Comments as PureComments, ICommentsProps } from './Comments';
-import { ICommentDetailState, reducer as commentDetailReducer } from './components/CommentDetail/store';
-import { IModeratedCommentsGlobalState, reducer as moderatedCommentsReducer} from './components/ModeratedComments/store';
-import { INewCommentsState, newCommentsReducer } from './components/NewComments/store';
-import { IThreadedCommentDetailState, reducer as threadedCommentDetailReducer } from './components/ThreadedCommentDetail/store';
 
 export { NewComments } from './components/NewComments';
 export { TagSelector } from './components/TagSelector';
 export { ModeratedComments } from './components/ModeratedComments';
 export { CommentDetail } from './components/CommentDetail';
 export { ThreadedCommentDetail } from './components/ThreadedCommentDetail';
-
-export type ICommentsGlobalState = Readonly<{
-  newComments: INewCommentsState;
-  moderatedComments: IModeratedCommentsGlobalState;
-  commentDetail: ICommentDetailState;
-  threadedCommentDetail: IThreadedCommentDetailState;
-}>;
-
-export const reducer = combineReducers<ICommentsGlobalState>({
-  newComments: newCommentsReducer,
-  moderatedComments: moderatedCommentsReducer,
-  commentDetail: commentDetailReducer,
-  threadedCommentDetail: threadedCommentDetailReducer,
-});
 
 export const Comments = compose(
   connect(createStructuredSelector({

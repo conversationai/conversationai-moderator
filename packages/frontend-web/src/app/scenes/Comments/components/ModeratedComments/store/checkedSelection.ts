@@ -20,7 +20,7 @@ import { ICheckedSelectionPayloads, ICheckedSelectionState, makeCheckedSelection
 
 const checkedSelectionStore = makeCheckedSelectionStore(
   (state: IAppState) => {
-    return state.scenes.commentsIndex.moderatedComments.checkedSelection;
+    return state.scenes.comments.moderatedComments.checkedSelection;
   },
   { defaultSelectionState: false },
 );

@@ -25,7 +25,7 @@ import {
 
 const currentPagingIdentifier = makeCurrentPagingIdentifierReducer(
   (state: IAppState) => {
-    return state.scenes.commentsIndex.newComments.currentPagingIdentifier;
+    return state.scenes.comments.newComments.currentPagingIdentifier;
   },
 );
 
