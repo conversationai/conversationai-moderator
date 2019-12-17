@@ -256,7 +256,7 @@ export const moderatedCommentsReducer = handleActions<
 }, initialState);
 
 function getRecord(state: IAppState) {
-  return state.scenes.commentsIndex.moderatedComments.moderatedComments;
+  return state.scenes.comments.moderatedComments.moderatedComments;
 }
 
 export function getIsLoading(state: IAppState) {

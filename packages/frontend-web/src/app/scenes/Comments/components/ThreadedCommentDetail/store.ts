@@ -60,9 +60,9 @@ export const reducer = combineReducers<IThreadedCommentDetailState>({
 });
 
 export function getComment(state: IAppState) {
-  return state.scenes.commentsIndex.threadedCommentDetail.comment.item;
+  return state.scenes.comments.threadedCommentDetail.comment.item;
 }
 
 export function getIsLoading(state: IAppState) {
-  return state.scenes.commentsIndex.threadedCommentDetail.comment.isFetching;
+  return state.scenes.comments.threadedCommentDetail.comment.isFetching;
 }

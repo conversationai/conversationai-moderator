@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2020 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,13 +19,6 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
-import {
-  applyMiddleware,
-  combineReducers,
-  compose,
-  createStore,
-} from 'redux';
-import thunk from 'redux-thunk';
 
 import {
   AuthenticationStates,
@@ -38,25 +31,11 @@ import {
 } from './auth';
 import { ErrorRoot, SPLASH_STYLES, SplashRoot, ThemeRoot } from './components';
 import { APP_NAME } from './config';
-import { AppRoot, reducer as scenesReducer } from './scenes';
+import { AppRoot } from './scenes';
 import { ConfigureOAuth, Login } from './scenes/Login';
-import { reducer as globalReducer} from './stores';
+import { store } from './store';
 import { COMMON_STYLES } from './stylesx';
 import { css } from './utilx';
-
-// Add the reducer to your store on the `routing` key
-const store = createStore(
-  combineReducers({
-    scenes: scenesReducer,
-    global: globalReducer,
-  }),
-  {},
-  compose(
-    applyMiddleware(thunk),
-    // TODO: Make this toggle based on environment
-    // (window as any)['devToolsExtension'] ? (window as any)['devToolsExtension']() : (f: any) => f,
-  ),
-);
 
 function _Root(props: React.PropsWithChildren<RouteComponentProps<{}>>) {
   const [error, setError] = React.useState<string>(null);
@@ -133,14 +112,15 @@ function _Root(props: React.PropsWithChildren<RouteComponentProps<{}>>) {
 
 const Root = withRouter(_Root);
 
-ReactDOM.render(
-  <Provider store={store}>
-    <ThemeRoot>
-      <BrowserRouter>
-        <Root/>
-      </BrowserRouter>
-    </ThemeRoot>
-  </Provider>,
+ReactDOM.render((
+    <Provider store={store}>
+      <ThemeRoot>
+        <BrowserRouter>
+          <Root/>
+        </BrowserRouter>
+      </ThemeRoot>
+    </Provider>
+  ),
   document.getElementById('app'),
 );
 

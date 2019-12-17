@@ -183,7 +183,7 @@ export const commentPagingReducer = handleActions<
 }, initialState);
 
 export function getCommentPagingRecord(state: IAppState) {
-  return state.scenes.commentsIndex.commentDetail.paging;
+  return state.scenes.comments.commentDetail.paging;
 }
 
 export function getPagingIsFromBatch(state: IAppState) {
@@ -283,7 +283,7 @@ export const authorCountsReducer = handleActions<
 });
 
 export function getAuthorCountsRecord(state: IAppState) {
-  return state.scenes.commentsIndex.commentDetail.authorCounts;
+  return state.scenes.comments.commentDetail.authorCounts;
 }
 
 export type ICommentDetailState = Readonly<{
@@ -309,19 +309,19 @@ export const updateCommentScore: (payload: ICommentScoreModel) => Action<ICommen
 export const removeCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = removeCommentScoreRecord;
 
 export function getComment(state: IAppState) {
-  return state.scenes.commentsIndex.commentDetail.comment.item;
+  return state.scenes.comments.commentDetail.comment.item;
 }
 
 export function getScores(state: IAppState) {
-  return state.scenes.commentsIndex.commentDetail.scores.items;
+  return state.scenes.comments.commentDetail.scores.items;
 }
 
 export function getFlags(state: IAppState) {
-  return state.scenes.commentsIndex.commentDetail.flags.items;
+  return state.scenes.comments.commentDetail.flags.items;
 }
 
 export function getIsLoading(state: IAppState) {
-  return state.scenes.commentsIndex.commentDetail.comment.isFetching;
+  return state.scenes.comments.commentDetail.comment.isFetching;
 }
 
 export function getTaggingSensitivitiesInCategory(state: IAppState): List<ITaggingSensitivityModel> {

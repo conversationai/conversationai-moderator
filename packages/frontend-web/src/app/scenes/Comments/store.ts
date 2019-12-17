@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2020 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -15,15 +15,36 @@ limitations under the License.
 */
 
 import { List } from 'immutable';
-import {
-  ITaggingSensitivityModel,
-} from '../../../models';
+import { combineReducers } from 'redux';
+
+import { ITaggingSensitivityModel } from '../../../models';
 import { IAppState } from '../../appstate';
 import { getArticle } from '../../stores/articles';
 import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
+import { ICommentDetailState, reducer as commentDetailReducer } from './components/CommentDetail/store';
+import { IModeratedCommentsGlobalState, reducer as moderatedCommentsReducer } from './components/ModeratedComments/store';
+import { INewCommentsState, newCommentsReducer } from './components/NewComments/store';
+import { IThreadedCommentDetailState, reducer as threadedCommentDetailReducer } from './components/ThreadedCommentDetail/store';
 
-function aboveThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, score: ICommentSummaryScoreStateRecord): boolean {
+export type ICommentsGlobalState = Readonly<{
+  newComments: INewCommentsState;
+  moderatedComments: IModeratedCommentsGlobalState;
+  commentDetail: ICommentDetailState;
+  threadedCommentDetail: IThreadedCommentDetailState;
+}>;
+
+export const commentsReducer = combineReducers<ICommentsGlobalState>({
+  newComments: newCommentsReducer,
+  moderatedComments: moderatedCommentsReducer,
+  commentDetail: commentDetailReducer,
+  threadedCommentDetail: threadedCommentDetailReducer,
+});
+
+function aboveThreshold(
+  taggingSensitivities: List<ITaggingSensitivityModel>,
+  score: ICommentSummaryScoreStateRecord,
+): boolean {
   if (score.tagId === null) {
     return false;
   }
