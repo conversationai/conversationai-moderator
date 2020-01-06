@@ -37,6 +37,27 @@ export const Preselect = sequelize.define<
   IPreselectInstance,
   IPreselectAttributes
 >('preselect', {
+  id: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+
+  tagId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: true,
+  },
+
+  categoryId: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: true,
+  },
+
+  createdBy: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    allowNull: true,
+  },
+
   lowerThreshold: {
     type: Sequelize.FLOAT(2).UNSIGNED,
     allowNull: false,

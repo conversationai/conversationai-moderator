@@ -30,6 +30,12 @@ export type ICSRFInstance = Sequelize.Instance<ICSRFAttributes> & ICSRFAttribute
  * CSRF model
  */
 export const CSRF = sequelize.define<ICSRFInstance, ICSRFAttributes>('csrfs', {
+  id: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+
   clientCSRF: {
     type: Sequelize.CHAR(255),
     allowNull: false,

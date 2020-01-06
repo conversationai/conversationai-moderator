@@ -49,3 +49,5 @@ export const UserCategoryAssignment = sequelize.define<
     },
   },
 );
+
+UserCategoryAssignment.removeAttribute('id');
