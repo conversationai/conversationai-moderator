@@ -34,6 +34,12 @@ export const UserSocialAuth = sequelize.define<
   IUserSocialAuthInstance,
   IUserSocialAuthAttributes
 >('user_social_auth', {
+  id: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+
   userId: {
     type: Sequelize.INTEGER.UNSIGNED,
     references: { model: User, key: 'id' },

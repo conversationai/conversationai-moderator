@@ -53,6 +53,12 @@ export const ModerationRule = sequelize.define<
   IModerationRuleInstance,
   IModerationRuleAttributes
 >('moderation_rules', {
+  id: {
+    type: Sequelize.INTEGER.UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+
   tagId: {
     type: Sequelize.INTEGER.UNSIGNED,
     allowNull: false,
