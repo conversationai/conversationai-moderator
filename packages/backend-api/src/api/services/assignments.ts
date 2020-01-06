@@ -27,12 +27,9 @@ import {
   ModeratorAssignment,
   partialUpdateHappened,
   updateHappened,
-  User,
   UserCategoryAssignment,
 } from '../../models';
 import { REPLY_SUCCESS } from '../constants';
-import * as JSONAPI from '../jsonapi';
-import { list } from '../util/SequelizeHandler';
 
 export async function countAssignments(user: IUserInstance) {
   const articles: Array<IArticleInstance> = await user.getAssignedArticles();
@@ -45,65 +42,8 @@ export function createAssignmentsService(): express.Router {
     mergeParams: true,
   });
 
-  router.get('/users/:id', JSONAPI.handleGet(
-    async ({ params: { id } }, paging, include, filters, sort, fields) => {
-      const user = await User.findByPk(id);
-
-      return await list(
-        'articles', {
-          page: paging,
-          include,
-          filters,
-          sort,
-          fields,
-        },
-
-        // Hack type for dynamically generated methods.
-        (user as any).getAssignedArticles.bind(user),
-        (user as any).countAssignedArticles.bind(user),
-      );
-    },
-    JSONAPI.renderListResults,
-    ({ params: { id } }) => `/services/assignments/users/${id}`,
-  ));
-
-  router.get('/users/:id/count', async (req, res, next) => {
-    const user = await User.findByPk(req.params.id);
-    const count = user ? await countAssignments(user) : 0;
-
-    // So simple, not worth validating the schema.
-    res.json({ count });
-
-    next();
-  });
-
-  router.get('/articles/:id', JSONAPI.handleGet(
-    async ({ params: { id } }, paging, include, filters, sort, fields) => {
-      const article = await Article.findByPk(id);
-
-      return await list(
-        'users',
-        {
-          page: paging,
-          include,
-          filters,
-          sort,
-          fields,
-        },
-
-        // Hack type for dynamically generated methods.
-        (article as any).getAssignedModerators.bind(article),
-        (article as any).countAssignedModerators.bind(article),
-      );
-    },
-    JSONAPI.renderListResults,
-    ({ params: { id } }) => `/services/assignments/articles/${id}`,
-  ));
-
   async function removeArticleAssignment(userIds: Array<number>, articleIdsInCategory: Array<number>) {
     // Remove all assignmentsForArticles that have articleId that exist in articlesInCategory AND userId === userId
-    // TODO: This looks wrong.  What happens if user1 assigned to article 1 and 2 and user 2 assigned to article 1 and 2
-    //       And we want to remove user 1 article 2 and user 2 article 1.  This will remove them all....
     await ModeratorAssignment.destroy({
       where: {
         userId: {

@@ -7,7 +7,7 @@
     "build": "npm run compile",
     "compile": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration",
     "test": "npm run mocha",
-    "mocha": "WORKER_RUN_IMMEDIATELY=true ../../node_modules/.bin/ts-mocha 'src/test/**/*.spec.ts' --timeout 200000",
+    "mocha": "WORKER_RUN_IMMEDIATELY=true ts-mocha 'src/test/**/*.spec.ts' --timeout 200000",
     "lint": "find src -name '*.ts' | xargs ../../node_modules/.bin/tslint -c ../../tslint.json"
   },
   "license": "Apache-2.0",
