@@ -53,7 +53,7 @@ export { expect };
 
 let articleCounter = 0;
 export async function makeArticle(obj = {}): Promise<IArticleInstance> {
-  return await Article.create({
+  return Article.create({
     sourceId: `something ${articleCounter++}`,
     title: 'An article',
     text: 'Text',
@@ -67,7 +67,7 @@ export async function makeArticle(obj = {}): Promise<IArticleInstance> {
 }
 
 export async function makeUser(obj = {}): Promise<IUserInstance> {
-  return await User.create({
+  return User.create({
     group: 'general',
     name: 'Name',
     email: 'email@example.com',
@@ -77,7 +77,7 @@ export async function makeUser(obj = {}): Promise<IUserInstance> {
 }
 
 export async function makeTag(obj = {}): Promise<ITagInstance> {
-  return await Tag.create({
+  return Tag.create({
     key: 'test',
     label: 'Test',
     ...obj,
@@ -85,7 +85,7 @@ export async function makeTag(obj = {}): Promise<ITagInstance> {
 }
 
 export async function makeTaggingSensitivity(obj = {}): Promise<ITaggingSensitivityInstance> {
-  return await TaggingSensitivity.create({
+  return TaggingSensitivity.create({
     lowerThreshold: 0,
     upperThreshold: 1,
     ...obj,
@@ -94,7 +94,7 @@ export async function makeTaggingSensitivity(obj = {}): Promise<ITaggingSensitiv
 
 let commentCounter = 0;
 export async function makeComment(obj = {}): Promise<ICommentInstance> {
-  return await Comment.create({
+  return Comment.create({
     articleId: null,
     sourceId: `something ${commentCounter++}`,
     authorSourceId: 'something',
@@ -110,7 +110,7 @@ export async function makeComment(obj = {}): Promise<ICommentInstance> {
 }
 
 export async function makeCommentScore(obj = {}): Promise<ICommentScoreInstance> {
-  return await CommentScore.create({
+  return CommentScore.create({
     commentId: null,
     tagId: null,
     score: 1,
@@ -122,14 +122,14 @@ export async function makeCommentScore(obj = {}): Promise<ICommentScoreInstance>
 }
 
 export async function makeCommentSummaryScore(obj: Pick<ICommentSummaryScoreAttributes, 'commentId' | 'tagId' | 'score' | 'isConfirmed'>): Promise<ICommentSummaryScoreInstance> {
-  return await CommentSummaryScore.create({
+  return CommentSummaryScore.create({
     score: 1,
     ...obj,
   });
 }
 
 export async function makeCategory(obj = {}): Promise<ICategoryInstance> {
-  return await Category.create({
+  return Category.create({
     label: 'something',
     ...RESET_COUNTS,
     ...obj,
@@ -137,7 +137,7 @@ export async function makeCategory(obj = {}): Promise<ICategoryInstance> {
 }
 
 export async function makeRule(tag: ITagInstance, obj = {}): Promise<IModerationRuleInstance> {
-  return await ModerationRule.create({
+  return ModerationRule.create({
     tagId: tag.id,
     lowerThreshold: 0,
     upperThreshold: 1,
@@ -147,7 +147,7 @@ export async function makeRule(tag: ITagInstance, obj = {}): Promise<IModeration
 }
 
 export async function makePreselect(obj = {}): Promise<IPreselectInstance> {
-  return await Preselect.create({
+  return Preselect.create({
     lowerThreshold: 0,
     upperThreshold: 1,
     ...obj,
@@ -155,7 +155,7 @@ export async function makePreselect(obj = {}): Promise<IPreselectInstance> {
 }
 
 export async function makeFlag(obj: {}): Promise<ICommentFlagInstance> {
-  return await CommentFlag.create({
+  return CommentFlag.create({
     label: 'test flag',
     isResolved: false,
     ...obj,
