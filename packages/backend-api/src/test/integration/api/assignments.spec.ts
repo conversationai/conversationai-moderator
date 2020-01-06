@@ -66,31 +66,6 @@ describe(BASE_URL, () => {
     user = await makeUser();
   });
 
-  describe('/users/:id/count', () => {
-    const url = `${BASE_URL}/users/:id/count`;
-
-    it('Fetch counts of assigned comments', async () => {
-      {
-        const apiClient = chai.request(app);
-        const {status, body} = await apiClient.get(url.replace(':id', user.id.toString()));
-        expect(status).to.be.equal(200);
-        expect(body.count).to.be.equal(0);
-      }
-
-      await ModeratorAssignment.create({
-        userId: user.id,
-        articleId: article.id,
-      });
-
-      {
-        const apiClient = chai.request(app);
-        const {status, body} = await apiClient.get(url.replace(':id', user.id.toString()));
-        expect(status).to.be.equal(200);
-        expect(body.count).to.be.equal(1);
-      }
-    });
-  });
-
   describe('/categories/:id', () => {
     const url = `${BASE_URL}/categories/:id`;
     it('Assign a moderator to a category', async () => {
