@@ -69,7 +69,7 @@ export function getCategoryData(data: Partial<ICategoryAttributes> = {}): ICateg
 }
 
 export async function createCategory(obj: Partial<ICategoryAttributes> = {}): Promise<ICategoryInstance> {
-  return await Category.create(getCategoryData(obj));
+  return Category.create(getCategoryData(obj));
 }
 
 // Articles
@@ -88,7 +88,7 @@ export function getArticleData(data: Partial<IArticleAttributes> = {}): IArticle
 }
 
 export async function createArticle(obj: Partial<IArticleAttributes> = {}): Promise<IArticleInstance> {
-  return await Article.create(getArticleData(obj));
+  return Article.create(getArticleData(obj));
 }
 
 export function getCommentData(data: Partial<ICommentAttributes> = {}): ICommentAttributes {
@@ -103,7 +103,7 @@ export function getCommentData(data: Partial<ICommentAttributes> = {}): IComment
 }
 
 export async function createComment(data?: any): Promise<ICommentInstance> {
-  return await Comment.create(getCommentData(data));
+  return Comment.create(getCommentData(data));
 }
 
 // Comment score requests
@@ -119,13 +119,13 @@ export function getCommentScoreRequestData(data: Partial<ICommentScoreRequestAtt
 }
 
 export async function createCommentScoreRequest(data?: object): Promise<ICommentScoreRequestInstance> {
-  return await CommentScoreRequest.create(getCommentScoreRequestData(data));
+  return CommentScoreRequest.create(getCommentScoreRequestData(data));
 }
 
 // Users
 
 export async function createUser(data: Partial<IUserAttributes> = {}): Promise<IUserInstance> {
-  return await User.create({
+  return User.create({
     group: 'general',
     email: faker.internet.email(),
     name: faker.name.firstName(),
@@ -135,7 +135,7 @@ export async function createUser(data: Partial<IUserAttributes> = {}): Promise<I
 }
 
 export async function createServiceUser(data: Partial<IUserAttributes> = {}): Promise<IUserInstance> {
-  return await User.create({
+  return User.create({
     group: USER_GROUP_SERVICE,
     name: faker.name.firstName(),
     isActive: true,
@@ -144,7 +144,7 @@ export async function createServiceUser(data: Partial<IUserAttributes> = {}): Pr
 }
 
 export async function createModeratorUser(data: Partial<IUserAttributes> = {}): Promise<IUserInstance> {
-  return await User.create({
+  return User.create({
     group: USER_GROUP_MODERATOR,
     name: faker.name.firstName(),
     isActive: true,
@@ -171,7 +171,7 @@ export function getCommentScoreData(data: Partial<ICommentScoreAttributes> = {})
 }
 
 export async function createCommentScore(data?: object): Promise<ICommentScoreInstance> {
-  return await CommentScore.create(getCommentScoreData(data));
+  return CommentScore.create(getCommentScoreData(data));
 }
 
 // Comment summary scores
@@ -186,7 +186,7 @@ export function getCommentSummaryScoreData(data: Partial<ICommentSummaryScoreAtt
 }
 
 export async function createCommentSummaryScore(data?: object): Promise<ICommentSummaryScoreInstance> {
-  return await CommentSummaryScore.create(getCommentSummaryScoreData(data));
+  return CommentSummaryScore.create(getCommentSummaryScoreData(data));
 }
 
 // Moderation rules
@@ -206,7 +206,7 @@ export function getModerationRuleData(data: Partial<IModerationRuleAttributes> =
 }
 
 export async function createModerationRule(data?: object): Promise<IModerationRuleInstance> {
-  return await ModerationRule.create(getModerationRuleData(data));
+  return ModerationRule.create(getModerationRuleData(data));
 }
 
 // Tags
@@ -223,5 +223,5 @@ export function getTagData(data: Partial<ITagAttributes> = {}): ITagAttributes {
 }
 
 export async function createTag(data?: object): Promise<ITagInstance> {
-  return await Tag.create(getTagData(data));
+  return Tag.create(getTagData(data));
 }
