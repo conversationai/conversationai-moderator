@@ -16,9 +16,10 @@ limitations under the License.
 
 import * as express from 'express';
 import * as Joi from 'joi';
+import { QueryTypes } from 'sequelize';
 
 import { logger } from '../../logger';
-import { sequelize as sequelizeInstance } from '../../sequelize';
+import { sequelize } from '../../sequelize';
 import { sort } from '../util/SequelizeHandler';
 import { validateAndSendResponse } from '../util/validation';
 
@@ -46,7 +47,7 @@ export function createSearchService(): express.Router {
       if (term.length >= MINIMUM_QUERY_LENGTH) {
         if (searchByAuthor === 'true') {
           const iffyTerm = `%${term}%`;
-          results = await sequelizeInstance.query(
+          results = await sequelize.query(
             `SELECT id ` +
             `FROM comments ` +
             'WHERE comments.authorSourceId=:term ' +
@@ -57,11 +58,11 @@ export function createSearchService(): express.Router {
                 iffyTerm,
                 term,
               },
-              type: sequelizeInstance.QueryTypes.SELECT,
+              type: QueryTypes.SELECT,
             },
           );
         } else if (articleId) {
-          results = await sequelizeInstance.query(
+          results = await sequelize.query(
             `SELECT id, MATCH(text) AGAINST (:term) as relevance ` +
             `FROM comments ` +
             'WHERE comments.articleId = :articleId ' +
@@ -73,11 +74,11 @@ export function createSearchService(): express.Router {
                 term,
                 articleId,
               },
-              type: sequelizeInstance.QueryTypes.SELECT,
+              type: QueryTypes.SELECT,
             },
           );
         } else {
-          results = await sequelizeInstance.query(
+          results = await sequelize.query(
             `SELECT id, MATCH(text) AGAINST (:term) as relevance ` +
             `FROM comments WHERE MATCH(text) AGAINST (:term) ` +
             'ORDER BY relevance DESC ' +
@@ -86,13 +87,13 @@ export function createSearchService(): express.Router {
               replacements: {
                 term,
               },
-              type: sequelizeInstance.QueryTypes.SELECT,
+              type: QueryTypes.SELECT,
             },
           );
         }
       }
 
-      ids = results.map((r: any) => r.id);
+      ids = results ? results.map((r: any) => r.id) : [];
 
       const { query: { sort: sortQuery } } = req;
       const sortOrder = sortQuery ? sortQuery.split(',') : null;

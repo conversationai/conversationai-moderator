@@ -43,7 +43,7 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
   const deferredCount = await Comment.count({ where: { articleId: article.id, isDeferred: true } });
   const flaggedCount = await Comment.count({ where: { articleId: article.id,
       [Op.or]: [{ isModerated: false }, { isAccepted: true }],
-      unresolvedFlagsCount: { [Op.gt]: 0 } } })
+      unresolvedFlagsCount: { [Op.gt]: 0 } } });
   const batchedCount = await Comment.count({ where: { articleId: article.id, isModerated: true, isBatchResolved: true } });
 
   const update: Partial<IArticleAttributes> = {

@@ -16,7 +16,7 @@ limitations under the License.
 
 import * as express from 'express';
 import * as Joi from 'joi';
-import { Op } from 'sequelize';
+import { fn, Op } from 'sequelize';
 
 import { logger } from '../../logger';
 import {
@@ -29,7 +29,6 @@ import {
   IProcessTagAdditionData,
   IProcessTagData,
 } from '../../processing';
-import { sequelize } from '../../sequelize';
 import { REPLY_SUCCESS } from '../constants';
 import * as JSONAPI from '../jsonapi';
 import { list } from '../util/SequelizeHandler';
@@ -214,7 +213,7 @@ export function createPublisherService(): express.Router {
         const decisionIds = body.data.map((s: any) => parseInt(s, 10));
 
         await Decision.update({
-          sentBackToPublisher: sequelize.fn('now'),
+          sentBackToPublisher: fn('now'),
         }, {
           where: {
             id: {

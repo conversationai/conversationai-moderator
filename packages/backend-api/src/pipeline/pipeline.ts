@@ -17,7 +17,7 @@ limitations under the License.
 import * as Bluebird from 'bluebird';
 import { groupBy, maxBy } from 'lodash';
 import * as moment from 'moment';
-import { FindOrInitializeOptions, Op } from 'sequelize';
+import { FindOrInitializeOptions, fn, Op } from 'sequelize';
 import { humanize, titleize, trim } from 'underscore.string';
 
 import {
@@ -99,7 +99,7 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
     const csr = await CommentScoreRequest.create({
       commentId: comment.id,
       userId: scorer.id,
-      sentAt: sequelize.fn('now'),
+      sentAt: fn('now'),
     });
 
     await shim.sendToScorer(comment, csr.id);
@@ -111,7 +111,7 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
 
 export async function checkScoringDone(comment: ICommentInstance): Promise<void> {
   // Mark timestamp for when comment was last sent for scoring
-  comment.sentForScoring = sequelize.fn('now');
+  comment.sentForScoring = new Date();
   await comment.save();
 
   const isDoneScoring = await getIsDoneScoring(comment.id);
@@ -164,7 +164,7 @@ export async function getCommentsToResendForScoring(
     where: {
       isAccepted: null,
       isScored: false,
-      sentForScoring: { [Op.lt]: resendCutoff() },
+      sentForScoring: {[Op.lt]: resendCutoff()},
     },
     include: [Article],
   } as any;
@@ -254,7 +254,7 @@ export async function processMachineScore(
   await updateMaxSummaryScore(comment);
 
   // Mark the comment score request as done
-  commentScoreRequest.doneAt = sequelize.fn('now');
+  commentScoreRequest.doneAt = new Date();
   await commentScoreRequest.save();
 }
 
@@ -399,15 +399,15 @@ export async function recordDecision(
 ): Promise<IDecisionInstance> {
   // Find out if we're overriding a previous decision.
   const previousDecisions = await comment.getDecisions({
-    where: { isCurrentDecision: true },
+    where: {isCurrentDecision: true},
   });
 
   // Set previous active decisions to `isCurrentDecision` false.
   await Promise.all(
-    previousDecisions.map((d) => d.update({ isCurrentDecision: false })),
+    previousDecisions.map((d) => d.update({isCurrentDecision: false})),
   );
 
-  await comment.update({ updatedAt: sequelize.fn('now') });
+  await comment.update({updatedAt: fn('now')});
 
   // Add new decision, isCurrentDecision defaults to true.
   const decision = await Decision.create({
