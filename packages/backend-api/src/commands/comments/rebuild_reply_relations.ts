@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as Bluebird from 'bluebird';
+import { QueryTypes } from 'sequelize';
 import * as yargs from 'yargs';
 
 import { logger } from '../../logger';
@@ -37,7 +38,7 @@ export async function handler() {
       'FROM comments as c ' +
       'LEFT JOIN comments as c2 ON c.sourceId = c2.replyToSourceId ' +
       'WHERE c2.id IS NOT NULL;',
-      { type: sequelize.QueryTypes.SELECT },
+      { type: QueryTypes.SELECT },
     );
 
     logger.info('Found ' + results.length + ' comments with replies');
@@ -46,7 +47,7 @@ export async function handler() {
       const existing = await sequelize.query(
         'SELECT commentId, replyId FROM comment_replies ' +
         'WHERE commentId = ' + row.commentId + ' AND replyId = ' + row.replyId + ';',
-        { type: sequelize.QueryTypes.SELECT },
+        { type: QueryTypes.SELECT },
       );
 
       if (existing && existing.length > 0) { return Bluebird.resolve(); }

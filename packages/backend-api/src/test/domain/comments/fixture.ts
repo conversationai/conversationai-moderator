@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as faker from 'faker';
 import { random, sample } from 'lodash';
+import { fn } from 'sequelize';
 import { underscored } from 'underscore.string';
 
 import {
@@ -57,7 +58,6 @@ import {
   USER_GROUP_MODERATOR,
   USER_GROUP_SERVICE,
 } from '../../../models';
-import { sequelize } from '../../../sequelize';
 
 // Category
 export function getCategoryData(data: Partial<ICategoryAttributes> = {}): ICategoryAttributes {
@@ -97,7 +97,7 @@ export function getCommentData(data: Partial<ICommentAttributes> = {}): IComment
     authorSourceId: faker.random.uuid(),
     text: faker.lorem.words(20),
     author: {},
-    sourceCreatedAt: sequelize.fn('now'),
+    sourceCreatedAt: fn('now'),
     ...data,
   } as ICommentAttributes;
 }
@@ -112,7 +112,7 @@ export function getCommentScoreRequestData(data: Partial<ICommentScoreRequestAtt
   return {
     commentId: faker.random.number(),
     userId: faker.random.number(),
-    sentAt: sequelize.fn('now'),
+    sentAt: fn('now'),
 
     ...data,
   };

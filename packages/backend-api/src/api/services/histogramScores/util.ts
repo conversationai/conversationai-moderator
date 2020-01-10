@@ -16,10 +16,12 @@ limitations under the License.
 
 const { Canvas } = require('canvas');
 
+import { QueryTypes } from 'sequelize';
+
 import { DotChartRenderer, groupByDateColumns, groupByScoreColumns } from '@conversationai/moderator-frontend-web';
 
 import { Article, Category, Tag } from '../../../models';
-import { sequelize as sequelizeInstance } from '../../../sequelize';
+import { sequelize } from '../../../sequelize';
 import * as JSONAPI from '../../jsonapi';
 import { sort } from '../../util/SequelizeHandler';
 
@@ -71,7 +73,7 @@ export async function getHistogramScoresForAllCategories(tagId: number): Promise
   const tag = await Tag.findByPk(tagId);
   if (!tag) { throw new JSONAPI.NotFoundError(`Could not find tag ${tagId}`); }
 
-  return sequelizeInstance.query(
+  return sequelize.query(
     'SELECT comment_summary_scores.score AS score, comment_summary_scores.commentId ' +
     'FROM comments ' +
     'JOIN comment_summary_scores ON comment_summary_scores.commentId = comments.id ' +
@@ -83,7 +85,7 @@ export async function getHistogramScoresForAllCategories(tagId: number): Promise
       replacements: {
         tagId,
       },
-      type: sequelizeInstance.QueryTypes.SELECT,
+      type: QueryTypes.SELECT,
     },
   );
 }
@@ -92,12 +94,12 @@ export async function getHistogramScoresForAllCategories(tagId: number): Promise
  * Get the max score for each comment across all categories.
  */
 export async function getHistogramScoresForAllCategoriesByDate(): Promise<Array<ICommentDated>> {
-  return sequelizeInstance.query(
+  return sequelize.query(
     'SELECT comments.id as commentId, comments.sourceCreatedAt as date ' +
     'FROM comments ' +
     'WHERE comments.isModerated = false ',
     {
-      type: sequelizeInstance.QueryTypes.SELECT,
+      type: QueryTypes.SELECT,
     },
   );
 }
@@ -117,7 +119,7 @@ export async function getHistogramScoresForCategory(categoryId: number | 'all', 
   const tag = await Tag.findByPk(tagId);
   if (!tag) { throw new JSONAPI.NotFoundError(`Could not find tag ${tagId}`); }
 
-  return sequelizeInstance.query(
+  return sequelize.query(
     'SELECT comment_summary_scores.score AS score, comment_summary_scores.commentId ' +
     'FROM comments ' +
     'JOIN articles ON articles.id = comments.articleId ' +
@@ -132,7 +134,7 @@ export async function getHistogramScoresForCategory(categoryId: number | 'all', 
         categoryId,
         tagId,
       },
-      type: sequelizeInstance.QueryTypes.SELECT,
+      type: QueryTypes.SELECT,
     },
   );
 }
@@ -149,7 +151,7 @@ export async function getHistogramScoresForCategoryByDate(categoryId: number | '
   const category = await Category.findByPk(categoryId);
   if (!category) { throw new JSONAPI.NotFoundError(`Could not find category ${categoryId}`); }
 
-  return sequelizeInstance.query(
+  return sequelize.query(
     'SELECT comments.id as commentId, comments.sourceCreatedAt as date ' +
     'FROM comments ' +
     'JOIN articles ON articles.id = comments.articleId ' +
@@ -159,7 +161,7 @@ export async function getHistogramScoresForCategoryByDate(categoryId: number | '
       replacements: {
         categoryId,
       },
-      type: sequelizeInstance.QueryTypes.SELECT,
+      type: QueryTypes.SELECT,
     },
   );
 }
@@ -174,7 +176,7 @@ export async function getHistogramScoresForArticle(articleId: number, tagId: num
   const tag = await Tag.findByPk(tagId);
   if (!tag) { throw new JSONAPI.NotFoundError(`Could not find tag ${tagId}`); }
 
-  return sequelizeInstance.query(
+  return sequelize.query(
     'SELECT comment_summary_scores.score AS score, comment_summary_scores.commentId ' +
     'FROM comments ' +
     'JOIN comment_summary_scores ON comment_summary_scores.commentId = comments.id ' +
@@ -188,7 +190,7 @@ export async function getHistogramScoresForArticle(articleId: number, tagId: num
         articleId,
         tagId,
       },
-      type: sequelizeInstance.QueryTypes.SELECT,
+      type: QueryTypes.SELECT,
     },
   );
 }
@@ -200,7 +202,7 @@ export async function getHistogramScoresForArticleByDate(articleId: number): Pro
   const article = await Article.findByPk(articleId);
   if (!article) { throw new JSONAPI.NotFoundError(`Could not find article ${articleId}`); }
 
-  return sequelizeInstance.query(
+  return sequelize.query(
     'SELECT comments.id as commentId, comments.sourceCreatedAt as date ' +
     'FROM comments ' +
     'WHERE comments.articleId = :articleId ' +
@@ -209,7 +211,7 @@ export async function getHistogramScoresForArticleByDate(articleId: number): Pro
       replacements: {
         articleId,
       },
-      type: sequelizeInstance.QueryTypes.SELECT,
+      type: QueryTypes.SELECT,
     },
   );
 }
@@ -221,7 +223,7 @@ export async function getMaxSummaryScoreForArticle(articleId: number): Promise<A
   const article = await Article.findByPk(articleId);
   if (!article) { throw new JSONAPI.NotFoundError(`Could not find article ${articleId}`); }
 
-  return sequelizeInstance.query(
+  return sequelize.query(
     'SELECT comments.id as commentId, comments.maxSummaryScore as score ' +
     'FROM comments ' +
     'WHERE comments.articleId = :articleId ' +
@@ -232,7 +234,7 @@ export async function getMaxSummaryScoreForArticle(articleId: number): Promise<A
       replacements: {
         articleId,
       },
-      type: sequelizeInstance.QueryTypes.SELECT,
+      type: QueryTypes.SELECT,
     },
   );
 }
@@ -242,7 +244,7 @@ export async function getMaxSummaryScoreForArticle(articleId: number): Promise<A
  */
 export async function getMaxHistogramScoresForAllCategories(): Promise<Array<ICommentScored>> {
 
-  return sequelizeInstance.query(
+  return sequelize.query(
     'SELECT comments.id as commentId, comments.maxSummaryScore as score ' +
     'FROM comments ' +
     'WHERE comments.isScored = true ' +
@@ -250,7 +252,7 @@ export async function getMaxHistogramScoresForAllCategories(): Promise<Array<ICo
     'AND comments.maxSummaryScore IS NOT NULL ' +
     'ORDER BY score DESC',
     {
-      type: sequelizeInstance.QueryTypes.SELECT,
+      type: QueryTypes.SELECT,
     },
   );
 }
@@ -267,7 +269,7 @@ export async function getMaxSummaryScoreForCategory(categoryId: number | 'all'):
   const category = await Category.findByPk(categoryId);
   if (!category) { throw new JSONAPI.NotFoundError(`Could not find category ${categoryId}`); }
 
-  return sequelizeInstance.query(
+  return sequelize.query(
     'SELECT comments.id as commentId, comments.maxSummaryScore as score ' +
     'FROM comments ' +
     'JOIN articles ON articles.id = comments.articleId ' +
@@ -280,7 +282,7 @@ export async function getMaxSummaryScoreForCategory(categoryId: number | 'all'):
       replacements: {
         categoryId,
       },
-      type: sequelizeInstance.QueryTypes.SELECT,
+      type: QueryTypes.SELECT,
     },
   );
 }

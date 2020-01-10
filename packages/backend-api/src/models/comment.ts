@@ -56,7 +56,7 @@ export interface ICommentAttributes extends IBaseAttributes {
   unresolvedFlagsCount?: number;
   flagsSummary?: IFlagSummary | null;
   sourceCreatedAt: Date | null | Sequelize.fn;
-  sentForScoring?: string | null | Sequelize.fn;
+  sentForScoring?: Date | null | Sequelize.fn;
   sentBackToPublisher?: Date | null | Sequelize.fn;
   extra?: object | null;
   maxSummaryScore?: number | null;

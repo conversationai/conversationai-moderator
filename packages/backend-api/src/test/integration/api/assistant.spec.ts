@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as chai from 'chai';
+import { fn } from 'sequelize';
 
 import {
   Comment,
@@ -24,7 +25,6 @@ import {
 import {
   ICommentScoreRequestInstance,
 } from '../../../models';
-import { sequelize } from '../../../sequelize';
 import {
   expect,
   makeComment,
@@ -53,7 +53,7 @@ describe(prefixed, () => {
       csRequest = await CommentScoreRequest.create({
         commentId: comment.id,
         userId: user.id,
-        sentAt: sequelize.fn('now'),
+        sentAt: fn('now'),
       });
 
       score = {

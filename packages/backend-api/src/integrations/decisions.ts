@@ -22,7 +22,6 @@ import {
   IDecisionInstance,
   IUserInstance,
 } from '../models';
-import { sequelize } from '../sequelize';
 
 export async function getDecisionForComment(
   comment: ICommentInstance,
@@ -54,9 +53,9 @@ export async function foreachPendingDecision(
 }
 
 export async function markDecisionExecuted(decision: IDecisionInstance) {
-  decision.sentBackToPublisher = sequelize.fn('now');
+  decision.sentBackToPublisher = new Date();
   await decision.save();
   const comment = (await decision.getComment())!;
-  comment.sentBackToPublisher = sequelize.fn('now');
+  comment.sentBackToPublisher = new Date();
   await comment.save();
 }

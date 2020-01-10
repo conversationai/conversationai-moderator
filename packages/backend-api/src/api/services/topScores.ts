@@ -17,9 +17,10 @@ limitations under the License.
 import * as express from 'express';
 import * as Joi from 'joi';
 import { mapValues } from 'lodash';
+import { QueryTypes } from 'sequelize';
 
 import { Tag } from '../../models';
-import { sequelize as sequelizeInstance } from '../../sequelize';
+import { sequelize } from '../../sequelize';
 import * as JSONAPI from '../jsonapi';
 import { filterTopScoresByTaggingSensitivity } from '../util/queryComments';
 import { validateAndSendResponse, validateRequest } from '../util/validation';
@@ -80,7 +81,7 @@ export function createTopScoresService(): express.Router {
           return;
         }
 
-        const results = await sequelizeInstance.query(
+        const results = await sequelize.query(
           'SELECT comment_scores.score AS score, comment_scores.annotationStart AS start, comment_scores.annotationEnd AS end, comments.id as commentId ' +
           'FROM comments ' +
           'JOIN comment_top_scores ON comment_top_scores.commentId = comments.id ' +
@@ -92,7 +93,7 @@ export function createTopScoresService(): express.Router {
               tagId,
               commentIds,
             },
-            type: sequelizeInstance.QueryTypes.SELECT,
+            type: QueryTypes.SELECT,
           },
         );
 
@@ -145,7 +146,7 @@ export function createTopScoresService(): express.Router {
 
         const commentIds = summaryScores.map((score) => score.commentId);
 
-        const results = await sequelizeInstance.query(
+        const results = await sequelize.query(
           'SELECT comment_scores.score AS score, comment_scores.annotationStart AS start, ' +
           'comment_scores.annotationEnd AS end, comments.id as commentId ' +
           'FROM comments ' +
@@ -157,7 +158,7 @@ export function createTopScoresService(): express.Router {
             replacements: {
               commentIds,
             },
-            type: sequelizeInstance.QueryTypes.SELECT,
+            type: QueryTypes.SELECT,
           },
         );
 
