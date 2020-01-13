@@ -139,7 +139,8 @@ const mapStateToProps = createStructuredSelector({
   },
 
   previousCommentId: (
-      state: IAppState, { match: { params: { commentId }}, location }: ICommentDetailOwnProps,
+    state: IAppState,
+    { match: { params: { commentId }}, location }: ICommentDetailOwnProps,
   ) => {
     return getPreviousCommentId(state, getPagingIdentifier(location), commentId);
   },

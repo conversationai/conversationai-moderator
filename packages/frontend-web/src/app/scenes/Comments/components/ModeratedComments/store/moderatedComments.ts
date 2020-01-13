@@ -156,17 +156,26 @@ export const moderatedCommentsReducer = handleActions<
 >({
   [loadModeratedCommentsStart.toString()]: (state) => ({...state, isLoading: true}),
 
-  [loadModeratedCommentsForArticleComplete.toString()]: (state, { payload }: Action<ILoadModeratedCommentsForArticleCompletePayload>) => {
+  [loadModeratedCommentsForArticleComplete.toString()]: (
+    state,
+    { payload }: Action<ILoadModeratedCommentsForArticleCompletePayload>,
+  ) => {
     const { articleId, moderatedComments } = payload;
     return { ...state, isLoading: false, articles: state.articles.set(articleId, fromJS(moderatedComments))};
   },
 
-  [loadModeratedCommentsForCategoryComplete.toString()]: (state, { payload }: Action<ILoadModeratedCommentsForCategoriesCompletePayload>) => {
+  [loadModeratedCommentsForCategoryComplete.toString()]: (
+    state,
+    { payload }: Action<ILoadModeratedCommentsForCategoriesCompletePayload>,
+  ) => {
     const { category, moderatedComments } = payload;
     return { ...state, isLoading: false, categories: state.categories.set(category, fromJS(moderatedComments))};
   },
 
-  [setCommentsModerationForArticlesAction.toString()]: (state, { payload }: Action<ISetCommentsModerationForArticlesPayload>) => {
+  [setCommentsModerationForArticlesAction.toString()]: (
+    state,
+    { payload }: Action<ISetCommentsModerationForArticlesPayload>,
+  ) => {
     const { articleId, commentIds, moderationAction, currentModeration } = payload;
     const newState = {...state};
     commentIds.forEach((commentId: string) => {
