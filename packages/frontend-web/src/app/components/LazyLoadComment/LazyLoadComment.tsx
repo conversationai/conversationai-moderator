@@ -20,8 +20,6 @@ import { List, Set } from 'immutable';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { OpenInNew } from '@material-ui/icons';
-
 import { ICommentModel, ModelId } from '../../../models';
 import {
   IConfirmationAction,
@@ -32,16 +30,12 @@ import { REQUIRE_REASON_TO_REJECT } from '../../config';
 import {
   articleBase,
   commentRepliesDetailsLink,
-  NEW_COMMENTS_DEFAULT_TAG,
-  newCommentsPageLink,
   searchLink,
 } from '../../scenes/routes';
 import {
-  ARTICLE_HEADLINE_TYPE,
   DARK_COLOR,
   MEDIUM_COLOR,
 } from '../../styles';
-import { COMMON_STYLES } from '../../stylesx';
 import { maybeCallback, partial } from '../../util';
 import { css } from '../../utilx';
 import { Avatar } from '../Avatar';
@@ -56,6 +50,7 @@ import {
 } from '../Icons';
 import { ModerateButtons } from '../ModerateButtons';
 import { ROW_STYLES } from '../styles';
+import { ArticleTitle } from './components';
 
 const LAZY_BOX_STYLE = {
   width: '100%',
@@ -167,30 +162,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
         onMouseLeave={this.mouseLeave}
         {...css(ROW_STYLES.comment, {flex: 1})}
       >
-        {displayArticleTitle && (
-          <div key="title">
-            <Link
-              key="text"
-              {...css(ROW_STYLES.articleLink)}
-              to={newCommentsPageLink({
-                context: articleBase,
-                contextId: comment.article.id,
-                tag: NEW_COMMENTS_DEFAULT_TAG,
-              })}
-            >
-              <h4 {...css(ARTICLE_HEADLINE_TYPE, { marginBottom: '0px', marginTop: '0px'  })}>
-                {comment.article.title}
-              </h4>
-            </Link>
-            {comment.article.url && (
-            <div key="link" style={{display: 'inline-block', margin: '0 10px', position: 'relative', top: '3px'}}>
-              <a href={comment.article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
-                <OpenInNew fontSize="small"/>
-              </a>
-            </div>
-          )}
-          </div>
-        )}
+        {displayArticleTitle && <ArticleTitle articleId={comment.articleId}/>}
         <div key="body" {...css(ROW_STYLES.meta)}>
           <div key="text" {...css(ROW_STYLES.authorRow)}>
             { comment.replyToSourceId > 0 && (
