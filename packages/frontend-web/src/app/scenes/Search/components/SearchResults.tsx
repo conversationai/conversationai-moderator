@@ -449,11 +449,11 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
 
     return (
       <div>
-        {isLoading &&
+        {isLoading && (
           <div key="searchIcon" {...css(STYLES.placeholderBgContainer)}>
             <CircularProgress color="primary" size={100}/>
           </div>
-        }
+        )}
         <div key="content" {...css({backgroundColor: 'white'}, {display: 'block'})} >
           <div {...css(STYLES.resultsHeader, !areNoneSelected && STYLES.resultsActionHeader)}>
             {searchTerm && !isLoading && (
@@ -466,7 +466,8 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
             {isLoading && (
               <p {...css(STYLES.resultsHeadline, !areNoneSelected && STYLES.resultsActionHeadline)}>
                   Loading...
-              </p>)}
+              </p>
+            )}
             { !areNoneSelected && (
               <div {...css(STYLES.moderateButtons)}>
                 <CommentActionButton
@@ -573,7 +574,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
               updateCounter={updateCounter}
               triggerActionToast={this.triggerActionToast}
               searchTerm={searchTerm}
-              displayArticleTitle={!!searchTerm}
+              displayArticleTitle
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
             />

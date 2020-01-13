@@ -543,7 +543,7 @@ export class ModeratedComments
               sortOptions={this.getSortOptions()}
               totalItems={commentIds.size}
               triggerActionToast={this.triggerActionToast}
-              displayArticleTitle={isArticleContext(params)}
+              displayArticleTitle={!isArticleContext(params)}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
               onTableScroll={this.onTableScroll}

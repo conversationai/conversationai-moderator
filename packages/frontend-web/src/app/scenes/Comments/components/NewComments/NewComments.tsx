@@ -752,7 +752,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               totalItems={commentIds.size}
               triggerActionToast={this.triggerActionToast}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
-              displayArticleTitle={isArticleContext(params)}
+              displayArticleTitle={!isArticleContext(params)}
               onTableScroll={this.onTableScroll}
             />
           )}
