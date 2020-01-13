@@ -17,10 +17,8 @@ limitations under the License.
 import faker from 'faker';
 import { CommentModel, IAuthorModel, ICommentAttributes, ICommentModel } from '../comment';
 import { CommentFlagModel, ICommentFlagAttributes, ICommentFlagModel } from '../commentFlag';
-import { fakeArticleModel } from './article';
 
 export function fakeCommentModel(overrides: Partial<ICommentAttributes> = {}): ICommentModel {
-  const article = (overrides && overrides['article']) || fakeArticleModel();
   const author = {
     email: faker.internet.email(),
     location: faker.address.city(),
@@ -46,8 +44,7 @@ export function fakeCommentModel(overrides: Partial<ICommentAttributes> = {}): I
     unresolvedFlagsCount: faker.random.number(),
     sourceCreatedAt: faker.date.recent().toISOString(),
     sentForScoring: faker.random.boolean(),
-    articleId: article.id && undefined,
-    article,
+    articleId: undefined,
     updatedAt: faker.date.recent().toISOString(),
     ...overrides,
   });

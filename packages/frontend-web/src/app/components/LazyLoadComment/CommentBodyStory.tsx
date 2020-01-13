@@ -16,12 +16,14 @@ limitations under the License.
 
 import { storiesOf } from '@storybook/react';
 import faker from 'faker';
-import { List } from 'immutable';
+import { List, Map as IMap } from 'immutable';
 import React from 'react';
+import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import { createStore } from 'redux';
 
 import { IAuthorModel } from '../../../models';
-import { fakeCommentModel } from '../../../models/fake';
+import { fakeArticleModel, fakeCommentModel } from '../../../models/fake';
 import { BasicBody, LinkedBasicBody } from './LazyLoadComment';
 
 const author = {
@@ -31,8 +33,10 @@ const author = {
   avatar: faker.internet.avatar(),
 } as IAuthorModel;
 
+const article = fakeArticleModel();
 const comment = fakeCommentModel({
   id: '-1',
+  articleId: article.id,
   replyId: null,
   isAccepted: true,
   isDeferred: false,
@@ -45,6 +49,11 @@ const comment = fakeCommentModel({
   flagsSummary: new Map([['red', List([1, 1, 0])]]),
   text: 'Founded in 1965 by Albert Griffiths, The Gladiators has released some of the most mythical songs of Jamaican reggae. Their first hit, the single Hello Carol, was released in 1968. In 1976, thanks to their signature at Virgin, the trilogy Trenchtown Mix Up, Proverbial Reggae and Naturality has been distributed all around the world and some of the songs of these albums have become classics of the reggae as Mix Up and Roots Natty Roots.',
 });
+
+export const store = createStore(
+  (s, _a) => s,
+  {global: {articles: {index: IMap([[article.id, article]])}}},
+);
 
 const returnEmpty = () => '';
 const returnFalse = () => false;
@@ -77,7 +86,7 @@ storiesOf('CommentBody', module)
       </div>
     );
   })
-  .add('Hide Comment cAtion', () => {
+  .add('Hide Comment Action', () => {
     return (
       <div>
         <BasicBody
@@ -87,5 +96,19 @@ storiesOf('CommentBody', module)
           handleAssignTagsSubmit={doNothing}
         />
       </div>
+    );
+  })
+  .add('Show Article', () => {
+    return (
+      <Provider store={store}>
+        <div>
+          <BasicBody
+            comment={comment}
+            dispatchConfirmedAction={returnFalse}
+            handleAssignTagsSubmit={doNothing}
+            displayArticleTitle
+          />
+        </div>
+      </Provider>
     );
   });

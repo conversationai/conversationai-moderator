@@ -16,7 +16,6 @@ limitations under the License.
 
 import { fromJS, List, Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
-import { IArticleModel } from './article';
 
 export interface IAuthorAttributes {
   email: string;
@@ -56,7 +55,6 @@ export interface ICommentAttributes {
   flagsSummary?: Map<string, List<number>>;
   sentForScoring: boolean;
   articleId: string;
-  article: IArticleModel;
   replies?: Array<ICommentModel>;
   maxSummaryScore?: number;
   maxSummaryScoreTagId?: string;

@@ -20,7 +20,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { IAppDispatch, IAppState } from '../../appstate';
-import { getArticle } from '../../stores/articles';
+import { articleInjector } from '../../injectors/articleInjector';
 import { getSummaryScoresById, loadCommentSummaryScores } from '../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
 import { getTaggableTags } from '../../stores/tags';
@@ -30,7 +30,6 @@ import {
 } from './AssignTagsForm';
 
 const mapStateToProps = createStructuredSelector({
-  article: (state: IAppState, {articleId}) => getArticle(state, articleId),
   tags: (state: IAppState) => getTaggableTags(state),
 
   sensitivities: getTaggingSensitivities,
@@ -51,4 +50,5 @@ export type IAssignTagsFormProps = Pick<IPureAssignTagsFormProps, 'articleId'| '
 
 export const AssignTagsForm = compose<React.ComponentClass<IAssignTagsFormProps>>(
   connect(mapStateToProps, mapDispatchToProps),
+  articleInjector,
 )(PureAssignTagsForm);
