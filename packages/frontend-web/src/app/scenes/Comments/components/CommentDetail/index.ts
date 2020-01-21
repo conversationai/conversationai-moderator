@@ -27,6 +27,7 @@ import {
 } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
+import { getArticle } from '../../../../stores/articles';
 import {
   approveComments,
   confirmCommentScore,
@@ -48,6 +49,7 @@ import {
   getSummaryScoresById,
   loadCommentSummaryScores,
 } from '../../../../stores/commentSummaryScores';
+import { getTaggingSensitivities } from '../../../../stores/taggingSensitivities';
 import { getTaggableTags, getTags } from '../../../../stores/tags';
 import { getCurrentUser, getUser } from '../../../../stores/users';
 import { updateCommentStateAction } from '../ModeratedComments/store';
@@ -65,7 +67,6 @@ import {
   getPagingSource,
   getPreviousCommentId,
   getScores,
-  getTaggingSensitivitiesInCategory,
   loadComment,
   loadFlags,
   loadScores,
@@ -113,11 +114,18 @@ function getPagingIdentifier(location: Location): string | null {
 
 const mapStateToProps = createStructuredSelector({
   comment: getComment,
+  article: (state: IAppState) => {
+    const comment = getComment(state);
+    if (comment) {
+      return getArticle(state, comment.articleId);
+    }
+    return null;
+  },
   isLoading: getIsLoading,
   allTags: getTags,
   availableTags: getTaggableTags,
   allScores: getScores,
-  taggingSensitivitiesInCategory: getTaggingSensitivitiesInCategory,
+  taggingSensitivities: getTaggingSensitivities,
   flags: getFlags,
 
   summaryScores: (state: IAppState, ownProps: ICommentDetailOwnProps) => {
