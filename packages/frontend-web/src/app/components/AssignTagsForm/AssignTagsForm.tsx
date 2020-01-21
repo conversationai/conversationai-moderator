@@ -22,8 +22,14 @@ import {
   DialogTitle,
 } from '@material-ui/core';
 
-import { ICommentModel, ITaggingSensitivityModel, ITagModel, ModelId } from '../../../models';
-import { getSummaryScoresAboveThreshold } from '../../scenes/Comments/store';
+import {
+  IArticleModel,
+  ICommentModel,
+  ITaggingSensitivityModel,
+  ITagModel,
+  ModelId,
+} from '../../../models';
+import { getSensitivitiesForCategory, getSummaryScoresAboveThreshold } from '../../scenes/Comments/scoreFilters';
 import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
 import { css, stylesheet } from '../../utilx';
 import { CheckboxRow } from '../CheckboxRow';
@@ -75,6 +81,8 @@ const STYLES = stylesheet({
 });
 
 export interface IAssignTagsFormProps {
+  articleId: ModelId;
+  article: IArticleModel;
   comment: ICommentModel;
   tags: List<ITagModel>;
   sensitivities: List<ITaggingSensitivityModel>;
@@ -85,13 +93,15 @@ export interface IAssignTagsFormProps {
 }
 
 export function AssignTagsForm (props: IAssignTagsFormProps) {
-  const {comment, sensitivities, summaryScores, tags} = props;
+  const {article, comment, sensitivities, summaryScores, tags} = props;
 
   function getPreselected() {
     if (!summaryScores) {
       return Set<ModelId>();
     }
-    const scoresAboveThreshold = getSummaryScoresAboveThreshold(sensitivities, summaryScores);
+    const categoryId = article ? article.categoryId : 'na';
+    const sensitivitiesForCategory = getSensitivitiesForCategory(categoryId, sensitivities);
+    const scoresAboveThreshold = getSummaryScoresAboveThreshold(sensitivitiesForCategory, summaryScores);
     return scoresAboveThreshold.map((score) => score.tagId).toSet();
   }
 

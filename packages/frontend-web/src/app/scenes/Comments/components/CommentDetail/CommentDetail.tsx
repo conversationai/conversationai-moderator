@@ -25,6 +25,7 @@ import { Link } from 'react-router-dom';
 
 import {
   CommentScoreModel,
+  IArticleModel,
   IAuthorCountsModel,
   ICommentFlagModel,
   ICommentModel,
@@ -91,14 +92,15 @@ import {
   newCommentsPageLink,
 } from '../../../routes';
 import {
-  getSummaryScoresAboveThreshold,
-  getSummaryScoresBelowThreshold,
-} from '../../store';
-import { Shortcuts } from '../Shortcuts';
-import {
   getReducedScoresAboveThreshold,
   getReducedScoresBelowThreshold,
   getScoresAboveThreshold,
+  getSensitivitiesForCategory,
+  getSummaryScoresAboveThreshold,
+  getSummaryScoresBelowThreshold,
+} from '../../scoreFilters';
+import { Shortcuts } from '../Shortcuts';
+import {
   getTaggingSensitivityForTag,
 } from './store';
 
@@ -300,10 +302,11 @@ const STYLES = stylesheet({
 
 export interface ICommentDetailProps extends RouteComponentProps<ICommentDetailsPathParams> {
   comment: ICommentModel;
+  article: IArticleModel;
   allTags: List<ITagModel>;
   availableTags: List<ITagModel>;
   allScores?: List<ICommentScoreModel>;
-  taggingSensitivitiesInCategory?: List<ITaggingSensitivityModel>;
+  taggingSensitivities: List<ITaggingSensitivityModel>;
   flags?: List<ICommentFlagModel>;
   currentCommentIndex?: number;
   nextCommentId?: string;
@@ -335,6 +338,7 @@ export interface ICommentDetailProps extends RouteComponentProps<ICommentDetails
 }
 
 export interface ICommentDetailState {
+  taggingSensitivitiesInCategory?: List<ITaggingSensitivityModel>;
   allScoresAboveThreshold?: List<ICommentScoreModel>;
   reducedScoresAboveThreshold?: List<ICommentScoreModel>;
   reducedScoresBelowThreshold?: List<ICommentScoreModel>;
@@ -390,16 +394,20 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   }
 
   static getDerivedStateFromProps(nextProps: ICommentDetailProps, prevState: ICommentDetailState) {
-    const allScoresAboveThreshold = getScoresAboveThreshold(nextProps.taggingSensitivitiesInCategory, nextProps.allScores);
-    const reducedScoresAboveThreshold = getReducedScoresAboveThreshold(nextProps.taggingSensitivitiesInCategory, nextProps.allScores);
-    const reducedScoresBelowThreshold = getReducedScoresBelowThreshold(nextProps.taggingSensitivitiesInCategory, nextProps.allScores);
-    const summaryScoresAboveThreshold = getSummaryScoresAboveThreshold(nextProps.taggingSensitivitiesInCategory, nextProps.summaryScores);
-    const summaryScoresBelowThreshold = getSummaryScoresBelowThreshold(nextProps.taggingSensitivitiesInCategory, nextProps.summaryScores);
+    const categoryId = nextProps.article ? nextProps.article.categoryId : 'na';
+    const sensitivities =  getSensitivitiesForCategory(categoryId, nextProps.taggingSensitivities);
+
+    const allScoresAboveThreshold = getScoresAboveThreshold(sensitivities, nextProps.allScores);
+    const reducedScoresAboveThreshold = getReducedScoresAboveThreshold(sensitivities, nextProps.allScores);
+    const reducedScoresBelowThreshold = getReducedScoresBelowThreshold(sensitivities, nextProps.allScores);
+    const summaryScoresAboveThreshold = getSummaryScoresAboveThreshold(sensitivities, nextProps.summaryScores);
+    const summaryScoresBelowThreshold = getSummaryScoresBelowThreshold(sensitivities, nextProps.summaryScores);
 
     if (prevState.loadedCommentId !== nextProps.match.params.commentId) {
       nextProps.loadData(nextProps.match.params.commentId);
     }
     return {
+      taggingSensitivitiesInCategory: sensitivities,
       allScoresAboveThreshold,
       reducedScoresAboveThreshold,
       reducedScoresBelowThreshold,
@@ -1060,7 +1068,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
   @autobind
   handleScoreClick(scoreClicked: ICommentSummaryScoreModel) {
-    const thresholdByTag = getTaggingSensitivityForTag(this.props.taggingSensitivitiesInCategory, scoreClicked.tagId);
+    const thresholdByTag = getTaggingSensitivityForTag(this.state.taggingSensitivitiesInCategory, scoreClicked.tagId);
     const scoresSelectedByTag = this.props.allScores.filter(
       (score) => score.tagId === scoreClicked.tagId,
     ).sort((a, b) => b.score - a.score) as List<ICommentScoreModel>;

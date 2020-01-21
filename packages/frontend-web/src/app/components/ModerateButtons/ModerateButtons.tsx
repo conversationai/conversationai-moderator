@@ -235,27 +235,28 @@ export class ModerateButtons
             onClick={this.handleReject}
           />
         </div>
-        {requireReasonForReject &&
-        <Popper
-          key="popper"
-          open={this.state.rejectChooseTags}
-          anchorEl={this.rejectButtonAnchor}
-          placement={vertical ? 'left' : 'bottom'}
-          modifiers={{
-            preventOverflow: {
-              enabled: true,
-              boundariesElement: 'viewport',
-            },
-          }}
-          style={{zIndex: 2}}
-        >
-          <AssignTagsForm
-            comment={comment}
-            clearPopups={this.clearPopups}
-            submit={handleAssignTagsSubmit}
-          />
-        </Popper>
-        }
+        {requireReasonForReject && (
+          <Popper
+            key="popper"
+            open={this.state.rejectChooseTags}
+            anchorEl={this.rejectButtonAnchor}
+            placement={vertical ? 'left' : 'bottom'}
+            modifiers={{
+              preventOverflow: {
+                enabled: true,
+                boundariesElement: 'viewport',
+              },
+            }}
+            style={{zIndex: 2}}
+          >
+            <AssignTagsForm
+              articleId={comment.articleId}
+              comment={comment}
+              clearPopups={this.clearPopups}
+              submit={handleAssignTagsSubmit}
+            />
+          </Popper>
+        )}
 
         <CommentActionButton
           label="Highlight"

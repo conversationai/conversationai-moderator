@@ -20,8 +20,9 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
 import { IAppDispatch, IAppState } from '../../appstate';
-import { getTaggingSensitivitiesInCategory } from '../../scenes/Comments/store';
+import { getArticle } from '../../stores/articles';
 import { getSummaryScoresById, loadCommentSummaryScores } from '../../stores/commentSummaryScores';
+import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
 import { getTaggableTags } from '../../stores/tags';
 import {
   AssignTagsForm as PureAssignTagsForm,
@@ -29,10 +30,10 @@ import {
 } from './AssignTagsForm';
 
 const mapStateToProps = createStructuredSelector({
+  article: (state: IAppState, {articleId}) => getArticle(state, articleId),
   tags: (state: IAppState) => getTaggableTags(state),
 
-  sensitivities: (state: IAppState, { comment }: IPureAssignTagsFormProps) =>
-    getTaggingSensitivitiesInCategory(state, null, comment.articleId),
+  sensitivities: getTaggingSensitivities,
 
   summaryScores: (state: IAppState, { comment }: IPureAssignTagsFormProps) =>
     getSummaryScoresById(state, comment.id),
@@ -46,7 +47,7 @@ function mapDispatchToProps(dispatch: IAppDispatch) {
   };
 }
 
-export type IAssignTagsFormProps = Pick<IPureAssignTagsFormProps, 'comment' | 'clearPopups' | 'submit'>;
+export type IAssignTagsFormProps = Pick<IPureAssignTagsFormProps, 'articleId'| 'comment' | 'clearPopups' | 'submit'>;
 
 export const AssignTagsForm = compose<React.ComponentClass<IAssignTagsFormProps>>(
   connect(mapStateToProps, mapDispatchToProps),

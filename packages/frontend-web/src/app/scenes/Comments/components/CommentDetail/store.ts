@@ -33,15 +33,12 @@ import {
   getCommentScores,
   listAuthorCounts,
 } from '../../../../platform/dataService';
-import { getArticle } from '../../../../stores/articles';
 import {
   IRecordListState,
   ISingleRecordState,
   makeRecordListReducer,
   makeSingleRecordReducer,
 } from '../../../../util';
-
-import { getTaggingSensitivities } from '../../../../stores/taggingSensitivities';
 
 const loadCommentStart =
   createAction('comment-detail/LOAD_COMMENT_START');
@@ -324,75 +321,8 @@ export function getIsLoading(state: IAppState) {
   return state.scenes.comments.commentDetail.comment.isFetching;
 }
 
-export function getTaggingSensitivitiesInCategory(state: IAppState): List<ITaggingSensitivityModel> {
-  let categoryId = 'na';
-  const comment = getComment(state);
-  if (comment) {
-    const article = getArticle(state, comment.articleId);
-    if (article.categoryId) {
-      categoryId = article.categoryId;
-    }
-  }
-
-  const taggingSensitivities = getTaggingSensitivities(state);
-  return taggingSensitivities.filter((ts: ITaggingSensitivityModel) => (
-    ts.categoryId === categoryId || ts.categoryId === null
-  )) as List<ITaggingSensitivityModel>;
-}
-
 export function getTaggingSensitivityForTag(taggingSensitivities: List<ITaggingSensitivityModel>, tagId: ModelId) {
   return taggingSensitivities.find((ts) => ts.tagId === tagId || ts.categoryId === null);
-}
-
-function dedupeScoreTypes(scores: List<ICommentScoreModel>): List<ICommentScoreModel> {
-  return scores
-      .reduce((sum, score) => {
-        const existingScore = sum.get(score.tagId);
-
-        if (!existingScore || existingScore.score < score.score) {
-          return sum.set(score.tagId, score);
-        }
-
-        return sum;
-      }, Map<string, ICommentScoreModel>())
-      .toList();
-}
-
-function aboveThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, score: ICommentScoreModel): boolean {
-  if (score.tagId === null) {
-    return false;
-  }
-
-  return taggingSensitivities.some((ts) => {
-    return (
-      (ts.tagId === null || ts.tagId === score.tagId) &&
-      (score.score >= ts.lowerThreshold && score.score <= ts.upperThreshold)
-    );
-  });
-}
-
-export function getScoresAboveThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, scores: List<ICommentScoreModel>): List<ICommentScoreModel> {
-  return scores
-      .filter((s) => aboveThreshold(taggingSensitivities, s))
-      .sort((a, b) => b.score - a.score) as List<ICommentScoreModel>;
-}
-
-export function getScoresBelowThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, scores: List<ICommentScoreModel>): List<ICommentScoreModel> {
-  const scoresAboveThreshold = scores.filter((s) => aboveThreshold(taggingSensitivities, s)) as List<ICommentScoreModel>;
-  const scoresBelowThreshold = scores.filter((s) =>
-      !aboveThreshold(taggingSensitivities, s) &&
-      !scoresAboveThreshold.find((sa) => sa.tagId === s.tagId)) as List<ICommentScoreModel>;
-
-  return scoresBelowThreshold
-      .sort((a, b) => b.score - a.score) as List<ICommentScoreModel>;
-}
-
-export function getReducedScoresAboveThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, scores: List<ICommentScoreModel>): List<ICommentScoreModel> {
-  return dedupeScoreTypes(getScoresAboveThreshold(taggingSensitivities, scores));
-}
-
-export function getReducedScoresBelowThreshold(taggingSensitivities: List<ITaggingSensitivityModel>, scores: List<ICommentScoreModel>): List<ICommentScoreModel> {
-  return dedupeScoreTypes(getScoresBelowThreshold(taggingSensitivities, scores));
 }
 
 export function getAuthorCountsById(state: IAppState, id: string) {
