@@ -158,7 +158,6 @@ export interface IAnnotatedCommentTextState {
   confirmationStatus?: string;
   confirmationSource?: string;
   confirmationScore?: ICommentScoreModel;
-  taggifiedText?: any;
 }
 
 export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentTextProps, IAnnotatedCommentTextState> {
@@ -188,26 +187,9 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
     confirmationStatus: '',
     confirmationSource: '',
     confirmationScore: null,
-    taggifiedText: null,
   };
 
   componentDidMount() {
-    if (this.props.text && this.props.scores) {
-      this.setState({
-        taggifiedText: this.taggifyText(this.props.text, this.props.scores),
-      });
-    }
-  }
-
-  componentWillUpdate(nextProps: IAnnotatedCommentTextProps) {
-    if (this.props.scores !== nextProps.scores || this.props.text !== nextProps.text) {
-      this.setState({
-        taggifiedText: this.taggifyText(nextProps.text, nextProps.scores),
-      });
-    }
-  }
-
-  componentWillMount() {
     keyboardJS.bind('escape', this.onPressEscape);
     window.addEventListener('mouseup', this.onGlobalClick);
     window.addEventListener('touchend', this.onGlobalClick);
@@ -223,6 +205,8 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
   render() {
     const {
       availableTags,
+      text,
+      scores,
     } = this.props;
 
     const {
@@ -236,8 +220,10 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
       confirmationStatus,
       confirmationSource,
       confirmationScore,
-      taggifiedText,
     } = this.state;
+
+    const taggifiedText = this.taggifyText(text, scores);
+
     let confirmationToolTipContent;
     const confirmed = confirmationScore && confirmationScore.isConfirmed;
     if (confirmed !== null) {
