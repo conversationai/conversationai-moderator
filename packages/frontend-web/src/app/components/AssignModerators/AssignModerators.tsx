@@ -24,7 +24,8 @@ import { css, stylesheet } from '../../utilx';
 import {
   GUTTER_DEFAULT_SPACING,
 } from '../../styles';
-import { CheckboxRow } from '../CheckboxRow';
+import { Avatar } from '../Avatar';
+import { CheckboxRow, GOOD_IMAGE_SIZE } from '../CheckboxRow/CheckboxRow';
 import { ContainerFooter, ContainerHeader, OverflowContainer } from '../OverflowContainer';
 
 const STYLES = stylesheet({
@@ -62,15 +63,16 @@ function ModeratorListItem(props: {
 
   const isDisabled = categoryModeratorIds && categoryModeratorIds.includes(user.id);
   const isSelected = moderatorIds && moderatorIds.includes(user.id) || isDisabled;
-  function onChange() {
-    onModeratorStatusChange(user.id, isSelected);
+  function onChange(userId: ModelId) {
+    onModeratorStatusChange(userId, isSelected);
   }
 
   return (
     <li {...css(STYLES.listItem)} key={user.id}>
       <CheckboxRow
         label={user.name}
-        user={user}
+        value={user.id}
+        image={<Avatar size={GOOD_IMAGE_SIZE} target={user}/>}
         isSelected={isSelected}
         isDisabled={isDisabled}
         onChange={onChange}
