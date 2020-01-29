@@ -26,7 +26,6 @@ import {
 import { ICommentModel, ITaggingSensitivityModel, ITagModel, ModelId } from '../../../models';
 import { getSummaryScoresAboveThreshold } from '../../scenes/Comments/store';
 import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
-import { partial } from '../../util';
 import { css, stylesheet } from '../../utilx';
 import { CheckboxRow } from '../CheckboxRow';
 
@@ -146,7 +145,7 @@ export class AssignTagsForm extends React.Component<IAssignTagsFormProps, IAssig
   }
 
   @autobind
-  onTagButtonClick(tagId: string) {
+  onTagButtonClick(tagId: ModelId) {
     if (this.state.selectedTagIds.includes(tagId)) {
       this.setState({
         selectedTagIds: this.state.selectedTagIds.delete(tagId),
@@ -182,8 +181,9 @@ export class AssignTagsForm extends React.Component<IAssignTagsFormProps, IAssig
               <li key={`tag${t.id}`} {...css(STYLES.listItem)}>
                 <CheckboxRow
                   label={t.label}
+                  value={t.id}
                   isSelected={selectedTagIds && selectedTagIds.includes(t.id)}
-                  onChange={partial(this.onTagButtonClick, t.id)}
+                  onChange={this.onTagButtonClick}
                 />
               </li>
             ))}

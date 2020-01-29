@@ -20,16 +20,14 @@ import {
   Radio,
 } from '@material-ui/core';
 
-import { IUserModel } from '../../../models';
 import {
   ARTICLE_CATEGORY_TYPE,
   DARK_PRIMARY_TEXT_COLOR,
   LABEL_CHECK,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import { Avatar } from '../Avatar';
 
-const AVATAR_SIZE = 46;
+export const GOOD_IMAGE_SIZE = 46;
 
 const STYLES = stylesheet({
   base: {
@@ -69,20 +67,21 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ICheckboxRowProps {
+export interface ICheckboxRowProps<T> {
   label: string;
+  value: T;
+  image?: React.ReactNode;
   isSelected?: boolean;
   isDisabled?: boolean;
-  user?: IUserModel;
-  onChange?(): void;
+  onChange?(value: T): void;
 }
 
-export function CheckboxRow(props: ICheckboxRowProps) {
-  const {label, user, isSelected, isDisabled} = props;
+export function CheckboxRow<T>(props: ICheckboxRowProps<T>) {
+  const {label, value, image, isSelected, isDisabled} = props;
   const id = label.replace(/\s/g, '');
   function handleClick(e: any) {
     e.preventDefault();
-    props.onChange();
+    props.onChange(value);
   }
 
   return (
@@ -93,9 +92,9 @@ export function CheckboxRow(props: ICheckboxRowProps) {
           onClick={handleClick}
           {...css(STYLES.center)}
         >
-          {user && (
+          {image && (
             <span {...css(STYLES.avatar)} aria-hidden="true">
-              <Avatar size={AVATAR_SIZE} target={user}/>
+              {image}
             </span>
           )}
           <span {...css(STYLES.name)}>{label}</span>

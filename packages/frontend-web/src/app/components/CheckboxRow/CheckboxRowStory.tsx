@@ -19,7 +19,8 @@ import { storiesOf } from '@storybook/react';
 import faker from 'faker';
 
 import { fakeUserModel } from '../../../models/fake';
-import { CheckboxRow } from './CheckboxRow';
+import { Avatar } from '../Avatar';
+import { CheckboxRow, GOOD_IMAGE_SIZE } from './CheckboxRow';
 
 const user = fakeUserModel({
   name: 'Person One',
@@ -30,14 +31,16 @@ storiesOf('CheckboxRow', module)
     .add('Default', () => (
       <CheckboxRow
         label={user.name}
-        user={user}
+        value={user.id}
+        image={<Avatar size={GOOD_IMAGE_SIZE} target={user}/>}
         onChange={action('Change Lucas Dixon')}
       />
     ))
     .add('Selected', () => (
       <CheckboxRow
         label={user.name}
-        user={user}
+        value={user.id}
+        image={<Avatar size={GOOD_IMAGE_SIZE} target={user}/>}
         isSelected
         onChange={action('Change Lucas Dixon')}
       />
