@@ -14,9 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
   ClickAwayListener,
@@ -79,121 +78,69 @@ export interface IAssignTagsFormProps {
   comment: ICommentModel;
   tags: List<ITagModel>;
   sensitivities: List<ITaggingSensitivityModel>;
-  summaryScores:  List<ICommentSummaryScoreStateRecord>;
-  loadScoresForCommentId?(id: string): void;
+  summaryScores?:  List<ICommentSummaryScoreStateRecord>;
+  loadScoresForCommentId(id: string): void;
   clearPopups(): void;
   submit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
-export interface IAssignTagsFormState {
-  lastCommentId?: ModelId;
-  tagsPreselected?: Set<ModelId>;
-  selectedTagIds: Set<ModelId>;
-  loading: boolean;
-}
+export function AssignTagsForm (props: IAssignTagsFormProps) {
+  const {comment, sensitivities, summaryScores, tags} = props;
 
-export class AssignTagsForm extends React.Component<IAssignTagsFormProps, IAssignTagsFormState> {
-  state: IAssignTagsFormState = {
-    selectedTagIds: Set<ModelId>(),
-    loading: false,
-  };
-
-  static getDerivedStateFromProps(props: IAssignTagsFormProps, state: IAssignTagsFormState) {
-    const {comment, sensitivities, summaryScores, loadScoresForCommentId} = props;
-    let {tagsPreselected, selectedTagIds, loading, lastCommentId} = state;
-
-    let reset = false;
-    if (lastCommentId) {
-      if (!comment) {
-        reset = true;
-        lastCommentId = null;
-      }
-      else if (lastCommentId !== comment.id) {
-        reset = true;
-        lastCommentId = comment.id;
-      }
+  function getPreselected() {
+    if (!summaryScores) {
+      return Set<ModelId>();
     }
-    else {
-      if (comment) {
-        reset = true;
-        lastCommentId = comment.id;
-      }
-    }
-
-    if (reset) {
-      tagsPreselected = null;
-      selectedTagIds = Set<ModelId>();
-      loading = false;
-    }
-
-    if (!tagsPreselected && !loading) {
-      if (!summaryScores) {
-        loadScoresForCommentId(comment.id);
-        return {loading: true};
-      }
-      const scoresAboveThreshold = getSummaryScoresAboveThreshold(sensitivities, summaryScores);
-      tagsPreselected = scoresAboveThreshold.map((score) => score.tagId).toSet();
-      selectedTagIds = selectedTagIds.merge(tagsPreselected);
-    }
-
-    return {
-      lastCommentId,
-      tagsPreselected,
-      selectedTagIds,
-      loading,
-    };
+    const scoresAboveThreshold = getSummaryScoresAboveThreshold(sensitivities, summaryScores);
+    return scoresAboveThreshold.map((score) => score.tagId).toSet();
   }
 
-  @autobind
-  onTagButtonClick(tagId: ModelId) {
-    if (this.state.selectedTagIds.includes(tagId)) {
-      this.setState({
-        selectedTagIds: this.state.selectedTagIds.delete(tagId),
-      });
+  const [selected, setSelected] = useState(Set<ModelId>());
+  useEffect(() => {
+      props.loadScoresForCommentId(comment.id);
+    }, [comment.id]);
+  useEffect(() => {
+    setSelected(selected.merge(getPreselected()));
+  }, [summaryScores]);
+
+  function onTagButtonClick(tagId: ModelId) {
+    if (selected.includes(tagId)) {
+      setSelected(selected.delete(tagId));
     } else {
-      this.setState({
-        selectedTagIds: this.state.selectedTagIds.add(tagId),
-      });
+      setSelected(selected.add(tagId));
     }
   }
 
-  @autobind
-  submit() {
-    const {tagsPreselected, selectedTagIds} = this.state;
-    if (selectedTagIds.size === 0) {
+  function submit() {
+    if (selected.size === 0) {
       return;
     }
-    const rejectedTagIds = tagsPreselected ? tagsPreselected.subtract(selectedTagIds) : Set<ModelId>();
-    this.props.submit(this.props.comment.id, selectedTagIds, rejectedTagIds);
+    const preselected = getPreselected();
+    const rejected = preselected.subtract(selected);
+    props.submit(comment.id, selected, rejected);
   }
 
-  render() {
-    const { tags } = this.props;
-    const { selectedTagIds } = this.state;
-
-    const enabled =  selectedTagIds.size > 0;
-    return (
-      <ClickAwayListener onClickAway={this.props.clearPopups}>
-        <div {...css(SCRIM_STYLE.popupMenu, {padding: '20px 60px'})}>
-          <DialogTitle id="article-controls">Reason for rejection</DialogTitle>
-          <ul {...css(STYLES.tagsList)}>
-            {tags && tags.map((t) => (
-              <li key={`tag${t.id}`} {...css(STYLES.listItem)}>
-                <CheckboxRow
-                  label={t.label}
-                  value={t.id}
-                  isSelected={selectedTagIds && selectedTagIds.includes(t.id)}
-                  onChange={this.onTagButtonClick}
-                />
-              </li>
-            ))}
-          </ul>
-          <div key="footer" {...css({textAlign: 'right', marginBottom: '30px'})}>
-            <span onClick={this.props.clearPopups} {...css({marginRight: '30px', opacity: '0.5'})}>Cancel</span>
-            <span onClick={this.submit} {...css({color: NICE_CONTROL_BLUE, opacity: enabled ? 1 : 0.35})}>Reject Comment</span>
-          </div>
+  return (
+    <ClickAwayListener onClickAway={props.clearPopups}>
+      <div {...css(SCRIM_STYLE.popupMenu, {padding: '20px 60px'})}>
+        <DialogTitle id="article-controls">Reason for rejection</DialogTitle>
+        <ul {...css(STYLES.tagsList)}>
+          {tags && tags.map((t) => (
+            <li key={`tag${t.id}`} {...css(STYLES.listItem)}>
+              <CheckboxRow
+                label={t.label}
+                value={t.id}
+                isSelected={selected.includes(t.id)}
+                onChange={onTagButtonClick}
+              />
+            </li>
+          ))}
+        </ul>
+        <div key="footer" {...css({textAlign: 'right', marginBottom: '30px'})}>
+          <span onClick={props.clearPopups} {...css({marginRight: '30px', opacity: '0.5'})}>Cancel</span>
+          <span onClick={submit} {...css({color: NICE_CONTROL_BLUE, opacity: selected.size > 0 ? 1 : 0.35})}>Reject Comment</span>
         </div>
-      </ClickAwayListener>
-    );
-  }
+      </div>
+    </ClickAwayListener>
+  );
 }
