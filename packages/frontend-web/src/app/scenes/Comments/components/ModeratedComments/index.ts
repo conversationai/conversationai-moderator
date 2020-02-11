@@ -21,7 +21,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
-import { getArticle } from '../../../../stores/articles';
+import {contextInjector, IContextInjectorProps} from '../../../../injectors/contextInjector';
 import {
   approveComments,
   approveFlagsAndComments,
@@ -34,7 +34,7 @@ import {
 } from '../../../../stores/commentActions';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes, getTextSizesIsLoading } from '../../../../stores/textSizes';
-import { IModeratedCommentsPathParams, IModeratedCommentsQueryParams, isArticleContext } from '../../../routes';
+import { IModeratedCommentsPathParams, IModeratedCommentsQueryParams } from '../../../routes';
 import {
   IModeratedCommentsProps,
   ModeratedComments as PureModeratedComments,
@@ -47,8 +47,7 @@ import {
   getIsLoading,
   getModeratedComments,
   loadCommentList,
-  setCommentsModerationForArticle,
-  setCommentsModerationForCategory,
+  setCommentsModerationStatus,
   toggleSelectAll,
   toggleSingleItem,
 } from './store';
@@ -57,8 +56,7 @@ type IModeratedCommentsDispatchProps = Pick<
   IModeratedCommentsProps,
   'toggleSelectAll' |
   'toggleSingleItem' |
-  'setCommentModerationStatusForArticle' |
-  'setCommentModerationStatusForCategory' |
+  'setCommentModerationStatus' |
   'loadData' |
   'tagComments' |
   'dispatchAction'
@@ -66,12 +64,6 @@ type IModeratedCommentsDispatchProps = Pick<
 
 const mapStateToProps = createStructuredSelector({
   isLoading: (state: IAppState) => (getIsLoading(state) || getTextSizesIsLoading(state)),
-
-  article: (state: IAppState, { match: { params }}: IModeratedCommentsProps) => {
-    if (isArticleContext(params)) {
-      return getArticle(state, params.contextId);
-    }
-  },
 
   areNoneSelected: getAreAnyCommentsSelected,
 
@@ -117,11 +109,13 @@ function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsPro
 
     toggleSingleItem: ({ id }: { id: string }) => dispatch(toggleSingleItem({ id })),
 
-    setCommentModerationStatusForArticle: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
-        setCommentsModerationForArticle(dispatch, props.match.params.contextId, commentIds, moderationAction, currentModeration),
-
-    setCommentModerationStatusForCategory: (commentIds: Array<string>, moderationAction: string, currentModeration: string) =>
-        setCommentsModerationForCategory(dispatch, props.match.params.contextId, commentIds, moderationAction, currentModeration),
+    setCommentModerationStatus: (
+      iprops: IContextInjectorProps,
+      commentIds: Array<string>,
+      moderationAction: string,
+      currentModeration: string,
+    ) =>
+        setCommentsModerationStatus(dispatch, iprops, commentIds, moderationAction, currentModeration),
   };
 }
 
@@ -132,6 +126,7 @@ export const ModeratedComments: React.ComponentClass = compose(
     mapDispatchToProps,
   ),
   withRouter,
+  contextInjector,
 )(PureModeratedComments);
 
 export * from './store';

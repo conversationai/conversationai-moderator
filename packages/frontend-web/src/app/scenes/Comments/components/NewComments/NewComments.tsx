@@ -29,7 +29,6 @@ import {
 
 import {
   convertServerAction,
-  IArticleModel,
   ICommentDatedModel,
   ICommentModel,
   ICommentScoredModel,
@@ -57,6 +56,7 @@ import {
   DEFAULT_DRAG_HANDLE_POS1,
   DEFAULT_DRAG_HANDLE_POS2,
 } from '../../../../config';
+import { IContextInjectorProps } from '../../../../injectors/contextInjector';
 import { updateArticle } from '../../../../platform/dataService';
 import { getDefaultSort, putDefaultSort } from '../../../../util/savedSorts';
 import {
@@ -85,7 +85,6 @@ import {
   commentDetailsPageLink,
   INewCommentsPathParams,
   INewCommentsQueryParams,
-  isArticleContext,
   newCommentsPageLink,
   tagSelectorLink,
 } from '../../../routes';
@@ -249,8 +248,7 @@ const STYLES = stylesheet({
   },
 });
 
-export interface INewCommentsProps extends RouteComponentProps<INewCommentsPathParams> {
-  article?: IArticleModel;
+export interface INewCommentsProps extends RouteComponentProps<INewCommentsPathParams>, IContextInjectorProps {
   preselects?: List<IPreselectModel>;
   commentScores: List<ICommentScoredModel | ICommentDatedModel>;
   isLoading: boolean;
@@ -334,8 +332,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     let preselect: IPreselectModel;
     const params = props.match.params;
     const tag = params.tag;
-    const categoryId = (!isArticleContext(params)) ? params.contextId : props.article.categoryId;
-    const articleId = (isArticleContext(params)) ? params.contextId : null;
+    const {categoryId, articleId} = props;
     let defaultPos1: number;
     let defaultPos2: number;
     let defaultSort;
@@ -348,14 +345,17 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
     if (tag !== 'DATE') {
       if (props.preselects) {
-        if (categoryId && categoryId !== 'all' && props.selectedTag) {
-          preselect = props.preselects.find((p) => (p.categoryId === categoryId && p.tagId === props.selectedTag.id));
+        if (categoryId !== 'all' && props.selectedTag) {
+          preselect = props.preselects.find((p) =>
+            (p.categoryId === categoryId && p.tagId === props.selectedTag.id));
         }
-        if (!preselect && categoryId && categoryId !== 'all') {
-          preselect = props.preselects.find((p) => (p.categoryId === categoryId && !p.tagId));
+        if (!preselect && categoryId !== 'all') {
+          preselect = props.preselects.find((p) =>
+            (p.categoryId === categoryId && !p.tagId));
         }
         if (!preselect && props.selectedTag) {
-          preselect = props.preselects.find((p) => (!p.categoryId && p.tagId === props.selectedTag.id));
+          preselect = props.preselects.find((p) =>
+            (!p.categoryId && p.tagId === props.selectedTag.id));
         }
         if (!preselect) {
           preselect = props.preselects.find((p) => (!p.categoryId && !p.tagId));
@@ -383,8 +383,9 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
     let rulesInCategory: List<IRuleModel>;
     if (props.rules) {
-      if (categoryId && categoryId !== 'all') {
-        rulesInCategory = props.rules.filter((r) => (r.categoryId === categoryId || !r.categoryId)) as List<IRuleModel>;
+      if (categoryId !== 'all') {
+        rulesInCategory = props.rules.filter((r) =>
+          (r.categoryId === categoryId || !r.categoryId)) as List<IRuleModel>;
       }
       else {
         rulesInCategory = props.rules.filter((r) => (!r.categoryId)) as List<IRuleModel>;
@@ -471,6 +472,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
   render() {
     const {
+      isArticleContext,
       article,
       commentScores,
       textSizes,
@@ -592,7 +594,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               </Link>
               <span aria-hidden="true" {...css(STYLES.arrow)} />
             </div>
-            { isArticleContext(params) && (
+            { isArticleContext && (
               <ArticleControlIcon
                 article={article}
                 open={this.state.articleControlOpen}
@@ -752,7 +754,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               totalItems={commentIds.size}
               triggerActionToast={this.triggerActionToast}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
-              displayArticleTitle={!isArticleContext(params)}
+              displayArticleTitle={!isArticleContext}
               onTableScroll={this.onTableScroll}
             />
           )}

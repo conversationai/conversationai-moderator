@@ -19,11 +19,9 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { IAppState } from '../../appstate';
-import { getArticle } from '../../stores/articles';
-import { getCategory, getGlobalCounts } from '../../stores/categories';
-import { isArticleContext } from '../routes';
-import { Comments as PureComments, ICommentsProps } from './Comments';
+import { contextInjector } from '../../injectors/contextInjector';
+import { getGlobalCounts } from '../../stores/categories';
+import { Comments as PureComments } from './Comments';
 
 export { NewComments } from './components/NewComments';
 export { TagSelector } from './components/TagSelector';
@@ -33,20 +31,9 @@ export { ThreadedCommentDetail } from './components/ThreadedCommentDetail';
 
 export const Comments = compose(
   connect(createStructuredSelector({
-      article: (state: IAppState, {  match: { params }}: ICommentsProps) => (
-        isArticleContext(params) && getArticle(state, params.contextId)
-      ),
-      category: (state: IAppState, {  match: { params }}: ICommentsProps) => {
-        if (isArticleContext(params)) {
-          const article = getArticle(state, params.contextId);
-          return getCategory(state, article.categoryId);
-        }
-        else if (params.contextId !== 'all') {
-          return getCategory(state, params.contextId);
-        }
-      },
       globalCounts: getGlobalCounts,
     }),
   ),
   withRouter,
+  contextInjector,
 )(PureComments);

@@ -17,7 +17,9 @@ limitations under the License.
 import { fromJS, List, Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
+import { ModelId } from '../../../../../../models';
 import { IAppDispatch, IAppState } from '../../../../../appstate';
+import { IContextInjectorProps } from '../../../../../injectors/contextInjector';
 import {
   getModeratedCommentIdsForArticle as fetchModeratedCommentIdsForArticle,
   getModeratedCommentIdsForCategory as fetchModeratedCommentIdsForCategory,
@@ -73,7 +75,7 @@ const loadModeratedCommentsForCategoryComplete = createAction<ILoadModeratedComm
 );
 
 type ISetCommentsModerationForArticlesPayload = {
-  articleId: string;
+  articleId: ModelId;
   commentIds: Array<string>;
   moderationAction: string;
   currentModeration: string;
@@ -83,7 +85,7 @@ const setCommentsModerationForArticlesAction = createAction<ISetCommentsModerati
 );
 
 type ISetCommentsModerationForCategoriesPayload = {
-  category: string | 'all';
+  category: ModelId | 'all';
   commentIds: Array<string>;
   moderationAction: string;
   currentModeration: string;
@@ -112,26 +114,30 @@ export async function loadModeratedCommentsForCategory(
   await dispatch(loadModeratedCommentsForCategoryComplete({ category, moderatedComments }));
 }
 
-export function setCommentsModerationForArticle(
+export function setCommentsModerationStatus(
   dispatch: IAppDispatch,
-  articleId: string,
+  contextProps: IContextInjectorProps,
   commentIds: Array<string>,
   moderationAction: string,
   currentModeration: string,
 ) {
   dispatch(updateCommentStateAction[moderationAction](commentIds));
-  dispatch(setCommentsModerationForArticlesAction({articleId, commentIds, moderationAction, currentModeration}));
-}
-
-export function setCommentsModerationForCategory(
-  dispatch: IAppDispatch,
-  category: string,
-  commentIds: Array<string>,
-  moderationAction: string,
-  currentModeration: string,
-) {
-  dispatch(updateCommentStateAction[moderationAction](commentIds));
-  dispatch(setCommentsModerationForCategoriesAction({category, commentIds, moderationAction, currentModeration}));
+  if (contextProps.isArticleContext) {
+    dispatch(setCommentsModerationForArticlesAction({
+      articleId: contextProps.articleId,
+      commentIds,
+      moderationAction,
+      currentModeration,
+    }));
+  }
+  else {
+    dispatch(setCommentsModerationForCategoriesAction({
+      category: contextProps.categoryId,
+      commentIds,
+      moderationAction,
+      currentModeration,
+    }));
+  }
 }
 
 export type IModeratedCommentsState = Readonly<{
@@ -230,7 +236,7 @@ export const moderatedCommentsReducer = handleActions<
           (currentModeration !== 'highlighted' && moderationAction !== 'highlight'));
 
       if (shouldRemoveFromList) {
-        newState.categories = newState.categories.updateIn([category.toString(), currentModeration],
+        newState.categories = newState.categories.updateIn([category, currentModeration],
             (moderated) => moderated.delete(moderated.findIndex((item: string) => item === commentId)));
       }
       switch (moderationAction) {

@@ -21,7 +21,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
-import { getArticle } from '../../../../stores/articles';
+import { contextInjector } from '../../../../injectors/contextInjector';
 import {
   approveComments,
   confirmCommentSummaryScore,
@@ -44,7 +44,6 @@ import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes, getTextSizesIsLoading } from '../../../../stores/textSizes';
 import {
   INewCommentsPathParams,
-  isArticleContext,
 } from '../../../routes';
 import {
   INewCommentsProps,
@@ -113,12 +112,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): Partial<INewCommentsProps> 
 }
 
 const mapStateToProps = createStructuredSelector({
-  article: (state: IAppState, { match: { params }}: INewCommentsProps) => {
-    if (isArticleContext(params)) {
-      return getArticle(state, params.contextId);
-    }
-  },
-
   preselects: getPreselects,
 
   getComment: (state: IAppState) => (id: string) => (getComment(state, id)),
@@ -149,6 +142,7 @@ const mapStateToProps = createStructuredSelector({
 export const NewComments = compose(
   withRouter,
   connect(mapStateToProps, mapDispatchToProps),
+  contextInjector,
 )(PureNewComments) as any;
 
 export * from './store';
