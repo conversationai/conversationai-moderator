@@ -28,25 +28,26 @@ import {
 } from '@material-ui/core';
 
 import {
-  IArticleModel,
   ICommentModel,
   ITagModel,
   ModelId,
   TagModel,
 } from '../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../types';
-import { ArticleControlIcon, Scrim } from '../../../../components';
 import {
   AddIcon,
   ApproveIcon,
+  ArticleControlIcon,
   CommentActionButton,
   CommentList,
   DeferIcon,
   HighlightIcon,
   RejectIcon,
+  Scrim,
   ToastMessage,
   ToolTip,
 } from '../../../../components';
+import { IContextInjectorProps } from '../../../../injectors/contextInjector';
 import { updateArticle } from '../../../../platform/dataService';
 import {
   BASE_Z_INDEX,
@@ -70,7 +71,6 @@ import {
   commentDetailsPageLink,
   IModeratedCommentsPathParams,
   IModeratedCommentsQueryParams,
-  isArticleContext,
   moderatedCommentsPageLink,
 } from '../../../routes';
 
@@ -239,7 +239,7 @@ const STYLES = stylesheet({
 const LOADING_COMMENTS_MESSAGING = 'Loading comments.';
 const NO_COMMENTS_MESSAGING = 'No matching comments found.';
 
-export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedCommentsPathParams> {
+export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedCommentsPathParams>, IContextInjectorProps {
   isLoading: boolean;
   tags: List<ITagModel>;
   moderatedComments: Map<string, List<string>>;
@@ -247,27 +247,21 @@ export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedC
   areNoneSelected?: boolean;
   areAllSelected: boolean;
   pagingIdentifier?: string;
-  article?: IArticleModel;
   loadData?(params: IModeratedCommentsPathParams, query: IModeratedCommentsQueryParams): void;
   tagComments?(ids: Array<string>, tagId: string): any;
   dispatchAction?(action: IConfirmationAction, idsToDispatch: Array<string>): any;
   toggleSelectAll?(): any;
   toggleSingleItem({ id }: { id: string }): any;
   textSizes?: Map<number, number>;
-  setCommentModerationStatusForArticle?(
+  setCommentModerationStatus?(
+    props: IContextInjectorProps,
     commentIds: Array<string>,
     moderationAction: IConfirmationAction,
     currentModeration: string,
-  ): any;
-  setCommentModerationStatusForCategory?(
-    commentIds: Array<string>,
-    moderationAction: IConfirmationAction,
-    currentModeration: string,
-  ): any;
+  ): void;
 }
 
 export interface IModeratedCommentsState {
-  categoryId?: ModelId;
   commentIds?: List<string>;
   isConfirmationModalVisible?: boolean;
   confirmationAction?: IConfirmationAction;
@@ -327,7 +321,6 @@ export class ModeratedComments
   }
 
   static getDerivedStateFromProps(props: IModeratedCommentsProps, state: IModeratedCommentsState) {
-    const categoryId = (!isArticleContext(props.match.params)) ? props.match.params.contextId : props.article.categoryId;
     const actionLabel = props.match.params.disposition;
     let defaultSort = state.sort;
     let pathParamsChanged = false;
@@ -337,7 +330,7 @@ export class ModeratedComments
     }
 
     if (!defaultSort) {
-      defaultSort = getDefaultSort(categoryId, 'moderated', actionLabel);
+      defaultSort = getDefaultSort(props.categoryId, 'moderated', actionLabel);
     }
 
     const query: IModeratedCommentsQueryParams = qs.parse(props.location.search);
@@ -350,7 +343,6 @@ export class ModeratedComments
     const commentIds = props.moderatedComments.get(props.match.params.disposition);
 
     return {
-      categoryId,
       actionLabel,
       commentIds,
       currentPathParams: props.match.params,
@@ -361,6 +353,7 @@ export class ModeratedComments
 
   render() {
     const {
+      isArticleContext,
       isLoading,
       isItemChecked,
       areNoneSelected,
@@ -407,7 +400,7 @@ export class ModeratedComments
 
         <Collapse in={!hideHistogram}>
           <div {...css(STYLES.topSelectRow)}>
-            {isArticleContext(params) && (
+            {isArticleContext && (
               <ArticleControlIcon
                 article={this.props.article}
                 open={this.state.articleControlOpen}
@@ -543,7 +536,7 @@ export class ModeratedComments
               sortOptions={this.getSortOptions()}
               totalItems={commentIds.size}
               triggerActionToast={this.triggerActionToast}
-              displayArticleTitle={!isArticleContext(params)}
+              displayArticleTitle={!isArticleContext}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
               onTableScroll={this.onTableScroll}
@@ -729,20 +722,7 @@ export class ModeratedComments
       ],
     });
 
-    if (this.props.article) {
-      this.props.setCommentModerationStatusForArticle(
-        ids,
-        action,
-        this.state.actionLabel,
-      );
-    }
-    else {
-      this.props.setCommentModerationStatusForCategory(
-        ids,
-        action,
-        this.state.actionLabel,
-      );
-    }
+    this.props.setCommentModerationStatus(this.props, ids, action, this.state.actionLabel);
 
     // Send event
     await this.props.dispatchAction(action, ids);
@@ -767,7 +747,7 @@ export class ModeratedComments
   @autobind
   onSortChange(event: React.FormEvent<any>) {
     const sort: string = (event.target as any).value;
-    putDefaultSort(this.state.categoryId, 'moderated', this.state.actionLabel, sort);
+    putDefaultSort(this.props.categoryId, 'moderated', this.state.actionLabel, sort);
 
     if (sort === this.state.sort) {
       return;
