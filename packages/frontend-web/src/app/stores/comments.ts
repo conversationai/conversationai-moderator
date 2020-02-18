@@ -20,12 +20,12 @@ import { Action } from 'redux-actions';
 
 import { ICommentModel } from '../../models';
 import { IAppDispatch, IAppState, IThunkAction } from '../appstate';
-import { listCommentsById } from '../platform/dataService';
+import { getComments } from '../platform/dataService';
 import { ILoadCompletePayload, IQueuedModelState, makeQueuedModelStore } from '../util';
 
 const queueModelStore = makeQueuedModelStore<string, ICommentModel>(
   async (commentIds: List<string>) => {
-    const comments = await listCommentsById(commentIds);
+    const comments = await getComments(commentIds.toArray());
 
     return comments.reduce((sum: Map<string, ICommentModel>, comment: ICommentModel) => {
       return sum.set(comment.id, comment);

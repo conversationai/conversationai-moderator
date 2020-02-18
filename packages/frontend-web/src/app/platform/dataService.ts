@@ -88,11 +88,6 @@ export function setUserId(id: string) {
   userId = id;
 }
 
-export interface ISingleResponse<T> {
-  model: T;
-  response: any;
-}
-
 /**
  * Convert Partial<IParams> type to a query string.
  */
@@ -287,21 +282,12 @@ function convertArrayFromJSONAPI<T>(result: any): List<T> {
   )));
 }
 
-export async function listCommentsById(
-  commentIds: List<string>,
+export async function getComments(
+  commentIds: Array<ModelId>,
 ): Promise<Array<ICommentModel>> {
-  const { data } = await axios.post(
-    serviceURL(
-      'commentsById',
-      null,
-      null,
-    ),
-    {
-      data: commentIds.toArray(),
-    },
-  );
-
-  return data.data.map((d: any) => CommentModel({id: d.id, ...d.attributes}));
+  const url = serviceURL('simple', `/comment/get`);
+  const response = await axios.post(url, commentIds);
+  return response.data.map((a: any) => (CommentModel(a)));
 }
 
 export async function listCommentSummaryScoresById(
@@ -449,17 +435,6 @@ export async function getModeratedCommentIdsForCategory(
   );
 
   return data.data;
-}
-
-/**
- * Get a single model.
- */
-export async function getComment(
-  id: string,
-  params?: Partial<IParams>,
-): Promise<ICommentModel> {
-  const { data } = await axios.get(modelURL('comments', id, params));
-  return CommentModel({id: data.data.id, ...data.data.attributes});
 }
 
 export async function getArticles(ids: Array<ModelId>): Promise<Array<IArticleModel>> {
