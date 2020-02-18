@@ -27,6 +27,7 @@ import { createToken } from '../../auth/tokens';
 import { clearError } from '../../integrations';
 import {
   Article,
+  Comment,
   CommentFlag,
   CommentScore,
   User,
@@ -42,6 +43,7 @@ import {
 import { REPLY_SUCCESS } from '../constants';
 import {
   ARTICLE_FIELDS,
+  COMMENT_FIELDS,
   FLAG_FIELDS,
   SCORE_FIELDS,
   serialiseObject,
@@ -120,7 +122,7 @@ export function createSimpleRESTService(): express.Router {
     const articleId = parseInt(req.params.id, 10);
     const article = await Article.findByPk(articleId);
     if (!article) {
-      res.status(404).send('Not found');
+      res.status(404).json({status: 'error', errors: 'article not found'});
       next();
       return;
     }
@@ -141,6 +143,20 @@ export function createSimpleRESTService(): express.Router {
     });
     const articleData = articles.map((a) => serialiseObject(a, ARTICLE_FIELDS));
     res.json(articleData);
+    next();
+  });
+
+  router.post('/comment/get', async (req, res, next) => {
+    const comments = await Comment.findAll({
+      where: {id: {[Op.in]: req.body}},
+    });
+    const commentData = comments.map((c) => {
+      // TODO: replyTo, replies
+      // TODO: Summary scores
+      return serialiseObject(c, COMMENT_FIELDS);
+    });
+
+    res.json(commentData);
     next();
   });
 

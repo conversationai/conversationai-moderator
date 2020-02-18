@@ -19,13 +19,12 @@ import { List } from 'immutable';
 
 import {
   getArticleText,
-  getComment,
   getCommentFlags,
+  getComments,
   getCommentScores,
   getModeratedCommentIdsForArticle,
   getModeratedCommentIdsForCategory,
   IModeratedComments,
-  listCommentsById,
   listCommentSummaryScoresById,
   listMaxHistogramScoresByCategory,
   listMaxSummaryScoreByArticle,
@@ -51,7 +50,7 @@ export async function fetchArticleText(articleId: ModelId) {
 export async function listCommentsPage(comments: Array<ModelId>) {
   const sizes =  await listTextSizesByIds(comments, 696);
   checkTextSizes(sizes);
-  const data = await listCommentsById(List(comments));
+  const data = await getComments(comments);
   checkListComments(data);
 }
 
@@ -105,7 +104,7 @@ export async function listModeratedCommentsPage(
 }
 
 export async function commentDetailsPage(commentId: string)  {
-  const c = await getComment(commentId);
+  const c = await getComments([commentId]);
   checkSingleComment(c);
   const flags = await getCommentFlags(commentId);
   checkArrayOf(checkCommentFlag, flags);

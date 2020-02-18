@@ -19,7 +19,6 @@ import { processingTriggers } from '../../processing/api';
 import { createAssignmentsService } from './assignments';
 import { createAuthorCountsService } from './authorCounts';
 import { createCommentActionsService } from './commentActions';
-import { createCommentsByIdService } from './commentsById';
 import { createCommentSourcesService } from './commentSources';
 import { createEditCommentTextService } from './editComment';
 import { createHistogramScoresService } from './histogramScores';
@@ -43,7 +42,6 @@ export function createServicesRouter(): express.Router {
   router.use('/moderatedCounts', createModeratedCountsService());
   router.use('/authorCounts', createAuthorCountsService());
   router.use('/textSizes', createTextSizesService());
-  router.use('/commentsById', createCommentsByIdService());
   router.use('/topScores', createTopScoresService());
   router.use('/editComment', createEditCommentTextService());
   router.use('/updates', createUpdateNotificationService());

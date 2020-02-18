@@ -28,8 +28,8 @@ import {
 } from '../../../../../models';
 import { IAppDispatch, IAppState } from '../../../../appstate';
 import {
-  getComment as getCommentSvc,
   getCommentFlags,
+  getComments,
   getCommentScores,
   listAuthorCounts,
 } from '../../../../platform/dataService';
@@ -69,7 +69,8 @@ const storeAuthorCounts =
 
 export async function loadComment(dispatch: IAppDispatch, id: string) {
   await dispatch(loadCommentStart());
-  const comment = await getCommentSvc(id, { include: ['replyTo'] });
+
+  const [ comment ] = await getComments([id]);
   await dispatch(loadCommentComplete(comment));
 
   if (comment && comment.authorSourceId) {
