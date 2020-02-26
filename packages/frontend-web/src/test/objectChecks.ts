@@ -137,6 +137,19 @@ function action(val: any) {
   ].indexOf(val) >= 0;
 }
 
+export function checkArrayOf(itemChecker: (i: any) => boolean, o: any) {
+  if (!Array.isArray(o)) {
+    console.log(`Thing is not an Array`);
+    return false;
+  }
+
+  let valuesOk = true;
+  for (const i of o) {
+    valuesOk = itemChecker(i) && valuesOk;
+  }
+  return valuesOk;
+}
+
 function checkListNumber(o: any) {
   if (!List.isList(o)) {
     console.log(`Number list is not a list`);
@@ -224,7 +237,7 @@ const tagFields = {
 };
 
 const rangeFields = {
-  id: check.number,
+  id: check.string,
   categoryId: category_id_or_null,
   lowerThreshold: check.number,
   upperThreshold: check.number,

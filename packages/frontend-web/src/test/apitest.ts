@@ -40,11 +40,12 @@ if (!token) {
 };
 
 import { decodeToken, setAxiosToken } from '../app/auth';
-import { setUserId } from '../app/platform/dataService';
+import { getArticles, setUserId } from '../app/platform/dataService';
 import { saveToken } from '../app/platform/localStore';
 import { connectNotifier } from '../app/platform/websocketService';
 import { approveComment, rejectComment, setArticleModerators, setArticleState } from './actions';
 import { articleData, systemData, userData } from './notificationChecks';
+import { checkArrayOf, checkArticle } from './objectChecks';
 import {
   commentDetailsPage, fetchArticleText,
   listModeratedCommentsPage,
@@ -92,6 +93,12 @@ setUserId(userId);
   systemData.stateCheck();
   articleData.stateCheck();
   userData.stateCheck();
+
+  if (articleData.articlesWithNew.length > 0) {
+    console.log('Trying out getArticles API');
+    const articles = await getArticles(articleData.articlesWithNew.map((a) => (a.id)));
+    checkArrayOf(checkArticle, articles);
+  }
 
   if (articleData.articleFullyEnabled) {
     console.log('\n* Checking set article state');

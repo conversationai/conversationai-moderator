@@ -26,6 +26,7 @@ import {
 
 import {
   ArticleModel,
+  IArticleModel,
   IAuthorCountsModel,
   ICommentDatedModel,
   ICommentModel,
@@ -477,7 +478,7 @@ export async function getModel<T>(
   };
 }
 
-export async function getArticles(ids: Array<ModelId>) {
+export async function getArticles(ids: Array<ModelId>): Promise<Array<IArticleModel>> {
   const url = serviceURL('simple', `/article/get`);
   const response = await axios.post(url, ids);
   return response.data.map((a: any) => (ArticleModel(a)));

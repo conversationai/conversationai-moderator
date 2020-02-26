@@ -27,7 +27,6 @@ import { createToken } from '../../auth/tokens';
 import { clearError } from '../../integrations';
 import {
   Article,
-  IArticleInstance,
   User,
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
@@ -129,11 +128,11 @@ export function createSimpleRESTService(): express.Router {
   });
 
   router.post('/article/get', async (req, res, next) => {
-    const articles = await Article.findAll({where: {id: {[Op.in]: req.body}}});
-    const articleData = articles.map((a: IArticleInstance) => {
-      return serialiseObject(a, ARTICLE_FIELDS);
+    const articles = await Article.findAll({
+      where: {id: {[Op.in]: req.body}},
+      include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
     });
-
+    const articleData = articles.map((a) => serialiseObject(a, ARTICLE_FIELDS));
     res.json(articleData);
     next();
   });
