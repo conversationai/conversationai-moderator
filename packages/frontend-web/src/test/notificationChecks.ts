@@ -77,14 +77,14 @@ class ArticleMessages {
 
   dataCheck() {
     console.log('* check categories');
-    for (const c of this.data.categories.toArray()) {
+    for (const c of this.data.categories) {
       this.categoriesOk = this.categoriesOk && checkCategory(c);
     }
     console.log('* check articles');
-    for (const c of this.data.categories.toArray()) {
+    for (const c of this.data.categories) {
       this.categories.set(c.id, c);
     }
-    for (const a of this.data.articles.toArray()) {
+    for (const a of this.data.articles) {
       this.articlesOk = this.articlesOk && checkArticle(a);
       if (a.unmoderatedCount > 0) {
         this.articlesWithNew.push(a);
