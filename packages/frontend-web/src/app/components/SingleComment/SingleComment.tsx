@@ -500,11 +500,11 @@ function RenderSummaryScore({allTags, score, withColor, onScoreClick}: IRenderSu
 
 export interface ISingleCommentProps {
   comment: ICommentModel;
-  allScores?: List<ICommentScoreModel>;
-  allScoresAboveThreshold?: List<ICommentScoreModel>;
-  reducedScoresAboveThreshold?: List<ICommentScoreModel>;
-  reducedScoresBelowThreshold?: List<ICommentScoreModel>;
-  flags?: List<ICommentFlagModel>;
+  allScores?: Array<ICommentScoreModel>;
+  allScoresAboveThreshold?: Array<ICommentScoreModel>;
+  reducedScoresAboveThreshold?: Array<ICommentScoreModel>;
+  reducedScoresBelowThreshold?: Array<ICommentScoreModel>;
+  flags?: Array<ICommentFlagModel>;
   isThreadedComment?: boolean;
   isReply?: boolean;
   allTags?: List<ITagModel>;
@@ -525,8 +525,8 @@ export interface ISingleCommentProps {
   getUserById?(id: string): IUserModel;
   currentUser?: IUserModel;
   summaryScores?: List<ICommentSummaryScore>;
-  summaryScoresAboveThreshold?: List<ICommentSummaryScoreModel>;
-  summaryScoresBelowThreshold?: List<ICommentSummaryScoreModel>;
+  summaryScoresAboveThreshold?: Array<ICommentSummaryScoreModel>;
+  summaryScoresBelowThreshold?: Array<ICommentSummaryScoreModel>;
   onUpdateCommentText?(comment: ICommentModel): void;
   commentEditingEnabled?: boolean;
 }
@@ -598,7 +598,12 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
     onUpdateCommentText(comment.set('text', commentText).setIn(['author', 'name'], authorName).setIn(['author', 'location'], authorLoc));
     // null out local scores for comment
     this.props.allScores.forEach((score) => (
-     onRemoveCommentScore(score.set('score', null).set('annotationStart', null).set('annotationEnd', null))
+      onRemoveCommentScore({
+        ...score,
+        score: null,
+        annotationStart: null,
+        annotationEnd: null,
+      })
     ));
 
     // send comment text to be update to publisher
@@ -979,7 +984,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               </div>
             </div>
           )}
-          {reducedScoresBelowThreshold && reducedScoresBelowThreshold.size > 0 && (
+          {reducedScoresBelowThreshold && reducedScoresBelowThreshold.length > 0 && (
             <button
               aria-label={scoresBelowThresholdVisible ? 'Hide tags' : 'View all tags'}
               type="button"
@@ -989,7 +994,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               {scoresBelowThresholdVisible ? 'Hide tags' : 'View all tags'}
             </button>
           )}
-          {flags && flags.size > 0 && (
+          {flags && flags.length > 0 && (
             <div key="flags">
               <div key="__flags-title" {...css(FLAGS_STYLES.title)}>Flags</div>
               {flags.map((f) => renderFlag(f))}

@@ -14,9 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
-
 export interface ICommentFlagAttributes {
   id: string;
   label: string;
@@ -30,19 +27,8 @@ export interface ICommentFlagAttributes {
   resolvedAt?: string;
 }
 
-export interface ICommentFlagModel extends TypedRecord<ICommentFlagModel>, ICommentFlagAttributes {}
+export type ICommentFlagModel = Readonly<ICommentFlagAttributes>;
 
-const CommentFlagModelRecord = Record({
-  id: null,
-  commentId: null,
-  label: null,
-  detail: null,
-  isRecommendation: false,
-  sourceId: null,
-  authorSourceId: null,
-  isResolved: false,
-});
-
-export function CommentFlagModel(keyValuePairs?: ICommentFlagAttributes): ICommentFlagModel {
-  return new CommentFlagModelRecord(keyValuePairs) as ICommentFlagModel;
+export function CommentFlagModel(flagData?: ICommentFlagAttributes): ICommentFlagModel {
+  return flagData as ICommentFlagModel;
 }

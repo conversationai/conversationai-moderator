@@ -45,7 +45,7 @@ const loadCommentComplete =
 const loadCommentScoresStart =
   createAction('comment-detail/LOAD_COMMENT_SCORE_START');
 const loadCommentScoresComplete =
-  createAction<object>('comment-detail/LOAD_COMMENT_SCORE_COMPLETE');
+  createAction<Array<ICommentScoreModel>>('comment-detail/LOAD_COMMENT_SCORE_COMPLETE');
 const addCommentScoreRecord =
   createAction<ICommentScoreModel>('comment-detail/ADD_COMMENT_SCORE');
 const updateCommentScoreRecord =
@@ -55,7 +55,7 @@ const removeCommentScoreRecord =
 const loadCommentFlagsStart =
   createAction('comment-detail/LOAD_COMMENT_FLAG_START');
 const loadCommentFlagsComplete =
-  createAction<object>('comment-detail/LOAD_COMMENT_FLAG_COMPLETE');
+  createAction<Array<ICommentFlagModel>>('comment-detail/LOAD_COMMENT_FLAG_COMPLETE');
 export const clearCommentPagingOptions: () => Action<void> =
   createAction('comment-detail/CLEAR_COMMENT_PAGING_OPTIONS');
 const internalStoreCommentPagingOptions =
@@ -103,60 +103,53 @@ const {
 export const updateComment: (payload: ICommentModel) => Action<ICommentModel> = updateCommentRecord;
 
 export interface ICommentScoreState {
-  items: List<ICommentScoreModel>;
+  items: Array<ICommentScoreModel>;
 }
 
-const initialScoreState = {
-  items: List<ICommentScoreModel>(),
+const initialScoreState: ICommentScoreState = {
+  items: [],
 };
 
 const commentScoresReducer = handleActions<
   ICommentScoreState,
   void   | // startEvent
-  List<ICommentScoreModel> | // endEvent
+  Array<ICommentScoreModel> | // endEvent
   ICommentScoreModel  // addRecord, updateRecord, removeRecord
   >( {
   [loadCommentScoresStart.toString()]: (_state) => (initialScoreState),
 
-  [loadCommentScoresComplete.toString()]: (_state, { payload }: Action<List<ICommentScoreModel>>) => ({
+  [loadCommentScoresComplete.toString()]: (_state, { payload }: Action<Array<ICommentScoreModel>>) => ({
     items: payload,
   }),
 
   [addCommentScoreRecord.toString()]: (state, { payload }: Action<ICommentScoreModel>) => ({
-    items: state.items.push(payload),
+    items: [...state.items, payload],
   }),
 
   [updateCommentScoreRecord.toString()]: (state, { payload }: Action<ICommentScoreModel>) => {
-    const index = state.items.findIndex((item) => (item.id === payload.id));
     return {
-      ...state,
-      items: state.items.set(index, payload),
+      items: state.items.map((i) => (payload.id === i.id ? payload : i)),
     };
   },
 
   [removeCommentScoreRecord.toString()]: (state, { payload }: Action<ICommentScoreModel>) => {
-    const index = state.items.findIndex((item) => (item.id === payload.id));
-    if (index < 0) {
-      return state;
-    }
     return {
-      ...state,
-      items: List(state.items.splice(index, 1)),
+      items: state.items.filter((i) => (i.id !== payload.id)),
     };
   },
 }, initialScoreState);
 
 export interface ICommentFlagsState {
-  items: List<ICommentFlagModel>;
+  items: Array<ICommentFlagModel>;
 }
 
-const initialFlagsState = {
-  items: List<ICommentFlagModel>(),
+const initialFlagsState: ICommentFlagsState = {
+  items: [],
 };
 
-const commentFlagsReducer = handleActions<ICommentFlagsState, void | List<ICommentFlagModel>>({
+const commentFlagsReducer = handleActions<ICommentFlagsState, void | Array<ICommentFlagModel>>({
     [loadCommentFlagsStart.toString()]: (_state: ICommentFlagsState) => (initialFlagsState),
-    [loadCommentFlagsComplete.toString()]: (state: ICommentFlagsState, { payload }: Action<List<ICommentFlagModel>>) => ({
+    [loadCommentFlagsComplete.toString()]: (state: ICommentFlagsState, { payload }: Action<Array<ICommentFlagModel>>) => ({
      ...state,
      items: payload,
    }),

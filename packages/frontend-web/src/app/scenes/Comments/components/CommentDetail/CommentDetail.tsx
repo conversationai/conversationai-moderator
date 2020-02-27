@@ -305,9 +305,9 @@ export interface ICommentDetailProps extends RouteComponentProps<ICommentDetails
   article: IArticleModel;
   allTags: List<ITagModel>;
   availableTags: List<ITagModel>;
-  allScores?: List<ICommentScoreModel>;
+  allScores?: Array<ICommentScoreModel>;
   taggingSensitivities: List<ITaggingSensitivityModel>;
-  flags?: List<ICommentFlagModel>;
+  flags?: Array<ICommentFlagModel>;
   currentCommentIndex?: number;
   nextCommentId?: string;
   previousCommentId?: string;
@@ -339,16 +339,16 @@ export interface ICommentDetailProps extends RouteComponentProps<ICommentDetails
 
 export interface ICommentDetailState {
   taggingSensitivitiesInCategory?: List<ITaggingSensitivityModel>;
-  allScoresAboveThreshold?: List<ICommentScoreModel>;
-  reducedScoresAboveThreshold?: List<ICommentScoreModel>;
-  reducedScoresBelowThreshold?: List<ICommentScoreModel>;
-  summaryScoresAboveThreshold?: List<ICommentSummaryScoreModel>;
-  summaryScoresBelowThreshold?: List<ICommentSummaryScoreModel>;
+  allScoresAboveThreshold?: Array<ICommentScoreModel>;
+  reducedScoresAboveThreshold?: Array<ICommentScoreModel>;
+  reducedScoresBelowThreshold?: Array<ICommentScoreModel>;
+  summaryScoresAboveThreshold?: Array<ICommentSummaryScoreModel>;
+  summaryScoresBelowThreshold?: Array<ICommentSummaryScoreModel>;
   loadedCommentId?: string;
   isKeyboardModalVisible?: boolean;
   isConfirmationModalVisible?: boolean;
   isScoresModalVisible?: boolean;
-  scoresSelectedByTag?: List<ICommentScoreModel>;
+  scoresSelectedByTag?: Array<ICommentScoreModel>;
   thresholdByTag?: ITaggingSensitivityModel;
   confirmationAction?: IConfirmationAction;
   isInfoDropdownVisible?: boolean;
@@ -1071,7 +1071,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     const thresholdByTag = getTaggingSensitivityForTag(this.state.taggingSensitivitiesInCategory, scoreClicked.tagId);
     const scoresSelectedByTag = this.props.allScores.filter(
       (score) => score.tagId === scoreClicked.tagId,
-    ).sort((a, b) => b.score - a.score) as List<ICommentScoreModel>;
+    ).sort((a, b) => b.score - a.score);
 
     this.setState({
       isScoresModalVisible: true,

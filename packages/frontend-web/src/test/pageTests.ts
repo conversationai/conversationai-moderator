@@ -33,8 +33,9 @@ import {
 } from '../app/platform/dataService';
 import { ICommentScoredModel, ModelId } from '../models';
 import {
-  checkCommentFlags,
-  checkCommentScores,
+  checkArrayOf,
+  checkCommentFlag,
+  checkCommentScore,
   checkHistogramScores,
   checkListComments,
   checkModeratedComments,
@@ -107,9 +108,9 @@ export async function commentDetailsPage(commentId: string)  {
   const c = await getComment(commentId);
   checkSingleComment(c);
   const flags = await getCommentFlags(commentId);
-  checkCommentFlags(flags);
+  checkArrayOf(checkCommentFlag, flags);
   const scores = await getCommentScores(commentId);
-  checkCommentScores(scores);
+  checkArrayOf(checkCommentScore, scores);
   await listCommentSummaryScoresById(commentId);
   // dataService.js:1289 listAuthorCounts ["c44181ec-1957-936e-4fb0-fbc21828d365"]
 }

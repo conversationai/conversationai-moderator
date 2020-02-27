@@ -47,7 +47,8 @@ import { approveComment, rejectComment, setArticleModerators, setArticleState } 
 import { articleData, systemData, userData } from './notificationChecks';
 import { checkArrayOf, checkArticle } from './objectChecks';
 import {
-  commentDetailsPage, fetchArticleText,
+  commentDetailsPage,
+  fetchArticleText,
   listModeratedCommentsPage,
   listNewCommentsPage_SUMMARY_SCORE,
 } from './pageTests';

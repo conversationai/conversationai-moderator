@@ -108,7 +108,7 @@ const STYLES = stylesheet({
 
 export interface IScoresListProps {
   comment?: ICommentModel;
-  scores?: List<ICommentScoreModel>;
+  scores?: Array<ICommentScoreModel>;
   threshold?: ITaggingSensitivityModel;
   onClose(): any;
   tags?: List<ITagModel>;
@@ -133,7 +133,7 @@ export class ScoresList extends React.PureComponent<IScoresListProps> {
       onClose,
     } = this.props;
 
-    const exampleScore = scores.get(0) || scores.get(0) || null;
+    const exampleScore = scores[0] || null;
     const tag = tags && tags.find((t) => (t.get('id') === exampleScore.tagId));
     const scoresAboveThreshold = threshold && scores && scores.filter((score) => score.score >= threshold.lowerThreshold);
     const scoresBelowThreshold = threshold && scores && scores.filter((score) => score.score < threshold.lowerThreshold);
