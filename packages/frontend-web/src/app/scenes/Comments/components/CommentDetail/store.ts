@@ -34,9 +34,7 @@ import {
   listAuthorCounts,
 } from '../../../../platform/dataService';
 import {
-  IRecordListState,
   ISingleRecordState,
-  makeRecordListReducer,
   makeSingleRecordReducer,
 } from '../../../../util';
 
@@ -48,6 +46,12 @@ const loadCommentScoresStart =
   createAction('comment-detail/LOAD_COMMENT_SCORE_START');
 const loadCommentScoresComplete =
   createAction<object>('comment-detail/LOAD_COMMENT_SCORE_COMPLETE');
+const addCommentScoreRecord =
+  createAction<ICommentScoreModel>('comment-detail/ADD_COMMENT_SCORE');
+const updateCommentScoreRecord =
+  createAction<ICommentScoreModel>('comment-detail/UPDATE_COMMENT_SCORE');
+const removeCommentScoreRecord =
+  createAction<ICommentScoreModel>('comment-detail/REMOVE_COMMENT_SCORE');
 const loadCommentFlagsStart =
   createAction('comment-detail/LOAD_COMMENT_FLAG_START');
 const loadCommentFlagsComplete =
@@ -78,15 +82,13 @@ export async function loadComment(dispatch: IAppDispatch, id: string) {
 
 export async function loadScores(dispatch: IAppDispatch, id: string) {
   await dispatch(loadCommentScoresStart());
-  const result = await getCommentScores(id);
-  const data = result.response;
+  const data = await getCommentScores(id);
   await dispatch(loadCommentScoresComplete(data));
 }
 
 export async function loadFlags(dispatch: IAppDispatch, id: string) {
   await dispatch(loadCommentFlagsStart());
-  const result = await getCommentFlags(id);
-  const data = result.response;
+  const data = await getCommentFlags(id);
   await dispatch(loadCommentFlagsComplete(data));
 }
 
@@ -100,22 +102,65 @@ const {
 
 export const updateComment: (payload: ICommentModel) => Action<ICommentModel> = updateCommentRecord;
 
-const {
-  reducer: commentScoresReducer,
-  addRecord: addCommentScoreRecord,
-  updateRecord: updateCommentScoreRecord,
-  removeRecord: removeCommentScoreRecord,
-} = makeRecordListReducer<ICommentScoreModel>(
-  loadCommentScoresStart.toString(),
-  loadCommentScoresComplete.toString(),
-);
+export interface ICommentScoreState {
+  items: List<ICommentScoreModel>;
+}
 
-const {
-  reducer: commentFlagsReducer,
-} = makeRecordListReducer<ICommentFlagModel>(
-  loadCommentFlagsStart.toString(),
-  loadCommentFlagsComplete.toString(),
-);
+const initialScoreState = {
+  items: List<ICommentScoreModel>(),
+};
+
+const commentScoresReducer = handleActions<
+  ICommentScoreState,
+  void   | // startEvent
+  List<ICommentScoreModel> | // endEvent
+  ICommentScoreModel  // addRecord, updateRecord, removeRecord
+  >( {
+  [loadCommentScoresStart.toString()]: (_state) => (initialScoreState),
+
+  [loadCommentScoresComplete.toString()]: (_state, { payload }: Action<List<ICommentScoreModel>>) => ({
+    items: payload,
+  }),
+
+  [addCommentScoreRecord.toString()]: (state, { payload }: Action<ICommentScoreModel>) => ({
+    items: state.items.push(payload),
+  }),
+
+  [updateCommentScoreRecord.toString()]: (state, { payload }: Action<ICommentScoreModel>) => {
+    const index = state.items.findIndex((item) => (item.id === payload.id));
+    return {
+      ...state,
+      items: state.items.set(index, payload),
+    };
+  },
+
+  [removeCommentScoreRecord.toString()]: (state, { payload }: Action<ICommentScoreModel>) => {
+    const index = state.items.findIndex((item) => (item.id === payload.id));
+    if (index < 0) {
+      return state;
+    }
+    return {
+      ...state,
+      items: List(state.items.splice(index, 1)),
+    };
+  },
+}, initialScoreState);
+
+export interface ICommentFlagsState {
+  items: List<ICommentFlagModel>;
+}
+
+const initialFlagsState = {
+  items: List<ICommentFlagModel>(),
+};
+
+const commentFlagsReducer = handleActions<ICommentFlagsState, void | List<ICommentFlagModel>>({
+    [loadCommentFlagsStart.toString()]: (_state: ICommentFlagsState) => (initialFlagsState),
+    [loadCommentFlagsComplete.toString()]: (state: ICommentFlagsState, { payload }: Action<List<ICommentFlagModel>>) => ({
+     ...state,
+     items: payload,
+   }),
+}, initialFlagsState);
 
 export interface ICommentPagingState {
   commentIds: List<string>;
@@ -285,8 +330,8 @@ export function getAuthorCountsRecord(state: IAppState) {
 
 export type ICommentDetailState = Readonly<{
   comment: ISingleRecordState<ICommentModel>;
-  scores: IRecordListState<ICommentScoreModel>;
-  flags: IRecordListState<ICommentFlagModel>;
+  scores: ICommentScoreState;
+  flags: ICommentFlagsState;
   paging: ICommentPagingState;
   authorCounts: IAuthorCountsState;
 }>;
