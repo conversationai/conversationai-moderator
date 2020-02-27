@@ -29,8 +29,10 @@ import {
   IArticleModel,
   IAuthorCountsModel,
   ICommentDatedModel,
+  ICommentFlagModel,
   ICommentModel,
   ICommentScoredModel,
+  ICommentScoreModel,
   ICommentSummaryScoreModel,
   IUserModel,
   ModelId,
@@ -42,8 +44,7 @@ import {
 } from '../../models';
 import { ITopScore, ServerStates } from '../../types';
 import { API_URL } from '../config';
-import { convertArrayFromJSONAPI } from '../util';
-import { convertFromJSONAPI } from '../util';
+import { convertFromJSONAPI, convertItemFromJSONAPI } from '../util';
 
 export type IValidModelNames =
     'articles' |
@@ -88,11 +89,6 @@ export function setUserId(id: string) {
 
 export interface ISingleResponse<T> {
   model: T;
-  response: any;
-}
-
-export interface IMultipleResponse<T> {
-  models: List<T>;
   response: any;
 }
 
@@ -294,6 +290,13 @@ export async function listHistogramScoresByCategoryByDate(
       commentId,
     })),
   );
+}
+
+function convertArrayFromJSONAPI<T>(result: any): List<T> {
+  const resultData = fromJS(result);
+  return List(resultData.get('data').map((d: any) => (
+    convertItemFromJSONAPI(d, resultData.get('included'))
+  )));
 }
 
 export async function listCommentsById(
@@ -556,25 +559,22 @@ async function listRelationshipModels<T>(
   id: string,
   relationship: string,
   params?: Partial<IParams>,
-): Promise<IMultipleResponse<T>> {
+): Promise<List<T>> {
   validateModelName(type);
 
   const { data } = await axios.get(
     relatedURL(type, id, relationship, params),
   );
 
-  return {
-    models: convertArrayFromJSONAPI<T>(data),
-    response: data,
-  };
+  return convertArrayFromJSONAPI<T>(data);
 }
 
 export function getCommentScores(commentId: string) {
-  return listRelationshipModels('comments', commentId, 'commentScores', {page: {offset: 0, limit: -1}});
+  return listRelationshipModels<ICommentScoreModel>('comments', commentId, 'commentScores', {page: {offset: 0, limit: -1}});
 }
 
 export function getCommentFlags(commentId: string) {
-  return listRelationshipModels('comments', commentId, 'commentFlags', {page: {offset: 0, limit: -1}});
+  return listRelationshipModels<ICommentFlagModel>('comments', commentId, 'commentFlags', {page: {offset: 0, limit: -1}});
 }
 
 export async function checkServerStatus(): Promise<ServerStates> {
