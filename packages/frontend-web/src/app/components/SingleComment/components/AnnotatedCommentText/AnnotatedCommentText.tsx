@@ -126,7 +126,7 @@ const STYLES = stylesheet({
 
 export interface IAnnotatedCommentTextProps {
   text: string;
-  scores: List<ICommentScoreModel>;
+  scores: Array<ICommentScoreModel>;
   availableTags: List<ITagModel>;
   onClick?(tag: string, start: number, end: number): Promise<any>;
   onUpdateCommentScore?(commentScore: ICommentScoreModel): void;
@@ -505,7 +505,11 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
   @autobind
   async confirmTag() {
     if (this.props.onUpdateCommentScore) {
-      await this.props.onUpdateCommentScore(this.state.confirmationScore.set('isConfirmed', true).set('confirmedUserId', this.props.currentUser.id));
+      await this.props.onUpdateCommentScore({
+        ...this.state.confirmationScore,
+        isConfirmed: true,
+        confirmedUserId: this.props.currentUser.id,
+      });
     }
     if (this.props.onConfirmCommentScore) {
       await this.props.onConfirmCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
@@ -530,7 +534,10 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
     }
 
     if (this.props.onUpdateCommentScore) {
-      await this.props.onUpdateCommentScore(this.state.confirmationScore.set('isConfirmed', null));
+      await this.props.onUpdateCommentScore({
+        ...this.state.confirmationScore,
+        isConfirmed: null,
+      });
     }
 
     if (this.props.onResetCommentScore) {
@@ -543,9 +550,11 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
   @autobind
   async removeTag() {
     if (this.props.onUpdateCommentScore) {
-      await this.props.onUpdateCommentScore(
-        this.state.confirmationScore.set('isConfirmed', false).set('confirmedUserId', this.props.currentUser.id),
-      );
+      await this.props.onUpdateCommentScore({
+        ...this.state.confirmationScore,
+        isConfirmed: false,
+        confirmedUserId: this.props.currentUser.id,
+      });
     }
     if (this.props.onRejectCommentScore) {
       this.props.onRejectCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
@@ -554,7 +563,7 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
     this.closeConfirmationToolTip();
   }
 
-  taggifyText(text: string, scores: List<ICommentScoreModel>): JSX.Element {
+  taggifyText(text: string, scores: Array<ICommentScoreModel>): JSX.Element {
     if (typeof scores === 'undefined') {
       return <div>{text}</div>;
     }

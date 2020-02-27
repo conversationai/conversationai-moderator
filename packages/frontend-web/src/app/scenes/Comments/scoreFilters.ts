@@ -91,7 +91,7 @@ export function getSummaryScoresBelowThreshold(
   ) as List<ICommentSummaryScoreStateRecord>;
 }
 
-function dedupeScoreTypes(scores: List<ICommentScoreModel>): List<ICommentScoreModel> {
+function dedupeScoreTypes(scores: Array<ICommentScoreModel>): Array<ICommentScoreModel> {
   return scores
     .reduce((sum, score) => {
       const existingScore = sum.get(score.tagId);
@@ -102,42 +102,42 @@ function dedupeScoreTypes(scores: List<ICommentScoreModel>): List<ICommentScoreM
 
       return sum;
     }, Map<string, ICommentScoreModel>())
-    .toList();
+    .toArray();
 }
 
 export function getScoresAboveThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  scores: List<ICommentScoreModel>,
-): List<ICommentScoreModel> {
+  scores: Array<ICommentScoreModel>,
+): Array<ICommentScoreModel> {
   return scores
     .filter((s) => isScoreAboveThreshold(taggingSensitivities, s))
-    .sort((a, b) => b.score - a.score) as List<ICommentScoreModel>;
+    .sort((a, b) => b.score - a.score);
 }
 
 export function getScoresBelowThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  scores: List<ICommentScoreModel>,
-): List<ICommentScoreModel> {
+  scores: Array<ICommentScoreModel>,
+): Array<ICommentScoreModel> {
   const aboveThreshold = scores.filter((s) =>
-    isScoreAboveThreshold(taggingSensitivities, s)) as List<ICommentScoreModel>;
+    isScoreAboveThreshold(taggingSensitivities, s));
   const scoresBelowThreshold = scores.filter((s) =>
     !isScoreAboveThreshold(taggingSensitivities, s) &&
-    !aboveThreshold.find((sa) => sa.tagId === s.tagId)) as List<ICommentScoreModel>;
+    !aboveThreshold.find((sa) => sa.tagId === s.tagId));
 
   return scoresBelowThreshold
-    .sort((a, b) => b.score - a.score) as List<ICommentScoreModel>;
+    .sort((a, b) => b.score - a.score);
 }
 
 export function getReducedScoresAboveThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  scores: List<ICommentScoreModel>,
-): List<ICommentScoreModel> {
+  scores: Array<ICommentScoreModel>,
+): Array<ICommentScoreModel> {
   return dedupeScoreTypes(getScoresAboveThreshold(taggingSensitivities, scores));
 }
 
 export function getReducedScoresBelowThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  scores: List<ICommentScoreModel>,
-): List<ICommentScoreModel> {
+  scores: Array<ICommentScoreModel>,
+): Array<ICommentScoreModel> {
   return dedupeScoreTypes(getScoresBelowThreshold(taggingSensitivities, scores));
 }

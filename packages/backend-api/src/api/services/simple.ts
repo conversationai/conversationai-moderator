@@ -27,6 +27,8 @@ import { createToken } from '../../auth/tokens';
 import { clearError } from '../../integrations';
 import {
   Article,
+  CommentFlag,
+  CommentScore,
   User,
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
@@ -38,7 +40,12 @@ import {
   updateHappened,
 } from '../../models';
 import { REPLY_SUCCESS } from '../constants';
-import { ARTICLE_FIELDS, serialiseObject } from './serializer';
+import {
+  ARTICLE_FIELDS,
+  FLAG_FIELDS,
+  SCORE_FIELDS,
+  serialiseObject,
+} from './serializer';
 
 const userFields = ['id', 'name', 'email', 'group', 'isActive', 'extra'];
 
@@ -147,6 +154,26 @@ export function createSimpleRESTService(): express.Router {
     }
     const text = article.text;
     res.json({text: text});
+    next();
+  });
+
+  router.get('/comment/:id/scores', async (req, res, next) => {
+    const commentId = parseInt(req.params.id, 10);
+    const scores = await CommentScore.findAll({
+      where: {commentId: commentId},
+    });
+    const scoresData = scores.map((s) => serialiseObject(s, SCORE_FIELDS));
+    res.json(scoresData);
+    next();
+  });
+
+  router.get('/comment/:id/flags', async (req, res, next) => {
+    const commentId = parseInt(req.params.id, 10);
+    const flags = await CommentFlag.findAll({
+      where: {commentId: commentId},
+    });
+    const flagsData = flags.map((f) => serialiseObject(f, FLAG_FIELDS));
+    res.json(flagsData);
     next();
   });
 

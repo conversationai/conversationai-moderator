@@ -26,6 +26,10 @@ import {
 
 import {
   ArticleModel,
+  CommentDatedModel,
+  CommentFlagModel,
+  CommentScoredModel,
+  CommentScoreModel,
   IArticleModel,
   IAuthorCountsModel,
   ICommentDatedModel,
@@ -36,10 +40,6 @@ import {
   ICommentSummaryScoreModel,
   IUserModel,
   ModelId,
-} from '../../models';
-import {
-  CommentDatedModel,
-  CommentScoredModel,
   UserModel,
 } from '../../models';
 import { ITopScore, ServerStates } from '../../types';
@@ -158,14 +158,6 @@ function modelURL(type: IValidModelNames, id: string, params?: Partial<IParams>)
 
   return `${listURL(type)}/${id}${serializeParams(params)}`;
 
-}
-
-/**
- * The URL of a model related.
- */
-function relatedURL(type: IValidModelNames, id: string, relationship: string, params?: Partial<IParams>): string {
-  validateModelName(type);
-  return `${API_URL}${REST_URL}/${type}/${id}/${relationship}${serializeParams(params)}`;
 }
 
 /**
@@ -551,30 +543,16 @@ export async function destroyModel(
   await axios.delete(modelURL(type, id));
 }
 
-/**
- * List (and filter) a model relationship.
- */
-async function listRelationshipModels<T>(
-  type: IValidModelNames,
-  id: string,
-  relationship: string,
-  params?: Partial<IParams>,
-): Promise<List<T>> {
-  validateModelName(type);
-
-  const { data } = await axios.get(
-    relatedURL(type, id, relationship, params),
-  );
-
-  return convertArrayFromJSONAPI<T>(data);
+export async function getCommentScores(commentId: string): Promise<Array<ICommentScoreModel>> {
+  const url = serviceURL('simple', `/comment/${commentId}/scores`);
+  const response = await axios.get(url);
+  return response.data.map((s: any) => (CommentScoreModel(s)));
 }
 
-export function getCommentScores(commentId: string) {
-  return listRelationshipModels<ICommentScoreModel>('comments', commentId, 'commentScores', {page: {offset: 0, limit: -1}});
-}
-
-export function getCommentFlags(commentId: string) {
-  return listRelationshipModels<ICommentFlagModel>('comments', commentId, 'commentFlags', {page: {offset: 0, limit: -1}});
+export async function getCommentFlags(commentId: string): Promise<Array<ICommentFlagModel>> {
+  const url = serviceURL('simple', `/comment/${commentId}/flags`);
+  const response = await axios.get(url);
+  return response.data.map((s: any) => (CommentFlagModel(s)));
 }
 
 export async function checkServerStatus(): Promise<ServerStates> {

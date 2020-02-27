@@ -130,7 +130,7 @@ const STYLES = stylesheet({
 });
 
 export interface ICommentTagsProps {
-  scores: List<ICommentScoreModel>;
+  scores: Array<ICommentScoreModel>;
   availableTags?: List<ITagModel>;
   onClick?(tagId: string): Promise<any>;
   onCommentTagClick?(commentScore: ICommentScoreModel): void;

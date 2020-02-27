@@ -105,13 +105,6 @@ function is_user(u: any) {
   return true;
 }
 
-function is_user_or_null(u: any) {
-  if (!u) {
-    return true;
-  }
-  return is_user(u);
-}
-
 function array_of_users(val: any) {
   if (!check.array(val)) {
     return false;
@@ -284,7 +277,7 @@ const commentFlagFields = {
   sourceId: check.maybe.string,
   authorSourceId: check.maybe.string,
   isResolved: check.boolean,
-  resolvedById: is_user_or_null,
+  resolvedById: check.maybe.string,
   resolvedAt: date_string_or_null,
 };
 
@@ -398,30 +391,12 @@ export function checkSingleComment(o: any) {
   checkComment(o.model);
 }
 
-export function checkCommentFlags(o: any) {
-  if (!List.isList(o.models)) {
-    console.log(`Got a bad commentFlags: Not a list`);
-    return false;
-  }
-  for (const f of o.models.toArray()) {
-    if (!checkObject(f, 'commentFlag', commentFlagFields)) {
-      return false;
-    }
-  }
-  return true;
+export function checkCommentFlag(o: any) {
+  return checkObject(o, 'commentFlag', commentFlagFields);
 }
 
-export function checkCommentScores(o: any) {
-  if (!List.isList(o.models)) {
-    console.log(`Got a bad commentScores: Not a list`);
-    return false;
-  }
-  for (const s of o.models.toArray()) {
-    if (!checkObject(s, 'commentScore', commentScoreFields)) {
-      return false;
-    }
-  }
-  return true;
+export function checkCommentScore(o: any) {
+  return checkObject(o, 'commentScore', commentScoreFields);
 }
 
 export function checkHistogramScores(o: any) {

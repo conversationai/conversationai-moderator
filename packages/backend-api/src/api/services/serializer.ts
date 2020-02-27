@@ -31,7 +31,12 @@ export const CATEGORY_FIELDS = [...COMMENTSET_FIELDS, 'label', 'ownerId', 'isAct
 export const ARTICLE_FIELDS = [...COMMENTSET_FIELDS, 'title', 'url', 'categoryId', 'sourceCreatedAt', 'lastModeratedAt',
   'isCommentingEnabled', 'isAutoModerated'];
 
-const ID_FIELDS = new Set(['categoryId', 'tagId', 'ownerId']);
+export const SCORE_FIELDS = ['id', 'commentId', 'confirmedUserId', 'tagId', 'score',
+  'annotationStart', 'annotationEnd', 'sourceType', 'isConfirmed'];
+export const FLAG_FIELDS = ['id', 'label', 'detail', 'isRecommendation', 'commentId', 'sourceId', 'authorSourceId',
+  'isResolved', 'resolvedById', 'resolvedAt'];
+
+const ID_FIELDS = new Set(['categoryId', 'tagId', 'ownerId', 'commentId', 'confirmedUserId', 'resolvedById']);
 
 // Convert IDs to strings, and assignedModerators to arrays of strings.
 export function serialiseObject(
