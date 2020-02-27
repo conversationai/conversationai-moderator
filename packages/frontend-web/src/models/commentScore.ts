@@ -16,14 +16,12 @@ limitations under the License.
 
 import { Record } from 'immutable';
 import { TypedRecord } from 'typed-immutable-record';
-import { ITagModel } from './tag';
 
 export interface ICommentScoreAttributes {
   id: string;
   commentId: string;
   confirmedUserId?: string;
   tagId?: string;
-  tag?: ITagModel;
   score: number;
   annotationStart?: number;
   annotationEnd?: number;
@@ -38,7 +36,6 @@ const CommentScoreModelRecord = Record({
   commentId: null,
   confirmedUserId: null,
   tagId: null,
-  tag: null,
   score: null,
   annotationStart: null,
   annotationEnd: null,
