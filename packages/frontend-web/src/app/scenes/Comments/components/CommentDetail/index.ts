@@ -28,22 +28,6 @@ import {
 import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
 import { getArticle } from '../../../../stores/articles';
-import {
-  approveComments,
-  confirmCommentScore,
-  confirmCommentSummaryScore,
-  deferComments,
-  deleteCommentTag,
-  highlightComments,
-  rejectComments,
-  rejectCommentScore,
-  rejectCommentSummaryScore,
-  resetComments,
-  resetCommentScore,
-  tagComments,
-  tagCommentsAnnotation,
-  tagCommentSummaryScores,
-} from '../../../../stores/commentActions';
 import { updateComment as updateCommentState } from '../../../../stores/comments';
 import {
   getSummaryScoresById,
@@ -83,29 +67,10 @@ type ICommentDetailDispatchProps = Pick<
   'loadScores' |
   'onUpdateComment' |
   'onUpdateCommentScore' |
-  'onConfirmCommentScore' |
-  'onRejectCommentScore' |
-  'onResetCommentScore' |
   'onAddCommentScore' |
   'onRemoveCommentScore' |
-  'onTagComment' |
-  'tagCommentSummaryScore' |
-  'confirmCommentSummaryScore' |
-  'rejectCommentSummaryScore' |
-  'onCommentAction' |
-  'onAnnotateComment' |
-  'onDeleteCommentTag'
+  'onCommentAction'
 >;
-
-const AVAILABLE_ACTIONS: {
-  [key: string]: (ids: Array<string>) => any;
-} = {
-  highlight: highlightComments,
-  approve: approveComments,
-  defer: deferComments,
-  reject: rejectComments,
-  reset: resetComments,
-};
 
 function getPagingIdentifier(location: Location): string | null {
   const query = qs.parse(location.search);
@@ -187,18 +152,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
       dispatch(updateCommentScore(commentScore))
     ),
 
-    onConfirmCommentScore: (commentid: string, commentScoreId: string) => (
-      dispatch(confirmCommentScore(commentid, commentScoreId))
-    ),
-
-    onRejectCommentScore: (commentid: string, commentScoreId: string) => (
-      dispatch(rejectCommentScore(commentid, commentScoreId))
-    ),
-
-    onResetCommentScore: (commentid: string, commentScoreId: string) => (
-      dispatch(resetCommentScore(commentid, commentScoreId))
-    ),
-
     onUpdateComment: (comment: ICommentModel) => {
       return Promise.all([
         dispatch(updateComment(comment)),
@@ -213,32 +166,9 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
       dispatch(removeCommentScore(commentScore))
     ),
 
-    onTagComment: (ids: Array<string>, tagId: string) => (
-        dispatch(tagComments(ids, tagId))
-    ),
-
-    tagCommentSummaryScore: (ids: Array<string>, tagId: string) =>
-        dispatch(tagCommentSummaryScores(ids, tagId)),
-
-    confirmCommentSummaryScore: (id: string, tagId: string) =>
-        dispatch(confirmCommentSummaryScore(id, tagId)),
-
-    rejectCommentSummaryScore: (id: string, tagId: string) =>
-        dispatch(rejectCommentSummaryScore(id, tagId)),
-
     onCommentAction: (action: IConfirmationAction, idsToDispatch: Array<string>) => {
-        dispatch(AVAILABLE_ACTIONS[action](idsToDispatch));
-        // Also update moderated state
         dispatch(updateCommentStateAction[action](idsToDispatch));
     },
-
-    onAnnotateComment: (id: string, tagId: string, start: number, end: number) => (
-      dispatch(tagCommentsAnnotation(id, tagId, start, end))
-    ),
-
-    onDeleteCommentTag: (id: string, commentScoreId: string) => (
-      dispatch(deleteCommentTag(id, commentScoreId))
-    ),
   };
 }
 

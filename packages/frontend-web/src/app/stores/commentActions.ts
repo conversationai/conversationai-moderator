@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import {ModelId} from '../../models';
 import {
   approveCommentsRequest,
   approveFlagsAndCommentsRequest,
@@ -39,70 +40,72 @@ import {
  * in thunks for redux action dispatching and chaining.
  */
 
-export function deleteCommentTag(id: string, commentScoreId: string) {
-  return (): Promise<void> => deleteCommentTagRequest(id, commentScoreId);
+export async function deleteCommentTag(commentId: ModelId, commentScoreId: string) {
+  await deleteCommentTagRequest(commentId, commentScoreId);
 }
 
-export function highlightComments(ids: Array<string>) {
-  return (): Promise<void> => highlightCommentsRequest(ids);
+export async function highlightComments(commentIds: Array<ModelId>) {
+  await highlightCommentsRequest(commentIds);
 }
 
-export function resetComments(ids: Array<string>) {
-  return (): Promise<void> => resetCommentsRequest(ids);
+export async function resetComments(commentIds: Array<ModelId>) {
+  await resetCommentsRequest(commentIds);
 }
 
-export function approveComments(ids: Array<string>) {
-  return (): Promise<void> => approveCommentsRequest(ids);
+export async function approveComments(commentIds: Array<ModelId>) {
+  await approveCommentsRequest(commentIds);
 }
 
-export function approveFlagsAndComments(ids: Array<string>) {
-  return (): Promise<void> => approveFlagsAndCommentsRequest(ids);
+export async function approveFlagsAndComments(commentIds: Array<ModelId>) {
+  await approveFlagsAndCommentsRequest(commentIds);
 }
 
-export function resolveFlags(ids: Array<string>) {
-  return (): Promise<void> => resolveFlagsRequest(ids);
+export async function resolveFlags(commentIds: Array<ModelId>) {
+  await resolveFlagsRequest(commentIds);
 }
 
-export function deferComments(ids: Array<string>) {
-  return (): Promise<void> => deferCommentsRequest(ids);
+export async function deferComments(commentIds: Array<ModelId>) {
+  await deferCommentsRequest(commentIds);
 }
 
-export function rejectComments(ids: Array<string>) {
-  return (): Promise<void> => rejectCommentsRequest(ids);
+export async function rejectComments(commentIds: Array<ModelId>) {
+  await rejectCommentsRequest(commentIds);
 }
 
-export function rejectFlagsAndComments(ids: Array<string>) {
-  return (): Promise<void> => rejectFlagsAndCommentsRequest(ids);
+export async function rejectFlagsAndComments(commentIds: Array<ModelId>) {
+  await rejectFlagsAndCommentsRequest(commentIds);
 }
 
-export function tagComments(ids: Array<string>, tagId: string) {
-  return (): Promise<void> => tagCommentsRequest(ids, tagId);
+export async function tagComments(commentIds: Array<ModelId>, tagId: string) {
+  await tagCommentsRequest(commentIds, tagId);
 }
 
-export function tagCommentsAnnotation(id: string, tagId: string, start: number, end: number) {
-  return (): Promise<void> => tagCommentsAnnotationRequest(id, tagId, start, end);
+export async function tagCommentsAnnotation(commentId: string, tagId: string, start: number, end: number) {
+  await tagCommentsAnnotationRequest(commentId, tagId, start, end);
 }
 
-export function tagCommentSummaryScores(ids: Array<string>, tagId: string) {
-  return (): Promise<void> => tagCommentSummaryScoresRequest(ids, tagId);
+export async function tagCommentSummaryScores(commentIds: Array<ModelId>, tagId: string) {
+  await tagCommentSummaryScoresRequest(commentIds, tagId);
 }
 
-export function confirmCommentSummaryScore(commentId: string, tagId: string) {
-  return (): Promise<void> => confirmCommentSummaryScoreRequest(commentId, tagId);
+export async function confirmCommentSummaryScore(commentId: ModelId, tagId: string) {
+  await confirmCommentSummaryScoreRequest(commentId, tagId);
 }
 
-export function rejectCommentSummaryScore(id: string, tagId: string) {
-  return (): Promise<void> => rejectCommentSummaryScoreRequest(id, tagId);
+export async function rejectCommentSummaryScore(commentId: ModelId, tagId: string) {
+  await rejectCommentSummaryScoreRequest(commentId, tagId);
 }
 
-export function resetCommentScore(commentId: string, commentScoreId: string) {
-  return (): Promise<void> => resetCommentScoreRequest(commentId, commentScoreId);
+export async function resetCommentScore(commentId: ModelId, commentScoreId: string) {
+  await resetCommentScoreRequest(commentId, commentScoreId);
 }
 
-export function confirmCommentScore(commentId: string, commentScoreId: string) {
-  return (): Promise<void> => confirmCommentScoreRequest(commentId, commentScoreId);
+export async function confirmCommentScore(commentId: ModelId, commentScoreId: string) {
+  await confirmCommentScoreRequest(commentId, commentScoreId);
 }
 
-export function rejectCommentScore(commentId: string, commentScoreId: string) {
-  return (): Promise<void> => rejectCommentScoreRequest(commentId, commentScoreId);
+export async function rejectCommentScore(commentId: ModelId, commentScoreId: string) {
+  await rejectCommentScoreRequest(commentId, commentScoreId);
 }
+
+export type ICommentActionFunction = (ids: Array<string>, tagId?: string) => Promise<void>;

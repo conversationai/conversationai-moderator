@@ -60,6 +60,18 @@ import {
   SUBMIT_FEEDBACK_URL,
 } from '../../../../config';
 import {
+  approveComments,
+  deferComments,
+  deleteCommentTag,
+  highlightComments,
+  ICommentActionFunction,
+  rejectComments,
+  resetComments,
+  tagComments,
+  tagCommentsAnnotation,
+  tagCommentSummaryScores,
+} from '../../../../stores/commentActions';
+import {
   BASE_Z_INDEX,
   BOTTOM_BORDER_TRANSITION,
   BOX_DEFAULT_SPACING,
@@ -112,6 +124,16 @@ const ACTION_PROPERTY_MAP: {
   reject: 'isAccepted',
   defer: 'isDeferred',
   reset: null,
+};
+
+const actionMap: {
+  [key: string]: ICommentActionFunction;
+} = {
+  highlight: highlightComments,
+  approve: approveComments,
+  defer: deferComments,
+  reject: rejectComments,
+  reset: resetComments,
 };
 
 const COMMENT_WRAPPER_WIDTH = 696;
@@ -314,27 +336,18 @@ export interface ICommentDetailProps extends RouteComponentProps<ICommentDetails
   isFromBatch?: boolean;
   isLoading?: boolean;
   onUpdateCommentScore?(commentScore: ICommentScoreModel): void;
-  onConfirmCommentScore?(commentid: string, commentScoreId: string): void;
-  onRejectCommentScore?(commentid: string, commentScoreId: string): void;
-  onResetCommentScore?(commentid: string, commentScoreId: string): void;
-  onDeleteCommentTag?(id: string, commentScoreId: string): void;
   onUpdateComment?(comment: ICommentModel): void;
   onAddCommentScore?(commentScore: ICommentScoreModel): void;
   onRemoveCommentScore?(commentScore: ICommentScoreModel): void;
   loadData?(commentId: string): void;
   loadScores?(commentId: string): void;
   onCommentAction?(action: IConfirmationAction, idsToDispatch: Array<string>): void;
-  onTagComment?(ids: Array<string>, tagId: string): void;
-  onAnnotateComment?(id: string, tagId: string, start: number, end: number): void;
   authorCountById?(id: string | number): IAuthorCountsModel;
   getUserById?(id: string | number): IUserModel;
   currentUser: IUserModel;
   detailSource?: string;
   linkBackToList?: string;
   summaryScores?: List<ICommentSummaryScoreModel>;
-  tagCommentSummaryScore?(ids: Array<string>, tagId: string): void;
-  confirmCommentSummaryScore?(id: string, tagId: string): void;
-  rejectCommentSummaryScore?(id: string, tagId: string): void;
 }
 
 export interface ICommentDetailState {
@@ -460,7 +473,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   @autobind
   async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
-      this.props.tagCommentSummaryScore([commentId], tagId);
+      tagCommentSummaryScores([commentId], tagId);
     });
     this.moderateComment('reject');
     this.setState({
@@ -480,10 +493,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       previousCommentId,
       loadScores,
       onUpdateCommentScore,
-      onConfirmCommentScore,
-      onRejectCommentScore,
-      onResetCommentScore,
-      onDeleteCommentTag,
       onRemoveCommentScore,
       authorCountById,
       getUserById,
@@ -659,10 +668,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                   onTagButtonClick={this.onTagButtonClick}
                   onCommentTagClick={this.onCommentTagClick}
                   onAnnotateTagButtonClick={this.onAnnotateTagButtonClick}
-                  onConfirmCommentScore={onConfirmCommentScore}
-                  onRejectCommentScore={onRejectCommentScore}
-                  onResetCommentScore={onResetCommentScore}
-                  onDeleteCommentTag={onDeleteCommentTag}
+                  onDeleteCommentTag={deleteCommentTag}
                   onRemoveCommentScore={onRemoveCommentScore}
                   onUpdateCommentScore={onUpdateCommentScore}
                   currentUser={currentUser}
@@ -930,6 +936,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       await this.props.onUpdateComment(this.getChangeByAction(commentAction));
     }
 
+    await actionMap[commentAction]([this.props.comment.id]);
     await Promise.all([
       this.props.onCommentAction && this.props.onCommentAction(commentAction, [this.props.comment.id]),
       timeout(2000),
@@ -1003,9 +1010,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     if (this.props.onAddCommentScore) {
       await this.props.onAddCommentScore(localStatePayload);
     }
-    if (this.props.onTagComment) {
-      await this.props.onTagComment([this.props.comment.id], tagId);
-    }
+    await tagComments([this.props.comment.id], tagId);
     await this.props.loadScores(this.props.comment.id);
     this.closeToast();
   }
@@ -1028,10 +1033,8 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     if (this.props.onAddCommentScore) {
       await this.props.onAddCommentScore(localStatePayload);
     }
-    if (this.props.onAnnotateComment) {
-      await this.props.onAnnotateComment(this.props.comment.id, tag, start, end);
-    }
 
+    await tagCommentsAnnotation(this.props.comment.id, tag, start, end);
     await this.props.loadScores(this.props.comment.id);
 
     this.closeToast();
@@ -1042,10 +1045,8 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     if (this.props.onRemoveCommentScore) {
       await this.props.onRemoveCommentScore(commentScore);
     }
-    if (this.props.onDeleteCommentTag) {
-      await this.props.onDeleteCommentTag(this.props.comment.id, commentScore.id);
-    }
 
+    await deleteCommentTag(this.props.comment.id, commentScore.id);
     this.closeToast();
   }
 

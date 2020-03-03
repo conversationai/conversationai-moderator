@@ -25,6 +25,15 @@ import {
   LinkedBasicBody,
 } from '../../../../../../components';
 import {
+  approveComments,
+  deferComments,
+  highlightComments,
+  ICommentActionFunction,
+  rejectComments,
+  resetComments,
+  tagCommentSummaryScores,
+} from '../../../../../../stores/commentActions';
+import {
   ARTICLE_CATEGORY_TYPE,
   DARK_PRIMARY_TEXT_COLOR,
   DIVIDER_COLOR,
@@ -78,12 +87,20 @@ const STYLES = stylesheet({
   },
 });
 
+const actionMap: { [key: string]: ICommentActionFunction } = {
+  highlight: highlightComments,
+  approve: approveComments,
+  defer: deferComments,
+  reject: rejectComments,
+  tag: tagCommentSummaryScores,
+  reset: resetComments,
+};
+
 export interface IThreadedCommentProps {
   comment: ICommentModel;
   replies?: Array<ICommentModel>;
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
   onUpdateReply?(action: ICommentAction, replyId: string): any;
-  dispatchAction?(action: ICommentAction, idsToDispatch: Array<string>): any;
   handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
@@ -123,18 +140,14 @@ export class ThreadedComment extends React.Component<IThreadedCommentProps, IThr
 
   @autobind
   async dispatchConfirmedAction(action: ICommentAction, ids: Array<string>) {
-    Promise.all([
-      this.props.dispatchAction(action, ids),
-      this.props.updateCommentState(action, ids),
-    ]);
+    await actionMap[action](ids);
+    await this.props.updateCommentState(action, ids);
   }
 
   @autobind
   async dispatchConfirmedReply(action: ICommentAction, ids: Array<string>) {
-    Promise.all([
-      this.props.dispatchAction(action, ids),
-      this.props.onUpdateReply(action, ids[0]),
-    ]);
+    await actionMap[action](ids);
+    await this.props.onUpdateReply(action, ids[0]);
   }
 
   render() {

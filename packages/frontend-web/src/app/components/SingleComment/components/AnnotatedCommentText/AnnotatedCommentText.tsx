@@ -23,6 +23,11 @@ import ReactDOM from 'react-dom';
 
 import { ICommentScoreModel, ITagModel, IUserModel, ModelId } from '../../../../../models';
 import {
+  confirmCommentScore,
+  rejectCommentScore,
+  resetCommentScore,
+} from '../../../../stores/commentActions';
+import {
   ARTICLE_CAPTION_TYPE,
   GREY_COLOR,
   GUTTER_DEFAULT_SPACING,
@@ -130,9 +135,6 @@ export interface IAnnotatedCommentTextProps {
   availableTags: List<ITagModel>;
   onClick?(tag: string, start: number, end: number): Promise<any>;
   onUpdateCommentScore?(commentScore: ICommentScoreModel): void;
-  onConfirmCommentScore?(commentId: ModelId, commentScoreId: ModelId): void;
-  onRejectCommentScore?(commentId: ModelId, commentScoreId: ModelId): void;
-  onResetCommentScore?(commentId: ModelId, commentScoreId: ModelId): void;
   onDeleteCommentTag?(commentId: ModelId, commentScoreId: ModelId): void;
   onRemoveCommentScore?(commentScore: ICommentScoreModel): void;
   loadScores?(commentId: string): void;
@@ -511,10 +513,8 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
         confirmedUserId: this.props.currentUser.id,
       });
     }
-    if (this.props.onConfirmCommentScore) {
-      await this.props.onConfirmCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
-    }
 
+    await confirmCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
     this.closeConfirmationToolTip();
   }
 
@@ -540,10 +540,7 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
       });
     }
 
-    if (this.props.onResetCommentScore) {
-      await this.props.onResetCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
-    }
-
+    await resetCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
     this.closeConfirmationToolTip();
   }
 
@@ -556,10 +553,8 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
         confirmedUserId: this.props.currentUser.id,
       });
     }
-    if (this.props.onRejectCommentScore) {
-      this.props.onRejectCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
-    }
 
+    await rejectCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
     this.closeConfirmationToolTip();
   }
 

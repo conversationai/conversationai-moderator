@@ -19,19 +19,8 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
-import {contextInjector, IContextInjectorProps} from '../../../../injectors/contextInjector';
-import {
-  approveComments,
-  approveFlagsAndComments,
-  deferComments,
-  highlightComments,
-  rejectComments,
-  rejectFlagsAndComments,
-  resetComments,
-  tagCommentSummaryScores,
-} from '../../../../stores/commentActions';
+import { contextInjector, IContextInjectorProps } from '../../../../injectors/contextInjector';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getTextSizes, getTextSizesIsLoading } from '../../../../stores/textSizes';
 import { IModeratedCommentsPathParams, IModeratedCommentsQueryParams } from '../../../routes';
@@ -57,9 +46,7 @@ type IModeratedCommentsDispatchProps = Pick<
   'toggleSelectAll' |
   'toggleSingleItem' |
   'setCommentModerationStatus' |
-  'loadData' |
-  'tagComments' |
-  'dispatchAction'
+  'loadData'
 >;
 
 const mapStateToProps = createStructuredSelector({
@@ -82,28 +69,11 @@ const mapStateToProps = createStructuredSelector({
   textSizes: getTextSizes,
 });
 
-function mapDispatchToProps(dispatch: IAppDispatch, props: IModeratedCommentsProps): IModeratedCommentsDispatchProps {
-  const actionMap: {
-    [key: string]: (ids: Array<string>, tagId?: string) => any;
-  } = {
-    highlight: highlightComments,
-    approve: props.match.params.disposition === 'flagged' ? approveFlagsAndComments : approveComments,
-    defer: deferComments,
-    reject: props.match.params.disposition === 'flagged' ? rejectFlagsAndComments : rejectComments,
-    tag: tagCommentSummaryScores,
-    reset: props.match.params.disposition === 'flagged' ? approveFlagsAndComments : resetComments,
-  };
-
+function mapDispatchToProps(dispatch: IAppDispatch): IModeratedCommentsDispatchProps {
   return {
     loadData: (params: IModeratedCommentsPathParams, query: IModeratedCommentsQueryParams) => {
       dispatch(loadCommentList(params, query));
     },
-
-    tagComments: (ids: Array<string>, tagId: string) =>
-        dispatch(tagCommentSummaryScores(ids, tagId)),
-
-    dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>) =>
-        dispatch(actionMap[action](idsToDispatch)),
 
     toggleSelectAll: () => dispatch(toggleSelectAll()),
 

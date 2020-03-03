@@ -22,14 +22,6 @@ import { createStructuredSelector } from 'reselect';
 import { ICommentAction } from '../../../../types';
 import { IAppDispatch, IAppState } from '../../../appstate';
 import {
-  approveComments,
-  deferComments,
-  highlightComments,
-  rejectComments,
-  resetComments,
-  tagCommentSummaryScores,
-} from '../../../stores/commentActions';
-import {
   approveComment,
   deferComment,
   highlightComment,
@@ -61,19 +53,6 @@ const updateCommentStateAction: {
   reset: resetComment,
 };
 
-export interface IActionMap {
-  [key: string]: (ids: Array<string>, tagId?: string) => () => Promise<void>;
-}
-
-const actionMap: IActionMap = {
-  highlight: highlightComments,
-  approve: approveComments,
-  defer: deferComments,
-  reject: rejectComments,
-  tag: tagCommentSummaryScores,
-  reset: resetComments,
-};
-
 const mapStateToProps = createStructuredSelector({
   totalCommentCount: (state: IAppState) => getAllCommentIds(state).size,
   isLoading: (state: IAppState) => (getIsLoading(state) || getTextSizesIsLoading(state)),
@@ -89,12 +68,6 @@ const mapStateToProps = createStructuredSelector({
 
 function mapDispatchToProps(dispatch: IAppDispatch): Partial<ISearchResultsProps> {
   return {
-    tagComments: (ids: Array<string>, tagId: string) =>
-      dispatch(tagCommentSummaryScores(ids, tagId)),
-
-    dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>) =>
-      dispatch(actionMap[action](idsToDispatch)),
-
     onToggleSelectAll: () => (
       dispatch(toggleSelectAll())
     ),
