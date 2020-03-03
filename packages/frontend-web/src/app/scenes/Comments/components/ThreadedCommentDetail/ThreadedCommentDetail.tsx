@@ -177,16 +177,16 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
           </button>
         </div>
         <div key="comments" {...css(STYLES.body)}>
-          {comment &&
-          <ThreadedComment
-            updateCommentState={updateCommentState}
-            onUpdateReply={onUpdateReply}
-            dispatchAction={dispatchAction}
-            comment={comment}
-            handleAssignTagsSubmit={this.handleAssignTagsSubmit}
-            replies={comment.replies}
-          />
-          }
+          {comment && (
+            <ThreadedComment
+              updateCommentState={updateCommentState}
+              onUpdateReply={onUpdateReply}
+              dispatchAction={dispatchAction}
+              comment={comment}
+              handleAssignTagsSubmit={this.handleAssignTagsSubmit}
+              replies={comment.replies}
+            />
+          )}
         </div>
       </div>
     );
