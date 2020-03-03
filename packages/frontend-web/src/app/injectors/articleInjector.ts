@@ -17,7 +17,7 @@ import { connect } from 'react-redux';
 
 import { ModelId } from '../../models';
 import { IAppState } from '../appstate';
-import { getCachedArticle, IArticleCacheProps } from './fetchQueues';
+import { getCachedArticle, IArticleCacheProps } from './articleFetchQueue';
 
 export interface IArticleInjectorInputProps {
   articleId: ModelId;
