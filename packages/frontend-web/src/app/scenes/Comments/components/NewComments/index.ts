@@ -19,18 +19,8 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { ICommentAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
 import { contextInjector } from '../../../../injectors/contextInjector';
-import {
-  approveComments,
-  confirmCommentSummaryScore,
-  deferComments,
-  highlightComments,
-  rejectComments,
-  rejectCommentSummaryScore,
-  tagCommentSummaryScores,
-} from '../../../../stores/commentActions';
 import {
   approveComment,
   deferComment,
@@ -63,16 +53,6 @@ import {
   toggleSingleItem,
 } from './store';
 
-const actionMap: {
-  [key: string]: (ids: Array<string>, tagId?: string) => any;
-} = {
-  highlight: highlightComments,
-  approve: approveComments,
-  defer: deferComments,
-  reject: rejectComments,
-  tag: tagCommentSummaryScores,
-};
-
 const moderationStatusMap: {
   [key: string]: (ids: Array<string>) => any;
 } = {
@@ -84,18 +64,6 @@ const moderationStatusMap: {
 
 function mapDispatchToProps(dispatch: IAppDispatch): Partial<INewCommentsProps> {
   return {
-    tagComments: (ids: Array<string>, tagId: string) =>
-        dispatch(tagCommentSummaryScores(ids, tagId)),
-
-    confirmCommentSummaryScore: (id: string, tagId: string) =>
-        dispatch(confirmCommentSummaryScore(id, tagId)),
-
-    rejectCommentSummaryScore: (id: string, tagId: string) =>
-        dispatch(rejectCommentSummaryScore(id, tagId)),
-
-    dispatchAction: (action: ICommentAction, idsToDispatch: Array<string>) =>
-        dispatch(actionMap[action](idsToDispatch)),
-
     setCommentModerationStatus: (commentIds: Array<string>, moderationAction: string) =>
         dispatch(moderationStatusMap[moderationAction](commentIds)),
 

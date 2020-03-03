@@ -23,14 +23,6 @@ import { ICommentModel } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
 import {
-  approveComments,
-  deferComments,
-  highlightComments,
-  rejectComments,
-  resetComments,
-  tagCommentSummaryScores,
-} from '../../../../stores/commentActions';
-import {
   approveComment,
   deferComment,
   highlightComment,
@@ -50,17 +42,6 @@ const updateCommentStateAction: {
   reset: resetComment,
 };
 
-const actionMap: {
-  [key: string]: (ids: Array<string>, tagId?: string) => any;
-} = {
-  highlight: highlightComments,
-  approve: approveComments,
-  defer: deferComments,
-  reject: rejectComments,
-  tag: tagCommentSummaryScores,
-  reset: resetComments,
-};
-
 type IThreadedCommentDetailStateProps = Pick<
   IThreadedCommentDetailProps,
   'comment' |
@@ -70,15 +51,9 @@ type IThreadedCommentDetailStateProps = Pick<
 type IThreadedCommentDetailDispatchProps = Pick<
   IThreadedCommentDetailProps,
   'loadData' |
-  'dispatchAction' |
   'onUpdateComment' |
-  'onUpdateCommentState' |
-  'tagComments'
+  'onUpdateCommentState'
 >;
-
-type IThreadedCommentDetailDispatchWithOverwriteProps = IThreadedCommentDetailDispatchProps & {
-  dispatchAction(action: IConfirmationAction, idsToDispatch: Array<string>): any;
-};
 
 function updateCommentState(comment: ICommentModel, action: IConfirmationAction): ICommentModel {
   switch (action) {
@@ -115,9 +90,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
       loadComment(dispatch, commentId);
     },
 
-    dispatchAction: (action: IConfirmationAction, idsToDispatch: Array<string>) =>
-        dispatch(actionMap[action](idsToDispatch)),
-
     onUpdateComment: (comment: ICommentModel) => (
       dispatch(updateComment(comment))
     ),
@@ -125,15 +97,12 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
     onUpdateCommentState: (comment: ICommentModel, action: IConfirmationAction) => (
         dispatch(updateCommentStateAction[action](comment))
     ),
-
-    tagComments: (ids: Array<string>, tagId: string) =>
-        dispatch(tagCommentSummaryScores(ids, tagId)),
   };
 }
 
 const mergeProps = (
   stateProps: IThreadedCommentDetailStateProps,
-  dispatchProps: IThreadedCommentDetailDispatchWithOverwriteProps,
+  dispatchProps: IThreadedCommentDetailDispatchProps,
   ownProps: IThreadedCommentDetailProps,
 ) => {
   return {

@@ -58,7 +58,16 @@ import {
 } from '../../../../config';
 import { IContextInjectorProps } from '../../../../injectors/contextInjector';
 import { updateArticle } from '../../../../platform/dataService';
-import { getDefaultSort, putDefaultSort } from '../../../../util/savedSorts';
+import {
+  approveComments,
+  confirmCommentSummaryScore,
+  deferComments,
+  highlightComments,
+  ICommentActionFunction,
+  rejectComments,
+  rejectCommentSummaryScore,
+  tagCommentSummaryScores,
+} from '../../../../stores/commentActions';
 import {
   ARTICLE_CATEGORY_TYPE,
   BASE_Z_INDEX,
@@ -80,6 +89,7 @@ import {
   partial,
   setReturnSavedCommentRow,
 } from '../../../../util';
+import { getDefaultSort, putDefaultSort } from '../../../../util/savedSorts';
 import { css, stylesheet } from '../../../../utilx';
 import {
   commentDetailsPageLink,
@@ -90,6 +100,14 @@ import {
 } from '../../../routes';
 import { BatchSelector } from './components/BatchSelector';
 import { getCommentIDsInRange } from './store';
+
+const actionMap: { [key: string]: ICommentActionFunction } = {
+  highlight: highlightComments,
+  approve: approveComments,
+  defer: deferComments,
+  reject: rejectComments,
+  tag: tagCommentSummaryScores,
+};
 
 const ARROW_SIZE = 6;
 const TOAST_DELAY = 6000;
@@ -260,16 +278,12 @@ export interface INewCommentsProps extends RouteComponentProps<INewCommentsPathP
   rules?: List<IRuleModel>;
   pagingIdentifier: string;
   textSizes?: Map<number, number>;
-  tagComments?(ids: Array<string>, tagId: string): any;
-  dispatchAction?(action: ICommentAction, idsToDispatch: Array<string>): any;
   removeCommentScore?(idsToDispatch: Array<string>): any;
   toggleSelectAll?(): any;
   toggleSingleItem({ id }: { id: string }): any;
   getComment?(id: string): any;
   setCommentModerationStatus?(commentIds: Array<string>, action: string): any;
   loadData(params: INewCommentsPathParams, pos1: number, pos2: number, sort: string): void;
-  confirmCommentSummaryScore?(id: string, tagId: string): void;
-  rejectCommentSummaryScore?(id: string, tagId: string): void;
 }
 
 export interface INewCommentsState {
@@ -454,11 +468,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
 
   @autobind
   async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>) {
-    const {
-      confirmCommentSummaryScore,
-      rejectCommentSummaryScore,
-    } = this.props;
-
     selectedTagIds.forEach((tagId) => {
       confirmCommentSummaryScore(commentId, tagId);
     });
@@ -881,7 +890,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   @autobind
   onTagButtonClick(tagId: string) {
     const ids = this.getSelectedIDs();
-    this.triggerActionToast('tag', ids.length, () => this.props.tagComments(ids, tagId));
+    this.triggerActionToast('tag', ids.length, () => tagCommentSummaryScores(ids, tagId));
     this.toggleTaggingToolTip();
   }
 
@@ -903,7 +912,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     );
 
     // Send event
-    await this.props.dispatchAction(action, idsToDispatch);
+    actionMap[action](idsToDispatch);
 
     // remove these from the ui because they are now 'moderated'
     this.props.removeCommentScore(idsToDispatch);

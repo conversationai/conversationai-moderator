@@ -47,6 +47,15 @@ import {
 } from '../../../components';
 import { DATE_FORMAT_LONG } from '../../../config';
 import {
+  approveComments,
+  deferComments,
+  highlightComments,
+  ICommentActionFunction,
+  rejectComments,
+  resetComments,
+  tagCommentSummaryScores,
+} from '../../../stores/commentActions';
+import {
   DARK_COLOR,
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
@@ -190,6 +199,15 @@ const STYLES = stylesheet({
   },
 });
 
+const actionMap: { [key: string]: ICommentActionFunction } = {
+  highlight: highlightComments,
+  approve: approveComments,
+  defer: deferComments,
+  reject: rejectComments,
+  tag: tagCommentSummaryScores,
+  reset: resetComments,
+};
+
 export interface ISearchResultsProps extends RouteComponentProps<{}> {
   totalCommentCount: number;
   isLoading: boolean;
@@ -202,8 +220,6 @@ export interface ISearchResultsProps extends RouteComponentProps<{}> {
   textSizes?: Map<number, number>;
   pagingIdentifier?: string;
 
-  tagComments?(ids: Array<string>, tagId: string): any;
-  dispatchAction?(action: IConfirmationAction, commentIds: Array<string>): any;
   onToggleSelectAll?(): void;
   onToggleSingleItem(item: { id: string }): void;
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
@@ -333,7 +349,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   @autobind
   async dispatchConfirmedAction(action: ICommentAction, ids?: Array<string>) {
     const idsToDispatch = ids || this.getSelectedIDs();
-    this.props.dispatchAction(action, idsToDispatch);
+    actionMap[action](idsToDispatch);
     this.props.updateCommentState(action, idsToDispatch);
   }
 
@@ -377,7 +393,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   @autobind
   onTagButtonClick(tagId: string) {
     const ids = this.getSelectedIDs();
-    this.triggerActionToast('tag', ids.length, () => this.props.tagComments(ids, tagId));
+    this.triggerActionToast('tag', ids.length, () => tagCommentSummaryScores(ids, tagId));
     this.toggleTaggingToolTip();
   }
 
@@ -411,7 +427,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   @autobind
   async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
-      this.props.tagComments([commentId], tagId);
+      tagCommentSummaryScores([commentId], tagId);
     });
     this.dispatchConfirmedAction('reject', [commentId]);
   }

@@ -26,6 +26,10 @@ import {
   RejectIcon,
 } from '../../../../components';
 import {
+  rejectComments,
+  tagCommentSummaryScores,
+} from '../../../../stores/commentActions';
+import {
   BASE_Z_INDEX,
   BODY_TEXT_TYPE,
   DARK_COLOR,
@@ -94,8 +98,6 @@ export interface IThreadedCommentDetailProps extends RouteComponentProps<ICommen
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
   onUpdateCommentState?(comment: ICommentModel, action: IConfirmationAction): any;
   loadData?(commentId: string): void;
-  dispatchAction?(action: ICommentAction, idsToDispatch: Array<string>): any;
-  tagComments?(ids: Array<string>, tagId: string): any;
 }
 
 export interface IThreadedCommentDetailState {
@@ -149,9 +151,9 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
   @autobind
   async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
-      this.props.tagComments([commentId], tagId);
+      tagCommentSummaryScores([commentId], tagId);
     });
-    this.props.dispatchAction('reject', [commentId]);
+    await rejectComments([commentId]);
     this.props.onUpdateReply('reject', commentId);
   }
 
@@ -160,7 +162,6 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
       comment,
       updateCommentState,
       onUpdateReply,
-      dispatchAction,
     } = this.props;
 
     return (
@@ -181,7 +182,6 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
             <ThreadedComment
               updateCommentState={updateCommentState}
               onUpdateReply={onUpdateReply}
-              dispatchAction={dispatchAction}
               comment={comment}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
               replies={comment.replies}

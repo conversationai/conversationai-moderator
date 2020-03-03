@@ -50,6 +50,17 @@ import {
 import { IContextInjectorProps } from '../../../../injectors/contextInjector';
 import { updateArticle } from '../../../../platform/dataService';
 import {
+  approveComments,
+  approveFlagsAndComments,
+  deferComments,
+  highlightComments,
+  ICommentActionFunction,
+  rejectComments,
+  rejectFlagsAndComments,
+  resetComments,
+  tagCommentSummaryScores,
+} from '../../../../stores/commentActions';
+import {
   BASE_Z_INDEX,
   BOX_DEFAULT_SPACING,
   DARK_COLOR,
@@ -239,6 +250,23 @@ const STYLES = stylesheet({
 const LOADING_COMMENTS_MESSAGING = 'Loading comments.';
 const NO_COMMENTS_MESSAGING = 'No matching comments found.';
 
+const actionMap: {
+  [key: string]: ICommentActionFunction;
+} = {
+  highlight: highlightComments,
+  highlightFlagged: highlightComments,
+  approve: approveComments,
+  approveFlagged: approveFlagsAndComments,
+  defer: deferComments,
+  deferFlagged: deferComments,
+  reject: rejectComments,
+  rejectFlagged: rejectFlagsAndComments,
+  tag: tagCommentSummaryScores,
+  tagFlagged: tagCommentSummaryScores,
+  reset: resetComments,
+  resetFlagged: resetComments,
+};
+
 export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedCommentsPathParams>, IContextInjectorProps {
   isLoading: boolean;
   tags: List<ITagModel>;
@@ -248,8 +276,6 @@ export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedC
   areAllSelected: boolean;
   pagingIdentifier?: string;
   loadData?(params: IModeratedCommentsPathParams, query: IModeratedCommentsQueryParams): void;
-  tagComments?(ids: Array<string>, tagId: string): any;
-  dispatchAction?(action: IConfirmationAction, idsToDispatch: Array<string>): any;
   toggleSelectAll?(): any;
   toggleSingleItem({ id }: { id: string }): any;
   textSizes?: Map<number, number>;
@@ -645,7 +671,7 @@ export class ModeratedComments
   @autobind
   onTagButtonClick(tagId: string) {
     const ids = this.getSelectedIDs();
-    this.triggerActionToast('tag', ids.length, () => this.props.tagComments(ids, tagId));
+    this.triggerActionToast('tag', ids.length, () => tagCommentSummaryScores(ids, tagId));
     this.toggleTaggingToolTip();
   }
 
@@ -701,7 +727,7 @@ export class ModeratedComments
   @autobind
   async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
-      this.props.tagComments([commentId], tagId);
+      tagCommentSummaryScores([commentId], tagId);
     });
     this.dispatchConfirmedAction('reject', [commentId]);
   }
@@ -725,7 +751,8 @@ export class ModeratedComments
     this.props.setCommentModerationStatus(this.props, ids, action, this.state.actionLabel);
 
     // Send event
-    await this.props.dispatchAction(action, ids);
+    const a = this.props.match.params.disposition === 'flagged' ? action + 'Flagged' : action;
+    await actionMap[a](ids);
   }
 
   @autobind

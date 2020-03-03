@@ -516,9 +516,6 @@ export interface ISingleCommentProps {
   url?: string;
   loadScores?(commentId: string): void;
   onUpdateCommentScore?(commentScore: ICommentScoreModel): void;
-  onConfirmCommentScore?(commentid: string, commentScoreId: string): void;
-  onRejectCommentScore?(commentid: string, commentScoreId: string): void;
-  onResetCommentScore?(commentid: string, commentScoreId: string): void;
   onDeleteCommentTag?(id: string, commentScoreId: string): void;
   onRemoveCommentScore?(commentScore: ICommentScoreModel): void;
   authorCounts?: IAuthorCountsModel;
@@ -675,9 +672,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       onScoreClick,
       loadScores,
       onUpdateCommentScore,
-      onConfirmCommentScore,
-      onRejectCommentScore,
-      onResetCommentScore,
       onDeleteCommentTag,
       onRemoveCommentScore,
       authorCounts,
@@ -944,9 +938,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                 onClick={onAnnotateTagButtonClick}
                 getUserById={getUserById}
                 currentUser={currentUser}
-                onConfirmCommentScore={onConfirmCommentScore}
-                onRejectCommentScore={onRejectCommentScore}
-                onResetCommentScore={onResetCommentScore}
                 onDeleteCommentTag={onDeleteCommentTag}
                 onRemoveCommentScore={onRemoveCommentScore}
                 onUpdateCommentScore={onUpdateCommentScore}
