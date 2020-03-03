@@ -16,7 +16,6 @@ limitations under the License.
 
 export * from './csrf';
 export * from './DotChartRenderer';
-export * from './createImmutableSelector';
 export * from './groupByColumn';
 export * from './makeCheckedSelectionStore';
 export * from './makeCurrentPagingIdentifierReducer';
