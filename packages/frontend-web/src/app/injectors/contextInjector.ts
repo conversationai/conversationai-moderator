@@ -20,7 +20,7 @@ import {IArticleModel, ICategoryModel, ModelId} from '../../models';
 import {IAppState} from '../appstate';
 import {IContextPathParams, isArticleContext} from '../scenes/routes';
 import {getCategory} from '../stores/categories';
-import {getCachedArticle} from './fetchQueues';
+import {getCachedArticle} from './articleFetchQueue';
 
 export interface IContextInjectorProps {
   isArticleContext: boolean;

@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {IArticleModel, ModelId} from '../../models';
+import {ArticleModel, IArticleModel, ModelId} from '../../models';
 import {IAppState} from '../appstate';
 import {getArticles} from '../platform/dataService';
 import {store} from '../store';
@@ -38,7 +38,7 @@ function ensureCache(articleId: ModelId) {
   }
 }
 
-export function getCachedArticle(state: IAppState, articleId: ModelId): {article: IArticleModel, inCache: boolean} {
+export function getCachedArticle(state: IAppState, articleId: ModelId): IArticleCacheProps {
   const article: IArticleModel = state.global.articles.index.get(articleId);
   if (article) {
     articleFetchQueue.delete(articleId);
@@ -49,7 +49,7 @@ export function getCachedArticle(state: IAppState, articleId: ModelId): {article
 
   return {
     inCache: false,
-    article: {
+    article: ArticleModel({
       id: articleId,
       sourceCreatedAt: '',
       updatedAt: '',
@@ -72,6 +72,6 @@ export function getCachedArticle(state: IAppState, articleId: ModelId): {article
       assignedModerators: new Array<ModelId>(),
       isCommentingEnabled: true,
       isAutoModerated: true,
-    },
+    }),
   };
 }
