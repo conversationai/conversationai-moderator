@@ -42,7 +42,7 @@ const comment = fakeCommentModel({
   author,
   sourceCreatedAt: date.toString(),
   unresolvedFlagsCount: 2,
-  flagsSummary: new Map([['red', List([1, 0, 0])], ['green', List([2, 2, 2])]]),
+  flagsSummary: new Map([['red', [1, 0, 0]], ['green', [2, 2, 2]]]),
 });
 
 const flags = fromJS([

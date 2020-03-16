@@ -69,12 +69,11 @@ const storeAuthorCounts =
 
 export async function loadComment(dispatch: IAppDispatch, id: string) {
   await dispatch(loadCommentStart());
-  const result = await getCommentSvc(id);
-  const data = result.response;
-  await dispatch(loadCommentComplete(data));
+  const comment = await getCommentSvc(id, { include: ['replyTo'] });
+  await dispatch(loadCommentComplete(comment));
 
-  if (data.data && data.data.attributes.authorSourceId) {
-    const authorSourceId = data.data.attributes.authorSourceId;
+  if (comment && comment.authorSourceId) {
+    const authorSourceId = comment.authorSourceId;
     const authorCounts = await listAuthorCounts([authorSourceId]);
     dispatch(storeAuthorCounts({authorCounts}));
   }

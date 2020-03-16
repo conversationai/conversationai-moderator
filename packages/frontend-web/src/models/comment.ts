@@ -14,8 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { fromJS, List, Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
+import { ModelId } from './common';
 
 export interface IAuthorAttributes {
   email: string;
@@ -34,70 +33,41 @@ export interface IAuthorCountsAttributes {
 export type IAuthorCountsModel = Readonly<IAuthorCountsAttributes>;
 
 export interface ICommentAttributes {
-  id: string;
-  sourceId: string | number;
-  replyToSourceId: string | number | undefined;
-  replyId: string | undefined;
-  replyTo?: ICommentModel;
-  authorSourceId: string | number;
-  text: string;
+  id: ModelId;
+  sourceId: string;
+  authorSourceId?: string;
+  replyToSourceId?: string;
   author: IAuthorModel;
+  text: string;
+
   isScored: boolean;
   isModerated: boolean;
-  isAccepted: boolean;
+  isAccepted?: boolean;
   isDeferred: boolean;
   isHighlighted: boolean;
   isBatchResolved: boolean;
   isAutoResolved: boolean;
+
   sourceCreatedAt: string;
   updatedAt: string;
+  sentForScoring: string;
+
   unresolvedFlagsCount: number;
-  flagsSummary?: Map<string, List<number>>;
-  sentForScoring: boolean;
-  articleId: string;
+  flagsSummary?: Map<string, Array<number>>;
+
+  articleId: ModelId;
+  replyId?: ModelId;
+  replyTo?: ICommentModel;
   replies?: Array<ICommentModel>;
+
   maxSummaryScore?: number;
-  maxSummaryScoreTagId?: string;
+  maxSummaryScoreTagId?: ModelId;
 }
 
-export interface ICommentModel extends TypedRecord<ICommentModel>, ICommentAttributes {}
+export type ICommentModel = Readonly<ICommentAttributes>;
 
-const CommentModelRecord = Record({
-  id: null,
-  sourceId: null,
-  replyToSourceId: null,
-  replyId: null,
-  replyTo: null,
-  authorSourceId: null,
-  text: null,
-  author: null,
-  isScored: null,
-  isModerated: null,
-  isAccepted: null,
-  isDeferred: null,
-  isHighlighted: null,
-  isBatchResolved: null,
-  isAutoResolved: null,
-  unresolvedFlagsCount: null,
-  flagsSummary: null,
-  sourceCreatedAt: null,
-  updatedAt: null,
-  sentForScoring: null,
-  articleId: null,
-  article: null,
-  replies: null,
-  commentScores: null,
-  commentFlags: null,
-  maxSummaryScore: null,
-  maxSummaryScoreTagId: null,
-});
-
-export function CommentModel(keyValuePairs?: ICommentAttributes | Map<string, any>): ICommentModel {
-  let author: any = (keyValuePairs as ICommentAttributes).author  || (keyValuePairs as Map<string, any>).get('author');
-
-  if (typeof author === 'string') {
-    author = JSON.parse(author);
-  }
+export function CommentModel(keyValuePairs?: ICommentAttributes): ICommentModel {
+  const author: any = (keyValuePairs as ICommentAttributes).author;
 
   if (author.user_name) {
     author.name = author.user_name;
@@ -107,6 +77,8 @@ export function CommentModel(keyValuePairs?: ICommentAttributes | Map<string, an
     author.avatar = author.image_uri;
   }
 
-  const immutableKeyValuePairs = fromJS(keyValuePairs).set('author', author);
-  return new CommentModelRecord(immutableKeyValuePairs) as ICommentModel;
+  const fsd = keyValuePairs.flagsSummary;
+  const flagsSummary = fsd ? new Map(Object.entries(fsd)) : new Map();
+
+  return {...keyValuePairs, author, flagsSummary} as ICommentModel;
 }

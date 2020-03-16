@@ -29,8 +29,6 @@ import {
   UserModel,
 } from '../../models';
 
-export type IModelID = string | number;
-
 let singleRecordStores = 0;
 
 function findModel(name: string): (Model: any) => any {
@@ -145,12 +143,12 @@ export function makeSingleRecordReducer<T>(
     };
   }
 
-  function onEnd(_state: ISingleRecordState<T>, { payload }: Action<object>) {
+  function onEnd(_state: ISingleRecordState<T>, { payload }: Action<T>) {
     return {
       hasData: true,
       isFetching: false,
       shouldWait: false,
-      item: convertFromJSONAPI<T>(fromJS(payload)),
+      item: payload,
     };
   }
 
@@ -161,7 +159,7 @@ export function makeSingleRecordReducer<T>(
   const reducer = handleActions<
     ISingleRecordState<T>,
     void   | // startEvent
-    object | // endEvent
+    T | // endEvent
     T        // updateRecordAction
   >({
     [startEvent]: onStart,

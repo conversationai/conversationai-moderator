@@ -28,6 +28,7 @@ import {
   ArticleModel,
   CommentDatedModel,
   CommentFlagModel,
+  CommentModel,
   CommentScoredModel,
   CommentScoreModel,
   IArticleModel,
@@ -293,7 +294,7 @@ function convertArrayFromJSONAPI<T>(result: any): List<T> {
 
 export async function listCommentsById(
   commentIds: List<string>,
-): Promise<List<ICommentModel>> {
+): Promise<Array<ICommentModel>> {
   const { data } = await axios.post(
     serviceURL(
       'commentsById',
@@ -305,7 +306,7 @@ export async function listCommentsById(
     },
   );
 
-  return convertArrayFromJSONAPI<ICommentModel>(data);
+  return data.data.map((d: any) => CommentModel({id: d.id, ...d.attributes}));
 }
 
 export async function listCommentSummaryScoresById(
@@ -458,19 +459,12 @@ export async function getModeratedCommentIdsForCategory(
 /**
  * Get a single model.
  */
-export async function getModel<T>(
-  type: IValidModelNames,
+export async function getComment(
   id: string,
   params?: Partial<IParams>,
-): Promise<ISingleResponse<T>> {
-  validateModelName(type);
-
-  const { data } = await axios.get(modelURL(type, id, params));
-
-  return {
-    model: convertFromJSONAPI<T>(data),
-    response: data,
-  };
+): Promise<ICommentModel> {
+  const { data } = await axios.get(modelURL('comments', id, params));
+  return CommentModel({id: data.data.id, ...data.data.attributes});
 }
 
 export async function getArticles(ids: Array<ModelId>): Promise<Array<IArticleModel>> {
@@ -483,10 +477,6 @@ export async function getArticleText(id: ModelId) {
   const url = serviceURL('simple', `/article/${id}/text`);
   const response = await axios.get(url);
   return response.data.text;
-}
-
-export async function getComment(id: string) {
-  return await getModel('comments', id, { include: ['replyTo'] });
 }
 
 /**

@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
@@ -58,24 +57,36 @@ type IThreadedCommentDetailDispatchProps = Pick<
 function updateCommentState(comment: ICommentModel, action: IConfirmationAction): ICommentModel {
   switch (action) {
     case 'highlight':
-      return comment.set('isHighlighted', true);
+      return {...comment, isHighlighted: true};
     case 'approve':
-      return comment.set('isAccepted', true)
-          .set('isModerated', true)
-          .set('isDeferred', false);
+      return {
+        ...comment,
+        isAccepted: true,
+        isModerated: true,
+        isDeferred: false,
+      };
     case 'reject':
-      return comment.set('isAccepted', false)
-          .set('isModerated', true)
-          .set('isDeferred', false);
+      return {
+        ...comment,
+        isAccepted: false,
+        isModerated: true,
+        isDeferred: false,
+      };
     case 'defer':
-      return comment.set('isAccepted', null)
-          .set('isModerated', true)
-          .set('isDeferred', true);
+      return {
+        ...comment,
+        isAccepted: null,
+        isModerated: true,
+        isDeferred: true,
+      };
     default :
-      return comment.set('isAccepted', null)
-          .set('isModerated', false)
-          .set('isHighlighted', false)
-          .set('isDeferred', false);
+      return {
+        ...comment,
+        isAccepted: null,
+        isModerated: false,
+        isHighlighted: false,
+        isDeferred: false,
+      };
   }
 }
 
@@ -111,19 +122,18 @@ const mergeProps = (
     ...dispatchProps,
 
     onUpdateReply: (action: IConfirmationAction, replyId: string) =>
-      dispatchProps.onUpdateComment(stateProps.comment.updateIn(['replies'], (replies: List<ICommentModel>) => {
-        return replies.map((r) => {
+      dispatchProps.onUpdateComment({
+        ...stateProps.comment,
+        replies: stateProps.comment.replies.map((r) => {
           if (r.id === replyId) {
             // We need to both update the reply state as well as the loaded comment state
             dispatchProps.onUpdateCommentState(r, action);
 
             return updateCommentState(r, action);
           }
-
           return r;
-        });
+        }),
       }),
-    ),
   };
 };
 
