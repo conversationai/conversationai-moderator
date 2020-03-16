@@ -21,7 +21,7 @@ import {
   ICommentModel,
 } from '../../../../../models';
 import { IAppDispatch, IAppState } from '../../../../appstate';
-import { getModel } from '../../../../platform/dataService';
+import { getComment as getCommentSvc } from '../../../../platform/dataService';
 import {
   ISingleRecordState,
   makeSingleRecordReducer,
@@ -34,9 +34,8 @@ const loadCommentComplete =
 
 export async function loadComment(dispatch: IAppDispatch, id: string) {
   await dispatch(loadCommentStart());
-  const result = await getModel('comments', id, {include: ['replies']});
-  const data = result.response;
-  await dispatch(loadCommentComplete(data));
+  const comment = await getCommentSvc(id, {include: ['replies']});
+  await dispatch(loadCommentComplete(comment));
 }
 
 // need to make an update replies store thinger

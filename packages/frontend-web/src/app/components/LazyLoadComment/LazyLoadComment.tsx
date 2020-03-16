@@ -165,7 +165,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
         {displayArticleTitle && <ArticleTitle articleId={comment.articleId}/>}
         <div key="body" {...css(ROW_STYLES.meta)}>
           <div key="text" {...css(ROW_STYLES.authorRow)}>
-            { comment.replyToSourceId > 0 && (
+            { comment.replyToSourceId && (
               <Link
                 to={commentRepliesDetailsLink({
                   context: articleBase,

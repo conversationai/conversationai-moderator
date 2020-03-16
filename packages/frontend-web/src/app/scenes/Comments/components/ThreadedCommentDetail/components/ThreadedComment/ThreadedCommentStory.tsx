@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 import { storiesOf } from '@storybook/react';
-import { List } from 'immutable';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -41,7 +40,7 @@ const comment = fakeCommentModel({
   authorSourceId: 'author1',
   author,
   unresolvedFlagsCount: 1,
-  flagsSummary: new Map([['red', List([1, 0, 0])], ['green', List([2, 1, 2])]]),
+  flagsSummary: new Map([['red', [1, 0, 0]], ['green', [2, 1, 2]]]),
   text: 'Orginating comment text is here',
 });
 const replies = [
@@ -54,7 +53,7 @@ const replies = [
     authorSourceId: 'author2',
     author,
     unresolvedFlagsCount: 2,
-    flagsSummary: new Map([['red', List([1, 0, 1])], ['green', List([2, 2, 0])]]),
+    flagsSummary: new Map([['red', [1, 0, 1]], ['green', [2, 2, 0]]]),
     text: 'First reply comment text is here. This comment is marked Deferred.',
   }),
   fakeCommentModel({
@@ -66,7 +65,7 @@ const replies = [
     authorSourceId: 'author3',
     author,
     unresolvedFlagsCount: 1 ,
-    flagsSummary: new Map([['red', List([1, 0, 0])], ['green', List([2, 1, 0])]]),
+    flagsSummary: new Map([['red', [1, 0, 0]], ['green', [2, 1, 0]]]),
     text: 'Second reply comment text is here. This comment is marked Highlighted.',
   }),
   fakeCommentModel({
@@ -79,9 +78,9 @@ const replies = [
     author,
     unresolvedFlagsCount: 20,
     flagsSummary: new Map([
-      ['red', List([5, 3, 5])],
-      ['green', List([15, 10, 15])],
-      ['blue', List([10, 7, 10])],
+      ['red', [5, 3, 5]],
+      ['green', [15, 10, 15]],
+      ['blue', [10, 7, 10]],
     ]),
     text: 'Third reply comment text is here. This comment is marked Rejected.',
   }),

@@ -408,7 +408,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
   static getDerivedStateFromProps(nextProps: ICommentDetailProps, prevState: ICommentDetailState) {
     const categoryId = nextProps.article ? nextProps.article.categoryId : 'na';
-    const sensitivities =  getSensitivitiesForCategory(categoryId, nextProps.taggingSensitivities);
+    const sensitivities = getSensitivitiesForCategory(categoryId, nextProps.taggingSensitivities);
 
     const allScoresAboveThreshold = getScoresAboveThreshold(sensitivities, nextProps.allScores);
     const reducedScoresAboveThreshold = getReducedScoresAboveThreshold(sensitivities, nextProps.allScores);
@@ -791,7 +791,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
               id={SCORES_POPUP_ID}
               {...css(
                 STYLES.popup,
-                { width: `${COMMENT_WRAPPER_WIDTH}px`},
+                { width: `${COMMENT_WRAPPER_WIDTH}px` },
               )}
             >
               {/* All scores popup */}
@@ -898,24 +898,33 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     const { comment } = this.props;
 
     if (action === 'reset') {
-      return comment.set('isHighlighted', false)
-                    .set('isAccepted', null)
-                    .set('isModerated', null)
-                    .set('isDeferred', false);
+      return {
+        ...comment,
+        isHighlighted: false,
+        isAccepted: null,
+        isModerated: null,
+        isDeferred: false,
+      };
     }
 
     if (action === 'highlight') {
-      return comment.set('isHighlighted', true)
-                    .set('isAccepted', true)
-                    .set('isModerated', true)
-                    .set('isDeferred', false);
+      return {
+        ...comment,
+        isHighlighted: true,
+        isAccepted: true,
+        isModerated: true,
+        isDeferred: false,
+      };
     }
 
-    return comment.set('isModerated', true)
-                  .set('isAccepted', null)
-                  .set('isHighlighted', false)
-                  .set('isDeferred', false)
-                  .set(ACTION_PROPERTY_MAP[action], action === 'reject' ? false : true);
+    return {
+      ...comment,
+      isModerated: true,
+      isAccepted: null,
+      isHighlighted: false,
+      isDeferred: false,
+      [ACTION_PROPERTY_MAP[action]]: action !== 'reject',
+    };
   }
 
   @autobind
@@ -980,7 +989,9 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   goToPrevComment() {
     const { previousCommentId } = this.props;
 
-    if (!previousCommentId) { return; }
+    if (!previousCommentId) {
+      return;
+    }
 
     this.saveReturnRow(previousCommentId);
     this.props.history.push(this.generatePagingLink(previousCommentId));
@@ -990,7 +1001,9 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   goToNextComment() {
     const { nextCommentId } = this.props;
 
-    if (!nextCommentId) { return; }
+    if (!nextCommentId) {
+      return;
+    }
 
     this.saveReturnRow(nextCommentId);
     this.props.history.push(this.generatePagingLink(nextCommentId));
@@ -1052,17 +1065,27 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
   @autobind
   closeToast() {
-    this.setState({ isConfirmationModalVisible: false });
+    this.setState({isConfirmationModalVisible: false});
   }
 
   getActiveButtons(comment: ICommentModel): List<IModerationAction> {
-    if (!comment) { return null; }
+    if (!comment) {
+      return null;
+    }
     let activeButtons = List();
 
-    if (comment.isAccepted === true) { activeButtons = List(['approve']); }
-    if (comment.isAccepted === false) { activeButtons = List(['reject']); }
-    if (comment.isHighlighted) { activeButtons = activeButtons.push('highlight'); }
-    if (comment.isDeferred) { activeButtons = List(['defer']); }
+    if (comment.isAccepted === true) {
+      activeButtons = List(['approve']);
+    }
+    if (comment.isAccepted === false) {
+      activeButtons = List(['reject']);
+    }
+    if (comment.isHighlighted) {
+      activeButtons = activeButtons.push('highlight');
+    }
+    if (comment.isDeferred) {
+      activeButtons = List(['defer']);
+    }
 
     return activeButtons as List<IModerationAction>;
   }

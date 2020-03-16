@@ -37,17 +37,17 @@ export function FlagsSummary(props: {
 
   const summary = comment.flagsSummary;
   const flags = Array.from(summary.keys())
-    .sort((a, b) => summary.get(b).get(TOTAL) - summary.get(a).get(TOTAL))
-    .filter((a) => summary.get(a).get(APPROVES) === 0);
+    .sort((a, b) => summary.get(b)[TOTAL] - summary.get(a)[TOTAL])
+    .filter((a) => summary.get(a)[APPROVES] === 0);
   const approves = Array.from(summary.keys())
-    .sort((a, b) => summary.get(b).get(TOTAL) - summary.get(a).get(TOTAL))
-    .filter((a) => summary.get(a).get(APPROVES) > 0);
+    .sort((a, b) => summary.get(b)[TOTAL] - summary.get(a)[TOTAL])
+    .filter((a) => summary.get(a)[APPROVES] > 0);
 
   function oneFlag(label: string) {
     const f = summary.get(label);
-    const total = f.get(TOTAL);
+    const total = f[TOTAL];
     if (full) {
-      const un = f.get(UNRESOLVED);
+      const un = f[UNRESOLVED];
       const unresolvedStr = (un > 0) ? `(${un})` : '';
       return (<span key={label}>&bull; {label}: {total} {unresolvedStr}</span>);
     }

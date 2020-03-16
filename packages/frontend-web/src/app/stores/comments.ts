@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import { List, Map } from 'immutable';
+import { omit } from 'lodash';
 import { Action } from 'redux-actions';
 
 import { ICommentModel } from '../../models';
@@ -27,7 +28,7 @@ const queueModelStore = makeQueuedModelStore<string, ICommentModel>(
     const comments = await listCommentsById(commentIds);
 
     return comments.reduce((sum: Map<string, ICommentModel>, comment: ICommentModel) => {
-      return sum.set(comment.get('id'), comment);
+      return sum.set(comment.id, comment);
     }, Map<string, ICommentModel>());
   },
   300,
@@ -57,11 +58,13 @@ function approveComment(commentIds: Array<string>): IThunkAction<void> {
       if (!comment) {
         return;
       }
-      const updatedComment = comment
-          .set('isAccepted', true)
-          .set('isModerated', true)
-          .set('isDeferred', false)
-          .set('updatedAt', new Date());
+      const updatedComment = {
+        ...comment,
+        isAccepted: true,
+        isModerated: true,
+        isDeferred: false,
+        updatedAt: new Date().toISOString(),
+      };
 
       dispatch(setComment({ key: commentId, model: updatedComment }));
     });
@@ -76,10 +79,12 @@ function highlightComment(commentIds: Array<string>): IThunkAction<void> {
       if (!comment) {
         return;
       }
-      const updatedComment = comment
-          .set('isAccepted', true)
-          .set('isHighlighted', true)
-          .set('updatedAt', new Date());
+      const updatedComment = {
+        ...comment,
+        isAccepted: true,
+        isHighlighted: true,
+        updatedAt: new Date().toString(),
+      };
 
       dispatch(setComment({ key: commentId, model: updatedComment }));
     });
@@ -94,10 +99,12 @@ function rejectComment(commentIds: Array<string>): IThunkAction<void> {
       if (!comment) {
         return;
       }
-      const updatedComment = comment
-          .set('isAccepted', false)
-          .set('isModerated', true)
-          .set('isDeferred', false);
+      const updatedComment = {
+        ...comment,
+        isAccepted: false,
+        isModerated: true,
+        isDeferred: false,
+      };
 
       dispatch(setComment({ key: commentId, model: updatedComment }));
     });
@@ -112,11 +119,12 @@ function deferComment(commentIds: Array<string>): IThunkAction<void> {
       if (!comment) {
         return;
       }
-      const updatedComment = comment
-          .set('isAccepted', null)
-          .set('isModerated', true)
-          .set('isDeferred', true)
-          .set('updatedAt', new Date());
+      const updatedComment = omit({
+        ...comment,
+        isModerated: true,
+        isDeferred: true,
+        updatedAt: new Date().toISOString(),
+      }, 'isAccepted');
 
       dispatch(setComment({ key: commentId, model: updatedComment }));
     });
@@ -131,12 +139,13 @@ function resetComment(commentIds: Array<string>): IThunkAction<void> {
       if (!comment) {
         return;
       }
-      const updatedComment = comment
-          .set('isAccepted', null)
-          .set('isModerated', false)
-          .set('isHighlighted', false)
-          .set('isDeferred', false)
-          .set('updatedAt', new Date());
+      const updatedComment = omit({
+        ...comment,
+        isModerated: false,
+        isHighlighted: false,
+        isDeferred: false,
+        updatedAt: new Date().toISOString(),
+      }, 'isAccepted');
 
       dispatch(setComment({ key: commentId, model: updatedComment }));
     });
