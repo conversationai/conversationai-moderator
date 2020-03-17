@@ -100,14 +100,6 @@ export function convertItemFromJSONAPI<T>(data: any, included?: List<any>): T {
   return output;
 }
 
-export function convertFromJSONAPI<T>(result: any): T {
-  const resultData = fromJS(result);
-  const dataList = resultData.get('data');
-  const dataItem = (dataList instanceof List) ? (dataList as List<T>).get(0) : dataList;
-
-  return convertItemFromJSONAPI<T>(dataItem, resultData.get('included'));
-}
-
 export type ISingleRecordState<T> = Readonly<{
   hasData: boolean;
   isFetching: boolean;

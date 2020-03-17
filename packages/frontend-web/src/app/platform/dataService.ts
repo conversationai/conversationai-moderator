@@ -45,7 +45,7 @@ import {
 } from '../../models';
 import { ITopScore, ServerStates } from '../../types';
 import { API_URL } from '../config';
-import { convertFromJSONAPI, convertItemFromJSONAPI } from '../util';
+import { convertItemFromJSONAPI } from '../util';
 
 export type IValidModelNames =
     'articles' |
@@ -164,23 +164,18 @@ function modelURL(type: IValidModelNames, id: string, params?: Partial<IParams>)
 /**
  * Create a new instance of a model.
  */
-export async function createModel<T>(
+export async function createModel(
   type: IValidModelNames,
   model: INewResource,
-): Promise<ISingleResponse<T>> {
+): Promise<void> {
   validateModelName(type);
 
-  const { data } = await axios.post(listURL(type), {
+  await axios.post(listURL(type), {
     data: {
       attributes: fromJS(model).delete('id').toJS(),
       type,
     },
   });
-
-  return {
-    model: convertFromJSONAPI<T>(data),
-    response: data,
-  };
 }
 
 export async function listTextSizesByIds(
@@ -482,12 +477,12 @@ export async function getArticleText(id: ModelId) {
 /**
  * Update a model.
  */
-export async function updateModel<T>(
+export async function updateModel(
   type: IValidModelNames,
   id: string,
   model: INewResource,
   onlyAttributes?: Array<string>,
-): Promise<ISingleResponse<T>> {
+): Promise<void> {
   validateModelName(type);
 
   let attributes = fromJS(model).delete('id').toJS();
@@ -496,18 +491,13 @@ export async function updateModel<T>(
     attributes = pick(attributes, onlyAttributes);
   }
 
-  const { data } = await axios.patch(modelURL(type, id), {
+  await axios.patch(modelURL(type, id), {
     data: {
       attributes,
       type,
       id,
     },
   });
-
-  return {
-    model: convertFromJSONAPI<T>(data),
-    response: data,
-  };
 }
 
 export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean) {
