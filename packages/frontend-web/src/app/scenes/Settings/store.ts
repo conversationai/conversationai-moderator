@@ -22,7 +22,6 @@ import {
   IRuleModel,
   ITaggingSensitivityModel,
   ITagModel,
-  IUserAttributes,
   IUserModel,
 } from '../../../models';
 import {
@@ -51,7 +50,7 @@ function diff<T extends Map<string, any>>(original: List<T>, current: List<T>): 
 
 export async function addUser(user: IUserModel): Promise<void> {
   // TODO: Don't know what's going on with the types here (hence the cast to any), nor with the key field...
-  await createModel<IUserAttributes & {key: string}>(
+  await createModel(
     'users',
     {...user, key: slugify(user.name, '_').toUpperCase()} as any,
   );
@@ -66,14 +65,14 @@ export async function modifyUser(user: IUserModel): Promise<void> {
 }
 
 async function addTag(tag: ITagModel): Promise<void> {
-  await createModel<ITagModel>(
+  await createModel(
     'tags',
     tag.set('key', slugify(tag.get('label'), '_').toUpperCase()) as any,
   );
 }
 
 async function modifyTag(tag: ITagModel): Promise<void> {
-  await updateModel<ITagModel>(
+  await updateModel(
     'tags',
     tag.id,
     tag as any,
@@ -97,14 +96,14 @@ export async function updateTags(oldTags: List<ITagModel>, newTags: List<ITagMod
 }
 
 async function addRule(rule: IRuleModel): Promise<void> {
-  await createModel<IRuleModel>(
+  await createModel(
     'moderation_rules',
     rule as any,
   );
 }
 
 async function modifyRule(rule: IRuleModel): Promise<void> {
-  await updateModel<IRuleModel>(
+  await updateModel(
     'moderation_rules',
     rule.id,
     rule as any,
@@ -128,14 +127,14 @@ export async function updateRules(oldRules: List<IRuleModel>, newRules: List<IRu
 }
 
 async function addPreselect(preselect: IPreselectModel): Promise<void> {
-  await createModel<IPreselectModel>(
+  await createModel(
     'preselects',
     preselect as any,
   );
 }
 
 async function modifyPreselect(preselect: IPreselectModel): Promise<void> {
-  await updateModel<IPreselectModel>(
+  await updateModel(
     'preselects',
     preselect.id,
     preselect as any,
@@ -159,14 +158,14 @@ export async function updatePreselects(oldPreselects: List<IPreselectModel>, new
 }
 
 async function addTaggingSensitivity(taggingSensitivity: ITaggingSensitivityModel): Promise<void> {
-  await createModel<ITaggingSensitivityModel>(
+  await createModel(
     'tagging_sensitivities',
     taggingSensitivity as any,
   );
 }
 
 async function modifyTaggingSensitivity(taggingSensitivity: ITaggingSensitivityModel): Promise<void> {
-  await updateModel<ITaggingSensitivityModel>(
+  await updateModel(
     'tagging_sensitivities',
     taggingSensitivity.id,
     taggingSensitivity as any,
