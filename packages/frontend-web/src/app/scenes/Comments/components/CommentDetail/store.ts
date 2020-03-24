@@ -19,7 +19,6 @@ import { combineReducers } from 'redux';
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import {
-  IAuthorCountsModel,
   ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
@@ -31,7 +30,6 @@ import {
   getCommentFlags,
   getComments,
   getCommentScores,
-  listAuthorCounts,
 } from '../../../../platform/dataService';
 import {
   ISingleRecordState,
@@ -61,23 +59,11 @@ export const clearCommentPagingOptions: () => Action<void> =
 const internalStoreCommentPagingOptions =
   createAction<ICommentPagingState>('comment-detail/STORE_COMMENT_PAGING_OPTIONS');
 
-type IStoreAuthorCountsPayload = {
-  authorCounts: Map<string, IAuthorCountsModel>;
-};
-const storeAuthorCounts =
-  createAction<IStoreAuthorCountsPayload>('comment-detail/STORE_AUTHOR_COUNTS');
-
 export async function loadComment(dispatch: IAppDispatch, id: string) {
   await dispatch(loadCommentStart());
 
   const [ comment ] = await getComments([id]);
   await dispatch(loadCommentComplete(comment));
-
-  if (comment && comment.authorSourceId) {
-    const authorSourceId = comment.authorSourceId;
-    const authorCounts = await listAuthorCounts([authorSourceId]);
-    dispatch(storeAuthorCounts({authorCounts}));
-  }
 }
 
 export async function loadScores(dispatch: IAppDispatch, id: string) {
@@ -300,33 +286,11 @@ export function getPreviousCommentId(state: IAppState, currentHash: string, comm
   }
 }
 
-export type IAuthorCountsState = Readonly<{
-  authorCounts: Map<string, IAuthorCountsModel>;
-}>;
-
-export const authorCountsReducer = handleActions<
-  IAuthorCountsState,
-  IStoreAuthorCountsPayload // storeAuthorCounts
->({
-  [storeAuthorCounts.toString()]: (state, { payload: { authorCounts } }: Action<IStoreAuthorCountsPayload>) => {
-    return {
-      authorCounts: state['authorCounts'].merge(Map(authorCounts)),
-    };
-  },
-}, {
-  authorCounts: Map<string, IAuthorCountsModel>(),
-});
-
-export function getAuthorCountsRecord(state: IAppState) {
-  return state.scenes.comments.commentDetail.authorCounts;
-}
-
 export type ICommentDetailState = Readonly<{
   comment: ISingleRecordState<ICommentModel>;
   scores: ICommentScoreState;
   flags: ICommentFlagsState;
   paging: ICommentPagingState;
-  authorCounts: IAuthorCountsState;
 }>;
 
 export const reducer = combineReducers<ICommentDetailState>({
@@ -334,7 +298,6 @@ export const reducer = combineReducers<ICommentDetailState>({
   scores: commentScoresReducer,
   flags: commentFlagsReducer,
   paging: commentPagingReducer,
-  authorCounts: authorCountsReducer,
 });
 
 /* Set or delete items in the comment detail store created by makeRecordListReducer */
@@ -361,9 +324,4 @@ export function getIsLoading(state: IAppState) {
 
 export function getTaggingSensitivityForTag(taggingSensitivities: List<ITaggingSensitivityModel>, tagId: ModelId) {
   return taggingSensitivities.find((ts) => ts.tagId === tagId || ts.categoryId === null);
-}
-
-export function getAuthorCountsById(state: IAppState, id: string) {
-  const authorCountsRecord = getAuthorCountsRecord(state);
-  return authorCountsRecord.authorCounts.get(id);
 }

@@ -21,6 +21,8 @@ export interface IAuthorAttributes {
   location: string;
   avatar: string;
   name: string;
+  approvalRating?: string;
+  isSubscriber: boolean;
 }
 
 export type IAuthorModel = Readonly<IAuthorAttributes>;

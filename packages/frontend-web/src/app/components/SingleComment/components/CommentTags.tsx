@@ -20,7 +20,7 @@ import { List } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 
-import { ICommentScoreModel, ITagModel } from '../../../../../models';
+import { ICommentScoreModel, ITagModel } from '../../../../models';
 import {
   GREY_COLOR,
   GUTTER_DEFAULT_SPACING,
@@ -31,13 +31,13 @@ import {
   TOOLTIP_Z_INDEX,
   VISUALLY_HIDDEN,
   WHITE_COLOR,
-} from '../../../../styles';
-import { identity, partial } from '../../../../util';
-import { css, stylesheet } from '../../../../utilx';
+} from '../../../styles';
+import { identity, partial } from '../../../util';
+import { css, stylesheet } from '../../../utilx';
 import {
   AddIcon,
-} from '../../../Icons';
-import { ToolTip } from '../../../ToolTip';
+} from '../../Icons';
+import { ToolTip } from '../../ToolTip';
 
 const ICON_SIZE = 24;
 

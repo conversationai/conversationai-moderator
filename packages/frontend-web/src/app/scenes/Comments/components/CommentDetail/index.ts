@@ -40,7 +40,6 @@ import { updateCommentStateAction } from '../ModeratedComments/store';
 import { CommentDetail as PureCommentDetail, ICommentDetailProps } from './CommentDetail';
 import {
   addCommentScore,
-  getAuthorCountsById,
   getComment,
   getCurrentCommentIndex,
   getFlags,
@@ -127,8 +126,6 @@ const mapStateToProps = createStructuredSelector({
   },
 
   isFromBatch: getPagingIsFromBatch,
-
-  authorCountById: (state: IAppState) => (id: string) => getAuthorCountsById(state, id),
 
   getUserById: (state: IAppState) => (userId: string) => getUser(state, userId),
 

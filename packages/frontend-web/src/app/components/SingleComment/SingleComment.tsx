@@ -21,7 +21,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import {
-  IAuthorCountsModel,
   ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
@@ -67,17 +66,19 @@ import { Avatar } from '../Avatar';
 import { Button } from '../Button';
 import { FlagsSummary } from '../FlagsSummary';
 import {
-  ApproveIcon,
   EditIcon,
-  EmailIcon,
-  FaceIcon,
-  IdIcon,
-  ReputationIcon,
 } from '../Icons';
 import { AnnotatedCommentText } from './components/AnnotatedCommentText';
+import { AuthorCounts } from './components/AuthorCounts';
 import { CommentTags } from './components/CommentTags';
+import {
+  ApprovalRatingRow,
+  EmailRow,
+  ICON_SIZE,
+  IsSubscriberRow,
+  SourceIdRow,
+} from './components/DetailRow';
 
-const ICON_SIZE = 20;
 const AVATAR_SIZE = 60;
 // const COMMENT_WIDTH = 696;
 const REPLY_WIDTH = 642;
@@ -140,51 +141,6 @@ const COMMENT_BODY_STYLES = `
     color: ${TAG_OTHER_COLOR};
   }
 `;
-
-const DETAIL_STYLES = stylesheet({
-  row: {
-    display: 'flex',
-    flexWrap: 'no-wrap',
-    alignItems: 'center',
-    marginRight: `${BOX_DEFAULT_SPACING}px`,
-    overflow: 'hidden',
-  },
-
-  icon: {
-    display: 'flex',
-    marginRight: '5px',
-  },
-
-  label: {
-    ...CAPTION_TYPE,
-    color: DARK_SECONDARY_TEXT_COLOR,
-    maxWidth: 120,
-    overflow: 'hidden',
-    whiteSpace: 'no-wrap',
-    textOverflow: 'ellipsis',
-  },
-});
-
-const DETAIL_LINK = {
-  color: DARK_SECONDARY_TEXT_COLOR,
-  textDecoration: 'none',
-  ':focus': {
-    outline: 0,
-    textDecoration: 'underline',
-  },
-};
-
-export interface IDetailRowProps {
-  label: string | JSX.Element;
-  value?: string;
-  icon?: JSX.Element;
-}
-const DetailRow = ({ label, value, icon }: IDetailRowProps) => (
-  <div {...css(DETAIL_STYLES.row)}>
-    <div {...css(DETAIL_STYLES.icon)}>{value || icon}</div>
-    <div {...css(DETAIL_STYLES.label)}>{label}</div>
-  </div>
-);
 
 const STYLES = stylesheet({
   threaded: {
@@ -518,7 +474,6 @@ export interface ISingleCommentProps {
   onUpdateCommentScore?(commentScore: ICommentScoreModel): void;
   onDeleteCommentTag?(id: string, commentScoreId: string): void;
   onRemoveCommentScore?(commentScore: ICommentScoreModel): void;
-  authorCounts?: IAuthorCountsModel;
   getUserById?(id: string): IUserModel;
   currentUser?: IUserModel;
   summaryScores?: List<ICommentSummaryScore>;
@@ -682,7 +637,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       onUpdateCommentScore,
       onDeleteCommentTag,
       onRemoveCommentScore,
-      authorCounts,
       getUserById,
       currentUser,
       summaryScoresAboveThreshold,
@@ -781,78 +735,11 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                   )}
                 </div>
                 <div {...css(PROFILE_STYLES.details)}>
-                  {authorCounts && (
-                    <DetailRow
-                      key="authorCounts"
-                      icon={(
-                        <ApproveIcon
-                          {...css({ fill: DARK_SECONDARY_TEXT_COLOR })}
-                          size={ICON_SIZE}
-                        />
-                      )}
-                      label={
-                        `${authorCounts.approvedCount} / ${(authorCounts.approvedCount + authorCounts.rejectedCount)}` +
-                        ` approved`}
-                    />
-                  )}
-                  {(author as any)['approvalRating'] && (
-                    <DetailRow
-                      key="author"
-                      icon={(
-                        <ReputationIcon
-                          {...css({ fill: DARK_SECONDARY_TEXT_COLOR })}
-                          size={ICON_SIZE}
-                        />
-                      )}
-                      label={(author as any)['approvalRating']}
-                    />
-                  )}
-                  {(author as any)['isSubscriber'] && (
-                    <DetailRow
-                      key="subscriber"
-                      label="Subscriber"
-                      icon={(
-                        <FaceIcon
-                          {...css({ fill: DARK_SECONDARY_TEXT_COLOR })}
-                          size={ICON_SIZE}
-                        />
-                      )}
-                    />
-                  )}
-                  {author.email && (
-                    <DetailRow
-                      key="email"
-                      label={(
-                        <a {...css(DETAIL_LINK)} href={'mailto:' + author.email}>
-                          {author.email}
-                        </a>
-                      )}
-                      icon={(
-                        <EmailIcon
-                          {...css({ fill: DARK_SECONDARY_TEXT_COLOR })}
-                          size={ICON_SIZE}
-                        />
-                      )}
-                    />
-                  )}
-
-                  {comment.authorSourceId && (
-                    <Link
-                      key="authorSourceId"
-                      to={searchLink({searchByAuthor: true, term: comment.authorSourceId.toString()})}
-                      {...css(STYLES.linkFocus)}
-                    >
-                      <DetailRow
-                        label={comment.authorSourceId.toString()}
-                        icon={(
-                          <IdIcon
-                            {...css({ fill: DARK_SECONDARY_TEXT_COLOR })}
-                            size={ICON_SIZE}
-                          />
-                        )}
-                      />
-                    </Link>
-                  )}
+                  <AuthorCounts authorSourceId={comment.authorSourceId}/>
+                  {author.approvalRating && (<ApprovalRatingRow approvalRating={author.approvalRating}/>)}
+                  {author.isSubscriber && (<IsSubscriberRow/>)}
+                  {author.email && (<EmailRow author={author}/>)}
+                  {comment.authorSourceId && (<SourceIdRow authorSourceId={comment.authorSourceId}/>)}
                 </div>
               </div>
             </div>
