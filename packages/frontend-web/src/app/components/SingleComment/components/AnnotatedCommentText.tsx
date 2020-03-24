@@ -21,12 +21,12 @@ import keyboardJS from 'keyboardjs';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { ICommentScoreModel, ITagModel, IUserModel, ModelId } from '../../../../../models';
+import { ICommentScoreModel, ITagModel, IUserModel, ModelId } from '../../../../models';
 import {
   confirmCommentScore,
   rejectCommentScore,
   resetCommentScore,
-} from '../../../../stores/commentActions';
+} from '../../../stores/commentActions';
 import {
   ARTICLE_CAPTION_TYPE,
   GREY_COLOR,
@@ -37,10 +37,10 @@ import {
   SCRIM_Z_INDEX,
   SEMI_BOLD_TYPE,
   WHITE_COLOR,
-} from '../../../../styles';
-import { partial } from '../../../../util';
-import { css, stylesheet } from '../../../../utilx';
-import { ToolTip } from '../../../ToolTip';
+} from '../../../styles';
+import { partial } from '../../../util';
+import { css, stylesheet } from '../../../utilx';
+import { ToolTip } from '../../ToolTip';
 
 const TOOLTIP_ARROW_SIZE = 16;
 

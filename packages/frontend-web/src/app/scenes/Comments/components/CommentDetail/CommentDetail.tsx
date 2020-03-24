@@ -26,7 +26,6 @@ import { Link } from 'react-router-dom';
 import {
   CommentScoreModel,
   IArticleModel,
-  IAuthorCountsModel,
   ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
@@ -342,7 +341,6 @@ export interface ICommentDetailProps extends RouteComponentProps<ICommentDetails
   loadData?(commentId: string): void;
   loadScores?(commentId: string): void;
   onCommentAction?(action: IConfirmationAction, idsToDispatch: Array<string>): void;
-  authorCountById?(id: string | number): IAuthorCountsModel;
   getUserById?(id: string | number): IUserModel;
   currentUser: IUserModel;
   detailSource?: string;
@@ -494,7 +492,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       loadScores,
       onUpdateCommentScore,
       onRemoveCommentScore,
-      authorCountById,
       getUserById,
       detailSource,
       linkBackToList,
@@ -651,7 +648,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
               )}
               { !this.props.isLoading ? (
                 <SingleComment
-                  authorCounts={authorCountById(comment.authorSourceId)}
                   comment={comment}
                   allScores={allScores}
                   allScoresAboveThreshold={allScoresAboveThreshold}
