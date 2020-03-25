@@ -21,7 +21,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import {
-  ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
   ICommentSummaryScoreModel,
@@ -78,6 +77,7 @@ import {
   IsSubscriberRow,
   SourceIdRow,
 } from './components/DetailRow';
+import { FlagsList } from './components/FlagsList';
 
 const AVATAR_SIZE = 60;
 // const COMMENT_WIDTH = 696;
@@ -402,30 +402,6 @@ const COMMENT_STYLES = stylesheet({
   },
 });
 
-const FLAGS_STYLES = stylesheet({
-  title: {
-    ...CAPTION_TYPE,
-    color: DARK_SECONDARY_TEXT_COLOR,
-    fontSize: '20px',
-  },
-  entry: {
-    padding: '10px',
-    margin: '10px 0',
-    backgroundColor: '#eee',
-  },
-  label: {
-    fontSize: '24px',
-  },
-  resolvedText: {
-    color: DARK_TERTIARY_TEXT_COLOR,
-    fontSize: '16px',
-    float: 'right',
-  },
-  detail: {
-    fontSize: '14px',
-  },
-});
-
 interface IRenderSummaryScoreProps {
   allTags?: List<ITagModel>;
   score: ICommentSummaryScoreModel;
@@ -460,7 +436,6 @@ export interface ISingleCommentProps {
   allScoresAboveThreshold?: Array<ICommentScoreModel>;
   reducedScoresAboveThreshold?: Array<ICommentScoreModel>;
   reducedScoresBelowThreshold?: Array<ICommentScoreModel>;
-  flags?: Array<ICommentFlagModel>;
   isThreadedComment?: boolean;
   isReply?: boolean;
   allTags?: List<ITagModel>;
@@ -623,7 +598,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       allScoresAboveThreshold,
       reducedScoresAboveThreshold,
       reducedScoresBelowThreshold,
-      flags,
       availableTags,
       allTags,
       onTagButtonClick,
@@ -657,25 +631,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
 
     const bodyStyling = css(COMMENT_STYLES.body);
     const className = bodyStyling.className ? bodyStyling.className + ' comment-body' : 'comment-body';
-
-    function renderFlag(f: ICommentFlagModel) {
-      let resolvedText = '';
-      if (f.isResolved) {
-        resolvedText += 'Resolved';
-        if (f.resolvedAt) {
-          resolvedText += ' on ' + (new Date(f.resolvedAt)).toLocaleDateString();
-        }
-      }
-      else {
-        resolvedText += 'Unresolved';
-      }
-      return (
-        <div key={f.id} {...css(FLAGS_STYLES.entry)}>{resolvedText}
-          <div key="label" {...css(FLAGS_STYLES.label)}>{f.label} <span {...css(FLAGS_STYLES.resolvedText)}>{resolvedText}</span></div>
-          {f.detail && <div key="description" {...css(FLAGS_STYLES.detail)}>{f.detail}</div>}
-        </div>
-      );
-    }
 
     return (
       <div {...css(isThreadedComment && isReply && STYLES.threaded)}>
@@ -880,12 +835,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               {scoresBelowThresholdVisible ? 'Hide tags' : 'View all tags'}
             </button>
           )}
-          {flags && flags.length > 0 && (
-            <div key="flags">
-              <div key="__flags-title" {...css(FLAGS_STYLES.title)}>Flags</div>
-              {flags.map((f) => renderFlag(f))}
-            </div>
-          )}
+          <FlagsList commentId={comment.id}/>
         </div>
       </div>
     );

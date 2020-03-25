@@ -42,7 +42,6 @@ import {
   addCommentScore,
   getComment,
   getCurrentCommentIndex,
-  getFlags,
   getIsLoading,
   getNextCommentId,
   getPagingIsFromBatch,
@@ -51,7 +50,6 @@ import {
   getPreviousCommentId,
   getScores,
   loadComment,
-  loadFlags,
   loadScores,
   removeCommentScore,
   updateComment,
@@ -90,7 +88,6 @@ const mapStateToProps = createStructuredSelector({
   availableTags: getTaggableTags,
   allScores: getScores,
   taggingSensitivities: getTaggingSensitivities,
-  flags: getFlags,
 
   summaryScores: (state: IAppState, ownProps: ICommentDetailOwnProps) => {
     return getSummaryScoresById(state, ownProps.match.params.commentId);
@@ -138,7 +135,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
       return Promise.all([
         loadComment(dispatch, commentId),
         loadScores(dispatch, commentId),
-        loadFlags(dispatch, commentId),
         loadCommentSummaryScores(dispatch, commentId),
       ]);
     },

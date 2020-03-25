@@ -19,7 +19,6 @@ import { combineReducers } from 'redux';
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import {
-  ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
   ITaggingSensitivityModel,
@@ -27,7 +26,6 @@ import {
 } from '../../../../../models';
 import { IAppDispatch, IAppState } from '../../../../appstate';
 import {
-  getCommentFlags,
   getComments,
   getCommentScores,
 } from '../../../../platform/dataService';
@@ -50,10 +48,6 @@ const updateCommentScoreRecord =
   createAction<ICommentScoreModel>('comment-detail/UPDATE_COMMENT_SCORE');
 const removeCommentScoreRecord =
   createAction<ICommentScoreModel>('comment-detail/REMOVE_COMMENT_SCORE');
-const loadCommentFlagsStart =
-  createAction('comment-detail/LOAD_COMMENT_FLAG_START');
-const loadCommentFlagsComplete =
-  createAction<Array<ICommentFlagModel>>('comment-detail/LOAD_COMMENT_FLAG_COMPLETE');
 export const clearCommentPagingOptions: () => Action<void> =
   createAction('comment-detail/CLEAR_COMMENT_PAGING_OPTIONS');
 const internalStoreCommentPagingOptions =
@@ -70,12 +64,6 @@ export async function loadScores(dispatch: IAppDispatch, id: string) {
   await dispatch(loadCommentScoresStart());
   const data = await getCommentScores(id);
   await dispatch(loadCommentScoresComplete(data));
-}
-
-export async function loadFlags(dispatch: IAppDispatch, id: string) {
-  await dispatch(loadCommentFlagsStart());
-  const data = await getCommentFlags(id);
-  await dispatch(loadCommentFlagsComplete(data));
 }
 
 const {
@@ -124,22 +112,6 @@ const commentScoresReducer = handleActions<
     };
   },
 }, initialScoreState);
-
-export interface ICommentFlagsState {
-  items: Array<ICommentFlagModel>;
-}
-
-const initialFlagsState: ICommentFlagsState = {
-  items: [],
-};
-
-const commentFlagsReducer = handleActions<ICommentFlagsState, void | Array<ICommentFlagModel>>({
-    [loadCommentFlagsStart.toString()]: (_state: ICommentFlagsState) => (initialFlagsState),
-    [loadCommentFlagsComplete.toString()]: (state: ICommentFlagsState, { payload }: Action<Array<ICommentFlagModel>>) => ({
-     ...state,
-     items: payload,
-   }),
-}, initialFlagsState);
 
 export interface ICommentPagingState {
   commentIds: List<string>;
@@ -289,14 +261,12 @@ export function getPreviousCommentId(state: IAppState, currentHash: string, comm
 export type ICommentDetailState = Readonly<{
   comment: ISingleRecordState<ICommentModel>;
   scores: ICommentScoreState;
-  flags: ICommentFlagsState;
   paging: ICommentPagingState;
 }>;
 
 export const reducer = combineReducers<ICommentDetailState>({
   comment: commentReducer,
   scores: commentScoresReducer,
-  flags: commentFlagsReducer,
   paging: commentPagingReducer,
 });
 
@@ -312,10 +282,6 @@ export function getComment(state: IAppState) {
 
 export function getScores(state: IAppState) {
   return state.scenes.comments.commentDetail.scores.items;
-}
-
-export function getFlags(state: IAppState) {
-  return state.scenes.comments.commentDetail.flags.items;
 }
 
 export function getIsLoading(state: IAppState) {

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import faker from 'faker';
-import { fromJS, List } from 'immutable';
+import { List } from 'immutable';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -22,7 +22,7 @@ import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 
 import { IAuthorModel, ITagModel } from '../../../models';
-import { fakeCommentFlagModel, fakeCommentModel, fakeTagModel } from '../../../models/fake';
+import { fakeCommentModel, fakeTagModel } from '../../../models/fake';
 import { css } from '../../utilx';
 import { SingleComment } from './SingleComment';
 
@@ -44,12 +44,6 @@ const comment = fakeCommentModel({
   unresolvedFlagsCount: 2,
   flagsSummary: new Map([['red', [1, 0, 0]], ['green', [2, 2, 2]]]),
 });
-
-const flags = fromJS([
-  fakeCommentFlagModel({label: 'red', isResolved: true, isRecommendation: false}),
-  fakeCommentFlagModel({label: 'green', isResolved: false, isRecommendation: true}),
-  fakeCommentFlagModel({label: 'green', isResolved: false, isRecommendation: true}),
-]);
 
 const availableTags = List<ITagModel>().push(fakeTagModel({}), fakeTagModel({}));
 
@@ -77,7 +71,6 @@ storiesOf('SingleComment', module)
         <div {...css(STORY_STYLES.detail)}>
           <SingleComment
             comment={comment}
-            flags={flags}
           />
         </div>
       </div>
@@ -89,7 +82,6 @@ storiesOf('SingleComment', module)
         <div {...css(STORY_STYLES.detail)}>
           <SingleComment
             comment={comment}
-            flags={flags}
             url="http://www.example.com/"
           />
         </div>
@@ -102,7 +94,6 @@ storiesOf('SingleComment', module)
         <div {...css(STORY_STYLES.detail)}>
           <SingleComment
             comment={comment}
-            flags={flags}
             commentEditingEnabled
             onUpdateCommentText={action('Updating Comment')}
           />
@@ -116,7 +107,6 @@ storiesOf('SingleComment', module)
         <div {...css(STORY_STYLES.detail)}>
           <SingleComment
             comment={comment}
-            flags={flags}
             availableTags={availableTags}
           />
         </div>
