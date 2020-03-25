@@ -26,7 +26,6 @@ import { Link } from 'react-router-dom';
 import {
   CommentScoreModel,
   IArticleModel,
-  ICommentFlagModel,
   ICommentModel,
   ICommentScoreModel,
   ICommentSummaryScoreModel,
@@ -328,7 +327,6 @@ export interface ICommentDetailProps extends RouteComponentProps<ICommentDetails
   availableTags: List<ITagModel>;
   allScores?: Array<ICommentScoreModel>;
   taggingSensitivities: List<ITaggingSensitivityModel>;
-  flags?: Array<ICommentFlagModel>;
   currentCommentIndex?: number;
   nextCommentId?: string;
   previousCommentId?: string;
@@ -485,7 +483,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       availableTags,
       allTags,
       allScores,
-      flags,
       currentCommentIndex,
       nextCommentId,
       previousCommentId,
@@ -655,7 +652,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                   reducedScoresBelowThreshold={reducedScoresBelowThreshold}
                   summaryScoresAboveThreshold={summaryScoresAboveThreshold}
                   summaryScoresBelowThreshold={summaryScoresBelowThreshold}
-                  flags={flags}
                   allTags={allTags}
                   availableTags={availableTags}
                   loadScores={loadScores}
