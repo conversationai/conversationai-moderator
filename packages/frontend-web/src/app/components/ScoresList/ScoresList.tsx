@@ -14,20 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
-import { List } from 'immutable';
 import React from 'react';
-import { css, stylesheet } from '../../utilx';
-
-import { RejectIcon } from '../Icons';
+import { useSelector } from 'react-redux';
 
 import {
   ICommentModel,
   ICommentScoreModel,
   ITaggingSensitivityModel,
-  ITagModel,
 } from '../../../models';
-
+import { getTags } from '../../stores/tags';
 import {
   BUTTON_RESET,
   DARK_SECONDARY_TEXT_COLOR,
@@ -35,6 +30,8 @@ import {
   GUTTER_DEFAULT_SPACING,
   PALE_COLOR,
 } from '../../styles';
+import { css, stylesheet } from '../../utilx';
+import { RejectIcon } from '../Icons';
 
 const SCORE_ROW_STYLES = stylesheet({
   container: {
@@ -111,65 +108,60 @@ export interface IScoresListProps {
   scores?: Array<ICommentScoreModel>;
   threshold?: ITaggingSensitivityModel;
   onClose(): any;
-  tags?: List<ITagModel>;
 }
 
-export class ScoresList extends React.PureComponent<IScoresListProps> {
+export function ScoresList(props: IScoresListProps) {
+  const {
+    comment,
+    scores,
+    threshold,
+    onClose,
+  } = props;
+  const tags = useSelector(getTags);
 
-  @autobind
-  getTextByIndeces(annotationStart: number, annotationEnd: number): string {
+  function getTextByIndeces(annotationStart: number, annotationEnd: number): string {
     if (annotationStart === null || annotationEnd === null) {
-      return this.props.comment.text;
+      return comment.text;
     }
 
-    return this.props.comment.text.slice(annotationStart, annotationEnd);
+    return comment.text.slice(annotationStart, annotationEnd);
   }
 
-  render() {
-    const {
-      scores,
-      threshold,
-      tags,
-      onClose,
-    } = this.props;
+  const exampleScore = scores[0] || null;
+  const tag = tags && tags.find((t) => (t.get('id') === exampleScore.tagId));
+  const scoresAboveThreshold = threshold && scores && scores.filter((score) => score.score >= threshold.lowerThreshold);
+  const scoresBelowThreshold = threshold && scores && scores.filter((score) => score.score < threshold.lowerThreshold);
 
-    const exampleScore = scores[0] || null;
-    const tag = tags && tags.find((t) => (t.get('id') === exampleScore.tagId));
-    const scoresAboveThreshold = threshold && scores && scores.filter((score) => score.score >= threshold.lowerThreshold);
-    const scoresBelowThreshold = threshold && scores && scores.filter((score) => score.score < threshold.lowerThreshold);
-
-    return (
-      <div>
-        <div key="Title" {...css(STYLES.header)}>
-          <h3>Score details for "{tag.label}" </h3>
-          <button type="button" onClick={onClose} aria-label="Close Scores Modal" {...css(STYLES.closeButton)}>
-            <RejectIcon {...css({ color: DARK_SECONDARY_TEXT_COLOR })} />
-          </button>
-        </div>
-        <div key="Header" {...css(STYLES.tableHeader)}>
-          <h4 {...css(STYLES.scoreHeader)}>SCORE</h4>
-          <h4>STRING</h4>
-        </div>
-        <div key="Thresholds" {...css(STYLES.body)}>
-          {scoresAboveThreshold && scoresAboveThreshold.map(( score ) => (
-            <ScoreRow
-              key={score.id}
-              score={score.score}
-              scoreColor={tag && tag.color}
-              text={this.getTextByIndeces(score.annotationStart, score.annotationEnd)}
-            />
-          ))}
-          {scoresBelowThreshold && scoresBelowThreshold.map(( score ) => (
-            <ScoreRow
-              key={score.id}
-              score={score.score}
-              scoreColor={DARK_TERTIARY_TEXT_COLOR}
-              text={this.getTextByIndeces(score.annotationStart, score.annotationEnd)}
-            />
-          ))}
-        </div>
+  return (
+    <div>
+      <div key="Title" {...css(STYLES.header)}>
+        <h3>Score details for "{tag.label}" </h3>
+        <button type="button" onClick={onClose} aria-label="Close Scores Modal" {...css(STYLES.closeButton)}>
+          <RejectIcon {...css({ color: DARK_SECONDARY_TEXT_COLOR })} />
+        </button>
       </div>
-    );
-  }
-
+      <div key="Header" {...css(STYLES.tableHeader)}>
+        <h4 {...css(STYLES.scoreHeader)}>SCORE</h4>
+        <h4>STRING</h4>
+      </div>
+      <div key="Thresholds" {...css(STYLES.body)}>
+        {scoresAboveThreshold && scoresAboveThreshold.map(( score ) => (
+          <ScoreRow
+            key={score.id}
+            score={score.score}
+            scoreColor={tag && tag.color}
+            text={getTextByIndeces(score.annotationStart, score.annotationEnd)}
+          />
+        ))}
+        {scoresBelowThreshold && scoresBelowThreshold.map(( score ) => (
+          <ScoreRow
+            key={score.id}
+            score={score.score}
+            scoreColor={DARK_TERTIARY_TEXT_COLOR}
+            text={getTextByIndeces(score.annotationStart, score.annotationEnd)}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }

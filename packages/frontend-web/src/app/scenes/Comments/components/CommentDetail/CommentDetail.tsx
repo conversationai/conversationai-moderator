@@ -323,7 +323,6 @@ const STYLES = stylesheet({
 export interface ICommentDetailProps extends RouteComponentProps<ICommentDetailsPathParams> {
   comment: ICommentModel;
   article: IArticleModel;
-  allTags: List<ITagModel>;
   availableTags: List<ITagModel>;
   allScores?: Array<ICommentScoreModel>;
   taggingSensitivities: List<ITaggingSensitivityModel>;
@@ -481,7 +480,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     const {
       comment,
       availableTags,
-      allTags,
       allScores,
       currentCommentIndex,
       nextCommentId,
@@ -652,7 +650,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                   reducedScoresBelowThreshold={reducedScoresBelowThreshold}
                   summaryScoresAboveThreshold={summaryScoresAboveThreshold}
                   summaryScoresBelowThreshold={summaryScoresBelowThreshold}
-                  allTags={allTags}
                   availableTags={availableTags}
                   loadScores={loadScores}
                   getUserById={getUserById}
@@ -791,7 +788,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                 comment={comment}
                 scores={scoresSelectedByTag}
                 threshold={thresholdByTag}
-                tags={allTags}
                 onClose={this.onScoresModalClose}
               />
             </div>

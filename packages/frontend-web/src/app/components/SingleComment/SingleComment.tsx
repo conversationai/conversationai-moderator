@@ -41,7 +41,6 @@ import {
   CAPTION_TYPE,
   COMMENT_DETAIL_BODY_TEXT_TYPE,
   COMMENT_DETAIL_DATE_TYPE,
-  COMMENT_DETAIL_TAG_LIST_BUTTON_TYPE,
   DARK_PRIMARY_TEXT_COLOR,
   DARK_SECONDARY_TEXT_COLOR,
   DARK_TERTIARY_TEXT_COLOR,
@@ -50,7 +49,6 @@ import {
   GUTTER_DEFAULT_SPACING,
   LIGHT_PRIMARY_TEXT_COLOR,
   MEDIUM_COLOR,
-  PALE_COLOR,
   TAG_INCOHERENT_COLOR,
   TAG_INFLAMMATORY_COLOR,
   TAG_OBSCENE_COLOR,
@@ -78,6 +76,7 @@ import {
   SourceIdRow,
 } from './components/DetailRow';
 import { FlagsList } from './components/FlagsList';
+import { SummaryScore } from './components/SummaryScore';
 
 const AVATAR_SIZE = 60;
 // const COMMENT_WIDTH = 696;
@@ -363,24 +362,6 @@ const COMMENT_STYLES = stylesheet({
     flexWrap: 'wrap',
   },
 
-  tag: {
-    ...BUTTON_RESET,
-    ...COMMENT_DETAIL_TAG_LIST_BUTTON_TYPE,
-    color: DARK_TERTIARY_TEXT_COLOR,
-    marginRight: `${GUTTER_DEFAULT_SPACING}px`,
-    marginBottom: `${GUTTER_DEFAULT_SPACING / 4}px`,
-    display: 'flex',
-    cursor: 'pointer',
-    ':focus': {
-      outline: 0,
-      background: PALE_COLOR,
-    },
-  },
-
-  label: {
-    marginRight: `${BOX_DEFAULT_SPACING / 2}px`,
-  },
-
   scoreDetails: {
     ...BUTTON_LINK_TYPE, BOTTOM_BORDER_TRANSITION,
     color: MEDIUM_COLOR,
@@ -402,34 +383,6 @@ const COMMENT_STYLES = stylesheet({
   },
 });
 
-interface IRenderSummaryScoreProps {
-  allTags?: List<ITagModel>;
-  score: ICommentSummaryScoreModel;
-  withColor?: boolean;
-  onScoreClick?(score: ICommentSummaryScoreModel): void;
-}
-
-function RenderSummaryScore({allTags, score, withColor, onScoreClick}: IRenderSummaryScoreProps) {
-  const tag = allTags.find((t) => (t.get('id') === score.tagId));
-  if (!tag) {
-    return;
-  }
-  function onClick() {
-    onScoreClick && onScoreClick(score);
-  }
-
-  return (
-    <button
-      {...css(COMMENT_STYLES.tag, withColor ? { color : tag.color } : {})}
-      key={score.tagId}
-      onClick={onClick}
-    >
-      <div {...css(COMMENT_STYLES.label)}>{tag.label}</div>
-      <div>{(score.score * 100).toFixed()}%</div>
-    </button>
-  );
-}
-
 export interface ISingleCommentProps {
   comment: ICommentModel;
   allScores?: Array<ICommentScoreModel>;
@@ -438,7 +391,6 @@ export interface ISingleCommentProps {
   reducedScoresBelowThreshold?: Array<ICommentScoreModel>;
   isThreadedComment?: boolean;
   isReply?: boolean;
-  allTags?: List<ITagModel>;
   availableTags?: List<ITagModel>;
   onScoreClick?(score: ICommentSummaryScoreModel): void;
   onTagButtonClick?(tagId: string): Promise<any>;
@@ -599,7 +551,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       reducedScoresAboveThreshold,
       reducedScoresBelowThreshold,
       availableTags,
-      allTags,
       onTagButtonClick,
       onCommentTagClick,
       onAnnotateTagButtonClick,
@@ -797,10 +748,9 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
           {summaryScoresAboveThreshold && (
             <div {...css(COMMENT_STYLES.tags)}>
               {summaryScoresAboveThreshold.map((s) => (
-                <RenderSummaryScore
+                <SummaryScore
                   key={s.tagId}
                   score={s}
-                  allTags={allTags}
                   onScoreClick={onScoreClick}
                   withColor
                 />
@@ -813,10 +763,9 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                 {summaryScoresBelowThreshold && (
                   <div {...css(COMMENT_STYLES.tags)}>
                     {summaryScoresBelowThreshold.map((s) => (
-                      <RenderSummaryScore
+                      <SummaryScore
                         key={s.tagId}
                         score={s}
-                        allTags={allTags}
                         onScoreClick={onScoreClick}
                       />
                     ))}
