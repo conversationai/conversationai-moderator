@@ -34,7 +34,7 @@ import {
   loadCommentSummaryScores,
 } from '../../../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../../../stores/taggingSensitivities';
-import { getTaggableTags, getTags } from '../../../../stores/tags';
+import { getTaggableTags } from '../../../../stores/tags';
 import { getCurrentUser, getUser } from '../../../../stores/users';
 import { updateCommentStateAction } from '../ModeratedComments/store';
 import { CommentDetail as PureCommentDetail, ICommentDetailProps } from './CommentDetail';
@@ -84,7 +84,6 @@ const mapStateToProps = createStructuredSelector({
     return null;
   },
   isLoading: getIsLoading,
-  allTags: getTags,
   availableTags: getTaggableTags,
   allScores: getScores,
   taggingSensitivities: getTaggingSensitivities,
