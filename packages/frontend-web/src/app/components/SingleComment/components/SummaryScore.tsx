@@ -14,21 +14,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import React from 'react';
+import React, {Fragment, useState} from 'react';
 import {useSelector} from 'react-redux';
 
-import {ICommentSummaryScoreModel} from '../../../../models';
+import {ICommentModel, ICommentSummaryScoreModel2} from '../../../../models';
+import {
+  getSensitivitiesForCategory,
+  getSummaryScoresAboveThreshold,
+  getSummaryScoresBelowThreshold,
+} from '../../../scenes/Comments/scoreFilters';
+import {getTaggingSensitivities} from '../../../stores/taggingSensitivities';
 import {getTags} from '../../../stores/tags';
 import {
-  BOX_DEFAULT_SPACING,
+  BOX_DEFAULT_SPACING, BUTTON_LINK_TYPE,
   BUTTON_RESET,
   COMMENT_DETAIL_TAG_LIST_BUTTON_TYPE,
   DARK_TERTIARY_TEXT_COLOR,
-  GUTTER_DEFAULT_SPACING, PALE_COLOR,
+  GUTTER_DEFAULT_SPACING, MEDIUM_COLOR, PALE_COLOR,
 } from '../../../styles';
 import {css, stylesheet} from '../../../utilx';
 
-const COMMENT_STYLES = stylesheet({
+const STYLES = stylesheet({
   tag: {
     ...BUTTON_RESET,
     ...COMMENT_DETAIL_TAG_LIST_BUTTON_TYPE,
@@ -43,18 +49,39 @@ const COMMENT_STYLES = stylesheet({
     },
   },
 
+  tags: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+
   label: {
     marginRight: `${BOX_DEFAULT_SPACING / 2}px`,
+  },
+
+  scoresLink: {
+    ...BUTTON_RESET,
+    ...BUTTON_LINK_TYPE,
+    color: MEDIUM_COLOR,
+    cursor: 'pointer',
+    textAlign: 'left',
+    marginTop: `${GUTTER_DEFAULT_SPACING}px`,
+    marginBottom: `${GUTTER_DEFAULT_SPACING}px`,
+    borderBottom: `2px solid transparent`,
+    alignSelf: 'flex-start',
+    ':focus': {
+      outline: 0,
+      borderBottom: `2px solid ${MEDIUM_COLOR}`,
+    },
   },
 });
 
 export interface ISummaryScoreProps {
-  score: ICommentSummaryScoreModel;
+  score: ICommentSummaryScoreModel2;
   withColor?: boolean;
-  onScoreClick?(score: ICommentSummaryScoreModel): void;
+  onScoreClick?(score: ICommentSummaryScoreModel2): void;
 }
 
-export function SummaryScore(props: ISummaryScoreProps) {
+function SummaryScore(props: ISummaryScoreProps) {
   const {score, withColor, onScoreClick} = props;
   const tags = useSelector(getTags);
 
@@ -68,12 +95,70 @@ export function SummaryScore(props: ISummaryScoreProps) {
 
   return (
     <button
-      {...css(COMMENT_STYLES.tag, withColor ? { color : tag.color } : {})}
+      {...css(STYLES.tag, withColor ? { color : tag.color } : {})}
       key={score.tagId}
       onClick={onClick}
     >
-      <div {...css(COMMENT_STYLES.label)}>{tag.label}</div>
+      <div {...css(STYLES.label)}>{tag.label}</div>
       <div>{(score.score * 100).toFixed()}%</div>
     </button>
+  );
+}
+
+export interface ISummaryScoresProps {
+  comment: ICommentModel;
+  onScoreClick?(score: ICommentSummaryScoreModel2): void;
+}
+
+export function SummaryScores(props: ISummaryScoresProps) {
+  const {comment, onScoreClick} = props;
+  const {categoryId, summaryScores} = comment;
+  const taggingSensitivities = useSelector(getTaggingSensitivities);
+  const [allVisible, setAllVisible] = useState(false);
+
+  const sensitivities = getSensitivitiesForCategory(categoryId, taggingSensitivities);
+  const summaryScoresAboveThreshold = getSummaryScoresAboveThreshold(sensitivities, summaryScores);
+  const summaryScoresBelowThreshold = getSummaryScoresBelowThreshold(sensitivities, summaryScores);
+
+  function toggleVisible() {
+    setAllVisible(!allVisible);
+  }
+
+  return (
+    <Fragment>
+      {summaryScoresAboveThreshold && (
+        <div {...css(STYLES.tags)}>
+          {summaryScoresAboveThreshold.map((s) => (
+            <SummaryScore
+              key={s.tagId}
+              score={s}
+              onScoreClick={onScoreClick}
+              withColor
+            />
+          ))}
+        </div>
+      )}
+      {allVisible && summaryScoresBelowThreshold && (
+        <div {...css(STYLES.tags)}>
+          {summaryScoresBelowThreshold.map((s) => (
+            <SummaryScore
+              key={s.tagId}
+              score={s}
+              onScoreClick={onScoreClick}
+            />
+          ))}
+        </div>
+      )}
+      {summaryScoresBelowThreshold && (
+        <button
+          aria-label={allVisible ? 'Hide tags' : 'View all tags'}
+          type="button"
+          {...css(STYLES.scoresLink)}
+          onClick={toggleVisible}
+        >
+          {allVisible ? 'Hide tags' : 'View all tags'}
+        </button>
+      )}
+    </Fragment>
   );
 }

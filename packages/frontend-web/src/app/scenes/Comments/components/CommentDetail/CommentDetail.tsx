@@ -27,7 +27,7 @@ import {
   CommentScoreModel,
   ICommentModel,
   ICommentScoreModel,
-  ICommentSummaryScoreModel,
+  ICommentSummaryScoreModel2,
   ITaggingSensitivityModel,
   ITagModel,
   IUserModel,
@@ -102,11 +102,8 @@ import {
 } from '../../../routes';
 import {
   getReducedScoresAboveThreshold,
-  getReducedScoresBelowThreshold,
   getScoresAboveThreshold,
   getSensitivitiesForCategory,
-  getSummaryScoresAboveThreshold,
-  getSummaryScoresBelowThreshold,
 } from '../../scoreFilters';
 import { Shortcuts } from '../Shortcuts';
 import {
@@ -340,16 +337,12 @@ export interface ICommentDetailProps extends RouteComponentProps<ICommentDetails
   currentUser: IUserModel;
   detailSource?: string;
   linkBackToList?: string;
-  summaryScores?: List<ICommentSummaryScoreModel>;
 }
 
 export interface ICommentDetailState {
   taggingSensitivitiesInCategory?: List<ITaggingSensitivityModel>;
   allScoresAboveThreshold?: Array<ICommentScoreModel>;
   reducedScoresAboveThreshold?: Array<ICommentScoreModel>;
-  reducedScoresBelowThreshold?: Array<ICommentScoreModel>;
-  summaryScoresAboveThreshold?: Array<ICommentSummaryScoreModel>;
-  summaryScoresBelowThreshold?: Array<ICommentSummaryScoreModel>;
   loadedCommentId?: string;
   isKeyboardModalVisible?: boolean;
   isConfirmationModalVisible?: boolean;
@@ -405,9 +398,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
     const allScoresAboveThreshold = getScoresAboveThreshold(sensitivities, nextProps.allScores);
     const reducedScoresAboveThreshold = getReducedScoresAboveThreshold(sensitivities, nextProps.allScores);
-    const reducedScoresBelowThreshold = getReducedScoresBelowThreshold(sensitivities, nextProps.allScores);
-    const summaryScoresAboveThreshold = getSummaryScoresAboveThreshold(sensitivities, nextProps.summaryScores);
-    const summaryScoresBelowThreshold = getSummaryScoresBelowThreshold(sensitivities, nextProps.summaryScores);
 
     if (prevState.loadedCommentId !== nextProps.match.params.commentId) {
       nextProps.loadData(nextProps.match.params.commentId);
@@ -416,9 +406,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       taggingSensitivitiesInCategory: sensitivities,
       allScoresAboveThreshold,
       reducedScoresAboveThreshold,
-      reducedScoresBelowThreshold,
-      summaryScoresAboveThreshold,
-      summaryScoresBelowThreshold,
       loadedCommentId: nextProps.match.params.commentId,
     };
   }
@@ -496,9 +483,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     const {
       allScoresAboveThreshold,
       reducedScoresAboveThreshold,
-      reducedScoresBelowThreshold,
-      summaryScoresAboveThreshold,
-      summaryScoresBelowThreshold,
       isKeyboardModalVisible,
       isConfirmationModalVisible,
       isScoresModalVisible,
@@ -645,9 +629,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                   allScores={allScores}
                   allScoresAboveThreshold={allScoresAboveThreshold}
                   reducedScoresAboveThreshold={reducedScoresAboveThreshold}
-                  reducedScoresBelowThreshold={reducedScoresBelowThreshold}
-                  summaryScoresAboveThreshold={summaryScoresAboveThreshold}
-                  summaryScoresBelowThreshold={summaryScoresBelowThreshold}
                   availableTags={availableTags}
                   loadScores={loadScores}
                   getUserById={getUserById}
@@ -1077,7 +1058,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   }
 
   @autobind
-  handleScoreClick(scoreClicked: ICommentSummaryScoreModel) {
+  handleScoreClick(scoreClicked: ICommentSummaryScoreModel2) {
     const thresholdByTag = getTaggingSensitivityForTag(this.state.taggingSensitivitiesInCategory, scoreClicked.tagId);
     const scoresSelectedByTag = this.props.allScores.filter(
       (score) => score.tagId === scoreClicked.tagId,

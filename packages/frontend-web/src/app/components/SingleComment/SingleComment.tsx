@@ -23,14 +23,13 @@ import { Link } from 'react-router-dom';
 import {
   ICommentModel,
   ICommentScoreModel,
-  ICommentSummaryScoreModel,
+  ICommentSummaryScoreModel2,
   ITagModel,
   IUserModel,
 } from '../../../models';
 import { DATE_FORMAT_LONG } from '../../config';
 import { editAndRescoreComment } from '../../platform/dataService';
 import { searchLink } from '../../scenes/routes';
-import { ICommentSummaryScore } from '../../stores/commentSummaryScores';
 import {
   ARTICLE_CATEGORY_TYPE,
   ARTICLE_HEADLINE_TYPE,
@@ -76,7 +75,7 @@ import {
   SourceIdRow,
 } from './components/DetailRow';
 import { FlagsList } from './components/FlagsList';
-import { SummaryScore } from './components/SummaryScore';
+import { SummaryScores } from './components/SummaryScore';
 
 const AVATAR_SIZE = 60;
 // const COMMENT_WIDTH = 696;
@@ -147,22 +146,6 @@ const STYLES = stylesheet({
     maxWidth: `${REPLY_WIDTH}px`,
   },
 
-  scoresLink: {
-    ...BUTTON_RESET,
-    ...BUTTON_LINK_TYPE,
-    color: MEDIUM_COLOR,
-    cursor: 'pointer',
-    textAlign: 'left',
-    marginTop: `${GUTTER_DEFAULT_SPACING}px`,
-    marginBottom: `${GUTTER_DEFAULT_SPACING}px`,
-    borderBottom: `2px solid transparent`,
-    alignSelf: 'flex-start',
-    ':focus': {
-      outline: 0,
-      borderBottom: `2px solid ${MEDIUM_COLOR}`,
-    },
-  },
-
   editButton: {
     ...BUTTON_RESET,
     ...CAPTION_TYPE,
@@ -230,14 +213,6 @@ const STYLES = stylesheet({
     padding: '8px 17px 7px 17px',
     cursor: 'pointer',
   },
-
-  linkFocus: {
-    ':focus': {
-      outline: 0,
-      textDecoration: 'underline',
-    },
-  },
-
 });
 
 const PROFILE_STYLES = stylesheet({
@@ -357,11 +332,6 @@ const COMMENT_STYLES = stylesheet({
     whiteSpace: 'pre-wrap',
   },
 
-  tags: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-
   scoreDetails: {
     ...BUTTON_LINK_TYPE, BOTTOM_BORDER_TRANSITION,
     color: MEDIUM_COLOR,
@@ -388,11 +358,10 @@ export interface ISingleCommentProps {
   allScores?: Array<ICommentScoreModel>;
   allScoresAboveThreshold?: Array<ICommentScoreModel>;
   reducedScoresAboveThreshold?: Array<ICommentScoreModel>;
-  reducedScoresBelowThreshold?: Array<ICommentScoreModel>;
   isThreadedComment?: boolean;
   isReply?: boolean;
   availableTags?: List<ITagModel>;
-  onScoreClick?(score: ICommentSummaryScoreModel): void;
+  onScoreClick?(score: ICommentSummaryScoreModel2): void;
   onTagButtonClick?(tagId: string): Promise<any>;
   onCommentTagClick?(commentScore: ICommentScoreModel): void;
   onAnnotateTagButtonClick?(tag: string, start: number, end: number): Promise<any>;
@@ -403,15 +372,11 @@ export interface ISingleCommentProps {
   onRemoveCommentScore?(commentScore: ICommentScoreModel): void;
   getUserById?(id: string): IUserModel;
   currentUser?: IUserModel;
-  summaryScores?: List<ICommentSummaryScore>;
-  summaryScoresAboveThreshold?: Array<ICommentSummaryScoreModel>;
-  summaryScoresBelowThreshold?: Array<ICommentSummaryScoreModel>;
   onUpdateCommentText?(comment: ICommentModel): void;
   commentEditingEnabled?: boolean;
 }
 
 export interface ISingleCommentState {
-  scoresBelowThresholdVisible: boolean;
   inEditMode: boolean;
   isEditHovered: boolean;
   isEditFocused: boolean;
@@ -420,7 +385,6 @@ export interface ISingleCommentState {
 export class SingleComment extends React.PureComponent<ISingleCommentProps, ISingleCommentState> {
 
   state = {
-    scoresBelowThresholdVisible: false,
     inEditMode: false,
     isEditHovered: false,
     isEditFocused: false,
@@ -429,13 +393,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
   authorLocation: HTMLDivElement = null;
   authorName: HTMLSpanElement = null;
   commentText: HTMLDivElement = null;
-
-  @autobind
-  toggleVisibleScores() {
-    this.setState({
-      scoresBelowThresholdVisible: !this.state.scoresBelowThresholdVisible,
-    });
-  }
 
   @autobind
   handleEditCommentClick() {
@@ -549,7 +506,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       comment,
       allScoresAboveThreshold,
       reducedScoresAboveThreshold,
-      reducedScoresBelowThreshold,
       availableTags,
       onTagButtonClick,
       onCommentTagClick,
@@ -564,14 +520,11 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       onRemoveCommentScore,
       getUserById,
       currentUser,
-      summaryScoresAboveThreshold,
-      summaryScoresBelowThreshold,
       onUpdateCommentText,
       commentEditingEnabled,
     } = this.props;
 
     const {
-      scoresBelowThresholdVisible,
       inEditMode,
       isEditHovered,
       isEditFocused,
@@ -745,45 +698,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               />
             )}
           </div>
-          {summaryScoresAboveThreshold && (
-            <div {...css(COMMENT_STYLES.tags)}>
-              {summaryScoresAboveThreshold.map((s) => (
-                <SummaryScore
-                  key={s.tagId}
-                  score={s}
-                  onScoreClick={onScoreClick}
-                  withColor
-                />
-              ))}
-            </div>
-          )}
-          {scoresBelowThresholdVisible && reducedScoresBelowThreshold && (
-            <div>
-              <div {...css(COMMENT_STYLES.tags)}>
-                {summaryScoresBelowThreshold && (
-                  <div {...css(COMMENT_STYLES.tags)}>
-                    {summaryScoresBelowThreshold.map((s) => (
-                      <SummaryScore
-                        key={s.tagId}
-                        score={s}
-                        onScoreClick={onScoreClick}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          {reducedScoresBelowThreshold && reducedScoresBelowThreshold.length > 0 && (
-            <button
-              aria-label={scoresBelowThresholdVisible ? 'Hide tags' : 'View all tags'}
-              type="button"
-              {...css(STYLES.scoresLink)}
-              onClick={this.toggleVisibleScores}
-            >
-              {scoresBelowThresholdVisible ? 'Hide tags' : 'View all tags'}
-            </button>
-          )}
+          <SummaryScores comment={comment} onScoreClick={onScoreClick}/>
           <FlagsList commentId={comment.id}/>
         </div>
       </div>

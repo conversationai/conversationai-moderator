@@ -28,10 +28,6 @@ import {
 import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
 import { updateComment as updateCommentState } from '../../../../stores/comments';
-import {
-  getSummaryScoresById,
-  loadCommentSummaryScores,
-} from '../../../../stores/commentSummaryScores';
 import { getTaggingSensitivities } from '../../../../stores/taggingSensitivities';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getCurrentUser, getUser } from '../../../../stores/users';
@@ -80,10 +76,6 @@ const mapStateToProps = createStructuredSelector({
   allScores: getScores,
   taggingSensitivities: getTaggingSensitivities,
 
-  summaryScores: (state: IAppState, ownProps: ICommentDetailOwnProps) => {
-    return getSummaryScoresById(state, ownProps.match.params.commentId);
-  },
-
   currentCommentIndex: (
     state: IAppState,
     { match: { params: { commentId }}, location }: ICommentDetailOwnProps,
@@ -126,7 +118,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
       return Promise.all([
         loadComment(dispatch, commentId),
         loadScores(dispatch, commentId),
-        loadCommentSummaryScores(dispatch, commentId),
       ]);
     },
 
