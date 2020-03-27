@@ -30,6 +30,7 @@ import {
   Comment,
   CommentFlag,
   CommentScore,
+  CommentSummaryScore,
   User,
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
@@ -47,6 +48,8 @@ import {
   FLAG_FIELDS,
   SCORE_FIELDS,
   serialiseObject,
+  serializedData,
+  SUMMARY_SCORE_FIELDS,
 } from './serializer';
 
 const userFields = ['id', 'name', 'email', 'group', 'isActive', 'extra'];
@@ -151,13 +154,30 @@ export function createSimpleRESTService(): express.Router {
       where: {id: {[Op.in]: req.body}},
       include: [{model: Article, as: 'article', attributes: ['categoryId']}],
     });
+    const summaryScores = await CommentSummaryScore.findAll({
+      where: {commentId: {[Op.in]: req.body}},
+    });
+
+    const scoresMap = new Map<number, Array<serializedData>>();
+    for (const score of summaryScores) {
+      let scoresForComment = scoresMap.get(score.commentId);
+      if (!scoresForComment) {
+        scoresForComment = [];
+        scoresMap.set(score.commentId, scoresForComment);
+      }
+      scoresForComment.push(serialiseObject(score, SUMMARY_SCORE_FIELDS));
+    }
+
     const commentData = comments.map((c) => {
       const data = serialiseObject(c, COMMENT_FIELDS);
       if ((c as any).article && (c as any).article.categoryId) {
         data['categoryId'] = (c as any).article.categoryId.toString();
       }
-      // TODO: replyTo, replies
-      // TODO: Summary scores
+      // TODO: replies
+      const scoreData = scoresMap.get(c.id);
+      if (scoreData) {
+        data['summaryScores'] = scoreData;
+      }
       return data;
     });
 
