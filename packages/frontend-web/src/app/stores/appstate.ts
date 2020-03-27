@@ -17,7 +17,6 @@ limitations under the License.
 import { IArticlesState } from './articles';
 import { ICategoriesState } from './categories';
 import { ICommentsState } from './comments';
-import { ICommentSummaryScoresState } from './commentSummaryScores';
 import { ICountsState } from './counts';
 import { IPreselectsState } from './preselects';
 import { IRulesState } from './rules';
@@ -31,7 +30,6 @@ export type IGlobalState = Readonly<{
   categories: ICategoriesState;
   articles: IArticlesState;
   comments: ICommentsState;
-  commentSummaryScores: ICommentSummaryScoresState;
   counts: ICountsState;
   users: IUsersState;
   tags: ITagsState;
