@@ -15,40 +15,16 @@ limitations under the License.
 */
 
 import React from 'react';
-import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { createStructuredSelector } from 'reselect';
 
-import { IAppDispatch, IAppState } from '../../appstate';
 import { articleInjector } from '../../injectors/articleInjector';
-import { getSummaryScoresById, loadCommentSummaryScores } from '../../stores/commentSummaryScores';
-import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
-import { getTaggableTags } from '../../stores/tags';
 import {
   AssignTagsForm as PureAssignTagsForm,
   IAssignTagsFormProps as IPureAssignTagsFormProps,
 } from './AssignTagsForm';
 
-const mapStateToProps = createStructuredSelector({
-  tags: (state: IAppState) => getTaggableTags(state),
-
-  sensitivities: getTaggingSensitivities,
-
-  summaryScores: (state: IAppState, { comment }: IPureAssignTagsFormProps) =>
-    getSummaryScoresById(state, comment.id),
-});
-
-function mapDispatchToProps(dispatch: IAppDispatch) {
-  return {
-    loadScoresForCommentId: async (id: string) => {
-      await loadCommentSummaryScores(dispatch, id);
-    },
-  };
-}
-
 export type IAssignTagsFormProps = Pick<IPureAssignTagsFormProps, 'articleId'| 'comment' | 'clearPopups' | 'submit'>;
 
 export const AssignTagsForm = compose<React.ComponentClass<IAssignTagsFormProps>>(
-  connect(mapStateToProps, mapDispatchToProps),
   articleInjector,
 )(PureAssignTagsForm);

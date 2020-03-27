@@ -16,8 +16,12 @@ limitations under the License.
 
 import { List, Map } from 'immutable';
 
-import {ICommentScoreModel, ITaggingSensitivityModel, ModelId} from '../../../models';
-import {ICommentSummaryScoreStateRecord} from '../../stores/commentSummaryScores';
+import {
+  ICommentScoreModel,
+  ICommentSummaryScoreModel2,
+  ITaggingSensitivityModel,
+  ModelId,
+} from '../../../models';
 
 export function getSensitivitiesForCategory(
   categoryId: ModelId,
@@ -30,7 +34,7 @@ export function getSensitivitiesForCategory(
 
 function isSummaryAboveThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  score: ICommentSummaryScoreStateRecord,
+  score: ICommentSummaryScoreModel2,
 ): boolean {
   if (score.tagId === null) {
     return false;
@@ -62,33 +66,24 @@ function isScoreAboveThreshold(
 
 export function getSummaryScoresAboveThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  scores: List<ICommentSummaryScoreStateRecord>): List<ICommentSummaryScoreStateRecord> {
+  scores: Array<ICommentSummaryScoreModel2>): Array<ICommentSummaryScoreModel2> {
   if (!scores) {
-    return;
+    return [];
   }
 
   return scores.filter((s) => isSummaryAboveThreshold(taggingSensitivities, s))
-    .sort((a, b) => b.score - a.score) as List<ICommentSummaryScoreStateRecord>;
+    .sort((a, b) => b.score - a.score);
 }
 
 export function getSummaryScoresBelowThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  scores: List<ICommentSummaryScoreStateRecord>): List<ICommentSummaryScoreStateRecord> {
+  scores: Array<ICommentSummaryScoreModel2>): Array<ICommentSummaryScoreModel2> {
   if (!scores) {
-    return;
+    return [];
   }
-  const scoresAboveThreshold = scores.filter(
-    (s) => isSummaryAboveThreshold(taggingSensitivities, s),
-  ) as List<ICommentSummaryScoreStateRecord>;
-  const scoresBelowThreshold = scores.filter((s) =>
-    !isSummaryAboveThreshold(taggingSensitivities, s) &&
-    !scoresAboveThreshold.find(
-      (sa) => sa.tagId === s.tagId),
-  ) as List<ICommentSummaryScoreStateRecord>;
-
-  return scoresBelowThreshold.sort(
-    (a, b) => b.score - a.score,
-  ) as List<ICommentSummaryScoreStateRecord>;
+  const tagsAboveThreshold = new Set(getSummaryScoresAboveThreshold(taggingSensitivities, scores).map((s) => s.tagId));
+  const scoresBelowThreshold = scores.filter((s) => !tagsAboveThreshold.has(s.tagId));
+  return scoresBelowThreshold.sort((a, b) => b.score - a.score);
 }
 
 function dedupeScoreTypes(scores: Array<ICommentScoreModel>): Array<ICommentScoreModel> {

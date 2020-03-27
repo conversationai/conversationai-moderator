@@ -14,8 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List, Set } from 'immutable';
+import {Set} from 'immutable';
 import React, {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
 
 import {
   ClickAwayListener,
@@ -25,12 +26,12 @@ import {
 import {
   IArticleModel,
   ICommentModel,
-  ITaggingSensitivityModel,
   ITagModel,
   ModelId,
 } from '../../../models';
 import { getSensitivitiesForCategory, getSummaryScoresAboveThreshold } from '../../scenes/Comments/scoreFilters';
-import { ICommentSummaryScoreStateRecord } from '../../stores/commentSummaryScores';
+import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
+import { getTaggableTags } from '../../stores/tags';
 import { css, stylesheet } from '../../utilx';
 import { CheckboxRow } from '../CheckboxRow';
 
@@ -84,16 +85,15 @@ export interface IAssignTagsFormProps {
   articleId: ModelId;
   article: IArticleModel;
   comment: ICommentModel;
-  tags: List<ITagModel>;
-  sensitivities: List<ITaggingSensitivityModel>;
-  summaryScores?:  List<ICommentSummaryScoreStateRecord>;
-  loadScoresForCommentId(id: string): void;
   clearPopups(): void;
   submit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
 export function AssignTagsForm (props: IAssignTagsFormProps) {
-  const {article, comment, sensitivities, summaryScores, tags} = props;
+  const tags = useSelector(getTaggableTags);
+  const sensitivities = useSelector(getTaggingSensitivities);
+  const {article, comment} = props;
+  const summaryScores = comment.summaryScores;
 
   function getPreselected() {
     if (!summaryScores) {
@@ -102,13 +102,10 @@ export function AssignTagsForm (props: IAssignTagsFormProps) {
     const categoryId = article ? article.categoryId : 'na';
     const sensitivitiesForCategory = getSensitivitiesForCategory(categoryId, sensitivities);
     const scoresAboveThreshold = getSummaryScoresAboveThreshold(sensitivitiesForCategory, summaryScores);
-    return scoresAboveThreshold.map((score) => score.tagId).toSet();
+    return Set(scoresAboveThreshold.map((score) => score.tagId));
   }
 
   const [selected, setSelected] = useState(Set<ModelId>());
-  useEffect(() => {
-      props.loadScoresForCommentId(comment.id);
-    }, [comment.id]);
   useEffect(() => {
     setSelected(selected.merge(getPreselected()));
   }, [summaryScores]);
@@ -135,7 +132,7 @@ export function AssignTagsForm (props: IAssignTagsFormProps) {
       <div {...css(SCRIM_STYLE.popupMenu, {padding: '20px 60px'})}>
         <DialogTitle id="article-controls">Reason for rejection</DialogTitle>
         <ul {...css(STYLES.tagsList)}>
-          {tags && tags.map((t) => (
+          {tags && tags.map((t: ITagModel) => (
             <li key={`tag${t.id}`} {...css(STYLES.listItem)}>
               <CheckboxRow
                 label={t.label}
