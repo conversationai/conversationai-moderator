@@ -36,22 +36,23 @@ export const COMMENT_FIELDS = ['id', 'sourceId', 'replyToSourceId', 'replyId', '
   'sourceCreatedAt', 'updatedAt', 'unresolvedFlagsCount', 'flagsSummary', 'sentForScoring', 'articleId',
   'maxSummaryScore', 'maxSummaryScoreTagId',
 ];
+export const SUMMARY_SCORE_FIELDS = ['tagId', 'score'];
 export const SCORE_FIELDS = ['id', 'commentId', 'confirmedUserId', 'tagId', 'score',
   'annotationStart', 'annotationEnd', 'sourceType', 'isConfirmed'];
 export const FLAG_FIELDS = ['id', 'label', 'detail', 'isRecommendation', 'commentId', 'sourceId', 'authorSourceId',
   'isResolved', 'resolvedById', 'resolvedAt'];
 
-const ID_FIELDS = new Set(['categoryId', 'articleId', 'tagId', 'ownerId', 'commentId',
+const ID_FIELDS = new Set(['id', 'categoryId', 'articleId', 'tagId', 'ownerId', 'commentId',
   'confirmedUserId', 'resolvedById', 'replyId']);
+
+export type serializedData = {[key: string]: {} | Array<string> | string | number};
 
 // Convert IDs to strings, and assignedModerators to arrays of strings.
 export function serialiseObject(
   o: Sequelize.Instance<any>,
   fields: Array<string>,
-): {[key: string]: {} | Array<string> | string | number} {
+): serializedData {
   const serialised = pick(o.toJSON(), fields);
-
-  serialised.id = serialised.id.toString();
 
   for (const k in serialised) {
     const v = serialised[k];
