@@ -149,11 +149,16 @@ export function createSimpleRESTService(): express.Router {
   router.post('/comment/get', async (req, res, next) => {
     const comments = await Comment.findAll({
       where: {id: {[Op.in]: req.body}},
+      include: [{model: Article, as: 'article', attributes: ['categoryId']}],
     });
     const commentData = comments.map((c) => {
+      const data = serialiseObject(c, COMMENT_FIELDS);
+      if ((c as any).article && (c as any).article.categoryId) {
+        data['categoryId'] = (c as any).article.categoryId.toString();
+      }
       // TODO: replyTo, replies
       // TODO: Summary scores
-      return serialiseObject(c, COMMENT_FIELDS);
+      return data;
     });
 
     res.json(commentData);
