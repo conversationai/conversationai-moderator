@@ -27,7 +27,6 @@ import {
 } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
-import { getArticle } from '../../../../stores/articles';
 import { updateComment as updateCommentState } from '../../../../stores/comments';
 import {
   getSummaryScoresById,
@@ -76,13 +75,6 @@ function getPagingIdentifier(location: Location): string | null {
 
 const mapStateToProps = createStructuredSelector({
   comment: getComment,
-  article: (state: IAppState) => {
-    const comment = getComment(state);
-    if (comment) {
-      return getArticle(state, comment.articleId);
-    }
-    return null;
-  },
   isLoading: getIsLoading,
   availableTags: getTaggableTags,
   allScores: getScores,

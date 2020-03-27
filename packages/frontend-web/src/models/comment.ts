@@ -57,6 +57,7 @@ export interface ICommentAttributes {
   unresolvedFlagsCount: number;
   flagsSummary?: Map<string, Array<number>>;
 
+  categoryId?: ModelId;
   articleId: ModelId;
   replyId?: ModelId;
   replyTo?: ICommentModel;

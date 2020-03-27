@@ -25,7 +25,6 @@ import { Link } from 'react-router-dom';
 
 import {
   CommentScoreModel,
-  IArticleModel,
   ICommentModel,
   ICommentScoreModel,
   ICommentSummaryScoreModel,
@@ -322,7 +321,6 @@ const STYLES = stylesheet({
 
 export interface ICommentDetailProps extends RouteComponentProps<ICommentDetailsPathParams> {
   comment: ICommentModel;
-  article: IArticleModel;
   availableTags: List<ITagModel>;
   allScores?: Array<ICommentScoreModel>;
   taggingSensitivities: List<ITaggingSensitivityModel>;
@@ -402,7 +400,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   }
 
   static getDerivedStateFromProps(nextProps: ICommentDetailProps, prevState: ICommentDetailState) {
-    const categoryId = nextProps.article ? nextProps.article.categoryId : 'na';
+    const categoryId = (nextProps.comment && nextProps.comment.categoryId) || 'na';
     const sensitivities = getSensitivitiesForCategory(categoryId, nextProps.taggingSensitivities);
 
     const allScoresAboveThreshold = getScoresAboveThreshold(sensitivities, nextProps.allScores);
