@@ -127,7 +127,7 @@ export function SummaryScores(props: ISummaryScoresProps) {
   return (
     <Fragment>
       {summaryScoresAboveThreshold && (
-        <div {...css(STYLES.tags)}>
+        <div key="above" {...css(STYLES.tags)}>
           {summaryScoresAboveThreshold.map((s) => (
             <SummaryScore
               key={s.tagId}
@@ -139,7 +139,7 @@ export function SummaryScores(props: ISummaryScoresProps) {
         </div>
       )}
       {allVisible && summaryScoresBelowThreshold && (
-        <div {...css(STYLES.tags)}>
+        <div key="below" {...css(STYLES.tags)}>
           {summaryScoresBelowThreshold.map((s) => (
             <SummaryScore
               key={s.tagId}
@@ -151,6 +151,7 @@ export function SummaryScores(props: ISummaryScoresProps) {
       )}
       {summaryScoresBelowThreshold && (
         <button
+          key="button"
           aria-label={allVisible ? 'Hide tags' : 'View all tags'}
           type="button"
           {...css(STYLES.scoresLink)}
