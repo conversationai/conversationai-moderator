@@ -42,7 +42,6 @@ import {
   ArrowIcon,
   ConfirmationCircle,
   InfoIcon,
-  LoadMoreIcon,
   ModerateButtons,
   ReplyIcon,
   ScoresList,
@@ -623,29 +622,25 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                   </Link>
                 </div>
               )}
-              { !this.props.isLoading ? (
-                <SingleComment
-                  comment={comment}
-                  allScores={allScores}
-                  allScoresAboveThreshold={allScoresAboveThreshold}
-                  reducedScoresAboveThreshold={reducedScoresAboveThreshold}
-                  availableTags={availableTags}
-                  loadScores={loadScores}
-                  getUserById={getUserById}
-                  onScoreClick={this.handleScoreClick}
-                  onTagButtonClick={this.onTagButtonClick}
-                  onCommentTagClick={this.onCommentTagClick}
-                  onAnnotateTagButtonClick={this.onAnnotateTagButtonClick}
-                  onDeleteCommentTag={deleteCommentTag}
-                  onRemoveCommentScore={onRemoveCommentScore}
-                  onUpdateCommentScore={onUpdateCommentScore}
-                  currentUser={currentUser}
-                  onUpdateCommentText={onUpdateComment}
-                  commentEditingEnabled={COMMENTS_EDITABLE_FLAG}
-                />
-              ) : (
-                <LoadMoreIcon {...css(STYLES.loadIcon)} />
-              )}
+              <SingleComment
+                comment={comment}
+                allScores={allScores}
+                allScoresAboveThreshold={allScoresAboveThreshold}
+                reducedScoresAboveThreshold={reducedScoresAboveThreshold}
+                availableTags={availableTags}
+                loadScores={loadScores}
+                getUserById={getUserById}
+                onScoreClick={this.handleScoreClick}
+                onTagButtonClick={this.onTagButtonClick}
+                onCommentTagClick={this.onCommentTagClick}
+                onAnnotateTagButtonClick={this.onAnnotateTagButtonClick}
+                onDeleteCommentTag={deleteCommentTag}
+                onRemoveCommentScore={onRemoveCommentScore}
+                onUpdateCommentScore={onUpdateCommentScore}
+                currentUser={currentUser}
+                onUpdateCommentText={onUpdateComment}
+                commentEditingEnabled={COMMENTS_EDITABLE_FLAG}
+              />
             </div>
           </div>
 
