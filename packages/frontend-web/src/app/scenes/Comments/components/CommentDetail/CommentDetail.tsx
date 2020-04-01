@@ -324,7 +324,6 @@ function _ReplyLink(props: IReplyLinkProps) {
           context: props.match.params.context,
           contextId: props.match.params.contextId,
           commentId: comment.id,
-          originatingCommentId: props.parent.id,
         })}
         {...css(STYLES.replyButton)}
       >

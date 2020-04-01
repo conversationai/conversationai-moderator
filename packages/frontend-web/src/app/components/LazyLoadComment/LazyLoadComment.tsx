@@ -185,7 +185,6 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                   context: articleBase,
                   contextId: comment.articleId,
                   commentId: comment.replyId,
-                  originatingCommentId: comment.id,
                 })}
                 {...css(ROW_STYLES.reply)}
                 onClick={partial(maybeCallback(onCommentClick), comment.id)}
