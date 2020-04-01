@@ -120,7 +120,6 @@ export function ThreadedCommentDetail() {
         <ThreadedComment
           comment={comment}
           handleAssignTagsSubmit={handleAssignTagsSubmit}
-          replies={comment.replies}
         />
       </div>
     </div>

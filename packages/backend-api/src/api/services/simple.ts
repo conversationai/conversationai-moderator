@@ -31,6 +31,7 @@ import {
   CommentFlag,
   CommentScore,
   CommentSummaryScore,
+  ICommentInstance,
   ICommentScoreAttributes,
   User,
   USER_GROUP_ADMIN,
@@ -154,7 +155,10 @@ export function createSimpleRESTService(): express.Router {
   router.post('/comment/get', async (req, res, next) => {
     const comments = await Comment.findAll({
       where: {id: {[Op.in]: req.body}},
-      include: [{model: Article, as: 'article', attributes: ['categoryId']}],
+      include: [
+        {model: Article, as: 'article', attributes: ['categoryId']},
+        {model: Comment, as: 'replies', attributes: ['id']},
+      ],
     });
     const summaryScores = await CommentSummaryScore.findAll({
       where: {commentId: {[Op.in]: req.body}},
@@ -198,7 +202,9 @@ export function createSimpleRESTService(): express.Router {
       if ((c as any).article && (c as any).article.categoryId) {
         data['categoryId'] = (c as any).article.categoryId.toString();
       }
-      // TODO: replies
+      if ((c as any).replies) {
+        data['replies'] = ((c as any).replies as Array<ICommentInstance>).map((r) => r.id.toString());
+      }
       const scoreData = scoresMap.get(c.id);
       if (scoreData) {
         data['summaryScores'] = scoreData;

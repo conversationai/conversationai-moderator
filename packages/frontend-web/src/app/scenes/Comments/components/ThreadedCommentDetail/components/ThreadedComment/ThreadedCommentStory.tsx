@@ -31,18 +31,6 @@ const author = {
   name: 'Bridie Skiles IV',
 } as IAuthorModel;
 
-const comment = fakeCommentModel({
-  isAccepted: true,
-  isDeferred: false,
-  isModerated: true,
-  isHighlighted: false,
-  sourceCreatedAt: null,
-  authorSourceId: 'author1',
-  author,
-  unresolvedFlagsCount: 1,
-  flagsSummary: new Map([['red', [1, 0, 0]], ['green', [2, 1, 2]]]),
-  text: 'Orginating comment text is here',
-});
 const replies = [
   fakeCommentModel({
     isDeferred: true,
@@ -97,6 +85,20 @@ const replies = [
   }),
 ];
 
+const comment = fakeCommentModel({
+  isAccepted: true,
+  isDeferred: false,
+  isModerated: true,
+  isHighlighted: false,
+  sourceCreatedAt: null,
+  authorSourceId: 'author1',
+  author,
+  unresolvedFlagsCount: 1,
+  flagsSummary: new Map([['red', [1, 0, 0]], ['green', [2, 1, 2]]]),
+  text: 'Originating comment text is here',
+  replies: replies.map((r) => r.id),
+});
+
 const STORY_STYLES = {
   base: {
     width: '100%',
@@ -121,7 +123,6 @@ storiesOf('ThreadedComment', module)
         <div {...css(STORY_STYLES.detail)}>
           <ThreadedComment
             comment={comment}
-            replies={replies}
             handleAssignTagsSubmit={doNothing}
           />
         </div>
