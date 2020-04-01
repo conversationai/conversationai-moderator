@@ -141,14 +141,10 @@ export function commentDetailsPageLink (
   return `/${context}/${contextId}/comments/${commentId}${queryString}`;
 }
 
-export interface ICommentReplyDetailsPathParams extends ICommentDetailsPathParams {
-  originatingCommentId: string;
-}
-
 export function commentRepliesDetailsLink(
-  {context, contextId, commentId, originatingCommentId}: ICommentReplyDetailsPathParams,
+  {context, contextId, commentId}: ICommentDetailsPathParams,
 ) {
-  return `/${context}/${contextId}/comments/${commentId}/${originatingCommentId}/replies`;
+  return `/${context}/${contextId}/comments/${commentId}/replies`;
 }
 
 export function commentSearchDetailsPageLink(
