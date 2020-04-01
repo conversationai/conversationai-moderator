@@ -17,7 +17,7 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import formatDate from 'date-fns/format';
 import { List } from 'immutable';
-import React from 'react';
+import React, {Fragment} from 'react';
 import { Link } from 'react-router-dom';
 
 import {
@@ -501,6 +501,74 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
     this.authorLocation.focus();
   }
 
+  renderAuthor() {
+    const {comment} = this.props;
+    const {inEditMode} = this.state;
+
+    const { author } = this.props.comment;
+    if (!author) {
+      return null;
+    }
+    return (
+      <Fragment>
+        {author.avatar && <Avatar key="avatarColumn" target={author} size={60}/>}
+        <div key="nameColumn" {...css(PROFILE_STYLES.nameColumn)}>
+          <div {...css(PROFILE_STYLES.name)}>
+            {!inEditMode ? (
+              <Link
+                to={searchLink({searchByAuthor: true, term: author.name})}
+                key="authorName"
+                {...css(PROFILE_STYLES.authorName)}
+              >
+                {author.name}
+              </Link>
+            ) : (
+              <span
+                key="authorNameEditable"
+                contentEditable
+                suppressContentEditableWarning
+                ref={this.saveAuthorNameRef}
+                onClick={this.focusName}
+                {...css(STYLES.contentEditableContainer, {minWidth: '300px'})}
+              >
+                {author.name}
+              </span>
+            )}
+          </div>
+          <div {...css(PROFILE_STYLES.meta)}>
+            <div>
+              {author.location && (
+                <div key="location" {...css(PROFILE_STYLES.location)}>
+                  {!inEditMode ? (
+                    <span key="authorLocation">{author.location}</span>
+                  ) : (
+                    <span
+                      key="authorLocationEditable"
+                      contentEditable
+                      suppressContentEditableWarning
+                      ref={this.saveAuthorLocationRef}
+                      onClick={this.focusLocation}
+                      {...css(STYLES.contentEditableContainer)}
+                    >
+                      {author.location}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+            <div {...css(PROFILE_STYLES.details)}>
+              <AuthorCounts authorSourceId={comment.authorSourceId}/>
+              {author.approvalRating && (<ApprovalRatingRow approvalRating={author.approvalRating}/>)}
+              {author.isSubscriber && (<IsSubscriberRow/>)}
+              {author.email && (<EmailRow author={author}/>)}
+              {comment.authorSourceId && (<SourceIdRow authorSourceId={comment.authorSourceId}/>)}
+            </div>
+          </div>
+        </div>
+      </Fragment>
+    );
+  }
+
   render() {
     const {
       comment,
@@ -530,7 +598,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       isEditFocused,
     } = this.state;
 
-    const { author } = comment;
     const SUBMITTED_AT = formatDate(comment.sourceCreatedAt, DATE_FORMAT_LONG);
 
     const bodyStyling = css(COMMENT_STYLES.body);
@@ -545,63 +612,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
           )}
         >
           <div {...css(PROFILE_STYLES.header)}>
-            {author.avatar && <Avatar key="avatarColumn" target={author} size={60}/>}
-            <div key="nameColumn" {...css(PROFILE_STYLES.nameColumn)}>
-              <div {...css(PROFILE_STYLES.name)}>
-                {!inEditMode ? (
-                  <Link
-                    to={searchLink({searchByAuthor: true, term: author.name})}
-                    key="authorName"
-                    {...css(PROFILE_STYLES.authorName)}
-                  >
-                    {author.name}
-                  </Link>
-                ) : (
-                  <span
-                    key="authorNameEditable"
-                    contentEditable
-                    suppressContentEditableWarning
-                    ref={this.saveAuthorNameRef}
-                    onClick={this.focusName}
-                    {...css(STYLES.contentEditableContainer, {minWidth: '300px'})}
-                  >
-                    {author.name}
-                  </span>
-                )
-                }
-              </div>
-
-              <div {...css(PROFILE_STYLES.meta)}>
-                <div>
-                  {author.location && (
-                    <div key="location" {...css(PROFILE_STYLES.location)}>
-                      {!inEditMode ? (
-                        <span key="authorLocation">{author.location}</span>
-                      ) : (
-                        <span
-                          key="authorLocationEditable"
-                          contentEditable
-                          suppressContentEditableWarning
-                          ref={this.saveAuthorLocationRef}
-                          onClick={this.focusLocation}
-                          {...css(STYLES.contentEditableContainer)}
-                        >
-                          {author.location}
-                        </span>
-                      )
-                      }
-                    </div>
-                  )}
-                </div>
-                <div {...css(PROFILE_STYLES.details)}>
-                  <AuthorCounts authorSourceId={comment.authorSourceId}/>
-                  {author.approvalRating && (<ApprovalRatingRow approvalRating={author.approvalRating}/>)}
-                  {author.isSubscriber && (<IsSubscriberRow/>)}
-                  {author.email && (<EmailRow author={author}/>)}
-                  {comment.authorSourceId && (<SourceIdRow authorSourceId={comment.authorSourceId}/>)}
-                </div>
-              </div>
-            </div>
+            {this.renderAuthor()}
           </div>
         </div>
         <div {...css(COMMENT_STYLES.base)}>
