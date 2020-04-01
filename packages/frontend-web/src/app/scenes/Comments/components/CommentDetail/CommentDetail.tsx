@@ -106,9 +106,6 @@ import {
   getSensitivitiesForCategory,
 } from '../../scoreFilters';
 import { Shortcuts } from '../Shortcuts';
-import {
-  getTaggingSensitivityForTag,
-} from './store';
 
 const ACTION_PROPERTY_MAP: {
   [key: string]: string | null;
@@ -354,7 +351,6 @@ export interface ICommentDetailProps extends RouteComponentProps<ICommentDetails
   nextCommentId?: string;
   previousCommentId?: string;
   isFromBatch?: boolean;
-  isLoading?: boolean;
   onUpdateCommentScore?(commentScore: ICommentScoreModel): void;
   onUpdateComment?(comment: ICommentModel): void;
   onAddCommentScore?(commentScore: ICommentScoreModel): void;
@@ -431,6 +427,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     if (prevState.loadedCommentId !== nextProps.match.params.commentId) {
       nextProps.loadData(nextProps.match.params.commentId);
     }
+
     return {
       taggingSensitivitiesInCategory: sensitivities,
       allScoresAboveThreshold,
@@ -564,7 +561,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                 vertical
                 activeButtons={activeButtons}
                 onClick={this.moderateComment}
-                disabled={this.props.isLoading}
                 requireReasonForReject={comment.isAccepted === false ? false : REQUIRE_REASON_TO_REJECT}
                 comment={comment}
                 handleAssignTagsSubmit={this.handleAssignTagsSubmit}
@@ -633,7 +629,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
           <div {...css(STYLES.commentWrapper)}>
             <div {...css(STYLES.comment)}>
-              { comment.replyId && !this.props.isLoading && (
+              { comment.replyId && (
                 <ReplyLink parent={comment} commentId={comment.replyId}/>
               )}
               <SingleComment
@@ -1068,7 +1064,8 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
   @autobind
   handleScoreClick(scoreClicked: ICommentSummaryScoreModel2) {
-    const thresholdByTag = getTaggingSensitivityForTag(this.state.taggingSensitivitiesInCategory, scoreClicked.tagId);
+    const thresholdByTag = this.state.taggingSensitivitiesInCategory.find(
+      (ts) => ts.tagId === scoreClicked.tagId || ts.categoryId === null);
     const scoresSelectedByTag = this.props.allScores.filter(
       (score) => score.tagId === scoreClicked.tagId,
     ).sort((a, b) => b.score - a.score);

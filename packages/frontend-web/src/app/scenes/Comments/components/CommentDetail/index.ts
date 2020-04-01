@@ -27,7 +27,8 @@ import {
 } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
-import { updateComment as updateCommentState } from '../../../../stores/comments';
+import { commentFromRouteInjector } from '../../../../injectors/commentInjector';
+import { commentsUpdated, updateComment as updateCommentState } from '../../../../stores/comments';
 import { getTaggingSensitivities } from '../../../../stores/taggingSensitivities';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getCurrentUser, getUser } from '../../../../stores/users';
@@ -35,19 +36,15 @@ import { updateCommentStateAction } from '../ModeratedComments/store';
 import { CommentDetail as PureCommentDetail, ICommentDetailProps } from './CommentDetail';
 import {
   addCommentScore,
-  getComment,
   getCurrentCommentIndex,
-  getIsLoading,
   getNextCommentId,
   getPagingIsFromBatch,
   getPagingLink,
   getPagingSource,
   getPreviousCommentId,
   getScores,
-  loadComment,
   loadScores,
   removeCommentScore,
-  updateComment,
   updateCommentScore,
 } from './store';
 
@@ -70,8 +67,6 @@ function getPagingIdentifier(location: Location): string | null {
 }
 
 const mapStateToProps = createStructuredSelector({
-  comment: getComment,
-  isLoading: getIsLoading,
   availableTags: getTaggableTags,
   allScores: getScores,
   taggingSensitivities: getTaggingSensitivities,
@@ -116,7 +111,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
   return {
     loadData: (commentId: string) => {
       return Promise.all([
-        loadComment(dispatch, commentId),
         loadScores(dispatch, commentId),
       ]);
     },
@@ -129,7 +123,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
 
     onUpdateComment: (comment: ICommentModel) => {
       return Promise.all([
-        dispatch(updateComment(comment)),
+        dispatch(commentsUpdated([comment])),
         updateCommentState(dispatch, comment),
       ]); },
 
@@ -147,8 +141,8 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
   };
 }
 
-// Add Redux data.
 export const CommentDetail: React.ComponentClass = compose(
-  connect(mapStateToProps, mapDispatchToProps),
   withRouter,
+  commentFromRouteInjector,
+  connect(mapStateToProps, mapDispatchToProps),
 )(PureCommentDetail);
