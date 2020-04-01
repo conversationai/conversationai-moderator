@@ -1,5 +1,5 @@
 /*
-Copyright 2017 Google Inc.
+Copyright 2020 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List, Map } from 'immutable';
+import { List, Map as IMap} from 'immutable';
 import { omit } from 'lodash';
-import { Action } from 'redux-actions';
+import { Action, createAction, handleActions } from 'redux-actions';
 
-import { ICommentModel } from '../../models';
+import { ICommentModel, ModelId } from '../../models';
 import { IAppDispatch, IAppState, IThunkAction } from '../appstate';
 import { getComments } from '../platform/dataService';
 import { ILoadCompletePayload, IQueuedModelState, makeQueuedModelStore } from '../util';
@@ -27,9 +27,9 @@ const queueModelStore = makeQueuedModelStore<string, ICommentModel>(
   async (commentIds: List<string>) => {
     const comments = await getComments(commentIds.toArray());
 
-    return comments.reduce((sum: Map<string, ICommentModel>, comment: ICommentModel) => {
+    return comments.reduce((sum: IMap<string, ICommentModel>, comment: ICommentModel) => {
       return sum.set(comment.id, comment);
-    }, Map<string, ICommentModel>());
+    }, IMap<string, ICommentModel>());
   },
   300,
   12,
@@ -164,3 +164,19 @@ export {
   deferComment,
   resetComment,
 };
+
+export const commentsUpdated = createAction<Array<ICommentModel>>('global/COMMENTS_UPDATED');
+
+export interface INewCommentsState {
+  index: Map<ModelId, ICommentModel>;
+}
+
+export const newReducer = handleActions<Readonly<INewCommentsState>, Array<ICommentModel>>( {
+  [commentsUpdated.toString()]: (state, { payload }: Action<Array<ICommentModel>>) => {
+    const index = state.index;
+    for (const comment of payload) {
+      index.set(comment.id, comment);
+    }
+    return {index};
+  },
+}, {index: new Map()});

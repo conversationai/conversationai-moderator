@@ -67,7 +67,6 @@ export interface ICommentAttributes {
   categoryId?: ModelId;
   articleId: ModelId;
   replyId?: ModelId;
-  replyTo?: ICommentModel;
   replies?: Array<ICommentModel>;
 
   summaryScores?: Array<ICommentSummaryScoreModel2>;
@@ -80,12 +79,14 @@ export type ICommentModel = Readonly<ICommentAttributes>;
 export function CommentModel(keyValuePairs?: ICommentAttributes): ICommentModel {
   const author: any = (keyValuePairs as ICommentAttributes).author;
 
-  if (author.user_name) {
-    author.name = author.user_name;
-  }
+  if (author) {
+    if (author.user_name) {
+      author.name = author.user_name;
+    }
 
-  if (author.image_uri) {
-    author.avatar = author.image_uri;
+    if (author.image_uri) {
+      author.avatar = author.image_uri;
+    }
   }
 
   const fsd = keyValuePairs.flagsSummary;
