@@ -28,7 +28,7 @@ import {
   rejectComment,
   resetComment,
 } from '../../../../stores/comments';
-import { getComment, getIsLoading, loadComment, updateComment } from './store';
+import { getComment, loadComment, updateComment } from './store';
 import { IThreadedCommentDetailProps, ThreadedCommentDetail as PureThreadedCommentDetail } from './ThreadedCommentDetail';
 
 const updateCommentStateAction: {
@@ -43,8 +43,7 @@ const updateCommentStateAction: {
 
 type IThreadedCommentDetailStateProps = Pick<
   IThreadedCommentDetailProps,
-  'comment' |
-  'isLoading'
+  'comment'
   >;
 
 type IThreadedCommentDetailDispatchProps = Pick<
@@ -92,7 +91,6 @@ function updateCommentState(comment: ICommentModel, action: IConfirmationAction)
 
 const mapStateToProps = createStructuredSelector({
   comment: getComment,
-  isLoading: getIsLoading,
 }) as (state: IAppState, ownProps: IThreadedCommentDetailProps) => IThreadedCommentDetailStateProps;
 
 function mapDispatchToProps(dispatch: IAppDispatch): any {

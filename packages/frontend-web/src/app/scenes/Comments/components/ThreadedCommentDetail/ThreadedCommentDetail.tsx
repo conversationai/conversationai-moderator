@@ -92,7 +92,6 @@ const STYLES = stylesheet({
 
 export interface IThreadedCommentDetailProps extends RouteComponentProps<ICommentDetailsPathParams>  {
   comment: ICommentModel;
-  isLoading?: boolean;
   onUpdateReply?(action: ICommentAction, replyId: string): any;
   onUpdateComment(comment: ICommentModel): any;
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
