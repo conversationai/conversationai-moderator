@@ -20,7 +20,7 @@ import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import qs from 'query-string';
 import React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import {
@@ -55,6 +55,8 @@ import {
   MODERATOR_GUIDELINES_URL,
   SUBMIT_FEEDBACK_URL,
 } from '../../../../config';
+import { ICommentCacheProps } from '../../../../injectors/commentFetchQueue';
+import { commentInjector } from '../../../../injectors/commentInjector';
 import {
   approveComments,
   deferComments,
@@ -91,7 +93,6 @@ import {
 import { clearReturnSavedCommentRow, partial, setReturnSavedCommentRow, timeout } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
 import {
-  articleBase,
   commentDetailsPageLink,
   commentRepliesDetailsLink,
   ICommentDetailsPathParams,
@@ -315,6 +316,35 @@ const STYLES = stylesheet({
   },
 });
 
+interface IReplyLinkProps extends RouteComponentProps<ICommentDetailsPathParams>, ICommentCacheProps {
+  commentId: ModelId;
+  parent: ICommentModel;
+}
+
+function _ReplyLink(props: IReplyLinkProps) {
+  const comment = props.comment;
+  return (
+    <div {...css(STYLES.replyToContainer)}>
+      <Link
+        to={commentRepliesDetailsLink({
+          context: props.match.params.context,
+          contextId: props.match.params.contextId,
+          commentId: comment.id,
+          originatingCommentId: props.parent.id,
+        })}
+        {...css(STYLES.replyButton)}
+      >
+        <div {...css(STYLES.replyIcon)}>
+          <ReplyIcon {...css({fill: DARK_COLOR})} size={24} />
+        </div>
+        This is a reply to {comment.author && comment.author.name}
+      </Link>
+    </div>
+  );
+}
+
+const ReplyLink = withRouter(commentInjector(_ReplyLink));
+
 export interface ICommentDetailProps extends RouteComponentProps<ICommentDetailsPathParams> {
   comment: ICommentModel;
   availableTags: List<ITagModel>;
@@ -500,7 +530,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     }
 
     const activeButtons = this.getActiveButtons(this.props.comment);
-    const inReplyTo = comment.replyTo;
 
     const batchURL = newCommentsPageLink({
       context: params.context,
@@ -604,23 +633,8 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
           <div {...css(STYLES.commentWrapper)}>
             <div {...css(STYLES.comment)}>
-              { inReplyTo && !this.props.isLoading && (
-                <div {...css(STYLES.replyToContainer)}>
-                  <Link
-                    to={commentRepliesDetailsLink({
-                      context: articleBase,
-                      contextId: comment.articleId,
-                      commentId: inReplyTo.id,
-                      originatingCommentId: comment.id,
-                    })}
-                    {...css(STYLES.replyButton)}
-                  >
-                    <div {...css(STYLES.replyIcon)}>
-                      <ReplyIcon {...css({fill: DARK_COLOR})} size={24} />
-                    </div>
-                    This is a reply to {inReplyTo.author.name}
-                  </Link>
-                </div>
+              { comment.replyId && !this.props.isLoading && (
+                <ReplyLink parent={comment} commentId={comment.replyId}/>
               )}
               <SingleComment
                 comment={comment}

@@ -22,6 +22,7 @@ import {
   confirmCommentSummaryScoreRequest,
   deferCommentsRequest,
   deleteCommentTagRequest,
+  getComments,
   highlightCommentsRequest,
   rejectCommentScoreRequest,
   rejectCommentsRequest,
@@ -34,11 +35,13 @@ import {
   tagCommentsRequest,
   tagCommentSummaryScoresRequest,
 } from '../platform/dataService';
+import {store} from '../store';
+import {commentsUpdated} from './comments';
 
-/**
- * Wrap a bunch of data service calls where we don't care about the result
- * in thunks for redux action dispatching and chaining.
- */
+export async function fetchComments(commentIds: Array<ModelId>) {
+  const comments = await getComments(commentIds);
+  store.dispatch(commentsUpdated(comments));
+}
 
 export async function deleteCommentTag(commentId: ModelId, commentScoreId: string) {
   await deleteCommentTagRequest(commentId, commentScoreId);
