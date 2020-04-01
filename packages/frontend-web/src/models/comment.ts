@@ -90,7 +90,7 @@ export interface ICommentAttributes {
   categoryId?: ModelId;
   articleId: ModelId;
   replyId?: ModelId;
-  replies?: Array<ICommentModel>;
+  replies?: Array<ModelId>;
 
   summaryScores?: Array<ICommentSummaryScoreModel>;
   maxSummaryScore?: number;
