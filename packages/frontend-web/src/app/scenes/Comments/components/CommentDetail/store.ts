@@ -19,25 +19,13 @@ import { combineReducers } from 'redux';
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import {
-  ICommentModel,
   ICommentScoreModel,
-  ITaggingSensitivityModel,
-  ModelId,
 } from '../../../../../models';
 import { IAppDispatch, IAppState } from '../../../../appstate';
 import {
-  getComments,
   getCommentScores,
 } from '../../../../platform/dataService';
-import {
-  ISingleRecordState,
-  makeSingleRecordReducer,
-} from '../../../../util';
 
-const loadCommentStart =
-  createAction('comment-detail/LOAD_COMMENT_START');
-const loadCommentComplete =
-  createAction<object>('comment-detail/LOAD_COMMENT_COMPLETE');
 const loadCommentScoresStart =
   createAction('comment-detail/LOAD_COMMENT_SCORE_START');
 const loadCommentScoresComplete =
@@ -53,28 +41,11 @@ export const clearCommentPagingOptions: () => Action<void> =
 const internalStoreCommentPagingOptions =
   createAction<ICommentPagingState>('comment-detail/STORE_COMMENT_PAGING_OPTIONS');
 
-export async function loadComment(dispatch: IAppDispatch, id: string) {
-  await dispatch(loadCommentStart());
-
-  const [ comment ] = await getComments([id]);
-  await dispatch(loadCommentComplete(comment));
-}
-
 export async function loadScores(dispatch: IAppDispatch, id: string) {
   await dispatch(loadCommentScoresStart());
   const data = await getCommentScores(id);
   await dispatch(loadCommentScoresComplete(data));
 }
-
-const {
-  reducer: commentReducer,
-  updateRecord: updateCommentRecord,
-} = makeSingleRecordReducer<ICommentModel>(
-  loadCommentStart.toString(),
-  loadCommentComplete.toString(),
-);
-
-export const updateComment: (payload: ICommentModel) => Action<ICommentModel> = updateCommentRecord;
 
 export interface ICommentScoreState {
   items: Array<ICommentScoreModel>;
@@ -259,13 +230,11 @@ export function getPreviousCommentId(state: IAppState, currentHash: string, comm
 }
 
 export type ICommentDetailState = Readonly<{
-  comment: ISingleRecordState<ICommentModel>;
   scores: ICommentScoreState;
   paging: ICommentPagingState;
 }>;
 
 export const reducer = combineReducers<ICommentDetailState>({
-  comment: commentReducer,
   scores: commentScoresReducer,
   paging: commentPagingReducer,
 });
@@ -276,18 +245,6 @@ export const addCommentScore: (payload: ICommentScoreModel) => Action<ICommentSc
 export const updateCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = updateCommentScoreRecord;
 export const removeCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = removeCommentScoreRecord;
 
-export function getComment(state: IAppState) {
-  return state.scenes.comments.commentDetail.comment.item;
-}
-
 export function getScores(state: IAppState) {
   return state.scenes.comments.commentDetail.scores.items;
-}
-
-export function getIsLoading(state: IAppState) {
-  return state.scenes.comments.commentDetail.comment.isFetching;
-}
-
-export function getTaggingSensitivityForTag(taggingSensitivities: List<ITaggingSensitivityModel>, tagId: ModelId) {
-  return taggingSensitivities.find((ts) => ts.tagId === tagId || ts.categoryId === null);
 }

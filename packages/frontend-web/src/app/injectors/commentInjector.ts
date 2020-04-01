@@ -14,17 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { connect } from 'react-redux';
+import { RouteComponentProps } from 'react-router';
 
 import { ModelId } from '../../models';
 import { IAppState } from '../appstate';
+import { ICommentDetailsPathParams } from '../scenes/routes';
 import { getCachedComment, ICommentCacheProps } from './commentFetchQueue';
 
 export interface ICommentInjectorInputProps {
   commentId: ModelId;
 }
 
-function mapStateToProps(state: IAppState, {commentId}: ICommentInjectorInputProps): ICommentCacheProps {
+function getCommentFromCommentId(state: IAppState, {commentId}: ICommentInjectorInputProps): ICommentCacheProps {
   return getCachedComment(state, commentId);
 }
 
-export const commentInjector = connect(mapStateToProps);
+export const commentInjector = connect(getCommentFromCommentId);
+
+function getCommentFromRoute(state: IAppState, props: RouteComponentProps<ICommentDetailsPathParams>): ICommentCacheProps {
+  return getCachedComment(state, props.match.params.commentId);
+}
+
+export const commentFromRouteInjector = connect(getCommentFromRoute);

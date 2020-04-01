@@ -50,7 +50,7 @@ export function getCachedComment(state: IAppState, commentId: ModelId): IComment
       replyId: null,
       replyToSourceId: null,
       authorSourceId: null,
-      text: null,
+      text: '',
       author: null,
       isScored: null,
       isModerated: null,
