@@ -28,8 +28,8 @@ import {
   IUserModel,
 } from '../../../models';
 import { DATE_FORMAT_LONG } from '../../config';
-import { editAndRescoreComment } from '../../platform/dataService';
 import { searchLink } from '../../scenes/routes';
+import { editAndRescoreComment } from '../../stores/commentActions';
 import {
   ARTICLE_CATEGORY_TYPE,
   ARTICLE_HEADLINE_TYPE,
@@ -431,14 +431,11 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
     const commentText = this.commentText.innerText;
 
     // reset comment text and author
+    const author = {...comment.author, name: authorName, location: authorLoc};
     onUpdateCommentText({
       ...comment,
       text: commentText,
-      author: {
-        ...comment.author,
-        name: authorName,
-        location: authorLoc,
-      },
+      author,
     });
     // null out local scores for comment
     this.props.allScores.forEach((score) => (
@@ -451,7 +448,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
     ));
 
     // send comment text to be update to publisher
-    editAndRescoreComment(comment.id, commentText, authorName, authorLoc);
+    editAndRescoreComment(comment.id, commentText, author);
 
     this.setState({
       inEditMode: false,

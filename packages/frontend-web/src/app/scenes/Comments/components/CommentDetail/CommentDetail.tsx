@@ -70,6 +70,13 @@ import {
   tagCommentSummaryScores,
 } from '../../../../stores/commentActions';
 import {
+  ATTRIBUTES_APPROVED,
+  ATTRIBUTES_DEFERRED,
+  ATTRIBUTES_HIGHLIGHTED,
+  ATTRIBUTES_REJECTED,
+  ATTRIBUTES_RESET,
+} from '../../../../stores/comments';
+import {
   BASE_Z_INDEX,
   BOTTOM_BORDER_TRANSITION,
   BOX_DEFAULT_SPACING,
@@ -106,16 +113,6 @@ import {
   getSensitivitiesForCategory,
 } from '../../scoreFilters';
 import { Shortcuts } from '../Shortcuts';
-
-const ACTION_PROPERTY_MAP: {
-  [key: string]: string | null;
-} = {
-  highlight: 'isHighlighted',
-  approve: 'isAccepted',
-  reject: 'isAccepted',
-  defer: 'isDeferred',
-  reset: null,
-};
 
 const actionMap: {
   [key: string]: ICommentActionFunction;
@@ -872,31 +869,38 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     if (action === 'reset') {
       return {
         ...comment,
-        isHighlighted: false,
-        isAccepted: null,
-        isModerated: null,
-        isDeferred: false,
+        ...ATTRIBUTES_RESET,
       };
     }
 
     if (action === 'highlight') {
       return {
         ...comment,
-        isHighlighted: true,
-        isAccepted: true,
-        isModerated: true,
-        isDeferred: false,
+        ...ATTRIBUTES_HIGHLIGHTED,
       };
     }
 
-    return {
-      ...comment,
-      isModerated: true,
-      isAccepted: null,
-      isHighlighted: false,
-      isDeferred: false,
-      [ACTION_PROPERTY_MAP[action]]: action !== 'reject',
-    };
+    if (action === 'approve') {
+      return {
+        ...comment,
+        ...ATTRIBUTES_APPROVED,
+      };
+    }
+
+    if (action === 'reject') {
+      return {
+        ...comment,
+        ...ATTRIBUTES_REJECTED,
+      };
+    }
+
+    if (action === 'defer') {
+      return {
+        ...comment,
+        ...ATTRIBUTES_DEFERRED,
+      };
+    }
+    return comment;
   }
 
   @autobind
