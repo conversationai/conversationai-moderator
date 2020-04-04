@@ -373,18 +373,16 @@ export async function search(
 /**
  * Send updated comment text and rescore comment.
  */
-export async function editAndRescoreComment(
+export async function editAndRescoreCommentRequest(
   commentId: string,
   text: string,
   authorName: string,
   authorLocation: string,
-  params?: Partial<IParams>,
 ): Promise<void> {
   await axios.patch(
     serviceURL(
       'editComment',
       null,
-      params,
     ), {
     data: {
       commentId,

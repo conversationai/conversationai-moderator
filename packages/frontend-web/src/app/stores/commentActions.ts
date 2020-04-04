@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {ModelId} from '../../models';
+import {IAuthorAttributes, ModelId} from '../../models';
 import {
   approveCommentsRequest,
   approveFlagsAndCommentsRequest,
   confirmCommentScoreRequest,
   confirmCommentSummaryScoreRequest,
   deferCommentsRequest,
-  deleteCommentTagRequest,
+  deleteCommentTagRequest, editAndRescoreCommentRequest,
   getComments,
   highlightCommentsRequest,
   rejectCommentScoreRequest,
@@ -36,7 +36,15 @@ import {
   tagCommentSummaryScoresRequest,
 } from '../platform/dataService';
 import {store} from '../store';
-import {commentsUpdated} from './comments';
+import {
+  ATTRIBUTES_APPROVED,
+  ATTRIBUTES_DEFERRED,
+  ATTRIBUTES_HIGHLIGHTED,
+  ATTRIBUTES_REJECTED,
+  ATTRIBUTES_RESET,
+  commentAttributesUpdated,
+  commentsUpdated,
+} from './comments';
 
 export async function fetchComments(commentIds: Array<ModelId>) {
   const comments = await getComments(commentIds);
@@ -49,18 +57,22 @@ export async function deleteCommentTag(commentId: ModelId, commentScoreId: strin
 
 export async function highlightComments(commentIds: Array<ModelId>) {
   await highlightCommentsRequest(commentIds);
+  store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_HIGHLIGHTED}));
 }
 
 export async function resetComments(commentIds: Array<ModelId>) {
   await resetCommentsRequest(commentIds);
+  store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_RESET}));
 }
 
 export async function approveComments(commentIds: Array<ModelId>) {
   await approveCommentsRequest(commentIds);
+  store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_APPROVED}));
 }
 
 export async function approveFlagsAndComments(commentIds: Array<ModelId>) {
   await approveFlagsAndCommentsRequest(commentIds);
+  store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_APPROVED}));
 }
 
 export async function resolveFlags(commentIds: Array<ModelId>) {
@@ -69,14 +81,17 @@ export async function resolveFlags(commentIds: Array<ModelId>) {
 
 export async function deferComments(commentIds: Array<ModelId>) {
   await deferCommentsRequest(commentIds);
+  store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_DEFERRED}));
 }
 
 export async function rejectComments(commentIds: Array<ModelId>) {
   await rejectCommentsRequest(commentIds);
+  store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_REJECTED}));
 }
 
 export async function rejectFlagsAndComments(commentIds: Array<ModelId>) {
   await rejectFlagsAndCommentsRequest(commentIds);
+  store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_REJECTED}));
 }
 
 export async function tagComments(commentIds: Array<ModelId>, tagId: string) {
@@ -109,6 +124,17 @@ export async function confirmCommentScore(commentId: ModelId, commentScoreId: st
 
 export async function rejectCommentScore(commentId: ModelId, commentScoreId: string) {
   await rejectCommentScoreRequest(commentId, commentScoreId);
+}
+
+export async function editAndRescoreComment(
+  commentId: ModelId,
+  text: string,
+  author: IAuthorAttributes,
+): Promise<void> {
+  await editAndRescoreCommentRequest(commentId, text, author.name, author.location);
+  store.dispatch(commentAttributesUpdated({
+    commentIds: [commentId],
+    attributes: {...ATTRIBUTES_RESET, text, author, summaryScores: []}}));
 }
 
 export type ICommentActionFunction = (ids: Array<string>, tagId?: string) => Promise<void>;

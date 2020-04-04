@@ -28,7 +28,7 @@ import {
 import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
 import { commentFromRouteInjector } from '../../../../injectors/commentInjector';
-import { commentsUpdated, updateComment as updateCommentState } from '../../../../stores/comments';
+import { updateComment as updateCommentState } from '../../../../stores/comments';
 import { getTaggingSensitivities } from '../../../../stores/taggingSensitivities';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getCurrentUser, getUser } from '../../../../stores/users';
@@ -122,10 +122,8 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
     ),
 
     onUpdateComment: (comment: ICommentModel) => {
-      return Promise.all([
-        dispatch(commentsUpdated([comment])),
-        updateCommentState(dispatch, comment),
-      ]); },
+      updateCommentState(dispatch, comment);
+    },
 
     onAddCommentScore: (commentScore: ICommentScoreModel) => (
       dispatch(addCommentScore(commentScore))
