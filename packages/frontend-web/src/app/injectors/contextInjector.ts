@@ -13,12 +13,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {connect} from 'react-redux';
+import {connect, useSelector} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
+import {useRouteMatch} from 'react-router-dom';
 
 import {IArticleModel, ICategoryModel, ModelId} from '../../models';
 import {IAppState} from '../appstate';
-import {IContextPathParams, isArticleContext} from '../scenes/routes';
+import {articleBase, categoryBase, IContextPathParams, isArticleContext} from '../scenes/routes';
 import {getCategory} from '../stores/categories';
 import {getCachedArticle} from './articleFetchQueue';
 
@@ -57,3 +58,36 @@ function mapStateToProps(
 }
 
 export const contextInjector = connect(mapStateToProps);
+
+export function useRouteContext() {
+  const match = useRouteMatch<IContextPathParams>('/:context/:contextId');
+  if (!match) {
+    return {};
+  }
+
+  const {params} = match;
+
+  if (params.context === articleBase) {
+    const articleId = params.contextId;
+    const {article, inCache} = useSelector((state: IAppState) => getCachedArticle(state, articleId));
+    return {
+      isArticleContext: true,
+      categoryId: article.categoryId,
+      category: useSelector((state: IAppState) => getCategory(state, article.categoryId)),
+      articleId,
+      article,
+      inCache,
+    };
+  }
+
+  if (params.context === categoryBase) {
+    return {
+      isArticleContext: false,
+      categoryId: params.contextId,
+      category: useSelector((state: IAppState) => getCategory(state, params.contextId)),
+      inCache: true,
+    };
+  }
+
+  return {};
+}

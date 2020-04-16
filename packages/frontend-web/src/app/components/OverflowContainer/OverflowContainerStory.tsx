@@ -31,6 +31,6 @@ storiesOf('OverflowContainer', module)
     .add('No Footer', () => (
       <OverflowContainer header={header} body={body} />
     ))
-    .add('No Header', () => (
+    .add('No SearchHeader', () => (
       <OverflowContainer body={body} footer={footer} />
     ));

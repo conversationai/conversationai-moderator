@@ -19,8 +19,9 @@ import { Link } from 'react-router-dom';
 
 import { AssignmentInd, Home, Menu, OpenInNew, Person, Search } from '@material-ui/icons';
 
-import { IArticleModel, ICategoryModel } from '../../models';
+import { ICategoryModel } from '../../models';
 import { logout } from '../auth';
+import { useRouteContext } from '../injectors/contextInjector';
 import { dashboardLink, searchLink } from '../scenes/routes';
 import {
   GUTTER_DEFAULT_SPACING,
@@ -88,86 +89,83 @@ const STYLES = stylesheet({
 });
 
 export interface IHeaderBarProps {
-  title?: string;
   category?: ICategoryModel;
-  article?: IArticleModel;
+  title?: string;
   isMe?: boolean;
   homeLink?: boolean;
   showSidebar?(): void;
 }
 
-export class HeaderBar extends React.Component<IHeaderBarProps> {
-
-  render() {
-    function renderHeaderItem(icon: any, text: string, link: string, selected?: boolean) {
-      let styles = {...css(STYLES.headerItem)};
-      if (selected) {
-        styles = {...css(STYLES.headerItem, STYLES.headerItemSelected)};
-      }
-
-      return (
-        <div key={text} {...styles}>
-          <Link to={link} aria-label={text} {...css(STYLES.headerLink)}>
-            <div>{icon}</div>
-            <div {...css(STYLES.headerText)}>{text}</div>
-          </Link>
-        </div>
-      );
+export function HeaderBar(props: IHeaderBarProps) {
+  function renderHeaderItem(icon: any, text: string, link: string, selected?: boolean) {
+    let styles = {...css(STYLES.headerItem)};
+    if (selected) {
+      styles = {...css(STYLES.headerItem, STYLES.headerItemSelected)};
     }
 
-    const {
-      category,
-      article,
-      showSidebar,
-      homeLink,
-      title,
-    } = this.props;
-
-    const categoryStr = title ? title :
-      article ? `Article: ${article.title}` :
-        category ? `Section: ${category.label}` :
-          'All Sections';
-
-    // const categoryFilter = category ? `${FILTER_CATEGORY}=${category.id}` : null;
-
-    // let allArticles = dashboardLink();
-    // let myArticles = dashboardLink(FILTER_MODERATOR_ISME);
-    // if (categoryFilter) {
-    //   allArticles += `/${categoryFilter}`;
-    //   myArticles += `+${categoryFilter}`;
-    // }
-    const articleId = article && article.id;
-
     return (
-      <header key="header" role="banner" {...css(STYLES.header)}>
-        {showSidebar &&
+      <div key={text} {...styles}>
+        <Link to={link} aria-label={text} {...css(STYLES.headerLink)}>
+          <div>{icon}</div>
+          <div {...css(STYLES.headerText)}>{text}</div>
+        </Link>
+      </div>
+    );
+  }
+
+  const {
+    showSidebar,
+    homeLink,
+    title,
+  } = props;
+
+  const {category, article} = useRouteContext();
+  const categoryToUse = props.category || category;
+
+  const categoryStr = title ? title :
+    article ? `Article: ${article.title}` :
+      categoryToUse ? `Section: ${categoryToUse.label}` :
+        'All Sections';
+
+  // const categoryFilter = category ? `${FILTER_CATEGORY}=${category.id}` : null;
+
+  // let allArticles = dashboardLink();
+  // let myArticles = dashboardLink(FILTER_MODERATOR_ISME);
+  // if (categoryFilter) {
+  //   allArticles += `/${categoryFilter}`;
+  //   myArticles += `+${categoryFilter}`;
+  // }
+  const articleId = article && article.id;
+
+  return (
+    <header key="header" role="banner" {...css(STYLES.header)}>
+      {showSidebar && (
         <div key="appName" onClick={showSidebar}>
           <span key="icon" {...css(STYLES.menuIcon)}><Menu  style={{ fontSize: 30 }} /></span>
         </div>
-        }
-        {homeLink && renderHeaderItem(<Home/>, 'Dashboard', dashboardLink({}))}
-        <span key="cat" {...css(STYLES.title)}>
-          {categoryStr}
-          {article && article.url && (
-            <div style={{display: 'inline-block', margin: '0 10px', position: 'relative', top: '3px'}}>
-              <a href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
-                <OpenInNew fontSize="small"/>
-              </a>
-            </div>
-          )}
-        </span>
-        {/*{renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}*/}
-        {/*{renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}*/}
-        <div key="spacer" style={{flexGrow: 1}}/>
-        {renderHeaderItem(<Search/>, 'Search', searchLink({articleId}))}
-        {renderHeaderItem(<AssignmentInd/>, 'By author', searchLink({articleId, searchByAuthor: true}))}
-        <div key="logout" {...css(STYLES.headerItem)}>
-          <div {...css(STYLES.headerLink)} aria-label="Logout" onClick={logout}>
-            <div><Person/></div>
-            <div {...css(STYLES.headerText)}>Logout</div>
+      )}
+      {homeLink && renderHeaderItem(<Home/>, 'Dashboard', dashboardLink({}))}
+      <span key="cat" {...css(STYLES.title)}>
+        {categoryStr}
+        {article && article.url && (
+          <div style={{display: 'inline-block', margin: '0 10px', position: 'relative', top: '3px'}}>
+            <a href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
+              <OpenInNew fontSize="small"/>
+            </a>
           </div>
+        )}
+      </span>
+      {/*{renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}*/}
+      {/*{renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}*/}
+      <div key="spacer" style={{flexGrow: 1}}/>
+      {renderHeaderItem(<Search/>, 'Search', searchLink({articleId}))}
+      {renderHeaderItem(<AssignmentInd/>, 'By author', searchLink({articleId, searchByAuthor: true}))}
+      <div key="logout" {...css(STYLES.headerItem)}>
+        <div {...css(STYLES.headerLink)} aria-label="Logout" onClick={logout}>
+          <div><Person/></div>
+          <div {...css(STYLES.headerText)}>Logout</div>
         </div>
-      </header>
-    );
-  }
+      </div>
+    </header>
+  );
 }
