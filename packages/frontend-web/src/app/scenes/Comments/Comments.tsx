@@ -15,21 +15,17 @@ limitations under the License.
 */
 
 import React from 'react';
-import { Redirect, Route, RouteComponentProps, Switch } from 'react-router';
+import {Redirect, Route, Switch, useRouteMatch} from 'react-router';
 
-import { IArticleModel, ICategoryModel } from '../../../models';
-import { IAppDispatch } from '../../appstate';
 import {
   HeaderBar,
 } from '../../components';
-import { ISummaryCounts } from '../../stores/categories';
 import {
   HEADER_HEIGHT,
   WHITE_COLOR,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
 import {
-  IContextPathParams,
   NEW_COMMENTS_DEFAULT_TAG,
 } from '../routes';
 import { CommentDetail } from './components/CommentDetail';
@@ -52,35 +48,15 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ICommentsProps extends RouteComponentProps<IContextPathParams> {
-  dispatch?: IAppDispatch;
-  article?: IArticleModel;
-  category?: ICategoryModel;
-  globalCounts: ISummaryCounts;
-}
-
-export function Comments(props: ICommentsProps) {
-  const {
-    article,
-    category,
-    globalCounts,
-    match: {path, url},
-  } = props;
+export function Comments(_props: { }) {
+  const {url, path} = useRouteMatch('/:context/:contextId');
 
   return (
     <div {...css({height: '100%'})}>
       <div {...css(STYLES.main)}>
-        <HeaderBar
-          category={category}
-          article={article}
-          homeLink
-        />
+        <HeaderBar homeLink/>
         <Route path={`${path}/:pt1/:pt2`}>
-          <SubheaderBar
-            global={globalCounts}
-            category={category}
-            article={article}
-          />
+          <SubheaderBar/>
         </Route>
         <div
           {...css({

@@ -26,14 +26,11 @@ import {
   ModelId,
 } from '../../../models';
 import {
-  Header,
-  RejectIcon,
+  HeaderBar,
   SearchAttribute,
+  SearchHeader,
 } from '../../components';
 import {
-  LIGHT_PRIMARY_TEXT_COLOR,
-  OFFSCREEN,
-  PALE_COLOR,
   WHITE_COLOR,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
@@ -50,39 +47,26 @@ const HEADER_STYLES = stylesheet({
   },
 
   searchInput: {
-    color: WHITE_COLOR,
+    backgroundColor: 'white',
+    height: '50px',
     border: 'none',
-    background: 'transparent',
+    borderRadius: '3px',
+    color: 'black',
+    padding: '0 10px',
     fontSize: '18px',
-    padding: '0px',
-    marginLeft: '16px',
     flex: 1,
-    ':focus': {
-      outline: 0,
-    },
+    marginLeft: '16px',
     '::placeholder': {
-      color: PALE_COLOR,
+      color: 'grey',
     },
   },
 
   formContainer: {
     display: 'flex',
+    alignItems: 'center',
     flex: 1,
     marginRight: '20px',
     marginLeft: '20px',
-  },
-
-  button: {
-    background: 'transparent',
-    border: 'none',
-    cursor: 'pointer',
-    display: 'flex',
-    borderBottom: '2px solid transparent',
-    marginRight: '16px',
-    ':focus': {
-      outline: 0,
-      borderBottom: '2px solid white',
-    },
   },
 });
 
@@ -160,11 +144,6 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
   }
 
   @autobind
-  handleSearchAuthorClose() {
-    updateSearchQuery(this.props, {searchByAuthor: false});
-  }
-
-  @autobind
   saveSearchInputRef(ref: HTMLInputElement) {
     this.searchInputRef = ref;
   }
@@ -176,21 +155,28 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
     });
   }
 
+  @autobind
+  setSearchByAuthor(value: boolean) {
+    updateSearchQuery(this.props, {searchByAuthor: value});
+  }
+
   render() {
     const { article, searchInputValue, searchParams } = this.state;
 
-    const placeholderText = searchParams.articleId ? 'Search comments by author ID or name' : 'Search';
+    const placeholderText = searchParams.searchByAuthor ? 'Search comments by author ID or name' : 'Search';
 
     return (
       <div {...css({height: '100%'})}>
         <div {...css(HEADER_STYLES.main)}>
-          <Header hideSearchIcon>
+          <HeaderBar title="Search" homeLink/>
+          <SearchHeader
+            searchByAuthor={searchParams.searchByAuthor}
+            setSearchByAuthor={this.setSearchByAuthor}
+            cancelSearch={this.onCancelSearch}
+          >
             <form key="search-form" aria-label="Search form" onSubmit={this.handleSearchFormSubmit} {...css(HEADER_STYLES.formContainer)}>
               { searchParams.articleId && article &&
                 <SearchAttribute title={`Article: ${article.title}`} onClose={this.handleSearchArticleClose} />
-              }
-              { searchParams.searchByAuthor &&
-                <SearchAttribute title="By Comment Author" onClose={this.handleSearchAuthorClose} />
               }
               <input
                 key="search-input"
@@ -202,12 +188,7 @@ export class Search extends React.Component<ISearchProps, ISearchState> {
                 {...css(HEADER_STYLES.searchInput)}
               />
             </form>
-
-            <button aria-label="Close search" key="search-close" {...css(HEADER_STYLES.button)} onClick={this.onCancelSearch}>
-              <span {...css(OFFSCREEN)}>Close search input</span>
-              <RejectIcon {...css({fill: LIGHT_PRIMARY_TEXT_COLOR})} />
-            </button>
-          </Header>
+          </SearchHeader>
           <SearchResults searchTerm={searchParams.term} searchByAuthor={searchParams.searchByAuthor}/>
         </div>
       </div>

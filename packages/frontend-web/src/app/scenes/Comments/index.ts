@@ -14,26 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import { compose } from 'redux';
-import { createStructuredSelector } from 'reselect';
-
-import { contextInjector } from '../../injectors/contextInjector';
-import { getGlobalCounts } from '../../stores/categories';
-import { Comments as PureComments } from './Comments';
-
+export { Comments } from './Comments';
 export { NewComments } from './components/NewComments';
 export { TagSelector } from './components/TagSelector';
 export { ModeratedComments } from './components/ModeratedComments';
 export { CommentDetail } from './components/CommentDetail';
 export { ThreadedCommentDetail } from './components/ThreadedCommentDetail';
 
-export const Comments = compose(
-  connect(createStructuredSelector({
-      globalCounts: getGlobalCounts,
-    }),
-  ),
-  withRouter,
-  contextInjector,
-)(PureComments);

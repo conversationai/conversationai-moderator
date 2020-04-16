@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import React from 'react';
-import {Link, RouteComponentProps, withRouter} from 'react-router-dom';
-
-import { IArticleModel, ICategoryModel } from '../../../../models';
-import { ISummaryCounts } from '../../../stores/categories';
+import { useSelector } from 'react-redux';
+import { Link, useRouteMatch } from 'react-router-dom';
+import { useRouteContext } from '../../../injectors/contextInjector';
+import { getGlobalCounts } from '../../../stores/categories';
 import {
   HEADER_HEIGHT,
   LIGHT_PRIMARY_TEXT_COLOR,
@@ -25,8 +25,7 @@ import {
 } from '../../../styles';
 import { css, stylesheet } from '../../../utilx';
 import {
-  articleBase,
-  categoryBase,
+  IContextPathParams,
   moderatedCommentsPageLink,
   NEW_COMMENTS_DEFAULT_TAG,
   newCommentsPageLink,
@@ -70,12 +69,6 @@ const STYLES = stylesheet({
   },
 });
 
-export interface ISubheaderBarProps extends RouteComponentProps<{pt1: string, pt2: string}> {
-  global?: ISummaryCounts;
-  category?: ICategoryModel;
-  article?: IArticleModel;
-}
-
 const CELLS = [
   ['New', 'unmoderatedCount', 'new'],
   ['Approved', 'approvedCount', 'approved'],
@@ -86,25 +79,27 @@ const CELLS = [
   ['Batched', 'batchedCount', 'batched'],
 ];
 
-function _SubheaderBar(props: ISubheaderBarProps) {
+export function SubheaderBar(_props: {}) {
   const {
-    global,
     category,
     article,
-    match: { params },
-  } = props;
+  } = useRouteContext();
+
+  const {params} = useRouteMatch<IContextPathParams & {pt1: string, pt2: string}>('/:context/:contextId/:pt1/:pt2');
+
+  const global = useSelector(getGlobalCounts);
 
   function linkFunction(disposition: string) {
     if (disposition === 'new') {
       return newCommentsPageLink({
-        context: article ? articleBase : categoryBase,
-        contextId: article ? article.id : category ? category.id : 'all',
+        context: params.context,
+        contextId: params.contextId,
         tag: NEW_COMMENTS_DEFAULT_TAG,
       });
     }
     return moderatedCommentsPageLink({
-      context: article ? articleBase : categoryBase,
-      contextId: article ? article.id : category ? category.id : 'all',
+      context: params.context,
+      contextId: params.contextId,
       disposition,
     });
   }
@@ -134,5 +129,3 @@ function _SubheaderBar(props: ISubheaderBarProps) {
     </header>
   );
 }
-
-export const SubheaderBar = withRouter(_SubheaderBar);

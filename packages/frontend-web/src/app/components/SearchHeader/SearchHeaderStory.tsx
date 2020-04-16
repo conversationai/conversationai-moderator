@@ -29,7 +29,7 @@ import {
 } from '../../styles';
 import { css } from '../../utilx';
 import { HomeIcon } from '../Icons';
-import { Header } from './Header';
+import { SearchHeader } from './SearchHeader';
 
 const STORY_STYLES = {
   main: {
@@ -57,20 +57,28 @@ const STORY_STYLES = {
   },
 };
 
-storiesOf('Header', module)
+storiesOf('SearchHeader', module)
   .addDecorator((story) => (
     <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
   ))
   .add('main header', () => {
     return (
-      <Header onSearchClick={action('clicked search')}>
+      <SearchHeader
+        cancelSearch={action('cancel search')}
+        searchByAuthor={false}
+        setSearchByAuthor={action('set search by author')}
+      >
         <Link to="/" {...css(STORY_STYLES.pageTitle)}>Moderator</Link>
-      </Header>
+      </SearchHeader>
     );
   })
   .add('article header', () => {
     return (
-      <Header onSearchClick={action('clicked search')}>
+      <SearchHeader
+        cancelSearch={action('cancel search')}
+        searchByAuthor={false}
+        setSearchByAuthor={action('set search by author')}
+      >
         <div {...css(STORY_STYLES.main)}>
           <Link to="/">
             <span {...css(VISUALLY_HIDDEN)}>Home</span>
@@ -80,6 +88,6 @@ storiesOf('Header', module)
             At Hiroshima Memorial, Obama Says Nuclear Arms Require Moral Revolution
           </h1>
         </div>
-      </Header>
+      </SearchHeader>
     );
   });

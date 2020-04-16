@@ -140,7 +140,7 @@ export function ScoresList(props: IScoresListProps) {
           <RejectIcon {...css({ color: DARK_SECONDARY_TEXT_COLOR })} />
         </button>
       </div>
-      <div key="Header" {...css(STYLES.tableHeader)}>
+      <div key="SearchHeader" {...css(STYLES.tableHeader)}>
         <h4 {...css(STYLES.scoreHeader)}>SCORE</h4>
         <h4>STRING</h4>
       </div>
