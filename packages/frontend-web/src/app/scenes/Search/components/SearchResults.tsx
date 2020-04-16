@@ -69,8 +69,7 @@ import {
 } from '../../../styles';
 import { always, partial } from '../../../util';
 import { css, stylesheet } from '../../../utilx';
-import { articleBase, commentDetailsPageLink } from '../../routes';
-import { updateSearchQuery } from '../types';
+import { articleBase, commentDetailsPageLink, ISearchQueryParams } from '../../routes';
 
 const TOAST_DELAY = 6000;
 
@@ -222,7 +221,8 @@ export interface ISearchResultsProps extends RouteComponentProps<{}> {
 
   onToggleSelectAll?(): void;
   onToggleSingleItem(item: { id: string }): void;
-  updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
+  updateCommentState?(action: IConfirmationAction, ids: Array<string>): void;
+  updateSearchQuery(queryDelta: ISearchQueryParams): void;
 
   searchTerm?: string;
   searchByAuthor?: boolean;
@@ -291,7 +291,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
     if (!newSort) {
       newSort = null;
     }
-    updateSearchQuery(this.props, {sort: newSort});
+    this.props.updateSearchQuery({sort: newSort});
   }
 
   @autobind

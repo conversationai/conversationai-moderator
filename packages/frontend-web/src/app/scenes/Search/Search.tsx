@@ -14,12 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
-import { List } from 'immutable';
-import { isEqual } from 'lodash';
 import qs from 'query-string';
-import React from 'react';
-import { RouteComponentProps } from 'react-router';
+import React, {useEffect, useRef, useState} from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import {
   IArticleModel,
@@ -34,9 +31,9 @@ import {
   WHITE_COLOR,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import { ISearchQueryParams } from '../routes';
+import { ISearchQueryParams, searchLink } from '../routes';
 import { SearchResults } from './components';
-import { ISearchScope, updateSearchQuery } from './types';
+import { ISearchScope } from './types';
 
 const HEADER_STYLES = stylesheet({
   main: {
@@ -70,128 +67,97 @@ const HEADER_STYLES = stylesheet({
   },
 });
 
-export interface ISearchProps extends RouteComponentProps<{}>  {
-  totalCommentCount?: number;
-  allCommentIds?: List<number>;
+export interface ISearchProps {
   onSearch?(newScope: ISearchScope): any;
   articleMap: Map<ModelId, IArticleModel>;
   resetCommentIds?(): void;
 }
 
-export interface ISearchState {
-  searchInputValue?: string;
-  searchParams?: ISearchQueryParams;
-  article?: IArticleModel;
-}
+export function Search(props: ISearchProps) {
+  const searchInputRef = useRef(null);
+  useEffect(() => {
+    searchInputRef.current.focus();
+  }, []);
 
-export class Search extends React.Component<ISearchProps, ISearchState> {
-  searchInputRef: any = null;
+  const history = useHistory();
+  const location = useLocation();
+  const query: ISearchQueryParams = qs.parse(location.search);
 
-  state: ISearchState = {
-    searchInputValue: '',
-  };
-
-  componentDidMount() {
-    this.searchInputRef.focus();
+  function updateSearchQuery(queryDelta: ISearchQueryParams) {
+    history.replace(searchLink({
+      ...query,
+      ...queryDelta,
+    }));
   }
 
-  static getDerivedStateFromProps(props: ISearchProps, state: ISearchState) {
-    const searchParams: ISearchQueryParams = qs.parse(props.location.search);
-    const newState: ISearchState = {searchParams};
+  const {articleId, term, searchByAuthor, sort} = query;
 
-    if (searchParams.term) {
-      if (!isEqual(searchParams, state.searchParams)) {
-        newState.searchInputValue = searchParams.term;
-        props.onSearch({
-          term: searchParams.term,
-          params: {
-            articleId: searchParams.articleId,
-            searchByAuthor: searchParams.searchByAuthor,
-            sort: [searchParams.sort] || searchParams.searchByAuthor ? ['-sourceCreatedAt'] : null,
-          },
-        });
-      }
+  useEffect(() => {
+    if (term) {
+      props.onSearch({
+        term,
+        params: {
+          articleId,
+          searchByAuthor,
+          sort: [sort] || searchByAuthor ? ['-sourceCreatedAt'] : null,
+        },
+      });
     }
-    if (searchParams.articleId) {
-      newState.article = props.articleMap.get(searchParams.articleId);
-    }
+  }, [articleId, term, searchByAuthor, sort]);
 
-    return newState;
-  }
-
-  @autobind
-  onCancelSearch() {
-    // reset results
-    this.props.resetCommentIds();
-
+  function onCancelSearch() {
+    props.resetCommentIds();
     // This fixes a bug where hitting escape tries to both clear the currently focused item
     // as well as run this function. This was causing weird rendering issues.
     setTimeout(() => window.history.back(), 60);
   }
 
-  @autobind
-  handleSearchFormSubmit(e: React.FormEvent<any>) {
+  function handleSearchArticleClose() {
+    updateSearchQuery({articleId: null});
+  }
+
+  function setSearchByAuthor(value: boolean) {
+    updateSearchQuery({searchByAuthor: value});
+  }
+
+  const [searchInputValue, setSearchInputValue] = useState(term);
+  function onSearchInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearchInputValue(e.target.value);
+  }
+  function handleSearchFormSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
-
-    updateSearchQuery(this.props, {
-      term: this.state.searchInputValue,
-    });
+    updateSearchQuery({term: searchInputValue});
   }
 
-  @autobind
-  handleSearchArticleClose() {
-    updateSearchQuery(this.props, {articleId: null});
-  }
+  const article = articleId ? props.articleMap.get(articleId) : null;
+  const placeholderText = searchByAuthor ? 'Search comments by author ID or name' : 'Search';
 
-  @autobind
-  saveSearchInputRef(ref: HTMLInputElement) {
-    this.searchInputRef = ref;
-  }
-
-  @autobind
-  onSearchInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({
-      searchInputValue: e.target.value,
-    });
-  }
-
-  @autobind
-  setSearchByAuthor(value: boolean) {
-    updateSearchQuery(this.props, {searchByAuthor: value});
-  }
-
-  render() {
-    const { article, searchInputValue, searchParams } = this.state;
-
-    const placeholderText = searchParams.searchByAuthor ? 'Search comments by author ID or name' : 'Search';
-
-    return (
-      <div {...css({height: '100%'})}>
-        <div {...css(HEADER_STYLES.main)}>
-          <HeaderBar title="Search" homeLink/>
-          <SearchHeader
-            searchByAuthor={searchParams.searchByAuthor}
-            setSearchByAuthor={this.setSearchByAuthor}
-            cancelSearch={this.onCancelSearch}
-          >
-            <form key="search-form" aria-label="Search form" onSubmit={this.handleSearchFormSubmit} {...css(HEADER_STYLES.formContainer)}>
-              { searchParams.articleId && article &&
-                <SearchAttribute title={`Article: ${article.title}`} onClose={this.handleSearchArticleClose} />
-              }
-              <input
-                key="search-input"
-                placeholder={placeholderText}
-                ref={this.saveSearchInputRef}
-                type="text"
-                value={searchInputValue}
-                onChange={this.onSearchInputChange}
-                {...css(HEADER_STYLES.searchInput)}
-              />
-            </form>
-          </SearchHeader>
-          <SearchResults searchTerm={searchParams.term} searchByAuthor={searchParams.searchByAuthor}/>
-        </div>
+  return (
+    <div {...css({height: '100%'})}>
+      <div {...css(HEADER_STYLES.main)}>
+        <HeaderBar title="Search" homeLink/>
+        <SearchHeader
+          searchByAuthor={searchByAuthor}
+          setSearchByAuthor={setSearchByAuthor}
+          cancelSearch={onCancelSearch}
+        >
+          <form key="search-form" aria-label="Search form" onSubmit={handleSearchFormSubmit} {...css(HEADER_STYLES.formContainer)}>
+            { article && (
+              <SearchAttribute title={`Article: ${article.title}`} onClose={handleSearchArticleClose} />
+            )}
+            <input
+              key="search-input"
+              placeholder={placeholderText}
+              ref={searchInputRef}
+              type="text"
+              value={searchInputValue}
+              onChange={onSearchInputChange}
+              {...css(HEADER_STYLES.searchInput)}
+            />
+          </form>
+        </SearchHeader>
+        <SearchResults searchTerm={term} searchByAuthor={searchByAuthor} updateSearchQuery={updateSearchQuery}/>
       </div>
-    );
-  }
+    </div>
+  );
 }

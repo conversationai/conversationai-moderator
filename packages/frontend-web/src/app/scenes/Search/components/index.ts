@@ -81,7 +81,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): Partial<ISearchResultsProps
   };
 }
 
-export type ISearchResultPublicProps = Pick<ISearchResultsProps, 'searchTerm' | 'searchByAuthor'>;
+export type ISearchResultPublicProps = Pick<ISearchResultsProps, 'searchTerm' | 'searchByAuthor' | 'updateSearchQuery'>;
 
 export const SearchResults: React.ComponentClass<ISearchResultPublicProps> = compose(
   withRouter,

@@ -14,25 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import qs from 'query-string';
-import { RouteComponentProps } from 'react-router';
-
-import { ISearchQueryParams, searchLink } from '../routes';
-
 export interface ISearchScope {
   term: string;
   params?: any;
-}
-
-export function updateSearchQuery(
-  props: RouteComponentProps<{}>,
-  queryDelta: ISearchQueryParams,
-) {
-  const query: ISearchQueryParams = qs.parse(props.location.search);
-  const newQuery = {
-    ...query,
-    ...queryDelta,
-  };
-
-  props.history.replace(searchLink(newQuery));
 }
