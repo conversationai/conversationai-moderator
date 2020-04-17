@@ -50,7 +50,7 @@ const textSizesReducer = handleActions<
     textSizes: state.textSizes.merge(textSizes),
   }),
 }, {
-  isLoading: true,
+  isLoading: false,
   hasData: false,
   textSizes: Map<string, number>(),
 });
