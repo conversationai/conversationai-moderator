@@ -16,26 +16,24 @@ limitations under the License.
 
 import qs from 'query-string';
 import React, {useEffect, useRef, useState} from 'react';
+import { useDispatch } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import {
-  IArticleModel,
-  ModelId,
-} from '../../../models';
 import {
   HeaderBar,
   SearchAttribute,
   SearchHeader,
 } from '../../components';
+import { useCachedArticle } from '../../injectors/articleInjector';
 import {
   WHITE_COLOR,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
+import { CommentDetail } from '../Comments/components/CommentDetail';
 import { ISearchQueryParams, searchBase, searchLink } from '../routes';
 import { SearchResults } from './components';
-import { ISearchScope } from './types';
-import { CommentDetail } from '../Comments/components/CommentDetail';
+import { loadCommentList, resetCommentIds } from './store';
 
 const HEADER_STYLES = stylesheet({
   main: {
@@ -69,13 +67,8 @@ const HEADER_STYLES = stylesheet({
   },
 });
 
-export interface ISearchProps {
-  onSearch?(newScope: ISearchScope): any;
-  articleMap: Map<ModelId, IArticleModel>;
-  resetCommentIds?(): void;
-}
-
-export function Search(props: ISearchProps) {
+export function Search(_props: {}) {
+  const dispatch = useDispatch();
   const searchInputRef = useRef(null);
   useEffect(() => {
     searchInputRef.current.focus();
@@ -96,7 +89,7 @@ export function Search(props: ISearchProps) {
 
   useEffect(() => {
     if (term) {
-      props.onSearch({
+      loadCommentList(dispatch, {
         term,
         params: {
           articleId,
@@ -105,10 +98,13 @@ export function Search(props: ISearchProps) {
         },
       });
     }
+    else {
+      dispatch(resetCommentIds());
+    }
   }, [articleId, term, searchByAuthor, sort]);
 
   function onCancelSearch() {
-    props.resetCommentIds();
+    dispatch(resetCommentIds());
     // This fixes a bug where hitting escape tries to both clear the currently focused item
     // as well as run this function. This was causing weird rendering issues.
     setTimeout(() => window.history.back(), 60);
@@ -122,7 +118,7 @@ export function Search(props: ISearchProps) {
     updateSearchQuery({searchByAuthor: value});
   }
 
-  const [searchInputValue, setSearchInputValue] = useState(term);
+  const [searchInputValue, setSearchInputValue] = useState(term || '');
   function onSearchInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchInputValue(e.target.value);
   }
@@ -131,7 +127,7 @@ export function Search(props: ISearchProps) {
     updateSearchQuery({term: searchInputValue});
   }
 
-  const article = articleId ? props.articleMap.get(articleId) : null;
+  const {article} = useCachedArticle(articleId);
   const placeholderText = searchByAuthor ? 'Search comments by author ID or name' : 'Search';
 
   return (

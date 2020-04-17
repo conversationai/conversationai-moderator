@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 import { ModelId } from '../../models';
 import { IAppState } from '../appstate';
@@ -28,3 +28,7 @@ function mapStateToProps(state: IAppState, {articleId}: IArticleInjectorInputPro
 }
 
 export const articleInjector = connect(mapStateToProps);
+
+export function useCachedArticle(articleId: ModelId): IArticleCacheProps {
+  return useSelector((state: IAppState) => getCachedArticle(state, articleId));
+}
