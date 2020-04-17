@@ -61,33 +61,35 @@ export const contextInjector = connect(mapStateToProps);
 
 export function useRouteContext() {
   const match = useRouteMatch<IContextPathParams>('/:context/:contextId');
-  if (!match) {
+  return useSelector((state: IAppState) =>  {
+    if (!match) {
+      return {};
+    }
+
+    const {params} = match;
+
+    if (params.context === articleBase) {
+      const articleId = params.contextId;
+      const {article, inCache} = getCachedArticle(state, articleId);
+      return {
+        isArticleContext: true,
+        categoryId: article.categoryId,
+        category: getCategory(state, article.categoryId),
+        articleId,
+        article,
+        inCache,
+      };
+    }
+
+    if (params.context === categoryBase) {
+      return {
+        isArticleContext: false,
+        categoryId: params.contextId,
+        category: getCategory(state, params.contextId),
+        inCache: true,
+      };
+    }
+
     return {};
-  }
-
-  const {params} = match;
-
-  if (params.context === articleBase) {
-    const articleId = params.contextId;
-    const {article, inCache} = useSelector((state: IAppState) => getCachedArticle(state, articleId));
-    return {
-      isArticleContext: true,
-      categoryId: article.categoryId,
-      category: useSelector((state: IAppState) => getCategory(state, article.categoryId)),
-      articleId,
-      article,
-      inCache,
-    };
-  }
-
-  if (params.context === categoryBase) {
-    return {
-      isArticleContext: false,
-      categoryId: params.contextId,
-      category: useSelector((state: IAppState) => getCategory(state, params.contextId)),
-      inCache: true,
-    };
-  }
-
-  return {};
+  });
 }

@@ -39,6 +39,10 @@ function ensureCache(articleId: ModelId) {
 }
 
 export function getCachedArticle(state: IAppState, articleId: ModelId): IArticleCacheProps {
+  if (!articleId) {
+    return {article: null, inCache: false};
+  }
+
   const article: IArticleModel = state.global.articles.index.get(articleId);
   if (article) {
     articleFetchQueue.delete(articleId);

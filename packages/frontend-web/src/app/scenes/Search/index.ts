@@ -13,44 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
-import { compose } from 'redux';
-import { createStructuredSelector } from 'reselect';
-
-import { IAppDispatch, IAppState } from '../../appstate';
-import { getArticleMap } from '../../stores/articles';
-import {ISearchProps, Search as PureSearch} from './Search';
-import {
-  getAllCommentIds,
-  loadCommentList,
-  resetCommentIds,
-} from './store';
-import { ISearchScope } from './types';
-
 export { SearchResults } from './components/SearchResults';
 export { searchReducer } from './store';
 
-const mapStateToProps = createStructuredSelector({
-  totalCommentCount: (state: IAppState) => getAllCommentIds(state).size,
-  allCommentIds: getAllCommentIds,
-  articleMap: getArticleMap,
-});
-
-function mapDispatchToProps(dispatch: IAppDispatch): Partial<ISearchProps> {
-  return {
-    onSearch: async (newScope: ISearchScope)  => {
-      await loadCommentList(dispatch, newScope);
-    },
-
-    resetCommentIds: () => dispatch(resetCommentIds()),
-  };
-}
-
-export const Search: React.ComponentClass<{}> = compose(
-  withRouter,
-  connect(mapStateToProps, mapDispatchToProps),
-)(PureSearch);
-
+export { Search } from './Search';
 export * from './store';
