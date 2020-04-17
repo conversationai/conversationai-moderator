@@ -16,6 +16,7 @@ limitations under the License.
 
 import qs from 'query-string';
 import React, {useEffect, useRef, useState} from 'react';
+import { Route, Switch } from 'react-router';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import {
@@ -31,9 +32,10 @@ import {
   WHITE_COLOR,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
-import { ISearchQueryParams, searchLink } from '../routes';
+import { ISearchQueryParams, searchBase, searchLink } from '../routes';
 import { SearchResults } from './components';
 import { ISearchScope } from './types';
+import { CommentDetail } from '../Comments/components/CommentDetail';
 
 const HEADER_STYLES = stylesheet({
   main: {
@@ -156,7 +158,14 @@ export function Search(props: ISearchProps) {
             />
           </form>
         </SearchHeader>
-        <SearchResults searchTerm={term} searchByAuthor={searchByAuthor} updateSearchQuery={updateSearchQuery}/>
+        <Switch>
+          <Route path={`/${searchBase}/comments/:commentId`}>
+            <CommentDetail/>
+          </Route>
+          <Route path={`/${searchBase}`}>
+            <SearchResults searchTerm={term} searchByAuthor={searchByAuthor} updateSearchQuery={updateSearchQuery}/>
+          </Route>
+        </Switch>
       </div>
     </div>
   );

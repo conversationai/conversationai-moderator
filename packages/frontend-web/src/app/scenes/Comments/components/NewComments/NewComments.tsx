@@ -30,7 +30,6 @@ import {
 import {
   convertServerAction,
   ICommentDatedModel,
-  ICommentModel,
   ICommentScoredModel,
   IPreselectModel,
   IRuleModel,
@@ -508,11 +507,11 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
       hideHistogram,
     } = this.state;
 
-    function getLinkTarget(comment: ICommentModel): string {
+    function getLinkTarget(commentId: ModelId): string {
       const urlParams = {
         context: params.context,
         contextId: params.contextId,
-        commentId: comment.id,
+        commentId: commentId,
       };
       const query = pagingIdentifier && {pagingIdentifier};
       return commentDetailsPageLink(urlParams, query);

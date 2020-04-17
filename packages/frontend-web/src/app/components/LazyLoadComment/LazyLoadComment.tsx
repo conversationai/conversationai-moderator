@@ -59,7 +59,7 @@ const LAZY_BOX_STYLE = {
 
 const AVATAR_SIZE = 24;
 
-export type ILinkTargetGetter = (comment: ICommentModel) => string;
+export type ILinkTargetGetter = (commentId: ModelId) => string;
 
 export interface IBasicBodyProps {
   comment: ICommentModel;
@@ -314,7 +314,7 @@ export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> 
       <div key={`${comment.id}`}>
         <BasicBody
           searchTerm={searchTerm}
-          commentLinkTarget={getLinkTarget(comment)}
+          commentLinkTarget={getLinkTarget(comment.id)}
           onCommentClick={onCommentClick}
           topScore={topScore}
           comment={comment}

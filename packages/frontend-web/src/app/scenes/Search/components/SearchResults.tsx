@@ -69,7 +69,7 @@ import {
 } from '../../../styles';
 import { always, partial } from '../../../util';
 import { css, stylesheet } from '../../../utilx';
-import { articleBase, commentDetailsPageLink, ISearchQueryParams } from '../../routes';
+import { commentSearchDetailsPageLink, ISearchQueryParams } from '../../routes';
 
 const TOAST_DELAY = 6000;
 
@@ -457,10 +457,9 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
       actionText,
     } = this.state;
 
-    function getLinkTarget(comment: ICommentModel) {
-      const params = {context: articleBase, contextId: comment.articleId, commentId: comment.id};
+    function getLinkTarget(commentId: ModelId) {
       const query = pagingIdentifier && {pagingIdentifier};
-      return commentDetailsPageLink(params, query);
+      return commentSearchDetailsPageLink(commentId, query);
     }
 
     return (
