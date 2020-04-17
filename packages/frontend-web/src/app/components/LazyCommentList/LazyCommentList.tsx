@@ -23,7 +23,7 @@ import { ICommentModel, ITagModel, ModelId } from '../../../models';
 import { IConfirmationAction } from '../../../types';
 import { partial } from '../../util';
 import { css, stylesheet } from '../../utilx';
-import { ICommentPropsForRow, LazyLoadComment } from '../LazyLoadComment';
+import { ICommentPropsForRow, ILinkTargetGetter, LazyLoadComment } from '../LazyLoadComment';
 import {
   BasicBody,
   LinkedBasicBody,
@@ -120,7 +120,7 @@ export interface ILazyCommentListProps {
   sortOptions?: List<ITagModel>;
   onSelectionChange?(commentId: string): void;
   onSortChange?(e: React.ChangeEvent<any>): any;
-  getLinkTarget?(comment: ICommentModel): string;
+  getLinkTarget?: ILinkTargetGetter;
   onCommentClick?(commentIndex: string): any;
   commentBody?: JSX.Element;
   rowHeight?: number;

@@ -150,3 +150,11 @@ export function commentRepliesDetailsLink(
 ) {
   return `/${context}/${contextId}/comments/${commentId}/${originatingCommentId}/replies`;
 }
+
+export function commentSearchDetailsPageLink(
+  commentId: ModelId,
+  query?: ICommentDetailsQueryParams,
+) {
+  const queryString = query ? `?${qs.stringify(query)}` : '';
+  return `/${searchBase}/comments/${commentId}${queryString}`;
+}

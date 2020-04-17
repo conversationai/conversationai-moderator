@@ -28,7 +28,6 @@ import {
 } from '@material-ui/core';
 
 import {
-  ICommentModel,
   ITagModel,
   ModelId,
   TagModel,
@@ -399,11 +398,11 @@ export class ModeratedComments
       hideHistogram,
     } = this.state;
 
-    function getLinkTarget(comment: ICommentModel): string {
+    function getLinkTarget(commentId: ModelId): string {
       const urlParams = {
         context: params.context,
         contextId: params.contextId,
-        commentId: comment.id,
+        commentId: commentId,
       };
       const query = pagingIdentifier && {pagingIdentifier};
       return commentDetailsPageLink(urlParams, query);
