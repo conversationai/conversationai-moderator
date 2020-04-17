@@ -37,14 +37,6 @@ const STYLES = stylesheet({
     height: `${HEADER_HEIGHT + 12}px`,
   },
 
-  // button: {
-  //   borderBottom: '2px solid transparent',
-  //   marginRight: '16px',
-  //   ':focus': {
-  //     outline: 0,
-  //   },
-  // },
-
   button: {
     background: 'transparent',
     border: 'none',

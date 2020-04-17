@@ -61,7 +61,7 @@ import {
   HEADER_HEIGHT,
   LIGHT_PRIMARY_TEXT_COLOR,
   MEDIUM_COLOR,
-  PALE_COLOR,
+  NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
   SCRIM_Z_INDEX,
   TOOLTIP_Z_INDEX,
@@ -126,8 +126,8 @@ const STYLES = stylesheet({
   },
   resultsHeader: {
     alignItems: 'center',
-    backgroundColor: PALE_COLOR,
-    color: MEDIUM_COLOR,
+    backgroundColor: NICE_MIDDLE_BLUE,
+    color: LIGHT_PRIMARY_TEXT_COLOR,
     display: 'flex',
     flexWrap: 'no-wrap',
     justifyContent: 'space-between',
@@ -135,9 +135,6 @@ const STYLES = stylesheet({
   },
   resultsHeadline: {
     marginLeft: 29,
-  },
-  resultsActionHeader: {
-    backgroundColor: MEDIUM_COLOR,
   },
   resultsActionHeadline: {
     color: WHITE_COLOR,
@@ -470,7 +467,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
           </div>
         )}
         <div key="content" {...css({backgroundColor: 'white'}, {display: 'block'})} >
-          <div {...css(STYLES.resultsHeader, !areNoneSelected && STYLES.resultsActionHeader)}>
+          <div {...css(STYLES.resultsHeader)}>
             {searchTerm && !isLoading && (
               <p {...css(STYLES.resultsHeadline, !areNoneSelected && STYLES.resultsActionHeadline)}>
                 {selectedCount > 0 && `${selectedCount} / `}
