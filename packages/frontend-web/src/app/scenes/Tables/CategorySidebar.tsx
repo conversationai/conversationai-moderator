@@ -35,7 +35,7 @@ import {
   newCommentsPageLink,
   settingsLink,
 } from '../routes';
-import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
+import { FILTER_CATEGORY } from './utils';
 
 const SIDEBAR_HEADER_HEIGHT = 159;
 const SIDEBAR_ROW_HEIGHT = 55;
@@ -155,7 +155,6 @@ export interface ICategorySidebarProps {
   user: IUserModel;
   categories: Array<ICategoryModel>;
   selectedCategory?: ICategoryModel;
-  selectMine: boolean;
   isAdmin?: boolean;
   isFixed?: boolean;
   hideSidebar?(): void;
@@ -178,13 +177,11 @@ export class CategorySidebar extends React.PureComponent<ICategorySidebarProps> 
       categories,
       selectedCategory,
       hideSidebar,
-      selectMine,
       isAdmin,
       isFixed,
     } = this.props;
 
-    const isMeSuffix = selectMine ? `+${FILTER_MODERATOR_ISME}` : '';
-    const allLink = selectMine ? dashboardLink({filter: FILTER_MODERATOR_ISME}) : dashboardLink({});
+    const allLink = dashboardLink({});
     const allUnmoderated = categories.reduce((r: number, v: ICategoryModel) => (r + v.unmoderatedCount), 0);
     const sorted = categories.sort((a, b) => (b.unmoderatedCount - a.unmoderatedCount));
 
@@ -198,13 +195,14 @@ export class CategorySidebar extends React.PureComponent<ICategorySidebarProps> 
           <span {...css(STYLES.verticalCenterText)}>{user.name}</span>
         </div>
         <div key="bar" {...css(STYLES.sidebarBar)}/>
-        {isAdmin &&
+        {isAdmin && (
           <div key="settings" {...css(STYLES.sidebarRow, STYLES.sidebarSettings, STYLES.sidebarChunk, {paddingLeft: `${SIDEBAR_XPAD + 8}px`})}>
             <Link to={settingsLink()} aria-label="Settings" {...css(STYLES.sidebarLink)}>
               <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}><Settings/></div>
               <div key="count" {...css(STYLES.sidebarCount, STYLES.verticalCenterText, {marginLeft: '46px', verticalAlign: 'bottom'})}>Settings</div>
             </Link>
-          </div>}
+          </div>
+        )}
         {isAdmin && <div key="bar2" {...css(STYLES.sidebarBar)}/>}
         <div key="labels" {...css(STYLES.sidebarRow, STYLES.sidebarRowHeader, STYLES.sidebarChunk)}>
           <div {...css(STYLES.sidebarRowInner)}>
@@ -235,7 +233,7 @@ export class CategorySidebar extends React.PureComponent<ICategorySidebarProps> 
               <div {...css(STYLES.sidebarRowInner, selectedCategory && selectedCategory.id === c.id ? STYLES.sidebarRowSelected : {})}>
                 <div key="label" {...css(STYLES.sidebarSection, STYLES.verticalCenterText)}>
                   <Link
-                    to={dashboardLink({filter: `${FILTER_CATEGORY}=${c.id}${isMeSuffix}`})}
+                    to={dashboardLink({filter: `${FILTER_CATEGORY}=${c.id}`})}
                     onClick={hideSidebar}
                     {...css(COMMON_STYLES.cellLink)}
                   >

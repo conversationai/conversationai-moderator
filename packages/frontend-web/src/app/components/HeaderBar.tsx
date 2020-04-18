@@ -91,20 +91,14 @@ const STYLES = stylesheet({
 export interface IHeaderBarProps {
   category?: ICategoryModel;
   title?: string;
-  isMe?: boolean;
   homeLink?: boolean;
   showSidebar?(): void;
 }
 
 export function HeaderBar(props: IHeaderBarProps) {
-  function renderHeaderItem(icon: any, text: string, link: string, selected?: boolean) {
-    let styles = {...css(STYLES.headerItem)};
-    if (selected) {
-      styles = {...css(STYLES.headerItem, STYLES.headerItemSelected)};
-    }
-
+  function renderHeaderItem(icon: any, text: string, link: string) {
     return (
-      <div key={text} {...styles}>
+      <div key={text} {...css(STYLES.headerItem)}>
         <Link to={link} aria-label={text} {...css(STYLES.headerLink)}>
           <div>{icon}</div>
           <div {...css(STYLES.headerText)}>{text}</div>
@@ -127,14 +121,6 @@ export function HeaderBar(props: IHeaderBarProps) {
       categoryToUse ? `Section: ${categoryToUse.label}` :
         'All Sections';
 
-  // const categoryFilter = category ? `${FILTER_CATEGORY}=${category.id}` : null;
-
-  // let allArticles = dashboardLink();
-  // let myArticles = dashboardLink(FILTER_MODERATOR_ISME);
-  // if (categoryFilter) {
-  //   allArticles += `/${categoryFilter}`;
-  //   myArticles += `+${categoryFilter}`;
-  // }
   const articleId = article && article.id;
 
   return (
@@ -155,8 +141,6 @@ export function HeaderBar(props: IHeaderBarProps) {
           </div>
         )}
       </span>
-      {/*{renderHeaderItem(<icons.ListIcon/>, 'All Articles', allArticles, !isMe)}*/}
-      {/*{renderHeaderItem(<icons.ListIcon/>, 'My Articles', myArticles, isMe)}*/}
       <div key="spacer" style={{flexGrow: 1}}/>
       {renderHeaderItem(<Search/>, 'Search', searchLink({articleId}))}
       {renderHeaderItem(<AssignmentInd/>, 'By author', searchLink({articleId, searchByAuthor: true}))}

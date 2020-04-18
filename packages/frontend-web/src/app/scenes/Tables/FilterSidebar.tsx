@@ -48,7 +48,6 @@ import {
   FILTER_DATE_sourceCreatedAt,
   FILTER_DATE_updatedAt,
   FILTER_MODERATORS,
-  FILTER_MODERATORS_ME,
   FILTER_MODERATORS_UNASSIGNED,
   FILTER_TITLE,
   FILTER_TO_REVIEW,
@@ -173,7 +172,6 @@ export class FilterSidebar extends React.Component<IFilterSidebarProps, IFilterS
     let moderatorFilterUsers: Array<string> = [];
 
     if (moderatorFilterString.length > 0 &&
-      moderatorFilterString !== FILTER_MODERATORS_ME &&
       moderatorFilterString !== FILTER_MODERATORS_UNASSIGNED) {
       moderatorFilterUsers = moderatorFilterString.split(',');
     }
@@ -419,17 +417,17 @@ export class FilterSidebar extends React.Component<IFilterSidebarProps, IFilterS
             <div onClick={clearPopups} {...css({float: 'right'})}>
               <icons.CloseIcon/>
             </div>
-            {this.state.isFilterActive &&
-            <Button
-              key="reset"
-              variant="contained"
-              color="primary"
-              onClick={this.clearFilters}
-              style={{float: 'right', marginTop: '-7px', marginRight: '30px'}}
-            >
-              Reset
-            </Button>
-            }
+            {this.state.isFilterActive &&  (
+              <Button
+                key="reset"
+                variant="contained"
+                color="primary"
+                onClick={this.clearFilters}
+                style={{float: 'right', marginTop: '-7px', marginRight: '30px'}}
+              >
+                Reset
+              </Button>
+            )}
           </h4>
           <div key="moderatorTitle" {...css(STYLES.filterSectionModeratorsTitle, STYLES.filterSectionFixed)}>
             <h5 key="header" {...css(STYLES.filterHeading)}>
