@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import formatDate from 'date-fns/format';
 import FocusTrap from 'focus-trap-react';
 import { List, Map, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
@@ -27,7 +26,6 @@ import {
 } from '@material-ui/core';
 
 import {
-  ICommentModel,
   ITagModel,
   ModelId,
   TagModel,
@@ -45,7 +43,6 @@ import {
   ToastMessage,
   ToolTip,
 } from '../../../components';
-import { DATE_FORMAT_LONG } from '../../../config';
 import {
   approveComments,
   deferComments,
@@ -296,12 +293,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
     const newSort = (event.target as any).value;
     this.updateScope(newSort);
     this.setState({commentSortType: newSort});
-  }
-
-  @autobind
-  getSortContentByType(comment: ICommentModel) {
-    // Until we can actually sort by the other options, all moderated columns use Date
-    return formatDate(comment.sourceCreatedAt, DATE_FORMAT_LONG);
   }
 
   @autobind
