@@ -73,7 +73,6 @@ export const FILTER_TITLE = 'title';
 export const FILTER_CATEGORY = 'category';
 export const FILTER_CATEGORY_NONE = 'none';
 export const FILTER_MODERATORS = 'moderators';
-export const FILTER_MODERATORS_ME = 'me';
 export const FILTER_MODERATORS_UNASSIGNED = 'unassigned';
 export const FILTER_TOGGLE_isCommentingEnabled = 'isCommentingEnabled';
 export const FILTER_TOGGLE_isAutoModerated = 'isAutoModerated';
@@ -88,24 +87,6 @@ export const FILTER_DATE_updatedAt = 'updatedAt';
 export const FILTER_DATE_lastModeratedAt = 'lastModeratedAt';
 export const FILTER_DATE_SINCE = 'since-';
 export const FILTER_DATE_PRIOR = 'prior-';
-export const FILTER_MODERATOR_ISME = `${FILTER_MODERATORS}=${FILTER_MODERATORS_ME}`;
-
-function articleHasModerator(context: IFilterContext, article: IArticleModel, moderatorId: string) {
-  for (const mId of article.assignedModerators) {
-    if (moderatorId === mId) {
-      return true;
-    }
-  }
-  if (article.categoryId) {
-    const category = context.categories.get(article.categoryId);
-    for (const mId of category.assignedModerators) {
-      if (moderatorId === mId) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
 
 function articleMatchesModerators(context: IFilterContext, article: IArticleModel, moderatorIds: Set<string>) {
   const category = context.categories.get(article.categoryId);
@@ -144,17 +125,8 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
             }
           }
           else {
-            let found = false;
-            if (i.value === FILTER_MODERATORS_ME) {
-              found = articleHasModerator(context, article, context.myId);
-            }
-            else {
-              const moderatorIds = new Set<string>(i.value.split(','));
-              found = articleMatchesModerators(context, article, moderatorIds);
-            }
-            if (!found) {
-              return false;
-            }
+            const moderatorIds = new Set<string>(i.value.split(','));
+            return articleMatchesModerators(context, article, moderatorIds);
           }
           break;
 
@@ -249,19 +221,13 @@ export function executeFilter(filterList: Array<IFilterItem>, context: IFilterCo
 
 export function resetFilterToRoot(filter: Array<IFilterItem>): Array<IFilterItem> {
   return filter.filter((item: IFilterItem) => {
-    if (item.key === FILTER_CATEGORY) {
-      return true;
-    }
-    return (item.key === FILTER_MODERATORS && item.value === FILTER_MODERATORS_ME);
+    return item.key === FILTER_CATEGORY;
   });
 }
 
 export function isFilterActive(filter: Array<IFilterItem>): boolean {
   for (const i of filter) {
     if (i.key === FILTER_CATEGORY) {
-      continue;
-    }
-    if (i.key === FILTER_MODERATORS && i.value === FILTER_MODERATORS_ME) {
       continue;
     }
     return true;

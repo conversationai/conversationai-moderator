@@ -77,7 +77,6 @@ storiesOf('TableFrame', module)
       <CategorySidebar
         user={user}
         categories={categories}
-        selectMine={false}
         selectedCategory={categories[2]}
         hideSidebar={hide}
       />
@@ -88,7 +87,6 @@ storiesOf('TableFrame', module)
       <CategorySidebar
         user={userNoIcon}
         categories={categoriesShort}
-        selectMine={false}
         selectedCategory={categoriesShort[3]}
       />
     );

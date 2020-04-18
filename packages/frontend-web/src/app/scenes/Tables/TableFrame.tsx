@@ -36,7 +36,7 @@ import { NICE_CONTROL_BLUE } from '../../styles';
 import { IDashboardPathParams } from '../routes';
 import { ArticleTable } from './ArticleTable';
 import { CategorySidebar, SIDEBAR_WIDTH } from './CategorySidebar';
-import { FILTER_CATEGORY, FILTER_MODERATOR_ISME } from './utils';
+import { FILTER_CATEGORY } from './utils';
 
 const theme = createMuiTheme({
   palette: {
@@ -94,7 +94,7 @@ export class PureTableFrame extends React.Component<ITableFrameProps, ITableFram
     this.setState({fixedSidebar: fixedSidebar()});
   }
 
-  renderSidebarPopup(selectMine: boolean, category?: ICategoryModel) {
+  renderSidebarPopup(category?: ICategoryModel) {
     if (this.state.fixedSidebar) {
       return null;
     }
@@ -112,7 +112,6 @@ export class PureTableFrame extends React.Component<ITableFrameProps, ITableFram
           categories={categories}
           selectedCategory={category}
           hideSidebar={this.hideSidebar}
-          selectMine={selectMine}
           isAdmin={isAdmin}
         />
       </Drawer>
@@ -128,8 +127,6 @@ export class PureTableFrame extends React.Component<ITableFrameProps, ITableFram
       match: {path},
     } = this.props;
 
-    const isMe = location.pathname.indexOf(FILTER_MODERATOR_ISME) >= 0;
-
     let category = null;
     const re = new RegExp(`${FILTER_CATEGORY}=(\\d+)`);
     const categoryMatch = re.exec(location.pathname);
@@ -141,7 +138,6 @@ export class PureTableFrame extends React.Component<ITableFrameProps, ITableFram
       return (
         <div style={{width: '100vw', height: '100vh'}}>
           <HeaderBar
-            isMe={isMe}
             category={category}
           />
           <div style={{float: 'left', width: `${SIDEBAR_WIDTH + 1}px`, backgroundColor: 'white'}}>
@@ -150,7 +146,6 @@ export class PureTableFrame extends React.Component<ITableFrameProps, ITableFram
                 user={user}
                 categories={categories}
                 selectedCategory={category}
-                selectMine={isMe}
                 isAdmin={isAdmin}
                 isFixed
               />
@@ -166,11 +161,10 @@ export class PureTableFrame extends React.Component<ITableFrameProps, ITableFram
     return (
       <MuiThemeProvider theme={theme}>
         <HeaderBar
-          isMe={isMe}
           category={category}
           showSidebar={this.showSidebar}
         />
-        {this.renderSidebarPopup(isMe, category)}
+        {this.renderSidebarPopup(category)}
         <div key="content">
           <Route path={`${path}`} component={ArticleTable}/>
         </div>
