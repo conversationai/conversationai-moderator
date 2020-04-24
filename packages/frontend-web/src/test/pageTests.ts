@@ -25,7 +25,6 @@ import {
   getModeratedCommentIdsForArticle,
   getModeratedCommentIdsForCategory,
   IModeratedComments,
-  listCommentSummaryScoresById,
   listMaxHistogramScoresByCategory,
   listMaxSummaryScoreByArticle,
   listTextSizesByIds,
@@ -110,6 +109,5 @@ export async function commentDetailsPage(commentId: string)  {
   checkArrayOf(checkCommentFlag, flags);
   const scores = await getCommentScores(commentId);
   checkArrayOf(checkCommentScore, scores);
-  await listCommentSummaryScoresById(commentId);
   // dataService.js:1289 listAuthorCounts ["c44181ec-1957-936e-4fb0-fbc21828d365"]
 }

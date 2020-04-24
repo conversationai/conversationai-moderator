@@ -137,13 +137,7 @@ export interface ILazyCommentListProps {
   onTableScroll?(scrollPos: number): boolean;
 }
 
-export interface ILazyCommentListState {
-}
-
-export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, ILazyCommentListState> {
-
-  state: ILazyCommentListState = {
-  };
+export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> {
 
   @autobind
   onSelectionChange(comment: ICommentModel) {

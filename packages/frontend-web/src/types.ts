@@ -36,8 +36,3 @@ export type ICommentAction = IModerationAction | 'tag';
 
 // These are the actions we can do to a comment within the interface
 export type IConfirmationAction = ICommentAction | 'reset';
-
-export interface ITopScore {
-  start: number;
-  end: number;
-}

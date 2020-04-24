@@ -23,7 +23,6 @@ import {
   CommentFlagModel,
   CommentModel,
   CommentScoreModel,
-  CommentSummaryScoreModel,
   RuleModel,
   TagModel,
   UserModel,
@@ -42,7 +41,6 @@ function findModel(name: string): (Model: any) => any {
   if (name === 'tagging_sensitivities') { return RuleModel; }
   if (name === 'comment_flags') { return CommentFlagModel; }
   if (name === 'comment_scores') { return CommentScoreModel; }
-  if (name === 'comment_summary_scores') { return CommentSummaryScoreModel; }
 
   throw new Error(`Could not find model: ${name}`);
 }

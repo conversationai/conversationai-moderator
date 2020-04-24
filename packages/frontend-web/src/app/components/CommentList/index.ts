@@ -24,15 +24,9 @@ import { IAppDispatch } from '../../appstate';
 import { DATE_FORMAT_HM, DATE_FORMAT_MDY } from '../../config';
 import { getComment, loadComment } from '../../stores/comments';
 import { getTags } from '../../stores/tags';
-import { loadTopScore, loadTopSummaryScore } from '../../stores/topScores';
 import { HEADER_HEIGHT } from '../../styles';
-import {
-  ILazyCommentListProps,
-  LazyCommentList,
-} from '../LazyCommentList';
-import {
-  ICommentProps,
-} from '../LazyLoadComment';
+import { ILazyCommentListProps, LazyCommentList } from '../LazyCommentList';
+import { ICommentProps } from '../LazyLoadComment';
 
 const DEFAULT_ROW_HEIGHT = 180;
 const ROW_PADDING_WITH_TITLE = 200;
@@ -176,27 +170,12 @@ function mapDispatchToProps(dispatch: IAppDispatch, ownProps: ICommentListProps)
     commentIds,
     triggerActionToast,
     dispatchConfirmedAction,
-    selectedTag,
   } = ownProps;
 
   return {
     onRowRender: async (index: number) => {
       const commentId = commentIds.get(index);
-      const comment: ICommentModel = await dispatch(loadComment(commentId));
-
-      switch (selectedTag && selectedTag.key) {
-        case undefined:
-          break;
-        case 'DATE':
-          break;
-        case 'SUMMARY_SCORE':
-          await loadTopSummaryScore(dispatch, commentId);
-          break;
-        default:
-          await loadTopScore(dispatch, commentId, selectedTag.id);
-      }
-
-      return comment;
+      return await dispatch(loadComment(commentId));
     },
 
     dispatchConfirmedAction: (action: ICommentAction, ids: Array<string>, shouldTriggerToast?: boolean) => {

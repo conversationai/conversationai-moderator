@@ -23,7 +23,6 @@ import { IRulesState } from './rules';
 import { ITaggingSensitivitiesState } from './taggingSensitivities';
 import { ITagsState } from './tags';
 import { ITextSizesState } from './textSizes';
-import { ITopScoresState, ITopScoresSummaryState } from './topScores';
 import { IUsersState } from './users';
 
 export type IGlobalState = Readonly<{
@@ -38,6 +37,4 @@ export type IGlobalState = Readonly<{
   preselects: IPreselectsState;
   taggingSensitivities: ITaggingSensitivitiesState;
   textSizes: ITextSizesState;
-  topScores: ITopScoresState;
-  topScoresSummary: ITopScoresSummaryState;
 }>;
