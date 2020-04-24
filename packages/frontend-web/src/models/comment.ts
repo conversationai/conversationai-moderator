@@ -37,6 +37,11 @@ export type IAuthorCountsModel = Readonly<IAuthorCountsAttributes>;
 export interface ICommentSummaryScoreAttributes2 {
   tagId: ModelId;
   score: number;
+  topScore: {
+    score: number;
+    start: number;
+    end: number;
+  };
 }
 
 export type ICommentSummaryScoreModel2 = Readonly<ICommentSummaryScoreAttributes2>;
