@@ -27,7 +27,7 @@ import {
   CommentScoreModel,
   ICommentModel,
   ICommentScoreModel,
-  ICommentSummaryScoreModel2,
+  ICommentSummaryScoreModel,
   ITaggingSensitivityModel,
   ITagModel,
   IUserModel,
@@ -1067,7 +1067,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
   }
 
   @autobind
-  handleScoreClick(scoreClicked: ICommentSummaryScoreModel2) {
+  handleScoreClick(scoreClicked: ICommentSummaryScoreModel) {
     const thresholdByTag = this.state.taggingSensitivitiesInCategory.find(
       (ts) => ts.tagId === scoreClicked.tagId || ts.categoryId === null);
     const scoresSelectedByTag = this.props.allScores.filter(

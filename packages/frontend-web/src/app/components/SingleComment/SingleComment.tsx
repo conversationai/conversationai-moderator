@@ -23,7 +23,7 @@ import { Link } from 'react-router-dom';
 import {
   ICommentModel,
   ICommentScoreModel,
-  ICommentSummaryScoreModel2,
+  ICommentSummaryScoreModel,
   ITagModel,
   IUserModel,
 } from '../../../models';
@@ -361,7 +361,7 @@ export interface ISingleCommentProps {
   isThreadedComment?: boolean;
   isReply?: boolean;
   availableTags?: List<ITagModel>;
-  onScoreClick?(score: ICommentSummaryScoreModel2): void;
+  onScoreClick?(score: ICommentSummaryScoreModel): void;
   onTagButtonClick?(tagId: string): Promise<any>;
   onCommentTagClick?(commentScore: ICommentScoreModel): void;
   onAnnotateTagButtonClick?(tag: string, start: number, end: number): Promise<any>;

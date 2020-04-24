@@ -18,7 +18,7 @@ import { List, Map } from 'immutable';
 
 import {
   ICommentScoreModel,
-  ICommentSummaryScoreModel2,
+  ICommentSummaryScoreModel,
   ITaggingSensitivityModel,
   ModelId,
 } from '../../../models';
@@ -34,7 +34,7 @@ export function getSensitivitiesForCategory(
 
 function isSummaryAboveThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  score: ICommentSummaryScoreModel2,
+  score: ICommentSummaryScoreModel,
 ): boolean {
   if (score.tagId === null) {
     return false;
@@ -66,7 +66,7 @@ function isScoreAboveThreshold(
 
 export function getSummaryScoresAboveThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  scores: Array<ICommentSummaryScoreModel2>): Array<ICommentSummaryScoreModel2> {
+  scores: Array<ICommentSummaryScoreModel>): Array<ICommentSummaryScoreModel> {
   if (!scores) {
     return [];
   }
@@ -77,7 +77,7 @@ export function getSummaryScoresAboveThreshold(
 
 export function getSummaryScoresBelowThreshold(
   taggingSensitivities: List<ITaggingSensitivityModel>,
-  scores: Array<ICommentSummaryScoreModel2>): Array<ICommentSummaryScoreModel2> {
+  scores: Array<ICommentSummaryScoreModel>): Array<ICommentSummaryScoreModel> {
   if (!scores) {
     return [];
   }

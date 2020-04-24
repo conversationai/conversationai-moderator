@@ -34,19 +34,19 @@ export interface IAuthorCountsAttributes {
 
 export type IAuthorCountsModel = Readonly<IAuthorCountsAttributes>;
 
-export interface ITopScore2 {
+export interface ITopScore {
   score: number;
   start: number;
   end: number;
 }
 
-export interface ICommentSummaryScoreAttributes2 {
+export interface ICommentSummaryScoreAttributes {
   tagId: ModelId;
   score: number;
-  topScore: ITopScore2;
+  topScore: ITopScore;
 }
 
-export type ICommentSummaryScoreModel2 = Readonly<ICommentSummaryScoreAttributes2>;
+export type ICommentSummaryScoreModel = Readonly<ICommentSummaryScoreAttributes>;
 
 export interface ICommentAttributes {
   id: ModelId;
@@ -76,7 +76,7 @@ export interface ICommentAttributes {
   replyId?: ModelId;
   replies?: Array<ICommentModel>;
 
-  summaryScores?: Array<ICommentSummaryScoreModel2>;
+  summaryScores?: Array<ICommentSummaryScoreModel>;
   maxSummaryScore?: number;
   maxSummaryScoreTagId?: ModelId;
 }
@@ -103,7 +103,7 @@ export function CommentModel(keyValuePairs?: ICommentAttributes): ICommentModel 
 }
 
 export function getTopScore(comment: ICommentModel) {
-  let topScore: ITopScore2 = null;
+  let topScore: ITopScore = null;
   for (const summary of comment.summaryScores) {
     if (!topScore || topScore.score < summary.topScore.score) {
       topScore = summary.topScore;
