@@ -18,7 +18,7 @@ import { List, Map as IMap} from 'immutable';
 import { omit } from 'lodash';
 import { Action, createAction, handleActions } from 'redux-actions';
 
-import { IAuthorAttributes, ICommentModel, ICommentSummaryScoreModel2, ModelId } from '../../models';
+import { IAuthorAttributes, ICommentModel, ICommentSummaryScoreModel, ModelId } from '../../models';
 import { IAppDispatch, IAppState, IThunkAction } from '../appstate';
 import { getComments } from '../platform/dataService';
 import { ILoadCompletePayload, IQueuedModelState, makeQueuedModelStore } from '../util';
@@ -174,7 +174,7 @@ export interface ICommentAttributesUpdateFlags {
   isHighlighted?: boolean;
   text?: string;
   author?: IAuthorAttributes;
-  summaryScores?: Array<ICommentSummaryScoreModel2>;
+  summaryScores?: Array<ICommentSummaryScoreModel>;
 }
 
 export interface ICommentAttributesUpdate {

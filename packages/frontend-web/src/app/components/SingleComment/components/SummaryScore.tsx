@@ -17,7 +17,7 @@ limitations under the License.
 import React, {Fragment, useState} from 'react';
 import {useSelector} from 'react-redux';
 
-import {ICommentModel, ICommentSummaryScoreModel2} from '../../../../models';
+import {ICommentModel, ICommentSummaryScoreModel} from '../../../../models';
 import {
   getSensitivitiesForCategory,
   getSummaryScoresAboveThreshold,
@@ -76,9 +76,9 @@ const STYLES = stylesheet({
 });
 
 export interface ISummaryScoreProps {
-  score: ICommentSummaryScoreModel2;
+  score: ICommentSummaryScoreModel;
   withColor?: boolean;
-  onScoreClick?(score: ICommentSummaryScoreModel2): void;
+  onScoreClick?(score: ICommentSummaryScoreModel): void;
 }
 
 function SummaryScore(props: ISummaryScoreProps) {
@@ -107,7 +107,7 @@ function SummaryScore(props: ISummaryScoreProps) {
 
 export interface ISummaryScoresProps {
   comment: ICommentModel;
-  onScoreClick?(score: ICommentSummaryScoreModel2): void;
+  onScoreClick?(score: ICommentSummaryScoreModel): void;
 }
 
 export function SummaryScores(props: ISummaryScoresProps) {
