@@ -64,7 +64,7 @@ import {
   TOOLTIP_Z_INDEX,
   WHITE_COLOR,
 } from '../../../styles';
-import { always, partial } from '../../../util';
+import { partial } from '../../../util';
 import { css, stylesheet } from '../../../utilx';
 import { commentSearchDetailsPageLink, ISearchQueryParams } from '../../routes';
 
@@ -566,7 +566,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
               textSizes={textSizes}
               commentIds={allCommentIds}
               areAllSelected={areAllSelected}
-              getCurrentSort={always(commentSortType)}
+              currentSort={commentSortType}
               getLinkTarget={getLinkTarget}
               isItemChecked={isItemChecked}
               onSelectAllChange={this.onSelectAllChange}

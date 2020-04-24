@@ -232,6 +232,7 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, 
     const {
       totalItems,
       onSortChange,
+      selectedTag,
       selectedSort,
       sortOptions,
       areAllSelected,
@@ -292,8 +293,8 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, 
           getLinkTarget={getLinkTarget}
           onCommentClick={onCommentClick}
           hideCommentAction={hideCommentAction}
-          topScore={null}
           comment={null}
+          selectedTag={selectedTag}
           handleAssignTagsSubmit={handleAssignTagsSubmit}
           displayArticleTitle={displayArticleTitle}
         />
@@ -302,8 +303,8 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps, 
     else {
       bodyContent = (
         <BasicBody
-          topScore={null}
           comment={null}
+          selectedTag={selectedTag}
           hideCommentAction={hideCommentAction}
           handleAssignTagsSubmit={handleAssignTagsSubmit}
         />

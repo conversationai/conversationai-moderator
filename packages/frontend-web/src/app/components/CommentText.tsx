@@ -18,8 +18,7 @@ import React from 'react';
 import Linkify from 'react-linkify';
 
 import { makeStyles } from '@material-ui/styles';
-
-import { ITopScore } from '../../types';
+import { ITopScore2 as ITopScore } from '../../models';
 
 const useStyles = makeStyles({
   bold: {
