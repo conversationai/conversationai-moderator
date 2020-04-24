@@ -26,7 +26,6 @@ import { createModeratedCountsService } from './moderatedCounts';
 import { createSearchService } from './search';
 import { createSimpleRESTService } from './simple';
 import { createTextSizesService } from './textSizes';
-import { createTopScoresService } from './topScores';
 import { createUpdateNotificationService } from './updateNotifications';
 
 export function createServicesRouter(): express.Router {
@@ -42,7 +41,6 @@ export function createServicesRouter(): express.Router {
   router.use('/moderatedCounts', createModeratedCountsService());
   router.use('/authorCounts', createAuthorCountsService());
   router.use('/textSizes', createTextSizesService());
-  router.use('/topScores', createTopScoresService());
   router.use('/editComment', createEditCommentTextService());
   router.use('/updates', createUpdateNotificationService());
   router.use('/simple', createSimpleRESTService());
