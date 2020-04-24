@@ -38,20 +38,17 @@ import {
   ICommentModel,
   ICommentScoredModel,
   ICommentScoreModel,
-  ICommentSummaryScoreModel,
   IUserModel,
   ModelId,
   UserModel,
 } from '../../models';
-import { ITopScore, ServerStates } from '../../types';
+import { ServerStates } from '../../types';
 import { API_URL } from '../config';
-import { convertItemFromJSONAPI } from '../util';
 
 export type IValidModelNames =
     'articles' |
     'categories' |
     'comment_scores' |
-    'comment_summary_scores' |
     'comments' |
     'moderation_rules' |
     'preselects' |
@@ -65,7 +62,6 @@ const VALID_MODEL_NAMES_LOOKUP: {
   articles: true,
   categories: true,
   comment_scores: true,
-  comment_summary_scores: true,
   comments: true,
   moderation_rules: true,
   preselects: true,
@@ -275,82 +271,12 @@ export async function listHistogramScoresByCategoryByDate(
   );
 }
 
-function convertArrayFromJSONAPI<T>(result: any): List<T> {
-  const resultData = fromJS(result);
-  return List(resultData.get('data').map((d: any) => (
-    convertItemFromJSONAPI(d, resultData.get('included'))
-  )));
-}
-
 export async function getComments(
   commentIds: Array<ModelId>,
 ): Promise<Array<ICommentModel>> {
   const url = serviceURL('simple', `/comment/get`);
   const response = await axios.post(url, commentIds);
   return response.data.map((a: any) => (CommentModel(a)));
-}
-
-export async function listCommentSummaryScoresById(
-  commentId: string,
-  params?: Partial<IParams>,
-): Promise<List<ICommentSummaryScoreModel>> {
-  const { data } = await axios.get(
-    listURL(
-      'comment_summary_scores',
-      {
-        ...params,
-        page: { limit: -1 },
-        filters: {
-          commentId,
-        },
-      },
-    ),
-  );
-
-  return convertArrayFromJSONAPI<ICommentSummaryScoreModel>(data);
-}
-
-export async function loadTopScoresForTag(
-  commentIds: List<string>,
-  tagId: string,
-): Promise<Map<number, ITopScore>> {
-  const { data }: any = await axios.post(
-    serviceURL(
-      'topScores',
-      `/tag/${tagId}`,
-    ),
-    {
-      data: commentIds.toArray(),
-    },
-  );
-
-  const objectOfData = data.data;
-
-  return Object.keys(objectOfData).reduce((sum, key) => {
-    return sum.set(parseInt(key, 10), objectOfData[key]);
-  }, Map<number, ITopScore>());
-}
-
-export async function loadTopScoresForSummaryScores(
-  summaryScores: Array<{
-    commentId: string,
-  }>,
-): Promise<Map<number, ITopScore>> {
-  const { data }: any = await axios.post(
-    serviceURL(
-      'topScores',
-      `/summaryScores`,
-    ),
-    {
-      data: summaryScores,
-    },
-  );
-
-  const objectOfData = data.data;
-
-  return Object.keys(objectOfData).reduce((sum, key) => {
-    return sum.set(parseInt(key, 10), objectOfData[key]);
-  }, Map<number, ITopScore>());
 }
 
 /**

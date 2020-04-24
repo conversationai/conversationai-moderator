@@ -26,7 +26,6 @@ import { reducer as rulesReducer } from './rules';
 import { reducer as taggingSensitivitiesReducer } from './taggingSensitivities';
 import { reducer as tagsReducer } from './tags';
 import { reducer as textSizesReducer } from './textSizes';
-import { topScoresReducer, topScoresSummaryReducer } from './topScores';
 import { reducer as usersReducer } from './users';
 
 export const reducer = combineReducers<IGlobalState>({
@@ -41,6 +40,4 @@ export const reducer = combineReducers<IGlobalState>({
   preselects: preselectsReducer,
   taggingSensitivities: taggingSensitivitiesReducer,
   textSizes: textSizesReducer,
-  topScores: topScoresReducer,
-  topScoresSummary: topScoresSummaryReducer,
 });
