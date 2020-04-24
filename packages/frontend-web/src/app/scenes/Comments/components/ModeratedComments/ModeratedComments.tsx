@@ -552,7 +552,7 @@ export class ModeratedComments
               textSizes={textSizes}
               commentIds={commentIds}
               areAllSelected={areAllSelected}
-              getCurrentSort={this.getCurrentSort}
+              currentSort={this.state.sort}
               getLinkTarget={getLinkTarget}
               isItemChecked={isItemChecked}
               onSelectAllChange={this.onSelectAllChange}
@@ -763,11 +763,6 @@ export class ModeratedComments
   handleUndoClick() {
     this.commentActionCancelled = true;
     this.onConfirmationClose();
-  }
-
-  @autobind
-  getCurrentSort() {
-    return this.state.sort;
   }
 
   @autobind

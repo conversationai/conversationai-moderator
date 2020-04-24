@@ -20,11 +20,10 @@ import { List, Set } from 'immutable';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { ICommentModel, ModelId } from '../../../models';
+import { getTopScore, getTopScoreForTag, ICommentModel, ITagModel, ModelId } from '../../../models';
 import {
   IConfirmationAction,
   IModerationAction,
-  ITopScore,
 } from '../../../types';
 import { REQUIRE_REASON_TO_REJECT } from '../../config';
 import {
@@ -63,8 +62,8 @@ export type ILinkTargetGetter = (commentId: ModelId) => string;
 
 export interface IBasicBodyProps {
   comment: ICommentModel;
+  selectedTag?: ITagModel;
   hideCommentAction?: boolean;
-  topScore?: ITopScore;
   showActions?: boolean;
   dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>, shouldTriggerToast?: boolean): any;
   commentLinkTarget?: string;
@@ -145,8 +144,8 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
   render() {
     const {
       comment,
+      selectedTag,
       hideCommentAction,
-      topScore,
       commentLinkTarget,
       onCommentClick,
       displayArticleTitle,
@@ -155,6 +154,21 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
 
     const actionsAreVisible = this.state.hover || this.state.popupOpen;
     const activeButtons = this.getActiveButtons();
+
+    let topScore = null;
+
+    switch (selectedTag && selectedTag.key) {
+      case undefined:
+        break;
+      case 'DATE':
+        break;
+      case 'SUMMARY_SCORE':
+        topScore = getTopScore(comment);
+        break;
+      default:
+        topScore = getTopScoreForTag(comment, selectedTag.id);
+        break;
+    }
 
     return(
       <div
@@ -299,10 +313,10 @@ export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> 
   render() {
     const {
       comment,
+      selectedTag,
       getLinkTarget,
       onCommentClick,
       hideCommentAction,
-      topScore,
       showActions,
       dispatchConfirmedAction,
       searchTerm,
@@ -316,8 +330,8 @@ export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> 
           searchTerm={searchTerm}
           commentLinkTarget={getLinkTarget(comment.id)}
           onCommentClick={onCommentClick}
-          topScore={topScore}
           comment={comment}
+          selectedTag={selectedTag}
           hideCommentAction={hideCommentAction}
           showActions={showActions}
           dispatchConfirmedAction={dispatchConfirmedAction}
@@ -332,7 +346,6 @@ export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> 
 export interface ICommentProps {
   comment: ICommentModel;
   sortContent: Array<string>;
-  topScore?: ITopScore;
 }
 
 export type ICommentPropsForRow = (index: number) => ICommentProps | null;

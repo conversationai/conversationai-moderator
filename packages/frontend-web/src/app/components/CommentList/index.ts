@@ -24,7 +24,7 @@ import { IAppDispatch } from '../../appstate';
 import { DATE_FORMAT_HM, DATE_FORMAT_MDY } from '../../config';
 import { getComment, loadComment } from '../../stores/comments';
 import { getTags } from '../../stores/tags';
-import { getTopScoreForComment, getTopSummaryScoreForComment, loadTopScore, loadTopSummaryScore } from '../../stores/topScores';
+import { loadTopScore, loadTopSummaryScore } from '../../stores/topScores';
 import { HEADER_HEIGHT } from '../../styles';
 import {
   ILazyCommentListProps,
@@ -95,7 +95,7 @@ export type ICommentListProps = {
   commentIds: any;
   commentScores?: any;
   textSizes: any;
-  getCurrentSort(): string;
+  currentSort: string;
   selectedTag?: any;
   triggerActionToast: any;
 } & ILazyCommentListOwnProps;
@@ -105,7 +105,7 @@ function mapStateToProps(state: any, ownProps: any): any {
     commentIds,
     commentScores,
     textSizes,
-    getCurrentSort,
+    currentSort,
     selectedTag,
     displayArticleTitle,
     heightOffset,
@@ -113,7 +113,7 @@ function mapStateToProps(state: any, ownProps: any): any {
   } = ownProps;
 
   return {
-    selectedSort: getCurrentSort(),
+    selectedSort: currentSort,
 
     selectedTag,
 
@@ -122,7 +122,6 @@ function mapStateToProps(state: any, ownProps: any): any {
       const comment = getComment(state, commentId);
 
       if (!comment) { return null; }
-      const currentSort = getCurrentSort();
       let sort;
       // Date does not have highest/lowest scores so we need to force switch the sort
       if (selectedTag && selectedTag.key === 'DATE' && (currentSort === 'highest' || currentSort === 'lowest')) {
@@ -144,24 +143,9 @@ function mapStateToProps(state: any, ownProps: any): any {
         maxSummaryScoreTagLabel,
       );
 
-      let topScore = null;
-
-      switch (selectedTag && selectedTag.key) {
-        case undefined:
-          break;
-        case 'DATE':
-          break;
-        case 'SUMMARY_SCORE':
-          topScore = getTopSummaryScoreForComment(state, commentId);
-          break;
-        default:
-          topScore = getTopScoreForComment(state, commentId, selectedTag.id);
-      }
-
       return {
         comment,
         sortContent,
-        topScore,
       };
     },
 

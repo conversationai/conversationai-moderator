@@ -755,7 +755,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               onSelectionChange={this.onSelectionChange}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
               sortOptions={filterSortOptions}
-              getCurrentSort={this.getCurrentSort}
+              currentSort={this.state.sort}
               onSortChange={this.onSortChange}
               onCommentClick={this.saveCommentRow}
               scrollToRow={selectedRow}
@@ -961,11 +961,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   @autobind
   saveCommentRow(commentId: string): void {
     setReturnSavedCommentRow(commentId);
-  }
-
-  @autobind
-  getCurrentSort(): string {
-    return this.state.sort;
   }
 
   @autobind
