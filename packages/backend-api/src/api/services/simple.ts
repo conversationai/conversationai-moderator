@@ -21,7 +21,7 @@ limitations under the License.
 
 import * as express from 'express';
 import { pick } from 'lodash';
-import { Op } from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 
 import { createToken } from '../../auth/tokens';
 import { clearError } from '../../integrations';
@@ -31,6 +31,7 @@ import {
   CommentFlag,
   CommentScore,
   CommentSummaryScore,
+  ICommentScoreAttributes,
   User,
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
@@ -41,6 +42,7 @@ import {
   partialUpdateHappened,
   updateHappened,
 } from '../../models';
+import { sequelize } from '../../sequelize';
 import { REPLY_SUCCESS } from '../constants';
 import {
   ARTICLE_FIELDS,
@@ -158,6 +160,24 @@ export function createSimpleRESTService(): express.Router {
       where: {commentId: {[Op.in]: req.body}},
     });
 
+    const results = await sequelize.query(
+      'SELECT commentId, tagId, score, annotationStart, annotationEnd ' +
+      'FROM comment_scores ' +
+      'WHERE id IN (SELECT commentScoreId from comment_top_scores where commentId in (:commentIds))',
+      {
+        type: QueryTypes.SELECT,
+        replacements: { commentIds: req.body },
+      },
+    ) as Array<ICommentScoreAttributes>;
+
+    const topScores = new Map<string, {[key: string]: any}>();
+    for (const topScore of results) {
+      topScores.set(
+        `${topScore.commentId}:${topScore.tagId}`,
+        {score: topScore.score, start: topScore.annotationStart, end: topScore.annotationEnd},
+      );
+    }
+
     const scoresMap = new Map<number, Array<serializedData>>();
     for (const score of summaryScores) {
       let scoresForComment = scoresMap.get(score.commentId);
@@ -165,7 +185,12 @@ export function createSimpleRESTService(): express.Router {
         scoresForComment = [];
         scoresMap.set(score.commentId, scoresForComment);
       }
-      scoresForComment.push(serialiseObject(score, SUMMARY_SCORE_FIELDS));
+      const summaryScore = serialiseObject(score, SUMMARY_SCORE_FIELDS);
+      const topScore = topScores.get(`${score.commentId}:${score.tagId}`);
+      if (topScore) {
+        summaryScore['topScore'] = topScore;
+      }
+      scoresForComment.push(summaryScore);
     }
 
     const commentData = comments.map((c) => {
