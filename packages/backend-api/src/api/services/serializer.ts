@@ -43,7 +43,7 @@ export const FLAG_FIELDS = ['id', 'label', 'detail', 'isRecommendation', 'commen
   'isResolved', 'resolvedById', 'resolvedAt'];
 
 const ID_FIELDS = new Set(['id', 'categoryId', 'articleId', 'tagId', 'ownerId', 'commentId',
-  'confirmedUserId', 'resolvedById', 'replyId']);
+  'confirmedUserId', 'resolvedById', 'replyId', 'maxSummaryScoreTagId']);
 
 export type serializedData = {[key: string]: {} | Array<string> | string | number};
 

@@ -103,13 +103,7 @@ export function CommentModel(keyValuePairs?: ICommentAttributes): ICommentModel 
 }
 
 export function getTopScore(comment: ICommentModel) {
-  let topScore: ITopScore = null;
-  for (const summary of comment.summaryScores) {
-    if (!topScore || topScore.score < summary.topScore.score) {
-      topScore = summary.topScore;
-    }
-  }
-  return topScore;
+  return getTopScoreForTag(comment, comment.maxSummaryScoreTagId);
 }
 
 export function getTopScoreForTag(comment: ICommentModel, tagId: ModelId) {
