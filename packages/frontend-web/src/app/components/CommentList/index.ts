@@ -15,10 +15,9 @@ limitations under the License.
 */
 
 import formatDate from 'date-fns/format';
-import { List } from 'immutable';
 import { isNaN, isNumber } from 'lodash';
 import { connect } from 'react-redux';
-import { ICommentModel, ICommentScoredModel } from '../../../models';
+import { ICommentModel, ICommentScore } from '../../../models';
 import { ICommentAction } from '../../../types';
 import { IAppDispatch } from '../../appstate';
 import { DATE_FORMAT_HM, DATE_FORMAT_MDY } from '../../config';
@@ -32,7 +31,7 @@ const DEFAULT_ROW_HEIGHT = 180;
 const ROW_PADDING_WITH_TITLE = 200;
 const ROW_PADDING = 130;
 
-function getSortContentByType(commentSortType: string, comment: ICommentModel, commentScores?: List<ICommentScoredModel>, maxSummaryScoreTag?: string): Array<string> {
+function getSortContentByType(commentSortType: string, comment: ICommentModel, commentScores?: Array<ICommentScore>, maxSummaryScoreTag?: string): Array<string> {
   switch (commentSortType) {
     case 'newest':
       return [formatDate(comment.sourceCreatedAt, DATE_FORMAT_MDY), formatDate(comment.sourceCreatedAt, DATE_FORMAT_HM)];

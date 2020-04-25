@@ -30,7 +30,7 @@ export interface ITaggedComment extends IGroupableComment {
 }
 
 export interface IDatedComment extends IGroupableComment {
-  date: number | Date;
+  date: Date;
 }
 
 export function groupByKey(comments: Array<IGroupableComment>, key: string, startVal: number, endVal: number, columnCount: number): IGroupedComments {

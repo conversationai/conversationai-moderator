@@ -29,8 +29,7 @@ import {
 
 import {
   convertServerAction,
-  ICommentDatedModel,
-  ICommentScoredModel,
+  ICommentListItem,
   IPreselectModel,
   IRuleModel,
   ITagModel,
@@ -267,7 +266,7 @@ const STYLES = stylesheet({
 
 export interface INewCommentsProps extends RouteComponentProps<INewCommentsPathParams>, IContextInjectorProps {
   preselects?: List<IPreselectModel>;
-  commentScores: List<ICommentScoredModel | ICommentDatedModel>;
+  commentScores: Array<ICommentListItem>;
   isLoading: boolean;
   selectedTag?: ITagModel;
   areNoneSelected?: boolean;
@@ -573,7 +572,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     const tagLinkURL = tagSelectorLink({context: params.context, contextId: params.contextId, tag: selectedTag && selectedTag.id});
 
     const rules = selectedTag && selectedTag.key !== 'DATE' && rulesInCategory && List<IRuleModel>(rulesInCategory.filter( (r) => r.tagId && r.tagId === selectedTag.id));
-    const disableAllButtons = areNoneSelected || commentScores.size <= 0;
+    const disableAllButtons = areNoneSelected || commentScores.length <= 0;
     const groupBy = (selectedTag && selectedTag.key === 'DATE') ? 'date' : 'score';
 
     const totalScoresInView = commentIds.size;
@@ -634,9 +633,9 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
         <div {...css(STYLES.buttonContainer)}>
 
           <div {...css(STYLES.commentCount)}>
-            { commentScores.size > 0 && (
+            { commentScores.length > 0 && (
               <div>
-                <span>{selectedIdsCount} of {commentScores.size} comments selected</span>
+                <span>{selectedIdsCount} of {commentScores.length} comments selected</span>
               </div>
             )}
           </div>

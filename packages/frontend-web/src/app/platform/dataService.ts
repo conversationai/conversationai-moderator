@@ -26,17 +26,15 @@ import {
 
 import {
   ArticleModel,
-  CommentDatedModel,
   CommentFlagModel,
   CommentModel,
-  CommentScoredModel,
   CommentScoreModel,
   IArticleModel,
   IAuthorCountsModel,
-  ICommentDatedModel,
+  ICommentDate,
   ICommentFlagModel,
   ICommentModel,
-  ICommentScoredModel,
+  ICommentScore,
   ICommentScoreModel,
   IUserModel,
   ModelId,
@@ -185,90 +183,83 @@ export async function listTextSizesByIds(
   }, Map<string, number>());
 }
 
+function packCommentScoreData(data: Array<{ commentId: ModelId, score: number }>): Array<ICommentScore> {
+  return data.map(({commentId, score}) => ({commentId, score}));
+}
+
+function packCommentDateData(data: Array<{ commentId: ModelId, date: string }>): Array<ICommentDate> {
+  return data.map(({date, commentId}) => ({
+    commentId,
+    date: new Date(date),
+  }));
+}
+
 export async function listHistogramScoresByArticle(
   articleId: string,
   tagId: string | 'DATE',
   sort: Array<string>,
-): Promise<List<ICommentScoredModel>> {
+): Promise<Array<ICommentScore>> {
   const response: any = await axios.get(
     serviceURL('histogramScores', `/articles/${articleId}/tags/${tagId}`, { sort }),
   );
 
-  return List(
-    (response.data.data as Array<any>).map(CommentScoredModel),
-  );
+  return packCommentScoreData(response.data.data);
 }
 
 export async function listMaxSummaryScoreByArticle(
   articleId: string,
   sort: Array<string>,
-): Promise<List<ICommentScoredModel>> {
+): Promise<Array<ICommentScore>> {
   const response: any = await axios.get(
     serviceURL('histogramScores', `/articles/${articleId}/summaryScore`, { sort }),
   );
 
-  return List(
-    (response.data.data as Array<any>).map(CommentScoredModel),
-  );
+  return packCommentScoreData(response.data.data);
 }
 
 export async function listHistogramScoresByArticleByDate(
-  articleId: string,
+  articleId: ModelId,
   sort: Array<string>,
-): Promise<List<ICommentDatedModel>> {
+): Promise<Array<ICommentDate>> {
   const response: any = await axios.get(
     serviceURL('histogramScores', `/articles/${articleId}/byDate`, { sort }),
   );
 
-  return List(
-    (response.data.data as Array<any>).map(({ date, commentId }) => CommentDatedModel({
-      date: new Date(date),
-      commentId,
-    })),
-  );
+  return packCommentDateData(response.data.data);
 }
 
 export async function listHistogramScoresByCategory(
   categoryId: string | 'all',
   tagId: string,
   sort: Array<string>,
-): Promise<List<ICommentScoredModel>> {
+): Promise<Array<ICommentScore>> {
   const response: any = await axios.get(
     serviceURL('histogramScores', `/categories/${categoryId}/tags/${tagId}`, { sort }),
   );
 
-  return List(
-    (response.data.data as Array<any>).map(CommentScoredModel),
-  );
+  return packCommentScoreData(response.data.data);
 }
 
 export async function listMaxHistogramScoresByCategory(
   categoryId: string | 'all',
   sort: Array<string>,
-): Promise<List<ICommentScoredModel>> {
+): Promise<Array<ICommentScore>> {
   const response: any = await axios.get(
     serviceURL('histogramScores', `/categories/${categoryId}/summaryScore`, { sort }),
   );
 
-  return List(
-    (response.data.data as Array<any>).map(CommentScoredModel),
-  );
+  return packCommentScoreData(response.data.data);
 }
 
 export async function listHistogramScoresByCategoryByDate(
-  categoryId: string | 'all',
+  categoryId: ModelId | 'all',
   sort: Array<string>,
-): Promise<List<ICommentDatedModel>> {
+): Promise<Array<ICommentDate>> {
   const response: any = await axios.get(
     serviceURL('histogramScores', `/categories/${categoryId}/byDate`, { sort }),
   );
 
-  return List(
-    (response.data.data as Array<any>).map(({ date, commentId }) => CommentDatedModel({
-      date: new Date(date),
-      commentId,
-    })),
-  );
+  return packCommentDateData(response.data.data);
 }
 
 export async function getComments(

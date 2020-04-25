@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 import check from 'check-types';
-import { List } from 'immutable';
 
 import {
   getArticleText,
@@ -29,7 +28,7 @@ import {
   listMaxSummaryScoreByArticle,
   listTextSizesByIds,
 } from '../app/platform/dataService';
-import { ICommentScoredModel, ModelId } from '../models';
+import { ICommentScore, ModelId } from '../models';
 import {
   checkArrayOf,
   checkCommentFlag,
@@ -63,7 +62,7 @@ export async function listNewCommentsPage_SUMMARY_SCORE(
     id = 'all';
   }
 
-  let scores: List<ICommentScoredModel>;
+  let scores: Array<ICommentScore>;
   if (type === 'article') {
     scores = await listMaxSummaryScoreByArticle(id, sort);
   }

@@ -16,6 +16,18 @@ limitations under the License.
 
 import { ModelId } from './common';
 
+export type ICommentListItem = Readonly<{
+  commentId: ModelId;
+}>;
+
+export type ICommentDate = Readonly<{
+  date: Date;
+}> & ICommentListItem;
+
+export type ICommentScore = Readonly<{
+  score: number;
+}> & ICommentListItem;
+
 export interface IAuthorAttributes {
   email: string;
   location: string;

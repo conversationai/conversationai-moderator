@@ -16,6 +16,8 @@ limitations under the License.
 
 import { storiesOf } from '@storybook/react';
 import * as faker from 'faker';
+
+import { ICommentDate, ICommentScore } from '../../../models';
 import {
   LIGHT_PRIMARY_TEXT_COLOR,
   MEDIUM_COLOR,
@@ -45,23 +47,13 @@ function randomTaggedComments(count: number) {
   return taggedComments;
 }
 
-interface ITaggedComment {
-  score: number;
-  commentId: string;
-}
-
-interface IDatedComment {
-  date: number;
-  commentId: string;
-}
-
-function randomDatedComments(count: number, dateAge: number): Array<IDatedComment> {
-  const datedComments: Array<IDatedComment> = [];
+function randomDatedComments(count: number, dateAge: number): Array<ICommentDate> {
+  const datedComments: Array<ICommentDate> = [];
 
   for (let i = 0; i < count; i++) {
     datedComments.push({
       commentId: i.toString(),
-      date: Number(faker.date.recent(dateAge)),
+      date: faker.date.recent(dateAge),
     });
   }
 
@@ -102,7 +94,7 @@ storiesOf('DotChart', module)
     return (
       <div {...css({ backgroundColor: MEDIUM_COLOR, padding: '50px' })}>
         <DotChart
-          commentsByColumn={groupByScoreColumns<ITaggedComment>(randomTaggedComments(1000), COLCOUNT)}
+          commentsByColumn={groupByScoreColumns<ICommentScore>(randomTaggedComments(1000), COLCOUNT)}
           selectedRange={{start: 0, end: 0.25}}
           width={902}
           height={282}
@@ -111,7 +103,7 @@ storiesOf('DotChart', module)
     );
   })
   .add('By Date (30 days)', () => {
-    const grouped = groupByDateColumns<IDatedComment>(randomDatedComments(1000, 30), COLCOUNT);
+    const grouped = groupByDateColumns<ICommentDate>(randomDatedComments(1000, 30), COLCOUNT);
     const columnsByIndex = Object.keys(grouped).sort();
 
     return (
@@ -127,7 +119,7 @@ storiesOf('DotChart', module)
   })
   .add('By Date (24 hours)', () => {
     const comments = randomDatedComments(1000, 1);
-    const grouped = groupByDateColumns<IDatedComment>(comments, COLCOUNT);
+    const grouped = groupByDateColumns<ICommentDate>(comments, COLCOUNT);
     const columnsByIndex = Object.keys(grouped).sort();
 
     return (
@@ -146,7 +138,7 @@ storiesOf('DotChart', module)
       <div {...css({ backgroundColor: MEDIUM_COLOR, padding: '50px' })}>
         <DotChart
           appliedRules={generateRules()}
-          commentsByColumn={groupByScoreColumns<ITaggedComment>(randomTaggedComments(1000), COLCOUNT)}
+          commentsByColumn={groupByScoreColumns<ICommentScore>(randomTaggedComments(1000), COLCOUNT)}
           selectedRange={{start: 0, end: 0.25}}
           width={902}
           height={282}
@@ -158,7 +150,7 @@ storiesOf('DotChart', module)
     return (
       <div {...css({ backgroundColor: MEDIUM_COLOR, padding: '50px' })}>
         <DotChart
-          commentsByColumn={groupByScoreColumns<ITaggedComment>(randomTaggedComments(1000), COLCOUNT)}
+          commentsByColumn={groupByScoreColumns<ICommentScore>(randomTaggedComments(1000), COLCOUNT)}
           selectedRange={{start: 0.50, end: 0.51}}
           width={768}
           height={282}
