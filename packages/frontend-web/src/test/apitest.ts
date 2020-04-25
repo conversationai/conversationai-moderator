@@ -186,10 +186,10 @@ setUserId(userId);
     console.log(`  Checked article ${article.id}`);
     console.log('  Doing an article text fetch');
     await fetchArticleText(article.id);
-    console.log(`\n* Approving comment ${comments.last()} and waiting for notification.`);
+    console.log(`\n* Approving comment ${comments.slice(-1)[0]} and waiting for notification.`);
 
     const category = articleData.categories.get(article.categoryId);
-    await approveComment(comments.last(), false,
+    await approveComment(comments.slice(-1)[0], false,
       {
         approvedCount: category.approvedCount + 1,
       }, {

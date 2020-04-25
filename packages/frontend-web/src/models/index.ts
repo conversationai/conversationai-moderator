@@ -17,7 +17,6 @@ limitations under the License.
 export * from './article';
 export * from './category';
 export * from './comment';
-export * from './commentDated';
 export * from './commentFlag';
 export * from './commentScore';
 export * from './common';

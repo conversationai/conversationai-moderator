@@ -17,14 +17,14 @@ limitations under the License.
 import { autobind } from 'core-decorators';
 import formatDate from 'date-fns/format';
 import { List } from 'immutable';
-import { clamp } from 'lodash';
+import { clamp, isEqual } from 'lodash';
 import React from 'react';
 
-import { ICommentDatedModel, ICommentScoredModel, IRuleModel } from '../../../../../../../models';
+import { ICommentDate, ICommentListItem, ICommentScore, IRuleModel } from '../../../../../../../models';
 import { DATE_FORMAT_LONG } from '../../../../../../config';
 import { COLCOUNT } from '../../../../../../config';
-import { css, stylesheet } from '../../../../../../utilx';
 import { groupByDateColumns, groupByScoreColumns, IGroupedComments } from '../../../../../../util';
+import { css, stylesheet } from '../../../../../../utilx';
 
 import {
   BASE_Z_INDEX,
@@ -89,7 +89,7 @@ export interface IBatchSelectorProps {
   defaultSelectionPosition1: number;
   defaultSelectionPosition2: number;
   automatedRuleToast?(rule: IRuleModel): void;
-  commentScores: List<ICommentScoredModel | ICommentDatedModel>;
+  commentScores: Array<ICommentListItem>;
   groupBy: 'date' | 'score';
   rules?: List<IRuleModel>;
   onSelectionChange?(selectedComments: Array<number>, pos1: number, pos2: number): void;
@@ -117,11 +117,11 @@ export class BatchSelector
   };
 
   componentWillUpdate(nextProps: IBatchSelectorProps) {
-    if (!this.groupedByColumn || !this.props.commentScores.equals(nextProps.commentScores)) {
+    if (!this.groupedByColumn || !isEqual(this.props.commentScores, nextProps.commentScores)) {
       if (this.props.groupBy === 'score') {
-        this.groupedByColumn = groupByScoreColumns<ICommentScoredModel>(nextProps.commentScores.toArray() as Array<ICommentScoredModel>, COLCOUNT);
+        this.groupedByColumn = groupByScoreColumns(nextProps.commentScores as Array<ICommentScore>, COLCOUNT);
       } else {
-        this.groupedByColumn = groupByDateColumns<ICommentDatedModel>(nextProps.commentScores.toArray() as Array<ICommentDatedModel>, COLCOUNT);
+        this.groupedByColumn = groupByDateColumns(nextProps.commentScores as Array<ICommentDate>, COLCOUNT);
       }
 
       this.onDataChange(this.state.selectionPosition1, this.state.selectionPosition2);

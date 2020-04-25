@@ -17,8 +17,9 @@ limitations under the License.
 import { List } from 'immutable';
 import { clamp } from 'lodash';
 import {
-  ICommentDatedModel,
-  ICommentScoredModel,
+  ICommentDate,
+  ICommentListItem,
+  ICommentScore,
   ITagModel,
   TagModel,
 } from '../../../../../../models';
@@ -42,7 +43,7 @@ export function getSelectedTag(state: IAppState, tag?: string): ITagModel | null
 }
 
 export function getCommentIDsInRange(
-  commentScores: List<ICommentScoredModel | ICommentDatedModel>,
+  commentScores: Array<ICommentListItem>,
   selectionPosition1: number,
   selectionPosition2: number,
   groupByDate: boolean,
@@ -50,10 +51,10 @@ export function getCommentIDsInRange(
   const minPos = Math.min(selectionPosition1, selectionPosition2);
   const maxPos = Math.max(selectionPosition1, selectionPosition2);
 
-  let scores: List<ICommentScoredModel | ICommentDatedModel>;
+  let scores: Array<ICommentListItem>;
 
   if (groupByDate) {
-    const grouped = groupByDateColumns(commentScores.toArray() as Array<ICommentDatedModel>, COLCOUNT);
+    const grouped = groupByDateColumns(commentScores as Array<ICommentDate>, COLCOUNT);
     const columnKeys = Object.keys(grouped).sort();
 
     const pos1Index = clamp(Math.ceil(minPos * (columnKeys.length - 1)), 0, columnKeys.length - 1);
@@ -64,9 +65,9 @@ export function getCommentIDsInRange(
 
     const pos1Value = Number(pos1Key);
     const pos2Value = Number(pos2Key);
-    scores = commentScores.filter((s: ICommentDatedModel) => (+s.date >= pos1Value) && (+s.date < pos2Value)) as List<ICommentDatedModel>;
+    scores = commentScores.filter((s: ICommentDate) => (+s.date >= pos1Value) && (+s.date < pos2Value));
   } else {
-    scores = commentScores.filter((s: ICommentScoredModel) => (s.score >= minPos) && (s.score < maxPos)) as List<ICommentScoredModel>;
+    scores = commentScores.filter((s: ICommentScore) => (s.score >= minPos) && (s.score < maxPos));
   }
 
   return List<string>(scores.map((score) => score.commentId));

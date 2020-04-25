@@ -13,16 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
+
+import { ICommentListItem } from '../../../../../../models';
 import { IAppDispatch, IAppState } from '../../../../../appstate';
-
-import {
-  ICommentDatedModel,
-  ICommentScoredModel,
-} from '../../../../../../models';
-
 import {
   listHistogramScoresByArticle,
   listHistogramScoresByArticleByDate,
@@ -37,7 +31,7 @@ const loadCommentScoresStart = createAction(
 );
 
 type ILoadCommentScoresCompletePayload = {
-  scores: List<ICommentScoredModel | ICommentDatedModel>;
+  scores: Array<ICommentListItem>;
 };
 const loadCommentScoresComplete = createAction<ILoadCommentScoresCompletePayload>(
   'article-detail-new/LOAD_COMMENTS_SCORES_COMPLETE',
@@ -102,13 +96,13 @@ export async function loadCommentScoresForCategory(
 export type ICommentScoresState = Readonly<{
   isLoading: boolean;
   hasData: boolean;
-  scores: List<ICommentScoredModel | ICommentDatedModel>;
+  scores: Array<ICommentListItem>;
 }>;
 
-const initailState = {
+const initailState: ICommentScoresState = {
   isLoading: true,
   hasData: false,
-  scores: List<ICommentScoredModel | ICommentDatedModel>(),
+  scores: [],
 };
 
 export const commentScoresReducer = handleActions<
@@ -126,10 +120,10 @@ export const commentScoresReducer = handleActions<
 
   [removeCommentScore.toString()]: (state, { payload }: Action<Array<string>>) => ({
     ...state,
-    scores: List(state.scores.filter((score: ICommentScoredModel | ICommentDatedModel) => {
+    scores: state.scores.filter((score: ICommentListItem) => {
           const index = payload.findIndex((id: string) => id === score.commentId);
           return index === -1;
-        })),
+        }),
     }),
 }, initailState);
 
