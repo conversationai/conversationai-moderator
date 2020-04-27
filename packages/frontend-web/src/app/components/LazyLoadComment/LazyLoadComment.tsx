@@ -345,7 +345,6 @@ export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> 
 
 export interface ICommentProps {
   comment: ICommentModel;
-  sortContent: Array<string>;
 }
 
 export type ICommentPropsForRow = (index: number) => ICommentProps | null;

@@ -14,15 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import formatDate from 'date-fns/format';
-import { isNaN, isNumber } from 'lodash';
 import { connect } from 'react-redux';
-import { ICommentModel, ICommentScore } from '../../../models';
+
 import { ICommentAction } from '../../../types';
 import { IAppDispatch } from '../../appstate';
-import { DATE_FORMAT_HM, DATE_FORMAT_MDY } from '../../config';
 import { getComment, loadComment } from '../../stores/comments';
-import { getTags } from '../../stores/tags';
 import { HEADER_HEIGHT } from '../../styles';
 import { ILazyCommentListProps, LazyCommentList } from '../LazyCommentList';
 import { ICommentProps } from '../LazyLoadComment';
@@ -30,31 +26,6 @@ import { ICommentProps } from '../LazyLoadComment';
 const DEFAULT_ROW_HEIGHT = 180;
 const ROW_PADDING_WITH_TITLE = 200;
 const ROW_PADDING = 130;
-
-function getSortContentByType(commentSortType: string, comment: ICommentModel, commentScores?: Array<ICommentScore>, maxSummaryScoreTag?: string): Array<string> {
-  switch (commentSortType) {
-    case 'newest':
-      return [formatDate(comment.sourceCreatedAt, DATE_FORMAT_MDY), formatDate(comment.sourceCreatedAt, DATE_FORMAT_HM)];
-    case 'oldest':
-      return [formatDate(comment.sourceCreatedAt, DATE_FORMAT_MDY), formatDate(comment.sourceCreatedAt, DATE_FORMAT_HM)];
-    case 'relevance':
-      return [formatDate(comment.sourceCreatedAt, DATE_FORMAT_MDY), formatDate(comment.sourceCreatedAt, DATE_FORMAT_HM)];
-    case 'updated':
-      return [formatDate(comment.updatedAt, DATE_FORMAT_MDY), formatDate(comment.updatedAt, DATE_FORMAT_HM)];
-    case 'flagged':
-      return [comment.unresolvedFlagsCount.toString()];
-    default:
-      const score = commentScores && commentScores.find((s) => s.commentId === comment.id);
-
-      if (!score || !isNumber(score.score) || isNaN(score.score)) {
-        return ['unscored'];
-      }
-
-      const scoreString = `${(score.score * 100.0).toFixed()}%`;
-
-      return maxSummaryScoreTag ? [scoreString, maxSummaryScoreTag] : [scoreString];
-  }
-}
 
 export type ICommentListOwnPropNames =
   'getLinkTarget' |
@@ -86,7 +57,6 @@ export type ILazyCommentListOwnProps = {
 
 export type ICommentListProps = {
   commentIds: any;
-  commentScores?: any;
   textSizes: any;
   currentSort: string;
   selectedTag?: any;
@@ -96,7 +66,6 @@ export type ICommentListProps = {
 function mapStateToProps(state: any, ownProps: any): any {
   const {
     commentIds,
-    commentScores,
     textSizes,
     currentSort,
     selectedTag,
@@ -115,30 +84,9 @@ function mapStateToProps(state: any, ownProps: any): any {
       const comment = getComment(state, commentId);
 
       if (!comment) { return null; }
-      let sort;
-      // Date does not have highest/lowest scores so we need to force switch the sort
-      if (selectedTag && selectedTag.key === 'DATE' && (currentSort === 'highest' || currentSort === 'lowest')) {
-        sort = 'newest';
-      } else {
-        sort = currentSort;
-      }
-
-      let maxSummaryScoreTagLabel: string = null;
-      if (selectedTag && selectedTag.key === 'SUMMARY_SCORE') {
-        const maxSummaryScoreTag = getTags(state).find((tag) => tag.id === comment.maxSummaryScoreTagId);
-        maxSummaryScoreTagLabel = maxSummaryScoreTag && maxSummaryScoreTag.label;
-      }
-
-      const sortContent = getSortContentByType(
-        sort,
-        comment,
-        commentScores,
-        maxSummaryScoreTagLabel,
-      );
 
       return {
         comment,
-        sortContent,
       };
     },
 

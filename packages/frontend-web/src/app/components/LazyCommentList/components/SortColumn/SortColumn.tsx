@@ -14,8 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import formatDate from 'date-fns/format';
 import React from 'react';
-import { ICommentModel, ITagModel } from '../../../../../models';
+import {useSelector} from 'react-redux';
+
+import { getSummaryForTag, ICommentModel, ITagModel } from '../../../../../models';
+import { DATE_FORMAT_HM, DATE_FORMAT_MDY } from '../../../../config';
+import { getTags } from '../../../../stores/tags';
 import {
   DARK_SECONDARY_TEXT_COLOR,
 } from '../../../../styles';
@@ -24,31 +29,74 @@ import { css, IStyle } from '../../../../utilx';
 export interface ISortColumnProps extends React.HTMLProps<any> {
   style?: IStyle;
   comment?: ICommentModel;
-  sortContent?: Array<string>;
+  selectedSort?: string;
   selectedTag?: ITagModel;
 }
 
-export class SortColumn extends React.PureComponent<ISortColumnProps> {
-  render() {
-    const {
-      style,
-      sortContent,
-      selectedTag,
-    } = this.props;
+export function SortColumn(props: ISortColumnProps) {
+  const {
+    style,
+    comment,
+    selectedSort,
+    selectedTag,
+  } = props;
 
-    const isSummaryScore = selectedTag && selectedTag.key === 'SUMMARY_SCORE';
+  const tags = useSelector(getTags);
 
+  if (!comment || !comment.text) {
     return (
       <div {...css(style)}>
-        {sortContent.map((content, i) => (
-          <p
-            key={content}
-            {...css({ margin: '0px'}, isSummaryScore && (i === 1) && { color: DARK_SECONDARY_TEXT_COLOR })}
-          >
-            {content}
-          </p>
-        ))}
+        <p key="loading" {...css({ margin: '0px'})}>
+           Loading...
+        </p>
       </div>
     );
   }
+
+  if (['newest', 'oldest', 'updated'].includes(selectedSort)) {
+    const date = selectedSort === 'updated' ? comment.updatedAt : comment.sourceCreatedAt;
+    return (
+      <div {...css(style)}>
+        <p key="date" {...css({margin: '0px'})}>{formatDate(date, DATE_FORMAT_MDY)}</p>
+        <p key="time" {...css({margin: '0px'})}>{formatDate(date, DATE_FORMAT_HM)}</p>
+      </div>
+    );
+  }
+
+  if (selectedSort === 'flagged') {
+    return (
+      <div {...css(style)}>
+        <p key="flags" {...css({margin: '0px'})}>{comment.unresolvedFlagsCount}</p>
+      </div>
+    );
+  }
+
+  if (selectedTag && selectedTag.key !== 'SUMMARY_SCORE') {
+    const summary = getSummaryForTag(comment, selectedTag.id);
+    if (summary) {
+      return (
+        <div {...css(style)}>
+          <p key="summary" {...css({margin: '0px'})}>{(summary.score * 100.0).toFixed()}%</p>
+        </div>
+      );
+    }
+  }
+
+  if (!comment.maxSummaryScore) {
+    return (
+      <div {...css(style)}>
+        <p key="summary" {...css({margin: '0px'})}>Unscored</p>
+      </div>
+    );
+  }
+
+  const maxSummaryScoreTag = tags.find((tag) => tag.id === comment.maxSummaryScoreTagId);
+  const tagLabel = maxSummaryScoreTag && maxSummaryScoreTag.label;
+
+  return (
+    <div {...css(style)}>
+      <p key="summary" {...css({margin: '0px'})}>{(comment.maxSummaryScore * 100.0).toFixed()}%</p>
+      <p key="label" {...css({margin: '0px', color: DARK_SECONDARY_TEXT_COLOR})}>{tagLabel}</p>
+    </div>
+  );
 }

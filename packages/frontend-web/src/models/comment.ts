@@ -118,6 +118,10 @@ export function getTopScore(comment: ICommentModel) {
   return getTopScoreForTag(comment, comment.maxSummaryScoreTagId);
 }
 
+export function getSummaryForTag(comment: ICommentModel, tagId: ModelId) {
+  return comment.summaryScores.find((s) => s.tagId === tagId);
+}
+
 export function getTopScoreForTag(comment: ICommentModel, tagId: ModelId) {
   for (const summary of comment.summaryScores) {
     if (summary.tagId === tagId) {

@@ -204,6 +204,7 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
       onRowRender,
       commentPropsForRow,
       updateCounter,
+      selectedSort,
       selectedTag,
     } = this.props;
 
@@ -216,7 +217,7 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
           updateCounter={updateCounter}
           rowIndex={cellProps.rowIndex}
         >
-          <SortColumn selectedTag={selectedTag} style={ROW_STYLES.approval} sortContent={null} comment={null} />
+          <SortColumn selectedSort={selectedSort} selectedTag={selectedTag} style={ROW_STYLES.approval} comment={null} />
         </LazyLoadComment>
       </Cell>
     );
