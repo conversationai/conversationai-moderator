@@ -28,6 +28,7 @@ const ROW_PADDING_WITH_TITLE = 200;
 const ROW_PADDING = 130;
 
 export type ICommentListOwnPropNames =
+  'commentIds' |
   'getLinkTarget' |
   'totalItems' |
   'areAllSelected' |
@@ -56,7 +57,6 @@ export type ILazyCommentListOwnProps = {
 };
 
 export type ICommentListProps = {
-  commentIds: any;
   textSizes: any;
   currentSort: string;
   selectedTag?: any;

@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 
 import { ModelId } from '../../models';
@@ -36,3 +36,7 @@ function getCommentFromRoute(state: IAppState, props: RouteComponentProps<IComme
 }
 
 export const commentFromRouteInjector = connect(getCommentFromRoute);
+
+export function useCachedComment(commentId: ModelId): ICommentCacheProps {
+  return useSelector((state: IAppState) => getCachedComment(state, commentId));
+}
