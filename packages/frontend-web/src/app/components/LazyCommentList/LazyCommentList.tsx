@@ -108,6 +108,7 @@ const HEADER_STYLES = stylesheet({
 const SELECT_ALL_ID = 'select-all-checkbox';
 
 export interface ILazyCommentListProps {
+  commentIds: List<ModelId>;
   width: number;
   heightOffset: number;
   totalItems: number;
@@ -201,24 +202,21 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
   @autobind
   getApprovalCell(cellProps: any) {
     const {
-      onRowRender,
-      commentPropsForRow,
-      updateCounter,
       selectedSort,
       selectedTag,
+      commentIds,
     } = this.props;
+
+    const commentId = commentIds.get(cellProps.rowIndex);
 
     return (
       <Cell width={cellProps.width} height={cellProps.height}>
-        <LazyLoadComment
-          loadingPlaceholder={null}
-          onRowRender={onRowRender}
-          commentPropsForRow={commentPropsForRow}
-          updateCounter={updateCounter}
-          rowIndex={cellProps.rowIndex}
-        >
-          <SortColumn selectedSort={selectedSort} selectedTag={selectedTag} style={ROW_STYLES.approval} comment={null} />
-        </LazyLoadComment>
+        <SortColumn
+          selectedSort={selectedSort}
+          selectedTag={selectedTag}
+          style={ROW_STYLES.approval}
+          commentId={commentId}
+        />
       </Cell>
     );
   }

@@ -18,8 +18,9 @@ import formatDate from 'date-fns/format';
 import React from 'react';
 import {useSelector} from 'react-redux';
 
-import { getSummaryForTag, ICommentModel, ITagModel } from '../../../../../models';
+import { getSummaryForTag, ITagModel, ModelId } from '../../../../../models';
 import { DATE_FORMAT_HM, DATE_FORMAT_MDY } from '../../../../config';
+import { useCachedComment } from '../../../../injectors/commentInjector';
 import { getTags } from '../../../../stores/tags';
 import {
   DARK_SECONDARY_TEXT_COLOR,
@@ -28,7 +29,7 @@ import { css, IStyle } from '../../../../utilx';
 
 export interface ISortColumnProps extends React.HTMLProps<any> {
   style?: IStyle;
-  comment?: ICommentModel;
+  commentId?: ModelId;
   selectedSort?: string;
   selectedTag?: ITagModel;
 }
@@ -36,11 +37,12 @@ export interface ISortColumnProps extends React.HTMLProps<any> {
 export function SortColumn(props: ISortColumnProps) {
   const {
     style,
-    comment,
+    commentId,
     selectedSort,
     selectedTag,
   } = props;
 
+  const {comment} = useCachedComment(commentId);
   const tags = useSelector(getTags);
 
   if (!comment || !comment.text) {
