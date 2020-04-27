@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import React from 'react';
-import { ICommentModel } from '../../../../../models';
+import { ModelId } from '../../../../../models';
 import { maybeCallback, partial } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
 import { Checkbox } from '../../../Checkbox';
@@ -58,39 +58,37 @@ const STYLES = stylesheet({
 });
 
 export interface ICheckboxColumnProps {
-  comment?: ICommentModel;
+  commentId?: ModelId;
   isSelected?: boolean;
-  onCheck?(comment: ICommentModel): void;
   inputId: string;
-  isItemChecked?(id: string): boolean;
+  isItemChecked?(commentId: ModelId): boolean;
+  onCheck?(commentId: ModelId): void;
 }
 
-export class CheckboxColumn extends React.PureComponent<ICheckboxColumnProps> {
-  render() {
-    const {
-      isSelected,
-      onCheck,
-      comment,
-      isItemChecked,
-      inputId,
-    } = this.props;
-    const smallerScreen = window.innerWidth < 1025;
+export function CheckboxColumn(props: ICheckboxColumnProps) {
+  const {
+    isSelected,
+    onCheck,
+    commentId,
+    isItemChecked,
+    inputId,
+  } = props;
+  const smallerScreen = window.innerWidth < 1025;
 
-    return (
-      <div {...css(STYLES.base)}>
-        <label
-          {...css(STYLES.label, smallerScreen && STYLES.labelSlim)}
-          htmlFor={inputId}
-          onClick={partial(maybeCallback(onCheck), comment)}
-        >
-          <Checkbox
-            inputId={inputId}
-            isSelected={isItemChecked && comment ? isItemChecked(comment.id) : isSelected}
-            onCheck={partial(maybeCallback(onCheck), comment)}
-          />
-          <span {...css(VISUALLY_HIDDEN)}>Select item</span>
-        </label>
-      </div>
-    );
-  }
+  return (
+    <div {...css(STYLES.base)}>
+      <label
+        {...css(STYLES.label, smallerScreen && STYLES.labelSlim)}
+        htmlFor={inputId}
+        onClick={partial(maybeCallback(onCheck), commentId)}
+      >
+        <Checkbox
+          inputId={inputId}
+          isSelected={isItemChecked ? isItemChecked(commentId) : isSelected}
+          onCheck={partial(maybeCallback(onCheck), commentId)}
+        />
+        <span {...css(VISUALLY_HIDDEN)}>Select item</span>
+      </label>
+    </div>
+  );
 }

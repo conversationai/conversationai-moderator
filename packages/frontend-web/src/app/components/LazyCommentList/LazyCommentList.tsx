@@ -141,35 +141,29 @@ export interface ILazyCommentListProps {
 export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> {
 
   @autobind
-  onSelectionChange(comment: ICommentModel) {
+  onSelectionChange(commentId: ModelId) {
    if (this.props.onSelectionChange) {
-     this.props.onSelectionChange(comment.id);
+     this.props.onSelectionChange(commentId);
    }
   }
 
   @autobind
   getCheckboxCell(cellProps: any) {
     const {
-      onRowRender,
-      commentPropsForRow,
+      commentIds,
       isItemChecked,
-      updateCounter,
     } = this.props;
+
+    const commentId = commentIds.get(cellProps.rowIndex);
 
     return (
       <Cell width={cellProps.width} height={cellProps.height}>
-        <LazyLoadComment
-          onRowRender={onRowRender}
-          commentPropsForRow={commentPropsForRow}
-          updateCounter={updateCounter}
-          rowIndex={cellProps.rowIndex}
-        >
-          <CheckboxColumn
-            inputId={cellProps.rowIndex}
-            isItemChecked={isItemChecked}
-            onCheck={this.onSelectionChange}
-          />
-        </LazyLoadComment>
+        <CheckboxColumn
+          commentId={commentId}
+          inputId={cellProps.rowIndex}
+          isItemChecked={isItemChecked}
+          onCheck={this.onSelectionChange}
+        />
       </Cell>
     );
   }
