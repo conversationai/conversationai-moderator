@@ -746,7 +746,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               textSizes={textSizes}
               commentIds={commentIds}
               selectedTag={selectedTag}
-              commentScores={commentScores}
               areAllSelected={areAllSelected}
               getLinkTarget={getLinkTarget}
               isItemChecked={isItemChecked}
