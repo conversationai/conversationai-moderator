@@ -308,39 +308,17 @@ export interface ILinkedBasicBodyProps extends IBasicBodyProps {
   getLinkTarget: ILinkTargetGetter;
 }
 
-export class LinkedBasicBody extends React.PureComponent<ILinkedBasicBodyProps> {
+export function LinkedBasicBody(props: ILinkedBasicBodyProps) {
+  const {
+    comment,
+    getLinkTarget,
+  } = props;
 
-  render() {
-    const {
-      comment,
-      selectedTag,
-      getLinkTarget,
-      onCommentClick,
-      hideCommentAction,
-      showActions,
-      dispatchConfirmedAction,
-      searchTerm,
-      displayArticleTitle,
-      handleAssignTagsSubmit,
-    } = this.props;
-
-    return (
-      <div key={`${comment.id}`}>
-        <BasicBody
-          searchTerm={searchTerm}
-          commentLinkTarget={getLinkTarget(comment.id)}
-          onCommentClick={onCommentClick}
-          comment={comment}
-          selectedTag={selectedTag}
-          hideCommentAction={hideCommentAction}
-          showActions={showActions}
-          dispatchConfirmedAction={dispatchConfirmedAction}
-          displayArticleTitle={displayArticleTitle}
-          handleAssignTagsSubmit={handleAssignTagsSubmit}
-        />
-      </div>
-    );
-  }
+  return (
+    <div key={`${comment.id}`}>
+      <BasicBody {...props} commentLinkTarget={getLinkTarget(comment.id)}/>
+    </div>
+  );
 }
 
 export interface ICommentProps {
@@ -355,7 +333,6 @@ export interface ILazyLoadCommentProps extends React.HTMLProps<any> {
   onRowRender(index: number): Promise<ICommentModel>;
   commentPropsForRow: ICommentPropsForRow;
   updateCounter?: number;
-  dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>, shouldTriggerToast?: boolean): any;
 }
 
 export interface ILazyLoadCommentState {
@@ -376,7 +353,6 @@ export class LazyLoadComment
       rowIndex,
       children,
       loadingPlaceholder,
-      dispatchConfirmedAction,
     } = this.props;
 
     const props = commentPropsForRow(rowIndex);
@@ -390,9 +366,6 @@ export class LazyLoadComment
               React.cloneElement(child, {
                 ...child.props,
                 ...props,
-                showActions: true,
-                dispatchConfirmedAction,
-                rowIndex,
               })
             ),
           )}

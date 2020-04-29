@@ -38,7 +38,6 @@ export type ICommentListOwnPropNames =
   'onSelectionChange' |
   'onSortChange' |
   'onCommentClick' |
-  'commentBody' |
   'rowHeight' |
   'hideCommentAction' |
   'updateCounter' |
