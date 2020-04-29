@@ -21,13 +21,9 @@ import React from 'react';
 
 import { ICommentModel, ITagModel, ModelId } from '../../../models';
 import { IConfirmationAction } from '../../../types';
-import { partial } from '../../util';
 import { css, stylesheet } from '../../utilx';
 import { ICommentPropsForRow, ILinkTargetGetter, LazyLoadComment } from '../LazyLoadComment';
-import {
-  BasicBody,
-  LinkedBasicBody,
-} from '../LazyLoadComment';
+import { LinkedBasicBody } from '../LazyLoadComment';
 import { CheckboxColumn } from './components/CheckboxColumn';
 import { SortColumn } from './components/SortColumn';
 
@@ -121,9 +117,8 @@ export interface ILazyCommentListProps {
   sortOptions?: List<ITagModel>;
   onSelectionChange?(commentId: string): void;
   onSortChange?(e: React.ChangeEvent<any>): any;
-  getLinkTarget?: ILinkTargetGetter;
+  getLinkTarget: ILinkTargetGetter;
   onCommentClick?(commentIndex: string): any;
-  commentBody?: JSX.Element;
   rowHeight?: number;
   hideCommentAction?: boolean;
   updateCounter?: number;
@@ -169,12 +164,19 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
   }
 
   @autobind
-  getBodyCell(bodyContent: JSX.Element, cellProps: any) {
+  getBodyCell(cellProps: any) {
     const {
       onRowRender,
       commentPropsForRow,
       updateCounter,
       dispatchConfirmedAction,
+      selectedTag,
+      getLinkTarget,
+      onCommentClick,
+      hideCommentAction,
+      searchTerm,
+      displayArticleTitle,
+      handleAssignTagsSubmit,
     } = this.props;
 
     return (
@@ -184,10 +186,20 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
           onRowRender={onRowRender}
           commentPropsForRow={commentPropsForRow}
           updateCounter={updateCounter}
-          dispatchConfirmedAction={dispatchConfirmedAction}
           rowIndex={cellProps.rowIndex}
         >
-          {bodyContent}
+          <LinkedBasicBody
+            searchTerm={searchTerm}
+            getLinkTarget={getLinkTarget}
+            onCommentClick={onCommentClick}
+            hideCommentAction={hideCommentAction}
+            comment={null}
+            selectedTag={selectedTag}
+            handleAssignTagsSubmit={handleAssignTagsSubmit}
+            displayArticleTitle={displayArticleTitle}
+            dispatchConfirmedAction={dispatchConfirmedAction}
+            showActions
+          />
         </LazyLoadComment>
       </Cell>
     );
@@ -219,23 +231,15 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
     const {
       totalItems,
       onSortChange,
-      selectedTag,
       selectedSort,
       sortOptions,
       areAllSelected,
       onSelectAllChange,
-      getLinkTarget,
-      onCommentClick,
-      commentBody,
       rowHeight,
-      hideCommentAction,
       rowHeightGetter,
       ownerHeight,
-      searchTerm,
-      displayArticleTitle,
       scrollToRow,
       onTableScroll,
-      handleAssignTagsSubmit,
       heightOffset,
     } = this.props;
 
@@ -269,35 +273,6 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
       />
     );
 
-    let bodyContent: any = null;
-    if (commentBody) {
-      bodyContent = commentBody;
-    }
-    else if (getLinkTarget) {
-      bodyContent = (
-        <LinkedBasicBody
-          searchTerm={searchTerm}
-          getLinkTarget={getLinkTarget}
-          onCommentClick={onCommentClick}
-          hideCommentAction={hideCommentAction}
-          comment={null}
-          selectedTag={selectedTag}
-          handleAssignTagsSubmit={handleAssignTagsSubmit}
-          displayArticleTitle={displayArticleTitle}
-        />
-      );
-    }
-    else {
-      bodyContent = (
-        <BasicBody
-          comment={null}
-          selectedTag={selectedTag}
-          hideCommentAction={hideCommentAction}
-          handleAssignTagsSubmit={handleAssignTagsSubmit}
-        />
-      );
-    }
-
     const bodyColumnHeader = () => (
       <div {...css(HEADER_STYLES.header, {width: 700})}>
         <label htmlFor={SELECT_ALL_ID} onClick={onSelectAllChange} {...css(HEADER_STYLES.label)}>
@@ -310,7 +285,7 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
       <Column
         header={bodyColumnHeader}
         width={700}
-        cell={partial(this.getBodyCell, bodyContent)}
+        cell={this.getBodyCell}
       />
     );
 
