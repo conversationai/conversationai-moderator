@@ -369,7 +369,6 @@ export interface ISingleCommentProps {
   loadScores?(commentId: string): void;
   getUserById?(id: string): IUserModel;
   currentUser?: IUserModel;
-  onUpdateCommentText?(comment: ICommentModel): void;
   commentEditingEnabled?: boolean;
 }
 
@@ -417,7 +416,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
   saveEditedCommentText(e: React.FormEvent<any>) {
     e.preventDefault();
     const {
-      onUpdateCommentText,
       comment,
     } = this.props;
 
@@ -428,11 +426,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
 
     // reset comment text and author
     const author = {...comment.author, name: authorName, location: authorLoc};
-    onUpdateCommentText({
-      ...comment,
-      text: commentText,
-      author,
-    });
     // send comment text to be update to publisher
     editAndRescoreComment(comment.id, commentText, author);
 
@@ -568,7 +561,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       loadScores,
       getUserById,
       currentUser,
-      onUpdateCommentText,
       commentEditingEnabled,
     } = this.props;
 
@@ -604,7 +596,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
               onCommentTagClick={onCommentTagClick}
             />
 
-            {onUpdateCommentText && commentEditingEnabled &&
+            {commentEditingEnabled &&
               (
                 <button
                   aria-label="Edit Comment Text"

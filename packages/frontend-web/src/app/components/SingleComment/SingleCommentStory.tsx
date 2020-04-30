@@ -18,7 +18,6 @@ import { List } from 'immutable';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 
 import { IAuthorModel, ITagModel } from '../../../models';
@@ -95,7 +94,6 @@ storiesOf('SingleComment', module)
           <SingleComment
             comment={comment}
             commentEditingEnabled
-            onUpdateCommentText={action('Updating Comment')}
           />
         </div>
       </div>

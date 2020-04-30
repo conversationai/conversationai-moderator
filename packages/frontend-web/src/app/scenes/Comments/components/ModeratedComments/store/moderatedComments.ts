@@ -25,24 +25,7 @@ import {
   getModeratedCommentIdsForCategory as fetchModeratedCommentIdsForCategory,
   IModeratedComments,
 } from '../../../../../platform/dataService';
-import {
-  approveComment,
-  deferComment,
-  highlightComment,
-  rejectComment,
-  resetComment,
-} from '../../../../../stores/comments';
 import { IModeratedCommentsPathParams, isArticleContext } from '../../../../routes';
-
-export const updateCommentStateAction: {
-  [key: string]: any;
-} = {
-  highlight: highlightComment,
-  approve: approveComment,
-  defer: deferComment,
-  reject: rejectComment,
-  reset: resetComment,
-};
 
 const ACTION_PLURAL: {
   [key: string]: string;
@@ -121,7 +104,6 @@ export function setCommentsModerationStatus(
   moderationAction: string,
   currentModeration: string,
 ) {
-  dispatch(updateCommentStateAction[moderationAction](commentIds));
   if (contextProps.isArticleContext) {
     dispatch(setCommentsModerationForArticlesAction({
       articleId: contextProps.articleId,

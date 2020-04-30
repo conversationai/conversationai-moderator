@@ -19,10 +19,10 @@ import { Cell, Column, Table } from 'fixed-data-table-2';
 import { List, Set } from 'immutable';
 import React from 'react';
 
-import { ICommentModel, ITagModel, ModelId } from '../../../models';
+import { ITagModel, ModelId } from '../../../models';
 import { IConfirmationAction } from '../../../types';
 import { css, stylesheet } from '../../utilx';
-import { ICommentPropsForRow, ILinkTargetGetter } from '../LazyLoadComment';
+import { ILinkTargetGetter } from '../LazyLoadComment';
 import { LinkedBasicBody } from '../LazyLoadComment';
 import { CheckboxColumn } from './components/CheckboxColumn';
 import { SortColumn } from './components/SortColumn';
@@ -108,8 +108,6 @@ export interface ILazyCommentListProps {
   width: number;
   heightOffset: number;
   totalItems: number;
-  onRowRender(index: number): Promise<ICommentModel>;
-  commentPropsForRow: ICommentPropsForRow;
   areAllSelected?: boolean;
   onSelectAllChange?(): void;
   isItemChecked(id: string): boolean;
@@ -121,7 +119,6 @@ export interface ILazyCommentListProps {
   onCommentClick?(commentIndex: string): any;
   rowHeight?: number;
   hideCommentAction?: boolean;
-  updateCounter?: number;
   dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>, shouldTriggerToast?: boolean): any;
   rowHeightGetter?(index: number): number;
   scrollToRow?: number;

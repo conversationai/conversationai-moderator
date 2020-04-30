@@ -21,25 +21,8 @@ import { createStructuredSelector } from 'reselect';
 import { ICommentModel } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
-import {
-  approveComment,
-  deferComment,
-  highlightComment,
-  rejectComment,
-  resetComment,
-} from '../../../../stores/comments';
 import { getComment, loadComment, updateComment } from './store';
 import { IThreadedCommentDetailProps, ThreadedCommentDetail as PureThreadedCommentDetail } from './ThreadedCommentDetail';
-
-const updateCommentStateAction: {
-  [key: string]: any;
-} = {
-  highlight: highlightComment,
-  approve: approveComment,
-  defer: deferComment,
-  reject: rejectComment,
-  reset: resetComment,
-};
 
 type IThreadedCommentDetailStateProps = Pick<
   IThreadedCommentDetailProps,
@@ -49,8 +32,7 @@ type IThreadedCommentDetailStateProps = Pick<
 type IThreadedCommentDetailDispatchProps = Pick<
   IThreadedCommentDetailProps,
   'loadData' |
-  'onUpdateComment' |
-  'onUpdateCommentState'
+  'onUpdateComment'
 >;
 
 function updateCommentState(comment: ICommentModel, action: IConfirmationAction): ICommentModel {
@@ -102,10 +84,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): any {
     onUpdateComment: (comment: ICommentModel) => (
       dispatch(updateComment(comment))
     ),
-
-    onUpdateCommentState: (comment: ICommentModel, action: IConfirmationAction) => (
-        dispatch(updateCommentStateAction[action](comment))
-    ),
   };
 }
 
@@ -124,9 +102,6 @@ const mergeProps = (
         ...stateProps.comment,
         replies: stateProps.comment.replies.map((r) => {
           if (r.id === replyId) {
-            // We need to both update the reply state as well as the loaded comment state
-            dispatchProps.onUpdateCommentState(r, action);
-
             return updateCommentState(r, action);
           }
           return r;

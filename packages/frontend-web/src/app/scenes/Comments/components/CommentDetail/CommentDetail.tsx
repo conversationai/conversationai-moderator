@@ -69,13 +69,6 @@ import {
   untagComment,
 } from '../../../../stores/commentActions';
 import {
-  ATTRIBUTES_APPROVED,
-  ATTRIBUTES_DEFERRED,
-  ATTRIBUTES_HIGHLIGHTED,
-  ATTRIBUTES_REJECTED,
-  ATTRIBUTES_RESET,
-} from '../../../../stores/globalActions';
-import {
   BASE_Z_INDEX,
   BOTTOM_BORDER_TRANSITION,
   BOX_DEFAULT_SPACING,
@@ -346,10 +339,8 @@ export interface ICommentDetailProps extends RouteComponentProps<ICommentDetails
   nextCommentId?: string;
   previousCommentId?: string;
   isFromBatch?: boolean;
-  onUpdateComment?(comment: ICommentModel): void;
   loadData?(commentId: string): void;
   loadScores?(commentId: string): void;
-  onCommentAction?(action: IConfirmationAction, idsToDispatch: Array<string>): void;
   getUserById?(id: string | number): IUserModel;
   currentUser: IUserModel;
   detailSource?: string;
@@ -492,7 +483,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       detailSource,
       linkBackToList,
       currentUser,
-      onUpdateComment,
       match: {params},
     } = this.props;
 
@@ -635,7 +625,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                 onCommentTagClick={this.onCommentTagClick}
                 onAnnotateTagButtonClick={this.onAnnotateTagButtonClick}
                 currentUser={currentUser}
-                onUpdateCommentText={onUpdateComment}
                 commentEditingEnabled={COMMENTS_EDITABLE_FLAG}
               />
             </div>
@@ -853,46 +842,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
     window.removeEventListener('resize', this.onResize);
   }
 
-  getChangeByAction(action: IConfirmationAction): ICommentModel {
-    const { comment } = this.props;
-
-    if (action === 'reset') {
-      return {
-        ...comment,
-        ...ATTRIBUTES_RESET,
-      };
-    }
-
-    if (action === 'highlight') {
-      return {
-        ...comment,
-        ...ATTRIBUTES_HIGHLIGHTED,
-      };
-    }
-
-    if (action === 'approve') {
-      return {
-        ...comment,
-        ...ATTRIBUTES_APPROVED,
-      };
-    }
-
-    if (action === 'reject') {
-      return {
-        ...comment,
-        ...ATTRIBUTES_REJECTED,
-      };
-    }
-
-    if (action === 'defer') {
-      return {
-        ...comment,
-        ...ATTRIBUTES_DEFERRED,
-      };
-    }
-    return comment;
-  }
-
   @autobind
   onBackClick() {
     window.history.back();
@@ -907,15 +856,9 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       isConfirmationModalVisible: true,
       confirmationAction: commentAction,
     });
-    if (this.props.onUpdateComment) {
-      await this.props.onUpdateComment(this.getChangeByAction(commentAction));
-    }
 
     await actionMap[commentAction]([this.props.comment.id]);
-    await Promise.all([
-      this.props.onCommentAction && this.props.onCommentAction(commentAction, [this.props.comment.id]),
-      timeout(2000),
-    ]);
+    await timeout(2000);
 
     if (this.props.loadScores) {
       await this.props.loadScores(this.props.comment.id);

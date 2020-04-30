@@ -79,7 +79,7 @@ storiesOf('CommentBody', module)
       <div>
         <LinkedBasicBody
           getLinkTarget={returnEmpty}
-          comment={comment}
+          commentId={comment.id}
           dispatchConfirmedAction={returnFalse}
           handleAssignTagsSubmit={doNothing}
         />

@@ -30,7 +30,7 @@ import {
   ModelId,
   TagModel,
 } from '../../../../models';
-import { ICommentAction, IConfirmationAction } from '../../../../types';
+import { ICommentAction } from '../../../../types';
 import {
   AddIcon,
   ApproveIcon,
@@ -215,7 +215,6 @@ export interface ISearchResultsProps extends RouteComponentProps<{}> {
 
   onToggleSelectAll?(): void;
   onToggleSingleItem(item: { id: string }): void;
-  updateCommentState?(action: IConfirmationAction, ids: Array<string>): void;
   updateSearchQuery(queryDelta: ISearchQueryParams): void;
 
   searchTerm?: string;
@@ -224,7 +223,6 @@ export interface ISearchResultsProps extends RouteComponentProps<{}> {
 
 export interface ISearchResultsState {
   selectedCount?: number;
-  updateCounter?: number;
   commentSortType?: string;
   isTaggingToolTipMetaVisible?: boolean;
   taggingToolTipMetaPosition?: {
@@ -245,7 +243,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   commentActionCancelled = false;
 
   state: ISearchResultsState = {
-    updateCounter: 0,
     isTaggingToolTipMetaVisible: false,
     commentSortType: this.props.searchByAuthor ? 'newest' : 'relevance',
     taggingToolTipMetaPosition: {
@@ -297,13 +294,11 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
 
   @autobind
   async onSelectAllChange() {
-    this.setState({ updateCounter: this.state.updateCounter + 1 });
     await this.props.onToggleSelectAll();
   }
 
   @autobind
   async onSelectionChange(id: string) {
-    this.setState({ updateCounter: this.state.updateCounter + 1 });
     await this.props.onToggleSingleItem({ id });
   }
 
@@ -338,7 +333,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
   async dispatchConfirmedAction(action: ICommentAction, ids?: Array<string>) {
     const idsToDispatch = ids || this.getSelectedIDs();
     actionMap[action](idsToDispatch);
-    this.props.updateCommentState(action, idsToDispatch);
   }
 
   @autobind
@@ -436,7 +430,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
     } = this.props;
 
     const {
-      updateCounter,
       isTaggingToolTipMetaVisible,
       taggingToolTipMetaPosition,
       commentSortType,
@@ -574,7 +567,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
               onSortChange={this.onSortChange}
               sortOptions={sortOptions}
               totalItems={totalCommentCount}
-              updateCounter={updateCounter}
               triggerActionToast={this.triggerActionToast}
               searchTerm={searchTerm}
               displayArticleTitle

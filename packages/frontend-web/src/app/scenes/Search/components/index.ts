@@ -19,15 +19,7 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { ICommentAction } from '../../../../types';
 import { IAppDispatch, IAppState } from '../../../appstate';
-import {
-  approveComment,
-  deferComment,
-  highlightComment,
-  rejectComment,
-  resetComment,
-} from '../../../stores/comments';
 import { getTaggableTags } from '../../../stores/tags';
 import { getTextSizes, getTextSizesIsLoading } from '../../../stores/textSizes';
 import {
@@ -42,16 +34,6 @@ import {
   toggleSingleItem,
 } from '../store';
 import { ISearchResultsProps, SearchResults as PureSearchResults } from './SearchResults';
-
-const updateCommentStateAction: {
-  [key: string]: any;
-} = {
-  highlight: highlightComment,
-  approve: approveComment,
-  defer: deferComment,
-  reject: rejectComment,
-  reset: resetComment,
-};
 
 const mapStateToProps = createStructuredSelector({
   totalCommentCount: (state: IAppState) => getAllCommentIds(state).size,
@@ -75,9 +57,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): Partial<ISearchResultsProps
     onToggleSingleItem: (item: { id: string }) => (
       dispatch(toggleSingleItem(item))
     ),
-
-    updateCommentState: (action: ICommentAction, ids: Array<string>) =>
-      dispatch(updateCommentStateAction[action](ids)),
   };
 }
 

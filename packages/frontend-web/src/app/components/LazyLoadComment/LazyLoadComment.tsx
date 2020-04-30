@@ -52,11 +52,6 @@ import { ModerateButtons } from '../ModerateButtons';
 import { ROW_STYLES } from '../styles';
 import { ArticleTitle } from './components';
 
-const LAZY_BOX_STYLE = {
-  width: '100%',
-  height: '100%',
-};
-
 const AVATAR_SIZE = 24;
 
 export type ILinkTargetGetter = (commentId: ModelId) => string;
@@ -326,71 +321,4 @@ export function LinkedBasicBody(props: ILinkedBasicBodyProps) {
 
 export interface ICommentProps {
   comment: ICommentModel;
-}
-
-export type ICommentPropsForRow = (index: number) => ICommentProps | null;
-
-export interface ILazyLoadCommentProps extends React.HTMLProps<any> {
-  loadingPlaceholder?: JSX.Element | string;
-  rowIndex: number;
-  onRowRender(index: number): Promise<ICommentModel>;
-  commentPropsForRow: ICommentPropsForRow;
-  updateCounter?: number;
-}
-
-export interface ILazyLoadCommentState {
-  hasLoaded?: boolean;
-  currentIndex?: number;
-}
-
-export class LazyLoadComment
-    extends React.PureComponent<ILazyLoadCommentProps, ILazyLoadCommentState> {
-  state: ILazyLoadCommentState = {
-    hasLoaded: false,
-    currentIndex: null,
-  };
-
-  render() {
-    const {
-      commentPropsForRow,
-      rowIndex,
-      children,
-      loadingPlaceholder,
-    } = this.props;
-
-    const props = commentPropsForRow(rowIndex);
-
-    if (props && this.state.hasLoaded) {
-      return (
-        <div {...css(LAZY_BOX_STYLE)}>
-          {React.Children.map(
-            children,
-            (child: any) => (
-              React.cloneElement(child, {
-                ...child.props,
-                ...props,
-              })
-            ),
-          )}
-        </div>
-      );
-    } else {
-      if ('undefined' !== typeof loadingPlaceholder) {
-        return (<div {...css(LAZY_BOX_STYLE)}>{loadingPlaceholder}</div>);
-      } else {
-        return (<div {...css(LAZY_BOX_STYLE)}>{children}</div>);
-      }
-    }
-  }
-
-  async componentWillUpdate() {
-    if (this.state.currentIndex !== this.props.rowIndex) {
-      this.setState({ currentIndex: this.props.rowIndex });
-      const comment = this.props.onRowRender(this.props.rowIndex);
-
-      if ('undefined' !== typeof comment) {
-        this.setState({ hasLoaded: true });
-      }
-    }
-  }
 }

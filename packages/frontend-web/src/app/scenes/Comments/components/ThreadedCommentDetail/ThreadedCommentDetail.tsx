@@ -95,7 +95,6 @@ export interface IThreadedCommentDetailProps extends RouteComponentProps<ICommen
   onUpdateReply?(action: ICommentAction, replyId: string): any;
   onUpdateComment(comment: ICommentModel): any;
   updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
-  onUpdateCommentState?(comment: ICommentModel, action: IConfirmationAction): any;
   loadData?(commentId: string): void;
 }
 
