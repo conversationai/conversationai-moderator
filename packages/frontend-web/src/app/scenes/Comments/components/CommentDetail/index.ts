@@ -21,17 +21,11 @@ import { withRouter } from 'react-router';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import {
-  ICommentModel,
-} from '../../../../../models';
-import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
 import { commentFromRouteInjector } from '../../../../injectors/commentInjector';
-import { updateComment as updateCommentState } from '../../../../stores/comments';
 import { getTaggingSensitivities } from '../../../../stores/taggingSensitivities';
 import { getTaggableTags } from '../../../../stores/tags';
 import { getCurrentUser, getUser } from '../../../../stores/users';
-import { updateCommentStateAction } from '../ModeratedComments/store';
 import { CommentDetail as PureCommentDetail, ICommentDetailProps } from './CommentDetail';
 import {
   getCurrentCommentIndex,
@@ -49,9 +43,7 @@ type ICommentDetailOwnProps = Pick<ICommentDetailProps, 'match' | 'location'>;
 type ICommentDetailDispatchProps = Pick<
   ICommentDetailProps,
   'loadData' |
-  'loadScores' |
-  'onUpdateComment' |
-  'onCommentAction'
+  'loadScores'
 >;
 
 function getPagingIdentifier(location: Location): string | null {
@@ -109,14 +101,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
     },
 
     loadScores: (commentId: string) => loadScores(dispatch, commentId),
-
-    onUpdateComment: (comment: ICommentModel) => {
-      updateCommentState(dispatch, comment);
-    },
-
-    onCommentAction: (action: IConfirmationAction, idsToDispatch: Array<string>) => {
-        dispatch(updateCommentStateAction[action](idsToDispatch));
-    },
   };
 }
 

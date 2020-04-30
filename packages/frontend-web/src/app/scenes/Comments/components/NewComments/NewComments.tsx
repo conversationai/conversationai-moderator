@@ -279,8 +279,6 @@ export interface INewCommentsProps extends RouteComponentProps<INewCommentsPathP
   removeCommentScore?(idsToDispatch: Array<string>): any;
   toggleSelectAll?(): any;
   toggleSingleItem({ id }: { id: string }): any;
-  getComment?(id: string): any;
-  setCommentModerationStatus?(commentIds: Array<string>, action: string): any;
   loadData(params: INewCommentsPathParams, pos1: number, pos2: number, sort: string): void;
 }
 
@@ -429,11 +427,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     const commentId = getReturnSavedCommentRow();
 
     if ((typeof commentId !== 'undefined') && !this.props.isLoading && this.state.commentIds.size > 0 ) {
-
-      if (!this.props.getComment(commentId)) {
-        return false;
-      }
-
       // need to wait to make sure dom and other items are loaded before scrolling you down to the saved comment
       // Maybe we need a better has loaded thing to see if a single row has been rendered and bubble that up to here?
       const row = this.state.commentIds.findIndex((idInRange) => idInRange === commentId);
@@ -902,11 +895,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   async dispatchConfirmedAction(action: ICommentAction, ids?: Array<string>) {
 
     const idsToDispatch = ids || this.getSelectedIDs();
-
-    this.props.setCommentModerationStatus(
-      idsToDispatch,
-      action,
-    );
 
     // Send event
     actionMap[action](idsToDispatch);

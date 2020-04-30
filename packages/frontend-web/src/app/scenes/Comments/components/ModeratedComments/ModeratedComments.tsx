@@ -291,7 +291,6 @@ export interface IModeratedCommentsState {
   isConfirmationModalVisible?: boolean;
   confirmationAction?: IConfirmationAction;
   selectedItems?: any;
-  updateCounter?: number;
   actionLabel: string;
   actionText?: string;
   actionCount?: number;
@@ -320,7 +319,6 @@ export class ModeratedComments
     isConfirmationModalVisible: false,
     confirmationAction: null,
     selectedItems: [],
-    updateCounter: 0,
     actionLabel: '',
     actionText: '',
     actionCount: 0,
@@ -681,26 +679,6 @@ export class ModeratedComments
   }
 
   @autobind
-  handleActionButtonClick(action: ICommentAction) {
-    this.setState({
-      isConfirmationModalVisible: true,
-      confirmationAction: action,
-      actionText: `Comments ` + ACTION_PLURAL[action],
-      toastButtonLabel: 'Undo',
-      toastIcon: this.matchAction(action),
-      showCount: true,
-    });
-    if (this.commentActionCancelled) {
-      this.commentActionCancelled = false;
-      this.onConfirmationClose();
-    } else {
-      setTimeout(() => {
-        this.dispatchConfirmedAction(action, this.getSelectedIDs());
-      }, TOAST_DELAY);
-    }
-  }
-
-  @autobind
   calculateTaggingTriggerPosition(ref: any) {
     if (!ref) {
       return;
@@ -802,15 +780,11 @@ export class ModeratedComments
   @autobind
   async onSelectAllChange() {
     await this.props.toggleSelectAll();
-
-    this.setState({ updateCounter: this.state.updateCounter + 1 });
   }
 
   @autobind
   async onSelectionChange(id: string) {
     await this.props.toggleSingleItem({ id });
-
-    this.setState({ updateCounter: this.state.updateCounter + 1 });
   }
 
   @autobind

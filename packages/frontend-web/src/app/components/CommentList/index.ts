@@ -18,10 +18,8 @@ import { connect } from 'react-redux';
 
 import { ICommentAction } from '../../../types';
 import { IAppDispatch } from '../../appstate';
-import { getComment, loadComment } from '../../stores/comments';
 import { HEADER_HEIGHT } from '../../styles';
 import { ILazyCommentListProps, LazyCommentList } from '../LazyCommentList';
-import { ICommentProps } from '../LazyLoadComment';
 
 const DEFAULT_ROW_HEIGHT = 180;
 const ROW_PADDING_WITH_TITLE = 200;
@@ -40,7 +38,6 @@ export type ICommentListOwnPropNames =
   'onCommentClick' |
   'rowHeight' |
   'hideCommentAction' |
-  'updateCounter' |
   'scrollToRow' |
   'ownerHeight' |
   'width' |
@@ -62,7 +59,7 @@ export type ICommentListProps = {
   triggerActionToast: any;
 } & ILazyCommentListOwnProps;
 
-function mapStateToProps(state: any, ownProps: any): any {
+function mapStateToProps(_state: any, ownProps: any): any {
   const {
     commentIds,
     textSizes,
@@ -77,17 +74,6 @@ function mapStateToProps(state: any, ownProps: any): any {
     selectedSort: currentSort,
 
     selectedTag,
-
-    commentPropsForRow(idx: number): ICommentProps {
-      const commentId = commentIds.get(idx);
-      const comment = getComment(state, commentId);
-
-      if (!comment) { return null; }
-
-      return {
-        comment,
-      };
-    },
 
     rowHeightGetter(idx: number): number {
       const commentId = commentIds.get(idx);
@@ -107,23 +93,16 @@ function mapStateToProps(state: any, ownProps: any): any {
 
 export type ILazyCommentListDispatchProps = Pick<
   ILazyCommentListProps,
-  'onRowRender' |
   'dispatchConfirmedAction'
 >;
 
-function mapDispatchToProps(dispatch: IAppDispatch, ownProps: ICommentListProps): ILazyCommentListDispatchProps {
+function mapDispatchToProps(_dispatch: IAppDispatch, ownProps: ICommentListProps): ILazyCommentListDispatchProps {
   const {
-    commentIds,
     triggerActionToast,
     dispatchConfirmedAction,
   } = ownProps;
 
   return {
-    onRowRender: async (index: number) => {
-      const commentId = commentIds.get(index);
-      return await dispatch(loadComment(commentId));
-    },
-
     dispatchConfirmedAction: (action: ICommentAction, ids: Array<string>, shouldTriggerToast?: boolean) => {
       if (!shouldTriggerToast) {
         return dispatchConfirmedAction(action, ids);

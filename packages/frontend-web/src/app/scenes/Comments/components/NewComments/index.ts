@@ -21,13 +21,6 @@ import { createStructuredSelector } from 'reselect';
 
 import { IAppDispatch, IAppState } from '../../../../appstate';
 import { contextInjector } from '../../../../injectors/contextInjector';
-import {
-  approveComment,
-  deferComment,
-  getComment,
-  highlightComment,
-  rejectComment,
-} from '../../../../stores/comments';
 import { getPreselects } from '../../../../stores/preselects';
 import { getRules } from '../../../../stores/rules';
 import { getTaggableTags } from '../../../../stores/tags';
@@ -53,20 +46,8 @@ import {
   toggleSingleItem,
 } from './store';
 
-const moderationStatusMap: {
-  [key: string]: (ids: Array<string>) => any;
-} = {
-  highlight: highlightComment,
-  approve: approveComment,
-  defer: deferComment,
-  reject: rejectComment,
-};
-
 function mapDispatchToProps(dispatch: IAppDispatch): Partial<INewCommentsProps> {
   return {
-    setCommentModerationStatus: (commentIds: Array<string>, moderationAction: string) =>
-        dispatch(moderationStatusMap[moderationAction](commentIds)),
-
     removeCommentScore: (idsToDispatch: Array<string>) => dispatch(removeCommentScore(idsToDispatch)),
 
     toggleSelectAll: () => dispatch(toggleSelectAll()),
@@ -81,8 +62,6 @@ function mapDispatchToProps(dispatch: IAppDispatch): Partial<INewCommentsProps> 
 
 const mapStateToProps = createStructuredSelector({
   preselects: getPreselects,
-
-  getComment: (state: IAppState) => (id: string) => (getComment(state, id)),
 
   commentScores: getCommentScores,
 
