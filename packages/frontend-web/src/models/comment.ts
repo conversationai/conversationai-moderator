@@ -122,11 +122,17 @@ export function getTopScore(comment: ICommentModel) {
   return getTopScoreForTag(comment, comment.maxSummaryScoreTagId);
 }
 
-export function getSummaryForTag(comment: ICommentModel, tagId: ModelId) {
+export function getSummaryForTag(comment: ICommentModel, tagId: ModelId): ICommentSummaryScoreModel | null {
+  if (!comment.summaryScores) {
+    return null;
+  }
   return comment.summaryScores.find((s) => s.tagId === tagId);
 }
 
 export function getTopScoreForTag(comment: ICommentModel, tagId: ModelId) {
+  if (!comment.summaryScores) {
+    return null;
+  }
   for (const summary of comment.summaryScores) {
     if (summary.tagId === tagId) {
       return summary.topScore;

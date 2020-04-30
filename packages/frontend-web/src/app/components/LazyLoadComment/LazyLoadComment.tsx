@@ -26,6 +26,7 @@ import {
   IModerationAction,
 } from '../../../types';
 import { REQUIRE_REASON_TO_REJECT } from '../../config';
+import { useCachedComment } from '../../injectors/commentInjector';
 import {
   articleBase,
   commentRepliesDetailsLink,
@@ -193,15 +194,15 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               </Link>
               )}
 
-            { comment.author.avatar && (
+            { comment.author?.avatar && (
               <span {...css({marginRight: '8px'})}>
                 <Avatar size={AVATAR_SIZE} target={comment.author} />
               </span>
             )}
-            { comment.author.name && (
+            { comment.author?.name && (
               <Link to={searchLink({searchByAuthor: true, term: comment.author.name})} {...css({ color: DARK_COLOR })}>{comment.author.name}&nbsp;</Link>
             )}
-            {comment.author.location && (
+            {comment.author?.location && (
               <span>from {comment.author.location}&nbsp;</span>
             )}
             <span {...css({textDecoration: 'none'})}> &bull; {distanceInWordsToNow(new Date(comment.sourceCreatedAt))} ago&nbsp;</span>
@@ -303,19 +304,22 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
   }
 }
 
-export interface ILinkedBasicBodyProps extends IBasicBodyProps {
+export interface ILinkedBasicBodyProps extends Omit<IBasicBodyProps, 'comment'> {
+  commentId: ModelId;
   getLinkTarget: ILinkTargetGetter;
 }
 
 export function LinkedBasicBody(props: ILinkedBasicBodyProps) {
   const {
-    comment,
+    commentId,
     getLinkTarget,
   } = props;
 
+  const {comment} = useCachedComment(commentId);
+
   return (
-    <div key={`${comment.id}`}>
-      <BasicBody {...props} commentLinkTarget={getLinkTarget(comment.id)}/>
+    <div key={`${commentId}`}>
+      <BasicBody {...props} comment={comment} commentLinkTarget={getLinkTarget(commentId)}/>
     </div>
   );
 }
