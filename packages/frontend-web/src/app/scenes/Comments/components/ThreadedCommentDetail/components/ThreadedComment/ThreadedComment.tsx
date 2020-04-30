@@ -20,10 +20,7 @@ import React from 'react';
 
 import {ICommentModel, ModelId} from '../../../../../../../models';
 import { ICommentAction, IConfirmationAction } from '../../../../../../../types';
-import {
-  BasicBody,
-  LinkedBasicBody,
-} from '../../../../../../components';
+import { BasicBody } from '../../../../../../components';
 import {
   approveComments,
   deferComments,
@@ -40,7 +37,7 @@ import {
   GUTTER_DEFAULT_SPACING,
   WHITE_COLOR,
 } from '../../../../../../styles';
-import { always, partial } from '../../../../../../util';
+import { partial } from '../../../../../../util';
 import { css, stylesheet } from '../../../../../../utilx';
 import { articleBase, commentDetailsPageLink } from '../../../../../routes';
 
@@ -189,11 +186,11 @@ export class ThreadedComment extends React.Component<IThreadedCommentProps, IThr
             key={`${reply.authorSourceId}${i}`}
           >
             <div {...css(STYLES.body, STYLES.replyBody)}>
-              <LinkedBasicBody
+              <BasicBody
                 handleAssignTagsSubmit={handleAssignTagsSubmit}
                 showActions={(reply.id === hoveredRowId) && hoveredRowThresholdPassed}
                 dispatchConfirmedAction={this.dispatchConfirmedReply}
-                getLinkTarget={always(`/articles/${reply.articleId}/comments/${reply.id}`)}
+                commentLinkTarget={`/articles/${reply.articleId}/comments/${reply.id}`}
                 comment={reply}
               />
             </div>

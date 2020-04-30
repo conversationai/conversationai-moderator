@@ -190,16 +190,10 @@ export function memoize<T extends Function>(fn: T, useEqualityForMutableObjects 
   return memoized as any;
 }
 
-export const partial:typeof lodashPartial = memoize(lodashPartial);
+export const partial: typeof lodashPartial = memoize(lodashPartial);
 
 export function maybeCallback<T>(fn?: T | null) {
   return fn || identity;
 }
-
-export function basicAlways<T>(value: T): () => T {
-  return () => value;
-}
-
-export const always = memoize(basicAlways);
 
 export { identity };

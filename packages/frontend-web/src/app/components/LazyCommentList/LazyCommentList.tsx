@@ -22,7 +22,7 @@ import React from 'react';
 import { ICommentModel, ITagModel, ModelId } from '../../../models';
 import { IConfirmationAction } from '../../../types';
 import { css, stylesheet } from '../../utilx';
-import { ICommentPropsForRow, ILinkTargetGetter, LazyLoadComment } from '../LazyLoadComment';
+import { ICommentPropsForRow, ILinkTargetGetter } from '../LazyLoadComment';
 import { LinkedBasicBody } from '../LazyLoadComment';
 import { CheckboxColumn } from './components/CheckboxColumn';
 import { SortColumn } from './components/SortColumn';
@@ -166,9 +166,7 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
   @autobind
   getBodyCell(cellProps: any) {
     const {
-      onRowRender,
-      commentPropsForRow,
-      updateCounter,
+      commentIds,
       dispatchConfirmedAction,
       selectedTag,
       getLinkTarget,
@@ -179,28 +177,22 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
       handleAssignTagsSubmit,
     } = this.props;
 
+    const commentId = commentIds.get(cellProps.rowIndex);
+
     return (
       <Cell width={cellProps.width} height={cellProps.height}>
-        <LazyLoadComment
-          loadingPlaceholder={<div {...css(ROW_STYLES.comment)}>...</div>}
-          onRowRender={onRowRender}
-          commentPropsForRow={commentPropsForRow}
-          updateCounter={updateCounter}
-          rowIndex={cellProps.rowIndex}
-        >
-          <LinkedBasicBody
-            searchTerm={searchTerm}
-            getLinkTarget={getLinkTarget}
-            onCommentClick={onCommentClick}
-            hideCommentAction={hideCommentAction}
-            comment={null}
-            selectedTag={selectedTag}
-            handleAssignTagsSubmit={handleAssignTagsSubmit}
-            displayArticleTitle={displayArticleTitle}
-            dispatchConfirmedAction={dispatchConfirmedAction}
-            showActions
-          />
-        </LazyLoadComment>
+        <LinkedBasicBody
+          searchTerm={searchTerm}
+          getLinkTarget={getLinkTarget}
+          onCommentClick={onCommentClick}
+          hideCommentAction={hideCommentAction}
+          commentId={commentId}
+          selectedTag={selectedTag}
+          handleAssignTagsSubmit={handleAssignTagsSubmit}
+          displayArticleTitle={displayArticleTitle}
+          dispatchConfirmedAction={dispatchConfirmedAction}
+          showActions
+        />
       </Cell>
     );
   }
