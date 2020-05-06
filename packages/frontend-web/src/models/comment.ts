@@ -60,6 +60,10 @@ export interface ICommentSummaryScoreAttributes {
 
 export type ICommentSummaryScoreModel = Readonly<ICommentSummaryScoreAttributes>;
 
+export const FLAGS_COUNT = 0;
+export const UNRESOLVED_FLAGS_COUNT = 1;
+export const RECOMMENDATIONS_COUNT = 2;
+
 export interface ICommentAttributes {
   id: ModelId;
   sourceId: string;

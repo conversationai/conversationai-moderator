@@ -44,15 +44,11 @@ import {
   ATTRIBUTES_RESET,
   commentAttributesUpdated,
   commentsUpdated,
-} from './comments';
+} from './globalActions';
 
 export async function fetchComments(commentIds: Array<ModelId>) {
   const comments = await getComments(commentIds);
   store.dispatch(commentsUpdated(comments));
-}
-
-export async function deleteCommentTag(commentId: ModelId, commentScoreId: string) {
-  await deleteCommentTagRequest(commentId, commentScoreId);
 }
 
 export async function highlightComments(commentIds: Array<ModelId>) {
@@ -72,11 +68,12 @@ export async function approveComments(commentIds: Array<ModelId>) {
 
 export async function approveFlagsAndComments(commentIds: Array<ModelId>) {
   await approveFlagsAndCommentsRequest(commentIds);
-  store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_APPROVED}));
+  store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_APPROVED, resolveFlags: true}));
 }
 
 export async function resolveFlags(commentIds: Array<ModelId>) {
   await resolveFlagsRequest(commentIds);
+  store.dispatch(commentAttributesUpdated({commentIds,  resolveFlags: true}));
 }
 
 export async function deferComments(commentIds: Array<ModelId>) {
@@ -91,11 +88,15 @@ export async function rejectComments(commentIds: Array<ModelId>) {
 
 export async function rejectFlagsAndComments(commentIds: Array<ModelId>) {
   await rejectFlagsAndCommentsRequest(commentIds);
-  store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_REJECTED}));
+  store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_REJECTED, resolveFlags: true}));
 }
 
 export async function tagComments(commentIds: Array<ModelId>, tagId: string) {
   await tagCommentsRequest(commentIds, tagId);
+}
+
+export async function deleteCommentTag(commentId: ModelId, commentScoreId: string) {
+  await deleteCommentTagRequest(commentId, commentScoreId);
 }
 
 export async function tagCommentsAnnotation(commentId: string, tagId: string, start: number, end: number) {

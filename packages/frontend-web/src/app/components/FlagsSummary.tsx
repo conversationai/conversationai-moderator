@@ -16,11 +16,7 @@ limitations under the License.
 
 import React from 'react';
 
-import { ICommentModel } from '../../models';
-
-const TOTAL = 0;
-const UNRESOLVED = 1;
-const APPROVES = 2;
+import {FLAGS_COUNT, ICommentModel, RECOMMENDATIONS_COUNT, UNRESOLVED_FLAGS_COUNT} from '../../models';
 
 export function FlagsSummary(props: {
   comment: ICommentModel;
@@ -37,17 +33,17 @@ export function FlagsSummary(props: {
 
   const summary = comment.flagsSummary;
   const flags = Array.from(summary.keys())
-    .sort((a, b) => summary.get(b)[TOTAL] - summary.get(a)[TOTAL])
-    .filter((a) => summary.get(a)[APPROVES] === 0);
+    .sort((a, b) => summary.get(b)[FLAGS_COUNT] - summary.get(a)[FLAGS_COUNT])
+    .filter((a) => summary.get(a)[RECOMMENDATIONS_COUNT] === 0);
   const approves = Array.from(summary.keys())
-    .sort((a, b) => summary.get(b)[TOTAL] - summary.get(a)[TOTAL])
-    .filter((a) => summary.get(a)[APPROVES] > 0);
+    .sort((a, b) => summary.get(b)[FLAGS_COUNT] - summary.get(a)[FLAGS_COUNT])
+    .filter((a) => summary.get(a)[RECOMMENDATIONS_COUNT] > 0);
 
   function oneFlag(label: string) {
     const f = summary.get(label);
-    const total = f[TOTAL];
+    const total = f[FLAGS_COUNT];
     if (full) {
-      const un = f[UNRESOLVED];
+      const un = f[UNRESOLVED_FLAGS_COUNT];
       const unresolvedStr = (un > 0) ? `(${un})` : '';
       return (<span key={label}>&bull; {label}: {total} {unresolvedStr}</span>);
     }
