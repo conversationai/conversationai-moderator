@@ -16,12 +16,13 @@ limitations under the License.
 
 import { List, Map as IMap} from 'immutable';
 import { omit } from 'lodash';
-import { Action, createAction, handleActions } from 'redux-actions';
+import { Action, handleActions } from 'redux-actions';
 
-import { IAuthorAttributes, ICommentModel, ICommentSummaryScoreModel, ModelId } from '../../models';
+import { ICommentModel, ModelId, UNRESOLVED_FLAGS_COUNT } from '../../models';
 import { IAppDispatch, IAppState, IThunkAction } from '../appstate';
 import { getComments } from '../platform/dataService';
 import { ILoadCompletePayload, IQueuedModelState, makeQueuedModelStore } from '../util';
+import { commentAttributesUpdated, commentsUpdated, ICommentAttributesUpdate } from './globalActions';
 
 const queueModelStore = makeQueuedModelStore<string, ICommentModel>(
   async (commentIds: List<string>) => {
@@ -165,59 +166,16 @@ export {
   resetComment,
 };
 
-export const commentsUpdated = createAction<Array<ICommentModel>>('global/COMMENTS_UPDATED');
+function resolveFlags(flagsSummary?: Map<string, Array<number>>) {
+  if (!flagsSummary) {
+    return flagsSummary;
+  }
+  for (const summary of flagsSummary.values()) {
+    summary[UNRESOLVED_FLAGS_COUNT] = 0;
+  }
 
-export interface ICommentAttributesUpdateFlags {
-  isModerated?: boolean | null;
-  isAccepted?: boolean | null;
-  isDeferred?: boolean;
-  isHighlighted?: boolean;
-  text?: string;
-  author?: IAuthorAttributes;
-  summaryScores?: Array<ICommentSummaryScoreModel>;
+  return flagsSummary;
 }
-
-export interface ICommentAttributesUpdate {
-  commentIds: Array<ModelId>;
-  attributes: ICommentAttributesUpdateFlags;
-}
-
-export const ATTRIBUTES_HIGHLIGHTED: ICommentAttributesUpdateFlags = {
-  isModerated: true,
-  isAccepted: true,
-  isHighlighted: true,
-  isDeferred: false,
-};
-
-export const ATTRIBUTES_RESET: ICommentAttributesUpdateFlags = {
-  isModerated: null,
-  isAccepted: null,
-  isHighlighted: false,
-  isDeferred: false,
-};
-
-export const ATTRIBUTES_APPROVED: ICommentAttributesUpdateFlags = {
-  isModerated: true,
-  isAccepted: true,
-  isHighlighted: false,
-  isDeferred: false,
-};
-
-export const ATTRIBUTES_REJECTED: ICommentAttributesUpdateFlags = {
-  isModerated: true,
-  isAccepted: false,
-  isHighlighted: false,
-  isDeferred: false,
-};
-
-export const ATTRIBUTES_DEFERRED: ICommentAttributesUpdateFlags = {
-  isModerated: true,
-  isAccepted: null,
-  isHighlighted: false,
-  isDeferred: true,
-};
-
-export const commentAttributesUpdated = createAction<ICommentAttributesUpdate>('global/COMMENT_ATTRIBUTES_UPDATED');
 
 export interface INewCommentsState {
   index: Map<ModelId, ICommentModel>;
@@ -231,21 +189,30 @@ export const newReducer = handleActions<Readonly<INewCommentsState>, Array<IComm
     }
     return {index};
   },
-  [commentAttributesUpdated.toString()]: (state, { payload}: Action<ICommentAttributesUpdate>) => {
+  [commentAttributesUpdated.toString()]: (state, { payload }: Action<ICommentAttributesUpdate>) => {
     const index = state.index;
     for (const commentId of payload.commentIds) {
       const comment = index.get(commentId);
       if (comment) {
-        const newComment = {
+        let newComment = {
           ...comment,
-          ...payload.attributes,
           updatedAt: new Date().toISOString(),
         };
-        if (payload.attributes.isModerated === null) {
-          delete newComment.isModerated;
+        if (payload.attributes) {
+          newComment = {
+            ...newComment,
+            ...payload.attributes,
+          };
+          if (payload.attributes.isModerated === null) {
+            delete newComment.isModerated;
+          }
+          if (payload.attributes.isAccepted === null) {
+            delete newComment.isAccepted;
+          }
         }
-        if (payload.attributes.isAccepted === null) {
-          delete newComment.isAccepted;
+        if (payload.resolveFlags) {
+          newComment.unresolvedFlagsCount = 0;
+          newComment.flagsSummary = resolveFlags(newComment.flagsSummary);
         }
         index.set(commentId, newComment);
       }

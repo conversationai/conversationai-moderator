@@ -75,7 +75,7 @@ import {
   ATTRIBUTES_HIGHLIGHTED,
   ATTRIBUTES_REJECTED,
   ATTRIBUTES_RESET,
-} from '../../../../stores/comments';
+} from '../../../../stores/globalActions';
 import {
   BASE_Z_INDEX,
   BOTTOM_BORDER_TRANSITION,
