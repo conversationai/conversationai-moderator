@@ -640,7 +640,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                 onTagButtonClick={this.onTagButtonClick}
                 onCommentTagClick={this.onCommentTagClick}
                 onAnnotateTagButtonClick={this.onAnnotateTagButtonClick}
-                onDeleteCommentTag={deleteCommentTag}
                 onRemoveCommentScore={onRemoveCommentScore}
                 onUpdateCommentScore={onUpdateCommentScore}
                 currentUser={currentUser}
