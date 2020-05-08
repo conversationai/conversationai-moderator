@@ -16,7 +16,7 @@ limitations under the License.
 
 import {createAction} from 'redux-actions';
 
-import {ICommentModel, ModelId} from '../../models';
+import {ICommentModel, ICommentScoreModel, ModelId} from '../../models';
 
 export const commentsUpdated = createAction<Array<ICommentModel>>('global/COMMENTS_UPDATED');
 
@@ -68,3 +68,8 @@ export const ATTRIBUTES_DEFERRED: ICommentAttributesUpdateDetails = {
 };
 
 export const commentAttributesUpdated = createAction<ICommentAttributesUpdate>('global/COMMENT_ATTRIBUTES_UPDATED');
+
+export const addCommentScore = createAction<ICommentScoreModel>('global/ADD_COMMENT_SCORE');
+export const removeCommentScore = createAction<ModelId>('global/REMOVE_COMMENT_SCORE');
+export const removeAllCommentScores = createAction<ModelId>('global/REMOVE_ALL_COMMENT_SCORE');
+export const updateCommentScore = createAction<{id: ModelId} & Partial<ICommentScoreModel>>('global/UPDATE_COMMENT_SCORE');

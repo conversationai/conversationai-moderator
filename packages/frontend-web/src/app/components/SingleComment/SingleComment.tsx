@@ -367,8 +367,6 @@ export interface ISingleCommentProps {
   onAnnotateTagButtonClick?(tag: string, start: number, end: number): Promise<any>;
   url?: string;
   loadScores?(commentId: string): void;
-  onUpdateCommentScore?(commentScore: ICommentScoreModel): void;
-  onRemoveCommentScore?(commentScore: ICommentScoreModel): void;
   getUserById?(id: string): IUserModel;
   currentUser?: IUserModel;
   onUpdateCommentText?(comment: ICommentModel): void;
@@ -420,7 +418,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
     e.preventDefault();
     const {
       onUpdateCommentText,
-      onRemoveCommentScore,
       comment,
     } = this.props;
 
@@ -436,16 +433,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       text: commentText,
       author,
     });
-    // null out local scores for comment
-    this.props.allScores.forEach((score) => (
-      onRemoveCommentScore({
-        ...score,
-        score: null,
-        annotationStart: null,
-        annotationEnd: null,
-      })
-    ));
-
     // send comment text to be update to publisher
     editAndRescoreComment(comment.id, commentText, author);
 
@@ -579,8 +566,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       isThreadedComment,
       onScoreClick,
       loadScores,
-      onUpdateCommentScore,
-      onRemoveCommentScore,
       getUserById,
       currentUser,
       onUpdateCommentText,
@@ -698,8 +683,6 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                 onClick={onAnnotateTagButtonClick}
                 getUserById={getUserById}
                 currentUser={currentUser}
-                onRemoveCommentScore={onRemoveCommentScore}
-                onUpdateCommentScore={onUpdateCommentScore}
               />
             )}
           </div>

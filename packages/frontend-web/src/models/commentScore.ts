@@ -14,11 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import {ModelId} from './common';
+
 export interface ICommentScoreAttributes {
-  id: string;
-  commentId: string;
-  confirmedUserId?: string;
-  tagId?: string;
+  id: ModelId;
+  commentId: ModelId;
+  confirmedUserId?: ModelId;
+  tagId?: ModelId;
   score: number;
   annotationStart?: number;
   annotationEnd?: number;

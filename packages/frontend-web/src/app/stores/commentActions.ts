@@ -14,14 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {IAuthorAttributes, ModelId} from '../../models';
+import {CommentScoreModel, IAuthorAttributes, ICommentScoreAttributes, ModelId} from '../../models';
+import {getMyUserId} from '../auth';
 import {
   approveCommentsRequest,
   approveFlagsAndCommentsRequest,
   confirmCommentScoreRequest,
   confirmCommentSummaryScoreRequest,
   deferCommentsRequest,
-  deleteCommentTagRequest, editAndRescoreCommentRequest,
+  deleteCommentScoreRequest,
+  editAndRescoreCommentRequest,
   getComments,
   highlightCommentsRequest,
   rejectCommentScoreRequest,
@@ -37,6 +39,7 @@ import {
 } from '../platform/dataService';
 import {store} from '../store';
 import {
+  addCommentScore,
   ATTRIBUTES_APPROVED,
   ATTRIBUTES_DEFERRED,
   ATTRIBUTES_HIGHLIGHTED,
@@ -44,6 +47,9 @@ import {
   ATTRIBUTES_RESET,
   commentAttributesUpdated,
   commentsUpdated,
+  removeAllCommentScores,
+  removeCommentScore,
+  updateCommentScore,
 } from './globalActions';
 
 export async function fetchComments(commentIds: Array<ModelId>) {
@@ -91,16 +97,38 @@ export async function rejectFlagsAndComments(commentIds: Array<ModelId>) {
   store.dispatch(commentAttributesUpdated({commentIds, attributes: ATTRIBUTES_REJECTED, resolveFlags: true}));
 }
 
-export async function tagComments(commentIds: Array<ModelId>, tagId: string) {
-  await tagCommentsRequest(commentIds, tagId);
+function sendAddScoreAction(commentId: ModelId, tagId: ModelId, start?: number, end?: number) {
+  const score: ICommentScoreAttributes = {
+    id: null,
+    commentId: commentId,
+    isConfirmed: true,
+    confirmedUserId: getMyUserId(),
+    sourceType: 'Moderator',
+    score: 1,
+    tagId,
+  };
+  if (start) {
+    score.annotationStart = start;
+  }
+  if (end) {
+    score.annotationEnd = end;
+  }
+  store.dispatch(addCommentScore(CommentScoreModel(score)));
 }
 
-export async function deleteCommentTag(commentId: ModelId, commentScoreId: string) {
-  await deleteCommentTagRequest(commentId, commentScoreId);
+export async function tagComment(commentId: ModelId, tagId: ModelId) {
+  sendAddScoreAction(commentId, tagId);
+  await tagCommentsRequest([commentId], tagId);
 }
 
-export async function tagCommentsAnnotation(commentId: string, tagId: string, start: number, end: number) {
+export async function tagCommentWithAnnotation(commentId: string, tagId: string, start: number, end: number) {
+  sendAddScoreAction(commentId, tagId, start, end);
   await tagCommentsAnnotationRequest(commentId, tagId, start, end);
+}
+
+export async function untagComment(commentId: ModelId, commentScoreId: string) {
+  store.dispatch(removeCommentScore(commentScoreId));
+  await deleteCommentScoreRequest(commentId, commentScoreId);
 }
 
 export async function tagCommentSummaryScores(commentIds: Array<ModelId>, tagId: string) {
@@ -116,14 +144,29 @@ export async function rejectCommentSummaryScore(commentId: ModelId, tagId: strin
 }
 
 export async function resetCommentScore(commentId: ModelId, commentScoreId: string) {
+  store.dispatch(updateCommentScore({
+    id: commentScoreId,
+    confirmedUserId: null,
+    isConfirmed: null,
+  }));
   await resetCommentScoreRequest(commentId, commentScoreId);
 }
 
 export async function confirmCommentScore(commentId: ModelId, commentScoreId: string) {
+  store.dispatch(updateCommentScore({
+    id: commentScoreId,
+    isConfirmed: true,
+    confirmedUserId: getMyUserId(),
+  }));
   await confirmCommentScoreRequest(commentId, commentScoreId);
 }
 
 export async function rejectCommentScore(commentId: ModelId, commentScoreId: string) {
+  store.dispatch(updateCommentScore({
+    id: commentScoreId,
+    isConfirmed: false,
+    confirmedUserId: getMyUserId(),
+  }));
   await rejectCommentScoreRequest(commentId, commentScoreId);
 }
 
@@ -132,6 +175,7 @@ export async function editAndRescoreComment(
   text: string,
   author: IAuthorAttributes,
 ): Promise<void> {
+  store.dispatch(removeAllCommentScores(commentId));
   await editAndRescoreCommentRequest(commentId, text, author.name, author.location);
   store.dispatch(commentAttributesUpdated({
     commentIds: [commentId],

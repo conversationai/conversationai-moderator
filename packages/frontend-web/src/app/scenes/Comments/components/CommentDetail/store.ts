@@ -18,24 +18,20 @@ import { fromJS, List, Map } from 'immutable';
 import { combineReducers } from 'redux';
 import { Action, createAction, handleActions } from 'redux-actions';
 
+import {ICommentScoreModel, ModelId} from '../../../../../models';
+import {IAppDispatch, IAppState} from '../../../../appstate';
+import {getCommentScores} from '../../../../platform/dataService';
 import {
-  ICommentScoreModel,
-} from '../../../../../models';
-import { IAppDispatch, IAppState } from '../../../../appstate';
-import {
-  getCommentScores,
-} from '../../../../platform/dataService';
+  addCommentScore,
+  removeAllCommentScores,
+  removeCommentScore,
+  updateCommentScore,
+} from '../../../../stores/globalActions';
 
 const loadCommentScoresStart =
   createAction('comment-detail/LOAD_COMMENT_SCORE_START');
 const loadCommentScoresComplete =
   createAction<Array<ICommentScoreModel>>('comment-detail/LOAD_COMMENT_SCORE_COMPLETE');
-const addCommentScoreRecord =
-  createAction<ICommentScoreModel>('comment-detail/ADD_COMMENT_SCORE');
-const updateCommentScoreRecord =
-  createAction<ICommentScoreModel>('comment-detail/UPDATE_COMMENT_SCORE');
-const removeCommentScoreRecord =
-  createAction<ICommentScoreModel>('comment-detail/REMOVE_COMMENT_SCORE');
 export const clearCommentPagingOptions: () => Action<void> =
   createAction('comment-detail/CLEAR_COMMENT_PAGING_OPTIONS');
 const internalStoreCommentPagingOptions =
@@ -59,7 +55,7 @@ const commentScoresReducer = handleActions<
   ICommentScoreState,
   void   | // startEvent
   Array<ICommentScoreModel> | // endEvent
-  ICommentScoreModel  // addRecord, updateRecord, removeRecord
+  ICommentScoreModel | ModelId // addRecord, updateRecord, removeRecord
   >( {
   [loadCommentScoresStart.toString()]: (_state) => (initialScoreState),
 
@@ -67,19 +63,25 @@ const commentScoresReducer = handleActions<
     items: payload,
   }),
 
-  [addCommentScoreRecord.toString()]: (state, { payload }: Action<ICommentScoreModel>) => ({
+  [addCommentScore.toString()]: (state, { payload }: Action<ICommentScoreModel>) => ({
     items: [...state.items, payload],
   }),
 
-  [updateCommentScoreRecord.toString()]: (state, { payload }: Action<ICommentScoreModel>) => {
+  [updateCommentScore.toString()]: (state, { payload }: Action<{id: ModelId} & Partial<ICommentScoreModel>>) => {
     return {
-      items: state.items.map((i) => (payload.id === i.id ? payload : i)),
+      items: state.items.map((i) => (payload.id === i.id ? {...i, ...payload} : i)),
     };
   },
 
-  [removeCommentScoreRecord.toString()]: (state, { payload }: Action<ICommentScoreModel>) => {
+  [removeCommentScore.toString()]: (state, { payload }: Action<ModelId>) => {
     return {
-      items: state.items.filter((i) => (i.id !== payload.id)),
+      items: state.items.filter((i) => (i.id !== payload)),
+    };
+  },
+
+  [removeAllCommentScores.toString()]: () => {
+    return {
+      items: [],
     };
   },
 }, initialScoreState);
@@ -240,10 +242,6 @@ export const reducer = combineReducers<ICommentDetailState>({
 });
 
 /* Set or delete items in the comment detail store created by makeRecordListReducer */
-
-export const addCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = addCommentScoreRecord;
-export const updateCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = updateCommentScoreRecord;
-export const removeCommentScore: (payload: ICommentScoreModel) => Action<ICommentScoreModel> = removeCommentScoreRecord;
 
 export function getScores(state: IAppState) {
   return state.scenes.comments.commentDetail.scores.items;

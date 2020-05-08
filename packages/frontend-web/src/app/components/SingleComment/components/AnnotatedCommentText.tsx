@@ -24,9 +24,9 @@ import ReactDOM from 'react-dom';
 import { ICommentScoreModel, ITagModel, IUserModel } from '../../../../models';
 import {
   confirmCommentScore,
-  deleteCommentTag,
   rejectCommentScore,
   resetCommentScore,
+  untagComment,
 } from '../../../stores/commentActions';
 import {
   ARTICLE_CAPTION_TYPE,
@@ -135,8 +135,6 @@ export interface IAnnotatedCommentTextProps {
   scores: Array<ICommentScoreModel>;
   availableTags: List<ITagModel>;
   onClick?(tag: string, start: number, end: number): Promise<any>;
-  onUpdateCommentScore?(commentScore: ICommentScoreModel): void;
-  onRemoveCommentScore?(commentScore: ICommentScoreModel): void;
   loadScores?(commentId: string): void;
   getUserById?(id: string): IUserModel;
   currentUser: IUserModel;
@@ -506,14 +504,6 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
 
   @autobind
   async confirmTag() {
-    if (this.props.onUpdateCommentScore) {
-      await this.props.onUpdateCommentScore({
-        ...this.state.confirmationScore,
-        isConfirmed: true,
-        confirmedUserId: this.props.currentUser.id,
-      });
-    }
-
     await confirmCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
     this.closeConfirmationToolTip();
   }
@@ -522,21 +512,11 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
   async undoTag() {
     if (
       this.props.currentUser.name === this.state.confirmationAuthor &&
-      this.state.confirmationSource !== 'Machine' &&
-      this.props.onRemoveCommentScore
+      this.state.confirmationSource !== 'Machine'
     ) {
-      this.props.onRemoveCommentScore(this.state.confirmationScore);
-      await deleteCommentTag(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
+      await untagComment(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
       this.closeConfirmationToolTip();
-
       return;
-    }
-
-    if (this.props.onUpdateCommentScore) {
-      await this.props.onUpdateCommentScore({
-        ...this.state.confirmationScore,
-        isConfirmed: null,
-      });
     }
 
     await resetCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
@@ -545,14 +525,6 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
 
   @autobind
   async removeTag() {
-    if (this.props.onUpdateCommentScore) {
-      await this.props.onUpdateCommentScore({
-        ...this.state.confirmationScore,
-        isConfirmed: false,
-        confirmedUserId: this.props.currentUser.id,
-      });
-    }
-
     await rejectCommentScore(this.state.confirmationScore.commentId, this.state.confirmationScore.id);
     this.closeConfirmationToolTip();
   }
