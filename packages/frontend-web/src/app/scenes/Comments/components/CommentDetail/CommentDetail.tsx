@@ -24,7 +24,6 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import {
-  CommentScoreModel,
   ICommentModel,
   ICommentScoreModel,
   ICommentSummaryScoreModel,
@@ -60,14 +59,14 @@ import { commentInjector } from '../../../../injectors/commentInjector';
 import {
   approveComments,
   deferComments,
-  deleteCommentTag,
   highlightComments,
   ICommentActionFunction,
   rejectComments,
   resetComments,
-  tagComments,
-  tagCommentsAnnotation,
+  tagComment,
   tagCommentSummaryScores,
+  tagCommentWithAnnotation,
+  untagComment,
 } from '../../../../stores/commentActions';
 import {
   ATTRIBUTES_APPROVED,
@@ -347,10 +346,7 @@ export interface ICommentDetailProps extends RouteComponentProps<ICommentDetails
   nextCommentId?: string;
   previousCommentId?: string;
   isFromBatch?: boolean;
-  onUpdateCommentScore?(commentScore: ICommentScoreModel): void;
   onUpdateComment?(comment: ICommentModel): void;
-  onAddCommentScore?(commentScore: ICommentScoreModel): void;
-  onRemoveCommentScore?(commentScore: ICommentScoreModel): void;
   loadData?(commentId: string): void;
   loadScores?(commentId: string): void;
   onCommentAction?(action: IConfirmationAction, idsToDispatch: Array<string>): void;
@@ -492,8 +488,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
       nextCommentId,
       previousCommentId,
       loadScores,
-      onUpdateCommentScore,
-      onRemoveCommentScore,
       getUserById,
       detailSource,
       linkBackToList,
@@ -640,8 +634,6 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                 onTagButtonClick={this.onTagButtonClick}
                 onCommentTagClick={this.onCommentTagClick}
                 onAnnotateTagButtonClick={this.onAnnotateTagButtonClick}
-                onRemoveCommentScore={onRemoveCommentScore}
-                onUpdateCommentScore={onUpdateCommentScore}
                 currentUser={currentUser}
                 onUpdateCommentText={onUpdateComment}
                 commentEditingEnabled={COMMENTS_EDITABLE_FLAG}
@@ -985,55 +977,21 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
 
   @autobind
   async onTagButtonClick(tagId: string) {
-    const localStatePayload = CommentScoreModel({
-      id: null,
-      commentId: this.props.comment.id,
-      isConfirmed: true,
-      sourceType: 'Moderator',
-      score: 1,
-      tagId,
-    });
-
-    if (this.props.onAddCommentScore) {
-      await this.props.onAddCommentScore(localStatePayload);
-    }
-    await tagComments([this.props.comment.id], tagId);
+    await tagComment(this.props.comment.id, tagId);
     await this.props.loadScores(this.props.comment.id);
     this.closeToast();
   }
 
   @autobind
   async onAnnotateTagButtonClick(tag: string, start: number, end: number): Promise<any> {
-
-    const localStatePayload = CommentScoreModel({
-      id: null,
-      commentId: this.props.comment.id,
-      confirmedUserId: this.props.currentUser.id,
-      isConfirmed: true,
-      tagId: tag,
-      annotationStart: start,
-      annotationEnd: end,
-      sourceType: 'Moderator',
-      score: 1,
-    });
-
-    if (this.props.onAddCommentScore) {
-      await this.props.onAddCommentScore(localStatePayload);
-    }
-
-    await tagCommentsAnnotation(this.props.comment.id, tag, start, end);
+    await tagCommentWithAnnotation(this.props.comment.id, tag, start, end);
     await this.props.loadScores(this.props.comment.id);
-
     this.closeToast();
   }
 
   @autobind
   async onCommentTagClick(commentScore: ICommentScoreModel) {
-    if (this.props.onRemoveCommentScore) {
-      await this.props.onRemoveCommentScore(commentScore);
-    }
-
-    await deleteCommentTag(this.props.comment.id, commentScore.id);
+    await untagComment(this.props.comment.id, commentScore.id);
     this.closeToast();
   }
 

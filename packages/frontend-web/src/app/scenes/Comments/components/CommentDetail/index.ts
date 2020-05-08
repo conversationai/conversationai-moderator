@@ -23,7 +23,6 @@ import { createStructuredSelector } from 'reselect';
 
 import {
   ICommentModel,
-  ICommentScoreModel,
 } from '../../../../../models';
 import { IConfirmationAction } from '../../../../../types';
 import { IAppDispatch, IAppState } from '../../../../appstate';
@@ -35,7 +34,6 @@ import { getCurrentUser, getUser } from '../../../../stores/users';
 import { updateCommentStateAction } from '../ModeratedComments/store';
 import { CommentDetail as PureCommentDetail, ICommentDetailProps } from './CommentDetail';
 import {
-  addCommentScore,
   getCurrentCommentIndex,
   getNextCommentId,
   getPagingIsFromBatch,
@@ -44,8 +42,6 @@ import {
   getPreviousCommentId,
   getScores,
   loadScores,
-  removeCommentScore,
-  updateCommentScore,
 } from './store';
 
 type ICommentDetailOwnProps = Pick<ICommentDetailProps, 'match' | 'location'>;
@@ -55,9 +51,6 @@ type ICommentDetailDispatchProps = Pick<
   'loadData' |
   'loadScores' |
   'onUpdateComment' |
-  'onUpdateCommentScore' |
-  'onAddCommentScore' |
-  'onRemoveCommentScore' |
   'onCommentAction'
 >;
 
@@ -117,21 +110,9 @@ function mapDispatchToProps(dispatch: IAppDispatch): ICommentDetailDispatchProps
 
     loadScores: (commentId: string) => loadScores(dispatch, commentId),
 
-    onUpdateCommentScore: (commentScore: ICommentScoreModel) => (
-      dispatch(updateCommentScore(commentScore))
-    ),
-
     onUpdateComment: (comment: ICommentModel) => {
       updateCommentState(dispatch, comment);
     },
-
-    onAddCommentScore: (commentScore: ICommentScoreModel) => (
-      dispatch(addCommentScore(commentScore))
-    ),
-
-    onRemoveCommentScore: (commentScore: ICommentScoreModel) => (
-      dispatch(removeCommentScore(commentScore))
-    ),
 
     onCommentAction: (action: IConfirmationAction, idsToDispatch: Array<string>) => {
         dispatch(updateCommentStateAction[action](idsToDispatch));

@@ -469,7 +469,7 @@ async function makeCommentActionForId(path: string, commentId: string): Promise<
   await axios.post(url, { data: { commentId, userId } });
 }
 
-export async function deleteCommentTagRequest(commentId: string, commentScoreId: string): Promise<void> {
+export async function deleteCommentScoreRequest(commentId: string, commentScoreId: string): Promise<void> {
   const url = serviceURL('commentActions', `/${commentId}/scores/${commentScoreId}`);
   await axios.delete(url);
 }
