@@ -18,15 +18,17 @@ import { Link } from 'react-router-dom';
 
 import { OpenInNew } from '@material-ui/icons';
 
-import { IArticleModel } from '../../../models';
-import { articleInjector } from '../../injectors/articleInjector';
+import { ModelId } from '../../../models';
+import { useCachedArticle } from '../../injectors/articleInjector';
 import { articleBase, NEW_COMMENTS_DEFAULT_TAG, newCommentsPageLink } from '../../scenes/routes';
 import { ARTICLE_HEADLINE_TYPE } from '../../styles';
 import { COMMON_STYLES } from '../../stylesx';
 import { css } from '../../utilx';
 import { ROW_STYLES } from '../styles';
 
-function _ArticleTitle({article}: {article: IArticleModel}) {
+export function ArticleTitle({articleId}: {articleId: ModelId}) {
+  const {article} = useCachedArticle(articleId);
+
   return (
     <div key="title" style={{display: 'flex'}}>
       <Link
@@ -34,17 +36,17 @@ function _ArticleTitle({article}: {article: IArticleModel}) {
         {...css(ROW_STYLES.articleLink)}
         to={newCommentsPageLink({
           context: articleBase,
-          contextId: article.id,
+          contextId: articleId,
           tag: NEW_COMMENTS_DEFAULT_TAG,
         })}
       >
         <h4 {...css(ARTICLE_HEADLINE_TYPE, { marginBottom: '0px', marginTop: '0px'  })}>
-          {article.title}
+          {article?.title}
         </h4>
       </Link>
-      {article.url && (
+      {article?.url && (
         <div key="link" style={{display: 'inline-block', margin: '0 10px', position: 'relative', top: '3px'}}>
-          <a href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
+          <a href={article?.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
             <OpenInNew fontSize="small"/>
           </a>
         </div>
@@ -52,5 +54,3 @@ function _ArticleTitle({article}: {article: IArticleModel}) {
     </div>
   );
 }
-
-export const ArticleTitle = articleInjector(_ArticleTitle);
