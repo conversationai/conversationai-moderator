@@ -24,16 +24,16 @@ import {
 } from '@material-ui/core';
 
 import {
-  IArticleModel,
   ICommentModel,
   ITagModel,
   ModelId,
-} from '../../../models';
-import { getSensitivitiesForCategory, getSummaryScoresAboveThreshold } from '../../scenes/Comments/scoreFilters';
-import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
-import { getTaggableTags } from '../../stores/tags';
-import { css, stylesheet } from '../../utilx';
-import { CheckboxRow } from '../CheckboxRow';
+} from '../../models';
+import { useCachedArticle } from '../injectors/articleInjector';
+import { getSensitivitiesForCategory, getSummaryScoresAboveThreshold } from '../scenes/Comments/scoreFilters';
+import { getTaggingSensitivities } from '../stores/taggingSensitivities';
+import { getTaggableTags } from '../stores/tags';
+import { css, stylesheet } from '../utilx';
+import { CheckboxRow } from './CheckboxRow';
 
 import {
   GUTTER_DEFAULT_SPACING,
@@ -41,7 +41,7 @@ import {
   MEDIUM_COLOR,
   NICE_CONTROL_BLUE,
   SCRIM_STYLE,
-} from '../../styles';
+} from '../styles';
 
 const STYLES = stylesheet({
   tagsList: {
@@ -83,16 +83,16 @@ const STYLES = stylesheet({
 
 export interface IAssignTagsFormProps {
   articleId: ModelId;
-  article: IArticleModel;
   comment: ICommentModel;
   clearPopups(): void;
   submit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
-export function AssignTagsForm (props: IAssignTagsFormProps) {
+export function AssignTagsForm(props: IAssignTagsFormProps) {
   const tags = useSelector(getTaggableTags);
   const sensitivities = useSelector(getTaggingSensitivities);
-  const {article, comment} = props;
+  const {articleId, comment} = props;
+  const {article} = useCachedArticle(articleId);
   const summaryScores = comment.summaryScores;
 
   function getPreselected() {
