@@ -14,10 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router';
 
-import { IAppState } from '../appstate';
 import { SplashRoot } from '../components';
 import { getCurrentUserIsAdmin } from '../stores/users';
 import {
@@ -40,14 +39,13 @@ function redirect(to: string) {
   };
 }
 
-function _AppRoot(props: {isAdmin: boolean}) {
+export function AppRoot() {
+  const isAdmin = useSelector(getCurrentUserIsAdmin);
   return (
     <Switch>
       <Route exact path="/" render={redirect(`/${dashboardBase}`)} />
       <Route path={`/${dashboardBase}/:filter?/:sort?`} component={TableFrame}/>
-      {props.isAdmin &&
-      <Route path={`/${settingsBase}`} component={Settings}/>
-      }
+      {isAdmin && <Route path={`/${settingsBase}`} component={Settings}/> }
       <Route path={`/${searchBase}`} component={Search}/>
       <Route path={`/${tagSelectorBase}/:context/:contextId/:tag`} component={TagSelector} />
       <Route path={'/:context/:contextId'} component={Comments}/>
@@ -55,10 +53,3 @@ function _AppRoot(props: {isAdmin: boolean}) {
     </Switch>
   );
 }
-
-// TODO: Replace with a hook when we upgrade react-redux and fixed type errors.
-export const AppRoot = connect((state: IAppState) => {
-  return {
-    isAdmin: getCurrentUserIsAdmin(state),
-  };
-})(_AppRoot);
