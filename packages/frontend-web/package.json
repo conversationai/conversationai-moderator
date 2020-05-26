@@ -14,6 +14,7 @@
     "storybook:build": "build-storybook -c tooling/storybook -s public -o build/storybook",
     "test:storybook": "jest -c tooling/storybook/jest.config.json tooling/storybook/Storyshots.test.js",
     "compile": "npm run compile:lib && npm run compile:web",
+    "compile:test": "../../node_modules/.bin/tsc --noEmit",
     "compile:lib": "rm -rf dist && ../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration && npm run compile:lib:cleanup",
     "compile:lib:cleanup": "find dist -type f -exec sed -i -e 's/_1\\.default(/_1(/g' {} \\; && find dist -type f -exec sed -i -e 's/_1\\.default\\./_1\\./g' {} \\;",
     "compile:lib:watch": "../../node_modules/.bin/tsc --sourceMap --outDir dist --declaration --watch",
