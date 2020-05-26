@@ -16,15 +16,13 @@ limitations under the License.
 
 import { connect } from 'react-redux';
 
-import { HEADER_HEIGHT } from '../../styles';
 import { ILazyCommentListProps, LazyCommentList } from '../LazyCommentList';
-
-const DEFAULT_ROW_HEIGHT = 180;
-const ROW_PADDING_WITH_TITLE = 200;
-const ROW_PADDING = 130;
 
 export type ICommentListOwnPropNames =
   'commentIds' |
+  'textSizes' |
+  'currentSort' |
+  'selectedTag' |
   'getLinkTarget' |
   'totalItems' |
   'areAllSelected' |
@@ -38,7 +36,6 @@ export type ICommentListOwnPropNames =
   'hideCommentAction' |
   'scrollToRow' |
   'ownerHeight' |
-  'width' |
   'heightOffset' |
   'dispatchConfirmedAction' |
   'displayArticleTitle' |
@@ -46,48 +43,10 @@ export type ICommentListOwnPropNames =
   'onTableScroll' |
   'searchTerm';
 
-export type ILazyCommentListOwnProps = {
+export type ICommentListProps = {
   [P in ICommentListOwnPropNames]?: ILazyCommentListProps[P];
 };
 
-export type ICommentListProps = {
-  textSizes: any;
-  currentSort: string;
-  selectedTag?: any;
-} & ILazyCommentListOwnProps;
-
-function mapStateToProps(_state: any, ownProps: any): any {
-  const {
-    commentIds,
-    textSizes,
-    currentSort,
-    selectedTag,
-    displayArticleTitle,
-    heightOffset,
-    width,
-  } = ownProps;
-
-  return {
-    selectedSort: currentSort,
-
-    selectedTag,
-
-    rowHeightGetter(idx: number): number {
-      const commentId = commentIds.get(idx);
-      const padding = displayArticleTitle ? ROW_PADDING_WITH_TITLE : ROW_PADDING;
-
-      return commentId && textSizes
-          ? textSizes.get(commentId) + padding
-          : DEFAULT_ROW_HEIGHT;
-    },
-
-    heightOffset: heightOffset || HEADER_HEIGHT,
-
-    width: width || window.innerWidth,
-
-  };
-}
-
 export const CommentList: React.ComponentClass<ICommentListProps> = connect(
-  mapStateToProps,
+  null,
 )(LazyCommentList);
