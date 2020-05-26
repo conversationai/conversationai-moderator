@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
 import { Cell, Column, Table } from 'fixed-data-table-2';
 import { List, Set } from 'immutable';
 import React from 'react';
@@ -130,22 +129,23 @@ export interface ILazyCommentListProps {
   onTableScroll?(scrollPos: number): boolean;
 }
 
-export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> {
+export function LazyCommentList(props: ILazyCommentListProps) {
 
-  @autobind
-  onSelectionChange(commentId: ModelId) {
-   if (this.props.onSelectionChange) {
-     this.props.onSelectionChange(commentId);
-   }
-  }
+  const {
+    commentIds,
+    isItemChecked,
+    dispatchConfirmedAction,
+    selectedTag,
+    getLinkTarget,
+    onCommentClick,
+    hideCommentAction,
+    searchTerm,
+    displayArticleTitle,
+    handleAssignTagsSubmit,
+    selectedSort,
+  } = props;
 
-  @autobind
-  getCheckboxCell(cellProps: any) {
-    const {
-      commentIds,
-      isItemChecked,
-    } = this.props;
-
+  function getCheckboxCell(cellProps: any) {
     const commentId = commentIds.get(cellProps.rowIndex);
 
     return (
@@ -154,26 +154,13 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
           commentId={commentId}
           inputId={cellProps.rowIndex}
           isItemChecked={isItemChecked}
-          onCheck={this.onSelectionChange}
+          onCheck={props.onSelectionChange}
         />
       </Cell>
     );
   }
 
-  @autobind
-  getBodyCell(cellProps: any) {
-    const {
-      commentIds,
-      dispatchConfirmedAction,
-      selectedTag,
-      getLinkTarget,
-      onCommentClick,
-      hideCommentAction,
-      searchTerm,
-      displayArticleTitle,
-      handleAssignTagsSubmit,
-    } = this.props;
-
+  function getBodyCell(cellProps: any) {
     const commentId = commentIds.get(cellProps.rowIndex);
 
     return (
@@ -194,14 +181,7 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
     );
   }
 
-  @autobind
-  getApprovalCell(cellProps: any) {
-    const {
-      selectedSort,
-      selectedTag,
-      commentIds,
-    } = this.props;
-
+  function getApprovalCell(cellProps: any) {
     const commentId = commentIds.get(cellProps.rowIndex);
 
     return (
@@ -216,131 +196,127 @@ export class LazyCommentList extends React.PureComponent<ILazyCommentListProps> 
     );
   }
 
-  render() {
-    const {
-      totalItems,
-      onSortChange,
-      selectedSort,
-      sortOptions,
-      areAllSelected,
-      onSelectAllChange,
-      rowHeight,
-      rowHeightGetter,
-      ownerHeight,
-      scrollToRow,
-      onTableScroll,
-      heightOffset,
-    } = this.props;
+  const {
+    totalItems,
+    onSortChange,
+    sortOptions,
+    areAllSelected,
+    onSelectAllChange,
+    rowHeight,
+    rowHeightGetter,
+    ownerHeight,
+    scrollToRow,
+    onTableScroll,
+    heightOffset,
+  } = props;
 
-    const tableWidth = window.innerWidth;
-    const tableHeight = window.innerHeight - heightOffset;
-    const smallerViewport = tableWidth < 1200;
+  const tableWidth = window.innerWidth;
+  const tableHeight = window.innerHeight - heightOffset;
+  const smallerViewport = tableWidth < 1200;
 
-    const ROW_HEIGHT = rowHeight || BASE_ROW_HEIGHT + ROW_PADDING;
-    const checkboxColumnWidth = smallerViewport ? 80 : 250;
-    const rightmostColumnWidth = smallerViewport ? 240 : 290;
+  const ROW_HEIGHT = rowHeight || BASE_ROW_HEIGHT + ROW_PADDING;
+  const checkboxColumnWidth = smallerViewport ? 80 : 250;
+  const rightmostColumnWidth = smallerViewport ? 240 : 290;
 
-    const checkboxColumnHeader = () => (
-      <div {...css(HEADER_STYLES.iconCentering, {flexDirection: 'row-reverse'})}>
-        <div {...css(HEADER_STYLES.header)}>
-          <CheckboxColumn
-            isSelected={areAllSelected}
-            onCheck={onSelectAllChange}
-            inputId={SELECT_ALL_ID}
-          />
-        </div>
-      </div>
-    );
-
-    const checkboxColumn = (
-      <Column
-        header={checkboxColumnHeader}
-        width={checkboxColumnWidth}
-        minWidth={checkboxColumnWidth}
-        flexGrow={1}
-        cell={this.getCheckboxCell}
-      />
-    );
-
-    const bodyColumnHeader = () => (
-      <div {...css(HEADER_STYLES.header, {width: 700})}>
-        <label htmlFor={SELECT_ALL_ID} onClick={onSelectAllChange} {...css(HEADER_STYLES.label)}>
-          {areAllSelected ? 'Deselect All' : 'Select All'}
-        </label>
-      </div>
-    );
-
-    const bodyColumn = (
-      <Column
-        header={bodyColumnHeader}
-        width={700}
-        cell={this.getBodyCell}
-      />
-    );
-
-    let approvalColumn;
-
-    if (sortOptions) {
-      const approvalColumnHeader = () => (
-        <div {...css(HEADER_STYLES.header)}>
-          <label htmlFor="sorted-type" {...css(OFFSCREEN)}>
-            Sort comments by
-          </label>
-
-          <div
-            {...css(
-              HEADER_STYLES.dropdown,
-              {marginLeft: `${smallerViewport ? 0 : GUTTER_DEFAULT_SPACING * 1.5}px`},
-            )}
-          >
-            <select
-              id="sorted-type"
-              onChange={onSortChange}
-              {...css(HEADER_STYLES.select)}
-              value={selectedSort}
-            >
-              {sortOptions.map((option) => (
-                <option key={option.key} value={option.key}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <span aria-hidden="true" {...css(HEADER_STYLES.arrow)} />
-          </div>
-        </div>
-      );
-
-      approvalColumn = (
-        <Column
-          header={approvalColumnHeader}
-          width={rightmostColumnWidth}
-          minWidth={rightmostColumnWidth}
-          flexGrow={1}
-          cell={this.getApprovalCell}
+  const checkboxColumnHeader = () => (
+    <div {...css(HEADER_STYLES.iconCentering, {flexDirection: 'row-reverse'})}>
+      <div {...css(HEADER_STYLES.header)}>
+        <CheckboxColumn
+          isSelected={areAllSelected}
+          onCheck={onSelectAllChange}
+          inputId={SELECT_ALL_ID}
         />
-      );
-    }
-
-    return (
-      <div className="comment-list">
-        <Table
-          scrollToRow={scrollToRow && (scrollToRow + 1)}
-          onVerticalScroll={onTableScroll}
-          headerHeight={COMMENT_HEADER_HEIGHT}
-          rowHeight={ROW_HEIGHT}
-          rowHeightGetter={rowHeightGetter}
-          rowsCount={totalItems}
-          touchScrollEnabled
-          ownerHeight={ownerHeight}
-          width={tableWidth}
-          height={tableHeight}
-        >
-          {checkboxColumn}
-          {bodyColumn}
-          {approvalColumn}
-        </Table>
       </div>
+    </div>
+  );
+
+  const checkboxColumn = (
+    <Column
+      header={checkboxColumnHeader}
+      width={checkboxColumnWidth}
+      minWidth={checkboxColumnWidth}
+      flexGrow={1}
+      cell={getCheckboxCell}
+    />
+  );
+
+  const bodyColumnHeader = () => (
+    <div {...css(HEADER_STYLES.header, {width: 700})}>
+      <label htmlFor={SELECT_ALL_ID} onClick={onSelectAllChange} {...css(HEADER_STYLES.label)}>
+        {areAllSelected ? 'Deselect All' : 'Select All'}
+      </label>
+    </div>
+  );
+
+  const bodyColumn = (
+    <Column
+      header={bodyColumnHeader}
+      width={700}
+      cell={getBodyCell}
+    />
+  );
+
+  let approvalColumn;
+
+  if (sortOptions) {
+    const approvalColumnHeader = () => (
+      <div {...css(HEADER_STYLES.header)}>
+        <label htmlFor="sorted-type" {...css(OFFSCREEN)}>
+          Sort comments by
+        </label>
+
+        <div
+          {...css(
+            HEADER_STYLES.dropdown,
+            {marginLeft: `${smallerViewport ? 0 : GUTTER_DEFAULT_SPACING * 1.5}px`},
+          )}
+        >
+          <select
+            id="sorted-type"
+            onChange={onSortChange}
+            {...css(HEADER_STYLES.select)}
+            value={selectedSort}
+          >
+            {sortOptions.map((option) => (
+              <option key={option.key} value={option.key}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <span aria-hidden="true" {...css(HEADER_STYLES.arrow)} />
+        </div>
+      </div>
+    );
+
+    approvalColumn = (
+      <Column
+        header={approvalColumnHeader}
+        width={rightmostColumnWidth}
+        minWidth={rightmostColumnWidth}
+        flexGrow={1}
+        cell={getApprovalCell}
+      />
     );
   }
 
+  return (
+    <div className="comment-list">
+      <Table
+        scrollToRow={scrollToRow && (scrollToRow + 1)}
+        onVerticalScroll={onTableScroll}
+        headerHeight={COMMENT_HEADER_HEIGHT}
+        rowHeight={ROW_HEIGHT}
+        rowHeightGetter={rowHeightGetter}
+        rowsCount={totalItems}
+        touchScrollEnabled
+        ownerHeight={ownerHeight}
+        width={tableWidth}
+        height={tableHeight}
+      >
+        {checkboxColumn}
+        {bodyColumn}
+        {approvalColumn}
+      </Table>
+    </div>
+  );
 }
