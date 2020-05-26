@@ -14,10 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
 import { List, Set } from 'immutable';
-import keyboardJS from 'keyboardjs';
-import React from 'react';
+import React, {useRef, useState} from 'react';
 
 import {
   Popper,
@@ -31,7 +29,7 @@ import {
   MEDIUM_COLOR,
 } from '../../styles';
 import { maybeCallback, partial } from '../../util';
-import { css, stylesheet } from '../../utilx';
+import {css, stylesheet, useBindEscape} from '../../utilx';
 import { AssignTagsForm } from '../AssignTagsForm';
 import { CommentActionButton } from '../CommentActionButton';
 import { ConfirmationCircle } from '../ConfirmationCircle';
@@ -101,170 +99,89 @@ export interface IModerateButtonsProps {
   popupOpen?(isOpen: boolean): void;
 }
 
-interface IModerateButtonsState {
-  rejectChooseTags: boolean;
-}
-
-export class ModerateButtons
-  extends React.PureComponent<IModerateButtonsProps, IModerateButtonsState> {
-  constructor(props: Readonly<IModerateButtonsProps>) {
-    super(props);
-    this.state = {
-      rejectChooseTags: false,
-    };
+export function ModerateButtons(props: IModerateButtonsProps) {
+  const [rejectChooseTags, setRejectChooseTags] = useState(false);
+  function clearPopups() {
+    setRejectChooseTags(false);
+    props.popupOpen && props.popupOpen(false);
   }
 
-  componentWillMount() {
-    keyboardJS.bind('escape', this.clearPopups);
-  }
+  useBindEscape(clearPopups);
 
-  componentWillUnmount() {
-    keyboardJS.unbind('escape', this.clearPopups);
-  }
+  const rejectButtonAnchor = useRef(null);
 
-  rejectButtonAnchor: any;
-  @autobind
-  setRejectButtonAnchor(node: any) {
-    this.rejectButtonAnchor = node;
-  }
-
-  @autobind
-  handleReject() {
-    const {
-      onClick,
-      requireReasonForReject,
-    } = this.props;
+  function handleReject() {
     if (requireReasonForReject) {
-      this.setState({rejectChooseTags: true});
-      this.props.popupOpen && this.props.popupOpen(true);
+      setRejectChooseTags(true);
+      props.popupOpen && props.popupOpen(true);
       return;
     }
 
     onClick('reject');
   }
 
-  @autobind
-  clearPopups() {
-    this.setState({rejectChooseTags: false});
-    this.props.popupOpen && this.props.popupOpen(false);
-  }
+  const {
+    vertical,
+    darkOnLight,
+    hideLabel,
+    containerSize,
+    activeButtons,
+    disabled,
+    onClick,
+    requireReasonForReject,
+    handleAssignTagsSubmit,
+    comment,
+  } = props;
 
-  render() {
-    const {
-      vertical,
-      darkOnLight,
-      hideLabel,
-      containerSize,
-      activeButtons,
-      disabled,
-      onClick,
-      requireReasonForReject,
-      handleAssignTagsSubmit,
-      comment,
-    } = this.props;
+  const ICON_COLOR = (vertical || darkOnLight) ? MEDIUM_COLOR : LIGHT_PRIMARY_TEXT_COLOR;
 
-    const ICON_COLOR = (vertical || darkOnLight) ? MEDIUM_COLOR : LIGHT_PRIMARY_TEXT_COLOR;
+  const buttonContainerSize = containerSize || 48;
 
-    const buttonContainerSize = containerSize || 48;
-
-    return (
-      <div
-        {...css(
-          STYLES.container,
-          vertical && STYLES.isVertical,
-        )}
-      >
-        <CommentActionButton
-          label="Approve"
-          isActive={activeButtons && activeButtons.includes('approve')}
-          hideLabel={hideLabel || vertical}
-          disabled={disabled}
-          icon={(
-            <ApproveIcon
-              {...css({
-                fill: ICON_COLOR,
-                width: `${buttonContainerSize / 2}px`,
-                height: `${buttonContainerSize / 2}px`,
-              })}
-            />
-          )}
-          style={{
-            width: buttonContainerSize + 10,
-            height: buttonContainerSize + 10,
-            padding: `5px 0px`,
-          }}
-          iconHovered={(
-            <ConfirmationCircle
-              backgroundColor={ICON_COLOR}
-              action="approve"
-              size={buttonContainerSize}
-              iconSize={buttonContainerSize / 2}
-            />
-          )}
-          onClick={partial(maybeCallback(onClick), 'approve')}
-        />
-
-        <div key="buttonAnchor" ref={this.setRejectButtonAnchor}>
-          <CommentActionButton
-            label="Reject"
-            isActive={activeButtons && activeButtons.includes('reject')}
-            hideLabel={hideLabel || vertical}
-            disabled={disabled}
-            icon={(
-              <RejectIcon
-                {...css({
-                  fill: ICON_COLOR,
-                  width: `${buttonContainerSize / 2}px`,
-                  height: `${buttonContainerSize / 2}px`,
-                })}
-              />
-            )}
-            style={{
-              width: buttonContainerSize + 10,
-              height: buttonContainerSize + 10,
-              padding: `5px 0px`,
-            }}
-            iconHovered={(
-              <ConfirmationCircle
-                backgroundColor={ICON_COLOR}
-                action="reject"
-                size={buttonContainerSize}
-                iconSize={buttonContainerSize / 2}
-              />
-            )}
-            onClick={this.handleReject}
+  return (
+    <div
+      {...css(
+        STYLES.container,
+        vertical && STYLES.isVertical,
+      )}
+    >
+      <CommentActionButton
+        label="Approve"
+        isActive={activeButtons && activeButtons.includes('approve')}
+        hideLabel={hideLabel || vertical}
+        disabled={disabled}
+        icon={(
+          <ApproveIcon
+            {...css({
+              fill: ICON_COLOR,
+              width: `${buttonContainerSize / 2}px`,
+              height: `${buttonContainerSize / 2}px`,
+            })}
           />
-        </div>
-        {requireReasonForReject && (
-          <Popper
-            key="popper"
-            open={this.state.rejectChooseTags}
-            anchorEl={this.rejectButtonAnchor}
-            placement={vertical ? 'left' : 'bottom'}
-            modifiers={{
-              preventOverflow: {
-                enabled: true,
-                boundariesElement: 'viewport',
-              },
-            }}
-            style={{zIndex: 2}}
-          >
-            <AssignTagsForm
-              articleId={comment.articleId}
-              comment={comment}
-              clearPopups={this.clearPopups}
-              submit={handleAssignTagsSubmit}
-            />
-          </Popper>
         )}
+        style={{
+          width: buttonContainerSize + 10,
+          height: buttonContainerSize + 10,
+          padding: `5px 0px`,
+        }}
+        iconHovered={(
+          <ConfirmationCircle
+            backgroundColor={ICON_COLOR}
+            action="approve"
+            size={buttonContainerSize}
+            iconSize={buttonContainerSize / 2}
+          />
+        )}
+        onClick={partial(maybeCallback(onClick), 'approve')}
+      />
 
+      <div key="buttonAnchor" ref={rejectButtonAnchor}>
         <CommentActionButton
-          label="Highlight"
-          isActive={activeButtons && activeButtons.includes('highlight')}
+          label="Reject"
+          isActive={activeButtons && activeButtons.includes('reject')}
           hideLabel={hideLabel || vertical}
           disabled={disabled}
           icon={(
-            <HighlightIcon
+            <RejectIcon
               {...css({
                 fill: ICON_COLOR,
                 width: `${buttonContainerSize / 2}px`,
@@ -280,44 +197,96 @@ export class ModerateButtons
           iconHovered={(
             <ConfirmationCircle
               backgroundColor={ICON_COLOR}
-              action="highlight"
+              action="reject"
               size={buttonContainerSize}
               iconSize={buttonContainerSize / 2}
             />
           )}
-          onClick={partial(maybeCallback(onClick), 'highlight')}
-        />
-
-        <CommentActionButton
-          label="Defer"
-          isActive={activeButtons && activeButtons.includes('defer')}
-          hideLabel={hideLabel || vertical}
-          disabled={disabled}
-          icon={(
-            <DeferIcon
-              {...css({
-                fill: ICON_COLOR,
-                width: `${buttonContainerSize / 2}px`,
-                height: `${buttonContainerSize / 2}px`,
-              })}
-            />
-          )}
-          style={{
-            width: buttonContainerSize + 10,
-            height: buttonContainerSize + 10,
-            padding: `5px 0px`,
-          }}
-          iconHovered={(
-            <ConfirmationCircle
-              backgroundColor={ICON_COLOR}
-              action="defer"
-              size={buttonContainerSize}
-              iconSize={buttonContainerSize / 2}
-            />
-          )}
-          onClick={partial(maybeCallback(onClick), 'defer')}
+          onClick={handleReject}
         />
       </div>
-    );
-  }
+      {requireReasonForReject && (
+        <Popper
+          key="popper"
+          open={rejectChooseTags}
+          anchorEl={rejectButtonAnchor.current}
+          placement={vertical ? 'left' : 'bottom'}
+          modifiers={{
+            preventOverflow: {
+              enabled: true,
+              boundariesElement: 'viewport',
+            },
+          }}
+          style={{zIndex: 2}}
+        >
+          <AssignTagsForm
+            articleId={comment.articleId}
+            comment={comment}
+            clearPopups={clearPopups}
+            submit={handleAssignTagsSubmit}
+          />
+        </Popper>
+      )}
+
+      <CommentActionButton
+        label="Highlight"
+        isActive={activeButtons && activeButtons.includes('highlight')}
+        hideLabel={hideLabel || vertical}
+        disabled={disabled}
+        icon={(
+          <HighlightIcon
+            {...css({
+              fill: ICON_COLOR,
+              width: `${buttonContainerSize / 2}px`,
+              height: `${buttonContainerSize / 2}px`,
+            })}
+          />
+        )}
+        style={{
+          width: buttonContainerSize + 10,
+          height: buttonContainerSize + 10,
+          padding: `5px 0px`,
+        }}
+        iconHovered={(
+          <ConfirmationCircle
+            backgroundColor={ICON_COLOR}
+            action="highlight"
+            size={buttonContainerSize}
+            iconSize={buttonContainerSize / 2}
+          />
+        )}
+        onClick={partial(maybeCallback(onClick), 'highlight')}
+      />
+
+      <CommentActionButton
+        label="Defer"
+        isActive={activeButtons && activeButtons.includes('defer')}
+        hideLabel={hideLabel || vertical}
+        disabled={disabled}
+        icon={(
+          <DeferIcon
+            {...css({
+              fill: ICON_COLOR,
+              width: `${buttonContainerSize / 2}px`,
+              height: `${buttonContainerSize / 2}px`,
+            })}
+          />
+        )}
+        style={{
+          width: buttonContainerSize + 10,
+          height: buttonContainerSize + 10,
+          padding: `5px 0px`,
+        }}
+        iconHovered={(
+          <ConfirmationCircle
+            backgroundColor={ICON_COLOR}
+            action="defer"
+            size={buttonContainerSize}
+            iconSize={buttonContainerSize / 2}
+          />
+        )}
+        onClick={partial(maybeCallback(onClick), 'defer')}
+      />
+    </div>
+  );
 }
