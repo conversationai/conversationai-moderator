@@ -567,7 +567,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
               onSortChange={this.onSortChange}
               sortOptions={sortOptions}
               totalItems={totalCommentCount}
-              triggerActionToast={this.triggerActionToast}
               searchTerm={searchTerm}
               displayArticleTitle
               dispatchConfirmedAction={this.dispatchConfirmedAction}

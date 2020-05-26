@@ -61,7 +61,7 @@ export interface IBasicBodyProps {
   selectedTag?: ITagModel;
   hideCommentAction?: boolean;
   showActions?: boolean;
-  dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>, shouldTriggerToast?: boolean): any;
+  dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>): void;
   commentLinkTarget?: string;
   onCommentClick?(commentId: string): any;
   searchTerm?: string;
@@ -96,8 +96,8 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
   }
 
   @autobind
-  onModerateButtonClick(comment: ICommentModel, action: IConfirmationAction, shouldTriggerToast: boolean): void {
-    this.props.dispatchConfirmedAction(action, [comment.id], shouldTriggerToast);
+  onModerateButtonClick(comment: ICommentModel, action: IConfirmationAction): void {
+    this.props.dispatchConfirmedAction(action, [comment.id]);
   }
 
   getActiveButtons(): List<IModerationAction> {
@@ -133,7 +133,6 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
     this.onModerateButtonClick(
       this.props.comment,
       newAction,
-      false,
     );
   }
 
@@ -317,8 +316,4 @@ export function LinkedBasicBody(props: ILinkedBasicBodyProps) {
       <BasicBody {...props} comment={comment} commentLinkTarget={getLinkTarget(commentId)}/>
     </div>
   );
-}
-
-export interface ICommentProps {
-  comment: ICommentModel;
 }

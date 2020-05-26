@@ -16,8 +16,6 @@ limitations under the License.
 
 import { connect } from 'react-redux';
 
-import { ICommentAction } from '../../../types';
-import { IAppDispatch } from '../../appstate';
 import { HEADER_HEIGHT } from '../../styles';
 import { ILazyCommentListProps, LazyCommentList } from '../LazyCommentList';
 
@@ -56,7 +54,6 @@ export type ICommentListProps = {
   textSizes: any;
   currentSort: string;
   selectedTag?: any;
-  triggerActionToast: any;
 } & ILazyCommentListOwnProps;
 
 function mapStateToProps(_state: any, ownProps: any): any {
@@ -91,33 +88,6 @@ function mapStateToProps(_state: any, ownProps: any): any {
   };
 }
 
-export type ILazyCommentListDispatchProps = Pick<
-  ILazyCommentListProps,
-  'dispatchConfirmedAction'
->;
-
-function mapDispatchToProps(_dispatch: IAppDispatch, ownProps: ICommentListProps): ILazyCommentListDispatchProps {
-  const {
-    triggerActionToast,
-    dispatchConfirmedAction,
-  } = ownProps;
-
-  return {
-    dispatchConfirmedAction: (action: ICommentAction, ids: Array<string>, shouldTriggerToast?: boolean) => {
-      if (!shouldTriggerToast) {
-        return dispatchConfirmedAction(action, ids);
-      }
-
-      return triggerActionToast(
-        action,
-        ids.length,
-        () => dispatchConfirmedAction(action, ids),
-      );
-    },
-  };
-}
-
 export const CommentList: React.ComponentClass<ICommentListProps> = connect(
   mapStateToProps,
-  mapDispatchToProps,
 )(LazyCommentList);
