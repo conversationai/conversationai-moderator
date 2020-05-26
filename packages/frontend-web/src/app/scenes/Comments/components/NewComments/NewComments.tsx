@@ -751,7 +751,6 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               onCommentClick={this.saveCommentRow}
               scrollToRow={selectedRow}
               totalItems={commentIds.size}
-              triggerActionToast={this.triggerActionToast}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               displayArticleTitle={!isArticleContext}
               onTableScroll={this.onTableScroll}

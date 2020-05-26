@@ -118,7 +118,7 @@ export interface ILazyCommentListProps {
   onCommentClick?(commentIndex: string): any;
   rowHeight?: number;
   hideCommentAction?: boolean;
-  dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>, shouldTriggerToast?: boolean): any;
+  dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>): any;
   rowHeightGetter?(index: number): number;
   scrollToRow?: number;
   ownerHeight?: number;

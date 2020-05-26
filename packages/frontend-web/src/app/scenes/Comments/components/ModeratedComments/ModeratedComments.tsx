@@ -558,7 +558,6 @@ export class ModeratedComments
               onSortChange={this.onSortChange}
               sortOptions={this.getSortOptions()}
               totalItems={commentIds.size}
-              triggerActionToast={this.triggerActionToast}
               displayArticleTitle={!isArticleContext}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
