@@ -19,8 +19,6 @@ export * from './DotChartRenderer';
 export * from './groupByColumn';
 export * from './makeCheckedSelectionStore';
 export * from './makeCurrentPagingIdentifierReducer';
-export * from './makeSingleRecordReducer';
-export * from './makeQueuedModelStore';
 export * from './returnURL';
 export * from './timeout';
 export * from './sortByLabel';
