@@ -24,7 +24,7 @@ export * from './CanvasTruncate';
 export * from './Checkbox';
 export * from './CheckboxRow';
 export * from './CommentActionButton';
-export * from './CommentList';
+export * from './LazyCommentList';
 export * from './ConfirmationCircle';
 export * from './DotChart';
 export * from './ErrorRoot';

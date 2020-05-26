@@ -42,9 +42,9 @@ import {
   ApproveIcon,
   ArticleControlIcon,
   CommentActionButton,
-  CommentList,
   DeferIcon,
   HighlightIcon,
+  LazyCommentList,
   RejectIcon,
   Scrim,
   ToastMessage,
@@ -734,7 +734,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
           { showMessaging ? (
             <p {...css(STYLES.commentsNotFoundMessaging)}>{commentsMessaging}</p>
           ) : (
-            <CommentList
+            <LazyCommentList
               heightOffset={listHeightOffset}
               textSizes={textSizes}
               commentIds={commentIds}
