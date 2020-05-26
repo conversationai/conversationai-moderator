@@ -19,18 +19,15 @@ import { combineReducers } from 'redux';
 import { ICommentDetailState, reducer as commentDetailReducer } from './components/CommentDetail/store';
 import { IModeratedCommentsGlobalState, reducer as moderatedCommentsReducer } from './components/ModeratedComments/store';
 import { INewCommentsState, newCommentsReducer } from './components/NewComments/store';
-import { IThreadedCommentDetailState, reducer as threadedCommentDetailReducer } from './components/ThreadedCommentDetail/store';
 
 export type ICommentsGlobalState = Readonly<{
   newComments: INewCommentsState;
   moderatedComments: IModeratedCommentsGlobalState;
   commentDetail: ICommentDetailState;
-  threadedCommentDetail: IThreadedCommentDetailState;
 }>;
 
 export const commentsReducer = combineReducers<ICommentsGlobalState>({
   newComments: newCommentsReducer,
   moderatedComments: moderatedCommentsReducer,
   commentDetail: commentDetailReducer,
-  threadedCommentDetail: threadedCommentDetailReducer,
 });
