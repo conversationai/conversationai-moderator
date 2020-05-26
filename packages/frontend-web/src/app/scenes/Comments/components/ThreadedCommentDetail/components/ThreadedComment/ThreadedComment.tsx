@@ -96,7 +96,6 @@ const actionMap: { [key: string]: ICommentActionFunction } = {
 export interface IThreadedCommentProps {
   comment: ICommentModel;
   replies?: Array<ICommentModel>;
-  onUpdateReply?(action: ICommentAction, replyId: string): any;
   handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
@@ -142,7 +141,6 @@ export class ThreadedComment extends React.Component<IThreadedCommentProps, IThr
   @autobind
   async dispatchConfirmedReply(action: ICommentAction, ids: Array<string>) {
     await actionMap[action](ids);
-    await this.props.onUpdateReply(action, ids[0]);
   }
 
   render() {
