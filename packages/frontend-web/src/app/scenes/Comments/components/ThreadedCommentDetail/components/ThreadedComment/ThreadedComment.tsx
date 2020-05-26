@@ -19,7 +19,7 @@ import { Set } from 'immutable';
 import React from 'react';
 
 import {ICommentModel, ModelId} from '../../../../../../../models';
-import { ICommentAction, IConfirmationAction } from '../../../../../../../types';
+import { ICommentAction } from '../../../../../../../types';
 import { BasicBody } from '../../../../../../components';
 import {
   approveComments,
@@ -96,7 +96,6 @@ const actionMap: { [key: string]: ICommentActionFunction } = {
 export interface IThreadedCommentProps {
   comment: ICommentModel;
   replies?: Array<ICommentModel>;
-  updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
   onUpdateReply?(action: ICommentAction, replyId: string): any;
   handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
@@ -138,7 +137,6 @@ export class ThreadedComment extends React.Component<IThreadedCommentProps, IThr
   @autobind
   async dispatchConfirmedAction(action: ICommentAction, ids: Array<string>) {
     await actionMap[action](ids);
-    await this.props.updateCommentState(action, ids);
   }
 
   @autobind

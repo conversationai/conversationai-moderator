@@ -16,12 +16,11 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import { Set } from 'immutable';
-import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 
 import { ICommentModel, ModelId } from '../../../../../models';
-import { ICommentAction, IConfirmationAction } from '../../../../../types';
+import { ICommentAction } from '../../../../../types';
 import {
   RejectIcon,
 } from '../../../../components';
@@ -94,29 +93,14 @@ export interface IThreadedCommentDetailProps extends RouteComponentProps<ICommen
   comment: ICommentModel;
   onUpdateReply?(action: ICommentAction, replyId: string): any;
   onUpdateComment(comment: ICommentModel): any;
-  updateCommentState?(action: IConfirmationAction, ids: Array<string>): any;
   loadData?(commentId: string): void;
 }
 
 export interface IThreadedCommentDetailState {
   loadedCommentId?: string;
-  isTaggingToolTipMetaVisible?: boolean;
-  taggingToolTipMetaPosition?: {
-    top: number;
-    left: number;
-  };
 }
 
 export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetailProps, IThreadedCommentDetailState> {
-
-  state: IThreadedCommentDetailState = {
-    isTaggingToolTipMetaVisible: false,
-    taggingToolTipMetaPosition: {
-      top: 0,
-      left: 0,
-    },
-  };
-
   static getDerivedStateFromProps(nextProps: IThreadedCommentDetailProps, prevState: IThreadedCommentDetailState) {
     if (!prevState.loadedCommentId) {
       nextProps.loadData(nextProps.match.params.commentId);
@@ -124,21 +108,6 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
     return {
       loadedCommentId: nextProps.match.params.commentId,
     };
-  }
-
-  componentDidMount() {
-    keyboardJS.bind('escape', this.onPressEscape);
-  }
-
-  componentWillUnmount() {
-    keyboardJS.unbind('escape', this.onPressEscape);
-  }
-
-  @autobind
-  onPressEscape() {
-    this.setState({
-      isTaggingToolTipMetaVisible: false,
-    });
   }
 
   @autobind
@@ -158,7 +127,6 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
   render() {
     const {
       comment,
-      updateCommentState,
       onUpdateReply,
     } = this.props;
 
@@ -178,7 +146,6 @@ export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetai
         <div key="comments" {...css(STYLES.body)}>
           {comment && (
             <ThreadedComment
-              updateCommentState={updateCommentState}
               onUpdateReply={onUpdateReply}
               comment={comment}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
