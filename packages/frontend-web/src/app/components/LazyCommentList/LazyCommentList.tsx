@@ -31,6 +31,7 @@ import {
   BASE_Z_INDEX,
   BOX_DEFAULT_SPACING,
   GUTTER_DEFAULT_SPACING,
+  HEADER_HEIGHT,
   MEDIUM_COLOR,
   OFFSCREEN,
   SELECT_ELEMENT,
@@ -100,26 +101,32 @@ const HEADER_STYLES = stylesheet({
   },
 });
 
+const DEFAULT_ROW_HEIGHT = 180;
+const ROW_PADDING_WITH_TITLE = 200;
+const ROW_PADDING_WITHOUT_TITLE = 130;
+
 const SELECT_ALL_ID = 'select-all-checkbox';
 
 export interface ILazyCommentListProps {
   commentIds: List<ModelId>;
-  width: number;
+  textSizes: any;
   heightOffset: number;
   totalItems: number;
+
   areAllSelected?: boolean;
   onSelectAllChange?(): void;
-  isItemChecked(id: string): boolean;
-  selectedSort?: string;
-  sortOptions?: List<ITagModel>;
   onSelectionChange?(commentId: string): void;
+  isItemChecked(id: string): boolean;
+
+  currentSort?: string;
+  sortOptions?: List<ITagModel>;
   onSortChange?(e: React.ChangeEvent<any>): any;
+
   getLinkTarget: ILinkTargetGetter;
   onCommentClick?(commentIndex: string): any;
   rowHeight?: number;
   hideCommentAction?: boolean;
   dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>): any;
-  rowHeightGetter?(index: number): number;
   scrollToRow?: number;
   ownerHeight?: number;
   searchTerm?: string;
@@ -133,6 +140,7 @@ export function LazyCommentList(props: ILazyCommentListProps) {
 
   const {
     commentIds,
+    textSizes,
     isItemChecked,
     dispatchConfirmedAction,
     selectedTag,
@@ -142,8 +150,17 @@ export function LazyCommentList(props: ILazyCommentListProps) {
     searchTerm,
     displayArticleTitle,
     handleAssignTagsSubmit,
-    selectedSort,
+    currentSort,
   } = props;
+
+  function rowHeightGetter(idx: number): number {
+    const commentId = commentIds.get(idx);
+    const padding = displayArticleTitle ? ROW_PADDING_WITH_TITLE : ROW_PADDING_WITHOUT_TITLE;
+
+    return commentId && textSizes
+      ? textSizes.get(commentId) + padding
+      : DEFAULT_ROW_HEIGHT;
+  }
 
   function getCheckboxCell(cellProps: any) {
     const commentId = commentIds.get(cellProps.rowIndex);
@@ -187,7 +204,7 @@ export function LazyCommentList(props: ILazyCommentListProps) {
     return (
       <Cell width={cellProps.width} height={cellProps.height}>
         <SortColumn
-          selectedSort={selectedSort}
+          selectedSort={currentSort}
           selectedTag={selectedTag}
           style={ROW_STYLES.approval}
           commentId={commentId}
@@ -203,13 +220,12 @@ export function LazyCommentList(props: ILazyCommentListProps) {
     areAllSelected,
     onSelectAllChange,
     rowHeight,
-    rowHeightGetter,
     ownerHeight,
     scrollToRow,
     onTableScroll,
-    heightOffset,
   } = props;
 
+  const heightOffset = props.heightOffset || HEADER_HEIGHT;
   const tableWidth = window.innerWidth;
   const tableHeight = window.innerHeight - heightOffset;
   const smallerViewport = tableWidth < 1200;
@@ -275,7 +291,7 @@ export function LazyCommentList(props: ILazyCommentListProps) {
             id="sorted-type"
             onChange={onSortChange}
             {...css(HEADER_STYLES.select)}
-            value={selectedSort}
+            value={currentSort}
           >
             {sortOptions.map((option) => (
               <option key={option.key} value={option.key}>
