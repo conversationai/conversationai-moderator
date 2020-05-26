@@ -14,16 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
 import { Set } from 'immutable';
 import React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router';
 
-import { ICommentModel, ModelId } from '../../../../../models';
-import { ICommentAction } from '../../../../../types';
+import { ModelId } from '../../../../../models';
 import {
   RejectIcon,
 } from '../../../../components';
+import { useCachedComment } from '../../../../injectors/commentInjector';
 import {
   rejectComments,
   tagCommentSummaryScores,
@@ -89,71 +88,41 @@ const STYLES = stylesheet({
   },
 });
 
-export interface IThreadedCommentDetailProps extends RouteComponentProps<ICommentDetailsPathParams>  {
-  comment: ICommentModel;
-  onUpdateReply?(action: ICommentAction, replyId: string): any;
-  onUpdateComment(comment: ICommentModel): any;
-  loadData?(commentId: string): void;
-}
+export function ThreadedCommentDetail() {
+  const {commentId} = useParams<ICommentDetailsPathParams>();
+  const {comment} = useCachedComment(commentId);
 
-export interface IThreadedCommentDetailState {
-  loadedCommentId?: string;
-}
-
-export class ThreadedCommentDetail extends React.Component<IThreadedCommentDetailProps, IThreadedCommentDetailState> {
-  static getDerivedStateFromProps(nextProps: IThreadedCommentDetailProps, prevState: IThreadedCommentDetailState) {
-    if (!prevState.loadedCommentId) {
-      nextProps.loadData(nextProps.match.params.commentId);
-    }
-    return {
-      loadedCommentId: nextProps.match.params.commentId,
-    };
-  }
-
-  @autobind
-  onCloseClick() {
+  function onCloseClick() {
     setTimeout(() => window.history.back(), 60);
   }
 
-  @autobind
-  async handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>) {
+  async function handleAssignTagsSubmit(toUpdateId: ModelId, selectedTagIds: Set<ModelId>) {
     selectedTagIds.forEach((tagId) => {
-      tagCommentSummaryScores([commentId], tagId);
+      tagCommentSummaryScores([toUpdateId], tagId);
     });
-    await rejectComments([commentId]);
-    this.props.onUpdateReply('reject', commentId);
+    await rejectComments([toUpdateId]);
   }
 
-  render() {
-    const {
-      comment,
-      onUpdateReply,
-    } = this.props;
-
-    return (
-      <div>
-        <div key="buttons" {...css(STYLES.header)}>
-          Replies to comment #{comment && comment.sourceId} from {comment && comment.author.name}
-          <button
-            type="button"
-            onClick={this.onCloseClick}
-            {...css(STYLES.closeButton)}
-            aria-label="Go back"
-          >
-            <RejectIcon {...css({ fill: DARK_COLOR })} />
-          </button>
-        </div>
-        <div key="comments" {...css(STYLES.body)}>
-          {comment && (
-            <ThreadedComment
-              onUpdateReply={onUpdateReply}
-              comment={comment}
-              handleAssignTagsSubmit={this.handleAssignTagsSubmit}
-              replies={comment.replies}
-            />
-          )}
-        </div>
+  return (
+    <div>
+      <div key="buttons" {...css(STYLES.header)}>
+        Replies to comment #{comment.sourceId} from {comment.author?.name}
+        <button
+          type="button"
+          onClick={onCloseClick}
+          {...css(STYLES.closeButton)}
+          aria-label="Go back"
+        >
+          <RejectIcon {...css({ fill: DARK_COLOR })} />
+        </button>
       </div>
-    );
-  }
+      <div key="comments" {...css(STYLES.body)}>
+        <ThreadedComment
+          comment={comment}
+          handleAssignTagsSubmit={handleAssignTagsSubmit}
+          replies={comment.replies}
+        />
+      </div>
+    </div>
+  );
 }
