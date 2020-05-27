@@ -15,12 +15,11 @@ limitations under the License.
 */
 
 import { expect } from 'chai';
-import { Map } from 'immutable';
 import { ICheckedSelectionState, makeCheckedSelectionStore } from '../makeCheckedSelectionStore';
 
 const getStateRecord = (state: any) => {
   return state.getIn(['test']) as ICheckedSelectionState;
-}
+};
 
 const testMakeCheckedSelectionStore = makeCheckedSelectionStore(getStateRecord, { defaultSelectionState: false });
 const testMakeCheckedSelectionStoreWithDefaultSelected = makeCheckedSelectionStore(getStateRecord, { defaultSelectionState: true });
@@ -38,10 +37,10 @@ describe('makeCheckedSelectionStore reducer with not selected by default', () =>
   });
 
   it('should toggle all to be selected and their default selection state to be true and remove all overrides', () => {
-    const testOverrides = Map({
-      1: true,
-      2: false,
-    });
+    const testOverrides = new Map([
+      ['1', true],
+      ['2', false],
+    ]);
     const testInitialState = {...initialState, overrides: testOverrides};
     const testState = reducer(testInitialState, testMakeCheckedSelectionStore.toggleSelectAll());
 
@@ -60,10 +59,10 @@ describe('makeCheckedSelectionStore reducer with not selected by default', () =>
   });
 
   it('should toggle all to be not selected and their default selection state to be false and remove all overrides', () => {
-    const testOverrides = Map({
-      1: true,
-      2: false,
-    });
+    const testOverrides = new Map([
+      ['1', true],
+      ['2', false],
+    ]);
     const testInitialState = {...initialState, overrides: testOverrides, areAllSelected: true};
     const testState = reducer(testInitialState, testMakeCheckedSelectionStore.toggleSelectAll());
 
@@ -78,7 +77,7 @@ describe('makeCheckedSelectionStore reducer with not selected by default', () =>
     expect(testState.areAllSelected).to.be.false;
 
     const overrides = testState.overrides;
-    expect(overrides.getIn(['1'])).to.be.true;
+    expect(overrides.get('1')).to.be.true;
   });
 
   it('should toggle a single item and change all are selected from true to be false and create an override set to true at id 1', () => {
@@ -88,7 +87,7 @@ describe('makeCheckedSelectionStore reducer with not selected by default', () =>
     expect(testState.areAllSelected).to.be.false;
 
     const overrides = testState.overrides;
-    expect(overrides.getIn(['1'])).to.be.true;
+    expect(overrides.get('1')).to.be.true;
   });
 
   it('should toggle a single item and change all are selected from true to be false and create an override set to true at id 1, then toggle back off again', () => {
@@ -98,7 +97,7 @@ describe('makeCheckedSelectionStore reducer with not selected by default', () =>
     expect(testState.areAllSelected).to.be.false;
 
     const overrides = testState.overrides;
-    expect(overrides.getIn(['1'])).to.be.true;
+    expect(overrides.get('1')).to.be.true;
 
     testState = reducer(testState, testMakeCheckedSelectionStore.toggleSingleItem({id: '1'}));
 
@@ -107,9 +106,7 @@ describe('makeCheckedSelectionStore reducer with not selected by default', () =>
   });
 
   it('should toggle a single item and change all are selected to be false and remove the override at id 1', () => {
-    const testOverrides = Map({
-      1: true,
-    });
+    const testOverrides = new Map([['1', true]]);
     const testInitialState = {...initialState, overrides: testOverrides};
     const testState = reducer(testInitialState, testMakeCheckedSelectionStore.toggleSingleItem({id: '1'}));
 
@@ -118,10 +115,10 @@ describe('makeCheckedSelectionStore reducer with not selected by default', () =>
   });
 
   it('should toggle a single item and change all are selected to be false and remove the override at id 1 and leave the override at 2', () => {
-    const testOverrides = Map({
-      1: true,
-      2: false,
-    });
+    const testOverrides = new Map([
+      ['1', true],
+      ['2', false],
+    ]);
     const testInitialState = {...initialState, overrides: testOverrides};
     const testState = reducer(testInitialState, testMakeCheckedSelectionStore.toggleSingleItem({id: '1'}));
 
@@ -129,13 +126,11 @@ describe('makeCheckedSelectionStore reducer with not selected by default', () =>
     expect(testState.overrides.size).to.equal(1);
 
     const overrides = testState.overrides;
-    expect(overrides.getIn(['2'])).to.be.false;
+    expect(overrides.get('2')).to.be.false;
   });
 
   it('should toggle a single item and change all are selected to be false and remove the override at id 1, then toggle again and add it back', () => {
-    const testOverrides = Map({
-      1: true,
-    });
+    const testOverrides = new Map([['1', true]]);
     const testInitialState = {...initialState, overrides: testOverrides};
     let testState = reducer(testInitialState, testMakeCheckedSelectionStore.toggleSingleItem({id: '1'}));
 
@@ -147,7 +142,7 @@ describe('makeCheckedSelectionStore reducer with not selected by default', () =>
     expect(testState.areAllSelected).to.be.false;
 
     const overrides = testState.overrides;
-    expect(overrides.getIn(['1'])).to.be.true;
+    expect(overrides.get('1')).to.be.true;
   });
 });
 
@@ -162,10 +157,10 @@ describe('makeCheckedSelectionStore reducer with selected by default set to true
   });
 
   it('should toggle all to be selected and their default selection state to be true and remove all overrides', () => {
-    const testOverrides = Map({
-      1: true,
-      2: false,
-    });
+    const testOverrides = new Map([
+      ['1', true],
+      ['2', false],
+    ]);
     const testInitialState = {...initialStateDefaultSelected, overrides: testOverrides};
     const testState = reducer(testInitialState, testMakeCheckedSelectionStoreWithDefaultSelected.toggleSelectAll());
 
@@ -184,10 +179,10 @@ describe('makeCheckedSelectionStore reducer with selected by default set to true
   });
 
   it('should toggle all to be not selected and their default selection state to be false and remove all overrides', () => {
-    const testOverrides = Map({
-      1: true,
-      2: false,
-    });
+    const testOverrides = new Map([
+      ['1', true],
+      ['2', false],
+    ]);
     const testInitialState = {...initialStateDefaultSelected, overrides: testOverrides, areAllSelected: true};
     const testState = reducer(testInitialState, testMakeCheckedSelectionStoreWithDefaultSelected.toggleSelectAll());
 
@@ -204,7 +199,7 @@ describe('makeCheckedSelectionStore reducer with selected by default set to true
 
     const overrides = testState.overrides;
     expect(
-      overrides.getIn(['1']),
+      overrides.get('1'),
     ).to.be.false;
 
     testState = reducer(testState, testMakeCheckedSelectionStoreWithDefaultSelected.toggleSingleItem({id: '1'}));
@@ -223,14 +218,12 @@ describe('makeCheckedSelectionStore reducer with selected by default set to true
 
     const overrides = testState.overrides;
     expect(
-      overrides.getIn(['1']),
+      overrides.get('1'),
     ).to.be.false;
   });
 
   it('should toggle a single item and change all are selected to be true and remove the override at id 1', () => {
-    const testOverrides = Map({
-      1: true,
-    });
+    const testOverrides = new Map([['1', true]]);
     const testInitialState = {...initialStateDefaultSelected, overrides: testOverrides};
     const testState = reducer(testInitialState, testMakeCheckedSelectionStoreWithDefaultSelected.toggleSingleItem({id: '1'}));
 
@@ -242,10 +235,10 @@ describe('makeCheckedSelectionStore reducer with selected by default set to true
 
 describe('makeCheckedSelectionStore getItemCheckedState', () => {
   it('should return any overrides of a given id found in state', () => {
-    const testOverrides = Map({
-      1: true,
-      2: false,
-    });
+    const testOverrides = new Map([
+      ['1', true],
+      ['2', false],
+    ]);
 
     const testItemCheckedState = testMakeCheckedSelectionStore.getItemCheckedState(testOverrides, '1', false);
 
@@ -257,10 +250,10 @@ describe('makeCheckedSelectionStore getItemCheckedState', () => {
   });
 
   it('should return false if no overrides matching a given id are found and isCheckedByDefault is false', () => {
-    const testOverrides = Map({
-      1: true,
-      2: false,
-    });
+    const testOverrides = new Map([
+      ['1', true],
+      ['2', false],
+    ]);
 
     const testItemCheckedState = testMakeCheckedSelectionStore.getItemCheckedState(testOverrides, '3', false);
 
@@ -272,10 +265,10 @@ describe('makeCheckedSelectionStore getItemCheckedState', () => {
   });
 
   it('should return true if no overrides matching a given id are found and isCheckedByDefault is true', () => {
-    const testOverrides = Map({
-      1: true,
-      2: false,
-    });
+    const testOverrides = new Map([
+      ['1', true],
+      ['2', false],
+    ]);
 
     const testItemCheckedState = testMakeCheckedSelectionStore.getItemCheckedState(testOverrides, '3', true);
 
