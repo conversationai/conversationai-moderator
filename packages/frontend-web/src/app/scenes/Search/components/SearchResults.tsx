@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { List, Map, Set } from 'immutable';
+import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
@@ -210,7 +210,7 @@ export interface ISearchResultsProps extends RouteComponentProps<{}> {
   selectedCount: number;
   allCommentIds?: List<string>;
   tags?: List<ITagModel>;
-  textSizes?: Map<number, number>;
+  textSizes?: Map<ModelId, number>;
   pagingIdentifier?: string;
 
   onToggleSelectAll?(): void;

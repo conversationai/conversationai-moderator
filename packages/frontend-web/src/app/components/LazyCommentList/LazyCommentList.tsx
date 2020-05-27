@@ -109,7 +109,7 @@ const SELECT_ALL_ID = 'select-all-checkbox';
 
 export interface ILazyCommentListProps {
   commentIds: List<ModelId>;
-  textSizes: any;
+  textSizes: Map<ModelId, number>;
   heightOffset: number;
   totalItems: number;
 
@@ -126,7 +126,7 @@ export interface ILazyCommentListProps {
   onCommentClick?(commentIndex: string): any;
   rowHeight?: number;
   hideCommentAction?: boolean;
-  dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>): any;
+  dispatchConfirmedAction?(action: IConfirmationAction, ids: Array<string>): void;
   scrollToRow?: number;
   ownerHeight?: number;
   searchTerm?: string;

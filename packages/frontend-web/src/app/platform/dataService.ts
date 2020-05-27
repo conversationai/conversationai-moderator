@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import axios from 'axios';
-import { fromJS, List, Map } from 'immutable';
+import { fromJS, List } from 'immutable';
 import { pick } from 'lodash';
 import qs from 'qs';
 
@@ -177,10 +177,7 @@ export async function listTextSizesByIds(
   );
 
   const data = response.data.data;
-
-  return Object.keys(data).reduce((sum, key) => {
-    return sum.set(key, data[key]);
-  }, Map<string, number>());
+  return new Map<ModelId, number>(Object.entries(data));
 }
 
 function packCommentScoreData(data: Array<{ commentId: ModelId, score: number }>): Array<ICommentScore> {
@@ -558,7 +555,7 @@ export async function listAuthorCounts(
     { data: authorSourceIds },
   );
 
-  return Map<string, IAuthorCountsModel>(response.data.data);
+  return new Map<string, IAuthorCountsModel>(Object.entries(response.data.data));
 }
 
 export async function listSystemUsers(type: string): Promise<List<IUserModel>> {
