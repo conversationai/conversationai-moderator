@@ -41,7 +41,7 @@ export function loadCommentList(
     const isArticleDetail = isArticleContext(params);
     const loader = isArticleDetail ? loadModeratedCommentsForArticle : loadModeratedCommentsForCategory;
     await loader(dispatch, params.contextId, sortDef);
-    const commentIds = getModeratedComments(getState(), params).get(params.disposition).toArray();
+    const commentIds = getModeratedComments(getState(), params)[params.disposition];
 
     const bodyContentWidth = 696;
 

@@ -317,7 +317,7 @@ export async function updateArticleModerators(articleId: ModelId, moderatorIds: 
   await axios.post(url, { data: moderatorIds });
 }
 
-export interface IModeratedComments {
+export type IModeratedComments = Readonly<{
   approved: Array<ModelId>;
   highlighted: Array<ModelId>;
   rejected: Array<ModelId>;
@@ -325,7 +325,8 @@ export interface IModeratedComments {
   flagged: Array<ModelId>;
   batched: Array<ModelId>;
   automated: Array<ModelId>;
-}
+  [key: string]: Array<ModelId>;
+}>;
 
 export async function getModeratedCommentIdsForArticle(
   articleId: ModelId,

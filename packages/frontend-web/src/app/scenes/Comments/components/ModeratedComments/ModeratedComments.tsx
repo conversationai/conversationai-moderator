@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { List, Map as IMap, Set } from 'immutable';
+import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import { isEqual } from 'lodash';
 import qs from 'query-string';
@@ -47,7 +47,7 @@ import {
   ToolTip,
 } from '../../../../components';
 import { IContextInjectorProps } from '../../../../injectors/contextInjector';
-import { updateArticle } from '../../../../platform/dataService';
+import { IModeratedComments, updateArticle } from '../../../../platform/dataService';
 import {
   approveComments,
   approveFlagsAndComments,
@@ -269,7 +269,7 @@ const actionMap: {
 export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedCommentsPathParams>, IContextInjectorProps {
   isLoading: boolean;
   tags: List<ITagModel>;
-  moderatedComments: IMap<string, List<string>>;
+  moderatedComments: IModeratedComments;
   isItemChecked(id: string): boolean;
   areNoneSelected?: boolean;
   areAllSelected: boolean;
@@ -287,7 +287,7 @@ export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedC
 }
 
 export interface IModeratedCommentsState {
-  commentIds?: List<string>;
+  commentIds?: Array<ModelId>;
   isConfirmationModalVisible?: boolean;
   confirmationAction?: IConfirmationAction;
   selectedItems?: any;
@@ -363,7 +363,7 @@ export class ModeratedComments
       props.loadData(props.match.params, {sort});
     }
 
-    const commentIds = props.moderatedComments.get(props.match.params.disposition);
+    const commentIds = props.moderatedComments[props.match.params.disposition];
 
     return {
       actionLabel,
@@ -409,7 +409,7 @@ export class ModeratedComments
     const selectedIdsLength = moderatedComments && this.getSelectedIDs().length;
 
     let commentsMessaging = isLoading ? LOADING_COMMENTS_MESSAGING : null;
-    if (!isLoading && commentIds.size === 0) {
+    if (!isLoading && commentIds.length === 0) {
       commentsMessaging = NO_COMMENTS_MESSAGING;
     }
 
@@ -548,7 +548,7 @@ export class ModeratedComments
             <LazyCommentList
               heightOffset={listHeightOffset}
               textSizes={textSizes}
-              commentIds={commentIds.toArray()}
+              commentIds={commentIds}
               areAllSelected={areAllSelected}
               currentSort={this.state.sort}
               getLinkTarget={getLinkTarget}
@@ -557,7 +557,7 @@ export class ModeratedComments
               onSelectionChange={this.onSelectionChange}
               onSortChange={this.onSortChange}
               sortOptions={this.getSortOptions()}
-              totalItems={commentIds.size}
+              totalItems={commentIds.length}
               displayArticleTitle={!isArticleContext}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               handleAssignTagsSubmit={this.handleAssignTagsSubmit}
@@ -629,7 +629,7 @@ export class ModeratedComments
     const { commentIds } = this.state;
     const selectedIds = commentIds && commentIds.filter((id) => this.props.isItemChecked(id));
 
-    return selectedIds ? selectedIds.toArray() : [];
+    return selectedIds ? selectedIds : [];
   }
 
   @autobind
