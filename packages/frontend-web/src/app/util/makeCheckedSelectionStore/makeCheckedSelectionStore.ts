@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Map } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import { IAppState } from '../../appstate';
@@ -57,7 +56,7 @@ export function makeCheckedSelectionStore(
   const initialState = {
     defaultSelectionState,
     areAllSelected: defaultSelectionState,
-    overrides: Map<string, boolean>(),
+    overrides: new Map<string, boolean>(),
   };
 
   const reducer = handleActions<
@@ -85,12 +84,18 @@ export function makeCheckedSelectionStore(
       const currentValue = state.overrides.get(id);
 
       // Not in list, therefore an override.
-      const newState = {...state};
-      newState.overrides = ('undefined' === typeof currentValue) ?
-        state.overrides.set(id, !defaultValue) :
-        state.overrides.delete(id);
-      newState.areAllSelected = (newState.overrides.size <= 0) ? defaultValue : false;
-      return newState;
+      const overrides = new Map(state.overrides);
+      if ('undefined' === typeof currentValue) {
+        overrides.set(id, !defaultValue);
+      }
+      else {
+        overrides.delete(id);
+      }
+      return {
+        ...state,
+        overrides,
+        areAllSelected: overrides.size <= 0 ? defaultValue : false,
+      };
     },
   }, initialState);
 
@@ -136,7 +141,6 @@ export function makeCheckedSelectionStore(
   return {
     initialState,
     reducer,
-    getDefaultSelectionState,
     getAreAllSelected,
     getAreAnyCommentsSelected,
     getOverrides,
