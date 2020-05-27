@@ -41,7 +41,7 @@ export function loadCommentList(
     const isArticleDetail = isArticleContext(params);
     const loader = isArticleDetail ? loadModeratedCommentsForArticle : loadModeratedCommentsForCategory;
     await loader(dispatch, params.contextId, sortDef);
-    const commentIds = getModeratedComments(getState(), params).get(params.disposition);
+    const commentIds = getModeratedComments(getState(), params).get(params.disposition).toArray();
 
     const bodyContentWidth = 696;
 
@@ -50,7 +50,7 @@ export function loadCommentList(
     const currentPagingIdentifier = await dispatch(storeCommentPagingOptions({
       commentIds,
       fromBatch: false,
-      source: `Comment %i of ${commentIds.size} from moderated comments with disposition "${params.disposition}"`,
+      source: `Comment %i of ${commentIds.length} from moderated comments with disposition "${params.disposition}"`,
       link,
     }));
 

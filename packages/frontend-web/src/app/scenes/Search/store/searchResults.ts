@@ -14,15 +14,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
+import { ModelId } from '../../../../models';
 import { IAppState } from '../../../appstate';
 
 export const loadAllCommentIdsStart: () => Action<void> = createAction(
   'search/LOAD_ALL_COMMENT_IDS',
 );
 
-export type ILoadAllCommentIdsCompletePayload = List<string>;
+export type ILoadAllCommentIdsCompletePayload = Array<ModelId>;
 export const loadAllCommentIdsComplete: (payload: ILoadAllCommentIdsCompletePayload) => Action<ILoadAllCommentIdsCompletePayload> =
   createAction<ILoadAllCommentIdsCompletePayload>(
     'search/LOAD_ALL_COMMENT_IDS_COMPLETE',
@@ -34,12 +34,12 @@ export const resetCommentIds: () => Action<void> = createAction(
 
 export type IAllCommentIDsState = Readonly<{
   isLoading: boolean;
-  ids: List<string>;
+  ids: Array<ModelId>;
 }>;
 
-const initialState = {
+const initialState: IAllCommentIDsState = {
   isLoading: false,
-  ids: List<string>(),
+  ids: [],
 };
 
 export const allCommentIdsReducer = handleActions<

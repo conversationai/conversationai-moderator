@@ -108,7 +108,7 @@ const ROW_PADDING_WITHOUT_TITLE = 130;
 const SELECT_ALL_ID = 'select-all-checkbox';
 
 export interface ILazyCommentListProps {
-  commentIds: List<ModelId>;
+  commentIds: Array<ModelId>;
   textSizes: Map<ModelId, number>;
   heightOffset: number;
   totalItems: number;
@@ -154,7 +154,7 @@ export function LazyCommentList(props: ILazyCommentListProps) {
   } = props;
 
   function rowHeightGetter(idx: number): number {
-    const commentId = commentIds.get(idx);
+    const commentId = commentIds[idx];
     const padding = displayArticleTitle ? ROW_PADDING_WITH_TITLE : ROW_PADDING_WITHOUT_TITLE;
 
     return commentId && textSizes
@@ -163,7 +163,7 @@ export function LazyCommentList(props: ILazyCommentListProps) {
   }
 
   function getCheckboxCell(cellProps: any) {
-    const commentId = commentIds.get(cellProps.rowIndex);
+    const commentId = commentIds[cellProps.rowIndex];
 
     return (
       <Cell width={cellProps.width} height={cellProps.height}>
@@ -178,7 +178,7 @@ export function LazyCommentList(props: ILazyCommentListProps) {
   }
 
   function getBodyCell(cellProps: any) {
-    const commentId = commentIds.get(cellProps.rowIndex);
+    const commentId = commentIds[cellProps.rowIndex];
 
     return (
       <Cell width={cellProps.width} height={cellProps.height}>
@@ -199,7 +199,7 @@ export function LazyCommentList(props: ILazyCommentListProps) {
   }
 
   function getApprovalCell(cellProps: any) {
-    const commentId = commentIds.get(cellProps.rowIndex);
+    const commentId = commentIds[cellProps.rowIndex];
 
     return (
       <Cell width={cellProps.width} height={cellProps.height}>

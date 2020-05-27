@@ -202,13 +202,12 @@ const actionMap: { [key: string]: ICommentActionFunction } = {
 };
 
 export interface ISearchResultsProps extends RouteComponentProps<{}> {
-  totalCommentCount: number;
   isLoading: boolean;
   isItemChecked(id: string): boolean;
   areNoneSelected: boolean;
   areAllSelected: boolean;
   selectedCount: number;
-  allCommentIds?: List<string>;
+  allCommentIds?: Array<string>;
   tags?: List<ITagModel>;
   textSizes?: Map<ModelId, number>;
   pagingIdentifier?: string;
@@ -337,11 +336,9 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
 
   @autobind
   getSelectedIDs(): Array<string> {
-    const ids = this.props.allCommentIds.filter((id) => (
+    return this.props.allCommentIds.filter((id) => (
       this.props.isItemChecked(id)
     ));
-
-    return ids.toArray();
   }
 
   @autobind
@@ -416,7 +413,6 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
 
   render() {
     const {
-      totalCommentCount,
       textSizes,
       isItemChecked,
       areNoneSelected,
@@ -442,6 +438,8 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
       const query = pagingIdentifier && {pagingIdentifier};
       return commentSearchDetailsPageLink(commentId, query);
     }
+
+    const totalCommentCount = allCommentIds?.length || 0;
 
     return (
       <div>

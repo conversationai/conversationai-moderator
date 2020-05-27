@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
 import { pick } from 'lodash';
 
 import { IAppDispatch } from '../../../appstate';
@@ -33,8 +32,7 @@ export async function loadCommentList(
   dispatch(loadAllCommentIdsStart);
   const { term, params } = scope;
   const commentIds = await search(term, params);
-  const commentIdsList = List(commentIds);
-  dispatch(loadAllCommentIdsComplete(commentIdsList));
+  dispatch(loadAllCommentIdsComplete(commentIds));
 
   const query = {
     ...pick(params, ['articleId', 'searchByAuthor', 'sort']),
@@ -43,9 +41,9 @@ export async function loadCommentList(
   const link = searchLink(query);
 
   const currentPagingIdentifier = await dispatch(storeCommentPagingOptions({
-    commentIds: commentIdsList,
+    commentIds,
     fromBatch: true,
-    source: `Comment %i of ${commentIdsList.size} from search for "${term}"`,
+    source: `Comment %i of ${commentIds.length} from search for "${term}"`,
     link,
   }));
 
@@ -53,5 +51,5 @@ export async function loadCommentList(
 
   const bodyContentWidth = 696;
 
-  await dispatch(loadTextSizesByIds(commentIdsList, bodyContentWidth));
+  await dispatch(loadTextSizesByIds(commentIds, bodyContentWidth));
 }

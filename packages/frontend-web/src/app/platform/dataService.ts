@@ -328,7 +328,7 @@ export interface IModeratedComments {
 }
 
 export async function getModeratedCommentIdsForArticle(
-  articleId: string,
+  articleId: ModelId,
   sort: Array<string>,
 ): Promise<IModeratedComments> {
   const { data }: any = await axios.get(
@@ -339,7 +339,7 @@ export async function getModeratedCommentIdsForArticle(
 }
 
 export async function getModeratedCommentIdsForCategory(
-  categoryId: string | 'all',
+  categoryId: ModelId | 'all',
   sort: Array<string>,
 ): Promise<IModeratedComments> {
   const { data }: any = await axios.get(

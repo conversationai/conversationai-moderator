@@ -36,7 +36,6 @@ import {
 import { ISearchResultsProps, SearchResults as PureSearchResults } from './SearchResults';
 
 const mapStateToProps = createStructuredSelector({
-  totalCommentCount: (state: IAppState) => getAllCommentIds(state).size,
   isLoading: (state: IAppState) => (getIsLoading(state) || getTextSizesIsLoading(state)),
   isItemChecked: (state: IAppState) => (id: string) => getIsItemChecked(state, id),
   areNoneSelected: getAreAnyCommentsSelected,
