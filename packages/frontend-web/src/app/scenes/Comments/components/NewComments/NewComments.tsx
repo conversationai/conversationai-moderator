@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { List, Map, Set } from 'immutable';
+import { List, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import qs from 'query-string';
 import React from 'react';
@@ -275,7 +275,7 @@ export interface INewCommentsProps extends RouteComponentProps<INewCommentsPathP
   tags: List<ITagModel>;
   rules?: List<IRuleModel>;
   pagingIdentifier: string;
-  textSizes?: Map<number, number>;
+  textSizes?: Map<ModelId, number>;
   removeCommentScore?(idsToDispatch: Array<string>): any;
   toggleSelectAll?(): any;
   toggleSingleItem({ id }: { id: string }): any;

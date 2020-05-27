@@ -14,9 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List, Map } from 'immutable';
+import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
+import { ModelId } from '../../models';
 import { IAppState, IThunkAction } from '../appstate';
 import { listTextSizesByIds } from '../platform/dataService';
 
@@ -25,7 +26,7 @@ const loadTextSizesStart = createAction(
 );
 
 type ILoadTestSizesCompletePayload = {
-  textSizes: Map<string, number>;
+  textSizes: Map<ModelId, number>;
 };
 const loadTextSizesComplete = createAction<ILoadTestSizesCompletePayload>(
   'text-sizes/LOAD_TEXT_SIZES_COMPLETE',
@@ -34,7 +35,7 @@ const loadTextSizesComplete = createAction<ILoadTestSizesCompletePayload>(
 export type ITextSizesState = Readonly<{
   isLoading: boolean;
   hasData: boolean;
-  textSizes: Map<string, number>;
+  textSizes: Map<ModelId, number>;
 }>;
 
 const textSizesReducer = handleActions<
@@ -47,12 +48,12 @@ const textSizesReducer = handleActions<
   [loadTextSizesComplete.toString()]: (state, { payload: { textSizes } }: Action<ILoadTestSizesCompletePayload>) => ({
     isLoading: false,
     hasData: true,
-    textSizes: state.textSizes.merge(textSizes),
+    textSizes: new Map([...state.textSizes, ...textSizes]),
   }),
 }, {
   isLoading: false,
   hasData: false,
-  textSizes: Map<string, number>(),
+  textSizes: new Map<ModelId, number>(),
 });
 
 function getStateRecord(state: IAppState) {

@@ -16,7 +16,7 @@ limitations under the License.
 
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
-import { List, Map, Set } from 'immutable';
+import { List, Map as IMap, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
 import { isEqual } from 'lodash';
 import qs from 'query-string';
@@ -269,7 +269,7 @@ const actionMap: {
 export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedCommentsPathParams>, IContextInjectorProps {
   isLoading: boolean;
   tags: List<ITagModel>;
-  moderatedComments: Map<string, List<string>>;
+  moderatedComments: IMap<string, List<string>>;
   isItemChecked(id: string): boolean;
   areNoneSelected?: boolean;
   areAllSelected: boolean;
@@ -277,7 +277,7 @@ export interface IModeratedCommentsProps extends RouteComponentProps<IModeratedC
   loadData?(params: IModeratedCommentsPathParams, query: IModeratedCommentsQueryParams): void;
   toggleSelectAll?(): any;
   toggleSingleItem({ id }: { id: string }): any;
-  textSizes?: Map<number, number>;
+  textSizes?: Map<ModelId, number>;
   setCommentModerationStatus?(
     props: IContextInjectorProps,
     commentIds: Array<string>,
