@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { fromJS, List, Map } from 'immutable';
+import { fromJS, Map } from 'immutable';
 import { combineReducers } from 'redux';
 import { Action, createAction, handleActions } from 'redux-actions';
 
@@ -87,22 +87,22 @@ const commentScoresReducer = handleActions<
 }, initialScoreState);
 
 export interface ICommentPagingState {
-  commentIds: List<string>;
+  commentIds: Array<ModelId>;
   fromBatch: boolean;
   source: string;
   link: string;
   hash?: string;
-  indexById?: Map<string, number>;
+  indexById?: Map<ModelId, number>;
 }
 
 export type ICommentPagingStateRecord = Readonly<ICommentPagingState>;
 
 const initialState: ICommentPagingStateRecord = {
-  commentIds: null,
+  commentIds: [],
   fromBatch: null,
   source: null,
   hash: null,
-  indexById: Map<string, number>(),
+  indexById: Map<ModelId, number>(),
   link: null,
 };
 
@@ -143,7 +143,7 @@ export const commentPagingReducer = handleActions<
   [clearCommentPagingOptions.toString()]: () => initialState,
 
   [internalStoreCommentPagingOptions.toString()]: (_, { payload }: Action<ICommentPagingState>) => {
-    const indexById = payload['commentIds'].reduce((sum, id, index) => sum.set(id, index), Map<string, number>());
+    const indexById = payload['commentIds'].reduce((sum, id, index) => sum.set(id, index), Map<ModelId, number>());
     return { ...payload, indexById };
   },
 }, initialState);
@@ -209,9 +209,9 @@ export function getNextCommentId(state: IAppState, currentHash: string, commentI
   if (typeof index !== 'undefined') {
     const nextIndex = index + 1;
 
-    if (nextIndex > (ids.size - 1)) { return null; }
+    if (nextIndex > (ids.length - 1)) { return null; }
 
-    return ids.get(nextIndex);
+    return ids[nextIndex];
   }
 }
 
@@ -227,7 +227,7 @@ export function getPreviousCommentId(state: IAppState, currentHash: string, comm
 
     if (nextIndex < 0) { return null; }
 
-    return ids.get(nextIndex);
+    return ids[nextIndex];
   }
 }
 

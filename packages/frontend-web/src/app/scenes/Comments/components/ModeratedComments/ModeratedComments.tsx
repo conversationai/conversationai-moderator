@@ -548,7 +548,7 @@ export class ModeratedComments
             <LazyCommentList
               heightOffset={listHeightOffset}
               textSizes={textSizes}
-              commentIds={commentIds}
+              commentIds={commentIds.toArray()}
               areAllSelected={areAllSelected}
               currentSort={this.state.sort}
               getLinkTarget={getLinkTarget}

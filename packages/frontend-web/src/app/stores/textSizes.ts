@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List } from 'immutable';
 import { Action, createAction, handleActions } from 'redux-actions';
 
 import { ModelId } from '../../models';
@@ -75,9 +74,9 @@ function getTextSizesIsLoading(state: IAppState) {
   return stateRecord && stateRecord.isLoading;
 }
 
-function loadTextSizesByIds(ids: List<string>, width: number): IThunkAction<Promise<void>> {
+function loadTextSizesByIds(ids: Array<ModelId>, width: number): IThunkAction<Promise<void>> {
   return async (dispatch, getState) => {
-    if (ids.size <= 0) {
+    if (ids.length <= 0) {
       return;
     }
 
@@ -88,7 +87,7 @@ function loadTextSizesByIds(ids: List<string>, width: number): IThunkAction<Prom
     const loadedSizes = getTextSizes(state);
     const unloadedIDs = !hasData ? ids : ids.filter((id) => !loadedSizes.has(id));
 
-    const textSizes = await listTextSizesByIds(unloadedIDs.toArray(), width);
+    const textSizes = await listTextSizesByIds(unloadedIDs, width);
 
     await dispatch(loadTextSizesComplete({ textSizes }));
   };

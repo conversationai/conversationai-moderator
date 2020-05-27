@@ -21,6 +21,7 @@ import {
   ICommentListItem,
   ICommentScore,
   ITagModel,
+  ModelId,
   TagModel,
 } from '../../../../../../models';
 import { IAppState } from '../../../../../appstate';
@@ -47,7 +48,7 @@ export function getCommentIDsInRange(
   selectionPosition1: number,
   selectionPosition2: number,
   groupByDate: boolean,
-): List<string> {
+): Array<ModelId> {
   const minPos = Math.min(selectionPosition1, selectionPosition2);
   const maxPos = Math.max(selectionPosition1, selectionPosition2);
 
@@ -70,5 +71,5 @@ export function getCommentIDsInRange(
     scores = commentScores.filter((s: ICommentScore) => (s.score >= minPos) && (s.score < maxPos));
   }
 
-  return List<string>(scores.map((score) => score.commentId));
+  return scores.map((score) => score.commentId);
 }

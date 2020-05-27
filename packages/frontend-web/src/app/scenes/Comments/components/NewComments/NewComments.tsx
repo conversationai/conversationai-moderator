@@ -292,7 +292,7 @@ export interface INewCommentsState {
   pos1?: number;
   pos2?: number;
   sort?: string;
-  commentIds?: List<string>;
+  commentIds?: Array<ModelId>;
   isConfirmationModalVisible?: boolean;
   isRuleInfoVisible?: boolean;
   confirmationAction?: ICommentAction;
@@ -426,7 +426,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     // We need to wait for commentIDsInRange to load so we can check that against the saved row
     const commentId = getReturnSavedCommentRow();
 
-    if ((typeof commentId !== 'undefined') && !this.props.isLoading && this.state.commentIds.size > 0 ) {
+    if ((typeof commentId !== 'undefined') && !this.props.isLoading && this.state.commentIds.length > 0 ) {
       // need to wait to make sure dom and other items are loaded before scrolling you down to the saved comment
       // Maybe we need a better has loaded thing to see if a single row has been rendered and bubble that up to here?
       const row = this.state.commentIds.findIndex((idInRange) => idInRange === commentId);
@@ -568,7 +568,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
     const disableAllButtons = areNoneSelected || commentScores.length <= 0;
     const groupBy = (selectedTag && selectedTag.key === 'DATE') ? 'date' : 'score';
 
-    const totalScoresInView = commentIds.size;
+    const totalScoresInView = commentIds.length;
     let commentsMessaging: string = null;
 
     if (isLoading) {
@@ -750,7 +750,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
               onSortChange={this.onSortChange}
               onCommentClick={this.saveCommentRow}
               scrollToRow={selectedRow}
-              totalItems={commentIds.size}
+              totalItems={commentIds.length}
               dispatchConfirmedAction={this.dispatchConfirmedAction}
               displayArticleTitle={!isArticleContext}
               onTableScroll={this.onTableScroll}
@@ -905,7 +905,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
   @autobind
   getSelectedIDs(): Array<string> {
     return this.state.commentIds
-        .filter((commentId) => this.props.isItemChecked(commentId)).toArray();
+        .filter((commentId) => this.props.isItemChecked(commentId));
   }
 
   @autobind

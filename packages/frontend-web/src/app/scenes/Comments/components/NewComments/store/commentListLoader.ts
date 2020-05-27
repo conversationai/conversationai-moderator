@@ -63,9 +63,9 @@ export function loadCommentList(
     const link = newCommentsPageLink(params, {pos1: pos1.toString(), pos2: pos2.toString(), sort});
 
     const currentPagingIdentifier = await dispatch(storeCommentPagingOptions({
-      commentIds: commentIDsInRange.toList(),
+      commentIds: commentIDsInRange,
       fromBatch: true,
-      source: `Comment %i of ${commentIDsInRange.size} from new comments with tag "${params.tag}"`,
+      source: `Comment %i of ${commentIDsInRange.length} from new comments with tag "${params.tag}"`,
       link,
     }));
 
