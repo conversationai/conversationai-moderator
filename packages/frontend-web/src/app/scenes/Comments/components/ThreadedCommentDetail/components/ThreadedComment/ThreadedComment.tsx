@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
 import { Set } from 'immutable';
-import React from 'react';
+import React, {useState} from 'react';
 
 import {ICommentModel, ModelId} from '../../../../../../../models';
 import { ICommentAction } from '../../../../../../../types';
 import { BasicBody } from '../../../../../../components';
+import { useCachedComment } from '../../../../../../injectors/commentInjector';
 import {
   approveComments,
   deferComments,
@@ -93,106 +93,113 @@ const actionMap: { [key: string]: ICommentActionFunction } = {
   reset: resetComments,
 };
 
+interface IReplyItemProps {
+  replyId: ModelId;
+  showActions: boolean;
+  handleRowMouseEnter(id: string): void;
+  handleRowMouseLeave(): void;
+  handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
+  dispatchConfirmedReply(action: ICommentAction, ids: Array<string>): void;
+}
+
+function ReplyItem(props: IReplyItemProps) {
+  const {
+    replyId,
+    showActions,
+    handleRowMouseEnter,
+    handleRowMouseLeave,
+    dispatchConfirmedReply,
+    handleAssignTagsSubmit,
+  } = props;
+  const {comment: reply} = useCachedComment(replyId);
+  return (
+    <div
+      {...css(STYLES.row)}
+      onMouseEnter={partial(handleRowMouseEnter, replyId)}
+      onMouseLeave={handleRowMouseLeave}
+    >
+      <div {...css(STYLES.body, STYLES.replyBody)}>
+        <BasicBody
+          comment={reply}
+          commentLinkTarget={`/articles/${reply.articleId}/comments/${reply.id}`}
+          showActions={showActions}
+          handleAssignTagsSubmit={handleAssignTagsSubmit}
+          dispatchConfirmedAction={dispatchConfirmedReply}
+        />
+      </div>
+    </div>
+  );
+}
+
 export interface IThreadedCommentProps {
   comment: ICommentModel;
-  replies?: Array<ICommentModel>;
   handleAssignTagsSubmit(commentId: ModelId, selectedTagIds: Set<ModelId>, rejectedTagIds: Set<ModelId>): Promise<void>;
 }
 
-export interface IThreadedCommentState {
-  hoveredRowId: string;
-  hoveredRowThresholdPassed: boolean;
-}
+export function ThreadedComment(props: IThreadedCommentProps) {
+  const [hoveredRowId, setHoveredRowId] = useState<ModelId | null>(null);
+  const [hoveredRowThresholdPassed, setHoveredRowThresholdPassed] = useState(false);
 
-export class ThreadedComment extends React.Component<IThreadedCommentProps, IThreadedCommentState> {
-
-  state: IThreadedCommentState = {
-    hoveredRowId: null,
-    hoveredRowThresholdPassed: false,
-  };
-
-  @autobind
-  handleRowMouseEnter(id: string): void {
-    this.setState({
-      hoveredRowId: id,
-    });
+  function handleRowMouseEnter(id: string): void {
+    setHoveredRowId(id);
     setTimeout(() => {
-      if (this.state.hoveredRowId === id) {
-        this.setState({
-          hoveredRowThresholdPassed: true,
-        });
+      if (hoveredRowId === id) {
+        setHoveredRowThresholdPassed(true);
       }
     }, 180);
   }
 
-  @autobind
-  handleRowMouseLeave(): void {
-    this.setState({
-      hoveredRowId: null,
-      hoveredRowThresholdPassed: false,
-    });
+  function handleRowMouseLeave(): void {
+    setHoveredRowId(null);
+    setHoveredRowThresholdPassed(false);
   }
 
-  @autobind
-  async dispatchConfirmedAction(action: ICommentAction, ids: Array<string>) {
+  async function dispatchConfirmedAction(action: ICommentAction, ids: Array<string>) {
     await actionMap[action](ids);
   }
 
-  @autobind
-  async dispatchConfirmedReply(action: ICommentAction, ids: Array<string>) {
+  async function dispatchConfirmedReply(action: ICommentAction, ids: Array<string>) {
     await actionMap[action](ids);
   }
 
-  render() {
-    const {
-      comment,
-      replies,
-      handleAssignTagsSubmit,
-    } = this.props;
+  const {
+    comment,
+    handleAssignTagsSubmit,
+  } = props;
 
-    const { hoveredRowThresholdPassed, hoveredRowId } = this.state;
-
-    return (
-      <div {...css(STYLES.base)}>
-        <div
-          {...css(STYLES.row)}
-          onMouseEnter={partial(this.handleRowMouseEnter, comment.id)}
-          onMouseLeave={this.handleRowMouseLeave}
-        >
-          <div {...css(STYLES.body)}>
-            <BasicBody
-              commentLinkTarget={commentDetailsPageLink({
-                context: articleBase,
-                contextId: comment.articleId,
-                commentId: comment.id,
-              })}
-              handleAssignTagsSubmit={handleAssignTagsSubmit}
-              comment={comment}
-              showActions={(comment.id === hoveredRowId) && hoveredRowThresholdPassed}
-              dispatchConfirmedAction={this.dispatchConfirmedAction}
-            />
-          </div>
+  return (
+    <div {...css(STYLES.base)}>
+      <div
+        {...css(STYLES.row)}
+        onMouseEnter={partial(handleRowMouseEnter, comment.id)}
+        onMouseLeave={handleRowMouseLeave}
+      >
+        <div {...css(STYLES.body)}>
+          <BasicBody
+            commentLinkTarget={commentDetailsPageLink({
+              context: articleBase,
+              contextId: comment.articleId,
+              commentId: comment.id,
+            })}
+            handleAssignTagsSubmit={handleAssignTagsSubmit}
+            comment={comment}
+            showActions={(comment.id === hoveredRowId) && hoveredRowThresholdPassed}
+            dispatchConfirmedAction={dispatchConfirmedAction}
+          />
         </div>
-
-        { replies && replies.map((reply, i) => (
-          <div
-            {...css(STYLES.row)}
-            onMouseEnter={partial(this.handleRowMouseEnter, reply.id)}
-            onMouseLeave={this.handleRowMouseLeave}
-            key={`${reply.authorSourceId}${i}`}
-          >
-            <div {...css(STYLES.body, STYLES.replyBody)}>
-              <BasicBody
-                handleAssignTagsSubmit={handleAssignTagsSubmit}
-                showActions={(reply.id === hoveredRowId) && hoveredRowThresholdPassed}
-                dispatchConfirmedAction={this.dispatchConfirmedReply}
-                commentLinkTarget={`/articles/${reply.articleId}/comments/${reply.id}`}
-                comment={reply}
-              />
-            </div>
-          </div>
-        )) }
       </div>
-    );
-  }
+
+      { comment.replies && comment.replies.map((replyId) => (
+        <ReplyItem
+          key={replyId}
+          replyId={replyId}
+          showActions={(replyId === hoveredRowId) && hoveredRowThresholdPassed}
+          handleRowMouseEnter={handleRowMouseEnter}
+          handleRowMouseLeave={handleRowMouseLeave}
+          handleAssignTagsSubmit={handleAssignTagsSubmit}
+          dispatchConfirmedReply={dispatchConfirmedReply}
+        />
+      )) }
+    </div>
+  );
 }

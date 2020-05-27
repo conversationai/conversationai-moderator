@@ -73,8 +73,8 @@ export function Comments(_props: { }) {
             <Route exact path={`${path}/moderated`} render={redirect(`${url}/moderated/approved`)} />
             <Route path={`${path}/new/:tag`} component={NewComments}/>
             <Route path={`${path}/moderated/:disposition`} component={ModeratedComments}/>
-            <Route path={`${path}/comments/:commentId`} component={CommentDetail}/>
             <Route path={`${path}/comments/:commentId/replies`} component={ThreadedCommentDetail}/>
+            <Route path={`${path}/comments/:commentId`} component={CommentDetail}/>
           </Switch>
         </div>
       </div>
