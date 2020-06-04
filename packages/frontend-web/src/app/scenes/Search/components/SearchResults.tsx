@@ -37,7 +37,7 @@ import {
   CommentActionButton,
   DeferIcon,
   HighlightIcon,
-  LazyCommentList,
+  CommentList,
   RejectIcon,
   Scrim,
   ToastMessage,
@@ -552,7 +552,7 @@ export class SearchResults extends React.Component<ISearchResultsProps, ISearchR
             )}
           </div>
           {!isLoading && searchTerm && totalCommentCount > 0 &&  (
-            <LazyCommentList
+            <CommentList
               heightOffset={HEADER_HEIGHT + RESULTS_HEADER_HEIGHT}
               textSizes={textSizes}
               commentIds={allCommentIds}

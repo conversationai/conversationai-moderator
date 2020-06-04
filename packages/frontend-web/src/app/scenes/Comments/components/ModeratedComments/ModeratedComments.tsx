@@ -40,7 +40,7 @@ import {
   CommentActionButton,
   DeferIcon,
   HighlightIcon,
-  LazyCommentList,
+  CommentList,
   RejectIcon,
   Scrim,
   ToastMessage,
@@ -545,7 +545,7 @@ export class ModeratedComments
           {showMessaging ? (
             <p {...css(STYLES.commentsNotFoundMessaging)}>{commentsMessaging}</p>
           ) : (
-            <LazyCommentList
+            <CommentList
               heightOffset={listHeightOffset}
               textSizes={textSizes}
               commentIds={commentIds}
