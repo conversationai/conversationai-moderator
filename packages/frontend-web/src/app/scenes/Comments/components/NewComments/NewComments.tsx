@@ -44,7 +44,7 @@ import {
   CommentActionButton,
   DeferIcon,
   HighlightIcon,
-  LazyCommentList,
+  CommentList,
   RejectIcon,
   Scrim,
   ToastMessage,
@@ -734,7 +734,7 @@ export class NewComments extends React.Component<INewCommentsProps, INewComments
           { showMessaging ? (
             <p {...css(STYLES.commentsNotFoundMessaging)}>{commentsMessaging}</p>
           ) : (
-            <LazyCommentList
+            <CommentList
               heightOffset={listHeightOffset}
               textSizes={textSizes}
               commentIds={commentIds}

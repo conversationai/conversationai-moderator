@@ -107,7 +107,7 @@ const ROW_PADDING_WITHOUT_TITLE = 130;
 
 const SELECT_ALL_ID = 'select-all-checkbox';
 
-export interface ILazyCommentListProps {
+export interface ICommentListProps {
   commentIds: Array<ModelId>;
   textSizes: Map<ModelId, number>;
   heightOffset: number;
@@ -136,7 +136,7 @@ export interface ILazyCommentListProps {
   onTableScroll?(scrollPos: number): boolean;
 }
 
-export function LazyCommentList(props: ILazyCommentListProps) {
+export function CommentList(props: ICommentListProps) {
 
   const {
     commentIds,
