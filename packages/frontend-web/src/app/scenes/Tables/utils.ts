@@ -65,7 +65,6 @@ export function getFilterValue(filterList: Array<IFilterItem>, key: string) {
 }
 
 export interface IFilterContext {
-  myId: string;
   categories: Map<ModelId, ICategoryModel>;
 }
 
