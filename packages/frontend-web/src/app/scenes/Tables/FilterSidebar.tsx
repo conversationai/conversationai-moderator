@@ -39,6 +39,7 @@ import {
 } from '@material-ui/icons';
 
 import { IUserModel, ModelId } from '../../../models';
+import { getMyUserId } from '../../auth';
 import { Avatar } from '../../components';
 import * as icons from '../../components/Icons';
 import { HEADER_HEIGHT, SCRIM_STYLE } from '../../styles';
@@ -125,7 +126,6 @@ export interface IFilterSidebarProps {
   filterString: string;
   filter: Array<IFilterItem>;
 
-  myUserId: string;
   users: Seq.Indexed<IUserModel>;
 
   setFilter(filter: Array<IFilterItem>): void;
@@ -390,7 +390,6 @@ export class FilterSidebar extends React.Component<IFilterSidebarProps, IFilterS
 
   render() {
     const {
-      myUserId,
       users,
       open,
       clearPopups,
@@ -406,6 +405,7 @@ export class FilterSidebar extends React.Component<IFilterSidebarProps, IFilterS
       commentsToReviewFilter,
     } = this.state;
 
+    const myUserId = getMyUserId();
     const me = users.find((u) => u.id === myUserId);
     const others = users.filter((u) => u.id !== myUserId).sort((u1, u2) => ('' + u1.name).localeCompare(u2.name));
 

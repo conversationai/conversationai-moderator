@@ -18,17 +18,17 @@ import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { Map as IMap, Set } from 'immutable';
 import keyboardJS from 'keyboardjs';
+import { range } from 'lodash';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
-import { IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
+import { IArticleAttributes, IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
 import { IAppState } from '../../appstate';
-import { getMyUserId } from '../../auth';
 import { ArticleControlIcon, AssignModerators, MagicTimestamp } from '../../components';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
@@ -38,7 +38,7 @@ import {
   updateCategoryModerators,
 } from '../../platform/dataService';
 import { getArticleMap, getArticles } from '../../stores/articles';
-import { getCategoryMap } from '../../stores/categories';
+import { getCategoryMap, ISummaryCounts } from '../../stores/categories';
 import { getUsers } from '../../stores/users';
 import {
   flexCenter,
@@ -48,8 +48,7 @@ import {
   SCRIM_STYLE,
 } from '../../styles';
 import { COMMON_STYLES, medium } from '../../stylesx';
-import { partial } from '../../util/partial';
-import { css, stylesheet } from '../../utilx';
+import { css, IPossibleStyle, stylesheet } from '../../utilx';
 import {
   articleBase,
   categoryBase,
@@ -102,19 +101,204 @@ const STYLES = stylesheet({
   },
 });
 
+const POPUP_MODERATORS = 'moderators';
+const POPUP_CONTROLS = 'controls';
+const POPUP_FILTERS = 'filters';
+const POPUP_SAVING = 'saving';
+
+function renderTime(time: string | null) {
+  if (!time) {
+    return 'Never';
+  }
+  return <MagicTimestamp timestamp={time} inFuture={false}/>;
+}
+
+interface ICountsInfoProps {
+  counts: ISummaryCounts;
+  cellStyle: IPossibleStyle;
+  getLink(disposition: string): string;
+}
+
+function CountsInfo(props: ICountsInfoProps) {
+  const {getLink, cellStyle, counts} = props;
+
+  return (
+    <>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+        <Link to={getLink('new')} {...css(COMMON_STYLES.cellLink)}>
+          {counts.unmoderatedCount}
+        </Link>
+      </td>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+        <Link to={getLink('approved')} {...css(COMMON_STYLES.cellLink)}>
+          {counts.approvedCount}
+        </Link>
+      </td>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+        <Link to={getLink('rejected')} {...css(COMMON_STYLES.cellLink)}>
+          {counts.rejectedCount}
+        </Link>
+      </td>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+        <Link to={getLink('deferred')} {...css(COMMON_STYLES.cellLink)}>
+          {counts.deferredCount}
+        </Link>
+      </td>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+        <Link to={getLink('highlighted')} {...css(COMMON_STYLES.cellLink)}>
+          {counts.highlightedCount}
+        </Link>
+      </td>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+        <Link to={getLink('flagged')} {...css(COMMON_STYLES.cellLink)}>
+          {counts.flaggedCount}
+        </Link>
+      </td>
+    </>
+  );
+}
+
+interface IRowActions {
+  clearPopups(): void;
+  openControls(article: IArticleModel): void;
+  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean): void;
+  openSetModerators(
+    targetId: ModelId,
+    moderatorIds: Array<ModelId>,
+    superModeratorIds: Array<ModelId>,
+    isCategory: boolean,
+  ): void;
+}
+
+interface IArticleRowProps extends IRowActions {
+  article: IArticleModel;
+  selectedArticle?: ModelId | null;
+}
+
+function ArticleRow(props: IArticleRowProps) {
+  const {article, selectedArticle} = props;
+  const categories = useSelector(getCategoryMap);
+  const users = useSelector(getUsers);
+
+  const lastModerated = renderTime(article.lastModeratedAt);
+  const category = categories.get(article.categoryId);
+  function getLink(disposition: string) {
+    if (disposition === 'new') {
+      return newCommentsPageLink({context: articleBase, contextId: article.id, tag: NEW_COMMENTS_DEFAULT_TAG});
+    }
+    return moderatedCommentsPageLink({context: articleBase, contextId: article.id, disposition});
+  }
+
+  const targetId = article.id;
+  const  moderatorIds = article.assignedModerators;
+  const superModeratorIds = category?.assignedModerators;
+
+  function openSetModerators() {
+    props.openSetModerators(targetId, moderatorIds, superModeratorIds, false);
+  }
+
+  const cellStyle = ARTICLE_TABLE_STYLES.dataCell;
+
+  return (
+    <tr {...css(cellStyle, ARTICLE_TABLE_STYLES.dataBody)}>
+      <td {...css(cellStyle)}>
+        <TitleCell
+          category={categories.get(article.categoryId)}
+          article={article}
+          link={getLink('new')}
+        />
+      </td>
+      <CountsInfo counts={article} cellStyle={cellStyle} getLink={getLink}/>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}>
+        <MagicTimestamp timestamp={article.updatedAt} inFuture={false}/>
+      </td>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}>
+        {lastModerated}
+      </td>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
+        <div {...css({display: 'inline-block'})}>
+          <ArticleControlIcon
+            article={article}
+            open={selectedArticle && selectedArticle === article.id}
+            clearPopups={props.clearPopups}
+            openControls={props.openControls}
+            saveControls={props.saveControls}
+          />
+        </div>
+      </td>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
+        {targetId && (
+          <ModeratorsWidget
+            users={users}
+            moderatorIds={moderatorIds}
+            superModeratorIds={superModeratorIds}
+            openSetModerators={openSetModerators}
+          />
+        )}
+      </td>
+    </tr>
+  );
+}
+
+interface ISummaryRowProps extends IRowActions {
+  summary: IArticleModel;
+}
+
+function SummaryRow(props: ISummaryRowProps) {
+  const {summary} = props;
+  const categories = useSelector(getCategoryMap);
+  const users = useSelector(getUsers);
+  const category = categories.get(summary.categoryId);
+
+  function getLink(disposition: string) {
+    const categoryId = category ? category.id : 'all';
+    if (disposition === 'new') {
+      return newCommentsPageLink({context: categoryBase, contextId: categoryId, tag: NEW_COMMENTS_DEFAULT_TAG});
+    }
+    return moderatedCommentsPageLink({context: categoryBase, contextId: categoryId, disposition});
+  }
+
+  const targetId = category?.id;
+  const moderatorIds = category?.assignedModerators;
+
+  function openSetModerators() {
+    props.openSetModerators(targetId, moderatorIds, null, true);
+  }
+
+  const cellStyle = ARTICLE_TABLE_STYLES.summaryCell;
+
+  return (
+    <tr {...css(cellStyle, ARTICLE_TABLE_STYLES.dataBody)}>
+      <td {...css(cellStyle)}>
+        <SimpleTitleCell article={summary} link={getLink('new')}/>
+      </td>
+      <CountsInfo counts={summary} cellStyle={cellStyle} getLink={getLink}/>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}/>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}/>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
+        <div {...css({display: 'inline-block'})}/>
+      </td>
+      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
+        {targetId && (
+          <ModeratorsWidget
+            users={users}
+            moderatorIds={moderatorIds}
+            superModeratorIds={null}
+            openSetModerators={openSetModerators}
+          />
+        )}
+      </td>
+    </tr>
+  );
+}
+
 export interface IArticleTableProps extends RouteComponentProps<IDashboardPathParams> {
-  myUserId: string;
   categories: Map<ModelId, ICategoryModel>;
   selectedCategory: ICategoryModel;
   articles: Array<IArticleModel>;
   articleMap: Map<ModelId, IArticleModel>;
   users: IMap<ModelId, IUserModel>;
 }
-
-const POPUP_MODERATORS = 'moderators';
-const POPUP_CONTROLS = 'controls';
-const POPUP_FILTERS = 'filters';
-const POPUP_SAVING = 'saving';
 
 export interface IArticleTableState {
   articlesContainerHeight: number;
@@ -159,7 +343,7 @@ function calculateSummaryCounts(articles: Array<IArticleModel>) {
     'highlightedCount',
     'flaggedCount',
   ];
-  const summary: any =  {};
+  const summary: Partial<IArticleAttributes> & {[key: string]: number} =  {};
   for (const i of columns) {
     summary['count'] = 0;
     summary[i] = 0;
@@ -186,7 +370,6 @@ function filterArticles(
 
   return props.articles.filter(executeFilter(filter,
     {
-      myId: props.myUserId,
       categories: props.categories,
     }));
 }
@@ -217,7 +400,7 @@ function processArticles(
 
   return {
     processedArticles: processedArticles.map((a) => a.id),
-    summary,
+    summary: summary as IArticleModel,
   };
 }
 
@@ -353,7 +536,6 @@ export class PureArticleTable extends React.Component<IArticleTableProps, IArtic
         open={this.state.popupToShow === POPUP_FILTERS}
         filterString={this.state.filterString}
         filter={this.state.filter}
-        myUserId={this.props.myUserId}
         users={this.props.users.valueSeq()}
         setFilter={setFilter}
         clearPopups={this.clearPopups}
@@ -380,18 +562,6 @@ export class PureArticleTable extends React.Component<IArticleTableProps, IArtic
         numberToShow: this.state.numberToShow + this._numberOnScreen,
       });
     }
-  }
-
-  @autobind
-  renderModerators(targetId: ModelId, moderatorIds: Array<ModelId>, superModeratorIds: Array<ModelId>, isCategory: boolean) {
-    return (
-      <ModeratorsWidget
-        users={this.props.users}
-        moderatorIds={moderatorIds}
-        superModeratorIds={superModeratorIds}
-        openSetModerators={partial(this.openSetModerators, targetId, moderatorIds, superModeratorIds, isCategory)}
-      />
-    );
   }
 
   @autobind
@@ -460,115 +630,30 @@ export class PureArticleTable extends React.Component<IArticleTableProps, IArtic
     );
   }
 
-  static renderTime(time: string | null) {
-    if (!time) {
-      return 'Never';
+  renderRow(index: number) {
+    if (index === -1) {
+      return (
+        <SummaryRow
+          key={'summary'}
+          summary={this.state.summary}
+          clearPopups={this.clearPopups}
+          openControls={this.openControls}
+          saveControls={this.saveControls}
+          openSetModerators={this.openSetModerators}
+        />
+      );
     }
-    return <MagicTimestamp timestamp={time} inFuture={false}/>;
-  }
-
-  renderRow(article: IArticleModel, isSummary: boolean) {
-    const lastModerated: any = (!isSummary) ? PureArticleTable.renderTime(article.lastModeratedAt) : '';
-    const category = this.props.categories.get(article.categoryId);
-    function getLink(disposition: string) {
-      if (disposition === 'new') {
-        return newCommentsPageLink({
-          context: isSummary ? categoryBase : articleBase,
-          contextId: isSummary ? (category ? category.id : 'all') : article.id,
-          tag: NEW_COMMENTS_DEFAULT_TAG,
-        });
-      }
-      return moderatedCommentsPageLink({
-        context: isSummary ? categoryBase : articleBase,
-        contextId: isSummary ? (category ? category.id : 'all') : article.id,
-        disposition,
-      });
-    }
-
-    let targetId: ModelId | null = null;
-    let moderatorIds: Array<ModelId> | null = null;
-    let superModeratorIds: Array<ModelId> | null = null;
-    if (isSummary) {
-      if (category) {
-        targetId = article.categoryId;
-        moderatorIds = category.assignedModerators;
-      }
-    }
-    else {
-      targetId = article.id;
-      moderatorIds = article.assignedModerators;
-      if (category) {
-        superModeratorIds = category.assignedModerators;
-      }
-    }
-
-    const cellStyle = isSummary ? ARTICLE_TABLE_STYLES.summaryCell : ARTICLE_TABLE_STYLES.dataCell;
-
+    const article = this.props.articleMap.get(this.state.processedArticles[index]);
     return (
-      <tr key={article.id} {...css(cellStyle, ARTICLE_TABLE_STYLES.dataBody)}>
-        <td {...css(cellStyle)}>
-          {isSummary ?
-            <SimpleTitleCell article={article} link={getLink('new')}/>
-            :
-            <TitleCell
-              category={this.props.categories.get(article.categoryId)}
-              article={article}
-              link={getLink('new')}
-            />
-          }
-        </td>
-        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={getLink('new')} {...css(COMMON_STYLES.cellLink)}>
-            {article.unmoderatedCount}
-          </Link>
-        </td>
-        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={getLink('approved')} {...css(COMMON_STYLES.cellLink)}>
-            {article.approvedCount}
-          </Link>
-        </td>
-        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={getLink('rejected')} {...css(COMMON_STYLES.cellLink)}>
-            {article.rejectedCount}
-          </Link>
-        </td>
-        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={getLink('deferred')} {...css(COMMON_STYLES.cellLink)}>
-            {article.deferredCount}
-          </Link>
-        </td>
-        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={getLink('highlighted')} {...css(COMMON_STYLES.cellLink)}>
-            {article.highlightedCount}
-          </Link>
-        </td>
-        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
-          <Link to={getLink('flagged')} {...css(COMMON_STYLES.cellLink)}>
-            {article.flaggedCount}
-          </Link>
-        </td>
-        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}>
-          {!isSummary && <MagicTimestamp timestamp={article.updatedAt} inFuture={false}/>}
-        </td>
-        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}>
-          {lastModerated}
-        </td>
-        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
-          <div {...css({display: 'inline-block'})}>
-            {!isSummary &&
-            <ArticleControlIcon
-              article={article}
-              open={this.state.selectedArticle && this.state.selectedArticle.id === article.id}
-              clearPopups={this.clearPopups}
-              openControls={this.openControls}
-              saveControls={this.saveControls}
-            />}
-          </div>
-        </td>
-        <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
-          {targetId && this.renderModerators(targetId, moderatorIds, superModeratorIds, isSummary)}
-        </td>
-      </tr>
+      <ArticleRow
+        key={article.id}
+        article={article}
+        selectedArticle={this.state.selectedArticle?.id}
+        clearPopups={this.clearPopups}
+        openControls={this.openControls}
+        saveControls={this.saveControls}
+        openSetModerators={this.openSetModerators}
+      />
     );
   }
 
@@ -576,8 +661,6 @@ export class PureArticleTable extends React.Component<IArticleTableProps, IArtic
     const {
       filter,
       sort,
-      summary,
-      processedArticles,
       numberToShow,
     } = this.state;
 
@@ -684,8 +767,8 @@ export class PureArticleTable extends React.Component<IArticleTableProps, IArtic
           >
             <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
               <tbody>
-                {this.renderRow(summary, true)}
-                {processedArticles.slice(0, numberToShow).map((id: ModelId) => this.renderRow(this.props.articleMap.get(id), false))}
+                {range(-1, Math.min(numberToShow, this.state.processedArticles.length))
+                  .map((i: number) => this.renderRow(i))}
               </tbody>
             </table>
           </PerfectScrollbar>
@@ -699,7 +782,6 @@ export class PureArticleTable extends React.Component<IArticleTableProps, IArtic
 }
 
 const baseSelector = createStructuredSelector({
-  myUserId: getMyUserId,
   categories: getCategoryMap,
   selectedCategory: (state: IAppState, { match: { params }}: IArticleTableProps) => {
     const m = /category=(\d+)/.exec(params.filter);
