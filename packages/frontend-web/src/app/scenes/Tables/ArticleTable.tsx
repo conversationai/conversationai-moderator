@@ -14,12 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { Map as IMap, Set } from 'immutable';
-import keyboardJS from 'keyboardjs';
 import { range } from 'lodash';
-import React from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { connect, useSelector } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -48,7 +46,7 @@ import {
   SCRIM_STYLE,
 } from '../../styles';
 import { COMMON_STYLES, medium } from '../../stylesx';
-import { css, IPossibleStyle, stylesheet } from '../../utilx';
+import { css, IPossibleStyle, stylesheet, useBindEscape } from '../../utilx';
 import {
   articleBase,
   categoryBase,
@@ -190,7 +188,7 @@ function ArticleRow(props: IArticleRowProps) {
   }
 
   const targetId = article.id;
-  const  moderatorIds = article.assignedModerators;
+  const moderatorIds = article.assignedModerators;
   const superModeratorIds = category?.assignedModerators;
 
   function openSetModerators() {
@@ -300,40 +298,6 @@ export interface IArticleTableProps extends RouteComponentProps<IDashboardPathPa
   users: IMap<ModelId, IUserModel>;
 }
 
-export interface IArticleTableState {
-  articlesContainerHeight: number;
-  articlesTableHeight: number;
-  numberToShow: number;
-  filterString: string;
-  filter: Array<IFilterItem>;
-  sortString: string;
-  sort: Array<string>;
-  summary: IArticleModel;
-  processedArticles: Array<ModelId>;
-
-  popupToShow?: string;
-
-  // Fields used by article control popup
-  selectedArticle?: IArticleModel;
-
-  // Fields used by set moderators popup
-  targetIsCategory?: boolean;
-  targetId?: ModelId;
-  moderatorIds?: Set<ModelId>;
-  superModeratorIds?: Set<ModelId>;
-}
-
-const clearPopupsState: Pick<IArticleTableState,
-  'popupToShow' | 'selectedArticle' | 'targetIsCategory' | 'targetId' | 'moderatorIds' | 'superModeratorIds'
-  > = {
-  popupToShow: null,
-  selectedArticle: null,
-  targetIsCategory: null,
-  targetId: null,
-  moderatorIds: null,
-  superModeratorIds: null,
-};
-
 function calculateSummaryCounts(articles: Array<IArticleModel>) {
   const columns = [
     'unmoderatedCount',
@@ -360,29 +324,39 @@ function calculateSummaryCounts(articles: Array<IArticleModel>) {
   return summary;
 }
 
-function filterArticles(
-  props: Readonly<IArticleTableProps>,
-  filter: Array<IFilterItem>,
-): Array<IArticleModel> {
-  if (filter.length === 0) {
-    return props.articles;
-  }
-
-  return props.articles.filter(executeFilter(filter,
-    {
-      categories: props.categories,
-    }));
+function sortArticles(articles: Array<IArticleModel>, sort: Array<string>) {
+  const sortFn = (sort.length > 0) ? executeSort(sort) : executeSort([`+${SORT_NEW}`]);
+  return articles.sort(sortFn);
 }
 
-function processArticles(
-  props: Readonly<IArticleTableProps>,
+function filterArticles(
+  articles: Array<IArticleModel>,
   filter: Array<IFilterItem>,
-  sort: Array<string>) {
+  categories: Map<ModelId, ICategoryModel>,
+): Array<IArticleModel> {
+  if (filter.length === 0) {
+    return articles;
+  }
 
-  const filteredArticles = filterArticles(props, filter);
-  const summary = calculateSummaryCounts(filteredArticles);
-  const sortFn = (sort.length > 0) ? executeSort(sort) : executeSort([`+${SORT_NEW}`]);
-  const processedArticles = filteredArticles.sort(sortFn);
+  return articles.filter(executeFilter(filter, {categories}));
+}
+
+function PureArticleTable(props: IArticleTableProps) {
+  const articlesContainerHeight = window.innerHeight - HEADER_HEIGHT * 2;
+  const numberOnScreen = Math.ceil((articlesContainerHeight - HEADER_HEIGHT) / CELL_HEIGHT);
+  const [numberToShow, setNumberToShow] = useState(numberOnScreen * 2);
+  const scrollBarRef = useRef<PerfectScrollbar>();
+
+  const filterString = props.match.params.filter || NOT_SET;
+  const sortString = props.match.params.sort || NOT_SET;
+  const filter = useMemo(() => parseFilter(filterString), [filterString]);
+  const sort = useMemo(() => parseSort(sortString), [sortString]);
+  const sortedArticles = useMemo(() => sortArticles(props.articles, sort), [props.articles, sort]);
+  const filteredArticles = useMemo(
+    () => filterArticles(sortedArticles, filter, props.categories),
+    [sortedArticles, filter, props.categories],
+  );
+  const summary = useMemo(() => calculateSummaryCounts(filteredArticles), [filteredArticles]);
 
   // Use users map from store
   const count = summary['count'];
@@ -398,204 +372,109 @@ function processArticles(
     summary['title'] += ' matching filter';
   }
 
-  return {
-    processedArticles: processedArticles.map((a) => a.id),
-    summary: summary as IArticleModel,
-  };
-}
+  const [popupToShow, setPopupToShow] = useState<string>(null);
+  const [selectedArticle, setSelectedArticle] = useState<IArticleModel>(null);
 
-function updateArticles(state: IArticleTableState, props: IArticleTableProps, filter: Array<IFilterItem>) {
-  const filteredArticles = filterArticles(props, filter);
-  const summary = calculateSummaryCounts(filteredArticles);
-  const newSummary = {
-    ...state.summary,
-    ...summary,
-  };
+  const [targetIsCategory, setTargetIsCategory] = useState<boolean>(null);
+  const [targetId, setTargetId] = useState<ModelId>(null);
+  const [moderatorIds, setModeratorIds] = useState<Set<ModelId>>(null);
+  const [superModeratorIds, setSuperModeratorIds] = useState<Set<ModelId>>(null);
 
-  return {
-    summary: newSummary,
-  };
-}
+  const currentFilter = getFilterString(filter);
+  const currentSort = getSortString(sort);
 
-export class PureArticleTable extends React.Component<IArticleTableProps, IArticleTableState> {
-  constructor(props: Readonly<IArticleTableProps>) {
-    super(props);
-    const {filter: filterString, sort: sortString} = props.match.params;
-    const filter: Array<IFilterItem> = parseFilter(filterString);
-    const sort: Array<string> = parseSort(sortString);
-    const articlesContainerHeight = window.innerHeight - HEADER_HEIGHT * 2;
-    this._numberOnScreen = Math.ceil((articlesContainerHeight - HEADER_HEIGHT) / CELL_HEIGHT);
-
-    this.state = {
-      filterString: filterString || NOT_SET,
-      sortString: sortString || NOT_SET,
-      filter,
-      sort,
-      articlesTableHeight: 0,
-      articlesContainerHeight,
-      numberToShow: this._numberOnScreen * 2,
-      ...processArticles(props, filter, sort),
-    };
+  function clearPopups() {
+    setPopupToShow(null);
+    setSelectedArticle(null);
+    setTargetIsCategory(null);
+    setTargetId(null);
+    setModeratorIds(null);
+    setSuperModeratorIds(null);
   }
 
-  _numberOnScreen = 0;
-  _scrollBarRef: PerfectScrollbar = null;
+  useBindEscape(clearPopups);
 
-  componentWillReceiveProps(props: Readonly<IArticleTableProps>): void {
-    let filter: Array<IFilterItem> = this.state.filter;
-    let sort: Array<string> = this.state.sort;
-    let redoArticles = false;
-    let filterUpdated = false;
-    let sortUpdated = false;
-    const {filter: filterString, sort: sortString} = props.match.params;
-
-    const newState: any = {};
-
-    if (this.state.filterString !== filterString) {
-      filterUpdated = true;
-    }
-    if (this.state.sortString !== sortString) {
-      sortUpdated = true;
-    }
-
-    if (filterUpdated) {
-      filter = parseFilter(filterString);
-      newState['filterString'] = filterString || NOT_SET;
-      newState['filter'] = filter;
-      redoArticles = true;
-    }
-
-    if (sortUpdated) {
-      sort = parseSort(sortString);
-      newState['sortString'] = sortString || NOT_SET;
-      newState['sort'] = sort;
-      redoArticles = true;
-    }
-
-    if (redoArticles) {
-      newState['numberToShow'] = this._numberOnScreen * 2;
-      Object.assign(newState, processArticles(props, filter, sort));
-    }
-    else {
-      Object.assign(newState, updateArticles(this.state, props, filter));
-    }
-
-    this.setState(newState);
+  function openSetModerators(
+    iTargetId: ModelId,
+    iModeratorIds: Array<ModelId>,
+    iSuperModeratorIds: Array<ModelId>,
+    isCategory: boolean,
+  ) {
+    clearPopups();
+    setPopupToShow(POPUP_MODERATORS);
+    setTargetIsCategory(isCategory);
+    setTargetId(iTargetId);
+    setModeratorIds(Set<ModelId>(iModeratorIds));
+    setSuperModeratorIds(Set<ModelId>(iSuperModeratorIds));
   }
 
-  @autobind
-  openSetModerators(targetId: ModelId, moderatorIds: Array<ModelId>, superModeratorIds: Array<ModelId>, isCategory: boolean) {
-    this.setState({
-      ...clearPopupsState,
-      popupToShow: POPUP_MODERATORS,
-      targetIsCategory: isCategory,
-      targetId: targetId,
-      moderatorIds: Set<ModelId>(moderatorIds),
-      superModeratorIds: Set<ModelId>(superModeratorIds),
-    });
+  function openFilters() {
+    clearPopups();
+    setPopupToShow(POPUP_FILTERS);
   }
 
-  @autobind
-  openFilters() {
-    this.setState({
-      ...clearPopupsState,
-      popupToShow: POPUP_FILTERS,
-    });
+  function openControls(article: IArticleModel) {
+    setPopupToShow(POPUP_CONTROLS);
+    setSelectedArticle(article);
   }
 
-  @autobind
-  openControls(article: IArticleModel) {
-    this.setState({
-      ...clearPopupsState,
-      popupToShow: POPUP_CONTROLS,
-      selectedArticle: article,
-    });
-  }
-
-  @autobind
-  clearPopups() {
-    this.setState(clearPopupsState);
-  }
-
-  componentDidMount() {
-    keyboardJS.bind('escape', this.clearPopups);
-  }
-
-  componentWillUnmount() {
-    keyboardJS.unbind('escape', this.clearPopups);
-  }
-
-  renderFilterPopup(currentSort: string) {
-    const history = this.props.history;
+  function renderFilterPopup() {
+    const history = props.history;
     function setFilter(newFilter: Array<IFilterItem>) {
       history.push(dashboardLink({filter: getFilterString(newFilter), sort: currentSort}));
     }
 
     return (
       <FilterSidebar
-        open={this.state.popupToShow === POPUP_FILTERS}
-        filterString={this.state.filterString}
-        filter={this.state.filter}
-        users={this.props.users.valueSeq()}
+        open={popupToShow === POPUP_FILTERS}
+        filterString={filterString}
+        filter={filter}
+        users={props.users.valueSeq()}
         setFilter={setFilter}
-        clearPopups={this.clearPopups}
+        clearPopups={clearPopups}
       />
     );
   }
 
-  @autobind
-  saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean) {
-    const articleId = this.state.selectedArticle.id;
-    this.setState({
-      ...clearPopupsState,
-      popupToShow: POPUP_SAVING,
-    });
-
-    updateArticle(articleId, isCommentingEnabled, isAutoModerated)
-      .then(this.clearPopups);
+  async function saveControls(isCommentingEnabled: boolean, isAutoModerated: boolean) {
+    clearPopups();
+    setPopupToShow(POPUP_SAVING);
+    await updateArticle(selectedArticle.id, isCommentingEnabled, isAutoModerated);
+    clearPopups();
   }
 
-  @autobind
-  showMore() {
-    if (this.state.numberToShow < this.props.articles.length) {
-      this.setState({
-        numberToShow: this.state.numberToShow + this._numberOnScreen,
-      });
+  function showMore() {
+    if (numberToShow < props.articles.length) { // TODO: Not right?  Should be filtered articles
+      setNumberToShow(numberToShow + numberOnScreen);
     }
   }
 
-  @autobind
-  onAddModerator(userId: string) {
-    this.setState({moderatorIds: this.state.moderatorIds.add(userId)});
+  function onAddModerator(userId: string) {
+    setModeratorIds(moderatorIds.add(userId));
   }
 
-  @autobind
-  onRemoveModerator(userId: string) {
-    this.setState({moderatorIds: this.state.moderatorIds.remove(userId)});
+  function onRemoveModerator(userId: string) {
+    setModeratorIds(moderatorIds.remove(userId));
   }
 
-  @autobind
-  saveModerators() {
-    const moderatorIds = this.state.moderatorIds.toArray();
-    const targetIsCategory = this.state.targetIsCategory;
-    const targetId = this.state.targetId;
-    this.setState({
-      ...clearPopupsState,
-      popupToShow: POPUP_SAVING,
-    });
+  async function saveModerators() {
+    clearPopups();
+    setPopupToShow(POPUP_SAVING);
 
     if (targetIsCategory) {
-      updateCategoryModerators(targetId, moderatorIds).then(this.clearPopups);
+      await updateCategoryModerators(targetId, moderatorIds.toArray());
     }
     else {
-      updateArticleModerators(targetId, moderatorIds).then(this.clearPopups);
+      await updateArticleModerators(targetId, moderatorIds.toArray());
     }
+
+    clearPopups();
   }
 
-  renderSaving() {
-    if (this.state.popupToShow === POPUP_SAVING) {
+  function renderSaving() {
+    if (popupToShow === POPUP_SAVING) {
       return (
-        <Scrim isVisible onBackgroundClick={this.clearPopups} scrimStyles={STYLES.scrimPopup}>
+        <Scrim isVisible onBackgroundClick={clearPopups} scrimStyles={STYLES.scrimPopup}>
           <div tabIndex={0} {...css(SCRIM_STYLE.popup)}>
             Saving....
           </div>
@@ -606,23 +485,23 @@ export class PureArticleTable extends React.Component<IArticleTableProps, IArtic
     return null;
   }
 
-  renderSetModerators() {
-    if (this.state.popupToShow !== POPUP_MODERATORS) {
+  function renderSetModerators() {
+    if (popupToShow !== POPUP_MODERATORS) {
       return null;
     }
 
     return (
-      <Scrim isVisible onBackgroundClick={this.clearPopups} scrimStyles={STYLES.scrimPopup}>
+      <Scrim isVisible onBackgroundClick={clearPopups} scrimStyles={STYLES.scrimPopup}>
         <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}}>
           <div tabIndex={0} {...css(SCRIM_STYLE.popup, {position: 'relative'})}>
             <AssignModerators
-              label={this.state.targetIsCategory ? 'Assign a category moderator' : 'Assign a moderator'}
-              moderatorIds={this.state.moderatorIds}
-              superModeratorIds={this.state.superModeratorIds}
-              onAddModerator={this.onAddModerator}
-              onRemoveModerator={this.onRemoveModerator}
-              onClickDone={this.saveModerators}
-              onClickClose={this.clearPopups}
+              label={targetIsCategory ? 'Assign a category moderator' : 'Assign a moderator'}
+              moderatorIds={moderatorIds}
+              superModeratorIds={superModeratorIds}
+              onAddModerator={onAddModerator}
+              onRemoveModerator={onRemoveModerator}
+              onClickDone={saveModerators}
+              onClickClose={clearPopups}
             />
           </div>
         </FocusTrap>
@@ -630,155 +509,144 @@ export class PureArticleTable extends React.Component<IArticleTableProps, IArtic
     );
   }
 
-  renderRow(index: number) {
+  function renderRow(index: number) {
     if (index === -1) {
       return (
         <SummaryRow
           key={'summary'}
-          summary={this.state.summary}
-          clearPopups={this.clearPopups}
-          openControls={this.openControls}
-          saveControls={this.saveControls}
-          openSetModerators={this.openSetModerators}
+          summary={summary as IArticleModel}
+          clearPopups={clearPopups}
+          openControls={openControls}
+          saveControls={saveControls}
+          openSetModerators={openSetModerators}
         />
       );
     }
-    const article = this.props.articleMap.get(this.state.processedArticles[index]);
+
+    const article = filteredArticles[index];
     return (
       <ArticleRow
         key={article.id}
         article={article}
-        selectedArticle={this.state.selectedArticle?.id}
-        clearPopups={this.clearPopups}
-        openControls={this.openControls}
-        saveControls={this.saveControls}
-        openSetModerators={this.openSetModerators}
+        selectedArticle={selectedArticle?.id}
+        clearPopups={clearPopups}
+        openControls={openControls}
+        saveControls={saveControls}
+        openSetModerators={openSetModerators}
       />
     );
   }
 
-  render() {
-    const {
-      filter,
-      sort,
-      numberToShow,
-    } = this.state;
-
-    const currentFilter = getFilterString(filter);
-    const currentSort = getSortString(sort);
-
-    function renderDirectionIndicatorUp() {
-      return (
-        <div {...css({position: 'absolute', left: 0, right: 0, top: '-18px', textAlign: 'center'})}>
-          <icons.KeyUpIcon/>
-        </div>
-      );
-    }
-
-    function renderDirectionIndicatorDown() {
-      return (
-        <div {...css({position: 'absolute', left: 0, right: 0, bottom: '-18px', textAlign: 'center'})}>
-          <icons.KeyDownIcon/>
-        </div>
-      );
-    }
-
-    function renderHeaderItem(label: string | JSX.Element, sortField: string) {
-      let directionIndicator: string | JSX.Element = '';
-      let nextSortItem = `+${sortField}`;
-
-      for (const item of sort) {
-        if (item.endsWith(sortField)) {
-          if (item[0] === '+') {
-            directionIndicator = renderDirectionIndicatorDown();
-            nextSortItem =  `-${sortField}`;
-          }
-          else if (item[0] === '-') {
-            directionIndicator = renderDirectionIndicatorUp();
-            nextSortItem = '';
-          }
-          break;
-        }
-      }
-      // const newSort = sortString(updateSort(sort, nextSortItem)); implements multi sort
-      const newSort = getSortString([nextSortItem]);
-      return (
-        <Link to={dashboardLink({filter: currentFilter, sort: newSort})} {...css(COMMON_STYLES.cellLink)}>
-          <span {...css({position: 'relative'})}>
-            {label}
-            {directionIndicator}
-          </span>
-        </Link>
-      );
-    }
-
-    const filterActive = isFilterActive(this.state.filter);
+  function renderDirectionIndicatorUp() {
     return (
-      <div key="main" style={{height: '100%'}}>
-        <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
-          <thead {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
-            <tr>
-              <th key="title" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.textCell)}>
-                {renderHeaderItem('Title', SORT_TITLE)}
-              </th>
-              <th key="new" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-                {renderHeaderItem('New', SORT_NEW)}
-              </th>
-              <th key="approved" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-                {renderHeaderItem('Approved', SORT_APPROVED)}
-              </th>
-              <th key="rejected" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-                {renderHeaderItem('Rejected', SORT_REJECTED)}
-              </th>
-              <th key="deferred" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-                {renderHeaderItem('Deferred', SORT_DEFERRED)}
-              </th>
-              <th key="highlighted" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-                {renderHeaderItem('Highlighted', SORT_HIGHLIGHTED)}
-              </th>
-              <th key="flagged" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-                {renderHeaderItem('Flagged', SORT_FLAGGED)}
-              </th>
-              <th key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
-                {renderHeaderItem('Modified', SORT_UPDATED)}
-              </th>
-              <th key="moderated" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
-                {renderHeaderItem('Moderated', SORT_LAST_MODERATED)}
-              </th>
-              <th key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}/>
-              <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}>
-                <div {...css({width: '100%', height: '100%', ...flexCenter})}>
-                  <div
-                    {...css({width: '44px', height: '44px', borderRadius: '50%', ...flexCenter,
-                      backgroundColor: filterActive ? NICE_LIGHTEST_BLUE : NICE_MIDDLE_BLUE,
-                      color: filterActive ? NICE_MIDDLE_BLUE : NICE_LIGHTEST_BLUE})}
-                  >
-                    <icons.FilterIcon {...css(medium)} onClick={this.openFilters}/>
-                  </div>
-                </div>
-              </th>
-            </tr>
-          </thead>
-        </table>
-        <div style={{height: `${this.state.articlesContainerHeight}px`}}>
-          <PerfectScrollbar
-            ref={(ref) => { this._scrollBarRef = ref; }}
-            onYReachEnd={this.showMore}
-          >
-            <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
-              <tbody>
-                {range(-1, Math.min(numberToShow, this.state.processedArticles.length))
-                  .map((i: number) => this.renderRow(i))}
-              </tbody>
-            </table>
-          </PerfectScrollbar>
-        </div>
-        {this.renderFilterPopup(currentSort)}
-        {this.renderSaving()}
-        {this.renderSetModerators()}
+      <div {...css({position: 'absolute', left: 0, right: 0, top: '-18px', textAlign: 'center'})}>
+        <icons.KeyUpIcon/>
       </div>
     );
   }
+
+  function renderDirectionIndicatorDown() {
+    return (
+      <div {...css({position: 'absolute', left: 0, right: 0, bottom: '-18px', textAlign: 'center'})}>
+        <icons.KeyDownIcon/>
+      </div>
+    );
+  }
+
+  function renderHeaderItem(label: string | JSX.Element, sortField: string) {
+    let directionIndicator: string | JSX.Element = '';
+    let nextSortItem = `+${sortField}`;
+
+    for (const item of sort) {
+      if (item.endsWith(sortField)) {
+        if (item[0] === '+') {
+          directionIndicator = renderDirectionIndicatorDown();
+          nextSortItem =  `-${sortField}`;
+        }
+        else if (item[0] === '-') {
+          directionIndicator = renderDirectionIndicatorUp();
+          nextSortItem = '';
+        }
+        break;
+      }
+    }
+    // const newSort = sortString(updateSort(sort, nextSortItem)); implements multi sort
+    const newSort = getSortString([nextSortItem]);
+    return (
+      <Link to={dashboardLink({filter: currentFilter, sort: newSort})} {...css(COMMON_STYLES.cellLink)}>
+        <span {...css({position: 'relative'})}>
+          {label}
+          {directionIndicator}
+        </span>
+      </Link>
+    );
+  }
+
+  const filterActive = isFilterActive(filter);
+  return (
+    <div key="main" style={{height: '100%'}}>
+      <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
+        <thead {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
+          <tr>
+            <th key="title" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.textCell)}>
+              {renderHeaderItem('Title', SORT_TITLE)}
+            </th>
+            <th key="new" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+              {renderHeaderItem('New', SORT_NEW)}
+            </th>
+            <th key="approved" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+              {renderHeaderItem('Approved', SORT_APPROVED)}
+            </th>
+            <th key="rejected" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+              {renderHeaderItem('Rejected', SORT_REJECTED)}
+            </th>
+            <th key="deferred" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+              {renderHeaderItem('Deferred', SORT_DEFERRED)}
+            </th>
+            <th key="highlighted" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+              {renderHeaderItem('Highlighted', SORT_HIGHLIGHTED)}
+            </th>
+            <th key="flagged" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+              {renderHeaderItem('Flagged', SORT_FLAGGED)}
+            </th>
+            <th key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
+              {renderHeaderItem('Modified', SORT_UPDATED)}
+            </th>
+            <th key="moderated" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
+              {renderHeaderItem('Moderated', SORT_LAST_MODERATED)}
+            </th>
+            <th key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}/>
+            <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}>
+              <div {...css({width: '100%', height: '100%', ...flexCenter})}>
+                <div
+                  {...css({width: '44px', height: '44px', borderRadius: '50%', ...flexCenter,
+                    backgroundColor: filterActive ? NICE_LIGHTEST_BLUE : NICE_MIDDLE_BLUE,
+                    color: filterActive ? NICE_MIDDLE_BLUE : NICE_LIGHTEST_BLUE})}
+                >
+                  <icons.FilterIcon {...css(medium)} onClick={openFilters}/>
+                </div>
+              </div>
+            </th>
+          </tr>
+        </thead>
+      </table>
+      <div style={{height: `${articlesContainerHeight}px`}}>
+        <PerfectScrollbar
+          ref={scrollBarRef}
+          onYReachEnd={showMore}
+        >
+          <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
+            <tbody>
+              {range(-1, Math.min(numberToShow, filteredArticles.length)).map((i) => renderRow(i))}
+            </tbody>
+          </table>
+        </PerfectScrollbar>
+      </div>
+      {renderFilterPopup()}
+      {renderSaving()}
+      {renderSetModerators()}
+    </div>
+  );
 }
 
 const baseSelector = createStructuredSelector({
