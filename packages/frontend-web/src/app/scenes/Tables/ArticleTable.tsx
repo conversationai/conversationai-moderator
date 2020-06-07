@@ -16,12 +16,12 @@ limitations under the License.
 
 import FocusTrap from 'focus-trap-react';
 import { Map as IMap, Set } from 'immutable';
-import { range } from 'lodash';
-import React, {useMemo, useRef, useState} from 'react';
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import React, {useMemo, useState} from 'react';
 import { connect, useSelector } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { VariableSizeList } from 'react-window';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 
@@ -345,9 +345,6 @@ function filterArticles(
 
 function PureArticleTable(props: IArticleTableProps) {
   const articlesContainerHeight = window.innerHeight - HEADER_HEIGHT * 2;
-  const numberOnScreen = Math.ceil((articlesContainerHeight - HEADER_HEIGHT) / CELL_HEIGHT);
-  const [numberToShow, setNumberToShow] = useState(numberOnScreen * 2);
-  const scrollBarRef = useRef<PerfectScrollbar>();
 
   const filterString = props.match.params.filter || NOT_SET;
   const sortString = props.match.params.sort || NOT_SET;
@@ -428,6 +425,7 @@ function PureArticleTable(props: IArticleTableProps) {
 
     return (
       <FilterSidebar
+        key="filter-sidebar"
         open={popupToShow === POPUP_FILTERS}
         filterString={filterString}
         filter={filter}
@@ -443,12 +441,6 @@ function PureArticleTable(props: IArticleTableProps) {
     setPopupToShow(POPUP_SAVING);
     await updateArticle(selectedArticle.id, isCommentingEnabled, isAutoModerated);
     clearPopups();
-  }
-
-  function showMore() {
-    if (numberToShow < props.articles.length) { // TODO: Not right?  Should be filtered articles
-      setNumberToShow(numberToShow + numberOnScreen);
-    }
   }
 
   function onAddModerator(userId: string) {
@@ -476,7 +468,7 @@ function PureArticleTable(props: IArticleTableProps) {
   function renderSaving() {
     if (popupToShow === POPUP_SAVING) {
       return (
-        <Scrim isVisible onBackgroundClick={clearPopups} scrimStyles={STYLES.scrimPopup}>
+        <Scrim key="saving" isVisible onBackgroundClick={clearPopups} scrimStyles={STYLES.scrimPopup}>
           <div tabIndex={0} {...css(SCRIM_STYLE.popup)}>
             Saving....
           </div>
@@ -493,7 +485,7 @@ function PureArticleTable(props: IArticleTableProps) {
     }
 
     return (
-      <Scrim isVisible onBackgroundClick={clearPopups} scrimStyles={STYLES.scrimPopup}>
+      <Scrim key="set-moderators" isVisible onBackgroundClick={clearPopups} scrimStyles={STYLES.scrimPopup}>
         <FocusTrap focusTrapOptions={{clickOutsideDeactivates: true}}>
           <div tabIndex={0} {...css(SCRIM_STYLE.popup, {position: 'relative'})}>
             <AssignModerators
@@ -511,31 +503,40 @@ function PureArticleTable(props: IArticleTableProps) {
     );
   }
 
-  function renderRow(index: number) {
-    if (index === -1) {
+  function rowHeight(index: number) {
+    if (index === 0) {
+      return HEADER_HEIGHT;
+    }
+    return CELL_HEIGHT;
+  }
+
+  function renderRow(index: number, style: any) {
+    if (index === 0) {
       return (
-        <SummaryRow
-          key={'summary'}
-          summary={summary as IArticleModel}
+        <div key={'summary'} style={style}>
+          <SummaryRow
+            summary={summary as IArticleModel}
+            clearPopups={clearPopups}
+            openControls={openControls}
+            saveControls={saveControls}
+            openSetModerators={openSetModerators}
+          />
+        </div>
+      );
+    }
+
+    const article = filteredArticles[index - 1];
+    return (
+      <div key={index} style={style}>
+        <ArticleRow
+          article={article}
+          selectedArticle={selectedArticle?.id}
           clearPopups={clearPopups}
           openControls={openControls}
           saveControls={saveControls}
           openSetModerators={openSetModerators}
         />
-      );
-    }
-
-    const article = filteredArticles[index];
-    return (
-      <ArticleRow
-        key={article.id}
-        article={article}
-        selectedArticle={selectedArticle?.id}
-        clearPopups={clearPopups}
-        openControls={openControls}
-        saveControls={saveControls}
-        openSetModerators={openSetModerators}
-      />
+      </div>
     );
   }
 
@@ -587,7 +588,7 @@ function PureArticleTable(props: IArticleTableProps) {
   const filterActive = isFilterActive(filter);
   return (
     <div key="main">
-      <div {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
+      <div key="header" {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
         <div key="title" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.textCell)}>
           {renderHeaderItem('Title', SORT_TITLE)}
         </div>
@@ -628,15 +629,22 @@ function PureArticleTable(props: IArticleTableProps) {
           </div>
         </div>
       </div>
-      <div style={{height: `${articlesContainerHeight}px`}}>
-        <PerfectScrollbar
-          ref={scrollBarRef}
-          onYReachEnd={showMore}
-        >
-          <div>
-            {range(-1, Math.min(numberToShow, filteredArticles.length)).map((i) => renderRow(i))}
-          </div>
-        </PerfectScrollbar>
+      <div key="content" style={{height: `${articlesContainerHeight}px`, backgroundColor: 'white'}}>
+        <AutoSizer>
+          {({width, height}) => (
+            <VariableSizeList
+              itemSize={rowHeight}
+              itemCount={filteredArticles.length + 1}
+              height={height}
+              width={width}
+              overscanCount={10}
+            >
+              {({index, style}) => (
+                renderRow(index, style)
+              )}
+            </VariableSizeList>
+          )}
+        </AutoSizer>
       </div>
       {renderFilterPopup()}
       {renderSaving()}
