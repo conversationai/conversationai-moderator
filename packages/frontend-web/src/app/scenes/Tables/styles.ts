@@ -26,31 +26,38 @@ import { stylesheet } from '../../utilx';
 export const CELL_HEIGHT = 96;
 
 export const ARTICLE_TABLE_STYLES = stylesheet({
-  dataTable: {
-    borderSpacing: 0,
-    width: '100%',
-  },
   dataHeader: {
     color: 'rgba(255,255,255,0.54)',
     backgroundColor: NICE_MIDDLE_BLUE,
     fontSize: '12px',
     fontWeight: 500,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
+
   dataBody: {
     background: 'white',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'right',
   },
   headerCell: {
     height: `${HEADER_HEIGHT}px`,
+    lineHeight: `${HEADER_HEIGHT}px`,
   },
   dataCell: {
     borderBottom: '1px solid rgba(38,50,56,0.12)',
     height: `${CELL_HEIGHT}px`,
+    lineHeight: `${CELL_HEIGHT}px`,
     fontSize: '14px',
     fontWeight: '500',
   },
   summaryCell: {
     borderBottom: '1px solid rgba(38,50,56,0.12)',
     height: `${HEADER_HEIGHT}px`,
+    lineHeight: `${HEADER_HEIGHT}px`,
     fontSize: '14px',
     fontWeight: '500',
     backgroundColor: '#FAFAFA',
@@ -58,11 +65,21 @@ export const ARTICLE_TABLE_STYLES = stylesheet({
   iconCell: {
     width: `${HEADER_HEIGHT}px`,
     minHeight: `${HEADER_HEIGHT}px`,
-    textAlign: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textCell: {
     textAlign: 'left',
     paddingLeft: '10px',
+    paddingRight: '20px',
+    flexGrow: '1',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    lineHeight: 'initial',
+    paddingTop: '20px',
+    paddingBottom: '15px',
   },
   numberCell: {
     textAlign: 'right',
