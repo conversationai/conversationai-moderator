@@ -56,7 +56,7 @@ import {
   NEW_COMMENTS_DEFAULT_TAG,
   newCommentsPageLink,
 } from '../routes';
-import { ModeratorsWidget, SimpleTitleCell, TitleCell } from './components';
+import { ModeratorsWidget, TITLE_CELL_STYLES, TitleCell } from './components';
 import { FilterSidebar } from './FilterSidebar';
 import { ARTICLE_TABLE_STYLES, CELL_HEIGHT } from './styles';
 import {
@@ -122,36 +122,36 @@ function CountsInfo(props: ICountsInfoProps) {
 
   return (
     <>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
         <Link to={getLink('new')} {...css(COMMON_STYLES.cellLink)}>
           {counts.unmoderatedCount}
         </Link>
-      </td>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+      </div>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
         <Link to={getLink('approved')} {...css(COMMON_STYLES.cellLink)}>
           {counts.approvedCount}
         </Link>
-      </td>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+      </div>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
         <Link to={getLink('rejected')} {...css(COMMON_STYLES.cellLink)}>
           {counts.rejectedCount}
         </Link>
-      </td>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+      </div>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
         <Link to={getLink('deferred')} {...css(COMMON_STYLES.cellLink)}>
           {counts.deferredCount}
         </Link>
-      </td>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+      </div>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
         <Link to={getLink('highlighted')} {...css(COMMON_STYLES.cellLink)}>
           {counts.highlightedCount}
         </Link>
-      </td>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
+      </div>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.numberCell)}>
         <Link to={getLink('flagged')} {...css(COMMON_STYLES.cellLink)}>
           {counts.flaggedCount}
         </Link>
-      </td>
+      </div>
     </>
   );
 }
@@ -198,22 +198,22 @@ function ArticleRow(props: IArticleRowProps) {
   const cellStyle = ARTICLE_TABLE_STYLES.dataCell;
 
   return (
-    <tr {...css(cellStyle, ARTICLE_TABLE_STYLES.dataBody)}>
-      <td {...css(cellStyle)}>
+    <div {...css(cellStyle, ARTICLE_TABLE_STYLES.dataBody)}>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.textCell)}>
         <TitleCell
           category={categories.get(article.categoryId)}
           article={article}
           link={getLink('new')}
         />
-      </td>
+      </div>
       <CountsInfo counts={article} cellStyle={cellStyle} getLink={getLink}/>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}>
         <MagicTimestamp timestamp={article.updatedAt} inFuture={false}/>
-      </td>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}>
+      </div>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}>
         {lastModerated}
-      </td>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
+      </div>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
         <div {...css({display: 'inline-block'})}>
           <ArticleControlIcon
             article={article}
@@ -223,8 +223,8 @@ function ArticleRow(props: IArticleRowProps) {
             saveControls={props.saveControls}
           />
         </div>
-      </td>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
+      </div>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
         {targetId && (
           <ModeratorsWidget
             users={users}
@@ -233,8 +233,8 @@ function ArticleRow(props: IArticleRowProps) {
             openSetModerators={openSetModerators}
           />
         )}
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 }
 
@@ -266,17 +266,19 @@ function SummaryRow(props: ISummaryRowProps) {
   const cellStyle = ARTICLE_TABLE_STYLES.summaryCell;
 
   return (
-    <tr {...css(cellStyle, ARTICLE_TABLE_STYLES.dataBody)}>
-      <td {...css(cellStyle)}>
-        <SimpleTitleCell article={summary} link={getLink('new')}/>
-      </td>
+    <div {...css(cellStyle, ARTICLE_TABLE_STYLES.dataBody)}>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.textCell)}>
+        <Link to={getLink('new')} {...css(COMMON_STYLES.cellLink, TITLE_CELL_STYLES.mainTextText)}>
+          {summary.title}
+        </Link>
+      </div>
       <CountsInfo counts={summary} cellStyle={cellStyle} getLink={getLink}/>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}/>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}/>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}/>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.timeCell)}/>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
         <div {...css({display: 'inline-block'})}/>
-      </td>
-      <td {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
+      </div>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.iconCell)}>
         {targetId && (
           <ModeratorsWidget
             users={users}
@@ -285,8 +287,8 @@ function SummaryRow(props: ISummaryRowProps) {
             openSetModerators={openSetModerators}
           />
         )}
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 }
 
@@ -584,62 +586,56 @@ function PureArticleTable(props: IArticleTableProps) {
 
   const filterActive = isFilterActive(filter);
   return (
-    <div key="main" style={{height: '100%'}}>
-      <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
-        <thead {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
-          <tr>
-            <th key="title" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.textCell)}>
-              {renderHeaderItem('Title', SORT_TITLE)}
-            </th>
-            <th key="new" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-              {renderHeaderItem('New', SORT_NEW)}
-            </th>
-            <th key="approved" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-              {renderHeaderItem('Approved', SORT_APPROVED)}
-            </th>
-            <th key="rejected" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-              {renderHeaderItem('Rejected', SORT_REJECTED)}
-            </th>
-            <th key="deferred" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-              {renderHeaderItem('Deferred', SORT_DEFERRED)}
-            </th>
-            <th key="highlighted" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-              {renderHeaderItem('Highlighted', SORT_HIGHLIGHTED)}
-            </th>
-            <th key="flagged" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-              {renderHeaderItem('Flagged', SORT_FLAGGED)}
-            </th>
-            <th key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
-              {renderHeaderItem('Modified', SORT_UPDATED)}
-            </th>
-            <th key="moderated" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
-              {renderHeaderItem('Moderated', SORT_LAST_MODERATED)}
-            </th>
-            <th key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}/>
-            <th key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}>
-              <div {...css({width: '100%', height: '100%', ...flexCenter})}>
-                <div
-                  {...css({width: '44px', height: '44px', borderRadius: '50%', ...flexCenter,
-                    backgroundColor: filterActive ? NICE_LIGHTEST_BLUE : NICE_MIDDLE_BLUE,
-                    color: filterActive ? NICE_MIDDLE_BLUE : NICE_LIGHTEST_BLUE})}
-                >
-                  <icons.FilterIcon {...css(medium)} onClick={openFilters}/>
-                </div>
-              </div>
-            </th>
-          </tr>
-        </thead>
-      </table>
+    <div key="main">
+      <div {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
+        <div key="title" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.textCell)}>
+          {renderHeaderItem('Title', SORT_TITLE)}
+        </div>
+        <div key="new" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          {renderHeaderItem('New', SORT_NEW)}
+        </div>
+        <div key="approved" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          {renderHeaderItem('Approved', SORT_APPROVED)}
+        </div>
+        <div key="rejected" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          {renderHeaderItem('Rejected', SORT_REJECTED)}
+        </div>
+        <div key="deferred" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          {renderHeaderItem('Deferred', SORT_DEFERRED)}
+        </div>
+        <div key="highlighted" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          {renderHeaderItem('Highlighted', SORT_HIGHLIGHTED)}
+        </div>
+        <div key="flagged" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
+          {renderHeaderItem('Flagged', SORT_FLAGGED)}
+        </div>
+        <div key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
+          {renderHeaderItem('Modified', SORT_UPDATED)}
+        </div>
+        <div key="moderated" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
+          {renderHeaderItem('Moderated', SORT_LAST_MODERATED)}
+        </div>
+        <div key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}/>
+        <div key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}>
+          <div {...css({width: '100%', height: '100%', ...flexCenter})}>
+            <div
+              {...css({width: '44px', height: '44px', borderRadius: '50%', ...flexCenter,
+                backgroundColor: filterActive ? NICE_LIGHTEST_BLUE : NICE_MIDDLE_BLUE,
+                color: filterActive ? NICE_MIDDLE_BLUE : NICE_LIGHTEST_BLUE})}
+            >
+              <icons.FilterIcon {...css(medium)} onClick={openFilters}/>
+            </div>
+          </div>
+        </div>
+      </div>
       <div style={{height: `${articlesContainerHeight}px`}}>
         <PerfectScrollbar
           ref={scrollBarRef}
           onYReachEnd={showMore}
         >
-          <table key="data" {...css(ARTICLE_TABLE_STYLES.dataTable)}>
-            <tbody>
-              {range(-1, Math.min(numberToShow, filteredArticles.length)).map((i) => renderRow(i))}
-            </tbody>
-          </table>
+          <div>
+            {range(-1, Math.min(numberToShow, filteredArticles.length)).map((i) => renderRow(i))}
+          </div>
         </PerfectScrollbar>
       </div>
       {renderFilterPopup()}

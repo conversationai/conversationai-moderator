@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { autobind } from 'core-decorators';
 import { Map, Set } from 'immutable';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -33,76 +32,72 @@ interface IModeratorsWidgetProps {
   openSetModerators(): void;
 }
 
-export class ModeratorsWidget extends React.Component<IModeratorsWidgetProps> {
-  @autobind
-  openModeratorsDlg() {
-    this.props.openSetModerators();
+export const MODERATOR_WIDGET_STYLES = stylesheet({
+  widget: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+});
+
+export function ModeratorsWidget(props: IModeratorsWidgetProps) {
+  const { users, moderatorIds, superModeratorIds }  = props;
+
+  let s = Set(moderatorIds);
+  if (superModeratorIds) {
+    s = s.merge(superModeratorIds);
   }
 
-  render() {
-    const { users, moderatorIds, superModeratorIds }  = this.props;
+  const moderators = s.toArray().map((uid: string) => users.get(uid));
 
-    let s = Set(moderatorIds);
-    if (superModeratorIds) {
-      s = s.merge(superModeratorIds);
-    }
-
-    const moderators = s.toArray().map((uid: string) => users.get(uid));
-
-    if (moderators.length === 0) {
-      return (
-        <div onClick={this.openModeratorsDlg}>
-          <PseudoAvatar size={IMAGE_BASE}>
-            <PersonAdd/>
-          </PseudoAvatar>
-        </div>
-      );
-    }
-
-    if (moderators.length === 1) {
-      const u = moderators[0];
-      return (
-        <div onClick={this.openModeratorsDlg}>
-          <Avatar target={u} size={IMAGE_BASE}/>
-        </div>
-      );
-    }
-
-    const ret = [];
-    let limit = moderators.length;
-    let extra = false;
-    if (limit > 4) {
-      limit = 3;
-      extra = true;
-    } else if (limit === 4) {
-      limit = 4;
-    }
-
-    for (let i = 0; i < limit; i++) {
-      ret.push(<Avatar target={moderators[i]} size={IMAGE_BASE / 2}/>);
-    }
-    if (extra) {
-      ret.push(<PseudoAvatar size={IMAGE_BASE / 2}>+{moderators.length - 3}</PseudoAvatar>);
-    }
-
+  if (moderators.length === 0) {
     return (
-      <div onClick={this.openModeratorsDlg} {...css({display: 'flex', flexWrap: 'wrap', justifyContent: 'center'})}>
-        {ret}
+      <div onClick={props.openSetModerators} {...css(MODERATOR_WIDGET_STYLES.widget)}>
+        <PseudoAvatar size={IMAGE_BASE}>
+          <PersonAdd/>
+        </PseudoAvatar>
       </div>
     );
   }
+
+  if (moderators.length === 1) {
+    const u = moderators[0];
+    return (
+      <div onClick={props.openSetModerators} {...css(MODERATOR_WIDGET_STYLES.widget)}>
+        <Avatar target={u} size={IMAGE_BASE}/>
+      </div>
+    );
+  }
+
+  const ret = [];
+  let limit = moderators.length;
+  let extra = false;
+  if (limit > 4) {
+    limit = 3;
+    extra = true;
+  } else if (limit === 4) {
+    limit = 4;
+  }
+
+  for (let i = 0; i < limit; i++) {
+    ret.push(<Avatar target={moderators[i]} size={IMAGE_BASE / 2}/>);
+  }
+  if (extra) {
+    ret.push(<PseudoAvatar size={IMAGE_BASE / 2}>+{moderators.length - 3}</PseudoAvatar>);
+  }
+
+  return (
+    <div onClick={props.openSetModerators} {...css(MODERATOR_WIDGET_STYLES.widget)}>
+      {ret}
+    </div>
+  );
 }
 
 export const TITLE_CELL_STYLES = stylesheet({
-  titleCell: {
-    paddingLeft: '10px',
-    paddingRight: '20px',
-  },
   superText: {
     fontSize: '10px',
     fontWeight: '600',
     color: 'rgba(0,0,0,0.54)',
-    margin: '10px 0',
   },
   categoryLabel: {
     textTransform: 'uppercase',
@@ -110,7 +105,6 @@ export const TITLE_CELL_STYLES = stylesheet({
   },
   mainText: {
     display: 'flex',
-    margin: '10px 0',
   },
   mainTextText: {
     lineHeight: '20px',
@@ -127,65 +121,42 @@ interface ITitleCellProps {
   link: string;
 }
 
-export class TitleCell extends React.Component<ITitleCellProps> {
-  render() {
-    const {
-      category,
-      article,
-      link,
-    } = this.props;
+export function TitleCell(props: ITitleCellProps) {
+  const {
+    category,
+    article,
+    link,
+  } = props;
 
-    const supertext = [];
-    if (category) {
-      supertext.push(<span key="label" {...css(TITLE_CELL_STYLES.categoryLabel)}>{category.label}</span>);
-    }
-    if (article.sourceCreatedAt) {
-      supertext.push((
-        <span key="timestamp">
-          <MagicTimestamp timestamp={article.sourceCreatedAt} inFuture={false}/>
-        </span>
-      ));
-    }
-
-    return (
-      <div {...css(TITLE_CELL_STYLES.titleCell)}>
-        {supertext.length > 0 && <div {...css(TITLE_CELL_STYLES.superText)}>{supertext}</div>}
-        <div {...css(TITLE_CELL_STYLES.mainText)}>
-          <div>
-            <Link to={link} {...css(COMMON_STYLES.cellLink, TITLE_CELL_STYLES.mainTextText)}>
-              {article.title}
-            </Link>
-          </div>
-          {article.url &&
-          <div {...css(TITLE_CELL_STYLES.mainTextLink)}>
-            <a key="link" href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
-              <OpenInNew fontSize="small" />
-            </a>
-          </div>
-          }
-        </div>
-      </div>
-    );
+  const supertext = [];
+  if (category) {
+    supertext.push(<span key="label" {...css(TITLE_CELL_STYLES.categoryLabel)}>{category.label}</span>);
   }
-}
-
-export class SimpleTitleCell extends React.Component<ITitleCellProps> {
-  render() {
-    const {
-      article,
-      link,
-    } = this.props;
-
-    return (
-      <div {...css(TITLE_CELL_STYLES.titleCell)}>
-        <div {...css(TITLE_CELL_STYLES.mainText)}>
-          <div>
-            <Link to={link} {...css(COMMON_STYLES.cellLink, TITLE_CELL_STYLES.mainTextText)}>
-              {article.title}
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+  if (article.sourceCreatedAt) {
+    supertext.push((
+      <span key="timestamp">
+        <MagicTimestamp timestamp={article.sourceCreatedAt} inFuture={false}/>
+      </span>
+    ));
   }
+
+  return (
+    <>
+      {supertext.length > 0 && <div {...css(TITLE_CELL_STYLES.superText)}>{supertext}</div>}
+      <div {...css(TITLE_CELL_STYLES.mainText)}>
+        <div>
+          <Link to={link} {...css(COMMON_STYLES.cellLink, TITLE_CELL_STYLES.mainTextText)}>
+            {article.title}
+          </Link>
+        </div>
+        {article.url &&
+        <div {...css(TITLE_CELL_STYLES.mainTextLink)}>
+          <a key="link" href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
+            <OpenInNew fontSize="small" />
+          </a>
+        </div>
+        }
+      </div>
+    </>
+  );
 }
