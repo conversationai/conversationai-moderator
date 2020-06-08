@@ -21,7 +21,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { fakeArticleModel, fakeCategoryModel } from '../../../models/fake';
 import { css } from '../../utilx';
-import { SimpleTitleCell, TitleCell } from './components';
+import { TitleCell } from './components';
 import { ARTICLE_TABLE_STYLES } from './styles';
 
 faker.seed(456);
@@ -52,34 +52,22 @@ storiesOf('TableComponents', module)
     <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
   ))
   .add('Title cell', () => {
+    const cellStyle = ARTICLE_TABLE_STYLES.dataCell;
     return (
-      <table {...css(ARTICLE_TABLE_STYLES.dataTable)} style={{maxWidth: '500px'}}>
-        <tr {...css(ARTICLE_TABLE_STYLES.dataBody)}>
-          <td {...css(ARTICLE_TABLE_STYLES.summaryCell, ARTICLE_TABLE_STYLES.textCell)}>
-            <SimpleTitleCell article={article2} link={'#'}/>
-          </td>
-        </tr>
-        <tr {...css(ARTICLE_TABLE_STYLES.dataBody)}>
-          <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
-            <TitleCell category={category} article={article1} link={'#'}/>
-          </td>
-        </tr>
-        <tr {...css(ARTICLE_TABLE_STYLES.dataBody)}>
-          <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
+      <div {...css(cellStyle, ARTICLE_TABLE_STYLES.dataBody)}>
+        <div {...css(cellStyle, ARTICLE_TABLE_STYLES.textCell)}>
+          <TitleCell category={category} article={article1} link={'#'}/>
+        </div>
+        <div {...css(cellStyle, ARTICLE_TABLE_STYLES.textCell)}>
             <TitleCell article={article2} link={'#'}/>
-          </td>
-        </tr>
-        <tr {...css(ARTICLE_TABLE_STYLES.dataBody)}>
-          <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
-            <TitleCell category={category2} article={article3} link={'#'}/>
-          </td>
-        </tr>
-        <tr {...css(ARTICLE_TABLE_STYLES.dataBody)}>
-          <td {...css(ARTICLE_TABLE_STYLES.dataCell, ARTICLE_TABLE_STYLES.textCell)}>
-            <TitleCell article={article4} link={'#'}/>
-          </td>
-        </tr>
-      </table>
+        </div>
+        <div {...css(cellStyle, ARTICLE_TABLE_STYLES.textCell)}>
+          <TitleCell category={category2} article={article3} link={'#'}/>
+        </div>
+        <div {...css(cellStyle, ARTICLE_TABLE_STYLES.textCell)}>
+          <TitleCell article={article4} link={'#'}/>
+        </div>
+      </div>
     );
   })
 ;
