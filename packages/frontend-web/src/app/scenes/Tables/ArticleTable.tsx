@@ -16,7 +16,8 @@ limitations under the License.
 
 import FocusTrap from 'focus-trap-react';
 import { Map as IMap, Set } from 'immutable';
-import React, {useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
+import { ScrollbarProps, Scrollbars } from 'react-custom-scrollbars';
 import { connect, useSelector } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -103,6 +104,32 @@ const POPUP_MODERATORS = 'moderators';
 const POPUP_CONTROLS = 'controls';
 const POPUP_FILTERS = 'filters';
 const POPUP_SAVING = 'saving';
+
+const CustomScrollbars = (
+  { onScroll, forwardedRef, style, children }: ScrollbarProps & { forwardedRef(view: any): void },
+) => {
+  const refSetter = useCallback((scrollbarsRef) => {
+    if (scrollbarsRef) {
+      forwardedRef(scrollbarsRef.view);
+    } else {
+      forwardedRef(null);
+    }
+  }, []);
+
+  return (
+    <Scrollbars
+      ref={refSetter}
+      style={{ ...style, overflow: 'hidden' }}
+      onScroll={onScroll}
+    >
+      {children}
+    </Scrollbars>
+  );
+};
+
+const CustomScrollbarsVirtualList = React.forwardRef((props, ref) => (
+  <CustomScrollbars {...props} forwardedRef={ref as (view: any) => void} />
+));
 
 function renderTime(time: string | null) {
   if (!time) {
@@ -633,6 +660,7 @@ function PureArticleTable(props: IArticleTableProps) {
         <AutoSizer>
           {({width, height}) => (
             <VariableSizeList
+              outerElementType={CustomScrollbarsVirtualList}
               itemSize={rowHeight}
               itemCount={filteredArticles.length + 1}
               height={height}
