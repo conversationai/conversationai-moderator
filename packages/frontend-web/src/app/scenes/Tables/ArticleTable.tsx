@@ -95,6 +95,14 @@ const STYLES = stylesheet({
     textSize: '18px',
     color: 'white',
   },
+
+  directionIndicator: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    lineHeight: 'initial',
+  },
 });
 
 const POPUP_MODERATORS = 'moderators';
@@ -312,6 +320,22 @@ function SummaryRow(props: ISummaryRowProps) {
           />
         )}
       </div>
+    </div>
+  );
+}
+
+function DirectionIndicatorUp() {
+  return (
+    <div {...css(STYLES.directionIndicator, {top: '-15px'})}>
+      <icons.KeyUpIcon/>
+    </div>
+  );
+}
+
+function DirectionIndicatorDown() {
+  return (
+    <div {...css(STYLES.directionIndicator, {bottom: '-18px'})}>
+      <icons.KeyDownIcon/>
     </div>
   );
 }
@@ -566,34 +590,20 @@ export function ArticleTable(_props: IArticleTableProps) {
     );
   }
 
-  function renderDirectionIndicatorUp() {
-    return (
-      <div {...css({position: 'absolute', left: 0, right: 0, top: '-18px', textAlign: 'center'})}>
-        <icons.KeyUpIcon/>
-      </div>
-    );
-  }
+  const HeaderItem: React.FunctionComponent<{sortField: string}> = (props) => {
+    const {sortField, children} = props;
 
-  function renderDirectionIndicatorDown() {
-    return (
-      <div {...css({position: 'absolute', left: 0, right: 0, bottom: '-18px', textAlign: 'center'})}>
-        <icons.KeyDownIcon/>
-      </div>
-    );
-  }
-
-  function renderHeaderItem(label: string | JSX.Element, sortField: string) {
     let directionIndicator: string | JSX.Element = '';
     let nextSortItem = `+${sortField}`;
 
     for (const item of sort) {
       if (item.endsWith(sortField)) {
         if (item[0] === '+') {
-          directionIndicator = renderDirectionIndicatorDown();
+          directionIndicator = DirectionIndicatorDown();
           nextSortItem =  `-${sortField}`;
         }
         else if (item[0] === '-') {
-          directionIndicator = renderDirectionIndicatorUp();
+          directionIndicator = DirectionIndicatorUp();
           nextSortItem = '';
         }
         break;
@@ -604,43 +614,43 @@ export function ArticleTable(_props: IArticleTableProps) {
     return (
       <Link to={dashboardLink({filter: currentFilter, sort: newSort})} {...css(COMMON_STYLES.cellLink)}>
         <span {...css({position: 'relative'})}>
-          {label}
+          {children}
           {directionIndicator}
         </span>
       </Link>
     );
-  }
+  };
 
   const filterActive = isFilterActive(filter);
   return (
     <div key="main">
       <div key="header" {...css(ARTICLE_TABLE_STYLES.dataHeader)}>
         <div key="title" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.textCell)}>
-          {renderHeaderItem('Title', SORT_TITLE)}
+          <HeaderItem sortField={SORT_TITLE}>Title</HeaderItem>
         </div>
         <div key="new" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          {renderHeaderItem('New', SORT_NEW)}
+          <HeaderItem sortField={SORT_NEW}>New</HeaderItem>
         </div>
         <div key="approved" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          {renderHeaderItem('Approved', SORT_APPROVED)}
+          <HeaderItem sortField={SORT_APPROVED}>Approved</HeaderItem>
         </div>
         <div key="rejected" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          {renderHeaderItem('Rejected', SORT_REJECTED)}
+          <HeaderItem sortField={SORT_REJECTED}>Rejected</HeaderItem>
         </div>
         <div key="deferred" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          {renderHeaderItem('Deferred', SORT_DEFERRED)}
+          <HeaderItem sortField={SORT_DEFERRED}>Deferred</HeaderItem>
         </div>
         <div key="highlighted" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          {renderHeaderItem('Highlighted', SORT_HIGHLIGHTED)}
+          <HeaderItem sortField={SORT_HIGHLIGHTED}>Highlighted</HeaderItem>
         </div>
         <div key="flagged" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.numberCell)}>
-          {renderHeaderItem('Flagged', SORT_FLAGGED)}
+          <HeaderItem sortField={SORT_FLAGGED}>Flagged</HeaderItem>
         </div>
         <div key="modified" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
-          {renderHeaderItem('Modified', SORT_UPDATED)}
+          <HeaderItem sortField={SORT_UPDATED}>Modified</HeaderItem>
         </div>
         <div key="moderated" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.timeCell)}>
-          {renderHeaderItem('Moderated', SORT_LAST_MODERATED)}
+          <HeaderItem sortField={SORT_LAST_MODERATED}>Moderated</HeaderItem>
         </div>
         <div key="flags" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}/>
         <div key="mods" {...css(ARTICLE_TABLE_STYLES.headerCell, ARTICLE_TABLE_STYLES.iconCell)}>
