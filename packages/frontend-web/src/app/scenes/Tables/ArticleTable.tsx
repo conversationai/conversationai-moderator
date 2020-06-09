@@ -15,19 +15,16 @@ limitations under the License.
 */
 
 import FocusTrap from 'focus-trap-react';
-import { Map as IMap, Set } from 'immutable';
+import { Set } from 'immutable';
 import React, {useCallback, useMemo, useState} from 'react';
 import { ScrollbarProps, Scrollbars } from 'react-custom-scrollbars';
-import { connect, useSelector } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { VariableSizeList } from 'react-window';
-import { compose } from 'redux';
-import { createStructuredSelector } from 'reselect';
 
-import { IArticleAttributes, IArticleModel, ICategoryModel, IUserModel, ModelId } from '../../../models';
-import { IAppState } from '../../appstate';
+import { IArticleAttributes, IArticleModel, ICategoryModel, ModelId } from '../../../models';
 import { ArticleControlIcon, AssignModerators, MagicTimestamp } from '../../components';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
@@ -36,7 +33,7 @@ import {
   updateArticleModerators,
   updateCategoryModerators,
 } from '../../platform/dataService';
-import { getArticleMap, getArticles } from '../../stores/articles';
+import { getArticles } from '../../stores/articles';
 import { getCategoryMap, ISummaryCounts } from '../../stores/categories';
 import { getUsers } from '../../stores/users';
 import {
@@ -319,12 +316,7 @@ function SummaryRow(props: ISummaryRowProps) {
   );
 }
 
-export interface IArticleTableProps extends RouteComponentProps<IDashboardPathParams> {
-  categories: Map<ModelId, ICategoryModel>;
-  selectedCategory: ICategoryModel;
-  articles: Array<IArticleModel>;
-  articleMap: Map<ModelId, IArticleModel>;
-  users: IMap<ModelId, IUserModel>;
+export interface IArticleTableProps {
 }
 
 function calculateSummaryCounts(articles: Array<IArticleModel>) {
@@ -370,17 +362,22 @@ function filterArticles(
   return articles.filter(executeFilter(filter, {categories}));
 }
 
-function PureArticleTable(props: IArticleTableProps) {
+export function ArticleTable(_props: IArticleTableProps) {
+  const history = useHistory();
+  const params = useParams<IDashboardPathParams>();
   const articlesContainerHeight = window.innerHeight - HEADER_HEIGHT * 2;
+  const categories = useSelector(getCategoryMap);
+  const articles = useSelector(getArticles);
+  const users = useSelector(getUsers);
 
-  const filterString = props.match.params.filter || NOT_SET;
-  const sortString = props.match.params.sort || NOT_SET;
+  const filterString = params.filter || NOT_SET;
+  const sortString = params.sort || NOT_SET;
   const filter = useMemo(() => parseFilter(filterString), [filterString]);
   const sort = useMemo(() => parseSort(sortString), [sortString]);
-  const sortedArticles = useMemo(() => sortArticles(props.articles, sort), [props.articles, sort]);
+  const sortedArticles = useMemo(() => sortArticles(articles, sort), [articles, sort]);
   const filteredArticles = useMemo(
-    () => filterArticles(sortedArticles, filter, props.categories),
-    [sortedArticles, filter, props.categories],
+    () => filterArticles(sortedArticles, filter, categories),
+    [sortedArticles, filter, categories],
   );
   const summary = useMemo(() => calculateSummaryCounts(filteredArticles), [filteredArticles]);
 
@@ -389,9 +386,12 @@ function PureArticleTable(props: IArticleTableProps) {
   summary['id'] = 'summary';
   summary['title'] = ` ${count} Title` + (count !== 1 ? 's' : '');
 
-  if (props.selectedCategory) {
-    summary['categoryId'] = props.selectedCategory.id;
-    summary['title'] += ` in section ${props.selectedCategory.label}`;
+  const categoryMatch = /category=(\d+)/.exec(filterString);
+  const selectedCategory = categoryMatch ? categories.get(categoryMatch[1]) : null;
+
+  if (selectedCategory) {
+    summary['categoryId'] = selectedCategory.id;
+    summary['title'] += ` in section ${selectedCategory.label}`;
   }
 
   if (filter.length > 1 || (filter.length === 1 && filter[0].key !== 'category')) {
@@ -445,7 +445,6 @@ function PureArticleTable(props: IArticleTableProps) {
   }
 
   function renderFilterPopup() {
-    const history = props.history;
     function setFilter(newFilter: Array<IFilterItem>) {
       history.push(dashboardLink({filter: getFilterString(newFilter), sort: currentSort}));
     }
@@ -456,7 +455,7 @@ function PureArticleTable(props: IArticleTableProps) {
         open={popupToShow === POPUP_FILTERS}
         filterString={filterString}
         filter={filter}
-        users={props.users.valueSeq()}
+        users={users.valueSeq()}
         setFilter={setFilter}
         clearPopups={clearPopups}
       />
@@ -680,23 +679,3 @@ function PureArticleTable(props: IArticleTableProps) {
     </div>
   );
 }
-
-const baseSelector = createStructuredSelector({
-  categories: getCategoryMap,
-  selectedCategory: (state: IAppState, { match: { params }}: IArticleTableProps) => {
-    const m = /category=(\d+)/.exec(params.filter);
-    if (!m) {
-      return null;
-    }
-
-    return getCategoryMap(state).get(m[1]);
-  },
-  articleMap: getArticleMap,
-  articles: getArticles,
-  users: getUsers,
-});
-
-export const ArticleTable: React.ComponentClass<{}> = compose(
-  withRouter,
-  connect(baseSelector),
-)(PureArticleTable);
