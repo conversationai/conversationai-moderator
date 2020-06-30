@@ -21,7 +21,7 @@ import {
   DARK_SECONDARY_TEXT_COLOR,
   GUTTER_DEFAULT_SPACING,
   INPUT_DROP_SHADOW,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
   PALE_COLOR, WHITE_COLOR,
 } from '../../styles';
 
@@ -81,7 +81,7 @@ export const SETTINGS_STYLES = {
     alignSelf: 'flex-end',
     backgroundColor: 'transparent',
     border: 'none',
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     cursor: 'pointer',
     height: ROW_HEIGHT,
     ':focus': {
@@ -117,7 +117,7 @@ export const SETTINGS_STYLES = {
 
   heading: {
     backgroundColor: PALE_COLOR,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     padding: `8px ${GUTTER_DEFAULT_SPACING}px`,
   },
   headingText: {

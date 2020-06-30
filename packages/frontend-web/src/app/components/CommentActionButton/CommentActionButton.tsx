@@ -22,8 +22,8 @@ import {
   BUTTON_LINK_TYPE,
   GUTTER_DEFAULT_SPACING,
   LIGHT_PRIMARY_TEXT_COLOR,
-  MEDIUM_COLOR,
   MEDIUM_OPACITY,
+  NICE_MIDDLE_BLUE,
   SHORT_SCREEN_QUERY,
   WHITE_COLOR,
 } from '../../styles';
@@ -73,7 +73,7 @@ const STYLES = stylesheet({
   },
 
   iconFocused: {
-    borderBottom: `2px solid ${MEDIUM_COLOR}`,
+    borderBottom: `2px solid ${NICE_MIDDLE_BLUE}`,
   },
 
   noLabel: {

@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import {
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
 } from './colors';
 
 /*
@@ -36,7 +36,7 @@ export const SELECT_ELEMENT = {
   borderRight: 0,
   borderBottom: 0,
   borderLeft: 0,
-  color: MEDIUM_COLOR,
+  color: NICE_MIDDLE_BLUE,
   cursor: 'pointer',
   lineHeight: '1.4em', // Prevent descenders from getting clipped.
   width: '100%',

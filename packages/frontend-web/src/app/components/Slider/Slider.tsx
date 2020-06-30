@@ -24,7 +24,7 @@ import {
   LIGHT_COLOR,
   LIGHT_PRIMARY_TEXT_COLOR,
   LIGHT_TERTIARY_TEXT_COLOR,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
 } from '../../styles';
 
 import {
@@ -72,7 +72,7 @@ const HANDLE_STYLES = stylesheet({
 
   label: {
     ...HANDLE_LABEL_TYPE,
-    background: MEDIUM_COLOR,
+    background: NICE_MIDDLE_BLUE,
     color: LIGHT_PRIMARY_TEXT_COLOR,
     padding: '3px 3px 1px 3px',
     position: 'absolute',

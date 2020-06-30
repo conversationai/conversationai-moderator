@@ -78,7 +78,7 @@ import {
   DARK_PRIMARY_TEXT_COLOR,
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
   VISUALLY_HIDDEN,
   WHITE_COLOR,
@@ -137,7 +137,7 @@ const STYLES: any = stylesheet({
   },
   pluginLink: {
     display: 'inline-block',
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
   },
 });
 

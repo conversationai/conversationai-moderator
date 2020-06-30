@@ -80,7 +80,7 @@ import {
   DIVIDER_COLOR,
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
   PALE_COLOR,
   SCRIM_STYLE,
   SCRIM_Z_INDEX,
@@ -272,7 +272,7 @@ const STYLES = stylesheet({
   resultsHeader: {
     alignItems: 'center',
     backgroundColor: PALE_COLOR,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     display: 'flex',
     flexWrap: 'no-wrap',
     justifyContent: 'space-between',
@@ -283,7 +283,7 @@ const STYLES = stylesheet({
   },
 
   resultsLink: {
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     cursor: 'pointer',
   },
 
@@ -560,8 +560,8 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                       direction={'up'}
                       label={'up arrow'}
                       size={58}
-                      color={upArrowIsFocused ? MEDIUM_COLOR : DARK_TERTIARY_TEXT_COLOR}
-                      icon={<ArrowIcon {...css({ fill: upArrowIsFocused ? MEDIUM_COLOR : DARK_TERTIARY_TEXT_COLOR })} size={24} />}
+                      color={upArrowIsFocused ? NICE_MIDDLE_BLUE : DARK_TERTIARY_TEXT_COLOR}
+                      icon={<ArrowIcon {...css({ fill: upArrowIsFocused ? NICE_MIDDLE_BLUE : DARK_TERTIARY_TEXT_COLOR })} size={24} />}
                     />
                     <span {...css(VISUALLY_HIDDEN)}>Previous Comment</span>
                   </Link>
@@ -588,8 +588,8 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
                       direction={'down'}
                       label={'down arrow'}
                       size={58}
-                      color={upArrowIsFocused ? MEDIUM_COLOR : DARK_TERTIARY_TEXT_COLOR}
-                      icon={<ArrowIcon {...css({ fill: downArrowIsFocused ? MEDIUM_COLOR : DARK_TERTIARY_TEXT_COLOR })} size={24} />}
+                      color={upArrowIsFocused ? NICE_MIDDLE_BLUE : DARK_TERTIARY_TEXT_COLOR}
+                      icon={<ArrowIcon {...css({ fill: downArrowIsFocused ? NICE_MIDDLE_BLUE : DARK_TERTIARY_TEXT_COLOR })} size={24} />}
                     />
                     <span {...css(VISUALLY_HIDDEN)}>Next Comment</span>
                   </Link>
@@ -719,7 +719,7 @@ export class CommentDetail extends React.Component<ICommentDetailProps, IComment
             onFocus={this.onFocusInfoIcon}
             onBlur={this.onBlurInfoIcon}
           >
-            <InfoIcon {...css({fill: infoIconFocused ? MEDIUM_COLOR : DARK_SECONDARY_TEXT_COLOR})} />
+            <InfoIcon {...css({fill: infoIconFocused ? NICE_MIDDLE_BLUE : DARK_SECONDARY_TEXT_COLOR})} />
             <span {...css(VISUALLY_HIDDEN)}>Tag Information</span>
           </button>
         </div>

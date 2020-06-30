@@ -38,8 +38,8 @@ import { CheckboxRow } from './CheckboxRow';
 import {
   GUTTER_DEFAULT_SPACING,
   LIGHT_PRIMARY_TEXT_COLOR,
-  MEDIUM_COLOR,
   NICE_CONTROL_BLUE,
+  NICE_MIDDLE_BLUE,
   SCRIM_STYLE,
 } from '../styles';
 
@@ -60,19 +60,19 @@ const STYLES = stylesheet({
     backgroundColor: 'transparent',
     border: 'none',
     borderRadius: 0,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     cursor: 'pointer',
     padding: '8px 20px',
     textAlign: 'left',
     width: '100%',
 
     ':hover': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       color: LIGHT_PRIMARY_TEXT_COLOR,
     },
 
     ':focus': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       color: LIGHT_PRIMARY_TEXT_COLOR,
     },
   },

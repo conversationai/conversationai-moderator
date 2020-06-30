@@ -33,8 +33,7 @@ import {
   searchLink,
 } from '../../scenes/routes';
 import {
-  DARK_COLOR,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
 } from '../../styles';
 import { maybeCallback, partial } from '../../util';
 import { css } from '../../utilx';
@@ -184,7 +183,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                 {...css(ROW_STYLES.reply)}
                 onClick={partial(maybeCallback(onCommentClick), comment.id)}
               >
-                <ReplyIcon {...css({fill: DARK_COLOR})} size={24} />
+                <ReplyIcon {...css({fill: NICE_MIDDLE_BLUE})} size={24} />
               </Link>
               )}
 
@@ -194,7 +193,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               </span>
             )}
             { comment.author?.name && (
-              <Link to={searchLink({searchByAuthor: true, term: comment.author.name})} {...css({ color: DARK_COLOR })}>{comment.author.name}&nbsp;</Link>
+              <Link to={searchLink({searchByAuthor: true, term: comment.author.name})} {...css({ color: NICE_MIDDLE_BLUE })}>{comment.author.name}&nbsp;</Link>
             )}
             {comment.author?.location && (
               <span>from {comment.author.location}&nbsp;</span>
@@ -234,7 +233,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
                 { activeButtons && activeButtons.includes('approve') && (
                   <div key="approve" {...css({ marginRight: '10px' })}>
                     <ConfirmationCircle
-                      backgroundColor={MEDIUM_COLOR}
+                      backgroundColor={NICE_MIDDLE_BLUE}
                       action="approve"
                       size={36}
                       iconSize={20}
@@ -245,7 +244,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               { activeButtons && activeButtons.includes('highlight') && (
                 <div key="highlight" {...css({ marginRight: '10px' })}>
                   <ConfirmationCircle
-                    backgroundColor={MEDIUM_COLOR}
+                    backgroundColor={NICE_MIDDLE_BLUE}
                     action="highlight"
                     size={36}
                     iconSize={20}
@@ -255,7 +254,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               { activeButtons && activeButtons.includes('reject') && (
                 <div key="reject" {...css({ marginRight: '10px' })}>
                   <ConfirmationCircle
-                    backgroundColor={MEDIUM_COLOR}
+                    backgroundColor={NICE_MIDDLE_BLUE}
                     action="reject"
                     size={36}
                     iconSize={20}
@@ -265,7 +264,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
               { activeButtons && activeButtons.includes('defer') && (
                 <div key="defer" {...css({ marginRight: '10px' })}>
                   <ConfirmationCircle
-                    backgroundColor={MEDIUM_COLOR}
+                    backgroundColor={NICE_MIDDLE_BLUE}
                     action="defer"
                     size={36}
                     iconSize={20}
