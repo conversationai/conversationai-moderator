@@ -45,16 +45,6 @@ export function SortColumn(props: ISortColumnProps) {
   const {comment} = useCachedComment(commentId);
   const tags = useSelector(getTags);
 
-  if (!comment || !comment.text) {
-    return (
-      <div {...css(style)}>
-        <p key="loading" {...css({ margin: '0px'})}>
-           Loading...
-        </p>
-      </div>
-    );
-  }
-
   if (['newest', 'oldest', 'updated'].includes(selectedSort)) {
     const date = selectedSort === 'updated' ? comment.updatedAt : comment.sourceCreatedAt;
     return (

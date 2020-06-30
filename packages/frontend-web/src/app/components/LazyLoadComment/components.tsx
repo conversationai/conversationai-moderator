@@ -24,16 +24,14 @@ import { articleBase, NEW_COMMENTS_DEFAULT_TAG, newCommentsPageLink } from '../.
 import { ARTICLE_HEADLINE_TYPE } from '../../styles';
 import { COMMON_STYLES } from '../../stylesx';
 import { css } from '../../utilx';
-import { ROW_STYLES } from '../styles';
 
 export function ArticleTitle({articleId}: {articleId: ModelId}) {
   const {article} = useCachedArticle(articleId);
-
   return (
     <div key="title" style={{display: 'flex'}}>
       <Link
         key="text"
-        {...css(ROW_STYLES.articleLink)}
+        {...css(COMMON_STYLES.articleLink)}
         to={newCommentsPageLink({
           context: articleBase,
           contextId: articleId,

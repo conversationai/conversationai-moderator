@@ -23,7 +23,6 @@ import {
 import {
   ARTICLE_CATEGORY_TYPE,
   DARK_PRIMARY_TEXT_COLOR,
-  LABEL_CHECK,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
 
@@ -59,7 +58,6 @@ const STYLES = stylesheet({
   },
 
   center: {
-    ...LABEL_CHECK,
     alignItems: 'center',
     cursor: 'pointer',
     display: 'flex',
