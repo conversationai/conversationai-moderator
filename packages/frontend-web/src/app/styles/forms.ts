@@ -15,10 +15,7 @@ limitations under the License.
 */
 
 import {
-  DARK_SECONDARY_TEXT_COLOR,
-  DIVIDER_COLOR,
   MEDIUM_COLOR,
-  WHITE_COLOR,
 } from './colors';
 
 /*
@@ -26,59 +23,6 @@ import {
  */
 export const LABEL_CHECK = {
   position: 'relative',
-};
-
-export const INPUT_CHECK = {
-  opacity: 0,
-  position: 'absolute',
-  width: 0,
-  height: 0,
-  clip: 'rect(1px, 1px, 1px, 1px)',
-  pointerEvents: 'none',
-  ':focus': {},
-};
-
-export const ELEMENTS_CHECK = {
-  backgroundClip: 'padding-box',
-  backgroundColor: 'transparent',
-  borderColor: DARK_SECONDARY_TEXT_COLOR,
-  borderRadius: '50%',
-  borderStyle: 'solid',
-  borderWidth: '2px',
-  display: 'block',
-  height: 18,
-  marginTop: -9,
-  position: 'absolute',
-  top: '50%',
-  transition: 'all 0.3s ease',
-  width: '18px',
-};
-
-export const ELEMENT_1_CHECK = {};
-
-export const ELEMENT_2_CHECK = {
-  backgroundColor: MEDIUM_COLOR,
-  borderColor: WHITE_COLOR,
-  transform: 'scale(0)',
-  transition: 'all 0.3s ease',
-};
-
-export const ELEMENT_1_CHECKED_CHECK = {
-  borderColor: DARK_SECONDARY_TEXT_COLOR,
-};
-
-export const ELEMENT_2_CHECKED_CHECK = {
-  transform: 'scale(1.1, 1.1)',
-  borderColor: 'transparent',
-};
-
-export const ELEMENT_2_CHECKED_CHECK_DISABLED = {
-  transform: 'scale(1, 1)',
-  backgroundColor: DIVIDER_COLOR,
-};
-
-export const ELEMENT_1_DISABLED = {
-  borderColor: DIVIDER_COLOR,
 };
 
 /*
