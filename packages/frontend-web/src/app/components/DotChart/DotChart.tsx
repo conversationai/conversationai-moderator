@@ -19,7 +19,7 @@ import React from 'react';
 import {
   BASE_Z_INDEX,
   LIGHT_COLOR,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
 } from '../../styles';
 import { css, stylesheet } from '../../utilx';
 import { DotChartRenderer, ICommentsByColumn, IRange } from '../../util';
@@ -33,8 +33,8 @@ const STYLES = stylesheet({
 
   ruleBlock: {
     background: LIGHT_COLOR,
-    borderLeft: `1px solid ${MEDIUM_COLOR}`,
-    borderRight: `1px solid ${MEDIUM_COLOR}`,
+    borderLeft: `1px solid ${NICE_MIDDLE_BLUE}`,
+    borderRight: `1px solid ${NICE_MIDDLE_BLUE}`,
     height: '100%',
     position: 'absolute',
     top: 0,
@@ -48,7 +48,7 @@ const STYLES = stylesheet({
     background: LIGHT_COLOR,
     borderWidth: 2,
     borderStyle: 'solid',
-    borderColor: MEDIUM_COLOR,
+    borderColor: NICE_MIDDLE_BLUE,
     borderRadius: '50%',
     display: 'block',
     height: `${ICON_SIZE}px`,

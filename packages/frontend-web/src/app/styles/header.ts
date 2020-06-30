@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 // import { stylesheet } from '../util';
-import { LIGHT_PRIMARY_TEXT_COLOR, MEDIUM_COLOR } from '../styles/colors';
+import { LIGHT_PRIMARY_TEXT_COLOR, NICE_MIDDLE_BLUE } from '../styles/colors';
 import { ARTICLE_HEADLINE_TYPE } from '../styles/typography';
 import { GUTTER_DEFAULT_SPACING } from '../styles/util';
 import { ARTICLE_PREVIEW_Z_INDEX } from '../styles/zindex';
@@ -90,7 +90,7 @@ export const ARTICLE_HEADER = {
     display: 'flex',
     ':hover': {
       transition: 'backgroundColor 0.3 ease',
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
     },
     ':focus': {
       outline: 0,

@@ -3,8 +3,10 @@ import {
   BODY_TEXT_TYPE, BUTTON_LINK_TYPE, BUTTON_RESET,
   CAPTION_TYPE,
   DARK_PRIMARY_TEXT_COLOR,
-  DARK_SECONDARY_TEXT_COLOR, DARK_TERTIARY_TEXT_COLOR,
-  GUTTER_DEFAULT_SPACING, MEDIUM_COLOR
+  DARK_SECONDARY_TEXT_COLOR,
+  DARK_TERTIARY_TEXT_COLOR,
+  GUTTER_DEFAULT_SPACING,
+  NICE_MIDDLE_BLUE,
 } from '../styles';
 import { stylesheet } from '../utilx';
 
@@ -55,7 +57,7 @@ export const ROW_STYLES = stylesheet({
 
   approval: {
     ...ARTICLE_CATEGORY_TYPE,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     padding: `0 0 0 ${GUTTER_DEFAULT_SPACING * 1.5}px`,
     textAlign: 'left',
   },
@@ -83,7 +85,7 @@ export const ROW_STYLES = stylesheet({
     flex: 1,
     border: 'none',
     borderRadius: 0,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     cursor: 'pointer',
     textAlign: 'right',
     fontSize: '12px',

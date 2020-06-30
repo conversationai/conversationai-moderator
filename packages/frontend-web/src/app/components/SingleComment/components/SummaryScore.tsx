@@ -30,7 +30,9 @@ import {
   BUTTON_RESET,
   COMMENT_DETAIL_TAG_LIST_BUTTON_TYPE,
   DARK_TERTIARY_TEXT_COLOR,
-  GUTTER_DEFAULT_SPACING, MEDIUM_COLOR, PALE_COLOR,
+  GUTTER_DEFAULT_SPACING,
+  NICE_MIDDLE_BLUE,
+  PALE_COLOR,
 } from '../../../styles';
 import {css, stylesheet} from '../../../utilx';
 
@@ -61,7 +63,7 @@ const STYLES = stylesheet({
   scoresLink: {
     ...BUTTON_RESET,
     ...BUTTON_LINK_TYPE,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     cursor: 'pointer',
     textAlign: 'left',
     marginTop: `${GUTTER_DEFAULT_SPACING}px`,
@@ -70,7 +72,7 @@ const STYLES = stylesheet({
     alignSelf: 'flex-start',
     ':focus': {
       outline: 0,
-      borderBottom: `2px solid ${MEDIUM_COLOR}`,
+      borderBottom: `2px solid ${NICE_MIDDLE_BLUE}`,
     },
   },
 });

@@ -26,7 +26,7 @@ import {
   GUTTER_DEFAULT_SPACING,
   LIGHT_PRIMARY_TEXT_COLOR,
   LIGHT_SECONDARY_TEXT_COLOR,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
   OFFSCREEN,
   TOOLTIP_Z_INDEX,
   VISUALLY_HIDDEN,
@@ -82,11 +82,11 @@ const STYLES = stylesheet({
 
   addButton: {
     ':hover': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
     },
 
     ':focus': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       outline: 0,
     },
   },
@@ -105,19 +105,19 @@ const STYLES = stylesheet({
     backgroundColor: 'transparent',
     border: 'none',
     borderRadius: 0,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     cursor: 'pointer',
     padding: '8px 20px',
     textAlign: 'left',
     width: '100%',
 
     ':hover': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       color: LIGHT_PRIMARY_TEXT_COLOR,
     },
 
     ':focus': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       color: LIGHT_PRIMARY_TEXT_COLOR,
     },
   },
@@ -230,7 +230,7 @@ export class CommentTags extends React.PureComponent<ICommentTagsProps, IComment
             {...css({
               fill: isMetaTagHovered || isMetaTagFocused
                 ? LIGHT_PRIMARY_TEXT_COLOR
-                : MEDIUM_COLOR,
+                : NICE_MIDDLE_BLUE,
             })}
             size={ICON_SIZE}
           />

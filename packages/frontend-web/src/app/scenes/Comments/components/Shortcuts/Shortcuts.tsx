@@ -21,7 +21,7 @@ import { ARTICLE_CATEGORY_TYPE,
   DARK_SECONDARY_TEXT_COLOR,
   GUTTER_DEFAULT_SPACING,
   HEADLINE_TYPE,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
 } from '../../../../styles';
 import { css, stylesheet } from '../../../../utilx';
 
@@ -124,7 +124,7 @@ export class Shortcuts extends React.Component<IShortcutProps> {
         <div {...css(STYLES.shorcuts)}>
           <div {...css(STYLES.shorcut)}>
             <div {...css(STYLES.name)}>
-              <ApproveIcon {...css({ color: MEDIUM_COLOR })} />
+              <ApproveIcon {...css({ color: NICE_MIDDLE_BLUE })} />
               <span {...css(STYLES.nameText)}>Approve</span>
             </div>
             <div {...css(STYLES.keys)}>
@@ -134,7 +134,7 @@ export class Shortcuts extends React.Component<IShortcutProps> {
           </div>
           <div {...css(STYLES.shorcut)}>
             <div {...css(STYLES.name)}>
-              <HighlightIcon {...css({ color: MEDIUM_COLOR })} />
+              <HighlightIcon {...css({ color: NICE_MIDDLE_BLUE })} />
               <span {...css(STYLES.nameText)}>Highlight</span>
             </div>
             <div {...css(STYLES.keys)}>
@@ -144,7 +144,7 @@ export class Shortcuts extends React.Component<IShortcutProps> {
           </div>
           <div {...css(STYLES.shorcut)}>
             <div {...css(STYLES.name)}>
-              <RejectIcon {...css({ color: MEDIUM_COLOR })} />
+              <RejectIcon {...css({ color: NICE_MIDDLE_BLUE })} />
               <span {...css(STYLES.nameText)}>Reject</span>
             </div>
             <div {...css(STYLES.keys)}>
@@ -154,7 +154,7 @@ export class Shortcuts extends React.Component<IShortcutProps> {
           </div>
           <div {...css(STYLES.shorcut)}>
             <div {...css(STYLES.name)}>
-              <DeferIcon {...css({ color: MEDIUM_COLOR })} />
+              <DeferIcon {...css({ color: NICE_MIDDLE_BLUE })} />
               <span {...css(STYLES.nameText)}>Defer</span>
             </div>
             <div {...css(STYLES.keys)}>

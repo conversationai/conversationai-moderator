@@ -47,7 +47,7 @@ import {
   GREY_COLOR,
   GUTTER_DEFAULT_SPACING,
   LIGHT_PRIMARY_TEXT_COLOR,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
   TAG_INCOHERENT_COLOR,
   TAG_INFLAMMATORY_COLOR,
   TAG_OBSCENE_COLOR,
@@ -94,7 +94,7 @@ const COMMENT_BODY_STYLES = `
 
   .comment-body::selection,
   .comment-body *::selection {
-    background: ${MEDIUM_COLOR};
+    background: ${NICE_MIDDLE_BLUE};
     borderColor: ${LIGHT_PRIMARY_TEXT_COLOR};
     color: ${LIGHT_PRIMARY_TEXT_COLOR};
   }
@@ -159,11 +159,11 @@ const STYLES = stylesheet({
     marginLeft: '10px',
 
     ':hover': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
     },
 
     ':focus': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       outline: 0,
     },
   },
@@ -208,7 +208,7 @@ const STYLES = stylesheet({
   },
 
   save: {
-    backgroundColor: MEDIUM_COLOR,
+    backgroundColor: NICE_MIDDLE_BLUE,
     color: WHITE_COLOR,
     padding: '8px 17px 7px 17px',
     cursor: 'pointer',
@@ -308,7 +308,7 @@ const COMMENT_STYLES = stylesheet({
   },
 
   link: {
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     textDecoration: 'none',
     ':focus': {
       outline: 0,
@@ -334,16 +334,16 @@ const COMMENT_STYLES = stylesheet({
 
   scoreDetails: {
     ...BUTTON_LINK_TYPE, BOTTOM_BORDER_TRANSITION,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     marginTop: `${GUTTER_DEFAULT_SPACING}px`,
     display: 'block',
     maxWidth: 115,
     ':hover': {
       transition: 'all 0.3 ease',
-      borderBottomColor: MEDIUM_COLOR,
+      borderBottomColor: NICE_MIDDLE_BLUE,
     },
     ':focus': {
-      borderBottomColor: MEDIUM_COLOR,
+      borderBottomColor: NICE_MIDDLE_BLUE,
     },
   },
 
@@ -611,7 +611,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
                     {...css({
                       fill: isEditHovered || isEditFocused
                           ? LIGHT_PRIMARY_TEXT_COLOR
-                          : MEDIUM_COLOR,
+                          : NICE_MIDDLE_BLUE,
                     })}
                     size={ICON_SIZE}
                   />

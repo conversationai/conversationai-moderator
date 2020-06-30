@@ -33,7 +33,7 @@ import {
   DARK_COLOR,
   DIVIDER_COLOR,
   GUTTER_DEFAULT_SPACING,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
   SCRIM_Z_INDEX,
   WHITE_COLOR,
 } from '../../../../styles';
@@ -62,7 +62,7 @@ const STYLES = stylesheet({
     paddingRight: 0,
     paddingBottom: `${GUTTER_DEFAULT_SPACING}px`,
     paddingLeft: `${GUTTER_DEFAULT_SPACING}px`,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
   },
 
   closeButton: {

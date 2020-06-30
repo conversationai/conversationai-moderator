@@ -26,7 +26,7 @@ import { IModerationAction } from '../../../types';
 import {
   GUTTER_DEFAULT_SPACING,
   LIGHT_PRIMARY_TEXT_COLOR,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
 } from '../../styles';
 import { maybeCallback, partial } from '../../util';
 import {css, stylesheet, useBindEscape} from '../../utilx';
@@ -67,19 +67,19 @@ const STYLES = stylesheet({
     backgroundColor: 'transparent',
     border: 'none',
     borderRadius: 0,
-    color: MEDIUM_COLOR,
+    color: NICE_MIDDLE_BLUE,
     cursor: 'pointer',
     padding: '8px 20px',
     textAlign: 'left',
     width: '100%',
 
     ':hover': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       color: LIGHT_PRIMARY_TEXT_COLOR,
     },
 
     ':focus': {
-      backgroundColor: MEDIUM_COLOR,
+      backgroundColor: NICE_MIDDLE_BLUE,
       color: LIGHT_PRIMARY_TEXT_COLOR,
     },
   },
@@ -133,7 +133,7 @@ export function ModerateButtons(props: IModerateButtonsProps) {
     comment,
   } = props;
 
-  const ICON_COLOR = (vertical || darkOnLight) ? MEDIUM_COLOR : LIGHT_PRIMARY_TEXT_COLOR;
+  const ICON_COLOR = (vertical || darkOnLight) ? NICE_MIDDLE_BLUE : LIGHT_PRIMARY_TEXT_COLOR;
 
   const buttonContainerSize = containerSize || 48;
 

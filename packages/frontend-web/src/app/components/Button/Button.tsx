@@ -21,7 +21,7 @@ import {
   GREY_COLOR,
   LIGHT_COLOR,
   LIGHT_PRIMARY_TEXT_COLOR,
-  MEDIUM_COLOR,
+  NICE_MIDDLE_BLUE,
   WHITE_COLOR,
 } from '../../styles';
 import { css, IStyle, stylesheet } from '../../utilx';
@@ -29,7 +29,7 @@ import { css, IStyle, stylesheet } from '../../utilx';
 const STYLES = stylesheet({
   button: {
     ...BUTTON_LINK_TYPE,
-    background: MEDIUM_COLOR,
+    background: NICE_MIDDLE_BLUE,
     border: 0,
     borderRadius: '3px',
     color: LIGHT_PRIMARY_TEXT_COLOR,
