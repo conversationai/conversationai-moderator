@@ -21,7 +21,6 @@ export * from './AssignTagsForm';
 export * from './Avatar';
 export * from './Button';
 export * from './CanvasTruncate';
-export * from './Checkbox';
 export * from './CheckboxRow';
 export * from './CommentActionButton';
 export * from './CommentList';

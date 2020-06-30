@@ -15,39 +15,30 @@ limitations under the License.
 */
 
 import React from 'react';
+
+import {
+  Radio,
+} from '@material-ui/core';
+
 import { ModelId } from '../../../../../models';
 import { maybeCallback, partial } from '../../../../util';
 import { css, stylesheet } from '../../../../utilx';
-import { Checkbox } from '../../../Checkbox';
 
 import {
-  ARTICLE_CATEGORY_TYPE,
-  DARK_PRIMARY_TEXT_COLOR,
   GUTTER_DEFAULT_SPACING,
-  LABEL_CHECK,
   VISUALLY_HIDDEN,
 } from '../../../../styles';
 
 const STYLES = stylesheet({
   base: {
-    display: 'flex',
-    boxSizing: 'border-box',
-    justifyContent: 'space-between',
-    minWidth: `${GUTTER_DEFAULT_SPACING}px`,
-    paddingLeft: '22px',
+    padding: '0 25px',
     height: '100%',
   },
 
   label: {
-    ...LABEL_CHECK,
-    ...ARTICLE_CATEGORY_TYPE,
-    alignItems: 'center',
     cursor: 'pointer',
     display: 'flex',
     userSelect: 'none',
-    width: '100%',
-    color: DARK_PRIMARY_TEXT_COLOR,
-    paddingBottom: 0,
     justifyContent: 'flex-end',
     marginRight: `${GUTTER_DEFAULT_SPACING * 2}px`,
   },
@@ -82,11 +73,7 @@ export function CheckboxColumn(props: ICheckboxColumnProps) {
         htmlFor={inputId}
         onClick={partial(maybeCallback(onCheck), commentId)}
       >
-        <Checkbox
-          inputId={inputId}
-          isSelected={isItemChecked ? isItemChecked(commentId) : isSelected}
-          onCheck={partial(maybeCallback(onCheck), commentId)}
-        />
+        <Radio color="primary" checked={isItemChecked ? isItemChecked(commentId) : isSelected}/>
         <span {...css(VISUALLY_HIDDEN)}>Select item</span>
       </label>
     </div>
