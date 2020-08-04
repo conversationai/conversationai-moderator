@@ -21,7 +21,7 @@ import qs from 'query-string';
 
 import { AuthenticationStates, SystemStates, WebsocketStates } from '../types';
 import { IAppDispatch } from './appstate';
-import { checkAuthorization, checkServerStatus, setUserId } from './platform/dataService';
+import { checkAuthorization, checkServerStatus } from './platform/dataService';
 import { getToken, saveToken } from './platform/localStore';
 import { connectNotifier, disconnectNotifier, STATUS_RESET, STATUS_UP }  from './platform/websocketService';
 import { articlesLoaded, articlesUpdated } from './stores/articles';
@@ -107,7 +107,6 @@ async function completeAuthentication(
 
   const data = decodeToken(token);
   userId = (data['user'] as number).toString();
-  setUserId(userId);
   await connectWebsocket(dispatch, setState);
   setState('gtg');
 }

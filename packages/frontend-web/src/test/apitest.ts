@@ -40,7 +40,7 @@ if (!token) {
 };
 
 import { decodeToken, setAxiosToken } from '../app/auth';
-import { getArticles, setUserId } from '../app/platform/dataService';
+import { getArticles } from '../app/platform/dataService';
 import { saveToken } from '../app/platform/localStore';
 import { connectNotifier } from '../app/platform/websocketService';
 import { approveComment, rejectComment, setArticleModerators, setArticleState } from './actions';
@@ -53,11 +53,9 @@ import {
   listNewCommentsPage_SUMMARY_SCORE,
 } from './pageTests';
 
-let userId: string;
 try {
   const data = decodeToken(token);
   console.log(`Accessing osmod backend as user ${data.user}`);
-  userId = data.user.toString();
 }
 catch (e) {
   console.log(`Couldn't parse token ${token}.`);
@@ -66,7 +64,6 @@ catch (e) {
 
 saveToken(token);
 setAxiosToken(token);
-setUserId(userId);
 
 (async () => {
   const readyPromise = new Promise<void>((resolve) => {

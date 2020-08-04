@@ -38,7 +38,6 @@ export const detailAddTagSchema = Joi.object({
 });
 
 export const commentActionSchema = Joi.object({
-  userId: Joi.string().optional(),
   commentId: Joi.string().required(),
 });
 
