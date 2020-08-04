@@ -30,11 +30,11 @@ function resolveFlags(flagsSummary?: Map<string, Array<number>>) {
   return flagsSummary;
 }
 
-export interface INewCommentsState {
+export interface ICommentsState {
   index: Map<ModelId, ICommentModel>;
 }
 
-export const newReducer = handleActions<Readonly<INewCommentsState>, Array<ICommentModel> | ICommentAttributesUpdate>( {
+export const reducer = handleActions<Readonly<ICommentsState>, Array<ICommentModel> | ICommentAttributesUpdate>( {
   [commentsUpdated.toString()]: (state, { payload }: Action<Array<ICommentModel>>) => {
     const index = state.index;
     for (const comment of payload) {

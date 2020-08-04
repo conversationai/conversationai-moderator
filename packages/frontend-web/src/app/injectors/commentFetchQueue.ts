@@ -47,7 +47,7 @@ function ensureCache(commentId: ModelId) {
 }
 
 export function getCachedComment(state: IAppState, commentId: ModelId): ICommentCacheProps {
-  const comment: ICommentModel = state.global.newComments.index.get(commentId);
+  const comment: ICommentModel = state.global.comments.index.get(commentId);
   if (comment) {
     commentFetchQueue.delete(commentId);
     return {comment, inCache: true};

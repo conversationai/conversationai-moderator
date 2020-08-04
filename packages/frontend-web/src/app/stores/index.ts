@@ -19,7 +19,7 @@ import { combineReducers } from 'redux';
 import { IGlobalState } from './appstate';
 import { reducer as articleReducer } from './articles';
 import { reducer as categoriesReducer } from './categories';
-import { newReducer as newCommentsReducer } from './comments';
+import { reducer as commentsReducer } from './comments';
 import { reducer as countsReducer } from './counts';
 import { reducer as preselectsReducer } from './preselects';
 import { reducer as rulesReducer } from './rules';
@@ -31,7 +31,7 @@ import { reducer as usersReducer } from './users';
 export const reducer = combineReducers<IGlobalState>({
   categories: categoriesReducer,
   articles: articleReducer,
-  newComments: newCommentsReducer,
+  comments: commentsReducer,
   counts: countsReducer,
   users: usersReducer,
   tags: tagsReducer,
