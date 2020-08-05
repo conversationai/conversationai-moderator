@@ -74,14 +74,6 @@ function validateModelName(name: string): void {
   }
 }
 
-// TODO: API shouldn't rely on us telling it who we are.  It should get that information from the authentication request
-//   But API currently does rely on this.
-//   Until we fix this, store userId here.  It gets set during authentication.
-let userId: string;
-export function setUserId(id: string) {
-  userId = id;
-}
-
 /**
  * Convert Partial<IParams> type to a query string.
  */
@@ -451,20 +443,13 @@ export async function checkAuthorization(): Promise<void> {
 
 async function makeCommentAction(path: string, ids: Array<string>): Promise<void> {
   if (ids.length <= 0) { return; }
-  const idUserArray =  ids.map((commentId) => {
-    return {
-      commentId,
-      userId,
-    };
-  });
-
   const url = serviceURL('commentActions', path);
-  await axios.post(url, { data: idUserArray, runImmediately: true });
+  await axios.post(url, { data: ids, runImmediately: true });
 }
 
 async function makeCommentActionForId(path: string, commentId: string): Promise<void> {
   const url = serviceURL('commentActions', path);
-  await axios.post(url, { data: { commentId, userId } });
+  await axios.post(url, { data: { commentId } });
 }
 
 export async function deleteCommentScoreRequest(commentId: string, commentScoreId: string): Promise<void> {

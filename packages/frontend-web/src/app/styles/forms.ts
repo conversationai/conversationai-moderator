@@ -19,13 +19,6 @@ import {
 } from './colors';
 
 /*
- * Checkbox/radio input styles
- */
-export const LABEL_CHECK = {
-  position: 'relative',
-};
-
-/*
  * Select element styles
  */
 export const SELECT_ELEMENT = {

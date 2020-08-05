@@ -17,6 +17,7 @@ limitations under the License.
 import { List } from 'immutable';
 import { ITagModel } from '../../../../../../models';
 import { IThunkAction } from '../../../../../appstate';
+import {clearCommentCache} from '../../../../../stores/globalActions';
 import { getTags } from '../../../../../stores/tags';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { commentSortDefinitions } from '../../../../../utilx';
@@ -41,6 +42,7 @@ export function loadCommentList(
   sort: string,
 ): IThunkAction<void> {
   return async (dispatch, getState) => {
+    dispatch(clearCommentCache());
     const tags = getTags(getState()) as List<ITagModel>;
 
     const tagId = (params.tag === 'DATE' || params.tag === 'SUMMARY_SCORE') ? params.tag :

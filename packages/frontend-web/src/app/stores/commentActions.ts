@@ -15,7 +15,6 @@ limitations under the License.
 */
 
 import {CommentScoreModel, IAuthorAttributes, ICommentScoreAttributes, ModelId} from '../../models';
-import {getMyUserId} from '../auth';
 import {
   approveCommentsRequest,
   approveFlagsAndCommentsRequest,
@@ -51,6 +50,7 @@ import {
   removeCommentScore,
   updateCommentScore,
 } from './globalActions';
+import {getMyUserId} from './users';
 
 export async function fetchComments(commentIds: Array<ModelId>) {
   const comments = await getComments(commentIds);

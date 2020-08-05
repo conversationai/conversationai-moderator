@@ -1,5 +1,4 @@
 import {
-  ARTICLE_CATEGORY_TYPE,
   BODY_TEXT_TYPE, BUTTON_LINK_TYPE, BUTTON_RESET,
   CAPTION_TYPE,
   DARK_PRIMARY_TEXT_COLOR,
@@ -42,24 +41,11 @@ export const ROW_STYLES = stylesheet({
     paddingRight: `${GUTTER_DEFAULT_SPACING}px`,
   },
 
-  commentHeading: {
-    ...BODY_TEXT_TYPE,
-    color: DARK_PRIMARY_TEXT_COLOR,
-    paddingRight: `${GUTTER_DEFAULT_SPACING}px`,
-  },
-
   reply: {
     fill: DARK_TERTIARY_TEXT_COLOR,
     marginBottom: 3,
     marginRight: 4,
     verticalAlign: 'top',
-  },
-
-  approval: {
-    ...ARTICLE_CATEGORY_TYPE,
-    color: NICE_MIDDLE_BLUE,
-    padding: `0 0 0 ${GUTTER_DEFAULT_SPACING * 1.5}px`,
-    textAlign: 'left',
   },
 
   actionToggle: {
@@ -69,14 +55,6 @@ export const ROW_STYLES = stylesheet({
     ':focus': {
       outline: 0,
       backgroundColor: `${COMMENT_HEADER_BACKGROUND_COLOR}`,
-    },
-  },
-
-  articleLink: {
-    color: DARK_PRIMARY_TEXT_COLOR,
-    ':focus': {
-      outline: 0,
-      textDecoration: 'underline',
     },
   },
 

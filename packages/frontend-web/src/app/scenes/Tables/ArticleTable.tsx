@@ -16,8 +16,7 @@ limitations under the License.
 
 import FocusTrap from 'focus-trap-react';
 import { Set } from 'immutable';
-import React, {useCallback, useMemo, useState} from 'react';
-import { ScrollbarProps, Scrollbars } from 'react-custom-scrollbars';
+import React, {useMemo, useState} from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -28,6 +27,7 @@ import { IArticleAttributes, IArticleModel, ICategoryModel, ModelId } from '../.
 import { ArticleControlIcon, AssignModerators, MagicTimestamp } from '../../components';
 import * as icons from '../../components/Icons';
 import { Scrim } from '../../components/Scrim';
+import {CustomScrollbarsVirtualList} from '../../components/VirtualListScrollbar';
 import {
   updateArticle,
   updateArticleModerators,
@@ -109,32 +109,6 @@ const POPUP_MODERATORS = 'moderators';
 const POPUP_CONTROLS = 'controls';
 const POPUP_FILTERS = 'filters';
 const POPUP_SAVING = 'saving';
-
-const CustomScrollbars = (
-  { onScroll, forwardedRef, style, children }: ScrollbarProps & { forwardedRef(view: any): void },
-) => {
-  const refSetter = useCallback((scrollbarsRef) => {
-    if (scrollbarsRef) {
-      forwardedRef(scrollbarsRef.view);
-    } else {
-      forwardedRef(null);
-    }
-  }, []);
-
-  return (
-    <Scrollbars
-      ref={refSetter}
-      style={{ ...style, overflow: 'hidden' }}
-      onScroll={onScroll}
-    >
-      {children}
-    </Scrollbars>
-  );
-};
-
-const CustomScrollbarsVirtualList = React.forwardRef((props, ref) => (
-  <CustomScrollbars {...props} forwardedRef={ref as (view: any) => void} />
-));
 
 function renderTime(time: string | null) {
   if (!time) {

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { flexCenter } from '../styles';
+import {flexCenter, NICE_MIDDLE_BLUE} from '../styles';
 import { stylesheet } from '../utilx';
 
 export const IMAGE_BASE = 40;
@@ -74,6 +74,14 @@ export const ICON_STYLES = stylesheet({
 });
 
 export const COMMON_STYLES = stylesheet({
+  articleLink: {
+    color: NICE_MIDDLE_BLUE,
+    ':focus': {
+      outline: 0,
+      textDecoration: 'underline',
+    },
+  },
+
   cellLink: {
     fontWeight: '500',
     color: 'inherit',

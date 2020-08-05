@@ -17,7 +17,40 @@ limitations under the License.
 import {Action, handleActions} from 'redux-actions';
 
 import {ICommentModel, ModelId, UNRESOLVED_FLAGS_COUNT} from '../../models';
-import {commentAttributesUpdated, commentsUpdated, ICommentAttributesUpdate} from './globalActions';
+import {IAppState} from '../appstate';
+import {clearCommentCache, commentAttributesUpdated, commentsUpdated, ICommentAttributesUpdate} from './globalActions';
+
+const commentPendingQueue = new Set<ModelId>();
+const commentFetchQueue = new Set<ModelId>();
+
+let timer: any;
+
+function executeFetch(commentFetcher: (commentIds: Array<ModelId>) => void) {
+  commentFetcher(Array.from(commentPendingQueue));
+  commentPendingQueue.forEach((i) => commentFetchQueue.add(i));
+  commentPendingQueue.clear();
+  timer = null;
+}
+
+export function ensureCache(commentId: ModelId, commentFetcher: (commentIds: Array<ModelId>) => void) {
+  if (commentFetchQueue.has(commentId) || commentPendingQueue.has(commentId)) {
+    // Already fetching or pending fetch
+    return;
+  }
+
+  if (!timer) {
+    timer = setTimeout(() => executeFetch(commentFetcher), 100);
+  }
+  commentPendingQueue.add(commentId);
+}
+
+export function clearCommentFetchQueue() {
+  commentPendingQueue.clear();
+  commentFetchQueue.clear();
+  if (timer) {
+    clearTimeout(timer);
+  }
+}
 
 function resolveFlags(flagsSummary?: Map<string, Array<number>>) {
   if (!flagsSummary) {
@@ -30,11 +63,15 @@ function resolveFlags(flagsSummary?: Map<string, Array<number>>) {
   return flagsSummary;
 }
 
-export interface INewCommentsState {
+export interface ICommentsState {
   index: Map<ModelId, ICommentModel>;
 }
 
-export const newReducer = handleActions<Readonly<INewCommentsState>, Array<ICommentModel> | ICommentAttributesUpdate>( {
+export const reducer = handleActions<Readonly<ICommentsState>, Array<ICommentModel> | ICommentAttributesUpdate>( {
+  [clearCommentCache.toString()]: () => {
+    clearCommentFetchQueue();
+    return {index: new Map()};
+  },
   [commentsUpdated.toString()]: (state, { payload }: Action<Array<ICommentModel>>) => {
     const index = state.index;
     for (const comment of payload) {
@@ -73,3 +110,11 @@ export const newReducer = handleActions<Readonly<INewCommentsState>, Array<IComm
     return {index};
   },
 }, {index: new Map()});
+
+export function getComment(state: IAppState, commentId: ModelId) {
+  const comment: ICommentModel = state.global.comments.index.get(commentId);
+  if (comment) {
+    commentFetchQueue.delete(commentId);
+  }
+  return comment;
+}

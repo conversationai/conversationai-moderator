@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import { IThunkAction } from '../../../../../appstate';
+import { clearCommentCache } from '../../../../../stores/globalActions';
 import { loadTextSizesByIds } from '../../../../../stores/textSizes';
 import { commentSortDefinitions,  } from '../../../../../utilx';
 import {
@@ -36,6 +37,7 @@ export function loadCommentList(
   query: IModeratedCommentsQueryParams,
 ): IThunkAction<void> {
   return async (dispatch, getState) => {
+    dispatch(clearCommentCache());
     const columnSort = query.sort;
     const sortDef = commentSortDefinitions[columnSort].sortInfo;
     const isArticleDetail = isArticleContext(params);

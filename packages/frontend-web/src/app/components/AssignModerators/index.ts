@@ -19,8 +19,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { IUserModel } from '../../../models';
 import { IAppState } from '../../appstate';
-import { getMyUserId } from '../../auth';
-import { getUsers } from '../../stores/users';
+import { getMyUserId, getUsers } from '../../stores/users';
 import {
   AssignModerators as PureAssignModerators,
   IAssignModeratorsProps,

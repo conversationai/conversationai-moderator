@@ -168,7 +168,6 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
       <div
         onMouseEnter={this.mouseEnter}
         onMouseLeave={this.mouseLeave}
-        {...css(ROW_STYLES.comment, {flex: 1})}
       >
         {displayArticleTitle && <ArticleTitle articleId={comment.articleId}/>}
         <div key="body" {...css(ROW_STYLES.meta)}>

@@ -16,29 +16,20 @@ limitations under the License.
 import {CommentModel, ICommentModel, ModelId} from '../../models';
 import {IAppState} from '../appstate';
 import {fetchComments} from '../stores/commentActions';
-
-const commentFetchQueue = new Set();
+import {ensureCache, getComment} from '../stores/comments';
 
 export interface ICommentCacheProps {
   comment: ICommentModel;
   inCache: boolean;
 }
 
-function ensureCache(commentId: ModelId) {
-  if (!commentFetchQueue.has(commentId)) {
-    commentFetchQueue.add(commentId);
-    fetchComments([commentId]);
-  }
-}
-
 export function getCachedComment(state: IAppState, commentId: ModelId): ICommentCacheProps {
-  const comment: ICommentModel = state.global.newComments.index.get(commentId);
+  const comment: ICommentModel = getComment(state, commentId);
   if (comment) {
-    commentFetchQueue.delete(commentId);
     return {comment, inCache: true};
   }
 
-  ensureCache(commentId);
+  ensureCache(commentId, fetchComments);
 
   return {
     inCache: false,

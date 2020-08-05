@@ -21,7 +21,7 @@ import qs from 'query-string';
 
 import { AuthenticationStates, SystemStates, WebsocketStates } from '../types';
 import { IAppDispatch } from './appstate';
-import { checkAuthorization, checkServerStatus, setUserId } from './platform/dataService';
+import { checkAuthorization, checkServerStatus } from './platform/dataService';
 import { getToken, saveToken } from './platform/localStore';
 import { connectNotifier, disconnectNotifier, STATUS_RESET, STATUS_UP }  from './platform/websocketService';
 import { articlesLoaded, articlesUpdated } from './stores/articles';
@@ -31,7 +31,7 @@ import { preselectsUpdated } from './stores/preselects';
 import { rulesUpdated } from './stores/rules';
 import { taggingSensitivitiesUpdated } from './stores/taggingSensitivities';
 import { tagsUpdated } from './stores/tags';
-import { usersUpdated } from './stores/users';
+import { setMyUserId, usersUpdated } from './stores/users';
 import { clearCSRF, clearReturnURL, getCSRF, getReturnURL } from './util';
 
 export function setAxiosToken(token: string): void {
@@ -52,8 +52,6 @@ export function setAxiosToken(token: string): void {
 export function decodeToken(token: string): any {
   return JwtDecode(token);
 }
-
-let userId: string | null;
 
 async function connectWebsocket(
   dispatch: IAppDispatch,
@@ -106,8 +104,7 @@ async function completeAuthentication(
   await checkAuthorization();
 
   const data = decodeToken(token);
-  userId = (data['user'] as number).toString();
-  setUserId(userId);
+  setMyUserId((data['user'] as number).toString());
   await connectWebsocket(dispatch, setState);
   setState('gtg');
 }
@@ -219,12 +216,8 @@ export async function start(
 }
 
 export function logout() {
-  userId = null;
+  setMyUserId(null);
   saveToken(null);
   disconnectNotifier();
   setAuthenticationState('unauthenticated');
-}
-
-export function getMyUserId(): string | null {
-  return userId;
 }
