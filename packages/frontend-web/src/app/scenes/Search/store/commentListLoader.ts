@@ -18,6 +18,7 @@ import { pick } from 'lodash';
 
 import { IAppDispatch } from '../../../appstate';
 import { search } from '../../../platform/dataService';
+import { clearCommentCache } from '../../../stores/globalActions';
 import { loadTextSizesByIds } from '../../../stores/textSizes';
 import { storeCommentPagingOptions } from '../../Comments/components/CommentDetail/store';
 import { searchLink } from '../../routes';
@@ -29,6 +30,7 @@ export async function loadCommentList(
   dispatch: IAppDispatch,
   scope: ISearchScope,
 ) {
+  dispatch(clearCommentCache());
   dispatch(loadAllCommentIdsStart);
   const { term, params } = scope;
   const commentIds = await search(term, params);

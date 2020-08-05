@@ -16,44 +16,20 @@ limitations under the License.
 import {CommentModel, ICommentModel, ModelId} from '../../models';
 import {IAppState} from '../appstate';
 import {fetchComments} from '../stores/commentActions';
-
-const commentPendingQueue = new Set<ModelId>();
-const commentFetchQueue = new Set<ModelId>();
-
-let timer: any;
+import {ensureCache, getComment} from '../stores/comments';
 
 export interface ICommentCacheProps {
   comment: ICommentModel;
   inCache: boolean;
 }
 
-function executeFetch() {
-  fetchComments(Array.from(commentPendingQueue));
-  commentPendingQueue.forEach((i) => commentFetchQueue.add(i));
-  commentPendingQueue.clear();
-  timer = null;
-}
-
-function ensureCache(commentId: ModelId) {
-  if (commentFetchQueue.has(commentId) || commentPendingQueue.has(commentId)) {
-    // Already fetching or pending fetch
-    return;
-  }
-
-  if (!timer) {
-    timer = setTimeout(executeFetch, 100);
-  }
-  commentPendingQueue.add(commentId);
-}
-
 export function getCachedComment(state: IAppState, commentId: ModelId): ICommentCacheProps {
-  const comment: ICommentModel = state.global.comments.index.get(commentId);
+  const comment: ICommentModel = getComment(state, commentId);
   if (comment) {
-    commentFetchQueue.delete(commentId);
     return {comment, inCache: true};
   }
 
-  ensureCache(commentId);
+  ensureCache(commentId, fetchComments);
 
   return {
     inCache: false,

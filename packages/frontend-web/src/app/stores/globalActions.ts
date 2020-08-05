@@ -73,3 +73,4 @@ export const addCommentScore = createAction<ICommentScoreModel>('global/ADD_COMM
 export const removeCommentScore = createAction<ModelId>('global/REMOVE_COMMENT_SCORE');
 export const removeAllCommentScores = createAction<ModelId>('global/REMOVE_ALL_COMMENT_SCORE');
 export const updateCommentScore = createAction<{id: ModelId} & Partial<ICommentScoreModel>>('global/UPDATE_COMMENT_SCORE');
+export const clearCommentCache = createAction('global/CLEAR_COMMENT_CACHE');
