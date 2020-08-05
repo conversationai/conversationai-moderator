@@ -19,7 +19,16 @@ import { Action, createAction, handleActions } from 'redux-actions';
 
 import { IUserModel, ModelId } from '../../models';
 import { IAppState } from '../appstate';
-import { getMyUserId } from '../auth';
+
+let userId: string | null;
+
+export function setMyUserId(uid: string | null) {
+  userId = uid;
+}
+
+export function getMyUserId(): string | null {
+  return userId;
+}
 
 export const USER_GROUP_GENERAL = 'general';
 export const USER_GROUP_ADMIN = 'admin';

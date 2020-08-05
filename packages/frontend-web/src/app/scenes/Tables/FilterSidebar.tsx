@@ -39,9 +39,9 @@ import {
 } from '@material-ui/icons';
 
 import { IUserModel, ModelId } from '../../../models';
-import { getMyUserId } from '../../auth';
 import { Avatar } from '../../components';
 import * as icons from '../../components/Icons';
+import { getMyUserId } from '../../stores/users';
 import { HEADER_HEIGHT, SCRIM_STYLE } from '../../styles';
 import { css, stylesheet } from '../../utilx';
 import {
