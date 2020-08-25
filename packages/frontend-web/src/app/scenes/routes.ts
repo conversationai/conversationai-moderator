@@ -45,6 +45,11 @@ export function settingsLink() {
   return `/${settingsBase}`;
 }
 
+export const rangesBase = 'ranges';
+export function rangesLink() {
+  return `/${rangesBase}`;
+}
+
 export interface ISearchQueryParams {
   articleId?: ModelId;
   searchByAuthor?: boolean;

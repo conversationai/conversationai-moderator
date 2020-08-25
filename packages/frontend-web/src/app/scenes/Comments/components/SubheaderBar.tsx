@@ -15,7 +15,7 @@ limitations under the License.
 */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link, useLocation, useRouteMatch } from 'react-router-dom';
 import { useRouteContext } from '../../../injectors/contextInjector';
 import { getGlobalCounts } from '../../../stores/categories';
 import {
@@ -29,6 +29,8 @@ import {
   moderatedCommentsPageLink,
   NEW_COMMENTS_DEFAULT_TAG,
   newCommentsPageLink,
+  rangesLink,
+  settingsLink,
 } from '../../routes';
 
 const STYLES = stylesheet({
@@ -52,6 +54,10 @@ const STYLES = stylesheet({
     borderBottom: `3px solid rgba(255,255,255,0.05)`,
   },
 
+  headerItemBig: {
+    width: '30vw',
+  },
+
   headerItemSelected: {
     color: `${LIGHT_PRIMARY_TEXT_COLOR}`,
     borderBottom: `3px solid ${LIGHT_PRIMARY_TEXT_COLOR}`,
@@ -66,6 +72,11 @@ const STYLES = stylesheet({
     fontSize: '12px',
     lineHeight: '20px',
     fontWeight: 500,
+  },
+
+  headerTextBig: {
+    fontSize: '20px',
+    paddingTop: '10px',
   },
 });
 
@@ -126,6 +137,30 @@ export function SubheaderBar(_props: {}) {
   return (
     <header key="header" role="banner" {...css(STYLES.header)}>
       {CELLS.map(renderHeaderItem)}
+    </header>
+  );
+}
+
+export function SettingsSubheaderBar(_props: {}) {
+  const location = useLocation();
+
+  function renderHeaderItem(route: string, label: string) {
+    let styles = {...css(STYLES.headerItem, STYLES.headerItemBig)};
+    if (route === location.pathname) {
+      styles = {...css(STYLES.headerItem, STYLES.headerItemBig, STYLES.headerItemSelected)};
+    }
+    return (
+      <div key={route} {...styles}>
+        <Link to={route} {...css(STYLES.headerLink)}>
+          <div {...css(STYLES.headerText, STYLES.headerTextBig)}>{label}</div>
+        </Link>
+      </div>
+    );
+  }
+  return (
+    <header key="header" role="banner" {...css(STYLES.header)}>
+      {renderHeaderItem(settingsLink(), 'Users and Services')}
+      {renderHeaderItem(rangesLink(), 'Tags and Ranges')}
     </header>
   );
 }
