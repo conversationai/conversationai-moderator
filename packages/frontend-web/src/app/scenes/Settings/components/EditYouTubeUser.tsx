@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import React from 'react';
+import {useSelector} from 'react-redux';
 
 import {
   CircularProgress,
@@ -30,6 +31,7 @@ import {
 import { ICategoryModel, IUserModel } from '../../../../models';
 import { ContainerHeader, OverflowContainer } from '../../../components/OverflowContainer';
 import { activateCommentSource, syncCommentSource } from '../../../platform/dataService';
+import { getCategories } from '../../../stores/categories';
 import { flexCenter, GUTTER_DEFAULT_SPACING, PALE_COLOR, SCRIM_Z_INDEX } from '../../../styles';
 import { css, stylesheet } from '../../../utilx';
 
@@ -143,7 +145,6 @@ function YoutubeCategory(props: IYoutubeCategoryProps) {
 export interface IEditYouTubeUserProps {
   onClickClose(e: React.FormEvent<any>): any;
   onUserUpdate(user: IUserModel): Promise<void>;
-  categories: Array<ICategoryModel>;
   user?: IUserModel;
 }
 
@@ -157,12 +158,12 @@ export function EditYouTubeUser(props: IEditYouTubeUserProps) {
   }
 
   const {
-    categories,
     user,
     onClickClose,
   } = props;
 
   const hasError = !!user.extra.lastError;
+  const categories = useSelector(getCategories);
   const relevant = categories.filter((c) => c.ownerId === user.id);
 
   return (
@@ -193,11 +194,11 @@ export function EditYouTubeUser(props: IEditYouTubeUserProps) {
             <label {...css(STYLES.label)}>Last Error</label>
             <div>
               {hasError ? user.extra.lastError.message : 'No error'}
-              {hasError &&
+              {hasError && (
                 <Tooltip title="Reset errors and reactivate" style={{marginLeft: '20px'}}>
                   <IconButton color="primary" onClick={onIsActiveChange}><CheckCircleOutline/></IconButton>
                 </Tooltip>
-              }
+              )}
             </div>
           </div>
           <h2 key="channelTitle" {...css(STYLES.subheading)}>Channels</h2>

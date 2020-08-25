@@ -28,7 +28,7 @@ import {
   SaveAlt,
 } from '@material-ui/icons';
 
-import { ICategoryModel, IUserModel, ModelId } from '../../../../models';
+import { IUserModel, ModelId } from '../../../../models';
 import { Scrim } from '../../../components/Scrim';
 import { SCRIM_STYLE } from '../../../styles';
 import { css } from '../../../utilx';
@@ -315,7 +315,6 @@ export function EditUserScrim(props: {
 }
 
 export function EditYouTubeScrim(props: {
-  categories: Array<ICategoryModel>,
   user?: IUserModel,
   visible: boolean,
   close(): void,
@@ -339,7 +338,6 @@ export function EditYouTubeScrim(props: {
           {...css(SCRIM_STYLE.popup, {position: 'relative', width: '77vh'})}
         >
           <EditYouTubeUser
-            categories={props.categories}
             user={props.user}
             onUserUpdate={props.save}
             onClickClose={props.close}

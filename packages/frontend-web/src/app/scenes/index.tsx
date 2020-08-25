@@ -25,12 +25,14 @@ import {
 } from './Comments';
 import {
   dashboardBase,
+  rangesBase,
   searchBase,
   settingsBase,
   tagSelectorBase,
 } from './routes';
 import { Search } from './Search';
-import { Settings } from './Settings';
+import { Ranges } from './Settings';
+import { Settings } from './Settings/Settings';
 import { TableFrame } from './Tables/TableFrame';
 
 function redirect(to: string) {
@@ -46,6 +48,7 @@ export function AppRoot() {
       <Route exact path="/" render={redirect(`/${dashboardBase}`)} />
       <Route path={`/${dashboardBase}/:filter?/:sort?`} component={TableFrame}/>
       {isAdmin && <Route path={`/${settingsBase}`} component={Settings}/> }
+      {isAdmin && <Route path={`/${rangesBase}`} component={Ranges}/> }
       <Route path={`/${searchBase}`} component={Search}/>
       <Route path={`/${tagSelectorBase}/:context/:contextId/:tag`} component={TagSelector} />
       <Route path={'/:context/:contextId'} component={Comments}/>

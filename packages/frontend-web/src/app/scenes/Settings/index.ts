@@ -18,84 +18,24 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
 
-import { IAppDispatch, IAppState } from '../../appstate';
-import { listSystemUsers } from '../../platform/dataService';
-import { getCategories } from '../../stores/categories';
+import { IAppState } from '../../appstate';
 import { getPreselects } from '../../stores/preselects';
 import { getRules } from '../../stores/rules';
 import { getTaggingSensitivities } from '../../stores/taggingSensitivities';
 import { getTags } from '../../stores/tags';
-import {
-  getSystemUsers,
-  getUsers,
-  systemUsersLoaded,
-  USER_GROUP_MODERATOR,
-  USER_GROUP_SERVICE,
-  USER_GROUP_YOUTUBE,
-} from '../../stores/users';
-import { ISettingsProps, Settings as PureSettings } from './Settings';
-import {
-  addUser,
-  modifyUser,
-} from './store';
+import { IRangesProps, Ranges as PureRanges } from './Ranges';
 
-export type ISettingsStateProps = Pick<
-  ISettingsProps,
-  'users' |
-  'serviceUsers' |
-  'moderatorUsers' |
-  'youtubeUsers' |
-  'tags' |
-  'categories' |
-  'rules' |
-  'preselects' |
-  'taggingSensitivities'
->;
-
-export type ISettingsDispatchProps = Pick<
-  ISettingsProps,
-  'reloadServiceUsers' |
-  'reloadModeratorUsers' |
-  'reloadYoutubeUsers' |
-  'addUser' |
-  'modifyUser'
->;
-
-const mapStateToProps = createStructuredSelector({
-  users: getUsers,
-  serviceUsers: (state) => getSystemUsers(USER_GROUP_SERVICE, state),
-  moderatorUsers: (state) => getSystemUsers(USER_GROUP_MODERATOR, state),
-  youtubeUsers: (state) => getSystemUsers(USER_GROUP_YOUTUBE, state),
+const mapStateToPropsRanges = createStructuredSelector({
   tags: getTags,
-  categories: getCategories,
   rules: getRules,
   preselects: getPreselects,
   taggingSensitivities: getTaggingSensitivities,
-}) as (state: IAppState, props: ISettingsProps) => ISettingsStateProps;
-
-export async function loadSystemUsers(dispatch: IAppDispatch, type: string): Promise<void> {
-  const result = await listSystemUsers(type);
-
-  await dispatch(systemUsersLoaded({type, users: result}));
-}
-
-function mapDispatchToProps(dispatch: IAppDispatch): ISettingsDispatchProps {
-  return {
-    reloadServiceUsers: () => loadSystemUsers(dispatch, USER_GROUP_SERVICE),
-    reloadModeratorUsers: () => loadSystemUsers(dispatch, USER_GROUP_MODERATOR),
-    reloadYoutubeUsers: () => loadSystemUsers(dispatch, USER_GROUP_YOUTUBE),
-    addUser: addUser,
-    modifyUser: modifyUser,
-  };
-}
-
-// Manually wrapping without `compose` so types stay correct.
+}) as (state: IAppState, props: IRangesProps) => Partial<IRangesProps>;
 
 // Add Redux data.
-const ConnectedSettings = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(PureSettings);
+const ConnectedRanges = connect(
+  mapStateToPropsRanges,
+)(PureRanges);
 
 // Add `router` prop.
-export const Settings: React.ComponentType = withRouter(ConnectedSettings);
+export const Ranges: React.ComponentType = withRouter(ConnectedRanges);
