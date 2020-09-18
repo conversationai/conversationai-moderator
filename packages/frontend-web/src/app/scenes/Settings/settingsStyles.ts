@@ -118,10 +118,10 @@ export const SETTINGS_STYLES = {
   heading: {
     backgroundColor: PALE_COLOR,
     color: NICE_MIDDLE_BLUE,
-    padding: `8px ${GUTTER_DEFAULT_SPACING}px`,
+    padding: `4px ${GUTTER_DEFAULT_SPACING}px`,
   },
   headingText: {
-    fontSize: 14,
+    fontSize: '1.3em',
   },
   section: {
     paddingTop: `${GUTTER_DEFAULT_SPACING}px`,

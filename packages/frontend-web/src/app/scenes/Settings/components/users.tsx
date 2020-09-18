@@ -20,6 +20,7 @@ import React from 'react';
 
 import {
   Fab,
+  IconButton,
   Tooltip,
 } from '@material-ui/core';
 import {
@@ -75,14 +76,19 @@ export function UserSettings(props: {
             {sortedUsers.map((u) => (
               <UserRow key={u.id} user={u} handleEditUser={props.handleEdit}/>
             ))}
+            <tr key="button">
+              <td key="spacer" colSpan={4}/>
+              <td key="add" {...css(SETTINGS_STYLES.userTableCell)}>
+                <Tooltip title="Add a user">
+                  <IconButton  color="primary" onClick={props.handleAdd}>
+                    <Add/>
+                  </IconButton>
+                </Tooltip>
+              </td>
+            </tr>
             </tbody>
           </table>
         </div>
-        <Tooltip title="Add a user">
-          <Fab color="primary" onClick={props.handleAdd}>
-            <Add/>
-          </Fab>
-        </Tooltip>
       </div>
     </div>
   );
@@ -125,14 +131,19 @@ export function ServiceUserSettings(props: {
           {users.map((u) => (
             <ServiceUserRow key={u.id} user={u} handleEditUser={props.handleEdit}/>
           ))}
+          <tr key="button">
+            <td key="spacer" colSpan={5}/>
+            <td key="add" {...css(SETTINGS_STYLES.userTableCell)}>
+              <Tooltip title="Add a service user">
+                <IconButton  color="primary" onClick={props.handleAdd}>
+                  <Add/>
+                </IconButton>
+              </Tooltip>
+            </td>
+          </tr>
           </tbody>
         </table>
       </div>
-      <Tooltip title="Add a service user">
-        <Fab color="primary" onClick={props.handleAdd}>
-          <Add/>
-        </Fab>
-      </Tooltip>
     </div>
   );
 }
