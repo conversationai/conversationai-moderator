@@ -130,7 +130,6 @@ export const SETTINGS_STYLES = {
     paddingBottom: `${GUTTER_DEFAULT_SPACING * 2}px`,
     backgroundColor: WHITE_COLOR,
   },
-
   buttonGroup: {
     display: 'flex',
     flexDirection: 'row',

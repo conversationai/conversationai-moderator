@@ -15,20 +15,24 @@ limitations under the License.
 */
 
 import {List} from 'immutable';
+import React, {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+
 import {ITagModel, TagModel} from '../../../../models';
-import {css, stylesheet} from '../../../utilx';
-import {SETTINGS_STYLES} from '../settingsStyles';
-import {LabelSettings} from './LabelSettings';
-import {Fab, Tooltip} from '@material-ui/core';
-import {Add} from '@material-ui/icons';
-import React from 'react';
+import {getTags} from '../../../stores/tags';
 import {
   GUTTER_DEFAULT_SPACING,
   NICE_MIDDLE_BLUE,
 } from '../../../styles';
+import {css, stylesheet} from '../../../utilx';
+import {SETTINGS_STYLES} from '../settingsStyles';
+import {updateTags} from '../store';
+import {STYLES} from '../styles';
+import {LabelSettings} from './LabelSettings';
+import {SaveButtons} from './SaveButtons';
 
 const SMALLER_SCREEN = window.innerWidth < 1200;
-const STYLES: any = stylesheet({
+const LOCAL_STYLES: any = stylesheet({
   labelTitle: {
     width: 200,
     marginRight: `${GUTTER_DEFAULT_SPACING}px`,
@@ -62,10 +66,15 @@ function validateColor(color: string): boolean {
 let placeholderId = -1;
 
 export function ManageTags(props: {
-  tags: List<ITagModel>,
-  updateTags(tags: List<ITagModel>): void,
+  setSaving(isSaving: boolean): void,
+  setError(message: string): void,
 }) {
-  const {tags} = props;
+  const baseTags = useSelector(getTags);
+  const [tags, setTags] = useState<List<ITagModel>>(List());
+  useEffect(() => {
+    setTags(baseTags);
+    props.setSaving(false);
+  }, [baseTags]);
 
   function handleAddTag(event: React.FormEvent<any>) {
     event.preventDefault();
@@ -79,20 +88,18 @@ export function ManageTags(props: {
       },
     );
 
-    const updatedTags = tags.set(tags.size, newValue);
-
-    props.updateTags(updatedTags);
+    setTags(tags.set(tags.size, newValue));
   }
 
   function handleLabelChange(tag: ITagModel, value: string) {
-    props.updateTags(tags.update(
+    setTags(tags.update(
       tags.findIndex((t) => t.equals(tag)),
       (t) => t.set('label', value),
     ));
   }
 
   function handleDescriptionChange(tag: ITagModel, value: string) {
-    props.updateTags(tags.update(
+    setTags(tags.update(
       tags.findIndex((t) => t.equals(tag)),
       (t) => t.set('description', value),
     ));
@@ -103,14 +110,14 @@ export function ManageTags(props: {
       console.log('invalid color: ', color);
     }
 
-    props.updateTags(tags.update(
+    setTags(tags.update(
       tags.findIndex((t) => t.equals(tag)),
       (t) => t.set('color', color),
     ));
   }
 
   function handleTagDeletePress(tag: ITagModel) {
-    props.updateTags(tags.delete(tags.findIndex((t) => t.equals(tag))));
+    setTags(tags.delete(tags.findIndex((t) => t.equals(tag))));
   }
 
   function handleTagChange(
@@ -118,10 +125,24 @@ export function ManageTags(props: {
     key: string,
     value: boolean,
   ) {
-    props.updateTags(tags.update(
+    setTags(tags.update(
       tags.findIndex((t) => t.equals(tag)),
       (t) => t.set(key, value),
     ));
+  }
+
+  function onCancelPress() {
+    setTags(baseTags);
+  }
+
+  async function handleFormSubmit() {
+    props.setSaving(true);
+
+    try {
+      await updateTags(baseTags, tags);
+    } catch (exception) {
+      props.setError(exception.message);
+    }
   }
 
   const summaryScoreTag = tags.find((tag) => tag.key === 'SUMMARY_SCORE');
@@ -129,18 +150,18 @@ export function ManageTags(props: {
   const tagsNoSummary = tags.filter((tag) => tag.id !== summaryScoreTagId).toList();
 
   return (
-    <div key="editTagsSection">
+    <form {...css(STYLES.formContainer)}>
       <div key="heading" {...css(SETTINGS_STYLES.heading)}>
         <h2 {...css(SETTINGS_STYLES.headingText)}>Tags</h2>
       </div>
       <div key="body" {...css(SETTINGS_STYLES.section)}>
         <div {...css(SETTINGS_STYLES.row, {padding: 0})}>
-          <p {...css(STYLES.labelTitle, SMALLER_SCREEN && {width: '184px', marginRight: '20px'})}>Label</p>
-          <p {...css(STYLES.descriptionTitle)}>Description</p>
-          <p {...css(STYLES.colorTitle, SMALLER_SCREEN && {marginRight: '20px'})}>Color</p>
-          <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>In Batch View</p>
-          <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>Is Taggable</p>
-          <p {...css(STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px'}, { marginRight: '68px'})}>In Summary Score</p>
+          <p {...css(LOCAL_STYLES.labelTitle, SMALLER_SCREEN && {width: '184px', marginRight: '20px'})}>Label</p>
+          <p {...css(LOCAL_STYLES.descriptionTitle)}>Description</p>
+          <p {...css(LOCAL_STYLES.colorTitle, SMALLER_SCREEN && {marginRight: '20px'})}>Color</p>
+          <p {...css(LOCAL_STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>In Batch View</p>
+          <p {...css(LOCAL_STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px', marginRight: '20px'})}>Is Taggable</p>
+          <p {...css(LOCAL_STYLES.summaryTitle, SMALLER_SCREEN && {width: '90px'}, { marginRight: '68px'})}>In Summary Score</p>
         </div>
         {tagsNoSummary.map((tag, i) => (
           <LabelSettings
@@ -153,12 +174,13 @@ export function ManageTags(props: {
             onTagChange={handleTagChange}
           />
         ))}
-        <Tooltip title="Add a tag">
-          <Fab color="primary" onClick={handleAddTag}>
-            <Add/>
-          </Fab>
-        </Tooltip>
+        <SaveButtons
+          onCancelPress={onCancelPress}
+          handleFormSubmit={handleFormSubmit}
+          handleAdd={handleAddTag}
+          addTip="Add a tag"
+        />
       </div>
-    </div>
+    </form>
   );
 }

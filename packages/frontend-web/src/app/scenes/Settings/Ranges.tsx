@@ -15,20 +15,8 @@ limitations under the License.
 */
 
 import {autobind} from 'core-decorators';
-import {List} from 'immutable';
 import React from 'react';
-import {RouteComponentProps} from 'react-router';
 
-import {
-  Button,
-} from '@material-ui/core';
-
-import {
-  IPreselectModel,
-  IRuleModel,
-  ITaggingSensitivityModel,
-  ITagModel,
-} from '../../../models';
 import {
   HeaderBar,
   Scrim,
@@ -39,18 +27,11 @@ import {ManageAutomatedRules} from './components/ManageAutomatedRules';
 import {ManagePreselects} from './components/ManagePreselects';
 import {ManageSensitivities} from './components/ManageSensitivities';
 import {ManageTags} from './components/ManageTags';
-import {
-  updatePreselects,
-  updateRules,
-  updateTaggingSensitivities,
-  updateTags,
-} from './store';
 
 import {
   SCRIM_STYLE,
   VISUALLY_HIDDEN,
 } from '../../styles';
-import { SETTINGS_STYLES } from './settingsStyles';
 import { STYLES } from './styles';
 
 function StatusScrim(props: {visible: boolean, submitStatus: string}) {
@@ -67,36 +48,16 @@ function StatusScrim(props: {visible: boolean, submitStatus: string}) {
   );
 }
 
-export interface IRangesProps extends RouteComponentProps<{}>  {
-  tags?: List<ITagModel>;
-  rules?: List<IRuleModel>;
-  taggingSensitivities?:  List<ITaggingSensitivityModel>;
-  preselects?: List<IPreselectModel>;
+export interface IRangesProps  {
 }
 
 export interface IRangesState {
-  tags?: List<ITagModel>;
-  rules?: List<IRuleModel>;
-  taggingSensitivities?:  List<ITaggingSensitivityModel>;
-  preselects?:  List<IPreselectModel>;
-  baseTags?: List<ITagModel>;
-  baseRules?: List<IRuleModel>;
-  baseTaggingSensitivities?:  List<ITaggingSensitivityModel>;
-  basePreselects?:  List<IPreselectModel>;
   isStatusScrimVisible?: boolean;
   submitStatus?: string;
 }
 
 export class Ranges extends React.Component<IRangesProps, IRangesState> {
   state: IRangesState = {
-    tags: this.props.tags,
-    rules: this.props.rules,
-    taggingSensitivities:  this.props.taggingSensitivities,
-    preselects:  this.props.preselects,
-    baseTags: this.props.tags,
-    baseRules: this.props.rules,
-    baseTaggingSensitivities:  this.props.taggingSensitivities,
-    basePreselects:  this.props.preselects,
     isStatusScrimVisible: false,
   };
 
@@ -108,127 +69,52 @@ export class Ranges extends React.Component<IRangesProps, IRangesState> {
     }
   }
 
-  componentWillUpdate(nextProps: IRangesProps) {
-    if (!this.props.tags.equals(nextProps.tags)) {
+  @autobind
+  setSaving(isSaving: boolean) {
+    if (isSaving) {
       this.setState({
-        baseTags: nextProps.tags,
-        tags: nextProps.tags,
-        isStatusScrimVisible: false,
+        isStatusScrimVisible: true,
+        submitStatus: 'Saving changes...',
       });
     }
-    if (!this.props.rules.equals(nextProps.rules)) {
+    else {
       this.setState({
-        baseRules: nextProps.rules,
-        rules: nextProps.rules,
-        isStatusScrimVisible: false,
-      });
-    }
-    if (!this.props.taggingSensitivities.equals(nextProps.taggingSensitivities)) {
-      this.setState({
-        baseTaggingSensitivities: nextProps.taggingSensitivities,
-        taggingSensitivities: nextProps.taggingSensitivities,
-        isStatusScrimVisible: false,
-      });
-    }
-    if (!this.props.preselects.equals(nextProps.preselects)) {
-      this.setState({
-        basePreselects: nextProps.preselects,
-        preselects: nextProps.preselects,
         isStatusScrimVisible: false,
       });
     }
   }
 
   @autobind
-  updateTags(tags: List<ITagModel>) {
-    this.setState({tags});
-  }
-
-  @autobind
-  updateRules(rules: List<IRuleModel>) {
-    this.setState({rules});
-  }
-
-  @autobind
-  updateTaggingSensitivities(taggingSensitivities: List<ITaggingSensitivityModel>) {
-    this.setState({taggingSensitivities});
-  }
-
-  @autobind
-  updatePreselects(preselects: List<IPreselectModel>) {
-    this.setState({preselects});
-  }
-
-  @autobind
-  async handleFormSubmit(e: React.MouseEvent<any>) {
-    e.preventDefault();
-
+  setError(message: string) {
     this.setState({
       isStatusScrimVisible: true,
-      submitStatus: 'Saving changes...',
+      submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${message}`,
     });
-
-    try {
-      await updateTags(this.state.baseTags, this.state.tags);
-      await updateRules(this.state.baseRules, this.state.rules);
-      await updatePreselects(this.state.basePreselects, this.state.preselects);
-      await updateTaggingSensitivities(this.state.baseTaggingSensitivities, this.state.taggingSensitivities);
-    } catch (exception) {
-      this.setState({
-        submitStatus: `There was an error saving your changes. Please reload and try again. Error: ${exception.message}`,
-      });
-    }
-  }
-
-  @autobind
-  onCancelPress() {
-    this.props.history.goBack();
   }
 
   render() {
-    const {
-      tags,
-    } = this.state;
-
     return (
       <div {...css(STYLES.base)}>
         <HeaderBar homeLink title="Settings"/>
         <SettingsSubheaderBar/>
         <div {...css(STYLES.body)}>
           <h1 {...css(VISUALLY_HIDDEN)}>Open Source Moderator Settings: Tags and Ranges</h1>
-          <form {...css(STYLES.formContainer)}>
-            <ManageTags
-              tags={tags}
-              updateTags={this.updateTags}
-            />
-            <ManageAutomatedRules
-              rules={this.state.rules}
-              tags={tags}
-              updateRules={this.updateRules}
-            />
-            <ManageSensitivities
-              tags={tags}
-              taggingSensitivities={this.state.taggingSensitivities}
-              updateTaggingSensitivities={this.updateTaggingSensitivities}
-            />
-            <ManagePreselects
-              tags={tags}
-              preselects={this.state.preselects}
-              updatePreselects={this.updatePreselects}
-            />
-            <div key="submitSection" {...css(SETTINGS_STYLES.buttonGroup)}>
-              <div style={{paddingRight: '30px'}}>
-                <Button variant="outlined" onClick={this.onCancelPress} style={{width: '150px'}}>
-                  Cancel
-                </Button>
-              </div>
-              <div style={{paddingRight: '30px'}}>
-                <Button variant="contained" color="primary" onClick={this.handleFormSubmit} style={{width: '150px'}}>
-                  Save
-                </Button>
-              </div>
-            </div>
-          </form>
+          <ManageTags
+            setSaving={this.setSaving}
+            setError={this.setError}
+          />
+          <ManageAutomatedRules
+            setSaving={this.setSaving}
+            setError={this.setError}
+          />
+          <ManageSensitivities
+            setSaving={this.setSaving}
+            setError={this.setError}
+          />
+          <ManagePreselects
+            setSaving={this.setSaving}
+            setError={this.setError}
+          />
         </div>
         <StatusScrim
           visible={this.state.isStatusScrimVisible}

@@ -15,39 +15,42 @@ limitations under the License.
 */
 
 import {List} from 'immutable';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-
-import {Fab, Tooltip} from '@material-ui/core';
-import {Add} from '@material-ui/icons';
 
 import {
   CategoryModel,
   ICategoryModel,
   IRuleModel,
   IServerAction,
-  ITagModel,
   RuleModel,
   SERVER_ACTION_ACCEPT,
 } from '../../../../models';
 import {getCategories} from '../../../stores/categories';
+import {getRules} from '../../../stores/rules';
+import {getTags} from '../../../stores/tags';
 import {partial} from '../../../util/partial';
 import {css} from '../../../utilx';
 import {SETTINGS_STYLES} from '../settingsStyles';
+import {updateRules} from '../store';
+import {STYLES} from '../styles';
 import {RuleRow} from './RuleRow';
+import {SaveButtons} from './SaveButtons';
 
 let placeholderId = -1;
 
 export function ManageAutomatedRules(props: {
-  tags?: List<ITagModel>;
-  rules?: List<IRuleModel>;
-  updateRules(rules: List<IRuleModel>): void;
+  setSaving(isSaving: boolean): void,
+  setError(message: string): void,
 }) {
-  const {
-    tags,
-    rules,
-  } = props;
+  const baseRules = useSelector(getRules);
+  const [rules, setRules] = useState<List<IRuleModel>>(List());
+  useEffect(() => {
+    setRules(baseRules);
+    props.setSaving(false);
+  }, [baseRules]);
 
+  const tags = useSelector(getTags);
   const categories = useSelector(getCategories);
   const categoriesWithAll = List([
     CategoryModel({
@@ -74,62 +77,80 @@ export function ManageAutomatedRules(props: {
     );
 
     const updatedRules = rules ?
-      rules.set(this.state.rules.size, newValue) :
+      rules.set(rules.size, newValue) :
       List([newValue]);
 
-    this.updateRules(updatedRules);
+    setRules(updatedRules);
   }
 
   function handleAutomatedRuleChange(category: string, rule: IRuleModel, value: number | string) {
-    props.updateRules(rules.update(
+    setRules(rules.update(
       rules.findIndex((r) => r.equals(rule)),
       (r) => r.set(category, value),
       ));
   }
 
   function handleAutomatedRuleDelete(rule: IRuleModel) {
-    props.updateRules(rules.delete(rules.findIndex((r) => r.equals(rule))));
+    setRules(rules.delete(rules.findIndex((r) => r.equals(rule))));
   }
 
   function handleModerateButtonClick(rule: IRuleModel, action: IServerAction) {
     const updatedRules = rules.update(
       rules.findIndex(((r) => r.equals(rule))),
       (r) => r.set('action', action));
-    props.updateRules(updatedRules);
+    setRules(updatedRules);
+  }
+
+  function onCancelPress() {
+    setRules(baseRules);
+  }
+
+  async function handleFormSubmit() {
+    props.setSaving(true);
+
+    try {
+      await updateRules(baseRules, rules);
+    } catch (exception) {
+      props.setError(exception.message);
+    }
   }
 
   return (
-    <div key="editRulesSection">
-      <div key="heading" {...css(SETTINGS_STYLES.heading)}>
-        <h2 {...css(SETTINGS_STYLES.headingText)}>Automated Rules</h2>
-      </div>
-      <div key="body" {...css(SETTINGS_STYLES.section)}>
-        {rules && rules.map((rule, i) => (
-          <RuleRow
-            key={i}
-            onDelete={handleAutomatedRuleDelete}
-            rule={rule}
-            onCategoryChange={partial(handleAutomatedRuleChange, 'categoryId', rule)}
-            onTagChange={partial(handleAutomatedRuleChange, 'tagId', rule)}
-            onLowerThresholdChange={partial(handleAutomatedRuleChange, 'lowerThreshold', rule)}
-            onUpperThresholdChange={partial(handleAutomatedRuleChange, 'upperThreshold', rule)}
-            rangeBottom={Math.round(rule.lowerThreshold * 100)}
-            rangeTop={Math.round(rule.upperThreshold * 100)}
-            selectedTag={rule.tagId}
-            selectedCategory={rule.categoryId}
-            selectedAction={rule.action}
-            hasTagging
-            onModerateButtonClick={handleModerateButtonClick}
-            categories={categoriesWithAll}
-            tags={tags}
+    <form {...css(STYLES.formContainer)}>
+      <div key="editRulesSection">
+        <div key="heading" {...css(SETTINGS_STYLES.heading)}>
+          <h2 {...css(SETTINGS_STYLES.headingText)}>Automated Rules</h2>
+        </div>
+        <div key="body" {...css(SETTINGS_STYLES.section)}>
+          {rules && rules.map((rule, i) => (
+            <RuleRow
+              key={i}
+              onDelete={handleAutomatedRuleDelete}
+              rule={rule}
+              onCategoryChange={partial(handleAutomatedRuleChange, 'categoryId', rule)}
+              onTagChange={partial(handleAutomatedRuleChange, 'tagId', rule)}
+              onLowerThresholdChange={partial(handleAutomatedRuleChange, 'lowerThreshold', rule)}
+              onUpperThresholdChange={partial(handleAutomatedRuleChange, 'upperThreshold', rule)}
+              rangeBottom={Math.round(rule.lowerThreshold * 100)}
+              rangeTop={Math.round(rule.upperThreshold * 100)}
+              selectedTag={rule.tagId}
+              selectedCategory={rule.categoryId}
+              selectedAction={rule.action}
+              hasTagging
+              onModerateButtonClick={handleModerateButtonClick}
+              categories={categoriesWithAll}
+              tags={tags}
+            />
+          ))}
+          <SaveButtons
+            onCancelPress={onCancelPress}
+            handleFormSubmit={handleFormSubmit}
+            handleAdd={handleAddAutomatedRule}
+            addTip="Add an automated rule"
+            width="1114px"
           />
-        ))}
-        <Tooltip title="Add an automated rule">
-          <Fab color="primary" onClick={handleAddAutomatedRule}>
-            <Add/>
-          </Fab>
-        </Tooltip>
+        </div>
       </div>
-    </div>
+    </form>
   );
 }
