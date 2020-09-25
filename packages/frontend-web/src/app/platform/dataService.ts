@@ -398,9 +398,7 @@ export async function destroyModel(
   type: IValidModelNames,
   id: string,
 ): Promise<void> {
-  validateModelName(type);
-
-  await axios.delete(modelURL(type, id));
+  await axios.delete(serviceURL('simple', `/${type}/${id}`));
 }
 
 export async function getCommentScores(commentId: string): Promise<Array<ICommentScoreModel>> {
