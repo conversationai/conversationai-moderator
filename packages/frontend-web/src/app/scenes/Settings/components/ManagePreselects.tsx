@@ -15,26 +15,40 @@ limitations under the License.
 */
 
 import {List} from 'immutable';
-import {CategoryModel, ICategoryModel, IPreselectModel, ITagModel, PreselectModel, TagModel} from '../../../../models';
+import React, {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+
+import {
+  CategoryModel,
+  ICategoryModel,
+  IPreselectModel,
+  ITagModel,
+  PreselectModel,
+  TagModel,
+} from '../../../../models';
+import {getCategories} from '../../../stores/categories';
+import {getPreselects} from '../../../stores/preselects';
+import {getTags} from '../../../stores/tags';
+import {partial} from '../../../util/partial';
 import {css} from '../../../utilx';
 import {SETTINGS_STYLES} from '../settingsStyles';
+import {updatePreselects} from '../store';
+import {STYLES} from '../styles';
 import {RuleRow} from './RuleRow';
-import {partial} from '../../../util/partial';
-import {Fab, Tooltip} from '@material-ui/core';
-import {Add} from '@material-ui/icons';
-import React from 'react';
-import {useSelector} from 'react-redux';
-import {getCategories} from '../../../stores/categories';
+import {SaveButtons} from './SaveButtons';
 
 let placeholderId = -1;
 
 export function ManagePreselects(props: {
-  preselects?:  List<IPreselectModel>;
-  tags?: List<ITagModel>;
-  updatePreselects(preselects: List<IPreselectModel>): void;
+  setSaving(isSaving: boolean): void,
+  setError(message: string): void,
 }) {
-
-  const {tags, preselects} = props;
+  const basePreselects = useSelector(getPreselects);
+  const [preselects, setPreselects] = useState<List<IPreselectModel>>(List());
+  useEffect(() => {
+    setPreselects(basePreselects);
+    props.setSaving(false);
+  }, [basePreselects]);
 
   function handleAddPreselect(event: React.FormEvent<any>) {
     event.preventDefault();
@@ -52,22 +66,23 @@ export function ManagePreselects(props: {
       preselects.set(preselects.size, newValue) :
       List([newValue]);
 
-    props.updatePreselects(updatedPreselects);
+    setPreselects(updatedPreselects);
   }
 
   function handlePreselectChange(category: string, preselect: IPreselectModel, value: number | string) {
-    props.updatePreselects(preselects.update(
+    setPreselects(preselects.update(
       preselects.findIndex((r) => r.equals(preselect)),
       (r) => r.set(category, value),
     ));
   }
 
   function handlePreselectDelete(preselect: IPreselectModel) {
-    props.updatePreselects(
+    setPreselects(
       preselects.delete(preselects.findIndex((r) => r.equals(preselect))),
     );
   }
 
+  const tags = useSelector(getTags);
   const tagsWithAll = List([
     TagModel({
       id: null,
@@ -88,37 +103,55 @@ export function ManagePreselects(props: {
     }),
   ]).concat(categories) as List<ICategoryModel>;
 
+  function onCancelPress() {
+    setPreselects(basePreselects);
+  }
+
+  async function handleFormSubmit() {
+    props.setSaving(true);
+
+    try {
+      await updatePreselects(basePreselects, preselects);
+    } catch (exception) {
+      props.setError(exception.message);
+    }
+  }
+
   return (
-    <div key="editRangesSection">
-      <div key="heading" {...css(SETTINGS_STYLES.heading)}>
-        <h2 {...css(SETTINGS_STYLES.headingText)}>
-          Preselected Batch Ranges (sets the default score range on a per category basis for tags in the batch selection view)
-        </h2>
-      </div>
-      <div key="body" {...css(SETTINGS_STYLES.section)}>
-        {preselects && preselects.map((preselect, i) => (
-          <RuleRow
-            key={i}
-            onDelete={handlePreselectDelete}
-            rule={preselect}
-            onCategoryChange={partial(handlePreselectChange, 'categoryId', preselect)}
-            onTagChange={partial(handlePreselectChange, 'tagId', preselect)}
-            onLowerThresholdChange={partial(handlePreselectChange, 'lowerThreshold', preselect)}
-            onUpperThresholdChange={partial(handlePreselectChange, 'upperThreshold', preselect)}
-            rangeBottom={Math.round(preselect.lowerThreshold * 100)}
-            rangeTop={Math.round(preselect.upperThreshold * 100)}
-            selectedTag={preselect.tagId}
-            selectedCategory={preselect.categoryId}
-            categories={categoriesWithAll}
-            tags={tagsWithAll}
+    <form {...css(STYLES.formContainer)}>
+      <div key="editRangesSection">
+        <div key="heading" {...css(SETTINGS_STYLES.heading)}>
+          <h2 {...css(SETTINGS_STYLES.headingText)}>
+            Preselected Batch Ranges (sets the default score range on a per category basis for tags in the batch selection view)
+          </h2>
+        </div>
+        <div key="body" {...css(SETTINGS_STYLES.section)}>
+          {preselects && preselects.map((preselect, i) => (
+            <RuleRow
+              key={i}
+              onDelete={handlePreselectDelete}
+              rule={preselect}
+              onCategoryChange={partial(handlePreselectChange, 'categoryId', preselect)}
+              onTagChange={partial(handlePreselectChange, 'tagId', preselect)}
+              onLowerThresholdChange={partial(handlePreselectChange, 'lowerThreshold', preselect)}
+              onUpperThresholdChange={partial(handlePreselectChange, 'upperThreshold', preselect)}
+              rangeBottom={Math.round(preselect.lowerThreshold * 100)}
+              rangeTop={Math.round(preselect.upperThreshold * 100)}
+              selectedTag={preselect.tagId}
+              selectedCategory={preselect.categoryId}
+              categories={categoriesWithAll}
+              tags={tagsWithAll}
+            />
+          ))}
+          <SaveButtons
+            onCancelPress={onCancelPress}
+            handleFormSubmit={handleFormSubmit}
+            handleAdd={handleAddPreselect}
+            addTip="Add a preselect"
+            width="931px"
           />
-        ))}
-        <Tooltip title="Add a preselect">
-          <Fab color="primary" onClick={handleAddPreselect}>
-            <Add/>
-          </Fab>
-        </Tooltip>
+        </div>
       </div>
-    </div>
+    </form>
   );
 }

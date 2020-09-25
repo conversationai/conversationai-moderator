@@ -19,7 +19,7 @@ import {
   DARK_PRIMARY_TEXT_COLOR,
   GUTTER_DEFAULT_SPACING,
   HEADER_HEIGHT,
-  WHITE_COLOR
+  WHITE_COLOR,
 } from '../../styles';
 import {stylesheet} from '../../utilx';
 

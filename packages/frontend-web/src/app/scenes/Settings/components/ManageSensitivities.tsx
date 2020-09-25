@@ -14,11 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {Fab, Tooltip} from '@material-ui/core';
-import {Add} from '@material-ui/icons';
 import {List} from 'immutable';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
+
 import {
   CategoryModel,
   ICategoryModel,
@@ -28,23 +27,30 @@ import {
   TagModel,
 } from '../../../../models';
 import {getCategories} from '../../../stores/categories';
+import {getTaggingSensitivities} from '../../../stores/taggingSensitivities';
+import {getTags} from '../../../stores/tags';
 import {partial} from '../../../util/partial';
 import {css} from '../../../utilx';
 import {SETTINGS_STYLES} from '../settingsStyles';
+import {updateTaggingSensitivities} from '../store';
+import {STYLES} from '../styles';
 import {RuleRow} from './RuleRow';
+import {SaveButtons} from './SaveButtons';
 
 let placeholderId = -1;
 
 export function ManageSensitivities(props: {
-  tags?: List<ITagModel>;
-  taggingSensitivities?:  List<ITaggingSensitivityModel>;
-  updateTaggingSensitivities(newSensitivities: List<ITaggingSensitivityModel>): void;
+  setSaving(isSaving: boolean): void,
+  setError(message: string): void,
 }) {
-  const {
-    tags,
-    taggingSensitivities,
-  } = props;
+  const baseSensitivities = useSelector(getTaggingSensitivities);
+  const [sensitivities, setSensitivities] = useState<List<ITaggingSensitivityModel>>(List());
+  useEffect(() => {
+    setSensitivities(baseSensitivities);
+    props.setSaving(false);
+  }, [baseSensitivities]);
 
+  const tags = useSelector(getTags);
   const categories = useSelector(getCategories);
   const categoriesWithAll = List([
     CategoryModel({
@@ -80,55 +86,73 @@ export function ManageSensitivities(props: {
       },
     );
 
-    const updatedTS = taggingSensitivities ?
-      taggingSensitivities.set(taggingSensitivities.size, newValue) :
+    const updatedTS = sensitivities ?
+      sensitivities.set(sensitivities.size, newValue) :
       List([newValue]);
 
-    props.updateTaggingSensitivities(updatedTS);
+    setSensitivities(updatedTS);
   }
 
   function handleTaggingSensitivityChange(category: string, ts: ITaggingSensitivityModel, value: number | string) {
-    props.updateTaggingSensitivities(taggingSensitivities.update(
-      taggingSensitivities.findIndex((r) => r.equals(ts)),
+    setSensitivities(sensitivities.update(
+      sensitivities.findIndex((r) => r.equals(ts)),
       (r) => r.set(category, value),
     ));
   }
 
   function handleTaggingSensitivityDelete(ts: ITaggingSensitivityModel) {
-    props.updateTaggingSensitivities(taggingSensitivities.delete(
-      taggingSensitivities.findIndex((r) => r.equals(ts)),
+    setSensitivities(sensitivities.delete(
+      sensitivities.findIndex((r) => r.equals(ts)),
     ));
   }
 
+  function onCancelPress() {
+    setSensitivities(baseSensitivities);
+  }
+
+  async function handleFormSubmit() {
+    props.setSaving(true);
+
+    try {
+      await updateTaggingSensitivities(baseSensitivities, sensitivities);
+    } catch (exception) {
+      props.setError(exception.message);
+    }
+  }
+
   return (
-    <div key="editSensitivitiesSection">
-      <div key="heading" {...css(SETTINGS_STYLES.heading)}>
-        <h2 {...css(SETTINGS_STYLES.headingText)}>Tagging Sensitivity (determines at what score range a tag will appear in the UI)</h2>
-      </div>
-      <div key="body" {...css(SETTINGS_STYLES.section)}>
-        {taggingSensitivities && taggingSensitivities.map((ts, i) => (
-          <RuleRow
-            key={i}
-            onDelete={handleTaggingSensitivityDelete}
-            rule={ts}
-            onCategoryChange={partial(handleTaggingSensitivityChange, 'categoryId', ts)}
-            onTagChange={partial(handleTaggingSensitivityChange, 'tagId', ts)}
-            onLowerThresholdChange={partial(handleTaggingSensitivityChange, 'lowerThreshold', ts)}
-            onUpperThresholdChange={partial(handleTaggingSensitivityChange, 'upperThreshold', ts)}
-            rangeBottom={Math.round(ts.lowerThreshold * 100)}
-            rangeTop={Math.round(ts.upperThreshold * 100)}
-            selectedTag={ts.tagId}
-            selectedCategory={ts.categoryId}
-            categories={categoriesWithAll}
-            tags={tagsWithAllNoSummary}
+    <form {...css(STYLES.formContainer)}>
+      <div key="editSensitivitiesSection">
+        <div key="heading" {...css(SETTINGS_STYLES.heading)}>
+          <h2 {...css(SETTINGS_STYLES.headingText)}>Tagging Sensitivity (determines at what score range a tag will appear in the UI)</h2>
+        </div>
+        <div key="body" {...css(SETTINGS_STYLES.section)}>
+          {sensitivities && sensitivities.map((ts, i) => (
+            <RuleRow
+              key={i}
+              onDelete={handleTaggingSensitivityDelete}
+              rule={ts}
+              onCategoryChange={partial(handleTaggingSensitivityChange, 'categoryId', ts)}
+              onTagChange={partial(handleTaggingSensitivityChange, 'tagId', ts)}
+              onLowerThresholdChange={partial(handleTaggingSensitivityChange, 'lowerThreshold', ts)}
+              onUpperThresholdChange={partial(handleTaggingSensitivityChange, 'upperThreshold', ts)}
+              rangeBottom={Math.round(ts.lowerThreshold * 100)}
+              rangeTop={Math.round(ts.upperThreshold * 100)}
+              selectedTag={ts.tagId}
+              selectedCategory={ts.categoryId}
+              categories={categoriesWithAll}
+              tags={tagsWithAllNoSummary}
+            />
+          ))}
+          <SaveButtons
+            onCancelPress={onCancelPress}
+            handleFormSubmit={handleFormSubmit}
+            handleAdd={handleAddTaggingSensitivity}
+            addTip="Add a tagging sensitivity rule"
+            width="931px"
           />
-        ))}
-        <Tooltip title="Add a tagging sensitivity rule">
-          <Fab color="primary" onClick={handleAddTaggingSensitivity}>
-            <Add/>
-          </Fab>
-        </Tooltip>
+        </div>
       </div>
-    </div>
+    </form>
   );
 }

@@ -31,7 +31,7 @@ import {
   tagSelectorBase,
 } from './routes';
 import { Search } from './Search';
-import { Ranges } from './Settings';
+import { Ranges } from './Settings/Ranges';
 import { Settings } from './Settings/Settings';
 import { TableFrame } from './Tables/TableFrame';
 
