@@ -33,6 +33,10 @@ import {
   CommentSummaryScore,
   ICommentInstance,
   ICommentScoreAttributes,
+  ModerationRule,
+  Preselect,
+  Tag,
+  TaggingSensitivity,
   User,
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
@@ -97,7 +101,7 @@ export function createSimpleRESTService(): express.Router {
       return;
     }
 
-    const group = await user.group;
+    const group = user.group;
 
     function isRealUser(g: string) {
       return g === USER_GROUP_ADMIN || g === USER_GROUP_GENERAL;
@@ -249,5 +253,25 @@ export function createSimpleRESTService(): express.Router {
     next();
   });
 
+  router.delete('/:model/:id', async (req, res, next) => {
+    const objectId = parseInt(req.params.id, 10);
+    switch (req.params.model) {
+      case 'moderation_rules':
+        await ModerationRule.destroy({where: {id: objectId}});
+        break;
+      case 'preselects':
+        await Preselect.destroy({where: {id: objectId}});
+        break;
+      case 'tagging_sensitivities':
+        await TaggingSensitivity.destroy({where: {id: objectId}});
+        break;
+      case 'tags':
+        await Tag.destroy({where: {id: objectId}});
+        break;
+    }
+    updateHappened();
+    res.json(REPLY_SUCCESS);
+    next();
+  });
   return router;
 }
