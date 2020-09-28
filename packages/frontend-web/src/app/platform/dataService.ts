@@ -44,35 +44,10 @@ import { ServerStates } from '../../types';
 import { API_URL } from '../config';
 
 export type IValidModelNames =
-    'articles' |
-    'categories' |
-    'comment_scores' |
-    'comments' |
     'moderation_rules' |
     'preselects' |
     'tagging_sensitivities' |
-    'tags' |
-    'users';
-
-const VALID_MODEL_NAMES_LOOKUP: {
-  [key: string]: boolean;
-} = {
-  articles: true,
-  categories: true,
-  comment_scores: true,
-  comments: true,
-  moderation_rules: true,
-  preselects: true,
-  tagging_sensitivities: true,
-  tags: true,
-  users: true,
-};
-
-function validateModelName(name: string): void {
-  if (!VALID_MODEL_NAMES_LOOKUP[name]) {
-    throw new Error(`Tried to perform a task on a model named ${name} which wasn't in the list of valid values. Might be an attempted exploit.`);
-  }
-}
+    'tags';
 
 /**
  * Convert Partial<IParams> type to a query string.
@@ -126,20 +101,15 @@ export function serviceURL(service: string, path?: string | null, params?: Parti
 /**
  * The URL of a model array listing.
  */
-function listURL(type: IValidModelNames, params?: Partial<IParams>): string {
-  validateModelName(type);
-
-  return `${API_URL}${REST_URL}/${type}${serializeParams(params)}`;
+function listURL(type: IValidModelNames): string {
+  return `${API_URL}${REST_URL}/${type}`;
 }
 
 /**
  * The URL of a single model result.
  */
-function modelURL(type: IValidModelNames, id: string, params?: Partial<IParams>): string {
-  validateModelName(type);
-
-  return `${listURL(type)}/${id}${serializeParams(params)}`;
-
+function modelURL(type: IValidModelNames, id: string): string {
+  return `${listURL(type)}/${id}`;
 }
 
 /**
@@ -149,8 +119,6 @@ export async function createModel(
   type: IValidModelNames,
   model: INewResource,
 ): Promise<void> {
-  validateModelName(type);
-
   await axios.post(listURL(type), {
     data: {
       attributes: fromJS(model).delete('id').toJS(),
@@ -363,8 +331,6 @@ export async function updateModel(
   model: INewResource,
   onlyAttributes?: Array<string>,
 ): Promise<void> {
-  validateModelName(type);
-
   let attributes = fromJS(model).delete('id').toJS();
 
   if (onlyAttributes) {
@@ -383,6 +349,19 @@ export async function updateModel(
 export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean) {
   const url = serviceURL('simple', `/article/update/${id}`);
   await axios.post(url, {isCommentingEnabled, isAutoModerated});
+}
+
+export async function createUser(user: IUserModel) {
+  const url = serviceURL('simple', `/user`);
+  const attributes = pick(user, ['name', 'email', 'group', 'isActive']);
+  try {
+    await axios.post(url, attributes);
+  } catch (e) {
+    if (e.response) {
+      throw new Error(e.response.data);
+    }
+    throw e;
+  }
 }
 
 export async function updateUser(user: IUserModel) {
