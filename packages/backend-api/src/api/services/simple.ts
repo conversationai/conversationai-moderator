@@ -92,6 +92,36 @@ export function createSimpleRESTService(): express.Router {
     next();
   });
 
+  router.post('/user',  async (req, res, next) => {
+    const {name, email, group, isActive} = req.body;
+    if (!(group === USER_GROUP_ADMIN || group === USER_GROUP_GENERAL || group === USER_GROUP_SERVICE)) {
+      res.status(400).send(`Can't create users of type ${group}`);
+      next();
+      return;
+    }
+
+    if ((group === USER_GROUP_ADMIN || group === USER_GROUP_GENERAL) && !email) {
+      res.status(400).send('User creation error: Human users require an email.');
+      next();
+      return;
+    }
+
+    if (email) {
+      const existing = await User.count({where: {email}});
+      if (existing) {
+        res.status(400).send('User creation error: email already in use.');
+        next();
+        return;
+      }
+    }
+
+    await User.create({name, email, group, isActive});
+
+    updateHappened();
+    res.json(REPLY_SUCCESS);
+    next();
+  });
+
   router.post('/user/update/:id', async (req, res, next) => {
     const userId = parseInt(req.params.id, 10);
     const user = await User.findByPk(userId);

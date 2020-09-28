@@ -26,6 +26,7 @@ import {
 } from '../../../models';
 import {
   createModel,
+  createUser,
   destroyModel,
   updateModel,
   updateUser,
@@ -49,11 +50,7 @@ function diff<T extends Map<string, any>>(original: List<T>, current: List<T>): 
 }
 
 export async function addUser(user: IUserModel): Promise<void> {
-  // TODO: Don't know what's going on with the types here (hence the cast to any), nor with the key field...
-  await createModel(
-    'users',
-    {...user, key: slugify(user.name, '_').toUpperCase()} as any,
-  );
+  await createUser(user);
 }
 
 // TODO: the typing in this module looks wrong - note the many casts to 'any' when calling createModel, updateModel etc.

@@ -19,7 +19,6 @@ import { ModelId } from './common';
 export interface IUserAttributes {
   id?: ModelId;
   name: string;
-  key?: string;
   email?: string;
   avatarURL?: string;
   group: string;
