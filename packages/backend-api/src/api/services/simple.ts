@@ -283,6 +283,61 @@ export function createSimpleRESTService(): express.Router {
     next();
   });
 
+  router.post('/tag', async (req, res, next) => {
+    for (const k of ['color', 'key', 'label']) {
+      if (typeof req.body[k] !== 'string') {
+        res.status(400).send(`Tag creation error: Missing/invalid attribute ${k}.`);
+        next();
+        return;
+      }
+    }
+
+    const {color, description, key, label, isInBatchView, inSummaryScore, isTaggable} = req.body;
+
+    await Tag.create({
+      color, description, key, label,
+      isInBatchView: !!isInBatchView,
+      inSummaryScore: !!inSummaryScore,
+      isTaggable: !!isTaggable,
+    });
+
+    updateHappened();
+    res.json(REPLY_SUCCESS);
+    next();
+  });
+
+  router.patch('/tag/:id', async (req, res, next) => {
+    const id = parseInt(req.params.id, 10);
+    const tag = await Tag.findByPk(id);
+    if (!tag) {
+      res.status(404).send('Not found');
+      next();
+      return;
+    }
+
+    for (const k of ['color', 'key', 'label', 'description']) {
+      if (k in req.body) {
+        if (typeof req.body[k] !== 'string' && (k !== 'description' || req.body[k] !== null)) {
+          res.status(400).send(`Tag modification error: Invalid attribute ${k}.`);
+          next();
+          return;
+        }
+        tag.set(k, req.body[k]);
+      }
+    }
+
+    for (const k of ['isInBatchView', 'inSummaryScore', 'isTaggable']) {
+      if (k in req.body) {
+        tag.set(k as 'isInBatchView' | 'inSummaryScore' | 'isTaggable', !!req.body[k]);
+      }
+    }
+
+    await tag.save();
+    updateHappened();
+    res.json(REPLY_SUCCESS);
+    next();
+  });
+
   router.delete('/:model/:id', async (req, res, next) => {
     const objectId = parseInt(req.params.id, 10);
     switch (req.params.model) {
@@ -295,9 +350,13 @@ export function createSimpleRESTService(): express.Router {
       case 'tagging_sensitivities':
         await TaggingSensitivity.destroy({where: {id: objectId}});
         break;
-      case 'tags':
+      case 'tag':
         await Tag.destroy({where: {id: objectId}});
         break;
+      default:
+        res.status(404);
+        next();
+        return;
     }
     updateHappened();
     res.json(REPLY_SUCCESS);
