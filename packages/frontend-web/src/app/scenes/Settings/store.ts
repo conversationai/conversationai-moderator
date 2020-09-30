@@ -27,11 +27,15 @@ import {
   ModelId,
 } from '../../../models';
 import {
-  createModel,
+  createPreselect,
+  createRule,
+  createSensitivity,
   createTag,
   createUser,
   destroyModel,
-  updateModel,
+  updatePreselect,
+  updateRule,
+  updateSensitivity,
   updateTag,
   updateUser,
 } from '../../platform/dataService';
@@ -94,15 +98,15 @@ export async function updateTags(oldTags: List<ITagModel>, newTags: List<ITagMod
 }
 
 async function addRule(rule: IRuleModel): Promise<void> {
-  await createModel('moderation_rules', rule);
+  await createRule(rule);
 }
 
 async function modifyRule(rule: IRuleModel): Promise<void> {
-  await updateModel('moderation_rules', rule);
+  await updateRule(rule);
 }
 
 async function deleteRule(ruleId: ModelId): Promise<void> {
-  await destroyModel('moderation_rules', ruleId);
+  await destroyModel('moderation_rule', ruleId);
 }
 
 export async function updateRules(oldRules: List<IRuleModel>, newRules: List<IRuleModel>) {
@@ -115,15 +119,15 @@ export async function updateRules(oldRules: List<IRuleModel>, newRules: List<IRu
 }
 
 async function addPreselect(preselect: IPreselectModel): Promise<void> {
-  await createModel('preselects', preselect);
+  await createPreselect(preselect);
 }
 
 async function modifyPreselect(preselect: IPreselectModel): Promise<void> {
-  await updateModel('preselects', preselect);
+  await updatePreselect(preselect);
 }
 
 async function deletePreselect(preselectId: ModelId): Promise<void> {
-  await destroyModel('preselects', preselectId);
+  await destroyModel('preselect', preselectId);
 }
 
 export async function updatePreselects(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>) {
@@ -136,15 +140,15 @@ export async function updatePreselects(oldPreselects: List<IPreselectModel>, new
 }
 
 async function addTaggingSensitivity(taggingSensitivity: ITaggingSensitivityModel): Promise<void> {
-  await createModel('tagging_sensitivities', taggingSensitivity);
+  await createSensitivity(taggingSensitivity);
 }
 
 async function modifyTaggingSensitivity(taggingSensitivity: ITaggingSensitivityModel): Promise<void> {
-  await updateModel('tagging_sensitivities', taggingSensitivity);
+  await updateSensitivity(taggingSensitivity);
 }
 
 async function deleteTaggingSensitivity(taggingSensitivityId: ModelId): Promise<void> {
-  await destroyModel('tagging_sensitivities', taggingSensitivityId);
+  await destroyModel('tagging_sensitivity', taggingSensitivityId);
 }
 
 export async function updateTaggingSensitivities(oldRules: List<ITaggingSensitivityModel>, newRules: List<ITaggingSensitivityModel>) {
