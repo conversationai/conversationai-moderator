@@ -128,7 +128,7 @@ export function ScoresList(props: IScoresListProps) {
   }
 
   const exampleScore = scores[0] || null;
-  const tag = tags && tags.find((t) => (t.get('id') === exampleScore.tagId));
+  const tag = tags && tags.find((t) => (t.id === exampleScore.tagId));
   const scoresAboveThreshold = threshold && scores && scores.filter((score) => score.score >= threshold.lowerThreshold);
   const scoresBelowThreshold = threshold && scores && scores.filter((score) => score.score < threshold.lowerThreshold);
 

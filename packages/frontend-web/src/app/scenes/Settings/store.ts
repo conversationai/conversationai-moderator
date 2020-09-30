@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { List, Map } from 'immutable';
+import { List } from 'immutable';
+import { isEqual } from 'lodash';
 import slugify from 'slugify';
 
 import {
@@ -23,6 +24,7 @@ import {
   ITaggingSensitivityModel,
   ITagModel,
   IUserModel,
+  ModelId,
 } from '../../../models';
 import {
   createModel,
@@ -32,155 +34,122 @@ import {
   updateUser,
 } from '../../platform/dataService';
 
-function diff<T extends Map<string, any>>(original: List<T>, current: List<T>): {
-  modified: List<T>,
-  added: List<T>,
-  removed: List<T>,
+function diff<T extends {id: ModelId}>(original: List<T>, current: List<T>): {
+  modified: Array<T>,
+  added: Array<T>,
+  removed: Array<ModelId>,
 } {
-  const modifiedOrAdded = current.filter((item) =>
-      !item.equals( original.find((originalItem) => originalItem.get('id') === item.get('id')) ));
-  const modified = modifiedOrAdded.filter((item) =>
-      !!original.find((originalItem) => originalItem.get('id') === item.get('id')));
-  const added = modifiedOrAdded.filter((item) =>
-      !original.find((originalItem) => originalItem.get('id') === item.get('id')));
-  const removed = original.filter((item) =>
-      !current.find((currentItem) => currentItem.get('id') === item.get('id')));
+  const originals = new Map<ModelId, T>();
+  const toAdd: Array<T> = [];
+  const toModify: Array<T> = [];
+  for (const o of original.toArray()) {
+    originals.set(o.id, o);
+  }
+  for (const c of current.toArray()) {
+    if (originals.has(c.id)) {
+      if (!isEqual(originals.get(c.id), c)) {
+        toModify.push(c);
+      }
+      originals.delete(c.id);
+    } else {
+      toAdd.push(c);
+    }
+  }
 
-  return { modified: modified as List<T>, added: added as List<T>, removed: removed as List<T> };
+  return { modified: toModify, added: toAdd, removed: Array.from(originals.keys()) };
 }
 
 export async function addUser(user: IUserModel): Promise<void> {
   await createUser(user);
 }
 
-// TODO: the typing in this module looks wrong - note the many casts to 'any' when calling createModel, updateModel etc.
-//  But it works. Which leads me to suspect the interface defined by these functions does not match the actual
-//  interface used by the generic JSON API...
-
 export async function modifyUser(user: IUserModel): Promise<void> {
  await updateUser(user);
 }
 
 async function addTag(tag: ITagModel): Promise<void> {
-  await createModel(
-    'tags',
-    tag.set('key', slugify(tag.get('label'), '_').toUpperCase()) as any,
-  );
+  await createModel('tags', {
+    ...tag,
+    key: slugify(tag.label, '_').toUpperCase(),
+  });
 }
 
 async function modifyTag(tag: ITagModel): Promise<void> {
-  await updateModel(
-    'tags',
-    tag.id,
-    tag as any,
-  );
+  await updateModel('tags', tag);
 }
 
-async function deleteTag(tag: ITagModel): Promise<void> {
-  await destroyModel(
-    'tags',
-    tag.id,
-  );
+async function deleteTag(tagId: ModelId): Promise<void> {
+  await destroyModel('tags', tagId);
 }
 
 export async function updateTags(oldTags: List<ITagModel>, newTags: List<ITagModel>) {
   const { modified, added, removed } = diff<ITagModel>(oldTags, newTags);
   await Promise.all([
-    Promise.all(modified.map(modifyTag).toArray()),
-    Promise.all(added.map(addTag).toArray()),
-    Promise.all(removed.map(deleteTag).toArray()),
+    Promise.all(modified.map(modifyTag)),
+    Promise.all(added.map(addTag)),
+    Promise.all(removed.map(deleteTag)),
   ]);
 }
 
 async function addRule(rule: IRuleModel): Promise<void> {
-  await createModel(
-    'moderation_rules',
-    rule as any,
-  );
+  await createModel('moderation_rules', rule);
 }
 
 async function modifyRule(rule: IRuleModel): Promise<void> {
-  await updateModel(
-    'moderation_rules',
-    rule.id,
-    rule as any,
-  );
+  await updateModel('moderation_rules', rule);
 }
 
-async function deleteRule(rule: IRuleModel): Promise<void> {
-  await destroyModel(
-    'moderation_rules',
-    rule.id,
-  );
+async function deleteRule(ruleId: ModelId): Promise<void> {
+  await destroyModel('moderation_rules', ruleId);
 }
 
 export async function updateRules(oldRules: List<IRuleModel>, newRules: List<IRuleModel>) {
   const { modified, added, removed } = diff<IRuleModel>(oldRules, newRules);
   await Promise.all([
-    Promise.all(modified.map(modifyRule).toArray()),
-    Promise.all(added.map(addRule).toArray()),
-    Promise.all(removed.map(deleteRule).toArray()),
+    Promise.all(modified.map(modifyRule)),
+    Promise.all(added.map(addRule)),
+    Promise.all(removed.map(deleteRule)),
   ]);
 }
 
 async function addPreselect(preselect: IPreselectModel): Promise<void> {
-  await createModel(
-    'preselects',
-    preselect as any,
-  );
+  await createModel('preselects', preselect);
 }
 
 async function modifyPreselect(preselect: IPreselectModel): Promise<void> {
-  await updateModel(
-    'preselects',
-    preselect.id,
-    preselect as any,
-  );
+  await updateModel('preselects', preselect);
 }
 
-async function deletePreselect(preselect: IPreselectModel): Promise<void> {
-  await destroyModel(
-    'preselects',
-    preselect.id,
-  );
+async function deletePreselect(preselectId: ModelId): Promise<void> {
+  await destroyModel('preselects', preselectId);
 }
 
 export async function updatePreselects(oldPreselects: List<IPreselectModel>, newPreselects: List<IPreselectModel>) {
   const { modified, added, removed } = diff<IPreselectModel>(oldPreselects, newPreselects);
   await Promise.all([
-    Promise.all(modified.map(modifyPreselect).toArray()),
-    Promise.all(added.map(addPreselect).toArray()),
-    Promise.all(removed.map(deletePreselect).toArray()),
+    Promise.all(modified.map(modifyPreselect)),
+    Promise.all(added.map(addPreselect)),
+    Promise.all(removed.map(deletePreselect)),
   ]);
 }
 
 async function addTaggingSensitivity(taggingSensitivity: ITaggingSensitivityModel): Promise<void> {
-  await createModel(
-    'tagging_sensitivities',
-    taggingSensitivity as any,
-  );
+  await createModel('tagging_sensitivities', taggingSensitivity);
 }
 
 async function modifyTaggingSensitivity(taggingSensitivity: ITaggingSensitivityModel): Promise<void> {
-  await updateModel(
-    'tagging_sensitivities',
-    taggingSensitivity.id,
-    taggingSensitivity as any,
-  );
+  await updateModel('tagging_sensitivities', taggingSensitivity);
 }
 
-async function deleteTaggingSensitivity(taggingSensitivity: ITaggingSensitivityModel): Promise<void> {
-  await destroyModel(
-    'tagging_sensitivities',
-    taggingSensitivity.id,
-  );
+async function deleteTaggingSensitivity(taggingSensitivityId: ModelId): Promise<void> {
+  await destroyModel('tagging_sensitivities', taggingSensitivityId);
 }
 
 export async function updateTaggingSensitivities(oldRules: List<ITaggingSensitivityModel>, newRules: List<ITaggingSensitivityModel>) {
   const { modified, added, removed } = diff<ITaggingSensitivityModel>(oldRules, newRules);
   await Promise.all([
-    Promise.all(modified.map(modifyTaggingSensitivity).toArray()),
-    Promise.all(added.map(addTaggingSensitivity).toArray()),
-    Promise.all(removed.map(deleteTaggingSensitivity).toArray()),
+    Promise.all(modified.map(modifyTaggingSensitivity)),
+    Promise.all(added.map(addTaggingSensitivity)),
+    Promise.all(removed.map(deleteTaggingSensitivity)),
   ]);
 }

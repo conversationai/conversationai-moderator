@@ -14,29 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
-
 import { ModelId } from './common';
 
 export interface IPreselectAttributes {
-  id: string;
+  id: ModelId;
   categoryId?: ModelId;
   lowerThreshold: number;
   upperThreshold: number;
   tagId?: ModelId;
 }
 
-export interface IPreselectModel extends TypedRecord<IPreselectModel>, IPreselectAttributes {}
+export type IPreselectModel = Readonly<IPreselectAttributes>;
 
-const PreselectModelRecord = Record({
-  id: null,
-  categoryId: null,
-  lowerThreshold: null,
-  upperThreshold: null,
-  tagId: null,
-});
-
-export function PreselectModel(keyValuePairs?: IPreselectAttributes): IPreselectModel {
-  return new PreselectModelRecord(keyValuePairs) as IPreselectModel;
+export function PreselectModel(keyValuePairs: IPreselectAttributes): IPreselectModel {
+  return keyValuePairs as IPreselectModel;
 }

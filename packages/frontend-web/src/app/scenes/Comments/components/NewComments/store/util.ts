@@ -30,10 +30,11 @@ import { getTags } from '../../../../../stores/tags';
 import { groupByDateColumns } from '../../../../../util';
 
 const dateTag = TagModel({
+  id: 'DATE',
   label: 'All Comments by Date',
   key: 'DATE',
   color: '',
-}).set('id', 'DATE');
+});
 
 export function getTagsWithDateAndSummary(state: IAppState): List<ITagModel> {
   return getTags(state).push(dateTag);

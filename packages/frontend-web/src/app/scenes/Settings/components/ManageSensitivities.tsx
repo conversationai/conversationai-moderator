@@ -95,14 +95,14 @@ export function ManageSensitivities(props: {
 
   function handleTaggingSensitivityChange(category: string, ts: ITaggingSensitivityModel, value: number | string) {
     setSensitivities(sensitivities.update(
-      sensitivities.findIndex((r) => r.equals(ts)),
-      (r) => r.set(category, value),
+      sensitivities.findIndex((r) => r.id === ts.id),
+      (r) => ({...r, [category]: value}),
     ));
   }
 
   function handleTaggingSensitivityDelete(ts: ITaggingSensitivityModel) {
     setSensitivities(sensitivities.delete(
-      sensitivities.findIndex((r) => r.equals(ts)),
+      sensitivities.findIndex((r) => r.id === ts.id),
     ));
   }
 
@@ -124,7 +124,7 @@ export function ManageSensitivities(props: {
     <form {...css(STYLES.formContainer)}>
       <div key="editSensitivitiesSection">
         <div key="heading" {...css(SETTINGS_STYLES.heading)}>
-          <h2 {...css(SETTINGS_STYLES.headingText)}>Tagging Sensitivity (determines at what score range a tag will appear in the UI)</h2>
+          <h2 {...css(SETTINGS_STYLES.headingText)}>Sensitivity <small>(The range where a score become interesting. Scores that match these ranges are highlighted in the UI)</small></h2>
         </div>
         <div key="body" {...css(SETTINGS_STYLES.section)}>
           {sensitivities && sensitivities.map((ts, i) => (

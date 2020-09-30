@@ -71,8 +71,8 @@ function differentiateRules(rules: List<IRuleModel>): Array<IRuleModel> {
   return sortedRules.reduce((sum, currentRule, i, allRules) => {
     const nextRule = allRules[i + 1];
 
-    if (nextRule && currentRule.get('upperThreshold') > nextRule.get('lowerThreshold')) {
-      sum.push(currentRule.set('upperThreshold', nextRule.lowerThreshold));
+    if (nextRule && currentRule.upperThreshold > nextRule.lowerThreshold) {
+      sum.push({ ...currentRule, upperThreshold: nextRule.lowerThreshold});
     } else {
       sum.push(currentRule);
     }

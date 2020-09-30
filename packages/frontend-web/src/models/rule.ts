@@ -14,9 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
-
 import { IServerAction, ModelId } from './common';
 
 export interface IRuleAttributes {
@@ -29,18 +26,8 @@ export interface IRuleAttributes {
   tagId?: ModelId;
 }
 
-export interface IRuleModel extends TypedRecord<IRuleModel>, IRuleAttributes {}
+export type IRuleModel = Readonly<IRuleAttributes>;
 
-const RuleModelRecord = Record({
-  id: null,
-  action: null,
-  categoryId: null,
-  createdBy: null,
-  lowerThreshold: null,
-  upperThreshold: null,
-  tagId: null,
-});
-
-export function RuleModel(keyValuePairs?: IRuleAttributes): IRuleModel {
-  return new RuleModelRecord(keyValuePairs) as IRuleModel;
+export function RuleModel(keyValuePairs: IRuleAttributes): IRuleModel {
+  return keyValuePairs as IRuleModel;
 }

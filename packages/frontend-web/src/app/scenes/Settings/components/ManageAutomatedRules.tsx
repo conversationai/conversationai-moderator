@@ -85,19 +85,20 @@ export function ManageAutomatedRules(props: {
 
   function handleAutomatedRuleChange(category: string, rule: IRuleModel, value: number | string) {
     setRules(rules.update(
-      rules.findIndex((r) => r.equals(rule)),
-      (r) => r.set(category, value),
+      rules.findIndex((r) => r.id === rule.id),
+      (r) => ({...r, [category]: value}),
       ));
   }
 
   function handleAutomatedRuleDelete(rule: IRuleModel) {
-    setRules(rules.delete(rules.findIndex((r) => r.equals(rule))));
+    setRules(rules.delete(rules.findIndex((r) => r.id === rule.id)));
   }
 
   function handleModerateButtonClick(rule: IRuleModel, action: IServerAction) {
     const updatedRules = rules.update(
-      rules.findIndex(((r) => r.equals(rule))),
-      (r) => r.set('action', action));
+      rules.findIndex(((r) => r.id === rule.id)),
+      (r) => ({...r, action}),
+    );
     setRules(updatedRules);
   }
 
@@ -119,7 +120,7 @@ export function ManageAutomatedRules(props: {
     <form {...css(STYLES.formContainer)}>
       <div key="editRulesSection">
         <div key="heading" {...css(SETTINGS_STYLES.heading)}>
-          <h2 {...css(SETTINGS_STYLES.headingText)}>Automated Rules</h2>
+          <h2 {...css(SETTINGS_STYLES.headingText)}>Automated Rules <small>(The server will automatically pass/fail comments that match these filters)</small></h2>
         </div>
         <div key="body" {...css(SETTINGS_STYLES.section)}>
           {rules && rules.map((rule, i) => (

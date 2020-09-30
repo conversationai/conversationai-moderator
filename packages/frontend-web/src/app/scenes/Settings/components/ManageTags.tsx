@@ -93,15 +93,15 @@ export function ManageTags(props: {
 
   function handleLabelChange(tag: ITagModel, value: string) {
     setTags(tags.update(
-      tags.findIndex((t) => t.equals(tag)),
-      (t) => t.set('label', value),
+      tags.findIndex((t) => t.id === tag.id),
+      (t) => ({...t, label: value}),
     ));
   }
 
   function handleDescriptionChange(tag: ITagModel, value: string) {
     setTags(tags.update(
-      tags.findIndex((t) => t.equals(tag)),
-      (t) => t.set('description', value),
+      tags.findIndex((t) =>  t.id === tag.id),
+      (t) => ({...t, description: value}),
     ));
   }
 
@@ -111,13 +111,13 @@ export function ManageTags(props: {
     }
 
     setTags(tags.update(
-      tags.findIndex((t) => t.equals(tag)),
-      (t) => t.set('color', color),
+      tags.findIndex((t) =>  t.id === tag.id),
+      (t) => ({...t, color}),
     ));
   }
 
   function handleTagDeletePress(tag: ITagModel) {
-    setTags(tags.delete(tags.findIndex((t) => t.equals(tag))));
+    setTags(tags.delete(tags.findIndex((t) =>  t.id === tag.id)));
   }
 
   function handleTagChange(
@@ -126,8 +126,8 @@ export function ManageTags(props: {
     value: boolean,
   ) {
     setTags(tags.update(
-      tags.findIndex((t) => t.equals(tag)),
-      (t) => t.set(key, value),
+      tags.findIndex((t) =>  t.id === tag.id),
+      (t) => ({...t, [key]: value}),
     ));
   }
 

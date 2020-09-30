@@ -15,12 +15,11 @@ limitations under the License.
 */
 
 import axios from 'axios';
-import { fromJS, List } from 'immutable';
+import { List } from 'immutable';
 import { pick } from 'lodash';
 import qs from 'qs';
 
 import {
-  INewResource,
   IParams,
 } from './types';
 
@@ -117,11 +116,11 @@ function modelURL(type: IValidModelNames, id: string): string {
  */
 export async function createModel(
   type: IValidModelNames,
-  model: INewResource,
+  model: {id: ModelId, [key: string]: string | number | boolean},
 ): Promise<void> {
   await axios.post(listURL(type), {
     data: {
-      attributes: fromJS(model).delete('id').toJS(),
+      attributes: model,
       type,
     },
   });
@@ -327,21 +326,13 @@ export async function getArticleText(id: ModelId) {
  */
 export async function updateModel(
   type: IValidModelNames,
-  id: string,
-  model: INewResource,
-  onlyAttributes?: Array<string>,
+  model: {id: ModelId, [key: string]: string | number | boolean},
 ): Promise<void> {
-  let attributes = fromJS(model).delete('id').toJS();
-
-  if (onlyAttributes) {
-    attributes = pick(attributes, onlyAttributes);
-  }
-
-  await axios.patch(modelURL(type, id), {
+  await axios.patch(modelURL(type, model.id), {
     data: {
-      attributes,
+      attributes: model,
       type,
-      id,
+      id: model.id,
     },
   });
 }
