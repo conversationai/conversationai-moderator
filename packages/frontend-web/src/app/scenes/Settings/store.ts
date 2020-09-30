@@ -28,9 +28,11 @@ import {
 } from '../../../models';
 import {
   createModel,
+  createTag,
   createUser,
   destroyModel,
   updateModel,
+  updateTag,
   updateUser,
 } from '../../platform/dataService';
 
@@ -68,18 +70,18 @@ export async function modifyUser(user: IUserModel): Promise<void> {
 }
 
 async function addTag(tag: ITagModel): Promise<void> {
-  await createModel('tags', {
+  await createTag({
     ...tag,
     key: slugify(tag.label, '_').toUpperCase(),
   });
 }
 
 async function modifyTag(tag: ITagModel): Promise<void> {
-  await updateModel('tags', tag);
+  await updateTag(tag);
 }
 
 async function deleteTag(tagId: ModelId): Promise<void> {
-  await destroyModel('tags', tagId);
+  await destroyModel('tag', tagId);
 }
 
 export async function updateTags(oldTags: List<ITagModel>, newTags: List<ITagModel>) {

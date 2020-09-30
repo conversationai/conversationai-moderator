@@ -35,6 +35,7 @@ import {
   ICommentModel,
   ICommentScore,
   ICommentScoreModel,
+  ITagModel,
   IUserModel,
   ModelId,
   UserModel,
@@ -46,7 +47,7 @@ export type IValidModelNames =
     'moderation_rules' |
     'preselects' |
     'tagging_sensitivities' |
-    'tags';
+    'tag';
 
 /**
  * Convert Partial<IParams> type to a query string.
@@ -342,9 +343,7 @@ export async function updateArticle(id: string, isCommentingEnabled: boolean, is
   await axios.post(url, {isCommentingEnabled, isAutoModerated});
 }
 
-export async function createUser(user: IUserModel) {
-  const url = serviceURL('simple', `/user`);
-  const attributes = pick(user, ['name', 'email', 'group', 'isActive']);
+async function createThing(url: string, attributes: {[key: string]: string | number | boolean}) {
   try {
     await axios.post(url, attributes);
   } catch (e) {
@@ -355,10 +354,41 @@ export async function createUser(user: IUserModel) {
   }
 }
 
+async function updateThing(url: string, attributes: {[key: string]: string | number | boolean}) {
+  try {
+    await axios.patch(url, attributes);
+  } catch (e) {
+    if (e.response) {
+      throw new Error(e.response.data);
+    }
+    throw e;
+  }
+}
+
+export async function createUser(user: IUserModel) {
+  const url = serviceURL('simple', `/user`);
+  const attributes = pick(user, ['name', 'email', 'group', 'isActive']);
+  return createThing(url, attributes);
+}
+
+export async function createTag(tag: ITagModel) {
+  const url = serviceURL('simple', `/tag`);
+  const attributes = pick(tag, ['color', 'description', 'key', 'label',
+    'isInBatchView', 'inSummaryScore', 'isTaggable']);
+  return createThing(url, attributes);
+}
+
 export async function updateUser(user: IUserModel) {
   const url = serviceURL('simple', `/user/update/${user.id}`);
   const attributes = pick(user, ['name', 'email', 'group', 'isActive']);
   await axios.post(url, attributes);
+}
+
+export async function updateTag(tag: ITagModel) {
+  const url = serviceURL('simple', `/tag/${tag.id}`);
+  const attributes = pick(tag, ['color', 'description', 'key', 'label',
+    'isInBatchView', 'inSummaryScore', 'isTaggable']);
+  return updateThing(url, attributes);
 }
 
 /**
