@@ -77,10 +77,11 @@ const SNAPSHOT_WIDTH = 264;
 const SNAPSHOT_HEIGHT = 76;
 
 const dateTag = TagModel({
+  id: 'DATE',
   label: 'All Comments by Date',
   key: 'DATE',
   color: '',
-}).set('id', 'DATE');
+});
 
 function getImagePath(base: string, id: string, tagId: string) {
   const dp = window.devicePixelRatio || 1;

@@ -586,7 +586,7 @@ export class AnnotatedCommentText extends React.PureComponent<IAnnotatedCommentT
     const str = originalString.slice(start, end);
     if (str.length > 0) {
       if (tagId) {
-        const tag = this.props.availableTags.find((t) => (t.get('id') === tagId));
+        const tag = this.props.availableTags.find((t) => (t.id === tagId));
 
         if (author !== 'Machine' && author !== null) {
           status = 'tagged';

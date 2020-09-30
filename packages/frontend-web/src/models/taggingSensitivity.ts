@@ -14,9 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Record } from 'immutable';
-import { TypedRecord } from 'typed-immutable-record';
-
 import { ModelId } from './common';
 
 export interface ITaggingSensitivityAttributes {
@@ -27,16 +24,8 @@ export interface ITaggingSensitivityAttributes {
   tagId?: ModelId;
 }
 
-export interface ITaggingSensitivityModel extends TypedRecord<ITaggingSensitivityModel>, ITaggingSensitivityAttributes {}
+export type ITaggingSensitivityModel = Readonly<ITaggingSensitivityAttributes>;
 
-const TaggingSensitivityModelRecord = Record({
-  id: null,
-  categoryId: null,
-  lowerThreshold: null,
-  upperThreshold: null,
-  tagId: null,
-});
-
-export function TaggingSensitivityModel(keyValuePairs?: ITaggingSensitivityAttributes): ITaggingSensitivityModel {
-  return new TaggingSensitivityModelRecord(keyValuePairs) as ITaggingSensitivityModel;
+export function TaggingSensitivityModel(keyValuePairs: ITaggingSensitivityAttributes): ITaggingSensitivityModel {
+  return keyValuePairs as ITaggingSensitivityModel;
 }

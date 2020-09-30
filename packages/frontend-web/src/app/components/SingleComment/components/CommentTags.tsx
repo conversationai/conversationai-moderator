@@ -197,7 +197,7 @@ export class CommentTags extends React.PureComponent<ICommentTagsProps, IComment
               return;
             }
 
-            const tag = availableTags.find((t) => (t.get('id') === s.tagId));
+            const tag = availableTags.find((t) => (t.id === s.tagId));
 
             return tag && (
               <button

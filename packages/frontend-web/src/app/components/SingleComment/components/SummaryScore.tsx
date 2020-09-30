@@ -87,7 +87,7 @@ function SummaryScore(props: ISummaryScoreProps) {
   const {score, withColor, onScoreClick} = props;
   const tags = useSelector(getTags);
 
-  const tag = tags.find((t) => (t.get('id') === score.tagId));
+  const tag = tags.find((t) => (t.id === score.tagId));
   if (!tag) {
     return;
   }

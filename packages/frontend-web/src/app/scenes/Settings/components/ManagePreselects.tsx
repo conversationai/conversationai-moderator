@@ -71,14 +71,14 @@ export function ManagePreselects(props: {
 
   function handlePreselectChange(category: string, preselect: IPreselectModel, value: number | string) {
     setPreselects(preselects.update(
-      preselects.findIndex((r) => r.equals(preselect)),
-      (r) => r.set(category, value),
+      preselects.findIndex((r) => r.id === preselect.id),
+      (r) => ({...r, [category]: value}),
     ));
   }
 
   function handlePreselectDelete(preselect: IPreselectModel) {
     setPreselects(
-      preselects.delete(preselects.findIndex((r) => r.equals(preselect))),
+      preselects.delete(preselects.findIndex((r) => r.id === preselect.id)),
     );
   }
 
@@ -122,7 +122,7 @@ export function ManagePreselects(props: {
       <div key="editRangesSection">
         <div key="heading" {...css(SETTINGS_STYLES.heading)}>
           <h2 {...css(SETTINGS_STYLES.headingText)}>
-            Preselected Batch Ranges (sets the default score range on a per category basis for tags in the batch selection view)
+            New Comments Page: Preselected Ranges <small>(Controls range of scores to show when first visiting the New Comments page)</small>
           </h2>
         </div>
         <div key="body" {...css(SETTINGS_STYLES.section)}>
