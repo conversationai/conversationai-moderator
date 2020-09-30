@@ -34,7 +34,7 @@ import {
   ICommentFlagModel,
   ICommentModel,
   ICommentScore,
-  ICommentScoreModel,
+  ICommentScoreModel, IPreselectModel, IRuleModel, ITaggingSensitivityModel,
   ITagModel,
   IUserModel,
   ModelId,
@@ -44,9 +44,9 @@ import { ServerStates } from '../../types';
 import { API_URL } from '../config';
 
 export type IValidModelNames =
-    'moderation_rules' |
-    'preselects' |
-    'tagging_sensitivities' |
+    'moderation_rule' |
+    'preselect' |
+    'tagging_sensitivity' |
     'tag';
 
 /**
@@ -76,15 +76,12 @@ function serializeParams(originalParams?: Partial<IParams> | null): string {
   return '?' + qs.stringify(params, { encode: false });
 }
 
+const BASE_RANGE_ATTRIBUTES = ['categoryId', 'tagId', 'lowerThreshold', 'upperThreshold'];
+
 /**
  * Base AUTH API Path
  */
 const AUTH_URL = `/auth`;
-
-/**
- * Base REST API Path
- */
-const REST_URL = `/rest`;
 
 /**
  * Base Services API Path
@@ -96,35 +93,6 @@ const SERVICES_URL = `/services`;
  */
 export function serviceURL(service: string, path?: string | null, params?: Partial<IParams>): string {
   return `${API_URL}${SERVICES_URL}/${service}${path ? path : ''}${serializeParams(params)}`;
-}
-
-/**
- * The URL of a model array listing.
- */
-function listURL(type: IValidModelNames): string {
-  return `${API_URL}${REST_URL}/${type}`;
-}
-
-/**
- * The URL of a single model result.
- */
-function modelURL(type: IValidModelNames, id: string): string {
-  return `${listURL(type)}/${id}`;
-}
-
-/**
- * Create a new instance of a model.
- */
-export async function createModel(
-  type: IValidModelNames,
-  model: {id: ModelId, [key: string]: string | number | boolean},
-): Promise<void> {
-  await axios.post(listURL(type), {
-    data: {
-      attributes: model,
-      type,
-    },
-  });
 }
 
 export async function listTextSizesByIds(
@@ -322,22 +290,6 @@ export async function getArticleText(id: ModelId) {
   return response.data.text;
 }
 
-/**
- * Update a model.
- */
-export async function updateModel(
-  type: IValidModelNames,
-  model: {id: ModelId, [key: string]: string | number | boolean},
-): Promise<void> {
-  await axios.patch(modelURL(type, model.id), {
-    data: {
-      attributes: model,
-      type,
-      id: model.id,
-    },
-  });
-}
-
 export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean) {
   const url = serviceURL('simple', `/article/update/${id}`);
   await axios.post(url, {isCommentingEnabled, isAutoModerated});
@@ -378,6 +330,24 @@ export async function createTag(tag: ITagModel) {
   return createThing(url, attributes);
 }
 
+export async function createRule(rule: IRuleModel) {
+  const url = serviceURL('simple', `/moderation_rule`);
+  const attributes = pick(rule, [...BASE_RANGE_ATTRIBUTES, 'action']);
+  return createThing(url, attributes);
+}
+
+export async function createPreselect(preselect: IPreselectModel) {
+  const url = serviceURL('simple', `/preselect`);
+  const attributes = pick(preselect, BASE_RANGE_ATTRIBUTES);
+  return createThing(url, attributes);
+}
+
+export async function createSensitivity(sensitivity: ITaggingSensitivityModel) {
+  const url = serviceURL('simple', `/tagging_sensitivity`);
+  const attributes = pick(sensitivity, BASE_RANGE_ATTRIBUTES);
+  return createThing(url, attributes);
+}
+
 export async function updateUser(user: IUserModel) {
   const url = serviceURL('simple', `/user/update/${user.id}`);
   const attributes = pick(user, ['name', 'email', 'group', 'isActive']);
@@ -388,6 +358,24 @@ export async function updateTag(tag: ITagModel) {
   const url = serviceURL('simple', `/tag/${tag.id}`);
   const attributes = pick(tag, ['color', 'description', 'key', 'label',
     'isInBatchView', 'inSummaryScore', 'isTaggable']);
+  return updateThing(url, attributes);
+}
+
+export async function updateRule(rule: IRuleModel) {
+  const url = serviceURL('simple', `/moderation_rule/${rule.id}`);
+  const attributes = pick(rule, [...BASE_RANGE_ATTRIBUTES, 'action']);
+  return updateThing(url, attributes);
+}
+
+export async function updatePreselect(preselect: IPreselectModel) {
+  const url = serviceURL('simple', `/preselect/${preselect.id}`);
+  const attributes = pick(preselect, BASE_RANGE_ATTRIBUTES);
+  return updateThing(url, attributes);
+}
+
+export async function updateSensitivity(sensitivity: ITaggingSensitivityModel) {
+  const url = serviceURL('simple', `/tagging_sensitivity/${sensitivity.id}`);
+  const attributes = pick(sensitivity, BASE_RANGE_ATTRIBUTES);
   return updateThing(url, attributes);
 }
 

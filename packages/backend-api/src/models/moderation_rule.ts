@@ -34,6 +34,8 @@ export const MODERATION_RULE_ACTION_TYPES = [
   MODERATION_ACTION_HIGHLIGHT,
 ];
 
+export const MODERATION_RULE_ACTION_TYPES_SET = new Set(MODERATION_RULE_ACTION_TYPES);
+
 export interface IModerationRuleAttributes extends IBaseAttributes {
   tagId: number;
   categoryId?: number;

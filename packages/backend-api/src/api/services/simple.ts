@@ -33,6 +33,10 @@ import {
   CommentSummaryScore,
   ICommentInstance,
   ICommentScoreAttributes,
+  IModerationRuleInstance,
+  IPreselectInstance,
+  ITaggingSensitivityInstance,
+  MODERATION_RULE_ACTION_TYPES_SET,
   ModerationRule,
   Preselect,
   Tag,
@@ -338,16 +342,139 @@ export function createSimpleRESTService(): express.Router {
     next();
   });
 
+  async function processRangeData(
+    req: express.Request,
+    res: express.Response,
+    setValue: (key: string, value: string | number | boolean | null) => void,
+  ) {
+    for (const k of ['tagId', 'categoryId']) {
+      if (k in req.body) {
+        let val: number | null;
+        if (req.body[k] === null) {
+          if (k === 'tagId' && req.params.model === 'moderation_rule') {
+            res.status(400).send(`tagId must be set.`);
+            return false;
+          }
+          val = null;
+        } else {
+          val = parseInt(req.body[k], 10);
+          if (isNaN(val)) {
+            res.status(400).send(`Invalid value ${req.body[k]} for field ${k}.`);
+            return false;
+          }
+        }
+        setValue(k, val);
+      }
+    }
+    for (const k of ['lowerThreshold', 'upperThreshold']) {
+      if (k in req.body) {
+        const val = parseFloat(req.body[k]);
+        if (isNaN(val) || val < 0 || val > 1) {
+          res.status(400).send(`Range error: ${k} is not a valid number: ${req.body[k]}.`);
+          return false;
+        }
+        setValue(k, val);
+      }
+    }
+    if (req.params.model === 'moderation_rule') {
+      if ('action' in req.body) {
+        const action = req.body.action;
+        if (!MODERATION_RULE_ACTION_TYPES_SET.has(action)) {
+          res.status(400).send(`Unknown action: ${action}.`);
+          return false;
+        }
+
+        setValue('action', action);
+      }
+    }
+
+    return true;
+  }
+
+  router.post('/:model', async (req, res, next) => {
+    const data: {[key: string]: string | number | boolean | null } = {};
+    if (!await processRangeData(req, res, (key, value) => data[key] = value)) {
+      next();
+      return;
+    }
+
+    let mandatory_attributes = ['lowerThreshold', 'upperThreshold'];
+    if (req.params.model === 'moderation_rule') {
+      mandatory_attributes = [...mandatory_attributes, 'tagId', 'action'];
+    }
+
+    for (const k of mandatory_attributes) {
+      if (!(k in data)) {
+        res.status(400).send(`Missing mandatory attribute: ${k}.`);
+        next();
+        return;
+      }
+    }
+
+    switch (req.params.model) {
+      case 'moderation_rule':
+        await ModerationRule.create(data as any);
+        break;
+      case 'preselect':
+        await Preselect.create(data as any);
+        break;
+      case 'tagging_sensitivity':
+        await TaggingSensitivity.create(data as any);
+        break;
+      default:
+        res.status(404);
+        next();
+        return;
+    }
+
+    updateHappened();
+    res.json(REPLY_SUCCESS);
+    next();
+  });
+
+  router.patch('/:model/:id', async (req, res, next) => {
+    const id = parseInt(req.params.id, 10);
+    let object: IModerationRuleInstance | IPreselectInstance | ITaggingSensitivityInstance | null;
+    switch (req.params.model) {
+      case 'moderation_rule':
+        object = await ModerationRule.findByPk(id);
+        break;
+      case 'preselect':
+        object = await Preselect.findByPk(id);
+        break;
+      case 'tagging_sensitivity':
+        object = await TaggingSensitivity.findByPk(id);
+        break;
+      default:
+        res.status(404);
+        next();
+        return;
+    }
+
+    if (!object) {
+      res.status(404).send('Not found');
+      next();
+      return;
+    }
+
+    if (await processRangeData(req, res, (key, value) => object!.set(key, value as any))) {
+      await object.save();
+      updateHappened();
+      res.json(REPLY_SUCCESS);
+    }
+    next();
+  });
+
   router.delete('/:model/:id', async (req, res, next) => {
     const objectId = parseInt(req.params.id, 10);
     switch (req.params.model) {
-      case 'moderation_rules':
+      case 'moderation_rule':
         await ModerationRule.destroy({where: {id: objectId}});
         break;
-      case 'preselects':
+      case 'preselect':
         await Preselect.destroy({where: {id: objectId}});
         break;
-      case 'tagging_sensitivities':
+      case 'tagging_sensitivity':
         await TaggingSensitivity.destroy({where: {id: objectId}});
         break;
       case 'tag':
