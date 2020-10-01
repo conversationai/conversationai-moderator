@@ -87,5 +87,3 @@ export async function mountAPI(testMode?: boolean): Promise<express.Express> {
 
   return app;
 }
-
-export { createArticleIfNonExistant } from './api/publisher/articles';

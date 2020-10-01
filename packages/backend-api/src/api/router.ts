@@ -18,7 +18,6 @@ import * as express from 'express';
 
 import { createAuthConfigRouter } from '../auth/router';
 import { createAssistantRouter } from './assistant';
-import { createPublisherRouter } from './publisher';
 import { createRESTRouter } from './rest';
 import { createServicesRouter } from './services';
 
@@ -45,11 +44,6 @@ export function createApiRouter(authenticator: any) {
   // The services API provides custom endpoints for our clients which would
   // normally be awkward REST queries or are unrelated to database models.
   router.use('/services', createServicesRouter());
-
-  // The services API provides custom endpoints for publishers to add new database
-  // to the system. These are separated from REST because their API will be
-  // optimised for specific publishers' data models.
-  router.use('/publisher', createPublisherRouter());
 
   // The assistant API provides callbacks for assistant users to send per-comment
   // scores into OSMOD. These are often, but not always, the result of a scoring
