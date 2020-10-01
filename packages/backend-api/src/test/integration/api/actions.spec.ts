@@ -99,7 +99,7 @@ describe(BASE_URL, () => {
   async function actOnAComment(url: string) {
     const apiClient = chai.request(app);
     const {status} = await apiClient.post(url).send({
-      data: [{commentId: comment1.id.toString(), userId: user.id.toString()}],
+      data: [{commentId: comment1.id.toString()}],
       runImmediately: true,
     });
     expect(status).equal(200);
@@ -217,8 +217,8 @@ describe(BASE_URL, () => {
     const {status} = await apiClient.post(url).send(
       {
         data: [
-          { commentId: comment1.id.toString(), userId: user.id.toString() },
-          { commentId: comment2.id.toString(), userId: user.id.toString() },
+          { commentId: comment1.id.toString() },
+          { commentId: comment2.id.toString() },
         ],
         runImmediately: true },
     );
@@ -244,8 +244,8 @@ describe(BASE_URL, () => {
     const {status} = await apiClient.post(url).send(
       {
         data: [
-          { commentId: comment1.id.toString(), userId: user.id.toString() },
-          { commentId: comment2.id.toString(), userId: user.id.toString() },
+          { commentId: comment1.id.toString() },
+          { commentId: comment2.id.toString() },
         ],
         runImmediately: true },
     );
