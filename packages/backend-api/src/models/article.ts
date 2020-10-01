@@ -23,9 +23,9 @@ import { updateHappened } from './last_update';
 import { IUserInstance, User } from './user';
 
 export interface IArticleAttributes extends IBaseAttributes {
-  ownerId?: number;
+  ownerId?: number | null;
   sourceId: string;
-  categoryId?: number;
+  categoryId?: number | null;
   title: string;
   text: string;
   url: string;

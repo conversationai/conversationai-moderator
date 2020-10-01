@@ -159,10 +159,10 @@ async function getArticleUpdate(articleId: number) {
   }
   const aData = serialiseObject(article, ARTICLE_FIELDS);
 
-  const category = await Category.findByPk(
+  const category = article.categoryId ? await Category.findByPk(
     article.categoryId,
     {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
-  );
+  ) : null;
 
   const cData = category  ? serialiseObject(category, CATEGORY_FIELDS) : undefined;
 

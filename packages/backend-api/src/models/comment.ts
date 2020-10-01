@@ -38,7 +38,7 @@ export interface IFlagSummary {
 }
 
 export interface ICommentAttributes extends IBaseAttributes {
-  ownerId?: number;
+  ownerId?: number | null;
   sourceId: string;
   articleId: number | null;
   replyToSourceId?: string | null;
