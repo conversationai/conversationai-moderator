@@ -20,8 +20,8 @@ import { Op } from 'sequelize';
 import * as yargs from 'yargs';
 
 import { logger } from '../../logger';
-import { Article, Category, Comment, IAuthorAttributes, RESET_COUNTS, updateHappened } from '../../models';
-import { postProcessComment, sendForScoring } from '../../pipeline';
+import { Article, Category, updateHappened, User, USER_GROUP_SERVICE } from '../../models';
+import { createArticle, createCategory, createComment } from './data_helpers';
 
 const PREEXISTING_CATEGORIES = 5;
 const PREEXISTING_ARTICLES = 20;
@@ -51,15 +51,6 @@ export function builder(args: yargs.Argv) {
     .default('comments', NEW_COMMENTS);
 }
 
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-}
-
 function isAlnum(data: string, offset: number): boolean {
   const c = data.charCodeAt(offset);
   if ((c > 47) && (c <  58)) {
@@ -68,17 +59,11 @@ function isAlnum(data: string, offset: number): boolean {
   if ((c > 64) && (c <  91)) {
     return true;
   }
-  if ((c > 96) && (c < 123)) {
-    return true;
-  }
-  return false;
+  return (c > 96) && (c < 123);
 }
 
 function isInternalPunctuation(data: string, offset: number): boolean {
-  if (' \t\n\r\v\'\,";-_'.indexOf(data.charAt(offset)) > -1) {
-    return true;
-  }
-  return false;
+  return ' \t\n\r\v\'\,";-_'.indexOf(data.charAt(offset)) > -1;
 }
 
 function find_start_of_sentence(data: string, offset: number): number {
@@ -146,10 +131,20 @@ function get_words(data: string, count: number): string {
 export async function handler(argv: any) {
   const data = fs.readFileSync(path.join(__dirname, '../../../data/alice.txt'), 'UTF8');
 
+  console.log('got here')
+  const [owner, ] = await User.findOrCreate({
+    where: {name: 'alice service user'},
+    defaults: {
+      name: 'alice service user',
+      group: USER_GROUP_SERVICE,
+      isActive: true,
+    },
+  });
+
   const categories = await Category.findAll({
     where: {
       isActive: true,
-      ownerId: {[Op.eq]: null},
+      ownerId: {[Op.eq]: owner.id},
     },
     order: [['createdAt', 'DESC']],
     limit: PREEXISTING_CATEGORIES,
@@ -157,7 +152,7 @@ export async function handler(argv: any) {
 
   const articles = await Article.findAll({
     where: {
-      ownerId: {[Op.eq]: null},
+      ownerId: {[Op.eq]: owner.id},
     },
     order: [['createdAt', 'DESC']],
     limit: PREEXISTING_ARTICLES,
@@ -167,43 +162,19 @@ export async function handler(argv: any) {
     for (let i = 0; i < argv.comments; i++) {
       const idx = Math.floor(articles.length * Math.random());
       const article = articles[idx];
-
-      const author: IAuthorAttributes = {
-        name: get_words(data, 3),
-      };
-
-      const comment = await Comment.create({
-        sourceId: guid(),
-        sourceCreatedAt: new Date(Date.now()),
-        articleId: article.id,
-        authorSourceId: guid(),
-        author: author,
-        text: get_sentences(data, 6),
-      });
-
-      await postProcessComment(comment);
-      await sendForScoring(comment);
+      await createComment(article, get_words(data, 3), get_sentences(data, 6));
     }
   }
 
   async function generate_articles() {
     for (let i = 0; i < argv.articles; i++) {
       const idx = Math.floor(categories.length * Math.random());
-      const category = categories[idx];
-
-      const new_article = await Article.create({
-        categoryId: category.id,
-        sourceId: guid(),
-        title: get_words(data, 10),
-        text: get_sentences(data, 3),
-        url: 'https://archive.org/stream/alicesadventures19033gut/19033.txt',
-        sourceCreatedAt: new Date(Date.now()),
-        isCommentingEnabled: true,
-        isAutoModerated: true,
-        ...RESET_COUNTS,
-      });
-
-      logger.info(`Generated article ${new_article.id}: ${new_article.title}`);
+      const new_article = await createArticle(
+        categories[idx],
+        get_words(data, 10),
+        get_sentences(data, 3),
+        'https://archive.org/stream/alicesadventures19033gut/19033.txt',
+      );
       articles.push(new_article);
       await generate_comments();
     }
@@ -211,13 +182,7 @@ export async function handler(argv: any) {
 
   if (argv.categories !== 0) {
     for (let i = 0; i < argv.categories; i++) {
-      const new_category = await Category.create({
-        label: get_words(data, 5),
-        ...RESET_COUNTS,
-      });
-
-      logger.info(`Generated category ${new_category.id}: ${new_category.label}`);
-      categories.push(new_category);
+      categories.push(await createCategory(owner, get_words(data, 5)));
 
       if (argv.articles !== 0) {
         await generate_articles();

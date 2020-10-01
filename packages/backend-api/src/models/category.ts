@@ -22,7 +22,7 @@ import { IUserInstance, User } from './user';
 
 export interface ICategoryAttributes extends IBaseAttributes {
   label: string;
-  ownerId?: number;
+  ownerId?: number | null;
   sourceId?: string;
   isActive?: boolean;
   extra?: object | null;
