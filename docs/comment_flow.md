@@ -2,22 +2,22 @@
 
 This document describes the path of a comment through the OSMOD system.
 
-1. A publisher submits a new article to OSMOD using the `/api/publisher/PUBLISHER_NAME/article` [endpoint](osmod_publisher_api.md).
+1. The integration module (e.g., the YouTube module) pulls categories, articles and comments from the target system.
 
-2. A publisher submits a new comment to OSMOD using the `/api/publisher/PUBLISHER_NAME/comment` [endpoint](osmod_publisher_api.md).
+2. For each comment, we create a task to send the comment out to assistants for processing.
 
-3. The comment is immediately created in the database, then a task is created to send the comment out to assistants for processing.
+3. The task queue creates a `CommentScoreRequest` and submits [the request](osmod_assistant_protocol.md) to all users in the `service` group that have a configured `endpoint` path.
 
-4. The task queue creates a `CommentScoreRequest` and submits [the request](osmod_assistant_protocol.md) to all users in the `service` group that have a configured `endpoint` path.
+4. Each assistant `POST`s back to the `callback` URL they were given, which contains the specific `CommentScoreRequest` id from the original request.
 
-5. Each assistant `POST`s back to the `callback` URL they were given, which contains the specific `CommentScoreRequest` id from the original request.
+5. Once all assistants have either called back, or timed out, a task is created to run automated `ModerationRule`s.
 
-6. Once all assistants have either called back, or timed out, a task is created to run automated `ModerationRule`s.
+6. The rule task is handled by running all `ModerationRule`s against a single comment. If the rule results in a resolution (approve or reject), the comment is considered resolved.
 
-7. The rule task is handled by running all `ModerationRule`s against a single comment. If the rule results in a resolution (approve or reject), a task is created to notify the publisher and the comment lifecyle is complete.
+7. If a rule did not resolve a comment, it is made available to the OSMOD frontend.
 
-8. If a rule did not resolve a comment, it is made available to the OSMOD frontend.
+8. The OSMOD frontend can approve or reject comments either singularly or in bulk.  The OSMOD frontend can also update the disposition of previously resolved comments.
 
-9. The OSMOD frontend can approve or reject comments either singularly or in bulk. Taking these actions will created a task to notify the publisher and the comment lifecyle is complete.
+9. For each resolved comment, the integration module updates the target system to implement the comment's final disposition.
 
 10. Party 🎉🎉🎉

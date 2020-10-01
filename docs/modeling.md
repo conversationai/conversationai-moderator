@@ -97,7 +97,7 @@ Represents a higher level collection of articles.  Categories correspond to e.g.
 Moderation Rules are configured at the category level and apply to all articles in the category. Moderators can be assigned at this level.
 
 - id (number) (required)
-- sourceId (string) (optional) Original id from publisher
+- sourceId (string) (optional) Original id from target system
 - ownerId (foreign key: User) (optional) Service user that created this article.
 - label (string) (required)
 - isActive (boolean) (required, default true) Whether this category is being actively managed.
@@ -120,7 +120,7 @@ This table holds the articles that can be commented on.
 - id (bigint) (required)
 - sourceId (string) (required)
 - ownerId (foreign key: User) (optional) Service user that created this article.
-- sourceCreatedAt (Created ISO 8601 timestamp from publisher)
+- sourceCreatedAt (Created ISO 8601 timestamp from target system)
 - categoryId (foreign key: Category) (optional)
 - title (string) (required)
 - text (string) (required)
@@ -163,11 +163,11 @@ This tables holds which users are assigned to which articles.
 This table holds the comments, and the state of the comments.
 
 - id (bigint) (required)
-- sourceId (string) (required) (Original id from publisher)
+- sourceId (string) (required) (Original id from target system)
 - ownerId (foreign key: User) (optional) Service user that uploaded this comment.
 - replyToSourceId (string) (optional foreign key: self.sourceId)
 - replyId (foreign key: Comment) (id of comment this is a reply to)
-- authorSourceId (string) (required) (publisher id of author)
+- authorSourceId (string) (required) (id of author on the target system)
 - article (foreign key: Article) (required)
 - author (json) (required)
 - text (long text) (required)
@@ -178,8 +178,7 @@ This table holds the comments, and the state of the comments.
 - isHighlighted (tinyint)
 - isBatchResolved (tinyint)
 - isAutoResolved (tinyint) (Indicates if the comment was auto-accepted/rejected based on a rule(s))
-- createdAt (datetime) (required) (Created ISO 8601 timestamp from publisher)
-- modifiedAt (datetime)
+- sourceCreatedAt (datetime) (required) (time comment created on target system)
 - sentForScoring (datetime)
 - sentBackToPublisher (datetime)
 - extra (json)
