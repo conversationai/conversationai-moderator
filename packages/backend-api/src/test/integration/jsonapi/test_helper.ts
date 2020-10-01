@@ -56,7 +56,7 @@ for (let i = 0; i < 20; i++) {
   data.comments = [];
 
   for (let j = 0; j < 50; j++) {
-    const commentData = (fakeCommentModel() as any).toJS();
+    const commentData = fakeCommentModel() as any;
     commentData.type = 'comments';
     commentData.state = Math.random() > 0.5 ? 'moderated' : 'new';
     commentData.articleId = data.id;
