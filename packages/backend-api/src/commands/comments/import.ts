@@ -14,46 +14,70 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as fs from 'fs';
+import * as parse from 'csv-parse';
+import { promises as fsPromises } from 'fs';
 import * as path from 'path';
 import * as yargs from 'yargs';
-import {IUserInstance, User, USER_GROUP_SERVICE} from '../../models';
+import {IUserInstance} from '../../models';
+import {createArticle, createCategory, createComment, createOwner} from './data_helpers';
 
 export const command = 'comments:import';
 export const describe = 'Import a CSV file of comments';
 
-const FILES = ['all', 'brexit',  'climate',  'election',  'wikipedia'];
+const FILES = ['brexit',  'climate',  'election',  'wikipedia'];
 
 export function builder(args: yargs.Argv) {
   return args
-    .usage('Usage: node $0 comments:generate [ --categories c ] [ -articles a ] \n' +
-      '                                 [ -comments o ]')
-    .choices('source', FILES)
-    .describe('source', `Source of comments.  (Defaults to ${FILES[0]})`)
-    .default('source', FILES[0]);
+    .usage('Usage: node $0 comments:import [ --source <source> ]')
+    .choices('source', [...FILES, 'all'])
+    .describe('source', 'Source of comments.')
+    .default('source', 'all');
 }
 
+const METADATA = {
+  wikipedia: {
+    category: 'Wikipedia',
+    article_id: '787',
+    article_title: 'Wikipedia 1/9/17',
+    article_summary: 'Some comments from Wikipedia.',
+  },
+  brexit: {
+    category: 'Brexit',
+    article_title: 'Brexit 9/1/2017',
+    article_summary: 'Some thoughts about brexit...',
+  },
+  climate: {
+    category: 'Climate Change',
+    article_title: 'Climate Change 3/10/18',
+    article_summary: 'Some thoughts about climate change...',
+  },
+  election: {
+    category: 'US Election',
+    article_title: 'US Election 10/20/17',
+    article_summary: 'Some thoughts about the US election...',
+  },
+} as {[key: string]: {category: string, article_title: string, article_summary: string}};
 
-function processFile(_owner: IUserInstance, fname: string) {
-  console.log(fname);
-  fs.readFileSync(path.join(__dirname, `../../../data/${fname}.txt`), 'UTF8');
+async function processFile(owner: IUserInstance, fname: string) {
+  const metadata = METADATA[fname];
+  const category = await createCategory(owner, metadata.category);
+  const article = await createArticle(category, metadata.article_title,
+    metadata.article_summary, 'https://jigsaw.google.com/');
+  const content = await fsPromises.readFile(path.join(__dirname, `../../../data/${fname}.csv`), 'UTF8');
+  const records = parse(content, {from_line: 2});
+  for await (const record of records) {
+    await createComment(article, `${fname} user`, record[0]);
+  }
 }
 
 export async function handler(argv: any) {
-  const [owner, ] = await User.findOrCreate({
-    where: {name: 'csv service user'},
-    defaults: {
-      name: 'csv service user',
-      group: USER_GROUP_SERVICE,
-      isActive: true,
-    },
-  });
+  const owner = await createOwner('csv service user');
 
   if (argv.source === 'all') {
     for (const f of FILES) {
-      processFile(owner, f);
+      await processFile(owner, f);
     }
   } else {
-    processFile(owner, argv.source);
+    await processFile(owner, argv.source);
   }
 }

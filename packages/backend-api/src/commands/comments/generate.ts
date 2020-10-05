@@ -20,8 +20,8 @@ import { Op } from 'sequelize';
 import * as yargs from 'yargs';
 
 import { logger } from '../../logger';
-import { Article, Category, updateHappened, User, USER_GROUP_SERVICE } from '../../models';
-import { createArticle, createCategory, createComment } from './data_helpers';
+import { Article, Category, updateHappened } from '../../models';
+import {createArticle, createCategory, createComment, createOwner} from './data_helpers';
 
 const PREEXISTING_CATEGORIES = 5;
 const PREEXISTING_ARTICLES = 20;
@@ -131,15 +131,7 @@ function get_words(data: string, count: number): string {
 export async function handler(argv: any) {
   const data = fs.readFileSync(path.join(__dirname, '../../../data/alice.txt'), 'UTF8');
 
-  console.log('got here')
-  const [owner, ] = await User.findOrCreate({
-    where: {name: 'alice service user'},
-    defaults: {
-      name: 'alice service user',
-      group: USER_GROUP_SERVICE,
-      isActive: true,
-    },
-  });
+  const owner = await createOwner('alice service user');
 
   const categories = await Category.findAll({
     where: {

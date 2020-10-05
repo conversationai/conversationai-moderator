@@ -6,7 +6,7 @@ import {
   IAuthorAttributes,
   ICategoryInstance,
   IUserInstance,
-  RESET_COUNTS
+  RESET_COUNTS, User, USER_GROUP_SERVICE
 } from '../../models';
 import {postProcessComment, sendForScoring} from '../../pipeline';
 
@@ -19,15 +19,33 @@ function guid() {
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
 
+export async function createOwner(name: string) {
+  const [owner, ] = await User.findOrCreate({
+    where: {name: 'alice service user'},
+    defaults: {
+      name: name,
+      group: USER_GROUP_SERVICE,
+      isActive: true,
+    },
+  });
+  return owner;
+}
+
 export async function createCategory(owner: IUserInstance | null, label: string) {
-  const category = await Category.create({
-    ownerId: owner?.id,
-    label,
-    sourceId: guid(),
-    ...RESET_COUNTS,
+  const [category, created] = await Category.findOrCreate({
+    where: {label},
+    defaults: {
+      ownerId: owner?.id,
+      label,
+      sourceId: guid(),
+      ...RESET_COUNTS,
+    },
   });
 
-  logger.info(`Generated category ${category.id}: ${category.label}`);
+  if (created) {
+    logger.info(`Generated category ${category.id}: ${category.label}`);
+  }
+
   return category;
 }
 
@@ -36,21 +54,26 @@ export async function createArticle(
   title: string,
   text: string,
   url: string,
-  ) {
-  const article = await Article.create({
-    categoryId: category.id,
-    ownerId: category.ownerId,
-    sourceId: guid(),
-    title,
-    text,
-    url,
-    sourceCreatedAt: new Date(Date.now()),
-    isCommentingEnabled: true,
-    isAutoModerated: true,
-    ...RESET_COUNTS,
+) {
+  const [article, created] = await Article.findOrCreate({
+    where: {title},
+    defaults: {
+      categoryId: category.id,
+      ownerId: category.ownerId,
+      sourceId: guid(),
+      title,
+      text,
+      url,
+      sourceCreatedAt: new Date(Date.now()),
+      isCommentingEnabled: true,
+      isAutoModerated: true,
+      ...RESET_COUNTS,
+    },
   });
 
-  logger.info(`Created article ${article.id}: ${article.title}`);
+  if (created) {
+    logger.info(`Created article ${article.id}: ${article.title}`);
+  }
 
   return article;
 }
