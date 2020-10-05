@@ -18,7 +18,6 @@ import * as express from 'express';
 
 import { createAuthConfigRouter } from '../auth/router';
 import { createAssistantRouter } from './assistant';
-import { createRESTRouter } from './rest';
 import { createServicesRouter } from './services';
 
 export function createApiRouter(authenticator: any) {
@@ -36,10 +35,6 @@ export function createApiRouter(authenticator: any) {
   }
 
   router.use('/', createAuthConfigRouter());
-
-  // The REST API provides standard CRUD operations on our database models using
-  // the JSONAPI scheme format.
-  router.use('/rest', createRESTRouter());
 
   // The services API provides custom endpoints for our clients which would
   // normally be awkward REST queries or are unrelated to database models.

@@ -15,8 +15,4 @@ limitations under the License.
 */
 
 export * from './types';
-export * from './shared';
 export * from './routing';
-export * from './rendering';
-export { Serializer } from './Serializer';
-export { MockHandler } from './handlers/MockHandler';
