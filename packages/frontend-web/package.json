@@ -67,7 +67,6 @@
     "@types/aphrodite": "0.5.13",
     "@types/check-types": "7.3.1",
     "@types/enzyme": "3.10.3",
-    "@types/fixed-data-table-2": "0.8.3",
     "@types/jwt-decode": "2.2.1",
     "@types/keyboardjs": "2.4.1",
     "@types/prop-types": "15.7.3",
