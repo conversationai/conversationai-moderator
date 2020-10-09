@@ -44,9 +44,6 @@ describe(prefixed, () => {
 
   describe('/scores/:id', () => {
     beforeEach(async () => {
-      await CommentScoreRequest.destroy({where: {}});
-      await Comment.destroy({where: {}});
-      await User.destroy({where: {}});
       const comment = await makeComment();
       const user = await makeUser();
 
@@ -61,6 +58,11 @@ describe(prefixed, () => {
         begin: 0,
         end: 1,
       };
+    });
+    afterEach(async () => {
+      await CommentScoreRequest.destroy({where: {}});
+      await Comment.destroy({where: {}});
+      await User.destroy({where: {}});
     });
 
     it('should return success with valid commentScoreRequest', async () => {

@@ -121,7 +121,9 @@ export async function makeCommentScore(obj = {}): Promise<ICommentScoreInstance>
   });
 }
 
-export async function makeCommentSummaryScore(obj: Pick<ICommentSummaryScoreAttributes, 'commentId' | 'tagId' | 'score' | 'isConfirmed'>): Promise<ICommentSummaryScoreInstance> {
+export async function makeCommentSummaryScore(
+  obj: Pick<ICommentSummaryScoreAttributes, 'commentId' | 'tagId' | 'score' | 'isConfirmed'>,
+): Promise<ICommentSummaryScoreInstance> {
   return CommentSummaryScore.create({
     score: 1,
     ...obj,

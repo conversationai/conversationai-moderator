@@ -71,7 +71,7 @@ export function createSimpleRESTService(): express.Router {
     mergeParams: true,
   });
 
-  router.get('/systemUsers/:type', async (req, res, next) => {
+  router.get('/systemUsers/:type', async (req, res) => {
     const users = await User.findAll({
       where: { group: req.params.type },
     });
@@ -92,21 +92,17 @@ export function createSimpleRESTService(): express.Router {
     }
 
     res.json({ users: userdata });
-
-    next();
   });
 
-  router.post('/user',  async (req, res, next) => {
+  router.post('/user',  async (req, res) => {
     const {name, email, group, isActive} = req.body;
     if (!(group === USER_GROUP_ADMIN || group === USER_GROUP_GENERAL || group === USER_GROUP_SERVICE)) {
       res.status(400).send(`Can't create users of type ${group}`);
-      next();
       return;
     }
 
     if ((group === USER_GROUP_ADMIN || group === USER_GROUP_GENERAL) && !email) {
       res.status(400).send('User creation error: Human users require an email.');
-      next();
       return;
     }
 
@@ -114,7 +110,6 @@ export function createSimpleRESTService(): express.Router {
       const existing = await User.count({where: {email}});
       if (existing) {
         res.status(400).send('User creation error: email already in use.');
-        next();
         return;
       }
     }
@@ -123,15 +118,13 @@ export function createSimpleRESTService(): express.Router {
 
     updateHappened();
     res.json(REPLY_SUCCESS);
-    next();
   });
 
-  router.post('/user/update/:id', async (req, res, next) => {
+  router.post('/user/update/:id', async (req, res) => {
     const userId = parseInt(req.params.id, 10);
     const user = await User.findByPk(userId);
     if (!user) {
       res.status(404).send('Not found');
-      next();
       return;
     }
 
@@ -141,16 +134,23 @@ export function createSimpleRESTService(): express.Router {
       return g === USER_GROUP_ADMIN || g === USER_GROUP_GENERAL;
     }
 
-    if (isRealUser(group) || group === USER_GROUP_SERVICE) {
+    if ((isRealUser(group) || group === USER_GROUP_SERVICE) && typeof(req.body.name) !== 'undefined') {
       user.name = req.body.name;
     }
+
     if (isRealUser(group)) {
       if (isRealUser(req.body.group)) {
         user.group = req.body.group;
       }
-      user.email = req.body.email;
+
+      if (typeof(req.body.email) !== 'undefined') {
+        user.email = req.body.email;
+      }
     }
-    user.isActive = req.body.isActive;
+
+    if (typeof(req.body.isActive) !== 'undefined') {
+      user.isActive = req.body.isActive;
+    }
     await user.save();
 
     if (group === USER_GROUP_YOUTUBE && req.body.isActive) {
@@ -159,15 +159,13 @@ export function createSimpleRESTService(): express.Router {
 
     res.json(REPLY_SUCCESS);
     updateHappened();
-    next();
   });
 
-  router.post('/article/update/:id', async (req, res, next) => {
+  router.post('/article/update/:id', async (req, res) => {
     const articleId = parseInt(req.params.id, 10);
     const article = await Article.findByPk(articleId);
     if (!article) {
       res.status(404).json({status: 'error', errors: 'article not found'});
-      next();
       return;
     }
 
@@ -177,20 +175,18 @@ export function createSimpleRESTService(): express.Router {
 
     res.json(REPLY_SUCCESS);
     partialUpdateHappened(articleId);
-    next();
   });
 
-  router.post('/article/get', async (req, res, next) => {
+  router.post('/article/get', async (req, res) => {
     const articles = await Article.findAll({
       where: {id: {[Op.in]: req.body}},
       include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
     });
     const articleData = articles.map((a) => serialiseObject(a, ARTICLE_FIELDS));
     res.json(articleData);
-    next();
   });
 
-  router.post('/comment/get', async (req, res, next) => {
+  router.post('/comment/get', async (req, res) => {
     const comments = await Comment.findAll({
       where: {id: {[Op.in]: req.body}},
       include: [
@@ -251,47 +247,41 @@ export function createSimpleRESTService(): express.Router {
     });
 
     res.json(commentData);
-    next();
   });
 
-  router.get('/article/:id/text', async (req, res, next) => {
+  router.get('/article/:id/text', async (req, res) => {
     const articleId = parseInt(req.params.id, 10);
     const article = await Article.findByPk(articleId);
     if (!article) {
       res.status(404).send('Not found');
-      next();
       return;
     }
     const text = article.text;
     res.json({text: text});
-    next();
   });
 
-  router.get('/comment/:id/scores', async (req, res, next) => {
+  router.get('/comment/:id/scores', async (req, res) => {
     const commentId = parseInt(req.params.id, 10);
     const scores = await CommentScore.findAll({
       where: {commentId: commentId},
     });
     const scoresData = scores.map((s) => serialiseObject(s, SCORE_FIELDS));
     res.json(scoresData);
-    next();
   });
 
-  router.get('/comment/:id/flags', async (req, res, next) => {
+  router.get('/comment/:id/flags', async (req, res) => {
     const commentId = parseInt(req.params.id, 10);
     const flags = await CommentFlag.findAll({
       where: {commentId: commentId},
     });
     const flagsData = flags.map((f) => serialiseObject(f, FLAG_FIELDS));
     res.json(flagsData);
-    next();
   });
 
-  router.post('/tag', async (req, res, next) => {
+  router.post('/tag', async (req, res) => {
     for (const k of ['color', 'key', 'label']) {
       if (typeof req.body[k] !== 'string') {
         res.status(400).send(`Tag creation error: Missing/invalid attribute ${k}.`);
-        next();
         return;
       }
     }
@@ -307,15 +297,13 @@ export function createSimpleRESTService(): express.Router {
 
     updateHappened();
     res.json(REPLY_SUCCESS);
-    next();
   });
 
-  router.patch('/tag/:id', async (req, res, next) => {
+  router.patch('/tag/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
     const tag = await Tag.findByPk(id);
     if (!tag) {
       res.status(404).send('Not found');
-      next();
       return;
     }
 
@@ -323,7 +311,6 @@ export function createSimpleRESTService(): express.Router {
       if (k in req.body) {
         if (typeof req.body[k] !== 'string' && (k !== 'description' || req.body[k] !== null)) {
           res.status(400).send(`Tag modification error: Invalid attribute ${k}.`);
-          next();
           return;
         }
         tag.set(k, req.body[k]);
@@ -339,7 +326,6 @@ export function createSimpleRESTService(): express.Router {
     await tag.save();
     updateHappened();
     res.json(REPLY_SUCCESS);
-    next();
   });
 
   async function processRangeData(
@@ -391,10 +377,9 @@ export function createSimpleRESTService(): express.Router {
     return true;
   }
 
-  router.post('/:model', async (req, res, next) => {
+  router.post('/:model', async (req, res) => {
     const data: {[key: string]: string | number | boolean | null } = {};
     if (!await processRangeData(req, res, (key, value) => data[key] = value)) {
-      next();
       return;
     }
 
@@ -406,7 +391,6 @@ export function createSimpleRESTService(): express.Router {
     for (const k of mandatory_attributes) {
       if (!(k in data)) {
         res.status(400).send(`Missing mandatory attribute: ${k}.`);
-        next();
         return;
       }
     }
@@ -423,16 +407,14 @@ export function createSimpleRESTService(): express.Router {
         break;
       default:
         res.status(404);
-        next();
         return;
     }
 
     updateHappened();
     res.json(REPLY_SUCCESS);
-    next();
   });
 
-  router.patch('/:model/:id', async (req, res, next) => {
+  router.patch('/:model/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
     let object: IModerationRuleInstance | IPreselectInstance | ITaggingSensitivityInstance | null;
     switch (req.params.model) {
@@ -447,13 +429,11 @@ export function createSimpleRESTService(): express.Router {
         break;
       default:
         res.status(404);
-        next();
         return;
     }
 
     if (!object) {
       res.status(404).send('Not found');
-      next();
       return;
     }
 
@@ -462,10 +442,9 @@ export function createSimpleRESTService(): express.Router {
       updateHappened();
       res.json(REPLY_SUCCESS);
     }
-    next();
   });
 
-  router.delete('/:model/:id', async (req, res, next) => {
+  router.delete('/:model/:id', async (req, res) => {
     const objectId = parseInt(req.params.id, 10);
     switch (req.params.model) {
       case 'moderation_rule':
@@ -482,12 +461,10 @@ export function createSimpleRESTService(): express.Router {
         break;
       default:
         res.status(404);
-        next();
         return;
     }
     updateHappened();
     res.json(REPLY_SUCCESS);
-    next();
   });
   return router;
 }
