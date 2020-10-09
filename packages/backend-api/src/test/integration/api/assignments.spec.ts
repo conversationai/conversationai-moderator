@@ -52,18 +52,20 @@ describe(BASE_URL, () => {
   let user: IUserInstance;
 
   beforeEach(async () => {
+    category = await makeCategory();
+    article = await makeArticle({categoryId: category.id});
+    await makeComment({articleId: article.id});
+    denormalizeCommentCountsForArticle(article, false);
+    user = await makeUser();
+  });
+
+  afterEach(async () => {
     await ModeratorAssignment.destroy({where: {}});
     await UserCategoryAssignment.destroy({where: {}});
     await Comment.destroy({where: {}});
     await Article.destroy({where: {}});
     await Category.destroy({where: {}});
     await User.destroy({where: {}});
-
-    category = await makeCategory();
-    article = await makeArticle({categoryId: category.id});
-    await makeComment({articleId: article.id});
-    denormalizeCommentCountsForArticle(article, false);
-    user = await makeUser();
   });
 
   describe('/categories/:id', () => {
