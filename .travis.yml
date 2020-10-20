@@ -2,7 +2,7 @@ language: node_js
 node_js:
  - "node"
 before_install:
-  - "npm install -g npm n redux"
+  - "npm install -g npm n react-redux redux"
 addons:
   apt:
     update: true
