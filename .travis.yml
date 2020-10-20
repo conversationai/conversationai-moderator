@@ -1,6 +1,11 @@
 language: node_js
 node_js:
  - "node"
+before_install:
+  - "npm install -g npm n"
+addons:
+  apt:
+    update: true
 env:
  - DATABASE_NAME=os_moderator_test DATABASE_USER=root NODE_ENV=test
 script:
