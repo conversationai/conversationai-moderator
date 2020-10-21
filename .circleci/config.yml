@@ -6,8 +6,6 @@ jobs:
       - image: circleci/redis
     steps:
       - checkout
-      - run: npm install -g npm@4.x.x
-      - run: npm install -g typescript
       - run: ./bin/install-circleci
       - save_cache:
           key: node_modules_cache
