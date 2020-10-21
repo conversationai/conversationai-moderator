@@ -3,22 +3,8 @@ jobs:
   build:
     docker:
       - image: circleci/node:12.19
-      - image: circleci/redis
     steps:
       - checkout
       - run: ./bin/install-circleci
-      - save_cache:
-          key: node_modules_cache
-          paths:
-            - node_modules
-            - packages/backend-api/node_modules
-            - packages/config/node_modules
-            - packages/frontend-web/node_modules
-      - run:
-          name: Drop the migrated DB, tests will generate their own
-          command: mysqladmin -uroot drop circle_test -f
-      - run:
-          name: Create a new empty DB.
-          command: mysqladmin -uroot create circle_test
       - run: ./bin/lint
-      - run: ./bin/test-no-compile
+      - run: ./bin/test
