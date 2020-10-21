@@ -1,32 +1,26 @@
-machine:
-  environment:
-    NODE_ENV: circle_ci
-  node:
-    version: 6.11.0
-  services:
-    - redis
-  post:
-    - npm install -g npm@4.x.x
-    - npm install -g typescript
-
-dependencies:
-  override:
-    - ./bin/install-circleci
-  cache_directories:
-    - node_modules
-    - packages/backend-api/node_modules
-    - packages/config/node_modules
-    - packages/frontend-web/node_modules
-
-database:
-  override:
-    # Drop the migrated DB, tests will generate their own.
-    - mysqladmin -uroot drop circle_test -f
-
-    # Create a new empty DB.
-    - mysqladmin -uroot create circle_test
-
-test:
-  override:
-    - ./bin/lint
-    - ./bin/test-no-compile
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:12.19
+      - image: circleci/redis
+    steps:
+      - checkout
+      - run: npm install -g npm@4.x.x
+      - run: npm install -g typescript
+      - run: ./bin/install-circleci
+      - save_cache:
+          key: node_modules_cache
+          paths:
+            - node_modules
+            - packages/backend-api/node_modules
+            - packages/config/node_modules
+            - packages/frontend-web/node_modules
+      - run:
+          name: Drop the migrated DB, tests will generate their own
+          command: mysqladmin -uroot drop circle_test -f
+      - run:
+          name: Create a new empty DB.
+          command: mysqladmin -uroot create circle_test
+      - run: ./bin/lint
+      - run: ./bin/test-no-compile
