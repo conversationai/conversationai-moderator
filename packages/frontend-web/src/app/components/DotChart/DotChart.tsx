@@ -21,8 +21,9 @@ import {
   LIGHT_COLOR,
   NICE_MIDDLE_BLUE,
 } from '../../styles';
-import { css, stylesheet } from '../../utilx';
 import { DotChartRenderer, ICommentsByColumn, IRange } from '../../util';
+import { css, stylesheet } from '../../utilx';
+
 export const ICON_SIZE = 24;
 
 const STYLES = stylesheet({

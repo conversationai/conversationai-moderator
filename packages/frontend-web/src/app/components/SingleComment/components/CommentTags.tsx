@@ -214,7 +214,7 @@ export class CommentTags extends React.PureComponent<ICommentTagsProps, IComment
             );
           })}
         </div>
-        {canSetTags &&
+        {canSetTags && (
         <button
           aria-label="Add tag to comment"
           ref={this.saveTaggingTooltipButtonRef}
@@ -235,7 +235,7 @@ export class CommentTags extends React.PureComponent<ICommentTagsProps, IComment
             size={ICON_SIZE}
           />
         </button>
-        }
+        )}
         {isTaggingToolTipMetaVisible && (
           <ToolTip
             arrowPosition="topCenter"

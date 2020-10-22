@@ -149,13 +149,13 @@ export function TitleCell(props: ITitleCellProps) {
             {article.title}
           </Link>
         </div>
-        {article.url &&
+        {article.url && (
         <div {...css(TITLE_CELL_STYLES.mainTextLink)}>
           <a key="link" href={article.url} target="_blank" {...css(COMMON_STYLES.cellLink)}>
             <OpenInNew fontSize="small" />
           </a>
         </div>
-        }
+        )}
       </div>
     </>
   );
