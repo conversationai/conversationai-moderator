@@ -3,6 +3,8 @@ jobs:
   build:
     docker:
       - image: circleci/node:12.19
+      environment:
+        NODE_ENV: circle_ci
     steps:
       - checkout
       - run: ./bin/install-circleci
