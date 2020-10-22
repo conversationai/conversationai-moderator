@@ -78,7 +78,7 @@ export async function resolveComment(
   const user = await getUser(userId);
   const comment = await getComment(commentId);
   logger.info(`${status} comment: ${commentId}`);
-  comment.isBatchResolved = isBatchAction
+  comment.isBatchResolved = isBatchAction;
   await comment.save();
   await domainFn(comment, user);
 }

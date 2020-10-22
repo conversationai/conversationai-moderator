@@ -23,7 +23,7 @@ import { DotChartRenderer, groupByDateColumns, groupByScoreColumns } from '@conv
 import { Article, Category, Tag } from '../../../models';
 import { sequelize } from '../../../sequelize';
 import * as JSONAPI from '../../jsonapi';
-import { sort } from '../../util/SequelizeHandler';
+import { applySort } from '../../util/SequelizeHandler';
 
 export interface ICommentScoredOrDated {
   commentId: number;
@@ -55,7 +55,7 @@ export async function sortComments<T extends ICommentScoredOrDated>(data: Array<
     return data;
   }
 
-  const sortedIds = await sort(
+  const sortedIds = await applySort(
     'comments',
     data.map((d) => d.commentId),
     sortQuery.split(','),

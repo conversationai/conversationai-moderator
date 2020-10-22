@@ -1,14 +1,17 @@
-import {logger} from '../../logger';
+import { logger } from '../../logger';
 import {
   Article,
   Category,
-  Comment, IArticleInstance,
+  Comment,
+  IArticleInstance,
   IAuthorAttributes,
   ICategoryInstance,
   IUserInstance,
-  RESET_COUNTS, User, USER_GROUP_SERVICE
+  RESET_COUNTS,
+  User,
+  USER_GROUP_SERVICE,
 } from '../../models';
-import {postProcessComment, sendForScoring} from '../../pipeline';
+import { postProcessComment, sendForScoring } from '../../pipeline';
 
 function guid() {
   function s4() {

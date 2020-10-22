@@ -20,7 +20,7 @@ import { sequelize } from '../sequelize';
 import { IBaseAttributes, IBaseInstance } from './constants';
 import { ITagInstance } from './tag';
 
-export interface ICommentSummaryScoreAttributes extends IBaseAttributes{
+export interface ICommentSummaryScoreAttributes extends IBaseAttributes {
   commentId: number;
   tagId: number;
   score: number;

@@ -112,4 +112,3 @@ Tag.associate = (models) => {
     as: 'commentScores',
   });
 };
-

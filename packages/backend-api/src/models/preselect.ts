@@ -20,7 +20,7 @@ import { sequelize } from '../sequelize';
 import { IBaseAttributes, IBaseInstance } from './constants';
 import { updateHappened } from './last_update';
 
-export interface IPreselectAttributes extends IBaseAttributes{
+export interface IPreselectAttributes extends IBaseAttributes {
   tagId?: number;
   categoryId?: number;
   createdBy?: number;

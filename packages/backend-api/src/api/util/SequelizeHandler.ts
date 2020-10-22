@@ -49,7 +49,7 @@ const serializersByType: ISerializersByType = serializerNames
       return sum;
     }, {} as ISerializersByType);
 
-export async function sort(
+export async function applySort(
   type: string,
   ids: Array<number>,
   sort: Array<string>,
