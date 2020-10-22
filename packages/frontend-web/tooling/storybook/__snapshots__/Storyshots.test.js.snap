@@ -852,7 +852,7 @@ exports[`Storyshots Avatar 36x36 1`] = `
       <img
         alt="Test Person"
         className="MuiAvatar-img"
-        src="https://s3.amazonaws.com/uifaces/faces/twitter/surgeonist/128.jpg"
+        src="https://s3.amazonaws.com/uifaces/faces/twitter/axel/128.jpg"
       />
     </div>
   </div>
@@ -916,7 +916,7 @@ exports[`Storyshots Avatar moderator 1`] = `
       <img
         alt="Test Person"
         className="MuiAvatar-img"
-        src="https://s3.amazonaws.com/uifaces/faces/twitter/surgeonist/128.jpg"
+        src="https://s3.amazonaws.com/uifaces/faces/twitter/axel/128.jpg"
       />
     </div>
   </div>
@@ -1022,7 +1022,7 @@ exports[`Storyshots CheckboxRow Default 1`] = `
             <img
               alt="Person One"
               className="MuiAvatar-img"
-              src="https://s3.amazonaws.com/uifaces/faces/twitter/abovefunction/128.jpg"
+              src="https://s3.amazonaws.com/uifaces/faces/twitter/stan/128.jpg"
             />
           </div>
         </div>
@@ -1138,7 +1138,7 @@ exports[`Storyshots CheckboxRow Selected 1`] = `
             <img
               alt="Person One"
               className="MuiAvatar-img"
-              src="https://s3.amazonaws.com/uifaces/faces/twitter/abovefunction/128.jpg"
+              src="https://s3.amazonaws.com/uifaces/faces/twitter/stan/128.jpg"
             />
           </div>
         </div>
@@ -1423,7 +1423,7 @@ exports[`Storyshots CommentBody Basic 1`] = `
       >
         <a
           className="reply_1gy5v6q"
-          href="/articles/34854/comments/null/replies"
+          href="/articles/27490/comments/null/replies"
           onClick={[Function]}
         >
           <svg
@@ -1488,7 +1488,7 @@ exports[`Storyshots CommentBody Basic 1`] = `
               <img
                 alt="Bridie Skiles V"
                 className="MuiAvatar-img"
-                src="https://s3.amazonaws.com/uifaces/faces/twitter/noufalibrahim/128.jpg"
+                src="https://s3.amazonaws.com/uifaces/faces/twitter/ryanmclaughlin/128.jpg"
               />
             </div>
           </div>
@@ -1628,7 +1628,7 @@ exports[`Storyshots CommentBody Hide Comment Action 1`] = `
       >
         <a
           className="reply_1gy5v6q"
-          href="/articles/34854/comments/null/replies"
+          href="/articles/27490/comments/null/replies"
           onClick={[Function]}
         >
           <svg
@@ -1693,7 +1693,7 @@ exports[`Storyshots CommentBody Hide Comment Action 1`] = `
               <img
                 alt="Bridie Skiles V"
                 className="MuiAvatar-img"
-                src="https://s3.amazonaws.com/uifaces/faces/twitter/noufalibrahim/128.jpg"
+                src="https://s3.amazonaws.com/uifaces/faces/twitter/ryanmclaughlin/128.jpg"
               />
             </div>
           </div>
@@ -1796,12 +1796,8 @@ exports[`Storyshots CommentBody Linked 1`] = `
 <div>
   <div>
     <div
-      className="comment_1b4bkso"
-      style={
-        Object {
-          "flex": 1,
-        }
-      }
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
     >
       <div
         className="meta_19ulwq8"
@@ -1809,74 +1805,6 @@ exports[`Storyshots CommentBody Linked 1`] = `
         <div
           className="authorRow_jgupte"
         >
-          <a
-            className="reply_1gy5v6q"
-            onClick={[Function]}
-            style={Object {}}
-          >
-            <svg
-              fill="currentColor"
-              height={24}
-              preserveAspectRatio="xMidYMid meet"
-              style={
-                Object {
-                  "fill": "#255271",
-                  "verticalAlign": "middle",
-                }
-              }
-              viewBox="0 0 24 24"
-              width={24}
-            >
-              <g>
-                <path
-                  d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"
-                />
-                <path
-                  d="M0 0h24v24H0z"
-                  fill="none"
-                />
-              </g>
-            </svg>
-          </a>
-          <span
-            style={
-              Object {
-                "marginRight": "8px",
-              }
-            }
-          >
-            <div
-              className="base_1x5zm4t"
-              style={
-                Object {
-                  "height": "24px",
-                  "width": "24px",
-                }
-              }
-            >
-              <img
-                alt="Bridie Skiles V"
-                src="https://s3.amazonaws.com/pimage.example.com/4405/3468/cropped-44053468.jpg"
-                width="100%"
-              />
-            </div>
-          </span>
-          <a
-            onClick={[Function]}
-            style={
-              Object {
-                "color": "#255271",
-              }
-            }
-          >
-            Bridie Skiles V
-             
-          </a>
-          <span>
-            from 
-            NYC
-             
-          </span>
           <span
             style={
               Object {
@@ -1888,75 +1816,12 @@ exports[`Storyshots CommentBody Linked 1`] = `
             over X years
              ago 
           </span>
-          <span>
-            • Flags: 
-            <span>
-              unresolved: 
-              1
-            </span>
-             
-            <span>
-              red
-              : 
-              1
-            </span>
-             
-            
-             
-            
-          </span>
         </div>
         <div
           className="actionContainer_11iv8a4"
         >
-          <div
-            style={
-              Object {
-                "marginRight": "10px",
-              }
-            }
-          >
-            <div
-              className="circle_42xzgj"
-              id="approve"
-              style={
-                Object {
-                  "backgroundColor": "#326891",
-                  "height": 36,
-                  "width": 36,
-                }
-              }
-            >
-              <svg
-                fill="currentColor"
-                height={20}
-                label="Approve"
-                preserveAspectRatio="xMidYMid meet"
-                role="alert"
-                style={
-                  Object {
-                    "fill": "rgba(255, 255, 255, 1)",
-                    "verticalAlign": "middle",
-                  }
-                }
-                viewBox="0 0 24 24"
-                width={20}
-              >
-                <g>
-                  <path
-                    d="M0,0H24V24H0V0Z"
-                    fill="none"
-                  />
-                  <path
-                    d="M9,16.17L4.83,12,3.41,13.41,9,19,21,7,19.59,5.59Z"
-                  />
-                </g>
-              </svg>
-            </div>
-          </div>
           <button
             className="actionToggle_71yhch"
-            onClick={[Function]}
             type="button"
           >
             <svg
@@ -1987,17 +1852,13 @@ exports[`Storyshots CommentBody Linked 1`] = `
       <div
         className="commentContainer_1s1qcet"
       >
-        <span
-          className="Linkify"
+        <div
+          className="comment_1b4bkso"
         >
-          <div
-            className="comment_1b4bkso"
-          >
-            <span>
-              Founded in 1965 by Albert Griffiths, The Gladiators has released some of the most mythical songs of Jamaican reggae. Their first hit, the single Hello Carol, was released in 1968. In 1976, thanks to their signature at Virgin, the trilogy Trenchtown Mix Up, Proverbial Reggae and Naturality has been distributed all around the world and some of the songs of these albums have become classics of the reggae as Mix Up and Roots Natty Roots.
-            </span>
-          </div>
-        </span>
+          <span>
+            
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -2019,7 +1880,7 @@ exports[`Storyshots CommentBody Show Article 1`] = `
     >
       <a
         className="articleLink_mmnviw"
-        href="/articles/34854/new/SUMMARY_SCORE"
+        href="/articles/27490/new/SUMMARY_SCORE"
         onClick={[Function]}
       >
         <h4
@@ -2034,7 +1895,7 @@ exports[`Storyshots CommentBody Show Article 1`] = `
             }
           }
         >
-          Possimus consequatur nobis ullam.
+          Placeat est qui occaecati officia labore.
         </h4>
       </a>
       <div
@@ -2049,7 +1910,7 @@ exports[`Storyshots CommentBody Show Article 1`] = `
       >
         <a
           className="cellLink_18xp2pq"
-          href="http://bradley.biz"
+          href="http://myrtis.biz"
           target="_blank"
         >
           <svg
@@ -2073,7 +1934,7 @@ exports[`Storyshots CommentBody Show Article 1`] = `
       >
         <a
           className="reply_1gy5v6q"
-          href="/articles/34854/comments/null/replies"
+          href="/articles/27490/comments/null/replies"
           onClick={[Function]}
         >
           <svg
@@ -2138,7 +1999,7 @@ exports[`Storyshots CommentBody Show Article 1`] = `
               <img
                 alt="Bridie Skiles V"
                 className="MuiAvatar-img"
-                src="https://s3.amazonaws.com/uifaces/faces/twitter/noufalibrahim/128.jpg"
+                src="https://s3.amazonaws.com/uifaces/faces/twitter/ryanmclaughlin/128.jpg"
               />
             </div>
           </div>
@@ -3076,7 +2937,7 @@ exports[`Storyshots LabelSettings spam 1`] = `
     >
       <span
         aria-disabled={false}
-        className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-205 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary"
+        className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-206 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary"
         onBlur={[Function]}
         onDragLeave={[Function]}
         onFocus={[Function]}
@@ -3094,12 +2955,12 @@ exports[`Storyshots LabelSettings spam 1`] = `
           className="MuiIconButton-label"
         >
           <input
-            className="PrivateSwitchBase-input-208"
+            className="PrivateSwitchBase-input-209"
             onChange={[Function]}
             type="radio"
           />
           <div
-            className="PrivateRadioButtonIcon-root-221"
+            className="PrivateRadioButtonIcon-root-222"
           >
             <svg
               aria-hidden="true"
@@ -3113,7 +2974,7 @@ exports[`Storyshots LabelSettings spam 1`] = `
             </svg>
             <svg
               aria-hidden="true"
-              className="MuiSvgIcon-root PrivateRadioButtonIcon-layer-222"
+              className="MuiSvgIcon-root PrivateRadioButtonIcon-layer-223"
               focusable="false"
               viewBox="0 0 24 24"
             >
@@ -3131,7 +2992,7 @@ exports[`Storyshots LabelSettings spam 1`] = `
     >
       <span
         aria-disabled={false}
-        className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-205 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary"
+        className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-206 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary"
         onBlur={[Function]}
         onDragLeave={[Function]}
         onFocus={[Function]}
@@ -3149,12 +3010,12 @@ exports[`Storyshots LabelSettings spam 1`] = `
           className="MuiIconButton-label"
         >
           <input
-            className="PrivateSwitchBase-input-208"
+            className="PrivateSwitchBase-input-209"
             onChange={[Function]}
             type="radio"
           />
           <div
-            className="PrivateRadioButtonIcon-root-221"
+            className="PrivateRadioButtonIcon-root-222"
           >
             <svg
               aria-hidden="true"
@@ -3168,7 +3029,7 @@ exports[`Storyshots LabelSettings spam 1`] = `
             </svg>
             <svg
               aria-hidden="true"
-              className="MuiSvgIcon-root PrivateRadioButtonIcon-layer-222"
+              className="MuiSvgIcon-root PrivateRadioButtonIcon-layer-223"
               focusable="false"
               viewBox="0 0 24 24"
             >
@@ -3186,7 +3047,7 @@ exports[`Storyshots LabelSettings spam 1`] = `
     >
       <span
         aria-disabled={false}
-        className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-205 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary"
+        className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-206 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary"
         onBlur={[Function]}
         onDragLeave={[Function]}
         onFocus={[Function]}
@@ -3204,12 +3065,12 @@ exports[`Storyshots LabelSettings spam 1`] = `
           className="MuiIconButton-label"
         >
           <input
-            className="PrivateSwitchBase-input-208"
+            className="PrivateSwitchBase-input-209"
             onChange={[Function]}
             type="radio"
           />
           <div
-            className="PrivateRadioButtonIcon-root-221"
+            className="PrivateRadioButtonIcon-root-222"
           >
             <svg
               aria-hidden="true"
@@ -3223,7 +3084,7 @@ exports[`Storyshots LabelSettings spam 1`] = `
             </svg>
             <svg
               aria-hidden="true"
-              className="MuiSvgIcon-root PrivateRadioButtonIcon-layer-222"
+              className="MuiSvgIcon-root PrivateRadioButtonIcon-layer-223"
               focusable="false"
               viewBox="0 0 24 24"
             >
@@ -7096,26 +6957,50 @@ exports[`Storyshots SingleComment base 1`] = `
           className="header_rv4s4m"
         >
           <div
-            className="avatarColumn_rgubth"
+            style={
+              Object {
+                "display": "inline-block",
+                "margin": "1px",
+              }
+            }
           >
-            <img
-              alt="Bridie Skiles IV"
-              className="avatar_pejsq2"
-              height={60}
-              src="https://s3.amazonaws.com/pimage.example.com/7778/5652/cropped-77785652.jpg"
-              width={60}
-            />
+            <div
+              aria-describedby={null}
+              className="MuiAvatar-root MuiAvatar-circle"
+              onBlur={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "rgb(7, 60, 43)",
+                  "color": "white",
+                  "fontSize": "30px",
+                  "height": "60px",
+                  "width": "60px",
+                }
+              }
+              title="Bridie Skiles IV"
+            >
+              <img
+                alt="Bridie Skiles IV"
+                className="MuiAvatar-img"
+                src="https://s3.amazonaws.com/uifaces/faces/twitter/devinhalladay/128.jpg"
+              />
+            </div>
           </div>
           <div
-            className="nameColumn_3shyuq"
+            className="nameColumn_14w2fwv"
           >
             <div
               className="name_1mvjcjb"
             >
               <a
                 className="authorName_hhj2q7"
+                href="/search?searchByAuthor=true&term=Bridie%20Skiles%20IV"
                 onClick={[Function]}
-                style={Object {}}
               >
                 Bridie Skiles IV
               </a>
@@ -7187,8 +7072,8 @@ exports[`Storyshots SingleComment base 1`] = `
                 </div>
                 <a
                   className="linkFocus_euyru4"
+                  href="/search?searchByAuthor=true&term=test"
                   onClick={[Function]}
-                  style={Object {}}
                 >
                   <div
                     className="row_wo3e5q"
@@ -7267,31 +7152,6 @@ exports[`Storyshots SingleComment base 1`] = `
               Nov. 30, 2016 12:00 AM
                
             </span>
-            <span>
-              • Flags: 
-              <span>
-                unresolved: 
-                2
-              </span>
-               
-              <span>
-                • 
-                red
-                : 
-                1
-                 
-                
-              </span>
-               
-              <span>
-                • 
-                green
-                : 
-                2
-                 
-                (2)
-              </span>
-            </span>
           </div>
         </div>
         <style>
@@ -7306,7 +7166,7 @@ exports[`Storyshots SingleComment base 1`] = `
 
   .comment-body::selection,
   .comment-body *::selection {
-    background: #326891;
+    background: #185bac;
     borderColor: rgba(255, 255, 255, 1);
     color: rgba(255, 255, 255, 1);
   }
@@ -7359,79 +7219,28 @@ exports[`Storyshots SingleComment base 1`] = `
             <div
               onMouseDown={[Function]}
               onTouchStart={[Function]}
-            />
-          </div>
-        </div>
-        <div>
-          <div
-            className="title_nqpgbv"
-          >
-            Flags
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Resolved
-            <div
-              className="label_1ab54ap"
             >
-              red
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Resolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Ullam voluptatem maxime itaque tenetur. Voluptas est similique quibusdam molestiae est rerum odit quo unde.
-            </div>
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Unresolved
-            <div
-              className="label_1ab54ap"
-            >
-              green
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Unresolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Aspernatur rerum aut quis id nam consectetur. Harum necessitatibus autem aut qui qui aliquam.
-            </div>
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Unresolved
-            <div
-              className="label_1ab54ap"
-            >
-              green
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Unresolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Vero cupiditate unde veniam. Voluptas natus consequatur ea accusamus fugiat consequuntur. Laborum ducimus magni et facilis deleniti sint magni.
+              <div>
+                Omnis quo qui deserunt. Magnam minus mollitia rerum et. Quidem consequuntur voluptate voluptas.
+ 
+Maxime eos repudiandae deserunt quia quis. Mollitia dolor repellendus velit nulla est et. Voluptates voluptatem quos dolorem at. Qui necessitatibus numquam consectetur adipisci enim.
+ 
+Et blanditiis assumenda repellendus. Itaque omnis corporis quod. Eos fugiat blanditiis blanditiis est necessitatibus voluptas qui deserunt sint.
+              </div>
             </div>
           </div>
         </div>
+        <div
+          className="tags_1joc06t"
+        />
+        <button
+          aria-label="View all tags"
+          className="scoresLink_186dkgy"
+          onClick={[Function]}
+          type="button"
+        >
+          View all tags
+        </button>
       </div>
     </div>
   </div>
@@ -7465,26 +7274,50 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
           className="header_rv4s4m"
         >
           <div
-            className="avatarColumn_rgubth"
+            style={
+              Object {
+                "display": "inline-block",
+                "margin": "1px",
+              }
+            }
           >
-            <img
-              alt="Bridie Skiles IV"
-              className="avatar_pejsq2"
-              height={60}
-              src="https://s3.amazonaws.com/pimage.example.com/7778/5652/cropped-77785652.jpg"
-              width={60}
-            />
+            <div
+              aria-describedby={null}
+              className="MuiAvatar-root MuiAvatar-circle"
+              onBlur={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "rgb(7, 60, 43)",
+                  "color": "white",
+                  "fontSize": "30px",
+                  "height": "60px",
+                  "width": "60px",
+                }
+              }
+              title="Bridie Skiles IV"
+            >
+              <img
+                alt="Bridie Skiles IV"
+                className="MuiAvatar-img"
+                src="https://s3.amazonaws.com/uifaces/faces/twitter/devinhalladay/128.jpg"
+              />
+            </div>
           </div>
           <div
-            className="nameColumn_3shyuq"
+            className="nameColumn_14w2fwv"
           >
             <div
               className="name_1mvjcjb"
             >
               <a
                 className="authorName_hhj2q7"
+                href="/search?searchByAuthor=true&term=Bridie%20Skiles%20IV"
                 onClick={[Function]}
-                style={Object {}}
               >
                 Bridie Skiles IV
               </a>
@@ -7556,8 +7389,8 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
                 </div>
                 <a
                   className="linkFocus_euyru4"
+                  href="/search?searchByAuthor=true&term=test"
                   onClick={[Function]}
-                  style={Object {}}
                 >
                   <div
                     className="row_wo3e5q"
@@ -7627,7 +7460,7 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
           </div>
           <button
             aria-label="Edit Comment Text"
-            className="editButton_j0w0jk"
+            className="editButton_kdc080"
             onBlur={[Function]}
             onClick={[Function]}
             onFocus={[Function]}
@@ -7640,7 +7473,7 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
               preserveAspectRatio="xMidYMid meet"
               style={
                 Object {
-                  "fill": "#326891",
+                  "fill": "#185bac",
                   "verticalAlign": "middle",
                 }
               }
@@ -7663,31 +7496,6 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
               Nov. 30, 2016 12:00 AM
                
             </span>
-            <span>
-              • Flags: 
-              <span>
-                unresolved: 
-                2
-              </span>
-               
-              <span>
-                • 
-                red
-                : 
-                1
-                 
-                
-              </span>
-               
-              <span>
-                • 
-                green
-                : 
-                2
-                 
-                (2)
-              </span>
-            </span>
           </div>
         </div>
         <style>
@@ -7702,7 +7510,7 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
 
   .comment-body::selection,
   .comment-body *::selection {
-    background: #326891;
+    background: #185bac;
     borderColor: rgba(255, 255, 255, 1);
     color: rgba(255, 255, 255, 1);
   }
@@ -7755,79 +7563,28 @@ exports[`Storyshots SingleComment can edit comment 1`] = `
             <div
               onMouseDown={[Function]}
               onTouchStart={[Function]}
-            />
-          </div>
-        </div>
-        <div>
-          <div
-            className="title_nqpgbv"
-          >
-            Flags
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Resolved
-            <div
-              className="label_1ab54ap"
             >
-              red
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Resolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Ullam voluptatem maxime itaque tenetur. Voluptas est similique quibusdam molestiae est rerum odit quo unde.
-            </div>
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Unresolved
-            <div
-              className="label_1ab54ap"
-            >
-              green
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Unresolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Aspernatur rerum aut quis id nam consectetur. Harum necessitatibus autem aut qui qui aliquam.
-            </div>
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Unresolved
-            <div
-              className="label_1ab54ap"
-            >
-              green
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Unresolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Vero cupiditate unde veniam. Voluptas natus consequatur ea accusamus fugiat consequuntur. Laborum ducimus magni et facilis deleniti sint magni.
+              <div>
+                Omnis quo qui deserunt. Magnam minus mollitia rerum et. Quidem consequuntur voluptate voluptas.
+ 
+Maxime eos repudiandae deserunt quia quis. Mollitia dolor repellendus velit nulla est et. Voluptates voluptatem quos dolorem at. Qui necessitatibus numquam consectetur adipisci enim.
+ 
+Et blanditiis assumenda repellendus. Itaque omnis corporis quod. Eos fugiat blanditiis blanditiis est necessitatibus voluptas qui deserunt sint.
+              </div>
             </div>
           </div>
         </div>
+        <div
+          className="tags_1joc06t"
+        />
+        <button
+          aria-label="View all tags"
+          className="scoresLink_186dkgy"
+          onClick={[Function]}
+          type="button"
+        >
+          View all tags
+        </button>
       </div>
     </div>
   </div>
@@ -7861,26 +7618,50 @@ exports[`Storyshots SingleComment has url 1`] = `
           className="header_rv4s4m"
         >
           <div
-            className="avatarColumn_rgubth"
+            style={
+              Object {
+                "display": "inline-block",
+                "margin": "1px",
+              }
+            }
           >
-            <img
-              alt="Bridie Skiles IV"
-              className="avatar_pejsq2"
-              height={60}
-              src="https://s3.amazonaws.com/pimage.example.com/7778/5652/cropped-77785652.jpg"
-              width={60}
-            />
+            <div
+              aria-describedby={null}
+              className="MuiAvatar-root MuiAvatar-circle"
+              onBlur={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "rgb(7, 60, 43)",
+                  "color": "white",
+                  "fontSize": "30px",
+                  "height": "60px",
+                  "width": "60px",
+                }
+              }
+              title="Bridie Skiles IV"
+            >
+              <img
+                alt="Bridie Skiles IV"
+                className="MuiAvatar-img"
+                src="https://s3.amazonaws.com/uifaces/faces/twitter/devinhalladay/128.jpg"
+              />
+            </div>
           </div>
           <div
-            className="nameColumn_3shyuq"
+            className="nameColumn_14w2fwv"
           >
             <div
               className="name_1mvjcjb"
             >
               <a
                 className="authorName_hhj2q7"
+                href="/search?searchByAuthor=true&term=Bridie%20Skiles%20IV"
                 onClick={[Function]}
-                style={Object {}}
               >
                 Bridie Skiles IV
               </a>
@@ -7952,8 +7733,8 @@ exports[`Storyshots SingleComment has url 1`] = `
                 </div>
                 <a
                   className="linkFocus_euyru4"
+                  href="/search?searchByAuthor=true&term=test"
                   onClick={[Function]}
-                  style={Object {}}
                 >
                   <div
                     className="row_wo3e5q"
@@ -8029,38 +7810,13 @@ exports[`Storyshots SingleComment has url 1`] = `
             className="metaType_kvauw4"
           >
             <a
-              className="link_1820azk"
+              className="link_1ktjehn"
+              href="/http://www.example.com/"
               onClick={[Function]}
-              style={Object {}}
             >
               Nov. 30, 2016 12:00 AM
                
             </a>
-            <span>
-              • Flags: 
-              <span>
-                unresolved: 
-                2
-              </span>
-               
-              <span>
-                • 
-                red
-                : 
-                1
-                 
-                
-              </span>
-               
-              <span>
-                • 
-                green
-                : 
-                2
-                 
-                (2)
-              </span>
-            </span>
           </div>
         </div>
         <style>
@@ -8075,7 +7831,7 @@ exports[`Storyshots SingleComment has url 1`] = `
 
   .comment-body::selection,
   .comment-body *::selection {
-    background: #326891;
+    background: #185bac;
     borderColor: rgba(255, 255, 255, 1);
     color: rgba(255, 255, 255, 1);
   }
@@ -8128,79 +7884,28 @@ exports[`Storyshots SingleComment has url 1`] = `
             <div
               onMouseDown={[Function]}
               onTouchStart={[Function]}
-            />
-          </div>
-        </div>
-        <div>
-          <div
-            className="title_nqpgbv"
-          >
-            Flags
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Resolved
-            <div
-              className="label_1ab54ap"
             >
-              red
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Resolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Ullam voluptatem maxime itaque tenetur. Voluptas est similique quibusdam molestiae est rerum odit quo unde.
-            </div>
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Unresolved
-            <div
-              className="label_1ab54ap"
-            >
-              green
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Unresolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Aspernatur rerum aut quis id nam consectetur. Harum necessitatibus autem aut qui qui aliquam.
-            </div>
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Unresolved
-            <div
-              className="label_1ab54ap"
-            >
-              green
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Unresolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Vero cupiditate unde veniam. Voluptas natus consequatur ea accusamus fugiat consequuntur. Laborum ducimus magni et facilis deleniti sint magni.
+              <div>
+                Omnis quo qui deserunt. Magnam minus mollitia rerum et. Quidem consequuntur voluptate voluptas.
+ 
+Maxime eos repudiandae deserunt quia quis. Mollitia dolor repellendus velit nulla est et. Voluptates voluptatem quos dolorem at. Qui necessitatibus numquam consectetur adipisci enim.
+ 
+Et blanditiis assumenda repellendus. Itaque omnis corporis quod. Eos fugiat blanditiis blanditiis est necessitatibus voluptas qui deserunt sint.
+              </div>
             </div>
           </div>
         </div>
+        <div
+          className="tags_1joc06t"
+        />
+        <button
+          aria-label="View all tags"
+          className="scoresLink_186dkgy"
+          onClick={[Function]}
+          type="button"
+        >
+          View all tags
+        </button>
       </div>
     </div>
   </div>
@@ -8234,26 +7939,50 @@ exports[`Storyshots SingleComment tags to add 1`] = `
           className="header_rv4s4m"
         >
           <div
-            className="avatarColumn_rgubth"
+            style={
+              Object {
+                "display": "inline-block",
+                "margin": "1px",
+              }
+            }
           >
-            <img
-              alt="Bridie Skiles IV"
-              className="avatar_pejsq2"
-              height={60}
-              src="https://s3.amazonaws.com/pimage.example.com/7778/5652/cropped-77785652.jpg"
-              width={60}
-            />
+            <div
+              aria-describedby={null}
+              className="MuiAvatar-root MuiAvatar-circle"
+              onBlur={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "rgb(7, 60, 43)",
+                  "color": "white",
+                  "fontSize": "30px",
+                  "height": "60px",
+                  "width": "60px",
+                }
+              }
+              title="Bridie Skiles IV"
+            >
+              <img
+                alt="Bridie Skiles IV"
+                className="MuiAvatar-img"
+                src="https://s3.amazonaws.com/uifaces/faces/twitter/devinhalladay/128.jpg"
+              />
+            </div>
           </div>
           <div
-            className="nameColumn_3shyuq"
+            className="nameColumn_14w2fwv"
           >
             <div
               className="name_1mvjcjb"
             >
               <a
                 className="authorName_hhj2q7"
+                href="/search?searchByAuthor=true&term=Bridie%20Skiles%20IV"
                 onClick={[Function]}
-                style={Object {}}
               >
                 Bridie Skiles IV
               </a>
@@ -8325,8 +8054,8 @@ exports[`Storyshots SingleComment tags to add 1`] = `
                 </div>
                 <a
                   className="linkFocus_euyru4"
+                  href="/search?searchByAuthor=true&term=test"
                   onClick={[Function]}
-                  style={Object {}}
                 >
                   <div
                     className="row_wo3e5q"
@@ -8395,7 +8124,7 @@ exports[`Storyshots SingleComment tags to add 1`] = `
             </div>
             <button
               aria-label="Add tag to comment"
-              className="button_vh6fxh-o_O-addButton_160px8j"
+              className="button_vh6fxh-o_O-addButton_jz3qn7"
               onBlur={[Function]}
               onClick={[Function]}
               onFocus={[Function]}
@@ -8420,7 +8149,7 @@ exports[`Storyshots SingleComment tags to add 1`] = `
                 preserveAspectRatio="xMidYMid meet"
                 style={
                   Object {
-                    "fill": "#326891",
+                    "fill": "#185bac",
                     "verticalAlign": "middle",
                   }
                 }
@@ -8450,31 +8179,6 @@ exports[`Storyshots SingleComment tags to add 1`] = `
               Nov. 30, 2016 12:00 AM
                
             </span>
-            <span>
-              • Flags: 
-              <span>
-                unresolved: 
-                2
-              </span>
-               
-              <span>
-                • 
-                red
-                : 
-                1
-                 
-                
-              </span>
-               
-              <span>
-                • 
-                green
-                : 
-                2
-                 
-                (2)
-              </span>
-            </span>
           </div>
         </div>
         <style>
@@ -8489,7 +8193,7 @@ exports[`Storyshots SingleComment tags to add 1`] = `
 
   .comment-body::selection,
   .comment-body *::selection {
-    background: #326891;
+    background: #185bac;
     borderColor: rgba(255, 255, 255, 1);
     color: rgba(255, 255, 255, 1);
   }
@@ -8542,79 +8246,28 @@ exports[`Storyshots SingleComment tags to add 1`] = `
             <div
               onMouseDown={[Function]}
               onTouchStart={[Function]}
-            />
-          </div>
-        </div>
-        <div>
-          <div
-            className="title_nqpgbv"
-          >
-            Flags
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Resolved
-            <div
-              className="label_1ab54ap"
             >
-              red
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Resolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Ullam voluptatem maxime itaque tenetur. Voluptas est similique quibusdam molestiae est rerum odit quo unde.
-            </div>
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Unresolved
-            <div
-              className="label_1ab54ap"
-            >
-              green
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Unresolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Aspernatur rerum aut quis id nam consectetur. Harum necessitatibus autem aut qui qui aliquam.
-            </div>
-          </div>
-          <div
-            className="entry_1uhx5sj"
-          >
-            Unresolved
-            <div
-              className="label_1ab54ap"
-            >
-              green
-               
-              <span
-                className="resolvedText_ylh4oj"
-              >
-                Unresolved
-              </span>
-            </div>
-            <div
-              className="detail_1b2af1e"
-            >
-              Vero cupiditate unde veniam. Voluptas natus consequatur ea accusamus fugiat consequuntur. Laborum ducimus magni et facilis deleniti sint magni.
+              <div>
+                Omnis quo qui deserunt. Magnam minus mollitia rerum et. Quidem consequuntur voluptate voluptas.
+ 
+Maxime eos repudiandae deserunt quia quis. Mollitia dolor repellendus velit nulla est et. Voluptates voluptatem quos dolorem at. Qui necessitatibus numquam consectetur adipisci enim.
+ 
+Et blanditiis assumenda repellendus. Itaque omnis corporis quod. Eos fugiat blanditiis blanditiis est necessitatibus voluptas qui deserunt sint.
+              </div>
             </div>
           </div>
         </div>
+        <div
+          className="tags_1joc06t"
+        />
+        <button
+          aria-label="View all tags"
+          className="scoresLink_186dkgy"
+          onClick={[Function]}
+          type="button"
+        >
+          View all tags
+        </button>
       </div>
     </div>
   </div>
@@ -10048,12 +9701,8 @@ exports[`Storyshots ThreadedComment default list 1`] = `
           className="body_4fl387"
         >
           <div
-            className="comment_1b4bkso"
-            style={
-              Object {
-                "flex": 1,
-              }
-            }
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
           >
             <div
               className="meta_19ulwq8"
@@ -10063,8 +9712,8 @@ exports[`Storyshots ThreadedComment default list 1`] = `
               >
                 <a
                   className="reply_1gy5v6q"
+                  href="/articles/undefined/comments/91358/replies"
                   onClick={[Function]}
-                  style={Object {}}
                 >
                   <svg
                     fill="currentColor"
@@ -10072,7 +9721,7 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                     preserveAspectRatio="xMidYMid meet"
                     style={
                       Object {
-                        "fill": "#255271",
+                        "fill": "#185bac",
                         "verticalAlign": "middle",
                       }
                     }
@@ -10091,10 +9740,11 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                   </svg>
                 </a>
                 <a
+                  href="/search?searchByAuthor=true&term=Bridie%20Skiles%20IV"
                   onClick={[Function]}
                   style={
                     Object {
-                      "color": "#255271",
+                      "color": "#185bac",
                     }
                   }
                 >
@@ -10117,27 +9767,6 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                   over X years
                    ago 
                 </span>
-                <span>
-                  • Flags: 
-                  <span>
-                    unresolved: 
-                    1
-                  </span>
-                   
-                  <span>
-                    red
-                    : 
-                    1
-                  </span>
-                   
-                  <span>
-                    green
-                    : 
-                    2
-                  </span>
-                   
-                  
-                </span>
               </div>
               <div
                 className="actionContainer_11iv8a4"
@@ -10154,7 +9783,7 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                     id="approve"
                     style={
                       Object {
-                        "backgroundColor": "#326891",
+                        "backgroundColor": "#185bac",
                         "height": 36,
                         "width": 36,
                       }
@@ -10189,7 +9818,6 @@ exports[`Storyshots ThreadedComment default list 1`] = `
                 </div>
                 <button
                   className="actionToggle_71yhch"
-                  onClick={[Function]}
                   type="button"
                 >
                   <svg
@@ -10220,239 +9848,23 @@ exports[`Storyshots ThreadedComment default list 1`] = `
             <div
               className="commentContainer_1s1qcet"
             >
-              <span
-                className="Linkify"
-              >
-                <div
-                  className="comment_1b4bkso"
-                >
-                  <div
-                    style={
-                      Object {
-                        "display": "flex",
-                        "flexDirection": "column",
-                      }
-                    }
-                  >
-                    <p>
-                      <span>
-                        Orginating comment text is here
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="row_gk8los"
-        onMouseEnter={[Function]}
-        onMouseLeave={[Function]}
-      >
-        <div
-          className="body_4fl387-o_O-replyBody_prxq4h"
-        >
-          <div>
-            <div
-              className="comment_1b4bkso"
-              style={
-                Object {
-                  "flex": 1,
-                }
-              }
-            >
               <div
-                className="meta_19ulwq8"
+                className="comment_1b4bkso"
               >
                 <div
-                  className="authorRow_jgupte"
+                  style={
+                    Object {
+                      "display": "flex",
+                      "flexDirection": "column",
+                    }
+                  }
                 >
-                  <a
-                    className="reply_1gy5v6q"
-                    onClick={[Function]}
-                    style={Object {}}
-                  >
-                    <svg
-                      fill="currentColor"
-                      height={24}
-                      preserveAspectRatio="xMidYMid meet"
-                      style={
-                        Object {
-                          "fill": "#255271",
-                          "verticalAlign": "middle",
-                        }
-                      }
-                      viewBox="0 0 24 24"
-                      width={24}
-                    >
-                      <g>
-                        <path
-                          d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"
-                        />
-                        <path
-                          d="M0 0h24v24H0z"
-                          fill="none"
-                        />
-                      </g>
-                    </svg>
-                  </a>
-                  <a
-                    onClick={[Function]}
-                    style={
-                      Object {
-                        "color": "#255271",
-                      }
-                    }
-                  >
-                    Bridie Skiles IV
-                     
-                  </a>
-                  <span>
-                    from 
-                    NYC
-                     
-                  </span>
-                  <span
-                    style={
-                      Object {
-                        "textDecoration": "none",
-                      }
-                    }
-                  >
-                     • 
-                    over X years
-                     ago 
-                  </span>
-                  <span>
-                    • Flags: 
+                  <p>
                     <span>
-                      unresolved: 
-                      2
+                      Originating comment text is here
                     </span>
-                     
-                    <span>
-                      green
-                      : 
-                      2
-                    </span>
-                     
-                    <span>
-                      red
-                      : 
-                      1
-                    </span>
-                     
-                    
-                  </span>
+                  </p>
                 </div>
-                <div
-                  className="actionContainer_11iv8a4"
-                >
-                  <div
-                    style={
-                      Object {
-                        "marginRight": "10px",
-                      }
-                    }
-                  >
-                    <div
-                      className="circle_42xzgj"
-                      id="defer"
-                      style={
-                        Object {
-                          "backgroundColor": "#326891",
-                          "height": 36,
-                          "width": 36,
-                        }
-                      }
-                    >
-                      <svg
-                        fill="currentColor"
-                        height={20}
-                        label="Defer"
-                        preserveAspectRatio="xMidYMid meet"
-                        role="alert"
-                        style={
-                          Object {
-                            "fill": "rgba(255, 255, 255, 1)",
-                            "verticalAlign": "middle",
-                          }
-                        }
-                        viewBox="0 0 24 24"
-                        width={20}
-                      >
-                        <g>
-                          <path
-                            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
-                          />
-                          <path
-                            d="M0 0h24v24H0z"
-                            fill="none"
-                          />
-                          <path
-                            d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"
-                          />
-                        </g>
-                      </svg>
-                    </div>
-                  </div>
-                  <button
-                    className="actionToggle_71yhch"
-                    onClick={[Function]}
-                    type="button"
-                  >
-                    <svg
-                      fill="currentColor"
-                      height={20}
-                      preserveAspectRatio="xMidYMid meet"
-                      style={
-                        Object {
-                          "verticalAlign": "middle",
-                        }
-                      }
-                      viewBox="0 0 24 24"
-                      width={20}
-                    >
-                      <g>
-                        <path
-                          d="M0,0H24V24H0V0Z"
-                          fill="none"
-                        />
-                        <path
-                          d="M12,8a2,2,0,1,0-2-2A2,2,0,0,0,12,8Zm0,2a2,2,0,1,0,2,2A2,2,0,0,0,12,10Zm0,6a2,2,0,1,0,2,2A2,2,0,0,0,12,16Z"
-                        />
-                      </g>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div
-                className="commentContainer_1s1qcet"
-              >
-                <span
-                  className="Linkify"
-                >
-                  <div
-                    className="comment_1b4bkso"
-                  >
-                    <div
-                      style={
-                        Object {
-                          "display": "flex",
-                          "flexDirection": "column",
-                        }
-                      }
-                    >
-                      <p>
-                        <span>
-                          First reply comment text is here. This comment is marked Deferred.
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </span>
               </div>
             </div>
           </div>
@@ -10466,198 +9878,80 @@ exports[`Storyshots ThreadedComment default list 1`] = `
         <div
           className="body_4fl387-o_O-replyBody_prxq4h"
         >
-          <div>
+          <div
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
             <div
-              className="comment_1b4bkso"
-              style={
-                Object {
-                  "flex": 1,
-                }
-              }
+              className="meta_19ulwq8"
             >
               <div
-                className="meta_19ulwq8"
-              >
-                <div
-                  className="authorRow_jgupte"
-                >
-                  <a
-                    className="reply_1gy5v6q"
-                    onClick={[Function]}
-                    style={Object {}}
-                  >
-                    <svg
-                      fill="currentColor"
-                      height={24}
-                      preserveAspectRatio="xMidYMid meet"
-                      style={
-                        Object {
-                          "fill": "#255271",
-                          "verticalAlign": "middle",
-                        }
-                      }
-                      viewBox="0 0 24 24"
-                      width={24}
-                    >
-                      <g>
-                        <path
-                          d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"
-                        />
-                        <path
-                          d="M0 0h24v24H0z"
-                          fill="none"
-                        />
-                      </g>
-                    </svg>
-                  </a>
-                  <a
-                    onClick={[Function]}
-                    style={
-                      Object {
-                        "color": "#255271",
-                      }
-                    }
-                  >
-                    Bridie Skiles IV
-                     
-                  </a>
-                  <span>
-                    from 
-                    NYC
-                     
-                  </span>
-                  <span
-                    style={
-                      Object {
-                        "textDecoration": "none",
-                      }
-                    }
-                  >
-                     • 
-                    over X years
-                     ago 
-                  </span>
-                  <span>
-                    • Flags: 
-                    <span>
-                      unresolved: 
-                      1
-                    </span>
-                     
-                    <span>
-                      green
-                      : 
-                      2
-                    </span>
-                     
-                    
-                     
-                    ...
-                  </span>
-                </div>
-                <div
-                  className="actionContainer_11iv8a4"
-                >
-                  <div
-                    style={
-                      Object {
-                        "marginRight": "10px",
-                      }
-                    }
-                  >
-                    <div
-                      className="circle_42xzgj"
-                      id="highlight"
-                      style={
-                        Object {
-                          "backgroundColor": "#326891",
-                          "height": 36,
-                          "width": 36,
-                        }
-                      }
-                    >
-                      <svg
-                        fill="currentColor"
-                        height={20}
-                        label="Highlight"
-                        preserveAspectRatio="xMidYMid meet"
-                        role="alert"
-                        style={
-                          Object {
-                            "fill": "rgba(255, 255, 255, 1)",
-                            "verticalAlign": "middle",
-                          }
-                        }
-                        viewBox="0 0 24 24"
-                        width={20}
-                      >
-                        <g>
-                          <path
-                            d="M17,3H7A2,2,0,0,0,5,5V21l7-3,7,3V5A2,2,0,0,0,17,3Z"
-                          />
-                          <path
-                            d="M0,0H24V24H0V0Z"
-                            fill="none"
-                          />
-                        </g>
-                      </svg>
-                    </div>
-                  </div>
-                  <button
-                    className="actionToggle_71yhch"
-                    onClick={[Function]}
-                    type="button"
-                  >
-                    <svg
-                      fill="currentColor"
-                      height={20}
-                      preserveAspectRatio="xMidYMid meet"
-                      style={
-                        Object {
-                          "verticalAlign": "middle",
-                        }
-                      }
-                      viewBox="0 0 24 24"
-                      width={20}
-                    >
-                      <g>
-                        <path
-                          d="M0,0H24V24H0V0Z"
-                          fill="none"
-                        />
-                        <path
-                          d="M12,8a2,2,0,1,0-2-2A2,2,0,0,0,12,8Zm0,2a2,2,0,1,0,2,2A2,2,0,0,0,12,10Zm0,6a2,2,0,1,0,2,2A2,2,0,0,0,12,16Z"
-                        />
-                      </g>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div
-                className="commentContainer_1s1qcet"
+                className="authorRow_jgupte"
               >
                 <span
-                  className="Linkify"
+                  style={
+                    Object {
+                      "textDecoration": "none",
+                    }
+                  }
                 >
-                  <div
-                    className="comment_1b4bkso"
-                  >
-                    <div
-                      style={
-                        Object {
-                          "display": "flex",
-                          "flexDirection": "column",
-                        }
-                      }
-                    >
-                      <p>
-                        <span>
-                          Second reply comment text is here. This comment is marked Highlighted.
-                        </span>
-                      </p>
-                    </div>
-                  </div>
+                   • 
+                  over X years
+                   ago 
                 </span>
+              </div>
+              <div
+                className="actionContainer_11iv8a4"
+              >
+                <button
+                  className="actionToggle_71yhch"
+                  type="button"
+                >
+                  <svg
+                    fill="currentColor"
+                    height={20}
+                    preserveAspectRatio="xMidYMid meet"
+                    style={
+                      Object {
+                        "verticalAlign": "middle",
+                      }
+                    }
+                    viewBox="0 0 24 24"
+                    width={20}
+                  >
+                    <g>
+                      <path
+                        d="M0,0H24V24H0V0Z"
+                        fill="none"
+                      />
+                      <path
+                        d="M12,8a2,2,0,1,0-2-2A2,2,0,0,0,12,8Zm0,2a2,2,0,1,0,2,2A2,2,0,0,0,12,10Zm0,6a2,2,0,1,0,2,2A2,2,0,0,0,12,16Z"
+                      />
+                    </g>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div
+              className="commentContainer_1s1qcet"
+            >
+              <div
+                className="comment_1b4bkso"
+              >
+                <div
+                  style={
+                    Object {
+                      "display": "flex",
+                      "flexDirection": "column",
+                    }
+                  }
+                >
+                  <p>
+                    <span>
+                      
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -10671,198 +9965,80 @@ exports[`Storyshots ThreadedComment default list 1`] = `
         <div
           className="body_4fl387-o_O-replyBody_prxq4h"
         >
-          <div>
+          <div
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
             <div
-              className="comment_1b4bkso"
-              style={
-                Object {
-                  "flex": 1,
-                }
-              }
+              className="meta_19ulwq8"
             >
               <div
-                className="meta_19ulwq8"
-              >
-                <div
-                  className="authorRow_jgupte"
-                >
-                  <a
-                    className="reply_1gy5v6q"
-                    onClick={[Function]}
-                    style={Object {}}
-                  >
-                    <svg
-                      fill="currentColor"
-                      height={24}
-                      preserveAspectRatio="xMidYMid meet"
-                      style={
-                        Object {
-                          "fill": "#255271",
-                          "verticalAlign": "middle",
-                        }
-                      }
-                      viewBox="0 0 24 24"
-                      width={24}
-                    >
-                      <g>
-                        <path
-                          d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"
-                        />
-                        <path
-                          d="M0 0h24v24H0z"
-                          fill="none"
-                        />
-                      </g>
-                    </svg>
-                  </a>
-                  <a
-                    onClick={[Function]}
-                    style={
-                      Object {
-                        "color": "#255271",
-                      }
-                    }
-                  >
-                    Bridie Skiles IV
-                     
-                  </a>
-                  <span>
-                    from 
-                    NYC
-                     
-                  </span>
-                  <span
-                    style={
-                      Object {
-                        "textDecoration": "none",
-                      }
-                    }
-                  >
-                     • 
-                    over X years
-                     ago 
-                  </span>
-                  <span>
-                    • Flags: 
-                    <span>
-                      unresolved: 
-                      20
-                    </span>
-                     
-                    
-                     
-                    <span>
-                      green
-                      : 
-                      15
-                    </span>
-                     
-                    ...
-                  </span>
-                </div>
-                <div
-                  className="actionContainer_11iv8a4"
-                >
-                  <div
-                    style={
-                      Object {
-                        "marginRight": "10px",
-                      }
-                    }
-                  >
-                    <div
-                      className="circle_42xzgj"
-                      id="reject"
-                      style={
-                        Object {
-                          "backgroundColor": "#326891",
-                          "height": 36,
-                          "width": 36,
-                        }
-                      }
-                    >
-                      <svg
-                        fill="currentColor"
-                        height={20}
-                        label="Reject"
-                        preserveAspectRatio="xMidYMid meet"
-                        role="alert"
-                        style={
-                          Object {
-                            "fill": "rgba(255, 255, 255, 1)",
-                            "verticalAlign": "middle",
-                          }
-                        }
-                        viewBox="0 0 24 24"
-                        width={20}
-                      >
-                        <g>
-                          <path
-                            d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
-                          />
-                          <path
-                            d="M0,0H24V24H0V0Z"
-                            fill="none"
-                          />
-                        </g>
-                      </svg>
-                    </div>
-                  </div>
-                  <button
-                    className="actionToggle_71yhch"
-                    onClick={[Function]}
-                    type="button"
-                  >
-                    <svg
-                      fill="currentColor"
-                      height={20}
-                      preserveAspectRatio="xMidYMid meet"
-                      style={
-                        Object {
-                          "verticalAlign": "middle",
-                        }
-                      }
-                      viewBox="0 0 24 24"
-                      width={20}
-                    >
-                      <g>
-                        <path
-                          d="M0,0H24V24H0V0Z"
-                          fill="none"
-                        />
-                        <path
-                          d="M12,8a2,2,0,1,0-2-2A2,2,0,0,0,12,8Zm0,2a2,2,0,1,0,2,2A2,2,0,0,0,12,10Zm0,6a2,2,0,1,0,2,2A2,2,0,0,0,12,16Z"
-                        />
-                      </g>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div
-                className="commentContainer_1s1qcet"
+                className="authorRow_jgupte"
               >
                 <span
-                  className="Linkify"
+                  style={
+                    Object {
+                      "textDecoration": "none",
+                    }
+                  }
                 >
-                  <div
-                    className="comment_1b4bkso"
-                  >
-                    <div
-                      style={
-                        Object {
-                          "display": "flex",
-                          "flexDirection": "column",
-                        }
-                      }
-                    >
-                      <p>
-                        <span>
-                          Third reply comment text is here. This comment is marked Rejected.
-                        </span>
-                      </p>
-                    </div>
-                  </div>
+                   • 
+                  over X years
+                   ago 
                 </span>
+              </div>
+              <div
+                className="actionContainer_11iv8a4"
+              >
+                <button
+                  className="actionToggle_71yhch"
+                  type="button"
+                >
+                  <svg
+                    fill="currentColor"
+                    height={20}
+                    preserveAspectRatio="xMidYMid meet"
+                    style={
+                      Object {
+                        "verticalAlign": "middle",
+                      }
+                    }
+                    viewBox="0 0 24 24"
+                    width={20}
+                  >
+                    <g>
+                      <path
+                        d="M0,0H24V24H0V0Z"
+                        fill="none"
+                      />
+                      <path
+                        d="M12,8a2,2,0,1,0-2-2A2,2,0,0,0,12,8Zm0,2a2,2,0,1,0,2,2A2,2,0,0,0,12,10Zm0,6a2,2,0,1,0,2,2A2,2,0,0,0,12,16Z"
+                      />
+                    </g>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div
+              className="commentContainer_1s1qcet"
+            >
+              <div
+                className="comment_1b4bkso"
+              >
+                <div
+                  style={
+                    Object {
+                      "display": "flex",
+                      "flexDirection": "column",
+                    }
+                  }
+                >
+                  <p>
+                    <span>
+                      
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -10876,136 +10052,167 @@ exports[`Storyshots ThreadedComment default list 1`] = `
         <div
           className="body_4fl387-o_O-replyBody_prxq4h"
         >
-          <div>
+          <div
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
             <div
-              className="comment_1b4bkso"
-              style={
-                Object {
-                  "flex": 1,
-                }
-              }
+              className="meta_19ulwq8"
             >
               <div
-                className="meta_19ulwq8"
-              >
-                <div
-                  className="authorRow_jgupte"
-                >
-                  <a
-                    className="reply_1gy5v6q"
-                    onClick={[Function]}
-                    style={Object {}}
-                  >
-                    <svg
-                      fill="currentColor"
-                      height={24}
-                      preserveAspectRatio="xMidYMid meet"
-                      style={
-                        Object {
-                          "fill": "#255271",
-                          "verticalAlign": "middle",
-                        }
-                      }
-                      viewBox="0 0 24 24"
-                      width={24}
-                    >
-                      <g>
-                        <path
-                          d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"
-                        />
-                        <path
-                          d="M0 0h24v24H0z"
-                          fill="none"
-                        />
-                      </g>
-                    </svg>
-                  </a>
-                  <a
-                    onClick={[Function]}
-                    style={
-                      Object {
-                        "color": "#255271",
-                      }
-                    }
-                  >
-                    Bridie Skiles IV
-                     
-                  </a>
-                  <span>
-                    from 
-                    NYC
-                     
-                  </span>
-                  <span
-                    style={
-                      Object {
-                        "textDecoration": "none",
-                      }
-                    }
-                  >
-                     • 
-                    over X years
-                     ago 
-                  </span>
-                </div>
-                <div
-                  className="actionContainer_11iv8a4"
-                >
-                  <button
-                    className="actionToggle_71yhch"
-                    onClick={[Function]}
-                    type="button"
-                  >
-                    <svg
-                      fill="currentColor"
-                      height={20}
-                      preserveAspectRatio="xMidYMid meet"
-                      style={
-                        Object {
-                          "verticalAlign": "middle",
-                        }
-                      }
-                      viewBox="0 0 24 24"
-                      width={20}
-                    >
-                      <g>
-                        <path
-                          d="M0,0H24V24H0V0Z"
-                          fill="none"
-                        />
-                        <path
-                          d="M12,8a2,2,0,1,0-2-2A2,2,0,0,0,12,8Zm0,2a2,2,0,1,0,2,2A2,2,0,0,0,12,10Zm0,6a2,2,0,1,0,2,2A2,2,0,0,0,12,16Z"
-                        />
-                      </g>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-              <div
-                className="commentContainer_1s1qcet"
+                className="authorRow_jgupte"
               >
                 <span
-                  className="Linkify"
+                  style={
+                    Object {
+                      "textDecoration": "none",
+                    }
+                  }
                 >
-                  <div
-                    className="comment_1b4bkso"
-                  >
-                    <div
-                      style={
-                        Object {
-                          "display": "flex",
-                          "flexDirection": "column",
-                        }
-                      }
-                    >
-                      <p>
-                        <span>
-                          Fourth reply comment text is here. This comment has not yet been moderated.
-                        </span>
-                      </p>
-                    </div>
-                  </div>
+                   • 
+                  over X years
+                   ago 
                 </span>
+              </div>
+              <div
+                className="actionContainer_11iv8a4"
+              >
+                <button
+                  className="actionToggle_71yhch"
+                  type="button"
+                >
+                  <svg
+                    fill="currentColor"
+                    height={20}
+                    preserveAspectRatio="xMidYMid meet"
+                    style={
+                      Object {
+                        "verticalAlign": "middle",
+                      }
+                    }
+                    viewBox="0 0 24 24"
+                    width={20}
+                  >
+                    <g>
+                      <path
+                        d="M0,0H24V24H0V0Z"
+                        fill="none"
+                      />
+                      <path
+                        d="M12,8a2,2,0,1,0-2-2A2,2,0,0,0,12,8Zm0,2a2,2,0,1,0,2,2A2,2,0,0,0,12,10Zm0,6a2,2,0,1,0,2,2A2,2,0,0,0,12,16Z"
+                      />
+                    </g>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div
+              className="commentContainer_1s1qcet"
+            >
+              <div
+                className="comment_1b4bkso"
+              >
+                <div
+                  style={
+                    Object {
+                      "display": "flex",
+                      "flexDirection": "column",
+                    }
+                  }
+                >
+                  <p>
+                    <span>
+                      
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="row_gk8los"
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+      >
+        <div
+          className="body_4fl387-o_O-replyBody_prxq4h"
+        >
+          <div
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
+            <div
+              className="meta_19ulwq8"
+            >
+              <div
+                className="authorRow_jgupte"
+              >
+                <span
+                  style={
+                    Object {
+                      "textDecoration": "none",
+                    }
+                  }
+                >
+                   • 
+                  over X years
+                   ago 
+                </span>
+              </div>
+              <div
+                className="actionContainer_11iv8a4"
+              >
+                <button
+                  className="actionToggle_71yhch"
+                  type="button"
+                >
+                  <svg
+                    fill="currentColor"
+                    height={20}
+                    preserveAspectRatio="xMidYMid meet"
+                    style={
+                      Object {
+                        "verticalAlign": "middle",
+                      }
+                    }
+                    viewBox="0 0 24 24"
+                    width={20}
+                  >
+                    <g>
+                      <path
+                        d="M0,0H24V24H0V0Z"
+                        fill="none"
+                      />
+                      <path
+                        d="M12,8a2,2,0,1,0-2-2A2,2,0,0,0,12,8Zm0,2a2,2,0,1,0,2,2A2,2,0,0,0,12,10Zm0,6a2,2,0,1,0,2,2A2,2,0,0,0,12,16Z"
+                      />
+                    </g>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div
+              className="commentContainer_1s1qcet"
+            >
+              <div
+                className="comment_1b4bkso"
+              >
+                <div
+                  style={
+                    Object {
+                      "display": "flex",
+                      "flexDirection": "column",
+                    }
+                  }
+                >
+                  <p>
+                    <span>
+                      
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>

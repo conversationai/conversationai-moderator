@@ -21,11 +21,12 @@ import thunk from 'redux-thunk';
 import { reducer as scenesReducer } from './scenes/store';
 import { reducer as globalReducer } from './stores';
 
+export const reducers = combineReducers({
+  scenes: scenesReducer,
+  global: globalReducer,
+});
 export const store = createStore(
-  combineReducers({
-    scenes: scenesReducer,
-    global: globalReducer,
-  }),
+  reducers,
   {},
   compose(
     applyMiddleware(thunk),
