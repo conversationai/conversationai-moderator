@@ -28,7 +28,7 @@ const user = fakeUserModel({
 });
 
 storiesOf('CheckboxRow', module)
-    .add('Default', () => (
+    .add('DontTest:Default', () => (
       <CheckboxRow
         label={user.name}
         value={user.id}
@@ -36,7 +36,7 @@ storiesOf('CheckboxRow', module)
         onChange={action('Change Lucas Dixon')}
       />
     ))
-    .add('Selected', () => (
+    .add('DontTest:Selected', () => (
       <CheckboxRow
         label={user.name}
         value={user.id}

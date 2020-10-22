@@ -44,12 +44,12 @@ storiesOf('Avatar', module)
   .addDecorator((story) => (
     <div style={{margin: '50px'}}>{story()}</div>
   ))
-  .add('commenter', () => {
+  .add('DontTest:commenter', () => {
     return (
       <Avatar size={54} target={authorWithAvatar} />
     );
   })
-  .add('moderator', () => {
+  .add('DontTest:moderator', () => {
     return (
       <Avatar size={54} target={user} />
     );
@@ -59,7 +59,7 @@ storiesOf('Avatar', module)
       <Avatar size={54} target={authorWithoutAvatar} />
     );
   })
-  .add('36x36', () => {
+  .add('DontTest:36x36', () => {
     return (
       <Avatar size={36} target={user} />
     );

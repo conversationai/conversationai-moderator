@@ -40,7 +40,7 @@ const users = [
 const moderatorIds = Set<ModelId>([users[0].id]);
 
 storiesOf('AssignModerators', module)
-    .add('Default', () => (
+    .add('DontTest:Default', () => (
       <AssignModerators
         users={users}
         moderatorIds={moderatorIds}
