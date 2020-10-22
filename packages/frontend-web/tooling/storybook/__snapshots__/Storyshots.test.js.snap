@@ -499,166 +499,6 @@ exports[`Storyshots Arrow disabled 1`] = `
 </div>
 `;
 
-exports[`Storyshots ArticlePreview With Title 1`] = `
-<div>
-  <div
-    className="base_1i48t9o"
-  >
-    <div
-      className="main_999lj"
-      tabIndex={0}
-    >
-      <div
-        className="bar_169xe59"
-        style={
-          Object {
-            "background": "#326891",
-          }
-        }
-      >
-        <div
-          className="headerMeta_bxp3yr"
-          style={
-            Object {
-              "width": "100%",
-            }
-          }
-        >
-          <button
-            className="backButton_17ovhcu"
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            type="button"
-          >
-            <span
-              style={
-                Object {
-                  "clip": "rect(1px, 1px, 1px, 1px)",
-                  "height": 0,
-                  "position": "absolute",
-                  "width": 0,
-                }
-              }
-            >
-              Back to Article
-            </span>
-            <svg
-              className="backIcon_2gjue9"
-              direction="left"
-              fill="currentColor"
-              height={24}
-              label="Close article preview"
-              preserveAspectRatio="xMidYMid meet"
-              style={
-                Object {
-                  "verticalAlign": "middle",
-                }
-              }
-              viewBox="0 0 24 24"
-              width={24}
-            >
-              <g>
-                <path
-                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-                />
-                <path
-                  d="M0 0h24v24H0z"
-                  fill="none"
-                />
-              </g>
-            </svg>
-          </button>
-          <h1
-            className="headerTitle_zpm3wt"
-          >
-            Article Title
-          </h1>
-          <div
-            className="open_ksk7x0"
-          >
-            <a
-              className="externalLink_13j0xjm"
-              href="https://example.com"
-              target="_blank"
-              title="Open article in new window"
-            >
-              <svg
-                fill="currentColor"
-                height={22}
-                preserveAspectRatio="xMidYMid meet"
-                style={
-                  Object {
-                    "fill": "rgba(255, 255, 255, 1)",
-                    "verticalAlign": "middle",
-                  }
-                }
-                viewBox="0 0 24 24"
-                width={22}
-              >
-                <g>
-                  <path
-                    d="M-3-3H21V21H-3Z"
-                    fill="none"
-                    transform="translate(3 3)"
-                  />
-                  <path
-                    d="M16,16H2V2H9V0H2A2,2,0,0,0,0,2V16a2,2,0,0,0,2,2H16a2,2,0,0,0,2-2V9H16ZM11,0V2h3.59L4.76,11.83l1.41,1.41L16,3.41V7h2V0Z"
-                    transform="translate(3 3)"
-                  />
-                </g>
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div
-        className="body_81189z"
-      >
-        <div
-          className="bodyCopy_p00fj4"
-        >
-          Sint rerum quos voluptatem minima earum ut saepe. Quidem accusamus nostrum quisquam architecto excepturi voluptas reprehenderit nisi omnis. Et provident ut voluptate labore omnis aliquid. Rerum qui est dolorem et aliquid et eos dolore sit.
-        </div>
-        <div
-          className="moderation_5kaapu"
-        >
-          <div
-            className="moderation_5kaapu"
-          >
-            <p
-              className="moderators_ootvmn"
-            >
-              <span>
-                <span
-                  title="Moderator1"
-                >
-                  Moderator1
-                </span>
-                <span>
-                   and 
-                </span>
-                <span
-                  title="Moderator2"
-                >
-                  Moderator2
-                </span>
-              </span>
-            </p>
-          </div>
-          <button
-            className="moderateButton_926b8f"
-            onClick={[Function]}
-          >
-            Edit
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
 exports[`Storyshots AssignModerators Default 1`] = `
 <div
   className="container_7gv3ej"
@@ -931,21 +771,91 @@ exports[`Storyshots AssignModerators Default 1`] = `
 </div>
 `;
 
-exports[`Storyshots Avatar 36x36 1`] = `
+exports[`Storyshots Avatar 30x30 no avatar 1`] = `
 <div
-  className="base_1x5zm4t"
   style={
     Object {
-      "height": "36px",
-      "width": "36px",
+      "margin": "50px",
     }
   }
 >
-  <img
-    alt="Test Person"
-    src="https://s3.amazonaws.com/uifaces/faces/twitter/xtopherpaul/128.jpg"
-    width="100%"
-  />
+  <div
+    style={
+      Object {
+        "display": "inline-block",
+        "margin": "1px",
+      }
+    }
+  >
+    <div
+      aria-describedby={null}
+      className="MuiAvatar-root MuiAvatar-circle MuiAvatar-colorDefault"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onMouseLeave={[Function]}
+      onMouseOver={[Function]}
+      onTouchEnd={[Function]}
+      onTouchStart={[Function]}
+      style={
+        Object {
+          "backgroundColor": "rgb(86, 117, 24)",
+          "color": "white",
+          "fontSize": "15px",
+          "height": "30px",
+          "width": "30px",
+        }
+      }
+      title="Bridie Skiles V"
+    >
+      BV
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Avatar 36x36 1`] = `
+<div
+  style={
+    Object {
+      "margin": "50px",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "display": "inline-block",
+        "margin": "1px",
+      }
+    }
+  >
+    <div
+      aria-describedby={null}
+      className="MuiAvatar-root MuiAvatar-circle"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onMouseLeave={[Function]}
+      onMouseOver={[Function]}
+      onTouchEnd={[Function]}
+      onTouchStart={[Function]}
+      style={
+        Object {
+          "backgroundColor": "rgb(90, 106, 35)",
+          "color": "white",
+          "fontSize": "18px",
+          "height": "36px",
+          "width": "36px",
+        }
+      }
+      title="Test Person"
+    >
+      <img
+        alt="Test Person"
+        className="MuiAvatar-img"
+        src="https://s3.amazonaws.com/uifaces/faces/twitter/surgeonist/128.jpg"
+      />
+    </div>
+  </div>
 </div>
 `;
 
@@ -969,201 +879,99 @@ exports[`Storyshots Avatar commenter 1`] = `
 
 exports[`Storyshots Avatar moderator 1`] = `
 <div
-  className="base_1x5zm4t"
   style={
     Object {
-      "height": "54px",
-      "width": "54px",
+      "margin": "50px",
     }
   }
 >
-  <img
-    alt="Test Person"
-    src="https://s3.amazonaws.com/uifaces/faces/twitter/xtopherpaul/128.jpg"
-    width="100%"
-  />
+  <div
+    style={
+      Object {
+        "display": "inline-block",
+        "margin": "1px",
+      }
+    }
+  >
+    <div
+      aria-describedby={null}
+      className="MuiAvatar-root MuiAvatar-circle"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onMouseLeave={[Function]}
+      onMouseOver={[Function]}
+      onTouchEnd={[Function]}
+      onTouchStart={[Function]}
+      style={
+        Object {
+          "backgroundColor": "rgb(90, 106, 35)",
+          "color": "white",
+          "fontSize": "27px",
+          "height": "54px",
+          "width": "54px",
+        }
+      }
+      title="Test Person"
+    >
+      <img
+        alt="Test Person"
+        className="MuiAvatar-img"
+        src="https://s3.amazonaws.com/uifaces/faces/twitter/surgeonist/128.jpg"
+      />
+    </div>
+  </div>
 </div>
 `;
 
 exports[`Storyshots Avatar no avatar 1`] = `
 <div
-  className="base_1x5zm4t"
   style={
     Object {
-      "backgroundColor": "#ededed",
-      "height": "54px",
-      "width": "54px",
+      "margin": "50px",
     }
   }
 >
-  <svg
-    fill="currentColor"
-    height="100%"
-    preserveAspectRatio="xMidYMid meet"
+  <div
     style={
       Object {
-        "fill": "#326891",
-        "verticalAlign": "middle",
+        "display": "inline-block",
+        "margin": "1px",
       }
     }
-    viewBox="0 0 24 24"
-    width="100%"
   >
-    <g>
-      <path
-        d="M12,12A4,4,0,1,0,8,8,4,4,0,0,0,12,12Zm0,2c-2.67,0-8,1.34-8,4v2H20V18C20,15.34,14.67,14,12,14Z"
-      />
-      <path
-        d="M0,0H24V24H0V0Z"
-        fill="none"
-      />
-    </g>
-  </svg>
+    <div
+      aria-describedby={null}
+      className="MuiAvatar-root MuiAvatar-circle MuiAvatar-colorDefault"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onMouseLeave={[Function]}
+      onMouseOver={[Function]}
+      onTouchEnd={[Function]}
+      onTouchStart={[Function]}
+      style={
+        Object {
+          "backgroundColor": "rgb(86, 117, 24)",
+          "color": "white",
+          "fontSize": "27px",
+          "height": "54px",
+          "width": "54px",
+        }
+      }
+      title="Bridie Skiles V"
+    >
+      BV
+    </div>
+  </div>
 </div>
 `;
 
 exports[`Storyshots Button Done 1`] = `
 <button
-  className="button_1ejk9zk"
+  className="button_2ihe17"
   onClick={[Function]}
 >
   Done
 </button>
-`;
-
-exports[`Storyshots Checkbox checked 1`] = `
-<div
-  style={
-    Object {
-      "position": "relative",
-      "width": "22px",
-    }
-  }
->
-  <span
-    className="input_7fg86n"
-  >
-    <input
-      checked={true}
-      className="inputCheck_157u3z6"
-      disabled={false}
-      id="some-id"
-      onBlur={[Function]}
-      onChange={[Function]}
-      onFocus={[Function]}
-      onKeyPress={[Function]}
-      readOnly={false}
-      type="checkbox"
-      value="checked"
-    />
-    <span
-      className="elementsCheck_19j6pfi-o_O-element1Check_3hmsj-o_O-element1CheckedCheck_2ib0m4"
-    />
-    <span
-      className="elementsCheck_19j6pfi-o_O-element2Check_uf1he5-o_O-element2CheckedCheck_yrl9pd"
-    />
-  </span>
-</div>
-`;
-
-exports[`Storyshots Checkbox checked and disabled 1`] = `
-<div
-  style={
-    Object {
-      "position": "relative",
-      "width": "22px",
-    }
-  }
->
-  <span
-    className="input_7fg86n"
-  >
-    <input
-      checked={true}
-      className="inputCheck_157u3z6"
-      disabled={true}
-      onBlur={[Function]}
-      onChange={[Function]}
-      onFocus={[Function]}
-      onKeyPress={[Function]}
-      readOnly={true}
-      type="checkbox"
-    />
-    <span
-      className="elementsCheck_19j6pfi-o_O-element1Check_3hmsj-o_O-element1CheckedCheck_2ib0m4-o_O-element1Disabled_1qz8msq"
-    />
-    <span
-      className="elementsCheck_19j6pfi-o_O-element2Check_uf1he5-o_O-element2CheckedCheck_yrl9pd-o_O-element2Disabled_1t68esn"
-    />
-  </span>
-</div>
-`;
-
-exports[`Storyshots Checkbox unchecked 1`] = `
-<div
-  style={
-    Object {
-      "position": "relative",
-      "width": "22px",
-    }
-  }
->
-  <span
-    className="input_7fg86n"
-  >
-    <input
-      checked={false}
-      className="inputCheck_157u3z6"
-      disabled={false}
-      onBlur={[Function]}
-      onChange={[Function]}
-      onFocus={[Function]}
-      onKeyPress={[Function]}
-      readOnly={false}
-      type="checkbox"
-      value="unchecked"
-    />
-    <span
-      className="elementsCheck_19j6pfi-o_O-element1Check_3hmsj"
-    />
-    <span
-      className="elementsCheck_19j6pfi-o_O-element2Check_uf1he5"
-    />
-  </span>
-</div>
-`;
-
-exports[`Storyshots Checkbox unchecked and disabled 1`] = `
-<div
-  style={
-    Object {
-      "position": "relative",
-      "width": "22px",
-    }
-  }
->
-  <span
-    className="input_7fg86n"
-  >
-    <input
-      checked={false}
-      className="inputCheck_157u3z6"
-      disabled={true}
-      onBlur={[Function]}
-      onChange={[Function]}
-      onFocus={[Function]}
-      onKeyPress={[Function]}
-      readOnly={true}
-      type="checkbox"
-    />
-    <span
-      className="elementsCheck_19j6pfi-o_O-element1Check_3hmsj-o_O-element1Disabled_1qz8msq"
-    />
-    <span
-      className="elementsCheck_19j6pfi-o_O-element2Check_uf1he5"
-    />
-  </span>
-</div>
 `;
 
 exports[`Storyshots CheckboxRow Default 1`] = `
@@ -1175,28 +983,48 @@ exports[`Storyshots CheckboxRow Default 1`] = `
     style={Object {}}
   >
     <label
-      className="center_13gva4a"
+      className="center_fc9idd"
       htmlFor="PersonOne"
       onClick={[Function]}
     >
       <span
         aria-hidden="true"
-        className="avatar_1n7agsc"
+        className="avatar_k9rqlh"
       >
         <div
-          className="base_1x5zm4t"
           style={
             Object {
-              "height": "46px",
-              "width": "46px",
+              "display": "inline-block",
+              "margin": "1px",
             }
           }
         >
-          <img
-            alt="Person One"
-            src="https://s3.amazonaws.com/uifaces/faces/twitter/curiousoffice/128.jpg"
-            width="100%"
-          />
+          <div
+            aria-describedby={null}
+            className="MuiAvatar-root MuiAvatar-circle"
+            onBlur={[Function]}
+            onFocus={[Function]}
+            onMouseLeave={[Function]}
+            onMouseOver={[Function]}
+            onTouchEnd={[Function]}
+            onTouchStart={[Function]}
+            style={
+              Object {
+                "backgroundColor": "rgb(45, 7, 27)",
+                "color": "white",
+                "fontSize": "23px",
+                "height": "46px",
+                "width": "46px",
+              }
+            }
+            title="Person One"
+          >
+            <img
+              alt="Person One"
+              className="MuiAvatar-img"
+              src="https://s3.amazonaws.com/uifaces/faces/twitter/abovefunction/128.jpg"
+            />
+          </div>
         </div>
       </span>
       <span
@@ -1205,25 +1033,56 @@ exports[`Storyshots CheckboxRow Default 1`] = `
         Person One
       </span>
       <span
-        className="input_7fg86n"
+        aria-disabled={false}
+        className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-106 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary"
+        onBlur={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={null}
       >
-        <input
-          checked={false}
-          className="inputCheck_157u3z6"
-          disabled={false}
-          id="PersonOne"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onFocus={[Function]}
-          onKeyPress={[Function]}
-          readOnly={false}
-          type="checkbox"
-        />
         <span
-          className="elementsCheck_19j6pfi-o_O-element1Check_3hmsj"
-        />
+          className="MuiIconButton-label"
+        >
+          <input
+            className="PrivateSwitchBase-input-109"
+            onChange={[Function]}
+            type="radio"
+          />
+          <div
+            className="PrivateRadioButtonIcon-root-122"
+          >
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root PrivateRadioButtonIcon-layer-123"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"
+              />
+            </svg>
+          </div>
+        </span>
         <span
-          className="elementsCheck_19j6pfi-o_O-element2Check_uf1he5"
+          className="MuiTouchRipple-root"
         />
       </span>
     </label>
@@ -1240,28 +1099,48 @@ exports[`Storyshots CheckboxRow Selected 1`] = `
     style={Object {}}
   >
     <label
-      className="center_13gva4a"
+      className="center_fc9idd"
       htmlFor="PersonOne"
       onClick={[Function]}
     >
       <span
         aria-hidden="true"
-        className="avatar_1n7agsc"
+        className="avatar_k9rqlh"
       >
         <div
-          className="base_1x5zm4t"
           style={
             Object {
-              "height": "46px",
-              "width": "46px",
+              "display": "inline-block",
+              "margin": "1px",
             }
           }
         >
-          <img
-            alt="Person One"
-            src="https://s3.amazonaws.com/uifaces/faces/twitter/curiousoffice/128.jpg"
-            width="100%"
-          />
+          <div
+            aria-describedby={null}
+            className="MuiAvatar-root MuiAvatar-circle"
+            onBlur={[Function]}
+            onFocus={[Function]}
+            onMouseLeave={[Function]}
+            onMouseOver={[Function]}
+            onTouchEnd={[Function]}
+            onTouchStart={[Function]}
+            style={
+              Object {
+                "backgroundColor": "rgb(45, 7, 27)",
+                "color": "white",
+                "fontSize": "23px",
+                "height": "46px",
+                "width": "46px",
+              }
+            }
+            title="Person One"
+          >
+            <img
+              alt="Person One"
+              className="MuiAvatar-img"
+              src="https://s3.amazonaws.com/uifaces/faces/twitter/abovefunction/128.jpg"
+            />
+          </div>
         </div>
       </span>
       <span
@@ -1270,25 +1149,57 @@ exports[`Storyshots CheckboxRow Selected 1`] = `
         Person One
       </span>
       <span
-        className="input_7fg86n"
+        aria-disabled={false}
+        className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-149 MuiRadio-root MuiRadio-colorPrimary PrivateSwitchBase-checked-150 Mui-checked MuiIconButton-colorPrimary"
+        onBlur={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={null}
       >
-        <input
-          checked={true}
-          className="inputCheck_157u3z6"
-          disabled={false}
-          id="PersonOne"
-          onBlur={[Function]}
-          onChange={[Function]}
-          onFocus={[Function]}
-          onKeyPress={[Function]}
-          readOnly={false}
-          type="checkbox"
-        />
         <span
-          className="elementsCheck_19j6pfi-o_O-element1Check_3hmsj-o_O-element1CheckedCheck_2ib0m4"
-        />
+          className="MuiIconButton-label"
+        >
+          <input
+            checked={true}
+            className="PrivateSwitchBase-input-152"
+            onChange={[Function]}
+            type="radio"
+          />
+          <div
+            className="PrivateRadioButtonIcon-root-165 PrivateRadioButtonIcon-checked-167"
+          >
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root PrivateRadioButtonIcon-layer-166"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"
+              />
+            </svg>
+          </div>
+        </span>
         <span
-          className="elementsCheck_19j6pfi-o_O-element2Check_uf1he5-o_O-element2CheckedCheck_yrl9pd"
+          className="MuiTouchRipple-root"
         />
       </span>
     </label>
@@ -1501,12 +1412,8 @@ exports[`Storyshots CommentActionButton Hide Label 1`] = `
 exports[`Storyshots CommentBody Basic 1`] = `
 <div>
   <div
-    className="comment_1b4bkso"
-    style={
-      Object {
-        "flex": 1,
-      }
-    }
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
   >
     <div
       className="meta_19ulwq8"
@@ -1516,8 +1423,8 @@ exports[`Storyshots CommentBody Basic 1`] = `
       >
         <a
           className="reply_1gy5v6q"
+          href="/articles/34854/comments/null/replies"
           onClick={[Function]}
-          style={Object {}}
         >
           <svg
             fill="currentColor"
@@ -1525,7 +1432,7 @@ exports[`Storyshots CommentBody Basic 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#255271",
+                "fill": "#185bac",
                 "verticalAlign": "middle",
               }
             }
@@ -1551,26 +1458,47 @@ exports[`Storyshots CommentBody Basic 1`] = `
           }
         >
           <div
-            className="base_1x5zm4t"
             style={
               Object {
-                "height": "24px",
-                "width": "24px",
+                "display": "inline-block",
+                "margin": "1px",
               }
             }
           >
-            <img
-              alt="Bridie Skiles V"
-              src="https://s3.amazonaws.com/pimage.example.com/4405/3468/cropped-44053468.jpg"
-              width="100%"
-            />
+            <div
+              aria-describedby={null}
+              className="MuiAvatar-root MuiAvatar-circle"
+              onBlur={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "rgb(86, 117, 24)",
+                  "color": "white",
+                  "fontSize": "12px",
+                  "height": "24px",
+                  "width": "24px",
+                }
+              }
+              title="Bridie Skiles V"
+            >
+              <img
+                alt="Bridie Skiles V"
+                className="MuiAvatar-img"
+                src="https://s3.amazonaws.com/uifaces/faces/twitter/noufalibrahim/128.jpg"
+              />
+            </div>
           </div>
         </span>
         <a
+          href="/search?searchByAuthor=true&term=Bridie%20Skiles%20V"
           onClick={[Function]}
           style={
             Object {
-              "color": "#255271",
+              "color": "#185bac",
             }
           }
         >
@@ -1593,23 +1521,6 @@ exports[`Storyshots CommentBody Basic 1`] = `
           over X years
            ago 
         </span>
-        <span>
-          • Flags: 
-          <span>
-            unresolved: 
-            1
-          </span>
-           
-          <span>
-            red
-            : 
-            1
-          </span>
-           
-          
-           
-          
-        </span>
       </div>
       <div
         className="actionContainer_11iv8a4"
@@ -1626,7 +1537,7 @@ exports[`Storyshots CommentBody Basic 1`] = `
             id="approve"
             style={
               Object {
-                "backgroundColor": "#326891",
+                "backgroundColor": "#185bac",
                 "height": 36,
                 "width": 36,
               }
@@ -1661,7 +1572,6 @@ exports[`Storyshots CommentBody Basic 1`] = `
         </div>
         <button
           className="actionToggle_71yhch"
-          onClick={[Function]}
           type="button"
         >
           <svg
@@ -1692,31 +1602,23 @@ exports[`Storyshots CommentBody Basic 1`] = `
     <div
       className="commentContainer_1s1qcet"
     >
-      <span
-        className="Linkify"
+      <div
+        className="comment_1b4bkso"
       >
-        <div
-          className="comment_1b4bkso"
-        >
-          <span>
-            Founded in 1965 by Albert Griffiths, The Gladiators has released some of the most mythical songs of Jamaican reggae. Their first hit, the single Hello Carol, was released in 1968. In 1976, thanks to their signature at Virgin, the trilogy Trenchtown Mix Up, Proverbial Reggae and Naturality has been distributed all around the world and some of the songs of these albums have become classics of the reggae as Mix Up and Roots Natty Roots.
-          </span>
-        </div>
-      </span>
+        <span>
+          Founded in 1965 by Albert Griffiths, The Gladiators has released some of the most mythical songs of Jamaican reggae. Their first hit, the single Hello Carol, was released in 1968. In 1976, thanks to their signature at Virgin, the trilogy Trenchtown Mix Up, Proverbial Reggae and Naturality has been distributed all around the world and some of the songs of these albums have become classics of the reggae as Mix Up and Roots Natty Roots.
+        </span>
+      </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
+exports[`Storyshots CommentBody Hide Comment Action 1`] = `
 <div>
   <div
-    className="comment_1b4bkso"
-    style={
-      Object {
-        "flex": 1,
-      }
-    }
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
   >
     <div
       className="meta_19ulwq8"
@@ -1726,8 +1628,8 @@ exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
       >
         <a
           className="reply_1gy5v6q"
+          href="/articles/34854/comments/null/replies"
           onClick={[Function]}
-          style={Object {}}
         >
           <svg
             fill="currentColor"
@@ -1735,7 +1637,7 @@ exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#255271",
+                "fill": "#185bac",
                 "verticalAlign": "middle",
               }
             }
@@ -1761,26 +1663,47 @@ exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
           }
         >
           <div
-            className="base_1x5zm4t"
             style={
               Object {
-                "height": "24px",
-                "width": "24px",
+                "display": "inline-block",
+                "margin": "1px",
               }
             }
           >
-            <img
-              alt="Bridie Skiles V"
-              src="https://s3.amazonaws.com/pimage.example.com/4405/3468/cropped-44053468.jpg"
-              width="100%"
-            />
+            <div
+              aria-describedby={null}
+              className="MuiAvatar-root MuiAvatar-circle"
+              onBlur={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "rgb(86, 117, 24)",
+                  "color": "white",
+                  "fontSize": "12px",
+                  "height": "24px",
+                  "width": "24px",
+                }
+              }
+              title="Bridie Skiles V"
+            >
+              <img
+                alt="Bridie Skiles V"
+                className="MuiAvatar-img"
+                src="https://s3.amazonaws.com/uifaces/faces/twitter/noufalibrahim/128.jpg"
+              />
+            </div>
           </div>
         </span>
         <a
+          href="/search?searchByAuthor=true&term=Bridie%20Skiles%20V"
           onClick={[Function]}
           style={
             Object {
-              "color": "#255271",
+              "color": "#185bac",
             }
           }
         >
@@ -1803,23 +1726,6 @@ exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
           over X years
            ago 
         </span>
-        <span>
-          • Flags: 
-          <span>
-            unresolved: 
-            1
-          </span>
-           
-          <span>
-            red
-            : 
-            1
-          </span>
-           
-          
-           
-          
-        </span>
       </div>
       <div
         className="actionContainer_11iv8a4"
@@ -1836,7 +1742,7 @@ exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
             id="approve"
             style={
               Object {
-                "backgroundColor": "#326891",
+                "backgroundColor": "#185bac",
                 "height": 36,
                 "width": 36,
               }
@@ -1874,17 +1780,13 @@ exports[`Storyshots CommentBody Hide Comment cAtion 1`] = `
     <div
       className="commentContainer_1s1qcet"
     >
-      <span
-        className="Linkify"
+      <div
+        className="comment_1b4bkso"
       >
-        <div
-          className="comment_1b4bkso"
-        >
-          <span>
-            Founded in 1965 by Albert Griffiths, The Gladiators has released some of the most mythical songs of Jamaican reggae. Their first hit, the single Hello Carol, was released in 1968. In 1976, thanks to their signature at Virgin, the trilogy Trenchtown Mix Up, Proverbial Reggae and Naturality has been distributed all around the world and some of the songs of these albums have become classics of the reggae as Mix Up and Roots Natty Roots.
-          </span>
-        </div>
-      </span>
+        <span>
+          Founded in 1965 by Albert Griffiths, The Gladiators has released some of the most mythical songs of Jamaican reggae. Their first hit, the single Hello Carol, was released in 1968. In 1976, thanks to their signature at Virgin, the trilogy Trenchtown Mix Up, Proverbial Reggae and Naturality has been distributed all around the world and some of the songs of these albums have become classics of the reggae as Mix Up and Roots Natty Roots.
+        </span>
+      </div>
     </div>
   </div>
 </div>
@@ -2095,6 +1997,266 @@ exports[`Storyshots CommentBody Linked 1`] = `
               Founded in 1965 by Albert Griffiths, The Gladiators has released some of the most mythical songs of Jamaican reggae. Their first hit, the single Hello Carol, was released in 1968. In 1976, thanks to their signature at Virgin, the trilogy Trenchtown Mix Up, Proverbial Reggae and Naturality has been distributed all around the world and some of the songs of these albums have become classics of the reggae as Mix Up and Roots Natty Roots.
             </span>
           </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots CommentBody Show Article 1`] = `
+<div>
+  <div
+    onMouseEnter={[Function]}
+    onMouseLeave={[Function]}
+  >
+    <div
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <a
+        className="articleLink_mmnviw"
+        href="/articles/34854/new/SUMMARY_SCORE"
+        onClick={[Function]}
+      >
+        <h4
+          style={
+            Object {
+              "fontFamily": "LibreFranklin-Medium, sans-serif",
+              "fontSize": 16,
+              "fontWeight": 400,
+              "lineHeight": 1.5,
+              "marginBottom": "0px",
+              "marginTop": "0px",
+            }
+          }
+        >
+          Possimus consequatur nobis ullam.
+        </h4>
+      </a>
+      <div
+        style={
+          Object {
+            "display": "inline-block",
+            "margin": "0 10px",
+            "position": "relative",
+            "top": "3px",
+          }
+        }
+      >
+        <a
+          className="cellLink_18xp2pq"
+          href="http://bradley.biz"
+          target="_blank"
+        >
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+            />
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div
+      className="meta_19ulwq8"
+    >
+      <div
+        className="authorRow_jgupte"
+      >
+        <a
+          className="reply_1gy5v6q"
+          href="/articles/34854/comments/null/replies"
+          onClick={[Function]}
+        >
+          <svg
+            fill="currentColor"
+            height={24}
+            preserveAspectRatio="xMidYMid meet"
+            style={
+              Object {
+                "fill": "#185bac",
+                "verticalAlign": "middle",
+              }
+            }
+            viewBox="0 0 24 24"
+            width={24}
+          >
+            <g>
+              <path
+                d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"
+              />
+              <path
+                d="M0 0h24v24H0z"
+                fill="none"
+              />
+            </g>
+          </svg>
+        </a>
+        <span
+          style={
+            Object {
+              "marginRight": "8px",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "display": "inline-block",
+                "margin": "1px",
+              }
+            }
+          >
+            <div
+              aria-describedby={null}
+              className="MuiAvatar-root MuiAvatar-circle"
+              onBlur={[Function]}
+              onFocus={[Function]}
+              onMouseLeave={[Function]}
+              onMouseOver={[Function]}
+              onTouchEnd={[Function]}
+              onTouchStart={[Function]}
+              style={
+                Object {
+                  "backgroundColor": "rgb(86, 117, 24)",
+                  "color": "white",
+                  "fontSize": "12px",
+                  "height": "24px",
+                  "width": "24px",
+                }
+              }
+              title="Bridie Skiles V"
+            >
+              <img
+                alt="Bridie Skiles V"
+                className="MuiAvatar-img"
+                src="https://s3.amazonaws.com/uifaces/faces/twitter/noufalibrahim/128.jpg"
+              />
+            </div>
+          </div>
+        </span>
+        <a
+          href="/search?searchByAuthor=true&term=Bridie%20Skiles%20V"
+          onClick={[Function]}
+          style={
+            Object {
+              "color": "#185bac",
+            }
+          }
+        >
+          Bridie Skiles V
+           
+        </a>
+        <span>
+          from 
+          NYC
+           
+        </span>
+        <span
+          style={
+            Object {
+              "textDecoration": "none",
+            }
+          }
+        >
+           • 
+          over X years
+           ago 
+        </span>
+      </div>
+      <div
+        className="actionContainer_11iv8a4"
+      >
+        <div
+          style={
+            Object {
+              "marginRight": "10px",
+            }
+          }
+        >
+          <div
+            className="circle_42xzgj"
+            id="approve"
+            style={
+              Object {
+                "backgroundColor": "#185bac",
+                "height": 36,
+                "width": 36,
+              }
+            }
+          >
+            <svg
+              fill="currentColor"
+              height={20}
+              label="Approve"
+              preserveAspectRatio="xMidYMid meet"
+              role="alert"
+              style={
+                Object {
+                  "fill": "rgba(255, 255, 255, 1)",
+                  "verticalAlign": "middle",
+                }
+              }
+              viewBox="0 0 24 24"
+              width={20}
+            >
+              <g>
+                <path
+                  d="M0,0H24V24H0V0Z"
+                  fill="none"
+                />
+                <path
+                  d="M9,16.17L4.83,12,3.41,13.41,9,19,21,7,19.59,5.59Z"
+                />
+              </g>
+            </svg>
+          </div>
+        </div>
+        <button
+          className="actionToggle_71yhch"
+          type="button"
+        >
+          <svg
+            fill="currentColor"
+            height={20}
+            preserveAspectRatio="xMidYMid meet"
+            style={
+              Object {
+                "verticalAlign": "middle",
+              }
+            }
+            viewBox="0 0 24 24"
+            width={20}
+          >
+            <g>
+              <path
+                d="M0,0H24V24H0V0Z"
+                fill="none"
+              />
+              <path
+                d="M12,8a2,2,0,1,0-2-2A2,2,0,0,0,12,8Zm0,2a2,2,0,1,0,2,2A2,2,0,0,0,12,10Zm0,6a2,2,0,1,0,2,2A2,2,0,0,0,12,16Z"
+              />
+            </g>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      className="commentContainer_1s1qcet"
+    >
+      <div
+        className="comment_1b4bkso"
+      >
+        <span>
+          Founded in 1965 by Albert Griffiths, The Gladiators has released some of the most mythical songs of Jamaican reggae. Their first hit, the single Hello Carol, was released in 1968. In 1976, thanks to their signature at Virgin, the trilogy Trenchtown Mix Up, Proverbial Reggae and Naturality has been distributed all around the world and some of the songs of these albums have become classics of the reggae as Mix Up and Roots Natty Roots.
         </span>
       </div>
     </div>
@@ -2443,7 +2605,7 @@ exports[`Storyshots DotChart Applied rules 1`] = `
   >
     <canvas />
     <div
-      className="ruleBlock_y3u16g"
+      className="ruleBlock_1byp03c"
       style={
         Object {
           "left": 0,
@@ -2452,7 +2614,7 @@ exports[`Storyshots DotChart Applied rules 1`] = `
       }
     >
       <span
-        className="icon_r96rws"
+        className="icon_13hdfvb"
       >
         <svg
           fill="currentColor"
@@ -2480,7 +2642,7 @@ exports[`Storyshots DotChart Applied rules 1`] = `
       </span>
     </div>
     <div
-      className="ruleBlock_y3u16g"
+      className="ruleBlock_1byp03c"
       style={
         Object {
           "left": 36.08,
@@ -2489,7 +2651,7 @@ exports[`Storyshots DotChart Applied rules 1`] = `
       }
     >
       <span
-        className="icon_r96rws"
+        className="icon_13hdfvb"
       >
         <svg
           fill="currentColor"
@@ -2517,7 +2679,7 @@ exports[`Storyshots DotChart Applied rules 1`] = `
       </span>
     </div>
     <div
-      className="ruleBlock_y3u16g"
+      className="ruleBlock_1byp03c"
       style={
         Object {
           "left": 225.5,
@@ -2526,7 +2688,7 @@ exports[`Storyshots DotChart Applied rules 1`] = `
       }
     >
       <span
-        className="icon_r96rws"
+        className="icon_13hdfvb"
       >
         <svg
           fill="currentColor"
@@ -2557,7 +2719,7 @@ exports[`Storyshots DotChart Applied rules 1`] = `
       </span>
     </div>
     <div
-      className="ruleBlock_y3u16g"
+      className="ruleBlock_1byp03c"
       style={
         Object {
           "left": 811.8000000000001,
@@ -2566,7 +2728,7 @@ exports[`Storyshots DotChart Applied rules 1`] = `
       }
     >
       <span
-        className="icon_r96rws"
+        className="icon_13hdfvb"
       >
         <svg
           fill="currentColor"
@@ -2688,12 +2850,29 @@ exports[`Storyshots DotChart Narrow 1`] = `
 `;
 
 exports[`Storyshots Errors Error page 1`] = `
-Array [
+<div>
   <div
     className="landing_headerTag"
   >
     Moderator
-  </div>,
+  </div>
+  <div
+    className="landing_footerTag"
+  >
+    <a
+      className="landing_link"
+      href="https://conversationai.github.io/"
+      target="_blank"
+    >
+      Learn more
+    </a>
+     
+    <span
+      className="landing_extratext"
+    >
+      about Modereator.
+    </span>
+  </div>
   <div
     className="landing_centerOnPage"
   >
@@ -2810,302 +2989,25 @@ Array [
         />
       </div>
     </div>
-  </div>,
-  <div
-    className="landing_footerTag"
-  >
-    <a
-      className="landing_link"
-      href="https://conversationai.github.io/"
-      target="_blank"
-    >
-      Learn more
-    </a>
-     
-    <span
-      className="landing_extratext"
-    >
-      about Modereator.
-    </span>
-  </div>,
+  </div>
   <div
     className="errors_9h093d-o_O-fadeIn_167dsx7"
   >
     <p>
       Hello there
     </p>
-  </div>,
-]
-`;
-
-exports[`Storyshots Header article header 1`] = `
-<header
-  role="banner"
->
-  <div
-    className="bar_169xe59"
-  >
-    <div
-      className="childrenContainer_11b7ka7"
-    >
-      <div
-        style={
-          Object {
-            "alignItems": "center",
-            "display": "flex",
-            "width": "50%",
-          }
-        }
-      >
-        <a
-          onClick={[Function]}
-          style={Object {}}
-        >
-          <span
-            style={
-              Object {
-                "clip": "rect(1px, 1px, 1px, 1px)",
-                "height": 0,
-                "position": "absolute",
-                "width": 0,
-              }
-            }
-          >
-            Home
-          </span>
-          <svg
-            fill="currentColor"
-            height={24}
-            preserveAspectRatio="xMidYMid meet"
-            style={
-              Object {
-                "verticalAlign": "middle",
-              }
-            }
-            viewBox="0 0 24 24"
-            width={24}
-          >
-            <g>
-              <path
-                d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"
-              />
-              <path
-                d="M0 0h24v24H0z"
-                fill="none"
-              />
-            </g>
-          </svg>
-        </a>
-        <h1
-          style={
-            Object {
-              "color": "rgba(255, 255, 255, 1)",
-              "fontFamily": "LibreFranklin-Medium, sans-serif",
-              "fontSize": 16,
-              "fontWeight": 400,
-              "lineHeight": 1.5,
-              "marginBottom": 0,
-              "marginLeft": "24px",
-              "marginRight": 0,
-              "marginTop": 0,
-              "overflow": "hidden",
-              "textOverflow": "ellipsis",
-              "whiteSpace": "nowrap",
-              "width": "100%",
-            }
-          }
-        >
-          At Hiroshima Memorial, Obama Says Nuclear Arms Require Moral Revolution
-        </h1>
-      </div>
-    </div>
-    <button
-      aria-label="Open user search"
-      className="button_1o9wccs"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      role="search"
-    >
-      <span
-        className="offscreen_vluvpa"
-      >
-        Open user search
-      </span>
-      <svg
-        className="iconStyle_33fl4q"
-        fill="currentColor"
-        height="24"
-        preserveAspectRatio="xMidYMid meet"
-        style={
-          Object {
-            "borderBottomColor": "transparent",
-            "verticalAlign": "middle",
-          }
-        }
-        viewBox="0 0 24 24"
-        width="24"
-      >
-        <g>
-          <path
-            d="M12,12A4,4,0,1,0,8,8,4,4,0,0,0,12,12Zm0,2c-2.67,0-8,1.34-8,4v2H20V18C20,15.34,14.67,14,12,14Z"
-          />
-          <path
-            d="M0,0H24V24H0V0Z"
-            fill="none"
-          />
-        </g>
-      </svg>
-    </button>
-    <button
-      aria-label="Open comment search"
-      className="button_1o9wccs"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      role="search"
-    >
-      <span
-        className="offscreen_vluvpa"
-      >
-        Open search input
-      </span>
-      <svg
-        className="iconStyle_33fl4q"
-        fill="currentColor"
-        height="24"
-        preserveAspectRatio="xMidYMid meet"
-        style={
-          Object {
-            "borderBottomColor": "transparent",
-            "verticalAlign": "middle",
-          }
-        }
-        viewBox="0 0 24 24"
-        width="24"
-      >
-        <g>
-          <path
-            d="M12.5,11h-.79l-.28-.27a6.51,6.51,0,1,0-.7.7l.27.28v.79l5,5L17.49,16Zm-6,0A4.5,4.5,0,1,1,11,6.5,4.49,4.49,0,0,1,6.5,11Z"
-            transform="translate(3 3)"
-          />
-          <path
-            d="M-3-3H21V21H-3Z"
-            fill="none"
-            transform="translate(3 3)"
-          />
-        </g>
-      </svg>
-    </button>
-  </div>
-</header>
-`;
-
-exports[`Storyshots Header main header 1`] = `
-<header
-  role="banner"
->
-  <div
-    className="bar_169xe59"
-  >
-    <div
-      className="childrenContainer_11b7ka7"
+    <p
+      className="errorsTryAgain_qf6k2g"
     >
       <a
+        className="link_vdmqoc"
         onClick={[Function]}
-        style={
-          Object {
-            "color": "rgba(255, 255, 255, 1)",
-            "fontFamily": "LibreFranklin-Medium, sans-serif",
-            "fontSize": 20,
-            "fontWeight": 400,
-            "lineHeight": 1.5,
-          }
-        }
       >
-        Moderator
+        Try Again
       </a>
-    </div>
-    <button
-      aria-label="Open user search"
-      className="button_1o9wccs"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      role="search"
-    >
-      <span
-        className="offscreen_vluvpa"
-      >
-        Open user search
-      </span>
-      <svg
-        className="iconStyle_33fl4q"
-        fill="currentColor"
-        height="24"
-        preserveAspectRatio="xMidYMid meet"
-        style={
-          Object {
-            "borderBottomColor": "transparent",
-            "verticalAlign": "middle",
-          }
-        }
-        viewBox="0 0 24 24"
-        width="24"
-      >
-        <g>
-          <path
-            d="M12,12A4,4,0,1,0,8,8,4,4,0,0,0,12,12Zm0,2c-2.67,0-8,1.34-8,4v2H20V18C20,15.34,14.67,14,12,14Z"
-          />
-          <path
-            d="M0,0H24V24H0V0Z"
-            fill="none"
-          />
-        </g>
-      </svg>
-    </button>
-    <button
-      aria-label="Open comment search"
-      className="button_1o9wccs"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      role="search"
-    >
-      <span
-        className="offscreen_vluvpa"
-      >
-        Open search input
-      </span>
-      <svg
-        className="iconStyle_33fl4q"
-        fill="currentColor"
-        height="24"
-        preserveAspectRatio="xMidYMid meet"
-        style={
-          Object {
-            "borderBottomColor": "transparent",
-            "verticalAlign": "middle",
-          }
-        }
-        viewBox="0 0 24 24"
-        width="24"
-      >
-        <g>
-          <path
-            d="M12.5,11h-.79l-.28-.27a6.51,6.51,0,1,0-.7.7l.27.28v.79l5,5L17.49,16Zm-6,0A4.5,4.5,0,1,1,11,6.5,4.49,4.49,0,0,1,6.5,11Z"
-            transform="translate(3 3)"
-          />
-          <path
-            d="M-3-3H21V21H-3Z"
-            fill="none"
-            transform="translate(3 3)"
-          />
-        </g>
-      </svg>
-    </button>
+    </p>
   </div>
-</header>
+</div>
 `;
 
 exports[`Storyshots LabelSettings spam 1`] = `
@@ -3169,113 +3071,212 @@ exports[`Storyshots LabelSettings spam 1`] = `
       />
     </div>
     <div
-      className="checkboxContainer_3jt4jk"
-    >
-      <label
-        className="checkContainer_1nx8hnd"
-        htmlFor="HELLO_WORLDisInBatchView"
-        onClick={[Function]}
-      >
-        <span
-          className="input_7fg86n"
-        >
-          <input
-            checked={false}
-            className="inputCheck_157u3z6"
-            disabled={false}
-            id="HELLO_WORLDisInBatchView"
-            onBlur={[Function]}
-            onChange={[Function]}
-            onFocus={[Function]}
-            onKeyPress={[Function]}
-            readOnly={false}
-            type="checkbox"
-          />
-          <span
-            className="elementsCheck_19j6pfi-o_O-element1Check_3hmsj"
-          />
-          <span
-            className="elementsCheck_19j6pfi-o_O-element2Check_uf1he5"
-          />
-        </span>
-      </label>
-    </div>
-    <div
-      className="checkboxContainer_3jt4jk"
-    >
-      <label
-        className="checkContainer_1nx8hnd"
-        htmlFor="HELLO_WORLDisTaggable"
-        onClick={[Function]}
-      >
-        <span
-          className="input_7fg86n"
-        >
-          <input
-            checked={false}
-            className="inputCheck_157u3z6"
-            disabled={false}
-            id="HELLO_WORLDisTaggable"
-            onBlur={[Function]}
-            onChange={[Function]}
-            onFocus={[Function]}
-            onKeyPress={[Function]}
-            readOnly={false}
-            type="checkbox"
-          />
-          <span
-            className="elementsCheck_19j6pfi-o_O-element1Check_3hmsj"
-          />
-          <span
-            className="elementsCheck_19j6pfi-o_O-element2Check_uf1he5"
-          />
-        </span>
-      </label>
-    </div>
-    <div
-      className="checkboxContainer_3jt4jk"
-    >
-      <label
-        className="checkContainer_1nx8hnd"
-        htmlFor="HELLO_WORLDinSummaryScore"
-        onClick={[Function]}
-      >
-        <span
-          className="input_7fg86n"
-        >
-          <input
-            checked={false}
-            className="inputCheck_157u3z6"
-            disabled={false}
-            id="HELLO_WORLDinSummaryScore"
-            onBlur={[Function]}
-            onChange={[Function]}
-            onFocus={[Function]}
-            onKeyPress={[Function]}
-            readOnly={false}
-            type="checkbox"
-          />
-          <span
-            className="elementsCheck_19j6pfi-o_O-element1Check_3hmsj"
-          />
-          <span
-            className="elementsCheck_19j6pfi-o_O-element2Check_uf1he5"
-          />
-        </span>
-      </label>
-    </div>
-    <button
-      className="deleteButton_1h93g23"
+      className="checkboxContainer_14jtxwx"
       onClick={[Function]}
+    >
+      <span
+        aria-disabled={false}
+        className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-205 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary"
+        onBlur={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={null}
+      >
+        <span
+          className="MuiIconButton-label"
+        >
+          <input
+            className="PrivateSwitchBase-input-208"
+            onChange={[Function]}
+            type="radio"
+          />
+          <div
+            className="PrivateRadioButtonIcon-root-221"
+          >
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root PrivateRadioButtonIcon-layer-222"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"
+              />
+            </svg>
+          </div>
+        </span>
+      </span>
+    </div>
+    <div
+      className="checkboxContainer_14jtxwx"
+      onClick={[Function]}
+    >
+      <span
+        aria-disabled={false}
+        className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-205 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary"
+        onBlur={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={null}
+      >
+        <span
+          className="MuiIconButton-label"
+        >
+          <input
+            className="PrivateSwitchBase-input-208"
+            onChange={[Function]}
+            type="radio"
+          />
+          <div
+            className="PrivateRadioButtonIcon-root-221"
+          >
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root PrivateRadioButtonIcon-layer-222"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"
+              />
+            </svg>
+          </div>
+        </span>
+      </span>
+    </div>
+    <div
+      className="checkboxContainer_14jtxwx"
+      onClick={[Function]}
+    >
+      <span
+        aria-disabled={false}
+        className="MuiButtonBase-root MuiIconButton-root PrivateSwitchBase-root-205 MuiRadio-root MuiRadio-colorPrimary MuiIconButton-colorPrimary"
+        onBlur={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={null}
+      >
+        <span
+          className="MuiIconButton-label"
+        >
+          <input
+            className="PrivateSwitchBase-input-208"
+            onChange={[Function]}
+            type="radio"
+          />
+          <div
+            className="PrivateRadioButtonIcon-root-221"
+          >
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"
+              />
+            </svg>
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root PrivateRadioButtonIcon-layer-222"
+              focusable="false"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"
+              />
+            </svg>
+          </div>
+        </span>
+      </span>
+    </div>
+    <div
       style={
         Object {
-          "marginLeft": 0,
+          "paddingLeft": "50px",
         }
       }
-      type="button"
     >
-      Delete
-    </button>
+      <button
+        aria-label="Delete Tag"
+        className="MuiButtonBase-root MuiIconButton-root"
+        disabled={false}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onDragLeave={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
+        onTouchStart={[Function]}
+        tabIndex={0}
+        type="button"
+      >
+        <span
+          className="MuiIconButton-label"
+        >
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root MuiSvgIcon-colorPrimary"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+            />
+          </svg>
+        </span>
+      </button>
+    </div>
   </div>
 </div>
 `;
@@ -3283,15 +3284,145 @@ exports[`Storyshots LabelSettings spam 1`] = `
 exports[`Storyshots Login Login failed 1`] = `
 <div>
   <div
-    className="header2Tag_2gbvxm-o_O-fadeIn_167dsx7"
+    className="landing_headerTag"
+  >
+    Moderator
+  </div>
+  <div
+    className="landing_footerTag"
   >
     <a
-      className="link_vdmqoc"
-      href="/auth/login/google?&referrer=http%3A%2F%2Flocalhost%2F"
+      className="landing_link"
+      href="https://conversationai.github.io/"
+      target="_blank"
     >
-      Sign in
+      Learn more
     </a>
+     
+    <span
+      className="landing_extratext"
+    >
+      about Modereator.
+    </span>
   </div>
+  <div
+    className="landing_centerOnPage"
+  >
+    <div
+      className="landing_bubbleSet"
+    >
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div />
+      <div />
+      <div />
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div />
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+    </div>
+  </div>
+  return (
   <div
     className="errors_9h093d-o_O-fadeIn_167dsx7"
   >
@@ -3303,11 +3434,12 @@ exports[`Storyshots Login Login failed 1`] = `
     >
       <a
         className="link_vdmqoc"
-        href="/auth/login/google?&referrer=http%3A%2F%2Flocalhost%2F"
+        onClick={[Function]}
       >
         Try Again
       </a>
     </p>
+    
   </div>
 </div>
 `;
@@ -3315,15 +3447,203 @@ exports[`Storyshots Login Login failed 1`] = `
 exports[`Storyshots Login Login page 1`] = `
 <div>
   <div
-    className="header2Tag_2gbvxm-o_O-fadeIn_167dsx7"
+    className="landing_headerTag"
+  >
+    Moderator
+  </div>
+  <div
+    className="landing_footerTag"
+  >
+    <a
+      className="landing_link"
+      href="https://conversationai.github.io/"
+      target="_blank"
+    >
+      Learn more
+    </a>
+     
+    <span
+      className="landing_extratext"
+    >
+      about Modereator.
+    </span>
+  </div>
+  <div
+    className="landing_centerOnPage"
+  >
+    <div
+      className="landing_bubbleSet"
+    >
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div />
+      <div />
+      <div />
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div />
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+      <div>
+        <div
+          className="landing_bubble"
+        />
+      </div>
+    </div>
+  </div>
+  <div
+    className="signIn_d2epan-o_O-fadeIn_167dsx7"
   >
     <a
       className="link_vdmqoc"
-      href="/auth/login/google?&referrer=http%3A%2F%2Flocalhost%2F"
+      onClick={[Function]}
     >
-      Sign in
+      Sign In
     </a>
+    
   </div>
+</div>
+`;
+
+exports[`Storyshots MagicTimestamps MagicTimestamps 1`] = `
+<div>
+  <span>
+    a few seconds ago
+  </span>
+  <br />
+  <span>
+    1 minute ago
+  </span>
+  <br />
+  <span>
+    30 minutes ago
+  </span>
+  <br />
+  <span>
+    1 hour ago
+  </span>
+  <br />
+  <span>
+    12 hours ago
+  </span>
+  <br />
+  <span>
+    1 day ago
+  </span>
+  <br />
+  <span>
+    2 days ago
+  </span>
+  <br />
+  <span>
+    Oct 24
+  </span>
+  <br />
+  <span>
+    in 2 days
+  </span>
+  <br />
+  <span>
+    Jan 1
+  </span>
+  <br />
+  <span>
+    June 24, 2017
+  </span>
 </div>
 `;
 
@@ -3360,7 +3680,7 @@ exports[`Storyshots ModerateButtons Horizontal 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "18px",
                 "verticalAlign": "middle",
                 "width": "18px",
@@ -3387,61 +3707,63 @@ exports[`Storyshots ModerateButtons Horizontal 1`] = `
         </div>
       </div>
     </button>
-    <button
-      aria-label="Reject"
-      className="base_1ghdph2"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      style={
-        Object {
-          "height": 46,
-          "padding": "5px 0px",
-          "width": 46,
+    <div>
+      <button
+        aria-label="Reject"
+        className="base_1ghdph2"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        style={
+          Object {
+            "height": 46,
+            "padding": "5px 0px",
+            "width": 46,
+          }
         }
-      }
-      type="button"
-    >
-      <div
-        aria-hidden={true}
-        className="content_n3cct7"
+        type="button"
       >
-        <div>
-          <svg
-            fill="currentColor"
-            height="24"
-            preserveAspectRatio="xMidYMid meet"
-            style={
-              Object {
-                "fill": "#326891",
-                "height": "18px",
-                "verticalAlign": "middle",
-                "width": "18px",
-              }
-            }
-            viewBox="0 0 24 24"
-            width="24"
-          >
-            <g>
-              <path
-                d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
-              />
-              <path
-                d="M0,0H24V24H0V0Z"
-                fill="none"
-              />
-            </g>
-          </svg>
-        </div>
         <div
-          className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
+          aria-hidden={true}
+          className="content_n3cct7"
         >
-          Reject
+          <div>
+            <svg
+              fill="currentColor"
+              height="24"
+              preserveAspectRatio="xMidYMid meet"
+              style={
+                Object {
+                  "fill": "#185bac",
+                  "height": "18px",
+                  "verticalAlign": "middle",
+                  "width": "18px",
+                }
+              }
+              viewBox="0 0 24 24"
+              width="24"
+            >
+              <g>
+                <path
+                  d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
+                />
+                <path
+                  d="M0,0H24V24H0V0Z"
+                  fill="none"
+                />
+              </g>
+            </svg>
+          </div>
+          <div
+            className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
+          >
+            Reject
+          </div>
         </div>
-      </div>
-    </button>
+      </button>
+    </div>
     <button
       aria-label="Highlight"
       className="base_1ghdph2"
@@ -3470,7 +3792,7 @@ exports[`Storyshots ModerateButtons Horizontal 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "18px",
                 "verticalAlign": "middle",
                 "width": "18px",
@@ -3525,7 +3847,7 @@ exports[`Storyshots ModerateButtons Horizontal 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "18px",
                 "verticalAlign": "middle",
                 "width": "18px",
@@ -3592,7 +3914,7 @@ exports[`Storyshots ModerateButtons Vertical 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "24px",
                 "verticalAlign": "middle",
                 "width": "24px",
@@ -3619,61 +3941,63 @@ exports[`Storyshots ModerateButtons Vertical 1`] = `
         </div>
       </div>
     </button>
-    <button
-      aria-label="Reject"
-      className="base_1ghdph2"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      style={
-        Object {
-          "height": 58,
-          "padding": "5px 0px",
-          "width": 58,
+    <div>
+      <button
+        aria-label="Reject"
+        className="base_1ghdph2"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        style={
+          Object {
+            "height": 58,
+            "padding": "5px 0px",
+            "width": 58,
+          }
         }
-      }
-      type="button"
-    >
-      <div
-        aria-hidden={true}
-        className="content_n3cct7"
+        type="button"
       >
-        <div>
-          <svg
-            fill="currentColor"
-            height="24"
-            preserveAspectRatio="xMidYMid meet"
-            style={
-              Object {
-                "fill": "#326891",
-                "height": "24px",
-                "verticalAlign": "middle",
-                "width": "24px",
-              }
-            }
-            viewBox="0 0 24 24"
-            width="24"
-          >
-            <g>
-              <path
-                d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
-              />
-              <path
-                d="M0,0H24V24H0V0Z"
-                fill="none"
-              />
-            </g>
-          </svg>
-        </div>
         <div
-          className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
+          aria-hidden={true}
+          className="content_n3cct7"
         >
-          Reject
+          <div>
+            <svg
+              fill="currentColor"
+              height="24"
+              preserveAspectRatio="xMidYMid meet"
+              style={
+                Object {
+                  "fill": "#185bac",
+                  "height": "24px",
+                  "verticalAlign": "middle",
+                  "width": "24px",
+                }
+              }
+              viewBox="0 0 24 24"
+              width="24"
+            >
+              <g>
+                <path
+                  d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
+                />
+                <path
+                  d="M0,0H24V24H0V0Z"
+                  fill="none"
+                />
+              </g>
+            </svg>
+          </div>
+          <div
+            className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
+          >
+            Reject
+          </div>
         </div>
-      </div>
-    </button>
+      </button>
+    </div>
     <button
       aria-label="Highlight"
       className="base_1ghdph2"
@@ -3702,7 +4026,7 @@ exports[`Storyshots ModerateButtons Vertical 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "24px",
                 "verticalAlign": "middle",
                 "width": "24px",
@@ -3757,7 +4081,7 @@ exports[`Storyshots ModerateButtons Vertical 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "24px",
                 "verticalAlign": "middle",
                 "width": "24px",
@@ -3823,7 +4147,7 @@ exports[`Storyshots ModerateButtons Vertical Approve 1`] = `
             id="approve"
             style={
               Object {
-                "backgroundColor": "#326891",
+                "backgroundColor": "#185bac",
                 "height": 48,
                 "width": 48,
               }
@@ -3863,61 +4187,63 @@ exports[`Storyshots ModerateButtons Vertical Approve 1`] = `
         </div>
       </div>
     </button>
-    <button
-      aria-label="Reject"
-      className="base_1ghdph2"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      style={
-        Object {
-          "height": 58,
-          "padding": "5px 0px",
-          "width": 58,
+    <div>
+      <button
+        aria-label="Reject"
+        className="base_1ghdph2"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        style={
+          Object {
+            "height": 58,
+            "padding": "5px 0px",
+            "width": 58,
+          }
         }
-      }
-      type="button"
-    >
-      <div
-        aria-hidden={true}
-        className="content_n3cct7"
+        type="button"
       >
-        <div>
-          <svg
-            fill="currentColor"
-            height="24"
-            preserveAspectRatio="xMidYMid meet"
-            style={
-              Object {
-                "fill": "#326891",
-                "height": "24px",
-                "verticalAlign": "middle",
-                "width": "24px",
-              }
-            }
-            viewBox="0 0 24 24"
-            width="24"
-          >
-            <g>
-              <path
-                d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
-              />
-              <path
-                d="M0,0H24V24H0V0Z"
-                fill="none"
-              />
-            </g>
-          </svg>
-        </div>
         <div
-          className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
+          aria-hidden={true}
+          className="content_n3cct7"
         >
-          Reject
+          <div>
+            <svg
+              fill="currentColor"
+              height="24"
+              preserveAspectRatio="xMidYMid meet"
+              style={
+                Object {
+                  "fill": "#185bac",
+                  "height": "24px",
+                  "verticalAlign": "middle",
+                  "width": "24px",
+                }
+              }
+              viewBox="0 0 24 24"
+              width="24"
+            >
+              <g>
+                <path
+                  d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
+                />
+                <path
+                  d="M0,0H24V24H0V0Z"
+                  fill="none"
+                />
+              </g>
+            </svg>
+          </div>
+          <div
+            className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
+          >
+            Reject
+          </div>
         </div>
-      </div>
-    </button>
+      </button>
+    </div>
     <button
       aria-label="Highlight"
       className="base_1ghdph2"
@@ -3946,7 +4272,7 @@ exports[`Storyshots ModerateButtons Vertical Approve 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "24px",
                 "verticalAlign": "middle",
                 "width": "24px",
@@ -4001,7 +4327,7 @@ exports[`Storyshots ModerateButtons Vertical Approve 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "24px",
                 "verticalAlign": "middle",
                 "width": "24px",
@@ -4068,7 +4394,7 @@ exports[`Storyshots ModerateButtons Vertical Defer 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "24px",
                 "verticalAlign": "middle",
                 "width": "24px",
@@ -4095,61 +4421,63 @@ exports[`Storyshots ModerateButtons Vertical Defer 1`] = `
         </div>
       </div>
     </button>
-    <button
-      aria-label="Reject"
-      className="base_1ghdph2"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      style={
-        Object {
-          "height": 58,
-          "padding": "5px 0px",
-          "width": 58,
+    <div>
+      <button
+        aria-label="Reject"
+        className="base_1ghdph2"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        style={
+          Object {
+            "height": 58,
+            "padding": "5px 0px",
+            "width": 58,
+          }
         }
-      }
-      type="button"
-    >
-      <div
-        aria-hidden={true}
-        className="content_n3cct7"
+        type="button"
       >
-        <div>
-          <svg
-            fill="currentColor"
-            height="24"
-            preserveAspectRatio="xMidYMid meet"
-            style={
-              Object {
-                "fill": "#326891",
-                "height": "24px",
-                "verticalAlign": "middle",
-                "width": "24px",
-              }
-            }
-            viewBox="0 0 24 24"
-            width="24"
-          >
-            <g>
-              <path
-                d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
-              />
-              <path
-                d="M0,0H24V24H0V0Z"
-                fill="none"
-              />
-            </g>
-          </svg>
-        </div>
         <div
-          className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
+          aria-hidden={true}
+          className="content_n3cct7"
         >
-          Reject
+          <div>
+            <svg
+              fill="currentColor"
+              height="24"
+              preserveAspectRatio="xMidYMid meet"
+              style={
+                Object {
+                  "fill": "#185bac",
+                  "height": "24px",
+                  "verticalAlign": "middle",
+                  "width": "24px",
+                }
+              }
+              viewBox="0 0 24 24"
+              width="24"
+            >
+              <g>
+                <path
+                  d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
+                />
+                <path
+                  d="M0,0H24V24H0V0Z"
+                  fill="none"
+                />
+              </g>
+            </svg>
+          </div>
+          <div
+            className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
+          >
+            Reject
+          </div>
         </div>
-      </div>
-    </button>
+      </button>
+    </div>
     <button
       aria-label="Highlight"
       className="base_1ghdph2"
@@ -4178,7 +4506,7 @@ exports[`Storyshots ModerateButtons Vertical Defer 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "24px",
                 "verticalAlign": "middle",
                 "width": "24px",
@@ -4232,7 +4560,7 @@ exports[`Storyshots ModerateButtons Vertical Defer 1`] = `
             id="defer"
             style={
               Object {
-                "backgroundColor": "#326891",
+                "backgroundColor": "#185bac",
                 "height": 48,
                 "width": 48,
               }
@@ -4311,7 +4639,7 @@ exports[`Storyshots ModerateButtons Vertical Highlight 1`] = `
             id="approve"
             style={
               Object {
-                "backgroundColor": "#326891",
+                "backgroundColor": "#185bac",
                 "height": 48,
                 "width": 48,
               }
@@ -4351,61 +4679,63 @@ exports[`Storyshots ModerateButtons Vertical Highlight 1`] = `
         </div>
       </div>
     </button>
-    <button
-      aria-label="Reject"
-      className="base_1ghdph2"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      style={
-        Object {
-          "height": 58,
-          "padding": "5px 0px",
-          "width": 58,
+    <div>
+      <button
+        aria-label="Reject"
+        className="base_1ghdph2"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        style={
+          Object {
+            "height": 58,
+            "padding": "5px 0px",
+            "width": 58,
+          }
         }
-      }
-      type="button"
-    >
-      <div
-        aria-hidden={true}
-        className="content_n3cct7"
+        type="button"
       >
-        <div>
-          <svg
-            fill="currentColor"
-            height="24"
-            preserveAspectRatio="xMidYMid meet"
-            style={
-              Object {
-                "fill": "#326891",
-                "height": "24px",
-                "verticalAlign": "middle",
-                "width": "24px",
-              }
-            }
-            viewBox="0 0 24 24"
-            width="24"
-          >
-            <g>
-              <path
-                d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
-              />
-              <path
-                d="M0,0H24V24H0V0Z"
-                fill="none"
-              />
-            </g>
-          </svg>
-        </div>
         <div
-          className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
+          aria-hidden={true}
+          className="content_n3cct7"
         >
-          Reject
+          <div>
+            <svg
+              fill="currentColor"
+              height="24"
+              preserveAspectRatio="xMidYMid meet"
+              style={
+                Object {
+                  "fill": "#185bac",
+                  "height": "24px",
+                  "verticalAlign": "middle",
+                  "width": "24px",
+                }
+              }
+              viewBox="0 0 24 24"
+              width="24"
+            >
+              <g>
+                <path
+                  d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
+                />
+                <path
+                  d="M0,0H24V24H0V0Z"
+                  fill="none"
+                />
+              </g>
+            </svg>
+          </div>
+          <div
+            className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
+          >
+            Reject
+          </div>
         </div>
-      </div>
-    </button>
+      </button>
+    </div>
     <button
       aria-label="Highlight"
       className="base_1ghdph2"
@@ -4433,7 +4763,7 @@ exports[`Storyshots ModerateButtons Vertical Highlight 1`] = `
             id="highlight"
             style={
               Object {
-                "backgroundColor": "#326891",
+                "backgroundColor": "#185bac",
                 "height": 48,
                 "width": 48,
               }
@@ -4501,7 +4831,7 @@ exports[`Storyshots ModerateButtons Vertical Highlight 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "24px",
                 "verticalAlign": "middle",
                 "width": "24px",
@@ -4568,7 +4898,7 @@ exports[`Storyshots ModerateButtons Vertical Reject 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "24px",
                 "verticalAlign": "middle",
                 "width": "24px",
@@ -4595,73 +4925,75 @@ exports[`Storyshots ModerateButtons Vertical Reject 1`] = `
         </div>
       </div>
     </button>
-    <button
-      aria-label="Reject"
-      className="base_1ghdph2"
-      onBlur={[Function]}
-      onClick={[Function]}
-      onFocus={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      style={
-        Object {
-          "height": 58,
-          "padding": "5px 0px",
-          "width": 58,
+    <div>
+      <button
+        aria-label="Reject"
+        className="base_1ghdph2"
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        style={
+          Object {
+            "height": 58,
+            "padding": "5px 0px",
+            "width": 58,
+          }
         }
-      }
-      type="button"
-    >
-      <div
-        aria-hidden={true}
-        className="content_n3cct7"
+        type="button"
       >
-        <div>
-          <div
-            className="circle_42xzgj"
-            id="reject"
-            style={
-              Object {
-                "backgroundColor": "#326891",
-                "height": 48,
-                "width": 48,
-              }
-            }
-          >
-            <svg
-              fill="currentColor"
-              height={24}
-              label="Reject"
-              preserveAspectRatio="xMidYMid meet"
-              role="alert"
+        <div
+          aria-hidden={true}
+          className="content_n3cct7"
+        >
+          <div>
+            <div
+              className="circle_42xzgj"
+              id="reject"
               style={
                 Object {
-                  "fill": "rgba(255, 255, 255, 1)",
-                  "verticalAlign": "middle",
+                  "backgroundColor": "#185bac",
+                  "height": 48,
+                  "width": 48,
                 }
               }
-              viewBox="0 0 24 24"
-              width={24}
             >
-              <g>
-                <path
-                  d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
-                />
-                <path
-                  d="M0,0H24V24H0V0Z"
-                  fill="none"
-                />
-              </g>
-            </svg>
+              <svg
+                fill="currentColor"
+                height={24}
+                label="Reject"
+                preserveAspectRatio="xMidYMid meet"
+                role="alert"
+                style={
+                  Object {
+                    "fill": "rgba(255, 255, 255, 1)",
+                    "verticalAlign": "middle",
+                  }
+                }
+                viewBox="0 0 24 24"
+                width={24}
+              >
+                <g>
+                  <path
+                    d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
+                  />
+                  <path
+                    d="M0,0H24V24H0V0Z"
+                    fill="none"
+                  />
+                </g>
+              </svg>
+            </div>
+          </div>
+          <div
+            className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
+          >
+            Reject
           </div>
         </div>
-        <div
-          className="baseLabel_1rd9h3c-o_O-noLabel_1u9fru1"
-        >
-          Reject
-        </div>
-      </div>
-    </button>
+      </button>
+    </div>
     <button
       aria-label="Highlight"
       className="base_1ghdph2"
@@ -4690,7 +5022,7 @@ exports[`Storyshots ModerateButtons Vertical Reject 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "24px",
                 "verticalAlign": "middle",
                 "width": "24px",
@@ -4745,7 +5077,7 @@ exports[`Storyshots ModerateButtons Vertical Reject 1`] = `
             preserveAspectRatio="xMidYMid meet"
             style={
               Object {
-                "fill": "#326891",
+                "fill": "#185bac",
                 "height": "24px",
                 "verticalAlign": "middle",
                 "width": "24px",
@@ -5542,7 +5874,7 @@ exports[`Storyshots OverflowContainer No Footer 1`] = `
 </div>
 `;
 
-exports[`Storyshots OverflowContainer No Header 1`] = `
+exports[`Storyshots OverflowContainer No SearchHeader 1`] = `
 <div
   className="container_7gv3ej"
 >
@@ -5567,12 +5899,29 @@ exports[`Storyshots OverflowContainer No Header 1`] = `
 `;
 
 exports[`Storyshots Root Splash page 1`] = `
-Array [
+<div>
   <div
     className="landing_headerTag"
   >
     Moderator
-  </div>,
+  </div>
+  <div
+    className="landing_footerTag"
+  >
+    <a
+      className="landing_link"
+      href="https://conversationai.github.io/"
+      target="_blank"
+    >
+      Learn more
+    </a>
+     
+    <span
+      className="landing_extratext"
+    >
+      about Modereator.
+    </span>
+  </div>
   <div
     className="landing_centerOnPage"
   >
@@ -5689,25 +6038,8 @@ Array [
         />
       </div>
     </div>
-  </div>,
-  <div
-    className="landing_footerTag"
-  >
-    <a
-      className="landing_link"
-      href="https://conversationai.github.io/"
-      target="_blank"
-    >
-      Learn more
-    </a>
-     
-    <span
-      className="landing_extratext"
-    >
-      about Modereator.
-    </span>
-  </div>,
-]
+  </div>
+</div>
 `;
 
 exports[`Storyshots RuleRow Rule Row 1`] = `
@@ -5909,13 +6241,48 @@ exports[`Storyshots RuleRow Rule Row 1`] = `
     type="number"
     value="100"
   />
-  <button
-    className="button_12d1n5l-o_O-deleteButton_1ghsfgq"
-    onClick={[Function]}
-    type="button"
+  <div
+    style={
+      Object {
+        "paddingLeft": "50px",
+      }
+    }
   >
-    Delete
-  </button>
+    <button
+      aria-label="Delete Rule"
+      className="MuiButtonBase-root MuiIconButton-root"
+      disabled={false}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={0}
+      type="button"
+    >
+      <span
+        className="MuiIconButton-label"
+      >
+        <svg
+          aria-hidden="true"
+          className="MuiSvgIcon-root MuiSvgIcon-colorPrimary"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+          />
+        </svg>
+      </span>
+    </button>
+  </div>
 </div>
 `;
 
@@ -5985,6 +6352,329 @@ exports[`Storyshots Scrim red 1`] = `
 </div>
 `;
 
+exports[`Storyshots SearchHeader article header 1`] = `
+<header
+  role="banner"
+>
+  <div
+    className="bar_gxbbl0"
+  >
+    <div
+      className="childrenContainer_11b7ka7"
+    >
+      <div
+        style={
+          Object {
+            "alignItems": "center",
+            "display": "flex",
+            "width": "50%",
+          }
+        }
+      >
+        <a
+          href="/"
+          onClick={[Function]}
+        >
+          <span
+            style={
+              Object {
+                "clip": "rect(1px, 1px, 1px, 1px)",
+                "height": 0,
+                "position": "absolute",
+                "width": 0,
+              }
+            }
+          >
+            Home
+          </span>
+          <svg
+            fill="currentColor"
+            height={24}
+            preserveAspectRatio="xMidYMid meet"
+            style={
+              Object {
+                "verticalAlign": "middle",
+              }
+            }
+            viewBox="0 0 24 24"
+            width={24}
+          >
+            <g>
+              <path
+                d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"
+              />
+              <path
+                d="M0 0h24v24H0z"
+                fill="none"
+              />
+            </g>
+          </svg>
+        </a>
+        <h1
+          style={
+            Object {
+              "color": "rgba(255, 255, 255, 1)",
+              "fontFamily": "LibreFranklin-Medium, sans-serif",
+              "fontSize": 16,
+              "fontWeight": 400,
+              "lineHeight": 1.5,
+              "marginBottom": 0,
+              "marginLeft": "24px",
+              "marginRight": 0,
+              "marginTop": 0,
+              "overflow": "hidden",
+              "textOverflow": "ellipsis",
+              "whiteSpace": "nowrap",
+              "width": "100%",
+            }
+          }
+        >
+          At Hiroshima Memorial, Obama Says Nuclear Arms Require Moral Revolution
+        </h1>
+      </div>
+    </div>
+    <button
+      aria-label="Author search"
+      className="button_pqy0q6"
+      onClick={[Function]}
+    >
+      <svg
+        className="iconStyle_33fl4q"
+        fill="currentColor"
+        height="24"
+        preserveAspectRatio="xMidYMid meet"
+        style={
+          Object {
+            "verticalAlign": "middle",
+          }
+        }
+        viewBox="0 0 24 24"
+        width="24"
+      >
+        <g>
+          <path
+            d="M12,12A4,4,0,1,0,8,8,4,4,0,0,0,12,12Zm0,2c-2.67,0-8,1.34-8,4v2H20V18C20,15.34,14.67,14,12,14Z"
+          />
+          <path
+            d="M0,0H24V24H0V0Z"
+            fill="none"
+          />
+        </g>
+      </svg>
+      <div
+        className="buttonText_15rdwd1"
+      >
+        Author
+      </div>
+    </button>
+    <button
+      aria-label="Open comment search"
+      className="button_pqy0q6-o_O-buttonSelected_1f2a2hn"
+      onClick={[Function]}
+    >
+      <svg
+        className="iconStyle_33fl4q"
+        fill="currentColor"
+        height="24"
+        preserveAspectRatio="xMidYMid meet"
+        style={
+          Object {
+            "verticalAlign": "middle",
+          }
+        }
+        viewBox="0 0 24 24"
+        width="24"
+      >
+        <g>
+          <path
+            d="M12.5,11h-.79l-.28-.27a6.51,6.51,0,1,0-.7.7l.27.28v.79l5,5L17.49,16Zm-6,0A4.5,4.5,0,1,1,11,6.5,4.49,4.49,0,0,1,6.5,11Z"
+            transform="translate(3 3)"
+          />
+          <path
+            d="M-3-3H21V21H-3Z"
+            fill="none"
+            transform="translate(3 3)"
+          />
+        </g>
+      </svg>
+      <div
+        className="buttonText_15rdwd1"
+      >
+        Content
+      </div>
+    </button>
+    <button
+      aria-label="Close search"
+      className="button_pqy0q6"
+      onClick={[Function]}
+    >
+      <svg
+        fill="currentColor"
+        height="24"
+        preserveAspectRatio="xMidYMid meet"
+        style={
+          Object {
+            "fill": "rgba(255, 255, 255, 1)",
+            "verticalAlign": "middle",
+          }
+        }
+        viewBox="0 0 24 24"
+        width="24"
+      >
+        <g>
+          <path
+            d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
+          />
+          <path
+            d="M0,0H24V24H0V0Z"
+            fill="none"
+          />
+        </g>
+      </svg>
+      <div
+        className="buttonText_15rdwd1"
+      >
+        Close
+      </div>
+    </button>
+  </div>
+</header>
+`;
+
+exports[`Storyshots SearchHeader main header 1`] = `
+<header
+  role="banner"
+>
+  <div
+    className="bar_gxbbl0"
+  >
+    <div
+      className="childrenContainer_11b7ka7"
+    >
+      <a
+        href="/"
+        onClick={[Function]}
+        style={
+          Object {
+            "color": "rgba(255, 255, 255, 1)",
+            "fontFamily": "LibreFranklin-Medium, sans-serif",
+            "fontSize": 20,
+            "fontWeight": 400,
+            "lineHeight": 1.5,
+          }
+        }
+      >
+        Moderator
+      </a>
+    </div>
+    <button
+      aria-label="Author search"
+      className="button_pqy0q6"
+      onClick={[Function]}
+    >
+      <svg
+        className="iconStyle_33fl4q"
+        fill="currentColor"
+        height="24"
+        preserveAspectRatio="xMidYMid meet"
+        style={
+          Object {
+            "verticalAlign": "middle",
+          }
+        }
+        viewBox="0 0 24 24"
+        width="24"
+      >
+        <g>
+          <path
+            d="M12,12A4,4,0,1,0,8,8,4,4,0,0,0,12,12Zm0,2c-2.67,0-8,1.34-8,4v2H20V18C20,15.34,14.67,14,12,14Z"
+          />
+          <path
+            d="M0,0H24V24H0V0Z"
+            fill="none"
+          />
+        </g>
+      </svg>
+      <div
+        className="buttonText_15rdwd1"
+      >
+        Author
+      </div>
+    </button>
+    <button
+      aria-label="Open comment search"
+      className="button_pqy0q6-o_O-buttonSelected_1f2a2hn"
+      onClick={[Function]}
+    >
+      <svg
+        className="iconStyle_33fl4q"
+        fill="currentColor"
+        height="24"
+        preserveAspectRatio="xMidYMid meet"
+        style={
+          Object {
+            "verticalAlign": "middle",
+          }
+        }
+        viewBox="0 0 24 24"
+        width="24"
+      >
+        <g>
+          <path
+            d="M12.5,11h-.79l-.28-.27a6.51,6.51,0,1,0-.7.7l.27.28v.79l5,5L17.49,16Zm-6,0A4.5,4.5,0,1,1,11,6.5,4.49,4.49,0,0,1,6.5,11Z"
+            transform="translate(3 3)"
+          />
+          <path
+            d="M-3-3H21V21H-3Z"
+            fill="none"
+            transform="translate(3 3)"
+          />
+        </g>
+      </svg>
+      <div
+        className="buttonText_15rdwd1"
+      >
+        Content
+      </div>
+    </button>
+    <button
+      aria-label="Close search"
+      className="button_pqy0q6"
+      onClick={[Function]}
+    >
+      <svg
+        fill="currentColor"
+        height="24"
+        preserveAspectRatio="xMidYMid meet"
+        style={
+          Object {
+            "fill": "rgba(255, 255, 255, 1)",
+            "verticalAlign": "middle",
+          }
+        }
+        viewBox="0 0 24 24"
+        width="24"
+      >
+        <g>
+          <path
+            d="M19,6.41L17.59,5,12,10.59,6.41,5,5,6.41,10.59,12,5,17.59,6.41,19,12,13.41,17.59,19,19,17.59,13.41,12Z"
+          />
+          <path
+            d="M0,0H24V24H0V0Z"
+            fill="none"
+          />
+        </g>
+      </svg>
+      <div
+        className="buttonText_15rdwd1"
+      >
+        Close
+      </div>
+    </button>
+  </div>
+</header>
+`;
+
 exports[`Storyshots Shortcuts base 1`] = `
 <div
   className="base_164y8je"
@@ -6042,7 +6732,7 @@ exports[`Storyshots Shortcuts base 1`] = `
           preserveAspectRatio="xMidYMid meet"
           style={
             Object {
-              "color": "#326891",
+              "color": "#185bac",
               "verticalAlign": "middle",
             }
           }
@@ -6092,7 +6782,7 @@ exports[`Storyshots Shortcuts base 1`] = `
           preserveAspectRatio="xMidYMid meet"
           style={
             Object {
-              "color": "#326891",
+              "color": "#185bac",
               "verticalAlign": "middle",
             }
           }
@@ -6142,7 +6832,7 @@ exports[`Storyshots Shortcuts base 1`] = `
           preserveAspectRatio="xMidYMid meet"
           style={
             Object {
-              "color": "#326891",
+              "color": "#185bac",
               "verticalAlign": "middle",
             }
           }
@@ -6192,7 +6882,7 @@ exports[`Storyshots Shortcuts base 1`] = `
           preserveAspectRatio="xMidYMid meet"
           style={
             Object {
-              "color": "#326891",
+              "color": "#185bac",
               "verticalAlign": "middle",
             }
           }
@@ -7969,7 +8659,7 @@ exports[`Storyshots Slider base 1`] = `
       >
         <div
           aria-live="polite"
-          className="label_mb8zkg"
+          className="label_sgfzm3"
         />
         <div
           className="handle_127h6n7"
@@ -8003,7 +8693,7 @@ exports[`Storyshots Slider base 1`] = `
       >
         <div
           aria-live="polite"
-          className="label_mb8zkg-o_O-rightLabel_p4ui66"
+          className="label_sgfzm3-o_O-rightLabel_p4ui66"
         />
         <div
           className="handle_127h6n7-o_O-rightHandle_srz9d1"
@@ -8022,255 +8712,151 @@ exports[`Storyshots Slider base 1`] = `
 </div>
 `;
 
-exports[`Storyshots TableComponents Magic timestamps 1`] = `
-<div>
-  <span>
-    a few seconds ago
-  </span>
-  <span>
-    1 minute ago
-  </span>
-  <span>
-    30 minutes ago
-  </span>
-  <span>
-    1 hour ago
-  </span>
-  <span>
-    12 hours ago
-  </span>
-  <span>
-    1 day ago
-  </span>
-  <span>
-    2 days ago
-  </span>
-  <span>
-    Jan 1
-  </span>
-  <span>
-    June 24, 2017
-  </span>
-</div>
-`;
-
 exports[`Storyshots TableComponents Title cell 1`] = `
-<table
-  className="dataTable_qnb40"
-  style={
-    Object {
-      "maxWidth": "500px",
-    }
-  }
+<div
+  className="dataCell_c9brmu-o_O-dataBody_1npqsf6"
 >
-  <tr
-    className="dataBody_p6cyk0"
+  <div
+    className="dataCell_c9brmu-o_O-textCell_v85ehq"
   >
-    <td
-      className="summaryCell_wodt4a-o_O-textCell_14spq3r"
+    <div
+      className="superText_jnj9e2"
     >
-      <div
-        className="titleCell_zbyw3b"
+      <span
+        className="categoryLabel_1tey719"
       >
-        <div
-          className="mainText_ls0c6d"
+        ChuChu TV Nursery Rhymes & Kids Songs
+      </span>
+      <span>
+        <span>
+          3 hours ago
+        </span>
+      </span>
+    </div>
+    <div
+      className="mainText_jro6t0"
+    >
+      <div>
+        <a
+          className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
+          href="/"
+          onClick={[Function]}
         >
-          <div>
-            <a
-              className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
-              onClick={[Function]}
-              style={Object {}}
-            >
-              Qui iste consectetur earum in sequi aut eveniet.
-            </a>
-          </div>
-        </div>
+          IMF chief Christine Lagarde warns Britain on Brexit: ‘It will never be as good as it is now’
+        </a>
       </div>
-    </td>
-  </tr>
-  <tr
-    className="dataBody_p6cyk0"
-  >
-    <td
-      className="dataCell_cwydnq-o_O-textCell_14spq3r"
-    >
       <div
-        className="titleCell_zbyw3b"
+        className="mainTextLink_d909a"
       >
-        <div
-          className="superText_1yx6vp7"
+        <a
+          className="cellLink_18xp2pq"
+          href="https://sebastian.name"
+          target="_blank"
         >
-          <span
-            className="categoryLabel_1tey719"
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall"
+            focusable="false"
+            viewBox="0 0 24 24"
           >
-            ChuChu TV Nursery Rhymes & Kids Songs
-          </span>
-          <span>
-            <span>
-              3 hours ago
-            </span>
-          </span>
-        </div>
-        <div
-          className="mainText_ls0c6d"
-        >
-          <div>
-            <a
-              className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
-              onClick={[Function]}
-              style={Object {}}
-            >
-              IMF chief Christine Lagarde warns Britain on Brexit: ‘It will never be as good as it is now’
-            </a>
-          </div>
-          <div
-            className="mainTextLink_d909a"
-          >
-            <a
-              className="cellLink_18xp2pq"
-              href="https://sebastian.name"
-              target="_blank"
-            >
-              <svg
-                aria-hidden="true"
-                className="MuiSvgIcon-root-1 MuiSvgIcon-fontSizeSmall-8"
-                focusable="false"
-                role="presentation"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M0 0h24v24H0z"
-                  fill="none"
-                />
-                <path
-                  d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
-                />
-              </svg>
-            </a>
-          </div>
-        </div>
+            <path
+              d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+            />
+          </svg>
+        </a>
       </div>
-    </td>
-  </tr>
-  <tr
-    className="dataBody_p6cyk0"
+    </div>
+  </div>
+  <div
+    className="dataCell_c9brmu-o_O-textCell_v85ehq"
   >
-    <td
-      className="dataCell_cwydnq-o_O-textCell_14spq3r"
+    <div
+      className="superText_jnj9e2"
     >
-      <div
-        className="titleCell_zbyw3b"
-      >
-        <div
-          className="superText_1yx6vp7"
+      <span>
+        <span>
+          13 hours ago
+        </span>
+      </span>
+    </div>
+    <div
+      className="mainText_jro6t0"
+    >
+      <div>
+        <a
+          className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
+          href="/"
+          onClick={[Function]}
         >
-          <span>
-            <span>
-              21 hours ago
-            </span>
-          </span>
-        </div>
-        <div
-          className="mainText_ls0c6d"
-        >
-          <div>
-            <a
-              className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
-              onClick={[Function]}
-              style={Object {}}
-            >
-              Qui iste consectetur earum in sequi aut eveniet.
-            </a>
-          </div>
-        </div>
+          Earum in sequi aut.
+        </a>
       </div>
-    </td>
-  </tr>
-  <tr
-    className="dataBody_p6cyk0"
+    </div>
+  </div>
+  <div
+    className="dataCell_c9brmu-o_O-textCell_v85ehq"
   >
-    <td
-      className="dataCell_cwydnq-o_O-textCell_14spq3r"
+    <div
+      className="superText_jnj9e2"
     >
-      <div
-        className="titleCell_zbyw3b"
+      <span
+        className="categoryLabel_1tey719"
       >
-        <div
-          className="superText_1yx6vp7"
+        World
+      </span>
+    </div>
+    <div
+      className="mainText_jro6t0"
+    >
+      <div>
+        <a
+          className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
+          href="/"
+          onClick={[Function]}
         >
-          <span
-            className="categoryLabel_1tey719"
-          >
-            World
-          </span>
-        </div>
-        <div
-          className="mainText_ls0c6d"
-        >
-          <div>
-            <a
-              className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
-              onClick={[Function]}
-              style={Object {}}
-            >
-              Possimus qui eos modi et autem.
-            </a>
-          </div>
-        </div>
+          Modi et autem qui porro deleniti atque perferendis voluptatibus.
+        </a>
       </div>
-    </td>
-  </tr>
-  <tr
-    className="dataBody_p6cyk0"
+    </div>
+  </div>
+  <div
+    className="dataCell_c9brmu-o_O-textCell_v85ehq"
   >
-    <td
-      className="dataCell_cwydnq-o_O-textCell_14spq3r"
+    <div
+      className="mainText_jro6t0"
     >
-      <div
-        className="titleCell_zbyw3b"
-      >
-        <div
-          className="mainText_ls0c6d"
+      <div>
+        <a
+          className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
+          href="/"
+          onClick={[Function]}
         >
-          <div>
-            <a
-              className="cellLink_18xp2pq-o_O-mainTextText_qx0jz6"
-              onClick={[Function]}
-              style={Object {}}
-            >
-              Id accusantium esse quidem dolores debitis id dolorem.
-            </a>
-          </div>
-          <div
-            className="mainTextLink_d909a"
-          >
-            <a
-              className="cellLink_18xp2pq"
-              href="https://heather.info"
-              target="_blank"
-            >
-              <svg
-                aria-hidden="true"
-                className="MuiSvgIcon-root-1 MuiSvgIcon-fontSizeSmall-8"
-                focusable="false"
-                role="presentation"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M0 0h24v24H0z"
-                  fill="none"
-                />
-                <path
-                  d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
-                />
-              </svg>
-            </a>
-          </div>
-        </div>
+          Aut fugit et.
+        </a>
       </div>
-    </td>
-  </tr>
-</table>
+      <div
+        className="mainTextLink_d909a"
+      >
+        <a
+          className="cellLink_18xp2pq"
+          href="https://landen.biz"
+          target="_blank"
+        >
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"
+            />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 `;
 
 exports[`Storyshots TableFrame Category sidebar 1`] = `
@@ -9324,12 +9910,12 @@ exports[`Storyshots TagLabelRow Default 1`] = `
   >
     <a
       className="link_1pxpy31"
+      href="/categories/1/new/INFLAMMATORY"
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
       onMouseEnter={[Function]}
       onMouseLeave={[Function]}
-      style={Object {}}
       tabIndex={0}
     >
       <span
@@ -9383,12 +9969,12 @@ exports[`Storyshots TagLabelRow Default 1`] = `
   >
     <a
       className="link_1pxpy31"
+      href="/categories/1/new/OFF_TOPIC"
       onBlur={[Function]}
       onClick={[Function]}
       onFocus={[Function]}
       onMouseEnter={[Function]}
       onMouseLeave={[Function]}
-      style={Object {}}
       tabIndex={0}
     >
       <span
@@ -10621,129 +11207,6 @@ exports[`Storyshots Toast undo 1`] = `
       Undo
     </button>
   </div>
-</div>
-`;
-
-exports[`Storyshots Toggle checked 1`] = `
-<div
-  style={
-    Object {
-      "position": "relative",
-      "width": "22px",
-    }
-  }
->
-  <span
-    className="input_1c4ib3o"
-  >
-    <input
-      checked={true}
-      className="inputCheck_157u3z6"
-      disabled={false}
-      id="some-id"
-      onBlur={[Function]}
-      onChange={[Function]}
-      onFocus={[Function]}
-      onKeyPress={[Function]}
-      readOnly={false}
-      type="checkbox"
-      value="checked"
-    />
-    <span
-      className="elementsCheck_yr1vd5-o_O-element1Check_vbsbp6-o_O-element1CheckedCheck_1a3uluo"
-    />
-  </span>
-</div>
-`;
-
-exports[`Storyshots Toggle checked and disabled 1`] = `
-<div
-  style={
-    Object {
-      "position": "relative",
-      "width": "22px",
-    }
-  }
->
-  <span
-    className="input_1c4ib3o"
-  >
-    <input
-      checked={true}
-      className="inputCheck_157u3z6"
-      disabled={true}
-      onBlur={[Function]}
-      onChange={[Function]}
-      onFocus={[Function]}
-      onKeyPress={[Function]}
-      readOnly={true}
-      type="checkbox"
-    />
-    <span
-      className="elementsCheck_yr1vd5-o_O-element1Check_vbsbp6-o_O-element1CheckedCheck_1a3uluo-o_O-element1Disabled_154dkyw"
-    />
-  </span>
-</div>
-`;
-
-exports[`Storyshots Toggle unchecked 1`] = `
-<div
-  style={
-    Object {
-      "position": "relative",
-      "width": "22px",
-    }
-  }
->
-  <span
-    className="input_1c4ib3o"
-  >
-    <input
-      checked={false}
-      className="inputCheck_157u3z6"
-      disabled={false}
-      onBlur={[Function]}
-      onChange={[Function]}
-      onFocus={[Function]}
-      onKeyPress={[Function]}
-      readOnly={false}
-      type="checkbox"
-      value="unchecked"
-    />
-    <span
-      className="elementsCheck_yr1vd5-o_O-element1Check_vbsbp6"
-    />
-  </span>
-</div>
-`;
-
-exports[`Storyshots Toggle unchecked and disabled 1`] = `
-<div
-  style={
-    Object {
-      "position": "relative",
-      "width": "22px",
-    }
-  }
->
-  <span
-    className="input_1c4ib3o"
-  >
-    <input
-      checked={false}
-      className="inputCheck_157u3z6"
-      disabled={true}
-      onBlur={[Function]}
-      onChange={[Function]}
-      onFocus={[Function]}
-      onKeyPress={[Function]}
-      readOnly={true}
-      type="checkbox"
-    />
-    <span
-      className="elementsCheck_yr1vd5-o_O-element1Check_vbsbp6-o_O-element1Disabled_154dkyw"
-    />
-  </span>
 </div>
 `;
 

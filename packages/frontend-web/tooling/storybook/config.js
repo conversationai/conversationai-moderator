@@ -14,12 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { configure } from '@storybook/react';
+import { configure } from "@storybook/react";
+import { Provider } from "react-redux";
 
-const req = require.context('../../src/app', true, /Story\.tsx?$/);
+const req = require.context("../../src/app", true, /Story\.tsx?$/);
 
+const ReduxProvider = ({ children, reduxStore }) => (
+  <Provider store={reduxStore}>{children}</Provider>
+);
 function loadStories() {
-  req.keys().forEach(req)
+  req.keys().forEach(req);
 }
 
 configure(loadStories, module);
