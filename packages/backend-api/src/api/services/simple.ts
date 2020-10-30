@@ -169,8 +169,13 @@ export function createSimpleRESTService(): express.Router {
       return;
     }
 
-    article.isCommentingEnabled = req.body.isCommentingEnabled;
-    article.isAutoModerated = req.body.isAutoModerated;
+    if (typeof req.body.isCommentingEnabled === 'boolean') {
+      article.isCommentingEnabled = req.body.isCommentingEnabled;
+    }
+    if (typeof req.body.isAutoModerated === 'boolean') {
+      article.isAutoModerated = req.body.isAutoModerated;
+    }
+
     await article.save();
 
     res.json(REPLY_SUCCESS);
