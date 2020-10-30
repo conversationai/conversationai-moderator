@@ -14,8 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { NotFoundError } from '../../../api/jsonapi';
-
 import {
   Article,
   Category,
@@ -39,6 +37,7 @@ import {
   getHistogramScoresForAllCategories,
   getHistogramScoresForArticle,
   getHistogramScoresForCategory,
+  NotFoundError,
 } from '../../../api/services/histogramScores/util';
 
 describe('histogramScores Functions', () => {
