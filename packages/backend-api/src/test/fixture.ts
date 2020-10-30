@@ -18,6 +18,7 @@ import * as chai from 'chai';
 import * as WebSocket from 'ws';
 
 import {
+  CommentTopScore,
   MODERATION_ACTION_ACCEPT, RESET_COUNTS,
 } from '../models';
 import {
@@ -118,6 +119,14 @@ export async function makeCommentScore(obj = {}): Promise<ICommentScoreInstance>
     annotationStart: null,
     annotationEnd: null,
     ...obj,
+  });
+}
+
+export async function makeCommentTopScore(score: ICommentScoreInstance): Promise<void> {
+  await CommentTopScore.create({
+    commentId: score.commentId as number,
+    tagId: score.tagId as number,
+    commentScoreId: score.id as number,
   });
 }
 
