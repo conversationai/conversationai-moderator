@@ -235,13 +235,9 @@ export async function processMachineScore(
   );
 
   await sequelize.transaction(async (t) => {
-    await Promise.all(
-      commentSummaryScoresData.map((c: ICommentSummaryScoreAttributes) =>
-        // TODO: Set returning works around bug in the typescript.
-        //       Maybe fixed in later sequelize?
-        CommentSummaryScore.upsert(c, { transaction: t, returning: false }),
-      ),
-    );
+    for (const c of commentSummaryScoresData) {
+      await CommentSummaryScore.upsert(c, {transaction: t, returning: false});
+    }
   });
 
   await updateMaxSummaryScore(comment);
@@ -343,8 +339,7 @@ export function compileSummaryScoresData(scoreData: ISummaryScores, comment: Com
     .forEach((tagKey) => {
       data.push({
         commentId: comment.id,
-        // TODO(ldixon): figure out why this typehack is needed and fix.
-        tagId: (tagsByKey[tagKey][0] as any).id,
+        tagId: (tagsByKey[tagKey][0]).id,
         score: scoreData[tagKey],
       });
     });
@@ -356,29 +351,21 @@ export function compileSummaryScoresData(scoreData: ISummaryScores, comment: Com
  * Given an array of tag keys, find or create them
  *
  * @param {array} keys      Array of tag keys (strings)
- * @param {object} options  Optional object to pass into the query, mainly to be able to pass along a `transaction`
  * @return {object} Promise object that resolves to an array of Tag model instances
  */
 export async function findOrCreateTagsByKey(
   keys: Array<string>,
-  options: Partial<FindOrInitializeOptions<ITagAttributes>> = {},
-): Promise<Array<ITagInstance>> {
-  options = options || {};
-
-  return await Bluebird.mapSeries(keys, async (key) => {
+): Promise<Array<Tag>> {
+  return Bluebird.mapSeries(keys, async (key) => {
     const cleanKey = trim(key);
     const label = titleize(humanize(cleanKey));
 
     const [instance] = await Tag.findOrCreate({
-      where: { key: cleanKey },
-
+      where: {key: cleanKey},
       defaults: {
         key: cleanKey,
         label,
-      },
-
-      ...options,
-    });
+      }});
 
     return instance;
   });
@@ -429,13 +416,17 @@ export async function postProcessComment(comment: Comment): Promise<void> {
 
   // Try to create reply, return if not a reply
   const replyToSourceId = comment.replyToSourceId;
-  if (!replyToSourceId) { return; }
+  if (!replyToSourceId) {
+    return;
+  }
 
   // Find a parent id
-  const parent = await Comment.findOne({ where: { sourceId: replyToSourceId } });
+  const parent = await Comment.findOne({where: {sourceId: replyToSourceId}});
 
   // If the parent cannot be found, then return
-  if (!parent) { return; }
+  if (!parent) {
+    return;
+  }
 
   await comment.update({
     replyId: parent.id,

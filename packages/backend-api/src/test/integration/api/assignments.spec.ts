@@ -29,11 +29,6 @@ import {
   UserCategoryAssignment,
 } from '../../../models';
 import {
-  IArticleInstance,
-  ICategoryInstance,
-  IUserInstance,
-} from '../../../models';
-import {
   expect,
   makeArticle,
   makeCategory,
@@ -47,9 +42,9 @@ import {
 const BASE_URL = `/services/assignments`;
 
 describe(BASE_URL, () => {
-  let category: ICategoryInstance;
-  let article: IArticleInstance;
-  let user: IUserInstance;
+  let category: Category;
+  let article: Article;
+  let user: User;
 
   beforeEach(async () => {
     category = await makeCategory();

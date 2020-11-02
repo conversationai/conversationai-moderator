@@ -32,26 +32,6 @@ import {
   User,
 } from '../../../models';
 import {
-  IArticleAttributes,
-  IArticleInstance,
-  ICategoryAttributes,
-  ICategoryInstance,
-  ICommentAttributes,
-  ICommentInstance,
-  ICommentScoreAttributes,
-  ICommentScoreInstance,
-  ICommentScoreRequestAttributes,
-  ICommentScoreRequestInstance,
-  ICommentSummaryScoreAttributes,
-  ICommentSummaryScoreInstance,
-  IModerationRuleAttributes,
-  IModerationRuleInstance,
-  ITagAttributes,
-  ITagInstance,
-  IUserAttributes,
-  IUserInstance,
-} from '../../../models';
-import {
   ENDPOINT_TYPE_PROXY,
   MODERATION_RULE_ACTION_TYPES,
   SCORE_SOURCE_TYPES,
@@ -59,8 +39,12 @@ import {
   USER_GROUP_SERVICE,
 } from '../../../models';
 
+export interface IAttributes {
+  [key: string]: any;
+}
+
 // Category
-export function getCategoryData(data: Partial<ICategoryAttributes> = {}): ICategoryAttributes {
+export function getCategoryData(data: IAttributes = {}): IAttributes {
   return {
     label: faker.lorem.words(1),
     ...RESET_COUNTS,
@@ -68,12 +52,12 @@ export function getCategoryData(data: Partial<ICategoryAttributes> = {}): ICateg
   };
 }
 
-export async function createCategory(obj: Partial<ICategoryAttributes> = {}): Promise<ICategoryInstance> {
+export async function createCategory(obj: Partial<IAttributes> = {}): Promise<Category> {
   return Category.create(getCategoryData(obj));
 }
 
 // Articles
-export function getArticleData(data: Partial<IArticleAttributes> = {}): IArticleAttributes {
+export function getArticleData(data: Partial<IAttributes> = {}): IAttributes {
   return {
     sourceId: faker.random.uuid(),
     title: faker.lorem.words(20),
@@ -87,11 +71,11 @@ export function getArticleData(data: Partial<IArticleAttributes> = {}): IArticle
   };
 }
 
-export async function createArticle(obj: Partial<IArticleAttributes> = {}): Promise<IArticleInstance> {
+export async function createArticle(obj: Partial<IAttributes> = {}): Promise<Article> {
   return Article.create(getArticleData(obj));
 }
 
-export function getCommentData(data: Partial<ICommentAttributes> = {}): ICommentAttributes {
+export function getCommentData(data: Partial<IAttributes> = {}): IAttributes {
   return {
     sourceId: faker.random.uuid(),
     authorSourceId: faker.random.uuid(),
@@ -99,16 +83,16 @@ export function getCommentData(data: Partial<ICommentAttributes> = {}): IComment
     author: {},
     sourceCreatedAt: fn('now'),
     ...data,
-  } as ICommentAttributes;
+  } as IAttributes;
 }
 
-export async function createComment(data?: any): Promise<ICommentInstance> {
+export async function createComment(data?: any): Promise<Comment> {
   return Comment.create(getCommentData(data));
 }
 
 // Comment score requests
 
-export function getCommentScoreRequestData(data: Partial<ICommentScoreRequestAttributes> = {}): ICommentScoreRequestAttributes {
+export function getCommentScoreRequestData(data: Partial<IAttributes> = {}): IAttributes {
   return {
     commentId: faker.random.number(),
     userId: faker.random.number(),
@@ -118,13 +102,13 @@ export function getCommentScoreRequestData(data: Partial<ICommentScoreRequestAtt
   };
 }
 
-export async function createCommentScoreRequest(data?: object): Promise<ICommentScoreRequestInstance> {
+export async function createCommentScoreRequest(data?: object): Promise<CommentScoreRequest> {
   return CommentScoreRequest.create(getCommentScoreRequestData(data));
 }
 
 // Users
 
-export async function createUser(data: Partial<IUserAttributes> = {}): Promise<IUserInstance> {
+export async function createUser(data: IAttributes = {}): Promise<User> {
   return User.create({
     group: 'general',
     email: faker.internet.email(),
@@ -134,7 +118,7 @@ export async function createUser(data: Partial<IUserAttributes> = {}): Promise<I
   });
 }
 
-export async function createServiceUser(data: Partial<IUserAttributes> = {}): Promise<IUserInstance> {
+export async function createServiceUser(data: IAttributes = {}): Promise<User> {
   return User.create({
     group: USER_GROUP_SERVICE,
     name: faker.name.firstName(),
@@ -143,7 +127,7 @@ export async function createServiceUser(data: Partial<IUserAttributes> = {}): Pr
   });
 }
 
-export async function createModeratorUser(data: Partial<IUserAttributes> = {}): Promise<IUserInstance> {
+export async function createModeratorUser(data: IAttributes = {}): Promise<User> {
   return User.create({
     group: USER_GROUP_MODERATOR,
     name: faker.name.firstName(),
@@ -159,7 +143,7 @@ export async function createModeratorUser(data: Partial<IUserAttributes> = {}): 
 
 // Comment scores
 
-export function getCommentScoreData(data: Partial<ICommentScoreAttributes> = {}): ICommentScoreAttributes {
+export function getCommentScoreData(data: IAttributes = {}): IAttributes {
   return {
     commentId: faker.random.number(),
     tagId: faker.random.number(),
@@ -170,13 +154,13 @@ export function getCommentScoreData(data: Partial<ICommentScoreAttributes> = {})
   } as any;
 }
 
-export async function createCommentScore(data?: object): Promise<ICommentScoreInstance> {
+export async function createCommentScore(data?: object): Promise<CommentScore> {
   return CommentScore.create(getCommentScoreData(data));
 }
 
 // Comment summary scores
 
-export function getCommentSummaryScoreData(data: Partial<ICommentSummaryScoreAttributes> = {}): ICommentSummaryScoreAttributes {
+export function getCommentSummaryScoreData(data: IAttributes = {}): IAttributes {
   return {
     commentId: faker.random.number(),
     tagId: faker.random.number(),
@@ -185,13 +169,13 @@ export function getCommentSummaryScoreData(data: Partial<ICommentSummaryScoreAtt
   };
 }
 
-export async function createCommentSummaryScore(data?: object): Promise<ICommentSummaryScoreInstance> {
+export async function createCommentSummaryScore(data?: object): Promise<CommentSummaryScore> {
   return CommentSummaryScore.create(getCommentSummaryScoreData(data));
 }
 
 // Moderation rules
 
-export function getModerationRuleData(data: Partial<IModerationRuleAttributes> = {}): IModerationRuleAttributes {
+export function getModerationRuleData(data: IAttributes = {}): IAttributes {
   const lowerThreshold = (random(0, 100) / 100);
   const upperThreshold = (random(lowerThreshold * 100, 100) / 100);
 
@@ -201,17 +185,16 @@ export function getModerationRuleData(data: Partial<IModerationRuleAttributes> =
     lowerThreshold,
     upperThreshold,
     ...data,
-    // TODO(ldixon): fix typehack.
-  } as any;
+  };
 }
 
-export async function createModerationRule(data?: object): Promise<IModerationRuleInstance> {
+export async function createModerationRule(data?: object): Promise<ModerationRule> {
   return ModerationRule.create(getModerationRuleData(data));
 }
 
 // Tags
 
-export function getTagData(data: Partial<ITagAttributes> = {}): ITagAttributes {
+export function getTagData(data: IAttributes = {}): IAttributes {
   const tagLabel = faker.lorem.words(2);
   const tagKey = underscored(tagLabel);
 
@@ -222,6 +205,6 @@ export function getTagData(data: Partial<ITagAttributes> = {}): ITagAttributes {
   };
 }
 
-export async function createTag(data?: object): Promise<ITagInstance> {
+export async function createTag(data?: object): Promise<Tag> {
   return Tag.create(getTagData(data));
 }

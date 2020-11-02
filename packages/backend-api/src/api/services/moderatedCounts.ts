@@ -121,8 +121,8 @@ export function createModeratedCountsService(): express.Router {
       return Promise.reject({ error: 404 });
     }
 
-    const data = await getModeratedCounts(model, sort, (article, where) => {
-      return article.getComments({
+    const data = await getModeratedCounts(model, sort, async (article, where) => {
+      return await article.getComments({
         where,
         attributes: ['id'],
       });
@@ -162,7 +162,7 @@ export function createModeratedCountsService(): express.Router {
       });
     } else {
       data = await getModeratedCounts(null, sort, async (_, where) => {
-        return await Comment.findAll({
+        return Comment.findAll({
           where,
           attributes: ['id'],
         });

@@ -28,9 +28,7 @@ export async function denormalizeCountsForComment(comment: Comment) {
 
   const flags = await CommentFlag.findAll({ where: { commentId: comment.id } });
 
-  for (const f of flags) {
-    const flag = f.get();
-
+  for (const flag of flags) {
     if (!flagsSummary[flag.label]) {
       flagsSummary[flag.label] = [0, 0, 0];
     }
@@ -46,7 +44,7 @@ export async function denormalizeCountsForComment(comment: Comment) {
     }
   }
 
-  return await comment.update({
+  return comment.update({
     unresolvedFlagsCount,
     flagsSummary,
   });

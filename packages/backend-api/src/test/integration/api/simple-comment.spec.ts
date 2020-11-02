@@ -24,9 +24,6 @@ import {
   CommentScore,
   CommentSummaryScore,
   CommentTopScore,
-  IArticleInstance,
-  ICommentInstance,
-  ITagInstance,
   Tag,
 } from '../../../models';
 import {
@@ -43,12 +40,12 @@ import {app} from './test_helper';
 const BASE_URL = `/services/simple`;
 
 describe(BASE_URL, () => {
-  let article1: IArticleInstance;
-  let article2: IArticleInstance;
-  let comment1: ICommentInstance;
-  let comment2: ICommentInstance;
-  let tag1: ITagInstance;
-  let tag2: ITagInstance;
+  let article1: Article;
+  let article2: Article;
+  let comment1: Comment;
+  let comment2: Comment;
+  let tag1: Tag;
+  let tag2: Tag;
 
   before(async () => {
     article1 = await makeArticle({title: 'test article 1', text: 'this is the text for article 1'});

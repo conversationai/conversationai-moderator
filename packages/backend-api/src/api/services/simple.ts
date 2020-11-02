@@ -73,13 +73,13 @@ export function createSimpleRESTService(): express.Router {
 
     const userdata: Array<any> = [];
     for (const u of users) {
-      const simple = u.toJSON();
+      const simple = u.toJSON() as {[key: string]: any};
       if (req.params.type === USER_GROUP_SERVICE) {
         const token = await createToken(u.id);
         simple.extra = {jwt: token};
       }
       else if (u.extra) {
-        simple.extra = u.extra as object;
+        simple.extra = u.extra;
         // Make sure we don't send any access tokens out.
         delete simple.extra.token;
       }
@@ -313,7 +313,7 @@ export function createSimpleRESTService(): express.Router {
           res.status(400).send(`Tag modification error: Invalid attribute ${k}.`);
           return;
         }
-        tag.set(k, req.body[k]);
+        tag.set(k as 'color' | 'key' | 'label' | 'description', req.body[k]);
       }
     }
 
@@ -437,7 +437,7 @@ export function createSimpleRESTService(): express.Router {
       return;
     }
 
-    if (await processRangeData(req, res, (key, value) => object!.set(key, value as any))) {
+    if (await processRangeData(req, res, (key, value) => object!.set(key as any, value as any))) {
       await object.save();
       updateHappened();
       res.json(REPLY_SUCCESS);

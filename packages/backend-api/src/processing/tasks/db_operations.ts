@@ -26,7 +26,6 @@ import {
   User,
 } from '../../models';
 import {
-  ICommentInstance,
   IResolution,
 } from '../../models';
 
@@ -73,12 +72,12 @@ export async function resolveComment(
   userId: number | null,
   isBatchAction: boolean,
   status: IResolution,
-  domainFn: (comment: ICommentInstance, source: any) => Promise<ICommentInstance>,
+  domainFn: (comment: Comment, source: any) => Promise<Comment>,
 ): Promise<void> {
   const user = await getUser(userId);
   const comment = await getComment(commentId);
   logger.info(`${status} comment: ${commentId}`);
-  comment.isBatchResolved = isBatchAction
+  comment.isBatchResolved = isBatchAction;
   await comment.save();
   await domainFn(comment, user);
 }
@@ -119,7 +118,7 @@ export async function resolveCommentAndFlags(
   userId: number | null,
   isBatchAction: boolean,
   status: IResolution,
-  domainFn: (comment: ICommentInstance, source: any) => Promise<ICommentInstance>,
+  domainFn: (comment: Comment, source: any) => Promise<Comment>,
 ): Promise<void> {
   // We update flags first as we do the denormalization in the resolveComment action.
   await resolveFlags(commentId, userId ? userId : undefined);

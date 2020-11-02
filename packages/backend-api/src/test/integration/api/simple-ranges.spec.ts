@@ -17,27 +17,32 @@ limitations under the License.
 import * as chai from 'chai';
 
 import {
-  ICategoryInstance,
-  IModerationRuleInstance, IPreselectInstance, ITaggingSensitivityInstance,
-  ITagInstance, ModerationRule, Preselect,
-  Tag, TaggingSensitivity,
+  Category,
+  ModerationRule,
+  Preselect,
+  Tag,
+  TaggingSensitivity,
 } from '../../../models';
 import {
-  expect, makeCategory, makePreselect, makeRule,
-  makeTag, makeTaggingSensitivity,
+  expect,
+  makeCategory,
+  makePreselect,
+  makeRule,
+  makeTag,
+  makeTaggingSensitivity,
 } from '../../fixture';
 import {app} from './test_helper';
 
 const BASE_URL = `/services/simple`;
 
 describe(BASE_URL, () => {
-  let category: ICategoryInstance;
-  let tag1: ITagInstance;
-  let tag2: ITagInstance;
-  let deleteTag: ITagInstance;
-  let rule: IModerationRuleInstance;
-  let sensitivity: ITaggingSensitivityInstance;
-  let preselect: IPreselectInstance;
+  let category: Category;
+  let tag1: Tag;
+  let tag2: Tag;
+  let deleteTag: Tag;
+  let rule: ModerationRule;
+  let sensitivity: TaggingSensitivity;
+  let preselect: Preselect;
 
   before(async () => {
     category = await makeCategory();
