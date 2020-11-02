@@ -31,11 +31,6 @@ import {
   CommentFlag,
   CommentScore,
   CommentSummaryScore,
-  ICommentInstance,
-  ICommentScoreAttributes,
-  IModerationRuleInstance,
-  IPreselectInstance,
-  ITaggingSensitivityInstance,
   MODERATION_RULE_ACTION_TYPES_SET,
   ModerationRule,
   Preselect,
@@ -211,7 +206,7 @@ export function createSimpleRESTService(): express.Router {
         type: QueryTypes.SELECT,
         replacements: { commentIds: req.body },
       },
-    ) as Array<ICommentScoreAttributes>;
+    ) as Array<CommentScore>;
 
     const topScores = new Map<string, {[key: string]: any}>();
     for (const topScore of results) {
@@ -242,7 +237,7 @@ export function createSimpleRESTService(): express.Router {
         data['categoryId'] = (c as any).article.categoryId.toString();
       }
       if ((c as any).replies) {
-        data['replies'] = ((c as any).replies as Array<ICommentInstance>).map((r) => r.id.toString());
+        data['replies'] = ((c as any).replies as Array<Comment>).map((r) => r.id.toString());
       }
       const scoreData = scoresMap.get(c.id);
       if (scoreData) {
@@ -421,7 +416,7 @@ export function createSimpleRESTService(): express.Router {
 
   router.patch('/:model/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
-    let object: IModerationRuleInstance | IPreselectInstance | ITaggingSensitivityInstance | null;
+    let object: ModerationRule | Preselect | TaggingSensitivity | null;
     switch (req.params.model) {
       case 'moderation_rule':
         object = await ModerationRule.findByPk(id);

@@ -15,14 +15,14 @@ limitations under the License.
 */
 
 import {
+  Comment,
   CommentFlag,
   FLAGS_COUNT,
-  ICommentInstance,
   RECOMMENDATIONS_COUNT,
   UNRESOLVED_FLAGS_COUNT,
 } from '../../models';
 
-export async function denormalizeCountsForComment(comment: ICommentInstance) {
+export async function denormalizeCountsForComment(comment: Comment) {
   let unresolvedFlagsCount = 0;
   const flagsSummary: {[key: string]: Array<number>} = {};
 

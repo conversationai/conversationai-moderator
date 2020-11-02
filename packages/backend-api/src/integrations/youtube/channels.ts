@@ -19,12 +19,12 @@ import { google } from 'googleapis';
 import { Op } from 'sequelize';
 
 import { logger } from '../../logger';
-import { Article, Category, ICategoryInstance, IUserInstance } from '../../models';
+import { Article, Category, User } from '../../models';
 import { mapChannelToCategory, saveError, setChannelActive } from './objectmap';
 
 const service = google.youtube('v3');
 
-async function sync_page_of_channels(owner: IUserInstance, auth: OAuth2Client, pageToken?: string) {
+async function sync_page_of_channels(owner: User, auth: OAuth2Client, pageToken?: string) {
   return new Promise<string | undefined>((resolve, reject) => {
     service.channels.list({
       auth: auth,
@@ -58,7 +58,7 @@ async function sync_page_of_channels(owner: IUserInstance, auth: OAuth2Client, p
 }
 
 export async function sync_channels(
-  owner: IUserInstance,
+  owner: User,
   auth: OAuth2Client,
 ) {
   logger.info(`Syncing channels for user ${owner.email}`);
@@ -69,7 +69,7 @@ export async function sync_channels(
 }
 
 export async function activate_channel(
-  owner: IUserInstance,
+  owner: User,
   auth: OAuth2Client,
   channelId: string,
   activate: boolean,
@@ -117,7 +117,7 @@ export async function activate_channel(
   });
 }
 
-export async function get_playlist_for_channel(owner: IUserInstance, auth: OAuth2Client, channelId: string) {
+export async function get_playlist_for_channel(owner: User, auth: OAuth2Client, channelId: string) {
   return new Promise<string>((resolve, reject) => {
     service.channels.list({
       auth: auth,
@@ -141,7 +141,7 @@ export async function get_playlist_for_channel(owner: IUserInstance, auth: OAuth
 }
 
 export async function get_article_id_map_for_channel(
-  category: ICategoryInstance,
+  category: Category,
 ) {
   const articles = await Article.findAll({
     where: { categoryId: category.id },
@@ -156,7 +156,7 @@ export async function get_article_id_map_for_channel(
 }
 
 export async function for_each_active_channel(
-  owner: IUserInstance,
+  owner: User,
   callback: (channelId: string, articleIdMap: Map<string, number>) => Promise<void>,
 ) {
   const categories = await Category.findAll({

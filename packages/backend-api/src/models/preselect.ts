@@ -14,17 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
 import {sequelize} from '../sequelize';
 import {Category} from './category';
-import {IBaseAttributes, IBaseInstance} from './constants';
 import {updateHappened} from './last_update';
 import {Tag} from './tag';
 import {User} from './user';
 
-export interface IPreselectAttributes extends IBaseAttributes {
+/**
+ * Preselect model
+ */
+export class Preselect extends Model {
+  id?: number;
   tagId?: number;
   categoryId?: number;
   createdBy?: number;
@@ -32,15 +34,7 @@ export interface IPreselectAttributes extends IBaseAttributes {
   upperThreshold: number;
 }
 
-export type IPreselectInstance = Sequelize.Instance<IPreselectAttributes> & IPreselectAttributes & IBaseInstance;
-
-/**
- * Preselect model
- */
-export const Preselect = sequelize.define<
-  IPreselectInstance,
-  IPreselectAttributes
->('preselect', {
+Preselect.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -72,6 +66,8 @@ export const Preselect = sequelize.define<
     allowNull: false,
   },
 }, {
+  sequelize,
+  modelName: 'preselect',
   hooks: {
     afterCreate: updateHappened,
     afterDestroy: updateHappened,

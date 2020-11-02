@@ -19,8 +19,6 @@ import * as express from 'express';
 import { youtubeActivateChannel, youtubeSynchronizeChannel } from '../../integrations';
 import {
   Category,
-  ICategoryInstance,
-  IUserInstance,
   User,
   USER_GROUP_YOUTUBE,
 } from '../../models';
@@ -40,8 +38,8 @@ export interface ISynchronizeChannelData {
 }
 
 async function _youtubeSynchronizeChannel(
-  owner: IUserInstance,
-  channel: ICategoryInstance,
+  owner: User,
+  channel: Category,
 ) {
   await enqueue<ISynchronizeChannelData>('youtubeSynchronizeChannel', {ownerId: owner.id, channelId: channel.id});
 }

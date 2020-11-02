@@ -19,9 +19,9 @@ import { google } from 'googleapis';
 
 import { logger } from '../../logger';
 import {
-  ICommentInstance,
-  IDecisionInstance,
-  IUserInstance,
+  Comment,
+  Decision,
+  User,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
 } from '../../models';
@@ -33,7 +33,7 @@ import { get_article_id_from_youtube_id } from './videos';
 const service = google.youtube('v3');
 
 async function sync_page_of_comments(
-  owner: IUserInstance,
+  owner: User,
   auth: OAuth2Client,
   channelId: string,
   articleIdMap: Map<string, number>,
@@ -86,7 +86,7 @@ async function sync_page_of_comments(
 }
 
 export async function sync_comment_threads_for_channel(
-  owner: IUserInstance,
+  owner: User,
   auth: OAuth2Client,
   channelId: string,
   articleIdMap: Map<string, number>,
@@ -106,7 +106,7 @@ export async function sync_comment_threads_for_channel(
 }
 
 export async function sync_comment_threads(
-  owner: IUserInstance,
+  owner: User,
   auth: OAuth2Client,
   all: boolean,
   count?: number,
@@ -118,8 +118,8 @@ export async function sync_comment_threads(
 
 export async function implement_moderation_decision(
   auth: OAuth2Client,
-  comment: ICommentInstance,
-  decision: IDecisionInstance,
+  comment: Comment,
+  decision: Decision,
 ) {
   const sourceId = comment.sourceId;
   const status = decision.status;
@@ -147,7 +147,7 @@ export async function implement_moderation_decision(
 }
 
 export async function implement_moderation_decisions(
-  owner: IUserInstance,
+  owner: User,
   auth: OAuth2Client,
 ) {
   await foreachPendingDecision(owner, async (decision, comment) => {

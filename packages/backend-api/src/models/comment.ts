@@ -14,15 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {
+  BelongsToGetAssociationMixin,
+  DataTypes,
+  HasManyGetAssociationsMixin,
+  Model,
+} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { Article, IArticleInstance } from './article';
-import { ICommentSummaryScoreInstance } from './comment_summary_score';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { IDecisionInstance } from './decision';
-import { User } from './user';
+import {sequelize} from '../sequelize';
+import {Article} from './article';
+import {User} from './user';
+
+declare class Decision extends Model {}
 
 export interface IAuthorAttributes {
   name: string;
@@ -39,8 +42,9 @@ export interface IFlagSummary {
   [key: string]: Array<number>;
 }
 
-export interface ICommentAttributes extends IBaseAttributes {
-  ownerId?: number | null;
+export class Comment extends Model {
+  id: number;
+  ownerId?: number;
   sourceId: string;
   articleId: number | null;
   replyToSourceId?: string | null;
@@ -57,25 +61,20 @@ export interface ICommentAttributes extends IBaseAttributes {
   isAutoResolved?: boolean | null;
   unresolvedFlagsCount?: number;
   flagsSummary?: IFlagSummary | null;
-  sourceCreatedAt: Date | null | Sequelize.fn;
-  sentForScoring?: Date | null | Sequelize.fn;
-  sentBackToPublisher?: Date | null | Sequelize.fn;
+  sourceCreatedAt: Date | null;
+  sentForScoring?: Date | null;
+  sentBackToPublisher?: Date | null;
   extra?: object | null;
   maxSummaryScore?: number | null;
   maxSummaryScoreTagId?: string | null;
+
+  getArticle: BelongsToGetAssociationMixin<Article>;
+  getReplyTo: BelongsToGetAssociationMixin<Comment>;
+  getDecisions: HasManyGetAssociationsMixin<Decision>;
+  getReplies: HasManyGetAssociationsMixin<Comment>;
 }
 
-export type ICommentInstance = Sequelize.Instance<ICommentAttributes> & ICommentAttributes & IBaseInstance & {
-  getArticle: Sequelize.BelongsToGetAssociationMixin<IArticleInstance>;
-  getDecisions: Sequelize.HasManyGetAssociationsMixin<IDecisionInstance>;
-  getCommentSummaryScores: Sequelize.HasManyGetAssociationsMixin<ICommentSummaryScoreInstance>;
-  getReplyTo: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
-};
-
-/**
- * Comment model
- */
-export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('comment', {
+Comment.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -207,14 +206,12 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
     allowNull: true,
   },
 }, {
+  sequelize,
+  modelName: 'comment',
   indexes: [
     {
       name: 'replyToSourceId_index',
       fields: ['replyToSourceId'],
-    },
-    {
-      name: 'replyId_index',
-      fields: ['replyId'],
     },
     {
       name: 'authorSourceId_index',

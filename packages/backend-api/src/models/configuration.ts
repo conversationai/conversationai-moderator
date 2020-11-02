@@ -24,26 +24,21 @@ limitations under the License.
  * served via a custom service user type (e.g, youtube service users.)
  */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
+import {sequelize} from '../sequelize';
 
 export const CONFIGURATION_TOKEN = 'token';
 export const CONFIGURATION_GOOGLE_OAUTH = 'google-oauth';
 
-interface IConfigurationAttributes {
-  id?: string;
-  data: object;
-}
-
-type IConfigurationInstance = Sequelize.Instance<IConfigurationAttributes> & IConfigurationAttributes & {
+class Configuration extends Model {
   id: string;
   createdAt: Date;
   updatedAt: Date;
-};
+  data: object;
+}
 
-const Configuration = sequelize.define<IConfigurationInstance, IConfigurationAttributes>('configuration_items', {
+Configuration.init({
   id: {
     type: DataTypes.STRING,
     primaryKey: true,
@@ -53,6 +48,9 @@ const Configuration = sequelize.define<IConfigurationInstance, IConfigurationAtt
     type: DataTypes.JSON,
     allowNull: false,
   },
+}, {
+  sequelize,
+  modelName: 'configuration_items',
 });
 
 export async function getConfigItem(itemId: string): Promise<object | null> {

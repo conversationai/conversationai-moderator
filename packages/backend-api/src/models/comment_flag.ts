@@ -14,15 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { Comment } from './comment';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { User } from './user';
+import {sequelize} from '../sequelize';
+import {Comment} from './comment';
+import {User} from './user';
 
-export interface ICommentFlagAttributes extends IBaseAttributes {
+export class CommentFlag extends Model {
+  id: number;
   label: string;
   detail?: string;
   isRecommendation: boolean;
@@ -35,12 +34,7 @@ export interface ICommentFlagAttributes extends IBaseAttributes {
   extra?: object | null;
 }
 
-export type ICommentFlagInstance = Sequelize.Instance<ICommentFlagAttributes> & ICommentFlagAttributes & IBaseInstance;
-
-/**
- * CommentFlag model
- */
-export const CommentFlag = sequelize.define<ICommentFlagInstance, ICommentFlagAttributes>('comment_flag', {
+CommentFlag.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -101,6 +95,8 @@ export const CommentFlag = sequelize.define<ICommentFlagInstance, ICommentFlagAt
     allowNull: true,
   },
 }, {
+  sequelize,
+  modelName: 'comment_flag',
   charset: 'utf8',
 });
 

@@ -14,29 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { Comment } from './comment';
-import { IBaseAttributes, IBaseInstance } from './constants';
+import {sequelize} from '../sequelize';
+import {Comment} from './comment';
 
-export interface ICommentSizeAttributes extends IBaseAttributes {
+export class CommentSize extends Model {
+  id: number;
   commentId: number;
   width: number;
   height: number;
 }
 
-export type ICommentSizeInstance = Sequelize.Instance<ICommentSizeAttributes> &
-  ICommentSizeAttributes & IBaseInstance;
-
-/**
- * Category model
- */
-export const CommentSize = sequelize.define<
-  ICommentSizeInstance,
-  ICommentSizeAttributes
->('comment_size', {
+CommentSize.init({
   commentId: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
@@ -52,7 +42,9 @@ export const CommentSize = sequelize.define<
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
-}, {
+},{
+  sequelize,
+  modelName: 'comment_size',
   indexes: [
     {
       name: 'commentId_width_index',

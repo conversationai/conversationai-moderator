@@ -14,14 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { updateHappened } from './last_update';
+import {sequelize} from '../sequelize';
+import {updateHappened} from './last_update';
 
-export interface ITagAttributes extends IBaseAttributes {
+/**
+ * Tag model
+ */
+export class Tag extends Model {
+  id: number;
   key: string;
   label: string;
   color?: string;
@@ -30,13 +32,7 @@ export interface ITagAttributes extends IBaseAttributes {
   isTaggable?: boolean;
   inSummaryScore?: boolean;
 }
-
-export type ITagInstance = Sequelize.Instance<ITagAttributes> & ITagAttributes & IBaseInstance;
-
-/**
- * Tag model
- */
-export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
+Tag.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -87,13 +83,14 @@ export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
     defaultValue: false,
   },
 }, {
+  sequelize,
+  modelName: 'tag',
   indexes: [
     {
       fields: ['key'],
       unique: true,
     },
   ],
-
   hooks: {
     afterCreate: updateHappened,
     afterDestroy: updateHappened,

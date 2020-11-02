@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {Op} from 'sequelize';
+import {Op, OrderItem} from 'sequelize';
 
 import {Comment} from '../../models';
 
@@ -22,7 +22,7 @@ export async function sortCommentIds(
   sort: Array<string>,
 ): Promise<Array<number>> {
 
-  const order: Array<Array<string>> = [];
+  const order: Array<OrderItem> = [];
 
   for (let sortItem of sort) {
     let orderItem = 'ASC';

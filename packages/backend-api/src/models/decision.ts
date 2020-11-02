@@ -14,42 +14,36 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {BelongsToGetAssociationMixin, DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { Comment, ICommentInstance } from './comment';
+import {sequelize} from '../sequelize';
+import {Comment} from './comment';
 import {
   IResolution,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
 } from './constants';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { ModerationRule } from './moderation_rule';
-import { User } from './user';
+import {ModerationRule} from './moderation_rule';
+import {User} from './user';
 
-export interface IDecisionAttributes extends IBaseAttributes {
+/**
+ * Decision model
+ */
+export class Decision extends Model {
+  id: number;
   commentId?: number;
   userId?: number;
   moderationRuleId?: number;
   isCurrentDecision?: boolean;
   status?: IResolution;
   source?: 'User' | 'Rule';
-  sentBackToPublisher?: Date | string | Sequelize.fn;
+  sentBackToPublisher?: Date;
+
+  getComment: BelongsToGetAssociationMixin<Comment>;
 }
 
-export type IDecisionInstance = Sequelize.Instance<IDecisionAttributes> & IDecisionAttributes & IBaseInstance & {
-  getComment: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
-};
-
-/**
- * Decision model
- */
-export const Decision = sequelize.define<
-  IDecisionInstance,
-  IDecisionAttributes
->('decision', {
+Decision.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -76,6 +70,9 @@ export const Decision = sequelize.define<
     type: DataTypes.DATE,
     allowNull: true,
   },
+}, {
+  sequelize,
+  modelName: 'decision',
 });
 
 Decision.belongsTo(Comment, {

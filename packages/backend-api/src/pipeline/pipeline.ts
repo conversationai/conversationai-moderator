@@ -17,7 +17,7 @@ limitations under the License.
 import * as Bluebird from 'bluebird';
 import { groupBy, maxBy } from 'lodash';
 import * as moment from 'moment';
-import { FindOrInitializeOptions, fn, Op } from 'sequelize';
+import { fn, Op } from 'sequelize';
 import { humanize, titleize, trim } from 'underscore.string';
 
 import {
@@ -29,22 +29,15 @@ import {
   Decision,
   ENDPOINT_TYPE_API,
   ENDPOINT_TYPE_PROXY,
-  ICommentInstance,
-  ICommentScoreAttributes,
-  ICommentSummaryScoreAttributes,
-  IDecisionInstance,
-  IModerationRuleInstance,
   IResolution, IScorerExtra,
   isModerationRule,
   isUser,
-  ITagAttributes,
-  ITagInstance,
-  IUserInstance,
+  ModerationRule,
   Tag,
   User,
   USER_GROUP_MODERATOR,
 } from '../models';
-import { sequelize } from '../sequelize';
+import {sequelize} from '../sequelize';
 
 import {
   cacheCommentTopScores,
@@ -52,18 +45,18 @@ import {
   denormalizeCommentCountsForArticle,
   denormalizeCountsForComment,
 } from '../domain';
-import { logger } from '../logger';
-import { processRulesForComment } from './rules';
-import { IScoreData, IScores, IShim, ISummaryScores } from './shim';
-import { getIsDoneScoring } from './state';
+import {logger} from '../logger';
+import {processRulesForComment} from './rules';
+import {IScoreData, IScores, IShim, ISummaryScores} from './shim';
+import {getIsDoneScoring} from './state';
 
-import { createShim as createApiShim } from './apiShim';
-import { commentModeratedHook } from './hooks';
-import { createShim as createProxyShim } from './proxyShim';
+import {createShim as createApiShim} from './apiShim';
+import {commentModeratedHook} from './hooks';
+import {createShim as createProxyShim} from './proxyShim';
 
 const shims = new Map<number, IShim>();
 
-export async function sendToScorer(comment: ICommentInstance, scorer: IUserInstance) {
+export async function sendToScorer(comment: Comment, scorer: User) {
   try {
     // Destroy existing comment score request for user.
     await CommentScoreRequest.destroy({
@@ -109,7 +102,7 @@ export async function sendToScorer(comment: ICommentInstance, scorer: IUserInsta
   }
 }
 
-export async function checkScoringDone(comment: ICommentInstance): Promise<void> {
+export async function checkScoringDone(comment: Comment): Promise<void> {
   // Mark timestamp for when comment was last sent for scoring
   comment.sentForScoring = new Date();
   await comment.save();
@@ -123,7 +116,7 @@ export async function checkScoringDone(comment: ICommentInstance): Promise<void>
 /**
  * Send passed in comment for scoring against all active service Users.
  */
-export async function sendForScoring(comment: ICommentInstance): Promise<void> {
+export async function sendForScoring(comment: Comment): Promise<void> {
   const serviceUsers = await User.findAll({
     where: {
       group: USER_GROUP_MODERATOR,
@@ -159,7 +152,7 @@ export function resendCutoff() {
  */
 export async function getCommentsToResendForScoring(
   processCommentLimit?: number,
-): Promise<Array<ICommentInstance>> {
+): Promise<Array<Comment>> {
   const findOpts = {
     where: {
       isAccepted: null,
@@ -179,7 +172,7 @@ export async function getCommentsToResendForScoring(
 /**
  * Resend a comment to be scored again.
  */
-export async function resendForScoring(comment: ICommentInstance): Promise<void> {
+export async function resendForScoring(comment: Comment): Promise<void> {
   logger.info(`Re-sending comment id ${comment.id} for scoring`);
   await sendForScoring(comment);
 }
@@ -258,7 +251,7 @@ export async function processMachineScore(
   await commentScoreRequest.save();
 }
 
-export async function updateMaxSummaryScore(comment: ICommentInstance): Promise<void> {
+export async function updateMaxSummaryScore(comment: Comment): Promise<void> {
   const tagsInSummaryScore = await Tag.findAll({
     where: {
       inSummaryScore: true,
@@ -307,12 +300,14 @@ export async function completeMachineScoring(commentId: number): Promise<void> {
  * Take raw scores data and an object of model data and map it all together in an array to
  * bulk create comment scores with
  */
-export function compileScoresData(sourceType: string, userId: number, scoreData: IScores, modelData: any): Array<ICommentScoreAttributes> {
+export function compileScoresData(sourceType: string, userId: number, scoreData: IScores, modelData: any) {
   sourceType = sourceType || 'Machine';
 
-  const tagsByKey = groupBy(modelData.tags, (tag: ITagInstance) => tag.key);
+  const tagsByKey = groupBy(modelData.tags, (tag: Tag) => tag.key);
 
-  const data: Array<ICommentScoreAttributes> = [];
+  const data: Array<Pick<CommentScore,
+    'commentId' | 'commentScoreRequestId' | 'sourceType' | 'userId' | 'tagId' | 'score' | 'annotationStart' | 'annotationEnd'>>
+    = [];
 
   Object
     .keys(scoreData)
@@ -338,10 +333,10 @@ export function compileScoresData(sourceType: string, userId: number, scoreData:
  * Take raw scores data and an object of model data and map it all together in an array to
  * bulk create comment summary scores with
  */
-export function compileSummaryScoresData(scoreData: ISummaryScores, comment: ICommentInstance, tags: Array<ITagInstance>): Array<ICommentSummaryScoreAttributes> {
-  const tagsByKey = groupBy(tags, (tag: ITagInstance) => tag.key);
+export function compileSummaryScoresData(scoreData: ISummaryScores, comment: Comment, tags: Array<Tag>) {
+  const tagsByKey = groupBy(tags, (tag: Tag) => tag.key);
 
-  const data: Array<ICommentSummaryScoreAttributes> = [];
+  const data: Array<Pick<CommentSummaryScore, 'commentId' | 'tagId' | 'score'>> = [];
 
   Object
     .keys(scoreData)
@@ -393,10 +388,10 @@ export async function findOrCreateTagsByKey(
  * Save the action of a rule or user making a comment on a decision.
  */
 export async function recordDecision(
-  comment: ICommentInstance,
+  comment: Comment,
   status: IResolution,
-  source: IUserInstance | IModerationRuleInstance | null,
-): Promise<IDecisionInstance> {
+  source: User | ModerationRule | null,
+): Promise<Decision> {
   // Find out if we're overriding a previous decision.
   const previousDecisions = await comment.getDecisions({
     where: {isCurrentDecision: true},
@@ -423,7 +418,7 @@ export async function recordDecision(
   return decision;
 }
 
-export async function postProcessComment(comment: ICommentInstance): Promise<void> {
+export async function postProcessComment(comment: Comment): Promise<void> {
   const article = await comment.getArticle();
 
   // Denormalize the moderation counts for the comment article

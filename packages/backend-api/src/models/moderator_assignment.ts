@@ -14,61 +14,52 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
 import {sequelize} from '../sequelize';
 import {Article} from './article';
-import {IBaseAttributes, IBaseInstance} from './constants';
 import {User} from './user';
-
-export interface IModeratorAssignmentAttributes extends  IBaseAttributes {
-  userId: number;
-  articleId: number;
-}
-
-export type IModeratorAssignmentInstance = Sequelize.Instance<IModeratorAssignmentAttributes> &
-  IModeratorAssignmentAttributes & IBaseInstance;
 
 /**
  * Article model
  */
-export const ModeratorAssignment = sequelize.define<
-  IModeratorAssignmentInstance,
-  IModeratorAssignmentAttributes
->(
-  'moderator_assignment',
-  {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      primaryKey: true,
-      autoIncrement: true,
-    },
+export class ModeratorAssignment extends Model {
+  id: number;
+  userId: number;
+  articleId: number;
+}
 
-    userId: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
-    },
+ModeratorAssignment.init({
+  id: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
+  },
 
-    articleId: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
+  userId: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+  },
+
+  articleId: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+  },
+}, {
+  sequelize,
+  modelName: 'moderator_assignment',
+  indexes: [
+    {
+      name: 'unique_assignment_index',
+      fields: ['userId', 'articleId'],
+      unique: true,
     },
-  },
-  {
-    indexes: [
-      {
-        name: 'unique_assignment_index',
-        fields: ['userId', 'articleId'],
-        unique: true,
-      },
-      {
-        name: 'userId_index',
-        fields: ['userId'],
-      },
-    ],
-  },
-);
+    {
+      name: 'userId_index',
+      fields: ['userId'],
+    },
+  ],
+});
 
 ModeratorAssignment.belongsTo(User, {
   onDelete: 'CASCADE',

@@ -18,33 +18,30 @@ import { groupBy, omit } from 'lodash';
 
 import { denormalizeCommentCountsForArticle, denormalizeCountsForComment } from '../domain';
 import {
+  Comment,
   CommentScore,
   CommentScoreRequest,
-  ICommentAttributes,
-  ICommentInstance,
-  ICommentScoreInstance,
-  ICommentScoreRequestInstance,
-  IModerationRuleInstance,
   IResolution,
   isUser,
-  ITagInstance,
-  IUserInstance,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
+  ModerationRule,
+  Tag,
+  User,
 } from '../models';
 import { recordDecision } from './pipeline';
 
 export interface IDecision {
   resolution: IResolution;
-  resolver: IUserInstance | IModerationRuleInstance | null;
+  resolver: User | ModerationRule | null;
 }
 
 /**
  * Take an array of CommentScoreRequest instances for a Comment and return true or false
  * indicating whether scoring is complete or not
  */
-export function scoresComplete(commentScoreRequests: Array<ICommentScoreRequestInstance>): boolean {
+export function scoresComplete(commentScoreRequests: Array<CommentScoreRequest>): boolean {
 
   // If there are no requests existing at all, assume it's not done scoring
 
@@ -64,7 +61,7 @@ export function scoresComplete(commentScoreRequests: Array<ICommentScoreRequestI
         // Condense down into an array of booleans, returning true for each scorer if any
         // score requests have `doneAt` set
 
-        return grouped[key].some((item: ICommentScoreRequestInstance) => {
+        return grouped[key].some((item: CommentScoreRequest) => {
           return !!item.doneAt;
         });
       })
@@ -92,7 +89,7 @@ export async function getIsDoneScoring(commentId: number) {
 }
 
 export type ICommentStateParams = Pick<
-  ICommentAttributes,
+  Comment,
   'isAccepted' | 'isModerated' | 'isDeferred' | 'isHighlighted' | 'isBatchResolved' | 'isAutoResolved'
 >;
 
@@ -114,7 +111,7 @@ export function getDefaultStateData(): ICommentStateParams {
  * Get object of approved state data to set on a Comment model instance
  * @return {object}
  */
-export function getApproveStateData(): Partial<ICommentAttributes> {
+export function getApproveStateData(): Partial<ICommentStateParams> {
   return {
     isAccepted: true,
     isModerated: true,
@@ -125,7 +122,7 @@ export function getApproveStateData(): Partial<ICommentAttributes> {
 /**
  * Get object of rejected state data to set on a Comment model instance
  */
-export function getRejectStateData(): Partial<ICommentAttributes> {
+export function getRejectStateData(): Partial<ICommentStateParams> {
   return {
     isAccepted: false,
     isModerated: true,
@@ -136,7 +133,7 @@ export function getRejectStateData(): Partial<ICommentAttributes> {
 /**
  * Get object of deferred state data to set on a Comment model instance
  */
-export function getDeferStateData(): Partial<ICommentAttributes> {
+export function getDeferStateData(): Partial<ICommentStateParams> {
   return {
     isAccepted: null,
     isModerated: true,
@@ -147,7 +144,7 @@ export function getDeferStateData(): Partial<ICommentAttributes> {
 /**
  * Get object of highlighted state data to set on a Comment model instance
  */
-export function getHighlightStateData(): Partial<ICommentAttributes> {
+export function getHighlightStateData(): Partial<ICommentStateParams> {
   return {
     isHighlighted: true,
   };
@@ -156,7 +153,7 @@ export function getHighlightStateData(): Partial<ICommentAttributes> {
 /**
  * Get object of unhighlighted state data to set on a Comment model instance
  */
-export function getUnHighlightStateData(): Partial<ICommentAttributes> {
+export function getUnHighlightStateData(): Partial<ICommentStateParams> {
   return {
     isHighlighted: false,
   };
@@ -167,10 +164,10 @@ export function getUnHighlightStateData(): Partial<ICommentAttributes> {
  * but keys that conflict with `state` will be omitted
  */
 export async function setCommentState(
-  comment: ICommentInstance,
-  source: IUserInstance | IModerationRuleInstance | null,
-  state: Partial<ICommentAttributes>,
-  data?: Partial<ICommentAttributes>): Promise<ICommentInstance> {
+  comment: Comment,
+  source: User | ModerationRule | null,
+  state: Partial<ICommentStateParams>,
+  data?: Partial<ICommentStateParams>): Promise<Comment> {
 
   // Create an object of data to save and accept an optional `data` object for additional
   // data, omitting any keys that conflict with `state`
@@ -196,10 +193,10 @@ export async function setCommentState(
  * tack on to the comment
  */
 export async function approve(
-  comment: ICommentInstance,
-  source: IUserInstance | IModerationRuleInstance | null,
+  comment: Comment,
+  source: User | ModerationRule | null,
   data?: object,
-): Promise<ICommentInstance> {
+): Promise<Comment> {
   const updated = await setCommentState(comment, source, getApproveStateData(), data);
 
   await recordDecision(updated, MODERATION_ACTION_ACCEPT, source);
@@ -212,10 +209,10 @@ export async function approve(
  * tack on to the comment
  */
 export async function reject(
-  comment: ICommentInstance,
-  source: IUserInstance | IModerationRuleInstance | null,
+  comment: Comment,
+  source: User | ModerationRule | null,
   data?: object,
-): Promise<ICommentInstance> {
+): Promise<Comment> {
   const updated = await setCommentState(comment, source, getRejectStateData(), data);
 
   await recordDecision(updated, MODERATION_ACTION_REJECT, source);
@@ -228,10 +225,10 @@ export async function reject(
  * tack on to the comment
  */
 export async function defer(
-  comment: ICommentInstance,
-  source: IUserInstance | IModerationRuleInstance | null,
+  comment: Comment,
+  source: User | ModerationRule | null,
   data?: object,
-): Promise<ICommentInstance> {
+): Promise<Comment> {
   const updated = await setCommentState(comment, source, getDeferStateData(), data);
 
   await recordDecision(updated, MODERATION_ACTION_DEFER, source);
@@ -244,9 +241,9 @@ export async function defer(
  * tack on to the comment
  */
 export async function highlight(
-  comment: ICommentInstance,
-  source: IUserInstance | IModerationRuleInstance | null,
-): Promise<ICommentInstance> {
+  comment: Comment,
+  source: User | ModerationRule | null,
+): Promise<Comment> {
   let updated = comment;
   if (comment.isHighlighted) {
     updated = await setCommentState(comment, source, {
@@ -266,7 +263,7 @@ export async function highlight(
 /**
  * Reset a comment in the database.
  */
-export function reset(comment: ICommentInstance, source: IUserInstance | IModerationRuleInstance | null ): Promise<ICommentInstance> {
+export function reset(comment: Comment, source: User | ModerationRule | null ): Promise<Comment> {
   return setCommentState(comment, source, getDefaultStateData());
 }
 
@@ -277,7 +274,7 @@ export function reset(comment: ICommentInstance, source: IUserInstance | IModera
  * @param {object} tag       Tag model instance
  * @param {object} user      User model instance
  */
-export async function addScore(comment: ICommentInstance, tag: ITagInstance, user?: IUserInstance | null): Promise<ICommentScoreInstance> {
+export async function addScore(comment: Comment, tag: Tag, user?: User | null): Promise<CommentScore> {
   const score = await CommentScore.create({
     tagId: tag.id,
     commentId: comment.id,

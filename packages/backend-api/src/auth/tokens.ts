@@ -22,7 +22,7 @@ import * as moment from 'moment';
 import {
   CONFIGURATION_TOKEN,
   getConfigItem,
-  IUserInstance,
+  User,
   setConfigItem,
 } from '../models';
 
@@ -80,7 +80,7 @@ export function isValidToken(tokenPayload: ITokenPayload): boolean {
  * @param {object} tokenPayload Decoded token payload object with an `iat` key
  * @return {boolean}
  */
-export async function isExpired(user: IUserInstance, tokenPayload: ITokenPayload): Promise<boolean> {
+export async function isExpired(user: User, tokenPayload: ITokenPayload): Promise<boolean> {
   if (user.group === 'service') {
     return false;
   }
