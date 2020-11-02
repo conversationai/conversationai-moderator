@@ -103,13 +103,3 @@ export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
     afterBulkDestroy: updateHappened,
   },
 });
-
-Tag.associate = (models) => {
-  Tag.hasMany(models.ModerationRule, {
-    as: 'moderationRules',
-  });
-
-  Tag.hasMany(models.CommentScore, {
-    as: 'commentScores',
-  });
-};

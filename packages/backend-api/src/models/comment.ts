@@ -115,7 +115,7 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
   },
 
   text: {
-    type: DataTypes.TEXT('long'),
+    type: DataTypes.TEXT({length: 'long'}),
     allowNull: false,
   },
 
@@ -272,31 +272,7 @@ Comment.belongsTo(Comment, {
   as: 'replyTo',
 });
 
-
-Comment.associate = (models) => {
-
-  Comment.hasMany(models.CommentFlag, {
-    as: 'commentFlags',
-  });
-
-  Comment.hasMany(models.CommentScore, {
-    as: 'commentScores',
-  });
-
-  Comment.hasMany(models.CommentSummaryScore, {
-    as: 'commentSummaryScores',
-  });
-
-  Comment.hasMany(models.Decision, {
-    as: 'decisions',
-  });
-
-  Comment.hasMany(models.CommentSize, {
-    as: 'commentSizes',
-  });
-
-  Comment.hasMany(models.Comment, {
-    foreignKey: 'replyId',
-    as: 'replies',
-  });
-};
+Comment.hasMany(Comment, {
+  foreignKey: 'replyId',
+  as: 'replies',
+});

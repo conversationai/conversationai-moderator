@@ -198,16 +198,3 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
 
 Article.belongsTo(User, {as: 'owner'});
 Article.belongsTo(Category);
-
-Article.associate = (models) => {
-  Article.hasMany(models.Comment);
-
-  Article.belongsToMany(models.User, {
-    through: {
-      model: models.ModeratorAssignment,
-      unique: false,
-    },
-    foreignKey: 'articleId',
-    as: 'assignedModerators',
-  });
-};
