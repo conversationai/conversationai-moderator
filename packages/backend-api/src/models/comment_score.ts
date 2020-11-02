@@ -14,15 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {BelongsToGetAssociationMixin, DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { Comment, ICommentInstance } from './comment';
-import { CommentScoreRequest } from './comment_score_request';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { ITagInstance, Tag } from './tag';
-import { User } from './user';
+import {sequelize} from '../sequelize';
+import {Comment} from './comment';
+import {CommentScoreRequest} from './comment_score_request';
+import {Tag} from './tag';
+import {User} from './user';
 
 export const SCORE_SOURCE_TYPES = [
   'User',
@@ -30,7 +28,8 @@ export const SCORE_SOURCE_TYPES = [
   'Machine',
 ];
 
-export interface ICommentScoreAttributes extends IBaseAttributes {
+export class CommentScore  extends Model {
+  id: number;
   commentId?: number | null;
   confirmedUserId?: number;
   commentScoreRequestId?: number;
@@ -43,18 +42,12 @@ export interface ICommentScoreAttributes extends IBaseAttributes {
   annotationEnd?: number | null;
   isConfirmed?: boolean | null;
   extra?: object | null;
+
+  getTag: BelongsToGetAssociationMixin<Tag>;
+  getComment: BelongsToGetAssociationMixin<Comment>;
 }
 
-export type ICommentScoreInstance = Sequelize.Instance<ICommentScoreAttributes> &
-  ICommentScoreAttributes & IBaseInstance & {
-  getComment: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
-  getTag: Sequelize.BelongsToGetAssociationMixin<ITagInstance>;
-};
-
-/**
- * CommentScore model
- */
-export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScoreAttributes>('comment_score', {
+CommentScore.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -118,6 +111,8 @@ export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScor
   },
 
 }, {
+  sequelize,
+  modelName: 'comment_score',
   indexes: [
     {
       name: 'commentId_index',

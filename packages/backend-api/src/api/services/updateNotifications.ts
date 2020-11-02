@@ -33,15 +33,6 @@ import {
   TaggingSensitivity,
   User,
 } from '../../models';
-import {
-  IArticleInstance,
-  ICategoryInstance,
-  IModerationRuleInstance,
-  IPreselectInstance,
-  ITaggingSensitivityInstance,
-  ITagInstance,
-  IUserInstance,
-} from '../../models';
 import { registerInterest } from '../../models';
 import { countAssignments } from './assignments';
 import {
@@ -86,27 +77,27 @@ interface IMessage {
 
 async function getSystemData() {
   const users = await User.findAll({where: {group: {[Op.in]: ['admin', 'general']}}});
-  const userdata = users.map((u: IUserInstance) => {
+  const userdata = users.map((u: User) => {
     return serialiseObject(u, USER_FIELDS);
   });
 
   const tags = await Tag.findAll({});
-  const tagdata = tags.map((t: ITagInstance) => {
+  const tagdata = tags.map((t: Tag) => {
     return serialiseObject(t, TAG_FIELDS);
   });
 
   const taggingSensitivities = await TaggingSensitivity.findAll({});
-  const tsdata = taggingSensitivities.map((t: ITaggingSensitivityInstance) => {
+  const tsdata = taggingSensitivities.map((t: TaggingSensitivity) => {
     return serialiseObject(t, TAGGING_SENSITIVITY_FIELDS);
   });
 
   const rules = await ModerationRule.findAll({});
-  const ruledata = rules.map((r: IModerationRuleInstance) => {
+  const ruledata = rules.map((r: ModerationRule) => {
     return serialiseObject(r, RULE_FIELDS);
   });
 
   const preselects = await Preselect.findAll({});
-  const preselectdata = preselects.map((p: IPreselectInstance) => {
+  const preselectdata = preselects.map((p: Preselect) => {
     return serialiseObject(p, PRESELECT_FIELDS);
   });
 
@@ -127,7 +118,7 @@ async function getAllArticlesData() {
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
   const categoryIds: Array<number> = [];
-  const categorydata = categories.map((c: ICategoryInstance) => {
+  const categorydata = categories.map((c: Category) => {
     categoryIds.push(c.id);
     return serialiseObject(c, CATEGORY_FIELDS);
   });
@@ -136,7 +127,7 @@ async function getAllArticlesData() {
     where: {[Op.or]: [{categoryId: null}, {categoryId: categoryIds}]},
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
-  const articledata = articles.map((a: IArticleInstance) => {
+  const articledata = articles.map((a: Article) => {
     return serialiseObject(a, ARTICLE_FIELDS);
   });
 

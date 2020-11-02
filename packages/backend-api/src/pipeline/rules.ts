@@ -22,10 +22,8 @@ import {
 } from 'lodash';
 
 import {
+  Comment,
   CommentSummaryScore,
-  ICommentInstance,
-  ICommentSummaryScoreInstance,
-  IModerationRuleInstance,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
@@ -48,12 +46,12 @@ export interface ICompiledScores {
  * Take a list of scores and compose them into an object whose keys are tag ids and whose values
  * are scores in those tags. If there are multiple scores for the same tag, we take the max.
  */
-export function compileScores(commentScores: Array<ICommentSummaryScoreInstance>): ICompiledScores {
+export function compileScores(commentScores: Array<CommentSummaryScore>): ICompiledScores {
   const grouped = groupBy(commentScores, (score) => score.tagId);
 
   return mapValues(grouped, (scores) => {
     // Pull out `score` field values and return their average
-    return max(scores.map((score: ICommentSummaryScoreInstance) => score.score)) || 0;
+    return max(scores.map((score: CommentSummaryScore) => score.score)) || 0;
   });
 }
 
@@ -69,9 +67,9 @@ export function compileScores(commentScores: Array<ICommentSummaryScoreInstance>
  * @return {object} Promise object that resolves with the comment, updated if anything's changed
  */
 export async function resolveComment(
-  comment: ICommentInstance,
-  scores: Array<ICommentSummaryScoreInstance>,
-  rules?: Array<IModerationRuleInstance>,
+  comment: Comment,
+  scores: Array<CommentSummaryScore>,
+  rules?: Array<ModerationRule>,
 ): Promise<IDecision | null> {
   // Add a fake score for SUMMARY_SCORE so that rules can be written against it.
   const summaryScoreTag = await Tag.findOne({
@@ -107,7 +105,7 @@ export async function resolveComment(
   const globalRules = matchingRules.filter((r) => !r.categoryId);
   const categoryRules = matchingRules.filter((r) => article && r.categoryId === article.categoryId);
 
-  function isThereConsensus(testRules: Array<IModerationRuleInstance>): boolean {
+  function isThereConsensus(testRules: Array<ModerationRule>): boolean {
     const actions = testRules.map((r) => r.action.toLowerCase());
 
     // Replace highlight with accept.
@@ -202,7 +200,7 @@ export async function resolveComment(
  *
  * @param {object} comment Comment model instance to process rules on
  */
-export async function processRulesForComment(comment: ICommentInstance): Promise<IDecision | null> {
+export async function processRulesForComment(comment: Comment): Promise<IDecision | null> {
   const article = await comment.getArticle();
 
   if (article && !article.isAutoModerated) {

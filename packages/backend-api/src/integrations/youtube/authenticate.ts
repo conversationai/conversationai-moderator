@@ -19,13 +19,13 @@ import { google } from 'googleapis';
 
 import { getOAuthConfiguration } from '../../auth/config';
 import { logger } from '../../logger';
-import { IIntegrationExtra, IUserInstance, User, USER_GROUP_YOUTUBE } from '../../models';
+import { IIntegrationExtra, User, USER_GROUP_YOUTUBE } from '../../models';
 
 export const SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl'];
 
 export async function for_one_youtube_user(
-  user: IUserInstance,
-  callback: (owner: IUserInstance, client: OAuth2Client) => Promise<void>,
+  user: User,
+  callback: (owner: User, client: OAuth2Client) => Promise<void>,
 ) {
   const oauthConfig = await getOAuthConfiguration();
   if (!oauthConfig) {
@@ -40,7 +40,7 @@ export async function for_one_youtube_user(
 }
 
 export async function for_all_youtube_users(
-  callback: (owner: IUserInstance, client: OAuth2Client) => Promise<void>,
+  callback: (owner: User, client: OAuth2Client) => Promise<void>,
 ) {
   const users = await User.findAll({where: {group: USER_GROUP_YOUTUBE, isActive: true}});
   for (const user of users) {

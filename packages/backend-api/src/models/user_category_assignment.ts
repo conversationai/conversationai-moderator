@@ -14,41 +14,31 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
+import {sequelize} from '../sequelize';
 
-export interface IUserCategoryAssignmentAttributes extends IBaseAttributes {
+export class UserCategoryAssignment extends Model {
+  id: number;
   categoryId: number;
   userId: number;
 }
 
-export type IUserCategoryAssignmentInstance = Sequelize.Instance<IUserCategoryAssignmentAttributes> &
-  IUserCategoryAssignmentAttributes & IBaseInstance;
-
-/**
- * Category model
- */
-export const UserCategoryAssignment = sequelize.define<
-  IUserCategoryAssignmentInstance,
-  IUserCategoryAssignmentAttributes
->(
-  'user_category_assignment',
-  {
-    categoryId: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
-      primaryKey: true,
-    },
-
-    userId: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      allowNull: false,
-      primaryKey: true,
-    },
+UserCategoryAssignment.init({
+  categoryId: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    primaryKey: true,
   },
-);
+
+  userId: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+    primaryKey: true,
+  },
+}, {
+  sequelize,
+  modelName: 'user_category_assignment',
+});
 
 UserCategoryAssignment.removeAttribute('id');

@@ -14,28 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
+import {sequelize} from '../sequelize';
 
-export interface ICommentTopScoreAttributes extends IBaseAttributes {
+export class CommentTopScore extends Model {
+  id: number;
   commentId: number;
   tagId: number;
   commentScoreId: number;
 }
-
-export type ICommentTopScoreInstance = Sequelize.Instance<ICommentTopScoreAttributes> &
-  ICommentTopScoreAttributes & IBaseInstance;
-
-/**
- * Category model
- */
-export const CommentTopScore = sequelize.define<
-  ICommentTopScoreInstance,
-  ICommentTopScoreAttributes
->('comment_top_score', {
+CommentTopScore.init({
   commentId: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
@@ -53,8 +42,9 @@ export const CommentTopScore = sequelize.define<
     allowNull: true,
   },
 }, {
+  sequelize,
+  modelName: 'comment_top_score',
   timestamps: false,
-
   indexes: [
     {
       name: 'commentId_tagId_index',

@@ -14,24 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
+import {sequelize} from '../sequelize';
 
-export interface ICSRFAttributes extends IBaseAttributes {
+export class CSRF extends Model {
+  createdAt: Date;
   clientCSRF: string;
   serverCSRF: string;
   referrer: string | null;
 }
 
-export type ICSRFInstance = Sequelize.Instance<ICSRFAttributes> & ICSRFAttributes & IBaseInstance;
-
-/**
- * CSRF model
- */
-export const CSRF = sequelize.define<ICSRFInstance, ICSRFAttributes>('csrfs', {
+CSRF.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -52,4 +46,7 @@ export const CSRF = sequelize.define<ICSRFInstance, ICSRFAttributes>('csrfs', {
     type: DataTypes.CHAR(255),
     allowNull: true,
   },
+}, {
+  sequelize,
+  modelName: 'csrfs',
 });

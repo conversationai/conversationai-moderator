@@ -15,14 +15,11 @@ limitations under the License.
 */
 
 import * as Joi from 'joi';
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {BelongsToManyGetAssociationsMixin, DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IArticleInstance } from './article';
-import { ICategoryInstance } from './category';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { updateHappened } from './last_update';
+import {sequelize} from '../sequelize';
+import {Article} from './article';
+import {updateHappened} from './last_update';
 
 export const USER_GROUP_GENERAL = 'general';
 export const USER_GROUP_ADMIN = 'admin';
@@ -67,23 +64,19 @@ export interface IServiceExtra {
   jwt: any;
 }
 
-export interface IUserAttributes extends IBaseAttributes {
+export class User extends Model {
+  id: number;
   group: string;
   email?: string;
   name: string;
   isActive: boolean;
   avatarURL?: string | null;
   extra?: IScorerExtra | IIntegrationExtra | IServiceExtra | null;
+
+  getAssignedArticles: BelongsToManyGetAssociationsMixin<Article>;
 }
 
-export type  IUserInstance = Sequelize.Instance<IUserAttributes> & IUserAttributes & IBaseInstance & {
-  getAssignedArticles: Sequelize.BelongsToManyGetAssociationsMixin<IArticleInstance>;
-  countAssignedArticles: Sequelize.BelongsToManyCountAssociationsMixin;
-  getAssignedCategories: Sequelize.BelongsToManyGetAssociationsMixin<ICategoryInstance>;
-  countAssignedCategories: Sequelize.BelongsToManyCountAssociationsMixin;
-};
-
-export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
+User.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -121,6 +114,9 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
     allowNull: true,
   },
 }, {
+
+  sequelize,
+  modelName: 'user',
   indexes: [
     {
       name: 'users_email',
@@ -165,10 +161,10 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
   },
 });
 
-export function isUser(instance: any) {
+export function isUser(instance: Model | null): boolean {
   // TODO: instanceof doesn't work under some circumstances that I don't really understand.
   //       Hopefully fixed in later sequelize.
   //       Instead check for an attribute unique to this object.
   // return instance instanceof User.Instance;
-  return instance && instance.get && !!instance.group;
+  return !!(instance && instance.get && !!(instance as User).group);
 }

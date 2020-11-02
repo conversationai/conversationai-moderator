@@ -14,17 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { Category } from './category';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { updateHappened } from './last_update';
-import { Tag } from './tag';
-import { User } from './user';
+import {sequelize} from '../sequelize';
+import {Category} from './category';
+import {updateHappened} from './last_update';
+import {Tag} from './tag';
+import {User} from './user';
 
-export interface ITaggingSensitivityAttributes extends IBaseAttributes {
+/**
+ * TaggingSensitivity model
+ */
+export class TaggingSensitivity extends Model {
+  id: number;
   tagId?: number;
   categoryId?: number;
   createdBy?: number;
@@ -32,16 +34,7 @@ export interface ITaggingSensitivityAttributes extends IBaseAttributes {
   upperThreshold: number;
 }
 
-export type ITaggingSensitivityInstance = Sequelize.Instance<ITaggingSensitivityAttributes> &
-  ITaggingSensitivityAttributes & IBaseInstance;
-
-/**
- * TaggingSensitivity model
- */
-export const TaggingSensitivity = sequelize.define<
-  ITaggingSensitivityInstance,
-  ITaggingSensitivityAttributes
->('tagging_sensitivity', {
+TaggingSensitivity.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -73,6 +66,8 @@ export const TaggingSensitivity = sequelize.define<
     allowNull: false,
   },
 }, {
+  sequelize,
+  modelName: 'tagging_sensitivity',
   hooks: {
     afterCreate: updateHappened,
     afterDestroy: updateHappened,

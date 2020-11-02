@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
 import {sequelize} from '../sequelize';
+
 import {Category} from './category';
 import {
   IAction,
@@ -26,7 +26,6 @@ import {
   MODERATION_ACTION_HIGHLIGHT,
   MODERATION_ACTION_REJECT,
 } from './constants';
-import {IBaseAttributes, IBaseInstance} from './constants';
 import {updateHappened} from './last_update';
 import {Tag} from './tag';
 import {User} from './user';
@@ -40,7 +39,8 @@ export const MODERATION_RULE_ACTION_TYPES = [
 
 export const MODERATION_RULE_ACTION_TYPES_SET = new Set(MODERATION_RULE_ACTION_TYPES);
 
-export interface IModerationRuleAttributes extends IBaseAttributes {
+export class ModerationRule extends Model {
+  id: number;
   tagId: number;
   categoryId?: number;
   createdBy?: number;
@@ -49,16 +49,7 @@ export interface IModerationRuleAttributes extends IBaseAttributes {
   action: IAction;
 }
 
-export type IModerationRuleInstance = Sequelize.Instance<IModerationRuleAttributes> &
-  IModerationRuleAttributes & IBaseInstance;
-
-/**
- * ModerationRule model
- */
-export const ModerationRule = sequelize.define<
-  IModerationRuleInstance,
-  IModerationRuleAttributes
->('moderation_rules', {
+ModerationRule.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -95,6 +86,8 @@ export const ModerationRule = sequelize.define<
     allowNull: false,
   },
 }, {
+  sequelize,
+  modelName: 'moderation_rules',
   hooks: {
     afterCreate: updateHappened,
     afterDestroy: updateHappened,

@@ -19,7 +19,7 @@ import * as passport from 'passport';
 import * as qs from 'qs';
 
 import { config } from '../config';
-import { IUserInstance } from '../models';
+import { User } from '../models';
 import { restartService } from '../server-management';
 import {
   getOAuthConfiguration,
@@ -166,7 +166,7 @@ export function createAuthRouter(): express.Router {
     (req, res, next) => {
       passport.authenticate('google', {
         session: false,
-      }, async (err: any, user: IUserInstance | false, info: any) => {
+      }, async (err: any, user: User | false, info: any) => {
 
         const {clientCSRF, referrer, errorMessage} = await getClientCSRF(req);
 

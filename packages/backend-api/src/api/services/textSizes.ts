@@ -18,7 +18,7 @@ import * as express from 'express';
 import * as Joi from 'joi';
 import { Op } from 'sequelize';
 
-import { CommentSize, ICommentSizeInstance } from '../../models';
+import { CommentSize } from '../../models';
 import { validateAndSendResponse, validateRequest } from '../util/validation';
 
 const validateTextSizesRequest = validateRequest(Joi.object({
@@ -71,7 +71,7 @@ export function createTextSizesService(): express.Router {
           return sum;
         }, {});
 
-        const sizingData = commentSizes.reduce((sum, commentSize: ICommentSizeInstance) => {
+        const sizingData = commentSizes.reduce((sum, commentSize: CommentSize) => {
           sum[commentSize.commentId.toString()] = commentSize.height;
 
           return sum;

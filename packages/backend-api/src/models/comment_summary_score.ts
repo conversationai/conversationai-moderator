@@ -14,35 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {BelongsToGetAssociationMixin, DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { Comment } from './comment';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { ITagInstance, Tag } from './tag';
-import { User } from './user';
+import {sequelize} from '../sequelize';
+import {Comment} from './comment';
+import {Tag} from './tag';
+import {User} from './user';
 
-export interface ICommentSummaryScoreAttributes extends IBaseAttributes{
+export class CommentSummaryScore extends Model {
+  id: number;
   commentId: number;
   tagId: number;
   score: number;
   isConfirmed?: boolean | null;
   confirmedUserId?: number | null;
+  getTag: BelongsToGetAssociationMixin<Tag>;
 }
 
-export type ICommentSummaryScoreInstance = Sequelize.Instance<ICommentSummaryScoreAttributes> &
-  ICommentSummaryScoreAttributes & IBaseInstance & {
-  getTag: Sequelize.BelongsToGetAssociationMixin<ITagInstance>;
-};
-
-/**
- * Category model
- */
-export const CommentSummaryScore = sequelize.define<
-  ICommentSummaryScoreInstance,
-  ICommentSummaryScoreAttributes
->('comment_summary_score', {
+CommentSummaryScore.init({
   commentId: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
@@ -72,8 +61,9 @@ export const CommentSummaryScore = sequelize.define<
     defaultValue: null,
   },
 }, {
+  sequelize,
+  modelName: 'comment_summary_score',
   timestamps: false,
-
   indexes: [
     {
       name: 'commentId_tagId_index',

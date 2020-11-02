@@ -14,17 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {BelongsToManyGetAssociationsMixin, DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { Category, ICategoryInstance } from './category';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { updateHappened } from './last_update';
-import { IUserInstance, User } from './user';
+import {sequelize} from '../sequelize';
+import {Category} from './category';
+import {Comment} from './comment';
+import {updateHappened} from './last_update';
+import {User} from './user';
 
-export interface IArticleAttributes extends IBaseAttributes {
-  ownerId?: number | null;
+export class Article extends Model {
+  id: number;
+  ownerId?: number;
   sourceId: string;
   categoryId?: number | null;
   title: string;
@@ -45,18 +45,12 @@ export interface IArticleAttributes extends IBaseAttributes {
   flaggedCount: number;
   batchedCount: number;
   lastModeratedAt?: Date | null;
+
+  getAssignedModerators: BelongsToManyGetAssociationsMixin<User>;
+  getComments: BelongsToManyGetAssociationsMixin<Comment>;
 }
 
-export type IArticleInstance = Sequelize.Instance<IArticleAttributes> & IArticleAttributes & IBaseInstance & {
-  getCategory: Sequelize.BelongsToGetAssociationMixin<ICategoryInstance>;
-  getAssignedModerators: Sequelize.BelongsToManyGetAssociationsMixin<IUserInstance>;
-  countAssignedModerators: Sequelize.BelongsToManyCountAssociationsMixin;
-};
-
-/**
- * Article model
- */
-export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('article', {
+Article.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -182,6 +176,9 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
     allowNull: true,
   },
 }, {
+
+  sequelize,
+  modelName: 'article',
   indexes: [
     {
       name: 'sourceId_index',

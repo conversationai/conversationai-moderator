@@ -14,33 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { User } from './user';
+import {sequelize} from '../sequelize';
+import {User} from './user';
 
-export interface IUserSocialAuthAttributes extends IBaseAttributes {
+export class UserSocialAuth extends Model {
+  id: number;
   userId?: number;
   socialId: string;
   provider: string;
   extra?: object | null;
 }
 
-export type IUserSocialAuthInstance = Sequelize.Instance<IUserSocialAuthAttributes> &
-  IUserSocialAuthAttributes & IBaseInstance;
-
-export const UserSocialAuth = sequelize.define<
-  IUserSocialAuthInstance,
-  IUserSocialAuthAttributes
->('user_social_auth', {
+UserSocialAuth.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
-
   userId: {
     type: DataTypes.INTEGER.UNSIGNED,
     references: { model: User, key: 'id' },
@@ -62,6 +54,8 @@ export const UserSocialAuth = sequelize.define<
     allowNull: true,
   },
 }, {
+  sequelize,
+  modelName: 'user_social_auth',
   indexes: [
     {
       name: 'unique_user_provider_index',

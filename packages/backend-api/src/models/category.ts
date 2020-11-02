@@ -14,14 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import * as DataTypes from 'sequelize';
+import {BelongsToGetAssociationMixin, BelongsToManyGetAssociationsMixin, DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { IUserInstance, User } from './user';
+import {sequelize} from '../sequelize';
+import {User} from './user';
 
-export interface ICategoryAttributes extends IBaseAttributes {
+export class Category extends Model {
+  id: number;
   label: string;
   ownerId?: number | null;
   sourceId?: string;
@@ -37,18 +36,12 @@ export interface ICategoryAttributes extends IBaseAttributes {
   deferredCount: number;
   flaggedCount: number;
   batchedCount: number;
+
+  getAssignedModerators: BelongsToManyGetAssociationsMixin<User>;
+  getOwner: BelongsToGetAssociationMixin<User>;
 }
 
-export type ICategoryInstance = Sequelize.Instance<ICategoryAttributes> & ICategoryAttributes & IBaseInstance & {
-  getAssignedModerators: Sequelize.BelongsToManyGetAssociationsMixin<IUserInstance>;
-  countAssignedModerators: Sequelize.BelongsToManyCountAssociationsMixin;
-  getOwner: Sequelize.BelongsToGetAssociationMixin<IUserInstance>;
-};
-
-/**
- * Category model
- */
-export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>('category', {
+Category.init({
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
@@ -142,6 +135,9 @@ export const Category = sequelize.define<ICategoryInstance, ICategoryAttributes>
     allowNull: true,
   },
 }, {
+
+  sequelize,
+  modelName: 'category',
   indexes: [
     {
       name: 'label_index',

@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ICommentInstance, IUserInstance } from '../../models';
+import { Comment, User } from '../../models';
 import { IPipelineHook } from '../../pipeline/hooks';
 import { getDecisionForComment } from '../decisions';
 import { for_one_youtube_user } from './authenticate';
 import { implement_moderation_decision } from './comments';
 
 export const youtubeHooks: IPipelineHook = {
-  async commentModerated(owner: IUserInstance, comment: ICommentInstance) {
+  async commentModerated(owner: User, comment: Comment) {
     await for_one_youtube_user(owner, async (_, auth) => {
       const decision = await getDecisionForComment(comment);
       if (!decision) {
