@@ -15,10 +15,14 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
+
 import { sequelize } from '../sequelize';
 import { Comment, ICommentInstance } from './comment';
+import { CommentScoreRequest } from './comment_score_request';
 import { IBaseAttributes, IBaseInstance } from './constants';
 import { ITagInstance, Tag } from './tag';
+import { User } from './user';
 
 export const SCORE_SOURCE_TYPES = [
   'User',
@@ -52,13 +56,13 @@ export type ICommentScoreInstance = Sequelize.Instance<ICommentScoreAttributes> 
  */
 export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScoreAttributes>('comment_score', {
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   commentId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: Comment, key: 'id' },
     allowNull: false,
     onDelete: 'cascade',
@@ -66,7 +70,7 @@ export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScor
   },
 
   tagId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: Tag, key: 'id' },
     allowNull: false,
     onDelete: 'cascade',
@@ -74,42 +78,42 @@ export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScor
   },
 
   sourceType: {
-    type: Sequelize.ENUM(SCORE_SOURCE_TYPES),
+    type: DataTypes.ENUM(...SCORE_SOURCE_TYPES),
     allowNull: false,
   },
 
   sourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: true,
   },
 
   score: {
-    type: Sequelize.FLOAT.UNSIGNED, // Score from 0 - 1
+    type: DataTypes.FLOAT.UNSIGNED, // Score from 0 - 1
     allowNull: false,
   },
 
   annotationStart: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   annotationEnd: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   extra: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 
   confirmedUserId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   isConfirmed: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
   },
 
@@ -130,18 +134,16 @@ export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScor
   ],
 });
 
-CommentScore.associate = (models) => {
-  CommentScore.belongsTo(models.Comment, {
-    onDelete: 'CASCADE',
-  });
-  CommentScore.belongsTo(models.CommentScoreRequest, {
-    as: 'commentScoreRequest',
-    onDelete: 'CASCADE',
-  });
-  CommentScore.belongsTo(models.Tag, {
-    onDelete: 'CASCADE',
-  });
-  CommentScore.belongsTo(models.User, {
-    onDelete: 'SET NULL',
-  });
-};
+CommentScore.belongsTo(Comment, {
+  onDelete: 'CASCADE',
+});
+CommentScore.belongsTo(CommentScoreRequest, {
+  as: 'commentScoreRequest',
+  onDelete: 'CASCADE',
+});
+CommentScore.belongsTo(Tag, {
+  onDelete: 'CASCADE',
+});
+CommentScore.belongsTo(User, {
+  onDelete: 'SET NULL',
+});

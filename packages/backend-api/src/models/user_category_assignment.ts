@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
 
 import { sequelize } from '../sequelize';
 import { IBaseAttributes, IBaseInstance } from './constants';
@@ -37,13 +38,13 @@ export const UserCategoryAssignment = sequelize.define<
   'user_category_assignment',
   {
     categoryId: {
-      type: Sequelize.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       primaryKey: true,
     },
 
     userId: {
-      type: Sequelize.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       primaryKey: true,
     },

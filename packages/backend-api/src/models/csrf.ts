@@ -15,6 +15,8 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
+
 import { sequelize } from '../sequelize';
 import { IBaseAttributes, IBaseInstance } from './constants';
 
@@ -31,23 +33,23 @@ export type ICSRFInstance = Sequelize.Instance<ICSRFAttributes> & ICSRFAttribute
  */
 export const CSRF = sequelize.define<ICSRFInstance, ICSRFAttributes>('csrfs', {
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   clientCSRF: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   serverCSRF: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   referrer: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: true,
   },
 });

@@ -15,6 +15,8 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
+
 import { sequelize } from '../sequelize';
 import { IBaseAttributes, IBaseInstance } from './constants';
 
@@ -29,12 +31,12 @@ export type ILastUpdateInstance = Sequelize.Instance<ILastUpdateAttributes> & IL
  */
 const LastUpdate = sequelize.define<ILastUpdateInstance, ILastUpdateAttributes>('last_updates', {
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
   },
 
   lastUpdate: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
   },
 });
 

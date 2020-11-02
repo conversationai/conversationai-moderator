@@ -15,6 +15,8 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
+
 import { sequelize } from '../sequelize';
 import { Article, IArticleInstance } from './article';
 import { ICommentSummaryScoreInstance } from './comment_summary_score';
@@ -75,133 +77,133 @@ export type ICommentInstance = Sequelize.Instance<ICommentAttributes> & IComment
  */
 export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('comment', {
   id: {
-   type: Sequelize.INTEGER.UNSIGNED,
-   primaryKey: true,
-   autoIncrement: true,
+    type: DataTypes.INTEGER.UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
   },
 
   ownerId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: User, key: 'id' },
     allowNull: true,
   },
 
   sourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   articleId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
     references: { model: Article, key: 'id' },
   },
 
   replyToSourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: true,
   },
 
   replyId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   authorSourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   text: {
-    type: Sequelize.TEXT('long'),
+    type: DataTypes.TEXT('long'),
     allowNull: false,
   },
 
   author: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: false,
   },
 
   isScored: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
 
   isModerated: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
 
   isAccepted: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: null,
   },
 
   isDeferred: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: false,
   },
 
   isHighlighted: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: false,
   },
 
   isBatchResolved: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: false,
   },
 
   isAutoResolved: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: false,
   },
 
   unresolvedFlagsCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   flagsSummary: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 
   sourceCreatedAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
   sentForScoring: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
   sentBackToPublisher: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
   extra: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 
   maxSummaryScore: {
-    type: Sequelize.FLOAT.UNSIGNED,
+    type: DataTypes.FLOAT.UNSIGNED,
     allowNull: true,
   },
 
   maxSummaryScoreTagId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 }, {
@@ -262,9 +264,16 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
   ],
 });
 
+Comment.belongsTo(User, {as: 'owner'});
+Comment.belongsTo(Article);
+Comment.belongsTo(Comment, {
+  foreignKey: 'replyId',
+  onDelete: 'SET NULL',
+  as: 'replyTo',
+});
+
+
 Comment.associate = (models) => {
-  Comment.belongsTo(models.User, {as: 'owner'});
-  Comment.belongsTo(models.Article);
 
   Comment.hasMany(models.CommentFlag, {
     as: 'commentFlags',
@@ -284,12 +293,6 @@ Comment.associate = (models) => {
 
   Comment.hasMany(models.CommentSize, {
     as: 'commentSizes',
-  });
-
-  Comment.belongsTo(models.Comment, {
-    foreignKey: 'replyId',
-    onDelete: 'SET NULL',
-    as: 'replyTo',
   });
 
   Comment.hasMany(models.Comment, {

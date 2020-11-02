@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
 
 import { sequelize } from '../sequelize';
 import { Comment } from './comment';
@@ -41,70 +42,68 @@ export type ICommentFlagInstance = Sequelize.Instance<ICommentFlagAttributes> & 
  */
 export const CommentFlag = sequelize.define<ICommentFlagInstance, ICommentFlagAttributes>('comment_flag', {
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   label: {
-    type: Sequelize.CHAR(80),
+    type: DataTypes.CHAR(80),
     allowNull: false,
   },
 
   detail: {
-    type: Sequelize.STRING,
+    type: DataTypes.STRING,
     allowNull: true,
   },
 
   isRecommendation: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
 
   commentId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: Comment, key: 'id' },
     onDelete: 'cascade',
     onUpdate: 'cascade',
   },
 
   sourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: true,
   },
 
   authorSourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: true,
   },
 
   isResolved: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
 
   resolvedById: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
     references: { model: User, key: 'id' },
     onDelete: 'set null',
   },
 
   resolvedAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
   extra: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 }, {
   charset: 'utf8',
 });
 
-CommentFlag.associate = (models) => {
-  CommentFlag.belongsTo(models.Comment, {
-    onDelete: 'CASCADE',
-  });
-};
+CommentFlag.belongsTo(Comment, {
+  onDelete: 'CASCADE',
+});

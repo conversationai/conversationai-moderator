@@ -25,6 +25,8 @@ limitations under the License.
  */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
+
 import { sequelize } from '../sequelize';
 
 export const CONFIGURATION_TOKEN = 'token';
@@ -43,12 +45,12 @@ type IConfigurationInstance = Sequelize.Instance<IConfigurationAttributes> & ICo
 
 const Configuration = sequelize.define<IConfigurationInstance, IConfigurationAttributes>('configuration_items', {
   id: {
-    type: Sequelize.STRING,
+    type: DataTypes.STRING,
     primaryKey: true,
   },
 
   data: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: false,
   },
 });

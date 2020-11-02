@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
 
 import { sequelize } from '../sequelize';
 import { Category, ICategoryInstance } from './category';
@@ -57,127 +58,127 @@ export type IArticleInstance = Sequelize.Instance<IArticleAttributes> & IArticle
  */
 export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('article', {
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   ownerId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: User, key: 'id' },
     allowNull: true,
   },
 
   sourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   categoryId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: Category, key: 'id' },
     allowNull: true,
   },
 
   title: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   text: {
-    type: Sequelize.TEXT('long'),
+    type: DataTypes.TEXT({length: 'long'}),
     allowNull: false,
   },
 
   url: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   sourceCreatedAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
   isCommentingEnabled: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true,
   },
 
   isAutoModerated: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true,
   },
 
   allCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   unprocessedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   unmoderatedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   moderatedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   highlightedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   approvedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   rejectedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   deferredCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   flaggedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   batchedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   lastModeratedAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
   extra: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 }, {
@@ -195,9 +196,10 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
   },
 });
 
+Article.belongsTo(User, {as: 'owner'});
+Article.belongsTo(Category);
+
 Article.associate = (models) => {
-  Article.belongsTo(models.User, {as: 'owner'});
-  Article.belongsTo(models.Category);
   Article.hasMany(models.Comment);
 
   Article.belongsToMany(models.User, {

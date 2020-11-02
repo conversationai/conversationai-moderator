@@ -66,28 +66,6 @@ Object.keys(byName).forEach((modelName) => {
   }
 });
 
-export const byType: any = {
-  articles: Article,
-  categories: Category,
-  comments: Comment,
-  comment_scores: CommentScore,
-  comment_summary_scores: CommentSummaryScore,
-  comment_flags: CommentFlag,
-  comment_score_requests: CommentScoreRequest,
-  comment_sizes: CommentSize,
-  comment_top_scores: CommentTopScore,
-  csrfs: CSRF,
-  decisions: Decision,
-  moderation_rules: ModerationRule,
-  moderator_assignments: ModeratorAssignment,
-  preselects: Preselect,
-  tags: Tag,
-  tagging_sensitivities: TaggingSensitivity,
-  users: User,
-  user_category_assignments: UserCategoryAssignment,
-  user_social_auths: UserSocialAuth,
-};
-
 export * from './article';
 export * from './category';
 export * from './comment';

@@ -16,6 +16,7 @@ limitations under the License.
 
 import * as Joi from 'joi';
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
 
 import { sequelize } from '../sequelize';
 import { IArticleInstance } from './article';
@@ -84,39 +85,39 @@ export type  IUserInstance = Sequelize.Instance<IUserAttributes> & IUserAttribut
 
 export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   group: {
-    type: Sequelize.ENUM(USER_GROUPS),
+    type: DataTypes.ENUM(USER_GROUPS),
     allowNull: false,
   },
 
   name: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   email: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: true,
   },
 
   isActive: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
 
   avatarURL: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: true,
   },
 
   extra: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 }, {

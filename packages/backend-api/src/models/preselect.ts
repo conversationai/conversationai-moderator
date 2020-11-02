@@ -15,12 +15,16 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { updateHappened } from './last_update';
+import {sequelize} from '../sequelize';
+import {Category} from './category';
+import {IBaseAttributes, IBaseInstance} from './constants';
+import {updateHappened} from './last_update';
+import {Tag} from './tag';
+import {User} from './user';
 
-export interface IPreselectAttributes extends IBaseAttributes{
+export interface IPreselectAttributes extends IBaseAttributes {
   tagId?: number;
   categoryId?: number;
   createdBy?: number;
@@ -38,33 +42,33 @@ export const Preselect = sequelize.define<
   IPreselectAttributes
 >('preselect', {
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   tagId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   categoryId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   createdBy: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   lowerThreshold: {
-    type: Sequelize.FLOAT(2).UNSIGNED,
+    type: DataTypes.FLOAT(2).UNSIGNED,
     allowNull: false,
   },
 
   upperThreshold: {
-    type: Sequelize.FLOAT(2).UNSIGNED,
+    type: DataTypes.FLOAT(2).UNSIGNED,
     allowNull: false,
   },
 }, {
@@ -78,23 +82,21 @@ export const Preselect = sequelize.define<
   },
 });
 
-Preselect.associate = (models) => {
-  Preselect.belongsTo(models.Category, {
-    onDelete: 'CASCADE',
-    foreignKey: {
-      allowNull: true,
-    },
-  });
+Preselect.belongsTo(Category, {
+  onDelete: 'CASCADE',
+  foreignKey: {
+    allowNull: true,
+  },
+});
 
-  Preselect.belongsTo(models.Tag, {
-    onDelete: 'CASCADE',
-    foreignKey: {
-      allowNull: true,
-    },
-  });
+Preselect.belongsTo(Tag, {
+  onDelete: 'CASCADE',
+  foreignKey: {
+    allowNull: true,
+  },
+});
 
-  Preselect.belongsTo(models.User, {
-    foreignKey: 'createdBy',
-    constraints: false,
-  });
-};
+Preselect.belongsTo(User, {
+  foreignKey: 'createdBy',
+  constraints: false,
+});
