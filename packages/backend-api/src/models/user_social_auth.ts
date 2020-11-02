@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
 
 import { sequelize } from '../sequelize';
 import { IBaseAttributes, IBaseInstance } from './constants';
@@ -35,29 +36,29 @@ export const UserSocialAuth = sequelize.define<
   IUserSocialAuthAttributes
 >('user_social_auth', {
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   userId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: User, key: 'id' },
     allowNull: false,
   },
 
   socialId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   provider: {
-    type: Sequelize.CHAR(150),
+    type: DataTypes.CHAR(150),
     allowNull: false,
   },
 
   extra: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 }, {
@@ -75,8 +76,6 @@ export const UserSocialAuth = sequelize.define<
   ],
 });
 
-UserSocialAuth.associate = (models) => {
-  UserSocialAuth.belongsTo(models.User, {
-    onDelete: 'CASCADE',
-  });
-};
+UserSocialAuth.belongsTo(User, {
+  onDelete: 'CASCADE',
+});

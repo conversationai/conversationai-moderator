@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
 
 import { sequelize } from '../sequelize';
 import { IBaseAttributes, IBaseInstance } from './constants';
@@ -36,19 +37,19 @@ export const CommentTopScore = sequelize.define<
   ICommentTopScoreAttributes
 >('comment_top_score', {
   commentId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     primaryKey: true,
   },
 
   tagId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     primaryKey: true,
   },
 
   commentScoreId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 }, {

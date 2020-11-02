@@ -15,12 +15,16 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
 
 import { sequelize } from '../sequelize';
+import { Category } from './category';
 import { IBaseAttributes, IBaseInstance } from './constants';
 import { updateHappened } from './last_update';
+import { Tag } from './tag';
+import { User } from './user';
 
-export interface ITaggingSensitivityAttributes extends IBaseAttributes{
+export interface ITaggingSensitivityAttributes extends IBaseAttributes {
   tagId?: number;
   categoryId?: number;
   createdBy?: number;
@@ -39,33 +43,33 @@ export const TaggingSensitivity = sequelize.define<
   ITaggingSensitivityAttributes
 >('tagging_sensitivity', {
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   tagId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   categoryId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   createdBy: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   lowerThreshold: {
-    type: Sequelize.FLOAT(2).UNSIGNED,
+    type: DataTypes.FLOAT(2).UNSIGNED,
     allowNull: false,
   },
 
   upperThreshold: {
-    type: Sequelize.FLOAT(2).UNSIGNED,
+    type: DataTypes.FLOAT(2).UNSIGNED,
     allowNull: false,
   },
 }, {
@@ -79,23 +83,21 @@ export const TaggingSensitivity = sequelize.define<
   },
 });
 
-TaggingSensitivity.associate = (models) => {
-  TaggingSensitivity.belongsTo(models.Category, {
-    onDelete: 'CASCADE',
-    foreignKey: {
-      allowNull: true,
-    },
-  });
+TaggingSensitivity.belongsTo(Category, {
+  onDelete: 'CASCADE',
+  foreignKey: {
+    allowNull: true,
+  },
+});
 
-  TaggingSensitivity.belongsTo(models.Tag, {
-    onDelete: 'CASCADE',
-    foreignKey: {
-      allowNull: true,
-    },
-  });
+TaggingSensitivity.belongsTo(Tag, {
+  onDelete: 'CASCADE',
+  foreignKey: {
+    allowNull: true,
+  },
+});
 
-  TaggingSensitivity.belongsTo(models.User, {
-    foreignKey: 'createdBy',
-    constraints: false,
-  });
-};
+TaggingSensitivity.belongsTo(User, {
+  foreignKey: 'createdBy',
+  constraints: false,
+});

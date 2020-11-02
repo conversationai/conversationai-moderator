@@ -15,8 +15,12 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
+import * as DataTypes from 'sequelize';
+
+import {sequelize} from '../sequelize';
+import {Article} from './article';
+import {IBaseAttributes, IBaseInstance} from './constants';
+import {User} from './user';
 
 export interface IModeratorAssignmentAttributes extends  IBaseAttributes {
   userId: number;
@@ -36,18 +40,18 @@ export const ModeratorAssignment = sequelize.define<
   'moderator_assignment',
   {
     id: {
-      type: Sequelize.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER.UNSIGNED,
       primaryKey: true,
       autoIncrement: true,
     },
 
     userId: {
-      type: Sequelize.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
     },
 
     articleId: {
-      type: Sequelize.INTEGER.UNSIGNED,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
     },
   },
@@ -66,12 +70,10 @@ export const ModeratorAssignment = sequelize.define<
   },
 );
 
-ModeratorAssignment.associate = (models) => {
-  ModeratorAssignment.belongsTo(models.User, {
-    onDelete: 'CASCADE',
-  });
+ModeratorAssignment.belongsTo(User, {
+  onDelete: 'CASCADE',
+});
 
-  ModeratorAssignment.belongsTo(models.Article, {
-    onDelete: 'CASCADE',
-  });
-};
+ModeratorAssignment.belongsTo(Article, {
+  onDelete: 'CASCADE',
+});

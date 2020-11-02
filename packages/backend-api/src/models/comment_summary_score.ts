@@ -15,10 +15,13 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
 
 import { sequelize } from '../sequelize';
+import { Comment } from './comment';
 import { IBaseAttributes, IBaseInstance } from './constants';
-import { ITagInstance } from './tag';
+import { ITagInstance, Tag } from './tag';
+import { User } from './user';
 
 export interface ICommentSummaryScoreAttributes extends IBaseAttributes{
   commentId: number;
@@ -41,30 +44,30 @@ export const CommentSummaryScore = sequelize.define<
   ICommentSummaryScoreAttributes
 >('comment_summary_score', {
   commentId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     primaryKey: true,
   },
 
   tagId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     primaryKey: true,
   },
 
   score: {
-    type: Sequelize.FLOAT.UNSIGNED, // Score from 0 - 1
+    type: DataTypes.FLOAT.UNSIGNED, // Score from 0 - 1
     allowNull: false,
   },
 
   isConfirmed: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: null,
   },
 
   confirmedUserId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
     defaultValue: null,
   },
@@ -82,17 +85,15 @@ export const CommentSummaryScore = sequelize.define<
 
 CommentSummaryScore.removeAttribute('id');
 
-CommentSummaryScore.associate = (models) => {
-  CommentSummaryScore.belongsTo(models.Comment, {
-    onDelete: 'CASCADE',
-  });
+CommentSummaryScore.belongsTo(Comment, {
+  onDelete: 'CASCADE',
+});
 
-  CommentSummaryScore.belongsTo(models.Tag, {
-    onDelete: 'CASCADE',
-  });
+CommentSummaryScore.belongsTo(Tag, {
+  onDelete: 'CASCADE',
+});
 
-  CommentSummaryScore.belongsTo(models.User, {
-    as: 'confirmedUser',
-    onDelete: 'CASCADE',
-  });
-};
+CommentSummaryScore.belongsTo(User, {
+  as: 'confirmedUser',
+  onDelete: 'CASCADE',
+});

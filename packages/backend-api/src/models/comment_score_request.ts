@@ -15,10 +15,12 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
 
 import { sequelize } from '../sequelize';
-import { ICommentInstance } from './comment';
+import { Comment, ICommentInstance } from './comment';
 import { IBaseAttributes, IBaseInstance } from './constants';
+import { User } from './user';
 
 export interface ICommentScoreRequestAttributes extends IBaseAttributes {
   commentId?: number;
@@ -40,33 +42,31 @@ export const CommentScoreRequest = sequelize.define<
   ICommentScoreRequestAttributes
 >('comment_score_request', {
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   commentId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
 
   userId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
 
   sentAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: false,
   },
 
   doneAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 });
 
-CommentScoreRequest.associate = (models) => {
-  CommentScoreRequest.belongsTo(models.Comment);
-  CommentScoreRequest.belongsTo(models.User);
-};
+CommentScoreRequest.belongsTo(Comment);
+CommentScoreRequest.belongsTo(User);

@@ -15,7 +15,10 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
+
 import { sequelize } from '../sequelize';
+import { Comment } from './comment';
 import { IBaseAttributes, IBaseInstance } from './constants';
 
 export interface ICommentSizeAttributes extends IBaseAttributes {
@@ -35,18 +38,18 @@ export const CommentSize = sequelize.define<
   ICommentSizeAttributes
 >('comment_size', {
   commentId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     primaryKey: true,
   },
 
   width: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
 
   height: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
 }, {
@@ -61,8 +64,6 @@ export const CommentSize = sequelize.define<
 
 CommentSize.removeAttribute('id');
 
-CommentSize.associate = (models) => {
-  CommentSize.belongsTo(models.Comment, {
-    onDelete: 'CASCADE',
-  });
-};
+CommentSize.belongsTo(Comment, {
+  onDelete: 'CASCADE',
+});

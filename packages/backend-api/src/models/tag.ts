@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as Sequelize from 'sequelize';
+import * as DataTypes from 'sequelize';
 
 import { sequelize } from '../sequelize';
 import { IBaseAttributes, IBaseInstance } from './constants';
@@ -37,29 +38,29 @@ export type ITagInstance = Sequelize.Instance<ITagAttributes> & ITagAttributes &
  */
 export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   key: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   label: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   color: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
     defaultValue: '#000000',
   },
 
   description: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: true,
   },
 
@@ -67,7 +68,7 @@ export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
   // various analytics which users are never expected to see. Or if a ML
   // tag is in "beta" and is running silently until the kinks are worked out.
   isInBatchView: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
@@ -75,13 +76,13 @@ export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
   // If false, hides from tag lists like reason to reject
   // or tags that moderator can apply to a comment
   isTaggable: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
 
   inSummaryScore: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
@@ -112,4 +113,3 @@ Tag.associate = (models) => {
     as: 'commentScores',
   });
 };
-
