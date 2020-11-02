@@ -91,7 +91,7 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
   },
 
   group: {
-    type: DataTypes.ENUM(USER_GROUPS),
+    type: DataTypes.ENUM(...USER_GROUPS),
     allowNull: false,
   },
 
@@ -164,34 +164,6 @@ export const User = sequelize.define<IUserInstance, IUserAttributes>('user', {
     afterBulkDestroy: updateHappened,
   },
 });
-
-User.associate = (models: any) => {
-  User.belongsToMany(models.Category, {
-    through: {
-      model: models.UserCategoryAssignment,
-      unique: false,
-    },
-    foreignKey: 'userId',
-  });
-
-  User.belongsToMany(models.Article, {
-    through: {
-      model: models.ModeratorAssignment,
-      unique: false,
-    },
-    foreignKey: 'userId',
-    as: 'assignedArticles',
-  });
-
-  User.belongsToMany(models.Category, {
-    through: {
-      model: models.UserCategoryAssignment,
-      unique: false,
-    },
-    foreignKey: 'userId',
-    as: 'assignedCategories',
-  });
-};
 
 export function isUser(instance: any) {
   // TODO: instanceof doesn't work under some circumstances that I don't really understand.
