@@ -38,5 +38,4 @@ export const mysqlConfig: Sequelize.Options = {
     collate: 'utf8_general_ci',
   },
   dialectOptions,
-  operatorsAliases: false,
 };

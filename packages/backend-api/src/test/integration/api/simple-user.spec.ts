@@ -16,7 +16,7 @@ limitations under the License.
 
 import * as chai from 'chai';
 
-import {IUserInstance, User} from '../../../models';
+import {User} from '../../../models';
 import {expect, makeUser} from '../../fixture';
 import {app} from './test_helper';
 
@@ -88,10 +88,10 @@ describe(BASE_URL, () => {
   });
 
   describe('user get/update', () => {
-    let general: IUserInstance;
-    let admin: IUserInstance;
-    let service: IUserInstance;
-    let moderator: IUserInstance;
+    let general: User;
+    let admin: User;
+    let service: User;
+    let moderator: User;
 
     before(async () => {
       general = await makeUser({group: 'general', email: 'general@example.com'});

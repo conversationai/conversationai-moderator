@@ -23,9 +23,6 @@ import {
   User,
 } from '../../../models';
 import {
-  ICommentScoreRequestInstance,
-} from '../../../models';
-import {
   expect,
   makeComment,
   makeUser,
@@ -39,7 +36,7 @@ const prefixed = `${BASE_URL}/`;
 
 describe(prefixed, () => {
   const url = `${prefixed}scores/:id`;
-  let csRequest: ICommentScoreRequestInstance;
+  let csRequest: CommentScoreRequest;
   let score: {score: number, begin: number, end: number};
 
   describe('/scores/:id', () => {
