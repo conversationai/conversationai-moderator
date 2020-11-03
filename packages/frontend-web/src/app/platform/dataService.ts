@@ -420,8 +420,13 @@ export async function checkAuthorization(): Promise<void> {
 
 async function makeCommentAction(path: string, ids: Array<string>): Promise<void> {
   if (ids.length <= 0) { return; }
+  const idUserArray =  ids.map((commentId) => {
+    return {
+      commentId,
+    };
+  });
   const url = serviceURL('commentActions', path);
-  await axios.post(url, { data: ids, runImmediately: true });
+  await axios.post(url, { data: idUserArray, runImmediately: true });
 }
 
 async function makeCommentActionForId(path: string, commentId: string): Promise<void> {
