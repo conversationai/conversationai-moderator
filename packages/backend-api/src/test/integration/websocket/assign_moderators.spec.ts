@@ -17,7 +17,6 @@ limitations under the License.
 import * as chai from 'chai';
 
 import { Article, Category, User } from '../../../models';
-import { IArticleInstance, ICategoryInstance, IUserInstance } from '../../../models';
 import { clearInterested } from '../../../models';
 
 import { REPLY_SUCCESS_VALUE } from '../../../api/constants';
@@ -44,9 +43,9 @@ describe('websocket tests: assign moderators', () => {
   let app: any;
   let server: any;
 
-  let user: IUserInstance;
-  let category: ICategoryInstance;
-  let article: IArticleInstance;
+  let user: User;
+  let category: Category;
+  let article: Article;
 
   before(async () => {
     await Article.destroy({where: {}});

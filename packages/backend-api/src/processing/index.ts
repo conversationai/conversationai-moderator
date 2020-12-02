@@ -20,7 +20,7 @@ import { registerHooks } from '../pipeline/hooks';
 
 registerHooks(USER_GROUP_YOUTUBE, youtubeHooks);
 
-export * from './tasks';
-export * from './dashboard';
 export * from './api';
+export * from './dashboard';
+export * from './tasks';
 export * from './worker';

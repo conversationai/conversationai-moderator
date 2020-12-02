@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ICategoryInstance, IUserInstance } from '../../models';
+import { Category, User } from '../../models';
 import { for_one_youtube_user } from './authenticate';
 import { activate_channel, get_article_id_map_for_channel } from './channels';
 import { sync_comment_threads_for_channel } from './comments';
 
 export async function youtubeActivateChannel(
-  owner: IUserInstance,
-  channel: ICategoryInstance,
+  owner: User,
+  channel: Category,
   args: {[key: string]: boolean},
 ) {
   await for_one_youtube_user(owner, async (_, auth) => {
@@ -30,8 +30,8 @@ export async function youtubeActivateChannel(
 }
 
 export async function youtubeSynchronizeChannel(
-  owner: IUserInstance,
-  channel: ICategoryInstance,
+  owner: User,
+  channel: Category,
 ) {
   const articleIdMap = await get_article_id_map_for_channel(channel);
   await for_one_youtube_user(owner, async (_, auth) => {

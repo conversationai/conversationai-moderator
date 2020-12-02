@@ -14,9 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-
+import { storiesOf } from '@storybook/react';
 import { Button } from './Button';
 
 storiesOf('Button', module)

@@ -48,7 +48,7 @@ const validateDetailRequest = (schema: Joi.Schema) => validateRequest(dataSchema
  * Queues an accept, reject, defer or highlight action. Accepts array of comment ids, or a single comment id.
  */
 export function queueMainAction(action: CommentActions): express.RequestHandler {
-  return async ({ body, user }, res, next) => {
+  return async ({ body, user }, res) => {
     const dataArray = Array.isArray(body.data) ? body.data : [body.data];
     const isBatchAction = (dataArray.length > 1);
 
@@ -59,7 +59,6 @@ export function queueMainAction(action: CommentActions): express.RequestHandler 
     }
 
     res.json(REPLY_SUCCESS);
-    next();
   };
 }
 
@@ -67,7 +66,7 @@ export function queueMainAction(action: CommentActions): express.RequestHandler 
  * Queues an tag action. Accepts array of comment ids, or a single comment id.
  */
 export function queueScoreCommentSummaryAction(action: ScoreActions): express.RequestHandler {
-  return async ({ body, params, user }, res, next) => {
+  return async ({ body, params, user }, res) => {
     const dataArray = Array.isArray(body.data) ? body.data : [body.data];
     const parsedTagId = parseInt(params.tagid, 10);
 
@@ -77,7 +76,6 @@ export function queueScoreCommentSummaryAction(action: ScoreActions): express.Re
     }
 
     res.json(REPLY_SUCCESS);
-    next();
   };
 }
 
@@ -85,12 +83,11 @@ export function queueScoreCommentSummaryAction(action: ScoreActions): express.Re
  * Queues an tag action. Accepts array of comment ids, or a single comment id.
  */
 export function queueSingleScoreAction(action: ScoreActions): express.RequestHandler {
-  return async ({ body, params, user }, res, next) => {
+  return async ({ body, params, user }, res) => {
     const parsedCommentId = parseInt(params.commentid, 10);
     const parsedTagId = parseInt(params.tagid, 10);
     await enqueueScoreAction(action, user.id, parsedCommentId, parsedTagId, body.runImmediately);
     res.json(REPLY_SUCCESS);
-    next();
   };
 }
 
@@ -160,7 +157,7 @@ export function createCommentActionsService(): express.Router {
 
   router.post('/:commentid/scores',
     validateDetailRequest(detailAddTagSchema),
-    async ({ body, params, user }, res, next) => {
+    async ({ body, params, user }, res) => {
       await enqueueAddTagTask(
         parseInt(params.commentid, 10),
         parseInt(body.data.tagId, 10),
@@ -170,39 +167,34 @@ export function createCommentActionsService(): express.Router {
         body.runImmediately);
 
       res.json(REPLY_SUCCESS);
-      next();
     },
   );
 
   router.post('/:commentid/scores/:commentscoreid/reset',
-    async ({ body, params}, res, next) => {
+    async ({ body, params}, res) => {
       await enqueueResetTagTask(parseInt(params.commentscoreid, 10), body.runImmediately);
       res.json(REPLY_SUCCESS);
-      next();
     },
   );
 
   router.post('/:commentid/scores/:commentscoreid/confirm',
-    async ({ body, params, user}, res, next) => {
+    async ({ body, params, user}, res) => {
       await enqueueConfirmTagTask(user && user.id, parseInt(params.commentscoreid, 10), body.runImmediately);
       res.json(REPLY_SUCCESS);
-      next();
     },
   );
 
   router.post('/:commentid/scores/:commentscoreid/reject',
-    async ({ body, params, user}, res, next) => {
+    async ({ body, params, user}, res) => {
       await enqueueRejectTagTask(user && user.id, parseInt(params.commentscoreid, 10), body.runImmediately);
       res.json(REPLY_SUCCESS);
-      next();
     },
   );
 
   router.delete('/:commentid/scores/:commentscoreid',
-    async ({ body, params}, res, next) => {
+    async ({ body, params}, res) => {
       await enqueueRemoveTagTask(parseInt(params.commentscoreid, 10), body.runImmediately);
       res.json(REPLY_SUCCESS);
-      next();
     },
   );
 

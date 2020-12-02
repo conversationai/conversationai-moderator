@@ -14,23 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export interface IPagingParams {
-  limit?: number;
-  offset?: number;
-}
-
-export interface IFilters {
-  [key: string]: string | Array<string | number> | IFilters | boolean | number | null;
-}
-
-export interface IFields {
-  [key: string]: Array<string>;
-}
-
 export interface IParams {
-  page: IPagingParams;
-  include: Array<string>;
-  filters: IFilters;
   sort: Array<string>;
-  fields: IFields;
 }

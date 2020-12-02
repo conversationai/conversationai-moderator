@@ -22,8 +22,8 @@ import { rtrim } from 'underscore.string';
 import { config } from '../config';
 import { logger } from '../logger';
 import {
-  ICommentInstance,
-  IUserInstance,
+  Comment,
+  User,
 } from '../models';
 import { IScoreData } from './shim';
 
@@ -73,7 +73,7 @@ interface IBotPostData {
  * @param {object} processMachineScore  Callback to invoke if score is determined synchronously.
  */
 export function createShim(
-    scorer: IUserInstance,
+    scorer: User,
     processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>,
     ) {
   const serviceUserId = scorer.id;
@@ -83,7 +83,7 @@ export function createShim(
   const apiKey = extra.apiKey;
 
   return {
-    sendToScorer: async (comment: ICommentInstance, correlator: string | number) => {
+    sendToScorer: async (comment: Comment, correlator: string | number) => {
       const article = await comment.getArticle();
 
       // Ensure data is present, otherwise an error will throw.

@@ -70,7 +70,7 @@ export class UserForm extends React.Component<IAddUsersProps> {
             onChange={partial(this.onValueChange, 'name')}
           />
         </div>
-        {realUser &&
+        {realUser && (
         <div key="email" {...css(SETTINGS_STYLES.row)}>
           <label htmlFor="email" {...css(SETTINGS_STYLES.label)}>Email Address</label>
           <input
@@ -81,8 +81,8 @@ export class UserForm extends React.Component<IAddUsersProps> {
             onChange={partial(this.onValueChange, 'email')}
           />
         </div>
-        }
-        {realUser &&
+        )}
+        {realUser && (
         <div key="group" {...css(SETTINGS_STYLES.row, SETTINGS_STYLES.selectBoxRow)}>
           <label htmlFor="name" {...css(SETTINGS_STYLES.label)}>Group</label>
           <select
@@ -98,7 +98,7 @@ export class UserForm extends React.Component<IAddUsersProps> {
           </select>
           <span aria-hidden="true" {...css(SETTINGS_STYLES.arrow)} />
         </div>
-        }
+        )}
         <div key="active" {...css(SETTINGS_STYLES.row)}>
           <label htmlFor="isActive" {...css(SETTINGS_STYLES.label)}>User is active</label>
           <Switch checked={user.isActive} color="primary" onChange={this.onIsActiveChange}/>

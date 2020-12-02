@@ -14,42 +14,37 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
+import {DataTypes, Model} from 'sequelize';
 
-export interface ICommentSizeAttributes extends IBaseAttributes {
+import {sequelize} from '../sequelize';
+import {Comment} from './comment';
+
+export class CommentSize extends Model {
+  id: number;
   commentId: number;
   width: number;
   height: number;
 }
 
-export type ICommentSizeInstance = Sequelize.Instance<ICommentSizeAttributes> &
-  ICommentSizeAttributes & IBaseInstance;
-
-/**
- * Category model
- */
-export const CommentSize = sequelize.define<
-  ICommentSizeInstance,
-  ICommentSizeAttributes
->('comment_size', {
+CommentSize.init({
   commentId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     primaryKey: true,
   },
 
   width: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
 
   height: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
-}, {
+},{
+  sequelize,
+  modelName: 'comment_size',
   indexes: [
     {
       name: 'commentId_width_index',
@@ -61,8 +56,6 @@ export const CommentSize = sequelize.define<
 
 CommentSize.removeAttribute('id');
 
-CommentSize.associate = (models) => {
-  CommentSize.belongsTo(models.Comment, {
-    onDelete: 'CASCADE',
-  });
-};
+CommentSize.belongsTo(Comment, {
+  onDelete: 'CASCADE',
+});

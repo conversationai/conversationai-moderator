@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:12.19
+        environment:
+          NODE_ENV: circle_ci
+    steps:
+      - checkout
+      - run: ./bin/install-circleci
+      - run: ./bin/lint
+      - run: ./bin/test

@@ -28,12 +28,6 @@ import {
   User,
 } from '../../../models';
 import {
-  IArticleInstance,
-  ICommentFlagInstance,
-  ICommentInstance,
-  IUserInstance,
-} from '../../../models';
-import {
   expect,
   makeArticle,
   makeComment,
@@ -45,15 +39,15 @@ import { app, setAuthenticatedUser } from './test_helper';
 const BASE_URL = `/services/commentActions`;
 
 describe(BASE_URL, () => {
-  let article: IArticleInstance;
-  let comment1: ICommentInstance;
-  let comment2: ICommentInstance;
-  let user: IUserInstance;
-  let user2: IUserInstance;
-  let unresolved1: ICommentFlagInstance;
-  let unresolved2: ICommentFlagInstance;
-  let resolved1: ICommentFlagInstance;
-  let unresolved3: ICommentFlagInstance;
+  let article: Article;
+  let comment1: Comment;
+  let comment2: Comment;
+  let user: User;
+  let user2: User;
+  let unresolved1: CommentFlag;
+  let unresolved2: CommentFlag;
+  let resolved1: CommentFlag;
+  let unresolved3: CommentFlag;
 
   async function checkArticle(
     x: string,

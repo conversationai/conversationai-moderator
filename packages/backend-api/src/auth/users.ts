@@ -15,20 +15,18 @@ limitations under the License.
 */
 
 import {
-  IUserInstance,
   User,
   USER_GROUP_ADMIN,
   USER_GROUP_YOUTUBE,
   UserSocialAuth,
 } from '../models';
-import { IUserSocialAuthAttributes, IUserSocialAuthInstance } from '../models';
 
 /**
  * Indicates whether a user is valid to be authenticated
  *
  * @param {object} user User model instance
  */
-export function isValidUser(user: IUserInstance): boolean {
+export function isValidUser(user: User): boolean {
   return user.isActive;
 }
 
@@ -41,9 +39,9 @@ export function isValidUser(user: IUserInstance): boolean {
  *                          `created` (boolean) (use .spread())
  */
 export async function findOrCreateUserSocialAuth(
-  user: IUserInstance,
-  data: IUserSocialAuthAttributes,
-): Promise<[IUserSocialAuthInstance, boolean]> {
+  user: User,
+  data: Pick<UserSocialAuth, 'provider' | 'socialId'>,
+): Promise<[UserSocialAuth, boolean]> {
   const socialAuthData = {
     ...data,
     userId: user.id,

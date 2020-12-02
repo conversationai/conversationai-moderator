@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { pick } from 'lodash';
-import * as Sequelize from 'sequelize';
+import { Model } from 'sequelize';
 
 export const TAG_FIELDS = ['id', 'color', 'description', 'key', 'label', 'isInBatchView', 'inSummaryScore', 'isTaggable'];
 export const RANGE_FIELDS = ['id', 'categoryId', 'lowerThreshold', 'upperThreshold', 'tagId'];
@@ -49,12 +49,12 @@ export type serializedData = {[key: string]: {} | Array<string> | string | numbe
 
 // Convert IDs to strings, and assignedModerators to arrays of strings.
 export function serialiseObject(
-  o: Sequelize.Instance<any>,
+  o: Model,
   fields: Array<string>,
 ): serializedData {
-  const serialised = pick(o.toJSON(), fields);
+  const serialised = pick(o.toJSON(), fields) as {[key: string]: any};
 
-  for (const k in serialised) {
+  for (const k of Object.keys(serialised)) {
     const v = serialised[k];
 
     if (ID_FIELDS.has(k) && v) {

@@ -14,12 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { configure } from '@storybook/react';
+import { addDecorator, configure } from "@storybook/react";
+import React from "react";
+import { Provider } from "react-redux";
+import { store } from "../../src/app/store";
 
-const req = require.context('../../src/app', true, /Story\.tsx?$/);
+const withProvider = (story) => <Provider store={store}>{story()}</Provider>;
+addDecorator(withProvider);
+
+const req = require.context("../../src/app", true, /Story\.tsx?$/);
 
 function loadStories() {
-  req.keys().forEach(req)
+  req.keys().forEach(req);
 }
 
 configure(loadStories, module);

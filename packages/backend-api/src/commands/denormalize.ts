@@ -22,8 +22,6 @@ import { logger } from '../logger';
 import {
   Article,
   Comment,
-  IArticleInstance,
-  ICommentInstance,
 } from '../models';
 
 export const command = 'denormalize';
@@ -39,7 +37,7 @@ export async function handler(argv: any) {
   if (!argv.articlesOnly) {
     const comments = await Comment.findAll();
 
-    await Bluebird.mapSeries(comments, (c: ICommentInstance) => {
+    await Bluebird.mapSeries(comments, (c: Comment) => {
       logger.info('Denormalizing comment ' + c.id);
 
       return denormalizeCountsForComment(c);
@@ -48,7 +46,7 @@ export async function handler(argv: any) {
 
   const articles = await Article.findAll();
 
-  await Bluebird.mapSeries(articles, (a: IArticleInstance) => {
+  await Bluebird.mapSeries(articles, (a: Article) => {
     logger.info('Denormalizing article ' + a.id);
 
     return denormalizeCommentCountsForArticle(a, false);

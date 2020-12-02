@@ -1,6 +1,6 @@
 # OSMOD Services API
 
-The OSMOD Services API is an extension of [the REST API](osmod_rest_api.md) which allows publishing and tagging operations to comments.
+The OSMOD Services API allows publishing and tagging operations to comments.
 
 This documentation covers the services:
 

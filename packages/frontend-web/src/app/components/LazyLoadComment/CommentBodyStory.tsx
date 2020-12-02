@@ -63,7 +63,7 @@ storiesOf('CommentBody', module)
   .addDecorator((story) => (
     <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
   ))
-  .add('Basic', () => {
+  .add('DontTest:Basic', () => {
     return (
       <div>
         <BasicBody
@@ -86,7 +86,7 @@ storiesOf('CommentBody', module)
       </div>
     );
   })
-  .add('Hide Comment Action', () => {
+  .add('DontTest:Hide Comment Action', () => {
     return (
       <div>
         <BasicBody
@@ -98,7 +98,7 @@ storiesOf('CommentBody', module)
       </div>
     );
   })
-  .add('Show Article', () => {
+  .add('DontTest:Show Article', () => {
     return (
       <Provider store={store}>
         <div>

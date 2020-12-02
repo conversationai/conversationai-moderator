@@ -23,4 +23,5 @@ distanceInWordsToNow.mockReturnValue('over X years');
 
 initStoryshots({
   configPath: __dirname,
+  storyNameRegex: /^((?!.*?DontTest).)*$/,
 });

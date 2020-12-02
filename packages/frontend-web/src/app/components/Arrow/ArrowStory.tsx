@@ -15,9 +15,9 @@ limitations under the License.
 */
 
 import { storiesOf } from '@storybook/react';
-import { ArrowIcon } from '../Icons';
 import { DARK_COLOR } from '../../styles';
 import { css } from '../../utilx';
+import { ArrowIcon } from '../Icons';
 import { Arrow } from './Arrow';
 
 storiesOf('Arrow', module)

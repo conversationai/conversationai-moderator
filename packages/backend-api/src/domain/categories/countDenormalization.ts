@@ -17,9 +17,9 @@ limitations under the License.
 import {
   Article,
 } from '../../models';
-import { ICategoryInstance } from '../../models';
+import { Category } from '../../models';
 
-export async function denormalizeCommentCountsForCategory(category: ICategoryInstance) {
+export async function denormalizeCommentCountsForCategory(category: Category) {
   const query = { where: { categoryId: category.id } };
 
   const [
