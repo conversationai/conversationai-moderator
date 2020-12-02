@@ -233,7 +233,7 @@ export function createHistogramScoresService(): express.Router {
   router.get('/articles/:id/tags/:tagId/chart', async (req, res, next) => {
     return scoresToChart('score', () => {
       const { params: { id, tagId } } = req;
-      const articleId = parseInt(id, 10)
+      const articleId = parseInt(id, 10);
       if (tagId === 'SUMMARY_SCORE') {
         return getMaxSummaryScoreForArticle(articleId);
       }

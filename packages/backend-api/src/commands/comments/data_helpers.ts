@@ -6,7 +6,7 @@ import {
   IAuthorAttributes,
   ICategoryInstance,
   IUserInstance,
-  RESET_COUNTS, User, USER_GROUP_SERVICE
+  RESET_COUNTS, User, USER_GROUP_SERVICE,
 } from '../../models';
 import {postProcessComment, sendForScoring} from '../../pipeline';
 
