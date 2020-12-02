@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 5.7.18, for osx10.13 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.22, for Linux (x86_64)
 --
--- Host: localhost    Database: os_moderator
+-- Host: localhost    Database: os_moderator_schema_test_migrations
 -- ------------------------------------------------------
--- Server version	5.7.18
+-- Server version	8.0.22-0ubuntu0.20.04.3
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,9 +21,9 @@
 
 DROP TABLE IF EXISTS `SequelizeMeta`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `SequelizeMeta` (
-  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`name`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `SequelizeMeta_name_unique` (`name`)
@@ -45,34 +45,38 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `articles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `articles` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `sourceId` char(255) NOT NULL,
   `title` char(255) NOT NULL,
   `text` longtext NOT NULL,
-  `isAutoModerated` tinyint(1) DEFAULT '1',
+  `isAutoModerated` tinyint(1) NOT NULL DEFAULT '1',
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `url` char(255) NOT NULL,
   `extra` json DEFAULT NULL,
-  `categoryId` int(10) unsigned DEFAULT NULL,
-  `unprocessedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `unmoderatedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `moderatedCount` int(10) unsigned NOT NULL DEFAULT '0',
+  `categoryId` int unsigned DEFAULT NULL,
+  `unprocessedCount` int unsigned NOT NULL DEFAULT '0',
+  `unmoderatedCount` int unsigned NOT NULL DEFAULT '0',
+  `moderatedCount` int unsigned NOT NULL DEFAULT '0',
   `sourceCreatedAt` datetime DEFAULT NULL,
-  `highlightedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `approvedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `rejectedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `deferedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `flaggedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `recommendedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `disableRules` tinyint(1) NOT NULL DEFAULT '0',
-  `batchedCount` int(10) unsigned NOT NULL DEFAULT '0',
+  `highlightedCount` int unsigned NOT NULL DEFAULT '0',
+  `approvedCount` int unsigned NOT NULL DEFAULT '0',
+  `rejectedCount` int unsigned NOT NULL DEFAULT '0',
+  `deferredCount` int unsigned NOT NULL DEFAULT '0',
+  `flaggedCount` int unsigned NOT NULL DEFAULT '0',
+  `batchedCount` int unsigned NOT NULL DEFAULT '0',
+  `allCount` int unsigned NOT NULL DEFAULT '0',
+  `ownerId` int unsigned DEFAULT NULL,
+  `lastModeratedAt` datetime DEFAULT NULL,
+  `isCommentingEnabled` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `sourceId_index` (`sourceId`),
-  KEY `categoryId_foreign_idx` (`categoryId`),
-  CONSTRAINT `categoryId_foreign_idx` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  KEY `categoryId` (`categoryId`),
+  KEY `ownerId` (`ownerId`),
+  CONSTRAINT `articles_ibfk_1` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `articles_ibfk_2` FOREIGN KEY (`ownerId`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -91,26 +95,30 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `categories` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `label` char(255) NOT NULL,
-  `isActive` tinyint(1) NOT NULL DEFAULT '1',
+  `isActive` tinyint(1) DEFAULT '1',
   `extra` json DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `unprocessedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `unmoderatedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `moderatedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `highlightedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `approvedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `rejectedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `deferedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `flaggedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `recommendedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `batchedCount` int(10) unsigned NOT NULL DEFAULT '0',
+  `unprocessedCount` int unsigned NOT NULL DEFAULT '0',
+  `unmoderatedCount` int unsigned NOT NULL DEFAULT '0',
+  `moderatedCount` int unsigned NOT NULL DEFAULT '0',
+  `highlightedCount` int unsigned NOT NULL DEFAULT '0',
+  `approvedCount` int unsigned NOT NULL DEFAULT '0',
+  `rejectedCount` int unsigned NOT NULL DEFAULT '0',
+  `deferredCount` int unsigned NOT NULL DEFAULT '0',
+  `flaggedCount` int unsigned NOT NULL DEFAULT '0',
+  `batchedCount` int unsigned NOT NULL DEFAULT '0',
+  `sourceId` char(255) DEFAULT NULL,
+  `allCount` int unsigned NOT NULL DEFAULT '0',
+  `ownerId` int unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `label_index` (`label`)
+  UNIQUE KEY `label_index` (`label`),
+  KEY `ownerId` (`ownerId`),
+  CONSTRAINT `categories_ibfk_2` FOREIGN KEY (`ownerId`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -129,17 +137,26 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `comment_flags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `comment_flags` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `sourceId` char(255) DEFAULT NULL,
   `extra` json DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `commentId` bigint(20) unsigned DEFAULT NULL,
+  `commentId` int unsigned DEFAULT NULL,
+  `label` char(80) NOT NULL,
+  `detail` varchar(255) DEFAULT NULL,
+  `authorSourceId` char(255) DEFAULT NULL,
+  `isResolved` tinyint(1) DEFAULT '0',
+  `isRecommendation` tinyint(1) DEFAULT '0',
+  `resolvedById` int unsigned DEFAULT NULL,
+  `resolvedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `comment_flags_commentId_foreign_idx` (`commentId`),
-  CONSTRAINT `comment_flags_commentId_foreign_idx` FOREIGN KEY (`commentId`) REFERENCES `comments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `comment_flags_resolvedById_foreign_idx` (`resolvedById`),
+  CONSTRAINT `comment_flags_commentId_foreign_idx` FOREIGN KEY (`commentId`) REFERENCES `comments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `comment_flags_resolvedById_foreign_idx` FOREIGN KEY (`resolvedById`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -153,49 +170,20 @@ LOCK TABLES `comment_flags` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `comment_recommendations`
---
-
-DROP TABLE IF EXISTS `comment_recommendations`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `comment_recommendations` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `sourceId` char(255) DEFAULT NULL,
-  `extra` json DEFAULT NULL,
-  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `commentId` bigint(20) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `comment_recommendations_commentId_foreign_idx` (`commentId`),
-  CONSTRAINT `comment_recommendations_commentId_foreign_idx` FOREIGN KEY (`commentId`) REFERENCES `comments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `comment_recommendations`
---
-
-LOCK TABLES `comment_recommendations` WRITE;
-/*!40000 ALTER TABLE `comment_recommendations` DISABLE KEYS */;
-/*!40000 ALTER TABLE `comment_recommendations` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `comment_score_requests`
 --
 
 DROP TABLE IF EXISTS `comment_score_requests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `comment_score_requests` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `commentId` bigint(20) unsigned DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `commentId` int unsigned DEFAULT NULL,
   `sentAt` datetime NOT NULL,
   `doneAt` datetime DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `userId` int(10) unsigned DEFAULT NULL,
+  `userId` int unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `commentId` (`commentId`),
   KEY `userId_foreign_idx` (`userId`),
@@ -219,23 +207,23 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `comment_scores`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `comment_scores` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `commentId` bigint(20) unsigned DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `commentId` int unsigned DEFAULT NULL,
   `sourceType` enum('User','Moderator','Machine') NOT NULL,
   `sourceId` char(255) DEFAULT NULL,
-  `commentScoreRequestId` bigint(20) unsigned DEFAULT NULL,
+  `commentScoreRequestId` int unsigned DEFAULT NULL,
   `score` float unsigned NOT NULL,
-  `annotationStart` int(10) unsigned DEFAULT NULL,
-  `annotationEnd` int(10) unsigned DEFAULT NULL,
+  `annotationStart` int unsigned DEFAULT NULL,
+  `annotationEnd` int unsigned DEFAULT NULL,
   `extra` json DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `tagId` int(10) unsigned DEFAULT NULL,
+  `tagId` int unsigned DEFAULT NULL,
   `isConfirmed` tinyint(1) DEFAULT NULL,
-  `confirmedUserId` int(10) unsigned DEFAULT NULL,
-  `userId` int(10) unsigned DEFAULT NULL,
+  `confirmedUserId` int unsigned DEFAULT NULL,
+  `userId` int unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `commentScoreRequestId` (`commentScoreRequestId`),
   KEY `commentId_index` (`commentId`),
@@ -267,11 +255,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `comment_sizes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `comment_sizes` (
-  `commentId` bigint(20) unsigned NOT NULL,
-  `width` int(10) unsigned NOT NULL,
-  `height` int(10) unsigned NOT NULL,
+  `commentId` int unsigned NOT NULL,
+  `width` int unsigned NOT NULL,
+  `height` int unsigned NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`commentId`),
@@ -295,13 +283,13 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `comment_summary_scores`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `comment_summary_scores` (
-  `commentId` bigint(20) unsigned NOT NULL,
-  `tagId` int(10) unsigned NOT NULL,
+  `commentId` int unsigned NOT NULL,
+  `tagId` int unsigned NOT NULL,
   `score` float unsigned NOT NULL,
   `isConfirmed` tinyint(1) DEFAULT NULL,
-  `confirmedUserId` int(10) unsigned DEFAULT NULL,
+  `confirmedUserId` int unsigned DEFAULT NULL,
   PRIMARY KEY (`commentId`,`tagId`),
   UNIQUE KEY `commentId_tagId_index` (`commentId`,`tagId`),
   KEY `tagId` (`tagId`),
@@ -327,11 +315,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `comment_top_scores`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `comment_top_scores` (
-  `commentId` bigint(20) unsigned NOT NULL,
-  `tagId` int(10) unsigned NOT NULL,
-  `commentScoreId` bigint(20) unsigned DEFAULT NULL,
+  `commentId` int unsigned NOT NULL,
+  `tagId` int unsigned NOT NULL,
+  `commentScoreId` int unsigned DEFAULT NULL,
   PRIMARY KEY (`commentId`,`tagId`),
   UNIQUE KEY `commentId_tagId_index` (`commentId`,`tagId`),
   KEY `tagId` (`tagId`),
@@ -357,21 +345,21 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `comments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `comments` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `sourceId` char(255) NOT NULL,
-  `articleId` bigint(20) unsigned DEFAULT NULL,
+  `articleId` int unsigned DEFAULT NULL,
   `replyToSourceId` char(255) DEFAULT NULL,
   `authorSourceId` char(255) NOT NULL,
   `text` longtext NOT NULL,
   `author` json NOT NULL,
   `isScored` tinyint(1) NOT NULL DEFAULT '0',
   `isAccepted` tinyint(1) DEFAULT NULL,
-  `isDeferred` tinyint(1) DEFAULT NULL,
-  `isHighlighted` tinyint(1) DEFAULT NULL,
-  `isBatchResolved` tinyint(1) DEFAULT NULL,
-  `isAutoResolved` tinyint(1) DEFAULT NULL,
+  `isDeferred` tinyint(1) DEFAULT '0',
+  `isHighlighted` tinyint(1) DEFAULT '0',
+  `isBatchResolved` tinyint(1) DEFAULT '0',
+  `isAutoResolved` tinyint(1) DEFAULT '0',
   `sourceCreatedAt` datetime DEFAULT NULL,
   `sentForScoring` datetime DEFAULT NULL,
   `extra` json DEFAULT NULL,
@@ -379,14 +367,14 @@ CREATE TABLE `comments` (
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sentBackToPublisher` datetime DEFAULT NULL,
   `isModerated` tinyint(1) NOT NULL DEFAULT '0',
-  `flaggedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `recommendedCount` int(10) unsigned NOT NULL DEFAULT '0',
-  `replyId` bigint(20) unsigned DEFAULT NULL,
+  `replyId` int unsigned DEFAULT NULL,
   `maxSummaryScore` float unsigned DEFAULT NULL,
-  `maxSummaryScoreTagId` bigint(20) unsigned DEFAULT NULL,
+  `maxSummaryScoreTagId` int unsigned DEFAULT NULL,
+  `ownerId` int unsigned DEFAULT NULL,
+  `unresolvedFlagsCount` int unsigned NOT NULL DEFAULT '0',
+  `flagsSummary` json DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `authorSourceId_index` (`authorSourceId`),
-  KEY `articleId_index` (`articleId`),
   KEY `replyToSourceId_index` (`replyToSourceId`),
   KEY `isAccepted_index` (`isAccepted`),
   KEY `isDeferred_index` (`isDeferred`),
@@ -398,8 +386,12 @@ CREATE TABLE `comments` (
   KEY `replyId_index` (`replyId`),
   KEY `maxSummaryScore_index` (`maxSummaryScore`),
   KEY `maxSummaryScoreTagId_index` (`maxSummaryScoreTagId`),
+  KEY `articleId` (`articleId`),
+  KEY `ownerId` (`ownerId`),
   FULLTEXT KEY `comments_text` (`text`),
-  CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`articleId`) REFERENCES `articles` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`articleId`) REFERENCES `articles` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`replyId`) REFERENCES `comments` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `comments_ibfk_3` FOREIGN KEY (`ownerId`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -413,14 +405,39 @@ LOCK TABLES `comments` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `configuration_items`
+--
+
+DROP TABLE IF EXISTS `configuration_items`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `configuration_items` (
+  `id` varchar(255) NOT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  `data` json NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `configuration_items`
+--
+
+LOCK TABLES `configuration_items` WRITE;
+/*!40000 ALTER TABLE `configuration_items` DISABLE KEYS */;
+/*!40000 ALTER TABLE `configuration_items` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `csrfs`
 --
 
 DROP TABLE IF EXISTS `csrfs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `csrfs` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `clientCSRF` char(255) NOT NULL,
   `serverCSRF` char(255) NOT NULL,
   `createdAt` datetime NOT NULL,
@@ -445,12 +462,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `decisions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `decisions` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `commentId` bigint(20) unsigned DEFAULT NULL,
-  `userId` int(10) unsigned DEFAULT NULL,
-  `moderationRuleId` int(10) unsigned DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `commentId` int unsigned DEFAULT NULL,
+  `userId` int unsigned DEFAULT NULL,
+  `moderationRuleId` int unsigned DEFAULT NULL,
   `status` enum('Accept','Reject','Defer') NOT NULL,
   `source` enum('User','Rule') NOT NULL,
   `isCurrentDecision` tinyint(1) NOT NULL DEFAULT '1',
@@ -477,29 +494,53 @@ LOCK TABLES `decisions` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `last_updates`
+--
+
+DROP TABLE IF EXISTS `last_updates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `last_updates` (
+  `id` int unsigned NOT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  `lastUpdate` int unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `last_updates`
+--
+
+LOCK TABLES `last_updates` WRITE;
+/*!40000 ALTER TABLE `last_updates` DISABLE KEYS */;
+/*!40000 ALTER TABLE `last_updates` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `moderation_rules`
 --
 
 DROP TABLE IF EXISTS `moderation_rules`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `moderation_rules` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `createdBy` int(10) unsigned DEFAULT NULL,
-  `categoryId` int(10) unsigned DEFAULT NULL,
-  `lowerThreshold` float unsigned DEFAULT NULL,
-  `upperThreshold` float unsigned DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `createdBy` int unsigned DEFAULT NULL,
+  `categoryId` int unsigned DEFAULT NULL,
+  `lowerThreshold` float unsigned NOT NULL,
+  `upperThreshold` float unsigned NOT NULL,
   `action` enum('Accept','Reject','Defer','Highlight') NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `tagId` int(10) unsigned NOT NULL,
+  `tagId` int unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `createdBy` (`createdBy`),
   KEY `categoryId` (`categoryId`),
-  KEY `moderation_rules_tagId_foreign_idx` (`tagId`),
-  CONSTRAINT `moderation_rules_ibfk_3` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `moderation_rules_tagId_foreign_idx` FOREIGN KEY (`tagId`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  KEY `tagId` (`tagId`),
+  CONSTRAINT `moderation_rules_ibfk_1` FOREIGN KEY (`tagId`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `moderation_rules_ibfk_2` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -518,11 +559,11 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `moderator_assignments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `moderator_assignments` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `userId` int(10) unsigned DEFAULT NULL,
-  `articleId` bigint(20) unsigned DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `userId` int unsigned NOT NULL,
+  `articleId` int unsigned NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -549,12 +590,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `preselects`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `preselects` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `createdBy` int(10) unsigned DEFAULT NULL,
-  `categoryId` int(10) unsigned DEFAULT NULL,
-  `tagId` int(10) unsigned DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `createdBy` int unsigned DEFAULT NULL,
+  `categoryId` int unsigned DEFAULT NULL,
+  `tagId` int unsigned DEFAULT NULL,
   `lowerThreshold` float unsigned DEFAULT NULL,
   `upperThreshold` float unsigned DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -566,7 +607,7 @@ CREATE TABLE `preselects` (
   CONSTRAINT `preselects_ibfk_1` FOREIGN KEY (`createdBy`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `preselects_ibfk_2` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `preselects_ibfk_3` FOREIGN KEY (`tagId`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -585,12 +626,12 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tagging_sensitivities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tagging_sensitivities` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `createdBy` int(10) unsigned DEFAULT NULL,
-  `categoryId` int(10) unsigned DEFAULT NULL,
-  `tagId` int(10) unsigned DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `createdBy` int unsigned DEFAULT NULL,
+  `categoryId` int unsigned DEFAULT NULL,
+  `tagId` int unsigned DEFAULT NULL,
   `lowerThreshold` float unsigned DEFAULT NULL,
   `upperThreshold` float unsigned DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -602,7 +643,7 @@ CREATE TABLE `tagging_sensitivities` (
   CONSTRAINT `tagging_sensitivities_ibfk_1` FOREIGN KEY (`createdBy`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `tagging_sensitivities_ibfk_2` FOREIGN KEY (`categoryId`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `tagging_sensitivities_ibfk_3` FOREIGN KEY (`tagId`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -621,9 +662,9 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `tags`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `label` char(255) NOT NULL,
   `color` char(255) NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -635,7 +676,7 @@ CREATE TABLE `tags` (
   `isTaggable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `tags_key` (`key`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -654,10 +695,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user_category_assignments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_category_assignments` (
-  `userId` int(10) unsigned NOT NULL,
-  `categoryId` int(10) unsigned NOT NULL,
+  `userId` int unsigned NOT NULL,
+  `categoryId` int unsigned NOT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`userId`,`categoryId`),
@@ -682,10 +723,10 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `user_social_auths`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_social_auths` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `userId` int(10) unsigned NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `userId` int unsigned NOT NULL,
   `socialId` char(255) NOT NULL,
   `provider` char(150) NOT NULL,
   `extra` json DEFAULT NULL,
@@ -714,22 +755,22 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `group` enum('general','admin','service') NOT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `group` enum('general','admin','service','moderator','youtube') NOT NULL,
   `name` char(255) NOT NULL,
   `email` char(255) DEFAULT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT '0',
   `extra` json DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `endpoint` char(255) DEFAULT NULL,
   `avatarURL` char(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `users_email` (`email`),
+  UNIQUE KEY `users_email_group` (`email`,`group`),
   KEY `group_index` (`group`),
-  KEY `isActive_index` (`isActive`)
+  KEY `isActive_index` (`isActive`),
+  KEY `users_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -751,4 +792,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-06-14 10:26:04
+-- Dump completed on 2020-12-02 11:42:31

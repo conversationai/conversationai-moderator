@@ -14,13 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { updateHappened } from './last_update';
+import {sequelize} from '../sequelize';
+import {Category} from './category';
+import {updateHappened} from './last_update';
+import {Tag} from './tag';
+import {User} from './user';
 
-export interface ITaggingSensitivityAttributes extends IBaseAttributes{
+export class TaggingSensitivity extends Model {
+  id: number;
   tagId?: number;
   categoryId?: number;
   createdBy?: number;
@@ -28,47 +31,40 @@ export interface ITaggingSensitivityAttributes extends IBaseAttributes{
   upperThreshold: number;
 }
 
-export type ITaggingSensitivityInstance = Sequelize.Instance<ITaggingSensitivityAttributes> &
-  ITaggingSensitivityAttributes & IBaseInstance;
-
-/**
- * TaggingSensitivity model
- */
-export const TaggingSensitivity = sequelize.define<
-  ITaggingSensitivityInstance,
-  ITaggingSensitivityAttributes
->('tagging_sensitivity', {
+TaggingSensitivity.init({
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   tagId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   categoryId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   createdBy: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   lowerThreshold: {
-    type: Sequelize.FLOAT(2).UNSIGNED,
+    type: DataTypes.FLOAT(2).UNSIGNED,
     allowNull: false,
   },
 
   upperThreshold: {
-    type: Sequelize.FLOAT(2).UNSIGNED,
+    type: DataTypes.FLOAT(2).UNSIGNED,
     allowNull: false,
   },
 }, {
+  sequelize,
+  modelName: 'tagging_sensitivity',
   hooks: {
     afterCreate: updateHappened,
     afterDestroy: updateHappened,
@@ -79,23 +75,21 @@ export const TaggingSensitivity = sequelize.define<
   },
 });
 
-TaggingSensitivity.associate = (models) => {
-  TaggingSensitivity.belongsTo(models.Category, {
-    onDelete: 'CASCADE',
-    foreignKey: {
-      allowNull: true,
-    },
-  });
+TaggingSensitivity.belongsTo(Category, {
+  onDelete: 'CASCADE',
+  foreignKey: {
+    allowNull: true,
+  },
+});
 
-  TaggingSensitivity.belongsTo(models.Tag, {
-    onDelete: 'CASCADE',
-    foreignKey: {
-      allowNull: true,
-    },
-  });
+TaggingSensitivity.belongsTo(Tag, {
+  onDelete: 'CASCADE',
+  foreignKey: {
+    allowNull: true,
+  },
+});
 
-  TaggingSensitivity.belongsTo(models.User, {
-    foreignKey: 'createdBy',
-    constraints: false,
-  });
-};
+TaggingSensitivity.belongsTo(User, {
+  foreignKey: 'createdBy',
+  constraints: false,
+});

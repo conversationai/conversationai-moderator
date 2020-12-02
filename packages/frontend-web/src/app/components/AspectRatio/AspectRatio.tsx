@@ -21,7 +21,7 @@ import { css } from '../../utilx';
 
 export interface IAspectRatioProps extends React.HTMLProps<any> {
   ratio: number;
-  contents: (width: number, height: number) => React.ReactNode;
+  contents(width: number, height: number): React.ReactNode;
 }
 
 export interface IAspectRatioState {

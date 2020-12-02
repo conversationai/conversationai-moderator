@@ -18,11 +18,9 @@ import * as Bluebird from 'bluebird';
 import { maxBy } from 'lodash';
 
 import {
+  Comment,
   CommentScore,
   CommentTopScore,
-  ICommentInstance,
-  ICommentScoreInstance,
-  ITagInstance,
   Tag,
 } from '../../models';
 
@@ -46,7 +44,7 @@ export interface ITopScores {
 /**
  * Figure out the top score given an array of scores. Simply uses the max `score`.
  */
-export function calculateTopScore(scores: Array<ICommentScoreInstance>): ICommentScoreInstance | null {
+export function calculateTopScore(scores: Array<CommentScore>): CommentScore | null {
   const scoresWithRange = scores.filter((s) => {
     return s.annotationStart !== null && s.annotationEnd !== null;
   });
@@ -59,7 +57,7 @@ export function calculateTopScore(scores: Array<ICommentScoreInstance>): ICommen
 /**
  * Get all the scores for a set of comments.
  */
-export async function calculateTopScores(comments: Array<ICommentInstance>, tagId: number): Promise<ITopScores> {
+export async function calculateTopScores(comments: Array<Comment>, tagId: number): Promise<ITopScores> {
   return Bluebird.reduce(comments, async (sum, comment) => {
     const topScore = await CommentTopScore.findOne({
       where: {
@@ -85,7 +83,7 @@ export async function calculateTopScores(comments: Array<ICommentInstance>, tagI
   }, {} as any);
 }
 
-export async function cacheCommentTopScore(comment: ICommentInstance, tag: ITagInstance): Promise<ICommentScoreInstance | null> {
+export async function cacheCommentTopScore(comment: Comment, tag: Tag): Promise<CommentScore | null> {
   const scores = await CommentScore.findAll({
     where: {
       commentId: comment.id,
@@ -106,7 +104,7 @@ export async function cacheCommentTopScore(comment: ICommentInstance, tag: ITagI
   return topScore;
 }
 
-export async function cacheCommentTopScores(comment: ICommentInstance) {
+export async function cacheCommentTopScores(comment: Comment) {
   const tags = await Tag.findAll();
   for (const tag of tags) {
     await cacheCommentTopScore(comment, tag);

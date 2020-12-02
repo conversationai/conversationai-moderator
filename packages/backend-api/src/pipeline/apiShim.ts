@@ -21,8 +21,10 @@ import * as striptags  from 'striptags';
 
 import { logger } from '../logger';
 import {
-  ICommentInstance, IRequestedAttributes, IScorerExtra,
-  IUserInstance,
+  Comment,
+  IRequestedAttributes,
+  IScorerExtra,
+  User,
 } from '../models';
 import { IScoreData } from './shim';
 
@@ -75,7 +77,7 @@ function StripAttributeVersion(attributeName: string): string {
  * @param {object} processMachineScore  Callback to invoke if score is determined synchronously.
  */
 export async function createShim(
-    scorer: IUserInstance,
+    scorer: User,
     processMachineScore: (commentId: number, serviceUserId: number, scoreData: IScoreData) => Promise<void>,
     ) {
   const serviceUserId = scorer.id;
@@ -85,7 +87,7 @@ export async function createShim(
   const attributes = extra.attributes;
   const userAgent = extra.userAgent;
 
-  async function packPerspectiveApiRequest(comment: ICommentInstance, reqId: string | number) {
+  async function packPerspectiveApiRequest(comment: Comment, reqId: string | number) {
     const req: IAnalyzeCommentRequest = {
       comment: {text: striptags(comment.text)},
       context: {entries: []},
@@ -108,7 +110,7 @@ export async function createShim(
     return req;
   }
 
-  function unpackPerspectiveApiResponse(comment: ICommentInstance, data: IAnalyzeCommentResponse): IScoreData {
+  function unpackPerspectiveApiResponse(comment: Comment, data: IAnalyzeCommentResponse): IScoreData {
     const unpackedData: IScoreData = {scores: {}, summaryScores: {}};
 
     for (const attributeName in data.attributeScores!) {
@@ -146,7 +148,7 @@ export async function createShim(
   }
 
   return {
-    sendToScorer: async (comment: ICommentInstance, reqId: string | number) => {
+    sendToScorer: async (comment: Comment, reqId: string | number) => {
       const papiRequest = await packPerspectiveApiRequest(comment, reqId);
       const papiResponse = await (endpoint.comments as any).analyze({key: apiKey, resource: papiRequest});
       const unpackedResponse = unpackPerspectiveApiResponse(comment, papiResponse.data);

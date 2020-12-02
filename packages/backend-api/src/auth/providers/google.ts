@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { config } from '../../config';
-import { IUserInstance, User } from '../../models';
+import { User } from '../../models';
 import { IGoogleOAuthConfiguration, setOAuthGood } from '../config';
 import { ensureFirstUser, findOrCreateUserSocialAuth, isFirstUserInitialised } from '../users';
 
@@ -74,7 +74,7 @@ export function mapAuthDataToUserSocialAuth(accessToken: string, refreshToken: s
  *   1. Finds or creates the user based on their email address
  *   2. Finds or creates a social auth record and relates it to the user
  */
-export async function verifyGoogleToken(accessToken: string, refreshToken: string, profile: IGoogleProfile): Promise<IUserInstance> {
+export async function verifyGoogleToken(accessToken: string, refreshToken: string, profile: IGoogleProfile): Promise<User> {
 
   const userData = mapAuthDataToUser(profile);
 
@@ -117,7 +117,7 @@ export function getGoogleStrategy(
       userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
     },
     async (accessToken: string, refreshToken: string, profile: IGoogleProfile,
-           callback: (err: any, user?: IUserInstance | false, info?: any) => any) => {
+           callback: (err: any, user?: User | false, info?: any) => any) => {
       try {
         const user = await verifyGoogleToken(accessToken, refreshToken, profile);
 

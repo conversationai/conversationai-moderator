@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import { Collapse } from '@material-ui/core';
 import { autobind } from 'core-decorators';
 import FocusTrap from 'focus-trap-react';
 import { List, Set } from 'immutable';
@@ -22,11 +23,6 @@ import qs from 'query-string';
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
-
-import {
-  Collapse,
-} from '@material-ui/core';
-
 import {
   convertServerAction,
   ICommentListItem,
@@ -42,9 +38,9 @@ import {
   ApproveIcon,
   ArticleControlIcon,
   CommentActionButton,
+  CommentList,
   DeferIcon,
   HighlightIcon,
-  CommentList,
   RejectIcon,
   Scrim,
   ToastMessage,

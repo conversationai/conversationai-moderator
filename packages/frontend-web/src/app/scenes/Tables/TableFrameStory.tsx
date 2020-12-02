@@ -71,7 +71,7 @@ storiesOf('TableFrame', module)
   .addDecorator((story) => (
     <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>
   ))
-  .add('Category sidebar overlay', () => {
+  .add('DontTest:Category sidebar overlay', () => {
     function hide() { console.log('hide clicked'); }
     return (
       <CategorySidebar
@@ -82,7 +82,7 @@ storiesOf('TableFrame', module)
       />
     );
   })
-  .add('Category sidebar', () => {
+  .add('DontTest:Category sidebar', () => {
     return (
       <CategorySidebar
         user={userNoIcon}
@@ -91,7 +91,7 @@ storiesOf('TableFrame', module)
       />
     );
   })
-  .add('Header bar with show sidebar', () => {
+  .add('DontTest:Header bar with show sidebar', () => {
     function show() { console.log('show clicked'); }
     return (
       <HeaderBar
@@ -99,7 +99,7 @@ storiesOf('TableFrame', module)
       />
     );
   })
-  .add('Header bar for admin', () => {
+  .add('DontTest:Header bar for admin', () => {
     return (
       <HeaderBar
         category={singleCategory}

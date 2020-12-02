@@ -14,59 +14,52 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
+import {BelongsToGetAssociationMixin, DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { ICommentInstance } from './comment';
-import { IBaseAttributes, IBaseInstance } from './constants';
+import {sequelize} from '../sequelize';
+import {Comment} from './comment';
+import {User} from './user';
 
-export interface ICommentScoreRequestAttributes extends IBaseAttributes {
+export class CommentScoreRequest extends Model {
+  id: number;
   commentId?: number;
   userId?: number;
-  sentAt: Date | Sequelize.fn;
-  doneAt?: Date | Sequelize.fn | null;
+  sentAt: Date;
+  doneAt?: Date | null;
+
+  getComment: BelongsToGetAssociationMixin<Comment>;
 }
 
-export type ICommentScoreRequestInstance = Sequelize.Instance<ICommentScoreRequestAttributes> &
-  ICommentScoreRequestAttributes & IBaseInstance & {
-  getComment: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
-};
-
-/**
- * CommentScoreRequest model
- */
-export const CommentScoreRequest = sequelize.define<
-  ICommentScoreRequestInstance,
-  ICommentScoreRequestAttributes
->('comment_score_request', {
+CommentScoreRequest.init({
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   commentId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
 
   userId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
 
   sentAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: false,
   },
 
   doneAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
+},{
+  sequelize,
+  modelName: 'comment_score_request',
 });
 
-CommentScoreRequest.associate = (models) => {
-  CommentScoreRequest.belongsTo(models.Comment);
-  CommentScoreRequest.belongsTo(models.User);
-};
+CommentScoreRequest.belongsTo(Comment);
+CommentScoreRequest.belongsTo(User);

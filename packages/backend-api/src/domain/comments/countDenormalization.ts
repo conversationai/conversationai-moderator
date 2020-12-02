@@ -15,22 +15,20 @@ limitations under the License.
 */
 
 import {
+  Comment,
   CommentFlag,
   FLAGS_COUNT,
-  ICommentInstance,
   RECOMMENDATIONS_COUNT,
   UNRESOLVED_FLAGS_COUNT,
 } from '../../models';
 
-export async function denormalizeCountsForComment(comment: ICommentInstance) {
+export async function denormalizeCountsForComment(comment: Comment) {
   let unresolvedFlagsCount = 0;
   const flagsSummary: {[key: string]: Array<number>} = {};
 
   const flags = await CommentFlag.findAll({ where: { commentId: comment.id } });
 
-  for (const f of flags) {
-    const flag = f.get();
-
+  for (const flag of flags) {
     if (!flagsSummary[flag.label]) {
       flagsSummary[flag.label] = [0, 0, 0];
     }
@@ -46,7 +44,7 @@ export async function denormalizeCountsForComment(comment: ICommentInstance) {
     }
   }
 
-  return await comment.update({
+  return comment.update({
     unresolvedFlagsCount,
     flagsSummary,
   });

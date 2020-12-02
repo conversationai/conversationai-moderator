@@ -16,7 +16,7 @@ limitations under the License.
 
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { IUserInstance, User } from '../../models';
+import { User } from '../../models';
 import { getTokenConfiguration, isValidToken } from '../tokens';
 import { isValidUser } from '../users';
 
@@ -26,7 +26,7 @@ import { isValidUser } from '../users';
  * @param {object}   jwtPayload Decoded JWT payload
  * @param {function} done       Verification callback
  */
-export async function verifyJWT(jwtPayload: any): Promise<IUserInstance> {
+export async function verifyJWT(jwtPayload: any): Promise<User> {
   if (!isValidToken(jwtPayload)) {
     throw new Error('Invalid token');
   }
@@ -71,7 +71,7 @@ export async function getJwtStrategy() {
         ExtractJwt.fromUrlQueryParameter('token'),
       ]),
     },
-    async (jwtPayload: any, callback: (err: any, user?: IUserInstance | false) => any) => {
+    async (jwtPayload: any, callback: (err: any, user?: User | false) => any) => {
       try {
         const user = await verifyJWT(jwtPayload);
         callback(null, user);

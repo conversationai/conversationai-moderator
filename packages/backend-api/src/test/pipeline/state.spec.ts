@@ -18,9 +18,9 @@ import * as chai from 'chai';
 import * as moment from 'moment';
 
 import {
+  Comment,
   CommentScoreRequest,
   Decision,
-  ICommentInstance,
   IResolution,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
@@ -50,7 +50,7 @@ import '../test_helper';
 const assert = chai.assert;
 
 async function shouldRecordDecision(
-  comment: ICommentInstance,
+  comment: Comment,
   status: IResolution,
   source: 'User' | 'Rule',
   userId: number) {

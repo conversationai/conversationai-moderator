@@ -25,12 +25,11 @@ import {
   CommentScore,
   CommentScoreRequest,
   CommentSummaryScore,
-  Decision, ICommentScoreRequestInstance,
+  Decision,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_REJECT,
   Tag,
 } from '../../models';
-import { ITagInstance } from '../../models';
 import {
   compileScoresData,
   compileSummaryScoresData,
@@ -386,7 +385,7 @@ describe('Pipeline Tests', () => {
 
       assert.lengthOf(commentScoreRequests, 2);
 
-      commentScoreRequests.forEach((request: ICommentScoreRequestInstance) => {
+      commentScoreRequests.forEach((request: CommentScoreRequest) => {
         if (request.id === commentScoreRequest1.id) {
           assert.isOk(request.doneAt);
         } else {
@@ -492,7 +491,7 @@ describe('Pipeline Tests', () => {
 
       const tags = await findOrCreateTagsByKey(Object.keys(scoreData));
 
-      const tagsByKey = groupBy(tags, (tag: ITagInstance) => {
+      const tagsByKey = groupBy(tags, (tag: Tag) => {
         return tag.key;
       });
 
@@ -560,7 +559,7 @@ describe('Pipeline Tests', () => {
 
       const tags = await findOrCreateTagsByKey(Object.keys(summarScoreData));
 
-      const tagsByKey = groupBy(tags, (tag: ITagInstance) => {
+      const tagsByKey = groupBy(tags, (tag: Tag) => {
         return tag.key;
       });
 

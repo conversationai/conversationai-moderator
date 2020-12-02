@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Comment, ICommentInstance, IUserInstance, User } from '../models';
+import { Comment, User } from '../models';
 import { enqueue, registerTask } from '../processing/util';
 
 export interface IPipelineHook {
-  commentModerated(owner: IUserInstance, comment: ICommentInstance): Promise<void>;
+  commentModerated(owner: User, comment: Comment): Promise<void>;
 }
 
 const hooks = new Map<string, IPipelineHook>();
@@ -55,7 +55,7 @@ export function registerHooks(ownerType: string, hook: IPipelineHook) {
   registerTask<IHookData>(`${ownerType}:commentModerated`, executeCommentModeratedTask);
 }
 
-export async function commentModeratedHook(comment: ICommentInstance) {
+export async function commentModeratedHook(comment: Comment) {
   const ownerId = comment.ownerId;
   if (!ownerId) {
     return;

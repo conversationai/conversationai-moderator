@@ -14,63 +14,55 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
+import {BelongsToGetAssociationMixin, DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { ITagInstance } from './tag';
+import {sequelize} from '../sequelize';
+import {Comment} from './comment';
+import {Tag} from './tag';
+import {User} from './user';
 
-export interface ICommentSummaryScoreAttributes extends IBaseAttributes{
+export class CommentSummaryScore extends Model {
   commentId: number;
   tagId: number;
   score: number;
   isConfirmed?: boolean | null;
   confirmedUserId?: number | null;
+  getTag: BelongsToGetAssociationMixin<Tag>;
 }
 
-export type ICommentSummaryScoreInstance = Sequelize.Instance<ICommentSummaryScoreAttributes> &
-  ICommentSummaryScoreAttributes & IBaseInstance & {
-  getTag: Sequelize.BelongsToGetAssociationMixin<ITagInstance>;
-};
-
-/**
- * Category model
- */
-export const CommentSummaryScore = sequelize.define<
-  ICommentSummaryScoreInstance,
-  ICommentSummaryScoreAttributes
->('comment_summary_score', {
+CommentSummaryScore.init({
   commentId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     primaryKey: true,
   },
 
   tagId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     primaryKey: true,
   },
 
   score: {
-    type: Sequelize.FLOAT.UNSIGNED, // Score from 0 - 1
+    type: DataTypes.FLOAT.UNSIGNED, // Score from 0 - 1
     allowNull: false,
   },
 
   isConfirmed: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: null,
   },
 
   confirmedUserId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
     defaultValue: null,
   },
 }, {
+  sequelize,
+  modelName: 'comment_summary_score',
   timestamps: false,
-
   indexes: [
     {
       name: 'commentId_tagId_index',
@@ -82,17 +74,15 @@ export const CommentSummaryScore = sequelize.define<
 
 CommentSummaryScore.removeAttribute('id');
 
-CommentSummaryScore.associate = (models) => {
-  CommentSummaryScore.belongsTo(models.Comment, {
-    onDelete: 'CASCADE',
-  });
+CommentSummaryScore.belongsTo(Comment, {
+  onDelete: 'CASCADE',
+});
 
-  CommentSummaryScore.belongsTo(models.Tag, {
-    onDelete: 'CASCADE',
-  });
+CommentSummaryScore.belongsTo(Tag, {
+  onDelete: 'CASCADE',
+});
 
-  CommentSummaryScore.belongsTo(models.User, {
-    as: 'confirmedUser',
-    onDelete: 'CASCADE',
-  });
-};
+CommentSummaryScore.belongsTo(User, {
+  as: 'confirmedUser',
+  onDelete: 'CASCADE',
+});

@@ -20,7 +20,7 @@ import { QueryTypes } from 'sequelize';
 
 import { logger } from '../../logger';
 import { sequelize } from '../../sequelize';
-import { sort } from '../util/SequelizeHandler';
+import { sortCommentIds } from '../util/sortCommentIds';
 import { validateAndSendResponse } from '../util/validation';
 
 const MINIMUM_QUERY_LENGTH = 3;
@@ -106,8 +106,7 @@ export function createSearchService(): express.Router {
           next,
         );
       } else {
-        const sortedIds = await sort(
-          'comments',
+        const sortedIds = await sortCommentIds(
           ids,
           sortOrder,
         );

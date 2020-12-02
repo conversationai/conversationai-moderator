@@ -17,7 +17,6 @@ limitations under the License.
 import * as express from 'express';
 import * as Joi from 'joi';
 
-import * as JSONAPI from '../../jsonapi';
 import { validateAndSendResponse } from '../../util/validation';
 import {
   getHistogramScoresForArticle,
@@ -27,7 +26,7 @@ import {
   getMaxSummaryScoreForArticle,
   getMaxSummaryScoreForCategory,
   ICommentDated,
-  ICommentScored,
+  ICommentScored, NotFoundError,
   renderScoresToPNG,
   sortComments,
 } from './util';
@@ -99,7 +98,7 @@ async function scoresToChart(
       parsedShowAll,
     ).pngStream().pipe(res);
   } catch (e) {
-    if (e instanceof JSONAPI.NotFoundError) {
+    if (e instanceof NotFoundError) {
       res.status(404).send(e.message);
       next();
     } else {
@@ -122,7 +121,7 @@ export function createHistogramScoresService(): express.Router {
 
       validateDatedCommentsAndSendResponse(stringifyIds(sortedData), res, next);
     } catch (e) {
-      if (e instanceof JSONAPI.NotFoundError) {
+      if (e instanceof NotFoundError) {
         res.status(404).send(e.message);
         next();
       } else {
@@ -148,7 +147,7 @@ export function createHistogramScoresService(): express.Router {
 
       validateScoredCommentsAndSendResponse(stringifyIds(sortedData), res, next);
     } catch (e) {
-      if (e instanceof JSONAPI.NotFoundError) {
+      if (e instanceof NotFoundError) {
         res.status(404).send(e.message);
         next();
       } else {
@@ -165,7 +164,7 @@ export function createHistogramScoresService(): express.Router {
 
       validateScoredCommentsAndSendResponse(stringifyIds(sortedData), res, next);
     } catch (e) {
-      if (e instanceof JSONAPI.NotFoundError) {
+      if (e instanceof NotFoundError) {
         res.status(404).send(e.message);
         next();
       } else {
@@ -195,7 +194,7 @@ export function createHistogramScoresService(): express.Router {
 
       validateDatedCommentsAndSendResponse(stringifyIds(sortedData), res, next);
     } catch (e) {
-      if (e instanceof JSONAPI.NotFoundError) {
+      if (e instanceof NotFoundError) {
         res.status(404).send(e.message);
         next();
       } else {
@@ -221,7 +220,7 @@ export function createHistogramScoresService(): express.Router {
 
       validateScoredCommentsAndSendResponse(stringifyIds(sortedData), res, next);
     } catch (e) {
-      if (e instanceof JSONAPI.NotFoundError) {
+      if (e instanceof NotFoundError) {
         res.status(404).send(e.message);
         next();
       } else {
@@ -233,7 +232,7 @@ export function createHistogramScoresService(): express.Router {
   router.get('/articles/:id/tags/:tagId/chart', async (req, res, next) => {
     return scoresToChart('score', () => {
       const { params: { id, tagId } } = req;
-      const articleId = parseInt(id, 10)
+      const articleId = parseInt(id, 10);
       if (tagId === 'SUMMARY_SCORE') {
         return getMaxSummaryScoreForArticle(articleId);
       }
@@ -254,7 +253,7 @@ export function createHistogramScoresService(): express.Router {
 
       validateScoredCommentsAndSendResponse(stringifyIds(sortedData), res, next);
     } catch (e) {
-      if (e instanceof JSONAPI.NotFoundError) {
+      if (e instanceof NotFoundError) {
         res.status(404).send(e.message);
         next();
       } else {

@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { USER_GROUP_YOUTUBE } from '../models';
 import { youtubeHooks } from '../integrations/youtube/hooks';
+import { USER_GROUP_YOUTUBE } from '../models';
 import { registerHooks } from '../pipeline/hooks';
 
 registerHooks(USER_GROUP_YOUTUBE, youtubeHooks);
 
-export * from './tasks';
-export * from './dashboard';
 export * from './api';
+export * from './dashboard';
+export * from './tasks';
 export * from './worker';

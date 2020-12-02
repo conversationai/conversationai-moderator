@@ -14,13 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import { sequelize } from '../sequelize';
-import { Article, IArticleInstance } from './article';
-import { ICommentSummaryScoreInstance } from './comment_summary_score';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { IDecisionInstance } from './decision';
-import { User } from './user';
+import {
+  BelongsToGetAssociationMixin,
+  DataTypes,
+  HasManyGetAssociationsMixin,
+  Model,
+} from 'sequelize';
+
+import {sequelize} from '../sequelize';
+import {Article} from './article';
+import {User} from './user';
+
+declare class Decision extends Model {}
 
 export interface IAuthorAttributes {
   name: string;
@@ -37,8 +42,9 @@ export interface IFlagSummary {
   [key: string]: Array<number>;
 }
 
-export interface ICommentAttributes extends IBaseAttributes {
-  ownerId?: number | null;
+export class Comment extends Model {
+  id: number;
+  ownerId?: number;
   sourceId: string;
   articleId: number | null;
   replyToSourceId?: string | null;
@@ -55,164 +61,157 @@ export interface ICommentAttributes extends IBaseAttributes {
   isAutoResolved?: boolean | null;
   unresolvedFlagsCount?: number;
   flagsSummary?: IFlagSummary | null;
-  sourceCreatedAt: Date | null | Sequelize.fn;
-  sentForScoring?: Date | null | Sequelize.fn;
-  sentBackToPublisher?: Date | null | Sequelize.fn;
+  sourceCreatedAt: Date | null;
+  sentForScoring?: Date | null;
+  sentBackToPublisher?: Date | null;
   extra?: object | null;
   maxSummaryScore?: number | null;
   maxSummaryScoreTagId?: string | null;
+
+  getArticle: BelongsToGetAssociationMixin<Article>;
+  getReplyTo: BelongsToGetAssociationMixin<Comment>;
+  getDecisions: HasManyGetAssociationsMixin<Decision>;
+  getReplies: HasManyGetAssociationsMixin<Comment>;
 }
 
-export type ICommentInstance = Sequelize.Instance<ICommentAttributes> & ICommentAttributes & IBaseInstance & {
-  getArticle: Sequelize.BelongsToGetAssociationMixin<IArticleInstance>;
-  getDecisions: Sequelize.HasManyGetAssociationsMixin<IDecisionInstance>;
-  getCommentSummaryScores: Sequelize.HasManyGetAssociationsMixin<ICommentSummaryScoreInstance>;
-  getReplyTo: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
-};
-
-/**
- * Comment model
- */
-export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('comment', {
+Comment.init({
   id: {
-   type: Sequelize.INTEGER.UNSIGNED,
-   primaryKey: true,
-   autoIncrement: true,
+    type: DataTypes.INTEGER.UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
   },
 
   ownerId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: User, key: 'id' },
     allowNull: true,
   },
 
   sourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   articleId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
     references: { model: Article, key: 'id' },
   },
 
   replyToSourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: true,
   },
 
   replyId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   authorSourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   text: {
-    type: Sequelize.TEXT('long'),
+    type: DataTypes.TEXT({length: 'long'}),
     allowNull: false,
   },
 
   author: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: false,
   },
 
   isScored: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
 
   isModerated: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
 
   isAccepted: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: null,
   },
 
   isDeferred: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: false,
   },
 
   isHighlighted: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: false,
   },
 
   isBatchResolved: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: false,
   },
 
   isAutoResolved: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
     defaultValue: false,
   },
 
   unresolvedFlagsCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   flagsSummary: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 
   sourceCreatedAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
   sentForScoring: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
   sentBackToPublisher: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
   extra: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 
   maxSummaryScore: {
-    type: Sequelize.FLOAT.UNSIGNED,
+    type: DataTypes.FLOAT.UNSIGNED,
     allowNull: true,
   },
 
   maxSummaryScoreTagId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 }, {
+  sequelize,
+  modelName: 'comment',
   indexes: [
     {
       name: 'replyToSourceId_index',
       fields: ['replyToSourceId'],
-    },
-    {
-      name: 'replyId_index',
-      fields: ['replyId'],
     },
     {
       name: 'authorSourceId_index',
@@ -262,38 +261,15 @@ export const Comment = sequelize.define<ICommentInstance, ICommentAttributes>('c
   ],
 });
 
-Comment.associate = (models) => {
-  Comment.belongsTo(models.User, {as: 'owner'});
-  Comment.belongsTo(models.Article);
+Comment.belongsTo(User, {as: 'owner'});
+Comment.belongsTo(Article);
+Comment.belongsTo(Comment, {
+  foreignKey: 'replyId',
+  onDelete: 'SET NULL',
+  as: 'replyTo',
+});
 
-  Comment.hasMany(models.CommentFlag, {
-    as: 'commentFlags',
-  });
-
-  Comment.hasMany(models.CommentScore, {
-    as: 'commentScores',
-  });
-
-  Comment.hasMany(models.CommentSummaryScore, {
-    as: 'commentSummaryScores',
-  });
-
-  Comment.hasMany(models.Decision, {
-    as: 'decisions',
-  });
-
-  Comment.hasMany(models.CommentSize, {
-    as: 'commentSizes',
-  });
-
-  Comment.belongsTo(models.Comment, {
-    foreignKey: 'replyId',
-    onDelete: 'SET NULL',
-    as: 'replyTo',
-  });
-
-  Comment.hasMany(models.Comment, {
-    foreignKey: 'replyId',
-    as: 'replies',
-  });
-};
+Comment.hasMany(Comment, {
+  foreignKey: 'replyId',
+  as: 'replies',
+});

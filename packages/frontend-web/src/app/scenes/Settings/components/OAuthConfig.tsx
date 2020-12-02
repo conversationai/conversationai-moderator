@@ -60,7 +60,9 @@ export function OAuthConfig(props: IOAuthConfigProps) {
           href="https://console.developers.google.com/apis/credentials"
           target="_blank"
           style={{color: 'inherit', fontWeight: 'bold', textDecoration: 'underline'}}
-        >the Google API console</a>.
+        >
+          the Google API console
+        </a>.
         If you don't yet have an <b>OAuth Client ID</b>, or want to allocate a new one,
         you can do so by clicking the <b>Create Credentials</b> button and selecting the <b>OAuth</b> entry.
       </p>
@@ -91,11 +93,11 @@ export function OAuthConfig(props: IOAuthConfigProps) {
           variant="outlined"
         />
       </div>
-      {props.showLogoutWarning &&
+      {props.showLogoutWarning && (
       <p>
         <b>WARNING:</b> Changing OAuth configuration will log everyone out.
       </p>
-      }
+      )}
       <p>
         The server will take a few seconds to reconfigure itself after the OAuth configuration has changed,
         and during this time, it will not be available.  If you have login issues, please try again after a few seconds.

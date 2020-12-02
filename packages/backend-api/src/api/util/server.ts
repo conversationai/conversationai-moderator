@@ -50,7 +50,6 @@ export const errorLogger = expressWinston.errorLogger({
   requestWhitelist: ['body'],
 });
 
-
 export function getExpressAppWithPreprocessors(testMode?: boolean) {
   const app = express();
   expressWs(app);

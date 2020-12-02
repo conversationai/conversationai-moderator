@@ -18,13 +18,6 @@ import * as chai from 'chai';
 
 import { denormalizeCommentCountsForArticle } from '../../../domain';
 import {
-  IModerationRuleInstance,
-  IPreselectInstance,
-  ITaggingSensitivityInstance,
-  ITagInstance,
-  IUserInstance,
-} from '../../../models';
-import {
   Article,
   Category,
   ModerationRule,
@@ -139,7 +132,7 @@ describe('Notification tests', () => {
   });
 
   it('Test notifies when user updated', async () => {
-    let user: IUserInstance;
+    let user: User;
 
     const res = await awaitNotification(async () => {
       user = await makeUser();
@@ -163,7 +156,7 @@ describe('Notification tests', () => {
   });
 
   it('Test notifies when tag updated', async () => {
-    let tag: ITagInstance;
+    let tag: Tag;
 
     const res = await awaitNotification(async () => {
       tag = await makeTag();
@@ -187,7 +180,7 @@ describe('Notification tests', () => {
   });
 
   it('Test notifies when taggingSensitivity updated', async () => {
-    let ts: ITaggingSensitivityInstance;
+    let ts: TaggingSensitivity;
 
     const res = await awaitNotification(async () => {
       ts = await makeTaggingSensitivity();
@@ -211,7 +204,7 @@ describe('Notification tests', () => {
   });
 
   it('Test notifies when rule updated', async () => {
-    let mr: IModerationRuleInstance;
+    let mr: ModerationRule;
     const t = await makeTag();
 
     const res = await awaitNotification(async () => {
@@ -236,7 +229,7 @@ describe('Notification tests', () => {
   });
 
   it('Test notifies when preselect updated', async () => {
-    let ps: IPreselectInstance;
+    let ps: Preselect;
 
     const res = await awaitNotification(async () => {
       ps = await makePreselect();

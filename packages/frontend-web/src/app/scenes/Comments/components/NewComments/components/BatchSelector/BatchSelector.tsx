@@ -153,23 +153,27 @@ export class BatchSelector
       areAutomatedRulesApplied,
     } = this.props;
 
+    const makeDotChart = (width: number, height: number): React.ReactNode => {
+      return (
+        <DotChart
+          height={height}
+          width={width}
+          commentsByColumn={this.groupedByColumn}
+          columnCount={COLCOUNT}
+          selectedRange={{
+            start: min,
+            end: max,
+          }}
+        />
+      );
+    };
+
     return (
       <div {...css(STYLES.batchControls)}>
         <div {...css({position: 'relative'})}>
           <AspectRatio
             ratio={5 / 1}
-            contents={(width: number, height: number) => (
-              <DotChart
-                height={height}
-                width={width}
-                commentsByColumn={this.groupedByColumn}
-                columnCount={COLCOUNT}
-                selectedRange={{
-                  start: min,
-                  end: max,
-                }}
-              />
-            )}
+            contents={makeDotChart}
           />
           {rules && rules.size > 0 && areAutomatedRulesApplied && (
             <RuleBars

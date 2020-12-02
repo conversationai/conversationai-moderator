@@ -16,7 +16,6 @@ limitations under the License.
 
 import * as yargs from 'yargs';
 
-
 import { denormalizeCommentCountsForCategory } from '../../domain';
 import { logger } from '../../logger';
 import { Article, Category } from '../../models';
