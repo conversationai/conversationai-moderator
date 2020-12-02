@@ -22,8 +22,8 @@ import * as moment from 'moment';
 import {
   CONFIGURATION_TOKEN,
   getConfigItem,
-  User,
   setConfigItem,
+  User,
 } from '../models';
 
 export interface ITokenConfiguration {

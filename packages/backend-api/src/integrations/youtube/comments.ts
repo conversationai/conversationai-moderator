@@ -21,9 +21,9 @@ import { logger } from '../../logger';
 import {
   Comment,
   Decision,
-  User,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
+  User,
 } from '../../models';
 import { foreachPendingDecision, markDecisionExecuted } from '../decisions';
 import { for_each_active_channel } from './channels';
