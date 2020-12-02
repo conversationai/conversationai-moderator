@@ -14,53 +14,48 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { User } from './user';
+import {sequelize} from '../sequelize';
+import {User} from './user';
 
-export interface IUserSocialAuthAttributes extends IBaseAttributes {
+export class UserSocialAuth extends Model {
+  id: number;
   userId?: number;
   socialId: string;
   provider: string;
   extra?: object | null;
 }
 
-export type IUserSocialAuthInstance = Sequelize.Instance<IUserSocialAuthAttributes> &
-  IUserSocialAuthAttributes & IBaseInstance;
-
-export const UserSocialAuth = sequelize.define<
-  IUserSocialAuthInstance,
-  IUserSocialAuthAttributes
->('user_social_auth', {
+UserSocialAuth.init({
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
-
   userId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: User, key: 'id' },
     allowNull: false,
   },
 
   socialId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   provider: {
-    type: Sequelize.CHAR(150),
+    type: DataTypes.CHAR(150),
     allowNull: false,
   },
 
   extra: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 }, {
+  sequelize,
+  modelName: 'user_social_auth',
   indexes: [
     {
       name: 'unique_user_provider_index',
@@ -75,8 +70,6 @@ export const UserSocialAuth = sequelize.define<
   ],
 });
 
-UserSocialAuth.associate = (models) => {
-  UserSocialAuth.belongsTo(models.User, {
-    onDelete: 'CASCADE',
-  });
-};
+UserSocialAuth.belongsTo(User, {
+  onDelete: 'CASCADE',
+});

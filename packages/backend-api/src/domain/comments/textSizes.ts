@@ -19,7 +19,7 @@ import * as path from 'path';
 
 import {
   CommentSize,
-  ICommentInstance,
+  Comment,
 } from '../../models';
 
 const FONT_FAMILY = 'Georgia';
@@ -91,13 +91,13 @@ function wordWrap(text: string, wordWrapWidth: number): Array<string> {
   return result.split(/(?:\r\n|\r|\n)/);
 }
 
-export async function calculateTextSize(comment: ICommentInstance, width: number): Promise<number> {
+export async function calculateTextSize(comment: Comment, width: number): Promise<number> {
   const lines = await wordWrap(comment.text, width);
 
   return getTextHeight(lines, width, TYPE_DEF);
 }
 
-export async function cacheTextSize(comment: ICommentInstance, width: number): Promise<number> {
+export async function cacheTextSize(comment: Comment, width: number): Promise<number> {
   const height = await calculateTextSize(comment, width);
 
   await CommentSize.findOrCreate({

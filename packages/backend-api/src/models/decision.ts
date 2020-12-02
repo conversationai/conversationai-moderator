@@ -14,82 +14,81 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import { sequelize } from '../sequelize';
-import { ICommentInstance } from './comment';
+import {BelongsToGetAssociationMixin, DataTypes, Model} from 'sequelize';
+
+import {sequelize} from '../sequelize';
+import {Comment} from './comment';
 import {
   IResolution,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
 } from './constants';
-import { IBaseAttributes, IBaseInstance } from './constants';
+import {ModerationRule} from './moderation_rule';
+import {User} from './user';
 
-export interface IDecisionAttributes extends IBaseAttributes {
+/**
+ * Decision model
+ */
+export class Decision extends Model {
+  id: number;
   commentId?: number;
   userId?: number;
   moderationRuleId?: number;
   isCurrentDecision?: boolean;
   status?: IResolution;
   source?: 'User' | 'Rule';
-  sentBackToPublisher?: Date | string | Sequelize.fn;
+  sentBackToPublisher?: Date;
+
+  getComment: BelongsToGetAssociationMixin<Comment>;
 }
 
-export type IDecisionInstance = Sequelize.Instance<IDecisionAttributes> & IDecisionAttributes & IBaseInstance & {
-  getComment: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
-};
-
-/**
- * Decision model
- */
-export const Decision = sequelize.define<
-  IDecisionInstance,
-  IDecisionAttributes
->('decision', {
+Decision.init({
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   status: {
-    type: Sequelize.ENUM([MODERATION_ACTION_ACCEPT, MODERATION_ACTION_REJECT, MODERATION_ACTION_DEFER]),
+    type: DataTypes.ENUM(MODERATION_ACTION_ACCEPT, MODERATION_ACTION_REJECT, MODERATION_ACTION_DEFER),
     allowNull: false,
   },
 
   source: {
-    type: Sequelize.ENUM(['User', 'Rule']),
+    type: DataTypes.ENUM('User', 'Rule'),
     allowNull: false,
   },
 
   isCurrentDecision: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true,
   },
 
   sentBackToPublisher: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+}, {
+  sequelize,
+  modelName: 'decision',
+});
+
+Decision.belongsTo(Comment, {
+  onDelete: 'CASCADE',
+});
+
+Decision.belongsTo(User, {
+  onDelete: 'SET NULL',
+  foreignKey: {
     allowNull: true,
   },
 });
 
-Decision.associate = (models) => {
-  Decision.belongsTo(models.Comment, {
-    onDelete: 'CASCADE',
-  });
-
-  Decision.belongsTo(models.User, {
-    onDelete: 'SET NULL',
-    foreignKey: {
-      allowNull: true,
-    },
-  });
-
-  Decision.belongsTo(models.ModerationRule, {
-    onDelete: 'SET NULL',
-    foreignKey: {
-      allowNull: true,
-    },
-  });
-};
+Decision.belongsTo(ModerationRule, {
+  onDelete: 'SET NULL',
+  foreignKey: {
+    allowNull: true,
+  },
+});

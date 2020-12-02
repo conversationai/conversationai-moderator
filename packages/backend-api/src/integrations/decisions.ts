@@ -16,17 +16,16 @@ limitations under the License.
 
 import { Op } from 'sequelize';
 
-import { Comment, Decision } from '../models';
 import {
-  ICommentInstance,
-  IDecisionInstance,
-  IUserInstance,
+  Comment,
+  Decision,
+  User,
 } from '../models';
 
 export async function getDecisionForComment(
-  comment: ICommentInstance,
-): Promise<IDecisionInstance | null> {
-  return await Decision.findOne({
+  comment: Comment,
+): Promise<Decision | null> {
+  return Decision.findOne({
     where: {
       commentId: comment.id,
       sentBackToPublisher: {  [Op.eq]: null },
@@ -36,8 +35,8 @@ export async function getDecisionForComment(
 }
 
 export async function foreachPendingDecision(
-  owner: IUserInstance,
-  callback: (decision: IDecisionInstance, comment: ICommentInstance) => Promise<void>,
+  owner: User,
+  callback: (decision: Decision, comment: Comment) => Promise<void>,
 ) {
   const decisions = await Decision.findAll({
     where: {
@@ -52,7 +51,7 @@ export async function foreachPendingDecision(
   }
 }
 
-export async function markDecisionExecuted(decision: IDecisionInstance) {
+export async function markDecisionExecuted(decision: Decision) {
   decision.sentBackToPublisher = new Date();
   await decision.save();
   const comment = (await decision.getComment())!;

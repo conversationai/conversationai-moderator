@@ -53,24 +53,15 @@ export type IValidModelNames =
  * Convert Partial<IParams> type to a query string.
  */
 function serializeParams(originalParams?: Partial<IParams> | null): string {
-  if (!originalParams) { return ''; }
+  if (!originalParams) {
+    return '';
+  }
 
   // Clone to avoid mutability issues.
   const params = { ...originalParams } as any;
 
   if (originalParams.sort) {
     params.sort = originalParams.sort.join(',');
-  }
-
-  // Type calls it filters, JSONAPI calls it filter. :(
-  delete params.filters;
-  if (originalParams.filters) {
-    params.filter = originalParams.filters;
-  }
-
-  // JSONAPI spec says "include" is comma separated.
-  if (originalParams.include) {
-    params.include = params.include.join(',');
   }
 
   return '?' + qs.stringify(params, { encode: false });
@@ -429,8 +420,13 @@ export async function checkAuthorization(): Promise<void> {
 
 async function makeCommentAction(path: string, ids: Array<string>): Promise<void> {
   if (ids.length <= 0) { return; }
+  const idUserArray =  ids.map((commentId) => {
+    return {
+      commentId,
+    };
+  });
   const url = serviceURL('commentActions', path);
-  await axios.post(url, { data: ids, runImmediately: true });
+  await axios.post(url, { data: idUserArray, runImmediately: true });
 }
 
 async function makeCommentActionForId(path: string, commentId: string): Promise<void> {

@@ -28,7 +28,6 @@ import {
   verifyToken,
 } from '../../auth/tokens';
 import {
-  IUserInstance,
   User,
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
@@ -54,9 +53,9 @@ describe('Auth Domain Token Tests', () => {
       .unix();
   }
 
-  let fakeGeneralUser: IUserInstance;
-  let fakeAdminUser: IUserInstance;
-  let fakeServiceUser: IUserInstance;
+  let fakeGeneralUser: User;
+  let fakeAdminUser: User;
+  let fakeServiceUser: User;
 
   beforeEach(async () => {
     fakeGeneralUser = await makeUser({group: USER_GROUP_GENERAL});

@@ -17,7 +17,7 @@ limitations under the License.
 import * as chai from 'chai';
 import * as express from 'express';
 
-import { IUserInstance } from '../../../models';
+import { User } from '../../../models';
 
 const chaiHttp = require('chai-http');
 
@@ -26,7 +26,7 @@ import { mountAPI } from '../../../index';
 
 chai.use(chaiHttp);
 let app: express.Application;
-let user: IUserInstance;
+let user: User;
 
 before(async () => {
   const serverStuff = makeServer(true);
@@ -38,7 +38,7 @@ before(async () => {
   app.use('/', await mountAPI(true));
 });
 
-export function setAuthenticatedUser(u: IUserInstance) {
+export function setAuthenticatedUser(u: User) {
   user = u;
 }
 

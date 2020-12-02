@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import * as chai from 'chai';
+import { UniqueConstraintError } from 'sequelize';
 
 import {
   ensureFirstUser,
@@ -23,7 +24,6 @@ import {
   isValidUser,
 } from '../../auth/users';
 import { User, UserSocialAuth } from '../../models';
-import { sequelize } from '../../sequelize';
 import { createUser } from '../domain/comments/fixture';
 
 const assert = chai.assert;
@@ -165,7 +165,7 @@ describe('Auth Domain Users Tests', function() {
         await findOrCreateUserSocialAuth(createdUser2, userSocialAuthData2);
         assert(false, 'findOrCreateUserSocialAuth resolved successfully when it should have thrown a unique constraint error');
       } catch (err) {
-        assert.instanceOf(err, sequelize.UniqueConstraintError);
+        assert.instanceOf(err, UniqueConstraintError);
       }
     });
   });

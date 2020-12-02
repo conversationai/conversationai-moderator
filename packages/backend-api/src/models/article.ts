@@ -14,16 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
+import {BelongsToManyGetAssociationsMixin, DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { Category, ICategoryInstance } from './category';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { updateHappened } from './last_update';
-import { IUserInstance, User } from './user';
+import {sequelize} from '../sequelize';
+import {Category} from './category';
+import {Comment} from './comment';
+import {updateHappened} from './last_update';
+import {User} from './user';
 
-export interface IArticleAttributes extends IBaseAttributes {
-  ownerId?: number | null;
+export class Article extends Model {
+  id: number;
+  ownerId?: number;
   sourceId: string;
   categoryId?: number | null;
   title: string;
@@ -44,143 +45,140 @@ export interface IArticleAttributes extends IBaseAttributes {
   flaggedCount: number;
   batchedCount: number;
   lastModeratedAt?: Date | null;
+
+  getAssignedModerators: BelongsToManyGetAssociationsMixin<User>;
+  getComments: BelongsToManyGetAssociationsMixin<Comment>;
 }
 
-export type IArticleInstance = Sequelize.Instance<IArticleAttributes> & IArticleAttributes & IBaseInstance & {
-  getCategory: Sequelize.BelongsToGetAssociationMixin<ICategoryInstance>;
-  getAssignedModerators: Sequelize.BelongsToManyGetAssociationsMixin<IUserInstance>;
-  countAssignedModerators: Sequelize.BelongsToManyCountAssociationsMixin;
-};
-
-/**
- * Article model
- */
-export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('article', {
+Article.init({
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   ownerId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: User, key: 'id' },
     allowNull: true,
   },
 
   sourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   categoryId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: Category, key: 'id' },
     allowNull: true,
   },
 
   title: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   text: {
-    type: Sequelize.TEXT('long'),
+    type: DataTypes.TEXT({length: 'long'}),
     allowNull: false,
   },
 
   url: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   sourceCreatedAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
   isCommentingEnabled: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true,
   },
 
   isAutoModerated: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true,
   },
 
   allCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   unprocessedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   unmoderatedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   moderatedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   highlightedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   approvedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   rejectedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   deferredCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   flaggedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   batchedCount: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
     defaultValue: 0,
   },
 
   lastModeratedAt: {
-    type: Sequelize.DATE,
+    type: DataTypes.DATE,
     allowNull: true,
   },
 
   extra: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 }, {
+
+  sequelize,
+  modelName: 'article',
   indexes: [
     {
       name: 'sourceId_index',
@@ -195,17 +193,5 @@ export const Article = sequelize.define<IArticleInstance, IArticleAttributes>('a
   },
 });
 
-Article.associate = (models) => {
-  Article.belongsTo(models.User, {as: 'owner'});
-  Article.belongsTo(models.Category);
-  Article.hasMany(models.Comment);
-
-  Article.belongsToMany(models.User, {
-    through: {
-      model: models.ModeratorAssignment,
-      unique: false,
-    },
-    foreignKey: 'articleId',
-    as: 'assignedModerators',
-  });
-};
+Article.belongsTo(User, {as: 'owner'});
+Article.belongsTo(Category);
