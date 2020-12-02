@@ -29,11 +29,6 @@ import {
   UserCategoryAssignment,
 } from '../../../models';
 import {
-  IArticleInstance,
-  ICategoryInstance,
-  IUserInstance,
-} from '../../../models';
-import {
   expect,
   makeArticle,
   makeCategory,
@@ -47,23 +42,25 @@ import {
 const BASE_URL = `/services/assignments`;
 
 describe(BASE_URL, () => {
-  let category: ICategoryInstance;
-  let article: IArticleInstance;
-  let user: IUserInstance;
+  let category: Category;
+  let article: Article;
+  let user: User;
 
   beforeEach(async () => {
+    category = await makeCategory();
+    article = await makeArticle({categoryId: category.id});
+    await makeComment({articleId: article.id});
+    denormalizeCommentCountsForArticle(article, false);
+    user = await makeUser();
+  });
+
+  afterEach(async () => {
     await ModeratorAssignment.destroy({where: {}});
     await UserCategoryAssignment.destroy({where: {}});
     await Comment.destroy({where: {}});
     await Article.destroy({where: {}});
     await Category.destroy({where: {}});
     await User.destroy({where: {}});
-
-    category = await makeCategory();
-    article = await makeArticle({categoryId: category.id});
-    await makeComment({articleId: article.id});
-    denormalizeCommentCountsForArticle(article, false);
-    user = await makeUser();
   });
 
   describe('/categories/:id', () => {

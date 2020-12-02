@@ -14,13 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { updateHappened } from './last_update';
+import {sequelize} from '../sequelize';
+import {updateHappened} from './last_update';
 
-export interface ITagAttributes extends IBaseAttributes {
+/**
+ * Tag model
+ */
+export class Tag extends Model {
+  id: number;
   key: string;
   label: string;
   color?: string;
@@ -29,37 +32,31 @@ export interface ITagAttributes extends IBaseAttributes {
   isTaggable?: boolean;
   inSummaryScore?: boolean;
 }
-
-export type ITagInstance = Sequelize.Instance<ITagAttributes> & ITagAttributes & IBaseInstance;
-
-/**
- * Tag model
- */
-export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
+Tag.init({
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   key: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   label: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
   },
 
   color: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: false,
     defaultValue: '#000000',
   },
 
   description: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: true,
   },
 
@@ -67,7 +64,7 @@ export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
   // various analytics which users are never expected to see. Or if a ML
   // tag is in "beta" and is running silently until the kinks are worked out.
   isInBatchView: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
@@ -75,24 +72,25 @@ export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
   // If false, hides from tag lists like reason to reject
   // or tags that moderator can apply to a comment
   isTaggable: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
 
   inSummaryScore: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
 }, {
+  sequelize,
+  modelName: 'tag',
   indexes: [
     {
       fields: ['key'],
       unique: true,
     },
   ],
-
   hooks: {
     afterCreate: updateHappened,
     afterDestroy: updateHappened,
@@ -102,13 +100,3 @@ export const Tag = sequelize.define<ITagInstance, ITagAttributes>('tag', {
     afterBulkDestroy: updateHappened,
   },
 });
-
-Tag.associate = (models) => {
-  Tag.hasMany(models.ModerationRule, {
-    as: 'moderationRules',
-  });
-
-  Tag.hasMany(models.CommentScore, {
-    as: 'commentScores',
-  });
-};

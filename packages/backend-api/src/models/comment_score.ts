@@ -14,11 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import { sequelize } from '../sequelize';
-import { Comment, ICommentInstance } from './comment';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { ITagInstance, Tag } from './tag';
+import {BelongsToGetAssociationMixin, DataTypes, Model} from 'sequelize';
+
+import {sequelize} from '../sequelize';
+import {Comment} from './comment';
+import {CommentScoreRequest} from './comment_score_request';
+import {Tag} from './tag';
+import {User} from './user';
 
 export const SCORE_SOURCE_TYPES = [
   'User',
@@ -26,7 +28,8 @@ export const SCORE_SOURCE_TYPES = [
   'Machine',
 ];
 
-export interface ICommentScoreAttributes extends IBaseAttributes {
+export class CommentScore  extends Model {
+  id: number;
   commentId?: number | null;
   confirmedUserId?: number;
   commentScoreRequestId?: number;
@@ -39,26 +42,20 @@ export interface ICommentScoreAttributes extends IBaseAttributes {
   annotationEnd?: number | null;
   isConfirmed?: boolean | null;
   extra?: object | null;
+
+  getTag: BelongsToGetAssociationMixin<Tag>;
+  getComment: BelongsToGetAssociationMixin<Comment>;
 }
 
-export type ICommentScoreInstance = Sequelize.Instance<ICommentScoreAttributes> &
-  ICommentScoreAttributes & IBaseInstance & {
-  getComment: Sequelize.BelongsToGetAssociationMixin<ICommentInstance>;
-  getTag: Sequelize.BelongsToGetAssociationMixin<ITagInstance>;
-};
-
-/**
- * CommentScore model
- */
-export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScoreAttributes>('comment_score', {
+CommentScore.init({
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   commentId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: Comment, key: 'id' },
     allowNull: false,
     onDelete: 'cascade',
@@ -66,7 +63,7 @@ export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScor
   },
 
   tagId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     references: { model: Tag, key: 'id' },
     allowNull: false,
     onDelete: 'cascade',
@@ -74,46 +71,48 @@ export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScor
   },
 
   sourceType: {
-    type: Sequelize.ENUM(SCORE_SOURCE_TYPES),
+    type: DataTypes.ENUM(...SCORE_SOURCE_TYPES),
     allowNull: false,
   },
 
   sourceId: {
-    type: Sequelize.CHAR(255),
+    type: DataTypes.CHAR(255),
     allowNull: true,
   },
 
   score: {
-    type: Sequelize.FLOAT.UNSIGNED, // Score from 0 - 1
+    type: DataTypes.FLOAT.UNSIGNED, // Score from 0 - 1
     allowNull: false,
   },
 
   annotationStart: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   annotationEnd: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   extra: {
-    type: Sequelize.JSON,
+    type: DataTypes.JSON,
     allowNull: true,
   },
 
   confirmedUserId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   isConfirmed: {
-    type: Sequelize.BOOLEAN,
+    type: DataTypes.BOOLEAN,
     allowNull: true,
   },
 
 }, {
+  sequelize,
+  modelName: 'comment_score',
   indexes: [
     {
       name: 'commentId_index',
@@ -130,18 +129,16 @@ export const CommentScore = sequelize.define<ICommentScoreInstance, ICommentScor
   ],
 });
 
-CommentScore.associate = (models) => {
-  CommentScore.belongsTo(models.Comment, {
-    onDelete: 'CASCADE',
-  });
-  CommentScore.belongsTo(models.CommentScoreRequest, {
-    as: 'commentScoreRequest',
-    onDelete: 'CASCADE',
-  });
-  CommentScore.belongsTo(models.Tag, {
-    onDelete: 'CASCADE',
-  });
-  CommentScore.belongsTo(models.User, {
-    onDelete: 'SET NULL',
-  });
-};
+CommentScore.belongsTo(Comment, {
+  onDelete: 'CASCADE',
+});
+CommentScore.belongsTo(CommentScoreRequest, {
+  as: 'commentScoreRequest',
+  onDelete: 'CASCADE',
+});
+CommentScore.belongsTo(Tag, {
+  onDelete: 'CASCADE',
+});
+CommentScore.belongsTo(User, {
+  onDelete: 'SET NULL',
+});

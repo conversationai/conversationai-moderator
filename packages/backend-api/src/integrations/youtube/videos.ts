@@ -19,16 +19,16 @@ import { google } from 'googleapis';
 import { Op } from 'sequelize';
 
 import { logger } from '../../logger';
-import { Article, Category, ICategoryInstance, IUserInstance } from '../../models';
+import { Article, Category, User } from '../../models';
 import { get_playlist_for_channel } from './channels';
 import { mapVideoItemToArticle, saveError } from './objectmap';
 
 const service = google.youtube('v3');
 
 async function sync_page_of_videos(
-  owner: IUserInstance,
+  owner: User,
   auth: OAuth2Client,
-  category: ICategoryInstance,
+  category: Category,
   playlist: string,
   pageToken?: string,
 ) {
@@ -66,7 +66,7 @@ async function sync_page_of_videos(
 }
 
 export async function sync_playlists(
-  owner: IUserInstance,
+  owner: User,
   auth: OAuth2Client,
 ) {
   logger.info(`Syncing videos for user ${owner.email}.`);
@@ -94,7 +94,7 @@ export async function sync_playlists(
 }
 
 export async function sync_individual_videos(
-  owner: IUserInstance,
+  owner: User,
   auth: OAuth2Client,
   videoIds: Array<string>,
 ): Promise<Array<number> | null> {
@@ -143,7 +143,7 @@ export async function sync_individual_videos(
 }
 
 export async function sync_known_videos(
-  owner: IUserInstance,
+  owner: User,
   auth: OAuth2Client,
 ) {
   logger.info(`Syncing known videos for user ${owner.email}.`);
@@ -171,7 +171,7 @@ export async function sync_known_videos(
 }
 
 export async function get_article_id_from_youtube_id(
-  owner: IUserInstance,
+  owner: User,
   auth: OAuth2Client,
   articleIds: Map<string, number>,
   channelId: string,

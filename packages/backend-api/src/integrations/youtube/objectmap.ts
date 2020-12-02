@@ -21,7 +21,7 @@ import { logger } from '../../logger';
 import {Article, Category, Comment, IIntegrationExtra, RESET_COUNTS, updateHappened} from '../../models';
 import {
   IAuthorAttributes,
-  IUserInstance,
+  User,
 } from '../../models';
 import { postProcessComment, sendForScoring } from '../../pipeline';
 
@@ -32,7 +32,7 @@ export function youtubeSetTestOnly(c: typeof testCallback) {
   testCallback = c;
 }
 
-export async function saveError(owner: IUserInstance, error: Error) {
+export async function saveError(owner: User, error: Error) {
   if (testOnly) {
     testCallback('error', error);
     return;
@@ -44,14 +44,14 @@ export async function saveError(owner: IUserInstance, error: Error) {
   await owner.save();
 }
 
-export async function clearError(owner: IUserInstance) {
+export async function clearError(owner: User) {
   const extra = owner.extra as IIntegrationExtra;
   delete extra.lastError;
   owner.extra = extra;
   await owner.save();
 }
 
-export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
+export async function mapChannelToCategory(owner: User, channel: any) {
   if (testOnly) {
     testCallback('channel', channel);
     return;
@@ -127,7 +127,7 @@ export async function mapChannelToCategory(owner: IUserInstance, channel: any) {
   }
 }
 
-export async function setChannelActive(owner: IUserInstance, channelId: string, brandingSettings: any) {
+export async function setChannelActive(owner: User, channelId: string, brandingSettings: any) {
   const isActive: boolean = !!brandingSettings.channel.moderateComments;
   if (testOnly) {
     testCallback('setChannelActive', brandingSettings);
@@ -137,7 +137,7 @@ export async function setChannelActive(owner: IUserInstance, channelId: string, 
   await updateHappened();
 }
 
-export async function foreachActiveChannel(owner: IUserInstance, callback: (channelId: string, articleIdMap: Map<string, number>) => Promise<void>) {
+export async function foreachActiveChannel(owner: User, callback: (channelId: string, articleIdMap: Map<string, number>) => Promise<void>) {
   const categories = await Category.findAll({
     where: {
       ownerId: owner.id,
@@ -165,7 +165,7 @@ export async function foreachActiveChannel(owner: IUserInstance, callback: (chan
 }
 
 export async function mapVideoItemToArticle(
-  owner: IUserInstance,
+  owner: User,
   categoryId: number,
   videoId: string,
   snippet: any,
@@ -217,7 +217,7 @@ export async function mapVideoItemToArticle(
 }
 
 async function mapCommentToComment(
-  owner: IUserInstance,
+  owner: User,
   articleId: number,
   ytcomment: any,
   replyToSourceId: string | undefined,
@@ -280,7 +280,7 @@ async function mapCommentToComment(
 }
 
 export async function mapCommentThreadToComments(
-  owner: IUserInstance,
+  owner: User,
   articleId: number,
   thread: any,
 ) {

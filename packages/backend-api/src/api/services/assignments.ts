@@ -19,20 +19,16 @@ import { Op } from 'sequelize';
 
 import {
   Article,
-  IArticleInstance,
-  IModeratorAssignmentAttributes,
-  IUserCategoryAssignmentAttributes,
-  IUserCategoryAssignmentInstance,
-  IUserInstance,
   ModeratorAssignment,
   partialUpdateHappened,
   updateHappened,
+  User,
   UserCategoryAssignment,
 } from '../../models';
 import { REPLY_SUCCESS } from '../constants';
 
-export async function countAssignments(user: IUserInstance) {
-  const articles: Array<IArticleInstance> = await user.getAssignedArticles();
+export async function countAssignments(user: User) {
+  const articles: Array<Article> = await user.getAssignedArticles();
   return articles.reduce((sum, a) => sum + a.unmoderatedCount, 0);
 }
 
@@ -56,7 +52,7 @@ export function createAssignmentsService(): express.Router {
     });
   }
 
-  function getArticleAssignmentArray(userIds: Array<number>, articleIdsInCategory: Array<number>): Array<IModeratorAssignmentAttributes> {
+  function getArticleAssignmentArray(userIds: Array<number>, articleIdsInCategory: Array<number>) {
     return articleIdsInCategory.reduce((sum: Array<{articleId: number; userId: number; }>, articleId) => {
       return sum.concat(userIds.map((userId) => {
         return {
@@ -67,7 +63,7 @@ export function createAssignmentsService(): express.Router {
     }, []);
   }
 
-  function getUserCategoryAssignment(userIds: Array<number>, categoryId: number): Array<IUserCategoryAssignmentAttributes> {
+  function getUserCategoryAssignment(userIds: Array<number>, categoryId: number) {
     return userIds.map((id) => {
       return {
         userId: id,
@@ -81,7 +77,7 @@ export function createAssignmentsService(): express.Router {
     const categoryId = parseInt(req.params.id, 10);
     const userIds: Array<number> = req.body.data.map((s: any) => parseInt(s, 10));
 
-    const articlesInCategory: Array<IArticleInstance> = await Article.findAll({
+    const articlesInCategory: Array<Article> = await Article.findAll({
       where: { categoryId },
     });
 
@@ -92,7 +88,7 @@ export function createAssignmentsService(): express.Router {
       where: { categoryId },
     });
 
-    const userIdsToBeRemoved = assignmentsForCategory.reduce((prev: Array<number>, current: IUserCategoryAssignmentInstance): Array<number> => {
+    const userIdsToBeRemoved = assignmentsForCategory.reduce((prev: Array<number>, current: UserCategoryAssignment): Array<number> => {
       const assignmentUserId: number = current.userId;
       const isInAssignment = userIds.some((userId) => (userId === assignmentUserId));
       if (isInAssignment) {

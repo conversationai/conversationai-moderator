@@ -3,10 +3,7 @@ import {
   Article,
   Category,
   Comment,
-  IArticleInstance,
   IAuthorAttributes,
-  ICategoryInstance,
-  IUserInstance,
   RESET_COUNTS,
   User,
   USER_GROUP_SERVICE,
@@ -34,7 +31,7 @@ export async function createOwner(name: string) {
   return owner;
 }
 
-export async function createCategory(owner: IUserInstance | null, label: string) {
+export async function createCategory(owner: User | null, label: string) {
   const [category, created] = await Category.findOrCreate({
     where: {label},
     defaults: {
@@ -53,7 +50,7 @@ export async function createCategory(owner: IUserInstance | null, label: string)
 }
 
 export async function createArticle(
-  category: ICategoryInstance,
+  category: Category,
   title: string,
   text: string,
   url: string,
@@ -82,7 +79,7 @@ export async function createArticle(
 }
 
 export async function createComment(
-  article: IArticleInstance,
+  article: Article,
   authorName: string,
   text: string,
 ) {

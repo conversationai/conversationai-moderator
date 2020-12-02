@@ -13,80 +13,70 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 import { Article } from './article';
 import { Category } from './category';
 import { Comment } from './comment';
 import { CommentFlag } from './comment_flag';
 import { CommentScore } from './comment_score';
-import { CommentScoreRequest } from './comment_score_request';
 import { CommentSize } from './comment_size';
 import { CommentSummaryScore } from './comment_summary_score';
-import { CommentTopScore } from './comment_top_score';
-import { CSRF } from './csrf';
 import { Decision } from './decision';
 import { ModerationRule } from './moderation_rule';
 import { ModeratorAssignment } from './moderator_assignment';
-import { Preselect } from './preselect';
 import { Tag } from './tag';
-import { TaggingSensitivity } from './tagging_sensitivity';
 import { User } from './user';
 import { UserCategoryAssignment } from './user_category_assignment';
-import { UserSocialAuth } from './user_social_auth';
 
-export const byName: any = {
-  Article,
-  Category,
-  Comment,
-  CommentScore,
-  CommentSummaryScore,
-  CommentFlag,
-  CommentScoreRequest,
-  CommentSize,
-  CommentTopScore,
-  CSRF,
-  Decision,
-  ModerationRule,
-  ModeratorAssignment,
-  Preselect,
-  Tag,
-  TaggingSensitivity,
-  User,
-  UserCategoryAssignment,
-  UserSocialAuth,
-};
-
-// Models can define an "associate" class method, which gets called
-// for each model that implements it, and provides a clean place
-// to create associations with other models without circular
-// dependencies
-Object.keys(byName).forEach((modelName) => {
-  if ('associate' in byName[modelName]) {
-    byName[modelName].associate(byName);
-  }
+Article.hasMany(Comment);
+Article.belongsToMany(User, {
+  through: {
+    model: ModeratorAssignment,
+    unique: false,
+  },
+  foreignKey: 'articleId',
+  as: 'assignedModerators',
 });
 
-export const byType: any = {
-  articles: Article,
-  categories: Category,
-  comments: Comment,
-  comment_scores: CommentScore,
-  comment_summary_scores: CommentSummaryScore,
-  comment_flags: CommentFlag,
-  comment_score_requests: CommentScoreRequest,
-  comment_sizes: CommentSize,
-  comment_top_scores: CommentTopScore,
-  csrfs: CSRF,
-  decisions: Decision,
-  moderation_rules: ModerationRule,
-  moderator_assignments: ModeratorAssignment,
-  preselects: Preselect,
-  tags: Tag,
-  tagging_sensitivities: TaggingSensitivity,
-  users: User,
-  user_category_assignments: UserCategoryAssignment,
-  user_social_auths: UserSocialAuth,
-};
+Category.hasMany(Article, {
+  // These work around a weird sequelize bug which adds a unique constraint
+  // only on article for seemingly no reason.
+  constraints: false,
+  foreignKeyConstraint: false,
+});
+Category.belongsToMany(User, {
+  through: {
+    model: UserCategoryAssignment,
+    unique: false,
+  },
+  foreignKey: 'categoryId',
+  as: 'assignedModerators',
+});
+
+Comment.hasMany(CommentFlag, { as: 'commentFlags' });
+Comment.hasMany(CommentScore, { as: 'commentScores' });
+Comment.hasMany(CommentSummaryScore, { as: 'commentSummaryScores' });
+Comment.hasMany(Decision, { as: 'decisions' });
+Comment.hasMany(CommentSize, { as: 'commentSizes' });
+
+Tag.hasMany(ModerationRule, { as: 'moderationRules' });
+Tag.hasMany(CommentScore, { as: 'commentScores' });
+
+User.belongsToMany(Article, {
+  through: {
+    model: ModeratorAssignment,
+    unique: false,
+  },
+  foreignKey: 'userId',
+  as: 'assignedArticles',
+});
+User.belongsToMany(Category, {
+  through: {
+    model: UserCategoryAssignment,
+    unique: false,
+  },
+  foreignKey: 'userId',
+  as: 'assignedCategories',
+});
 
 export * from './article';
 export * from './category';

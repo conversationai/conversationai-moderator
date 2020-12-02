@@ -23,14 +23,6 @@ export type IResolution = 'Accept' | 'Reject' | 'Defer';
 
 export type IAction = 'Accept' | 'Reject' | 'Defer' | 'Highlight';
 
-export interface IBaseInstance {
-  id: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export type IBaseAttributes = Partial<IBaseInstance>;
-
 export const RESET_COUNTS = {
   allCount: 0,
   unprocessedCount: 0,

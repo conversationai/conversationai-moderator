@@ -22,8 +22,7 @@ import { DotChartRenderer, groupByDateColumns, groupByScoreColumns } from '@conv
 
 import { Article, Category, Tag } from '../../../models';
 import { sequelize } from '../../../sequelize';
-import * as JSONAPI from '../../jsonapi';
-import { applySort } from '../../util/SequelizeHandler';
+import { sortCommentIds } from '../../util/sortCommentIds';
 
 export interface ICommentScoredOrDated {
   commentId: number;
@@ -35,6 +34,10 @@ export interface ICommentScored extends ICommentScoredOrDated {
 
 export interface ICommentDated extends ICommentScoredOrDated {
   date: string;
+}
+
+export class NotFoundError extends Error {
+
 }
 
 export async function sortComments(data: Array<ICommentScored>, sortQuery?: string): Promise<Array<ICommentScored>>;
@@ -55,8 +58,7 @@ export async function sortComments<T extends ICommentScoredOrDated>(data: Array<
     return data;
   }
 
-  const sortedIds = await applySort(
-    'comments',
+  const sortedIds = await sortCommentIds(
     data.map((d) => d.commentId),
     sortQuery.split(','),
   );
@@ -71,7 +73,7 @@ export async function sortComments<T extends ICommentScoredOrDated>(data: Array<
  */
 export async function getHistogramScoresForAllCategories(tagId: number): Promise<Array<ICommentScored>> {
   const tag = await Tag.findByPk(tagId);
-  if (!tag) { throw new JSONAPI.NotFoundError(`Could not find tag ${tagId}`); }
+  if (!tag) { throw new NotFoundError(`Could not find tag ${tagId}`); }
 
   return sequelize.query(
     'SELECT comment_summary_scores.score AS score, comment_summary_scores.commentId ' +
@@ -114,10 +116,10 @@ export async function getHistogramScoresForCategory(categoryId: number | 'all', 
   }
 
   const category = await Category.findByPk(categoryId);
-  if (!category) { throw new JSONAPI.NotFoundError(`Could not find category ${categoryId}`); }
+  if (!category) { throw new NotFoundError(`Could not find category ${categoryId}`); }
 
   const tag = await Tag.findByPk(tagId);
-  if (!tag) { throw new JSONAPI.NotFoundError(`Could not find tag ${tagId}`); }
+  if (!tag) { throw new NotFoundError(`Could not find tag ${tagId}`); }
 
   return sequelize.query(
     'SELECT comment_summary_scores.score AS score, comment_summary_scores.commentId ' +
@@ -149,7 +151,7 @@ export async function getHistogramScoresForCategoryByDate(categoryId: number | '
   }
 
   const category = await Category.findByPk(categoryId);
-  if (!category) { throw new JSONAPI.NotFoundError(`Could not find category ${categoryId}`); }
+  if (!category) { throw new NotFoundError(`Could not find category ${categoryId}`); }
 
   return sequelize.query(
     'SELECT comments.id as commentId, comments.sourceCreatedAt as date ' +
@@ -171,10 +173,10 @@ export async function getHistogramScoresForCategoryByDate(categoryId: number | '
  */
 export async function getHistogramScoresForArticle(articleId: number, tagId: number): Promise<Array<ICommentScored>> {
   const article = await Article.findByPk(articleId);
-  if (!article) { throw new JSONAPI.NotFoundError(`Could not find article ${articleId}`); }
+  if (!article) { throw new NotFoundError(`Could not find article ${articleId}`); }
 
   const tag = await Tag.findByPk(tagId);
-  if (!tag) { throw new JSONAPI.NotFoundError(`Could not find tag ${tagId}`); }
+  if (!tag) { throw new NotFoundError(`Could not find tag ${tagId}`); }
 
   return sequelize.query(
     'SELECT comment_summary_scores.score AS score, comment_summary_scores.commentId ' +
@@ -200,7 +202,7 @@ export async function getHistogramScoresForArticle(articleId: number, tagId: num
  */
 export async function getHistogramScoresForArticleByDate(articleId: number): Promise<Array<ICommentDated>> {
   const article = await Article.findByPk(articleId);
-  if (!article) { throw new JSONAPI.NotFoundError(`Could not find article ${articleId}`); }
+  if (!article) { throw new NotFoundError(`Could not find article ${articleId}`); }
 
   return sequelize.query(
     'SELECT comments.id as commentId, comments.sourceCreatedAt as date ' +
@@ -221,7 +223,7 @@ export async function getHistogramScoresForArticleByDate(articleId: number): Pro
  */
 export async function getMaxSummaryScoreForArticle(articleId: number): Promise<Array<ICommentScored>> {
   const article = await Article.findByPk(articleId);
-  if (!article) { throw new JSONAPI.NotFoundError(`Could not find article ${articleId}`); }
+  if (!article) { throw new NotFoundError(`Could not find article ${articleId}`); }
 
   return sequelize.query(
     'SELECT comments.id as commentId, comments.maxSummaryScore as score ' +
@@ -267,7 +269,7 @@ export async function getMaxSummaryScoreForCategory(categoryId: number | 'all'):
   }
 
   const category = await Category.findByPk(categoryId);
-  if (!category) { throw new JSONAPI.NotFoundError(`Could not find category ${categoryId}`); }
+  if (!category) { throw new NotFoundError(`Could not find category ${categoryId}`); }
 
   return sequelize.query(
     'SELECT comments.id as commentId, comments.maxSummaryScore as score ' +

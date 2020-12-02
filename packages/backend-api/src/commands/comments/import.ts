@@ -18,7 +18,7 @@ import * as parse from 'csv-parse';
 import { promises as fsPromises } from 'fs';
 import * as path from 'path';
 import * as yargs from 'yargs';
-import {IUserInstance} from '../../models';
+import {User} from '../../models';
 import {createArticle, createCategory, createComment, createOwner} from './data_helpers';
 
 export const command = 'comments:import';
@@ -58,7 +58,7 @@ const METADATA = {
   },
 } as {[key: string]: {category: string, article_title: string, article_summary: string}};
 
-async function processFile(owner: IUserInstance, fname: string) {
+async function processFile(owner: User, fname: string) {
   const metadata = METADATA[fname];
   const category = await createCategory(owner, metadata.category);
   const article = await createArticle(category, metadata.article_title,

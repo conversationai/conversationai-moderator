@@ -14,64 +14,57 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
-import { sequelize } from '../sequelize';
-import { IBaseAttributes, IBaseInstance } from './constants';
+import {DataTypes, Model} from 'sequelize';
 
-export interface IModeratorAssignmentAttributes extends  IBaseAttributes {
-  userId: number;
-  articleId: number;
-}
-
-export type IModeratorAssignmentInstance = Sequelize.Instance<IModeratorAssignmentAttributes> &
-  IModeratorAssignmentAttributes & IBaseInstance;
+import {sequelize} from '../sequelize';
+import {Article} from './article';
+import {User} from './user';
 
 /**
  * Article model
  */
-export const ModeratorAssignment = sequelize.define<
-  IModeratorAssignmentInstance,
-  IModeratorAssignmentAttributes
->(
-  'moderator_assignment',
-  {
-    id: {
-      type: Sequelize.INTEGER.UNSIGNED,
-      primaryKey: true,
-      autoIncrement: true,
-    },
+export class ModeratorAssignment extends Model {
+  id: number;
+  userId: number;
+  articleId: number;
+}
 
-    userId: {
-      type: Sequelize.INTEGER.UNSIGNED,
-      allowNull: false,
-    },
-
-    articleId: {
-      type: Sequelize.INTEGER.UNSIGNED,
-      allowNull: false,
-    },
+ModeratorAssignment.init({
+  id: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    primaryKey: true,
+    autoIncrement: true,
   },
-  {
-    indexes: [
-      {
-        name: 'unique_assignment_index',
-        fields: ['userId', 'articleId'],
-        unique: true,
-      },
-      {
-        name: 'userId_index',
-        fields: ['userId'],
-      },
-    ],
+
+  userId: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
   },
-);
 
-ModeratorAssignment.associate = (models) => {
-  ModeratorAssignment.belongsTo(models.User, {
-    onDelete: 'CASCADE',
-  });
+  articleId: {
+    type: DataTypes.INTEGER.UNSIGNED,
+    allowNull: false,
+  },
+}, {
+  sequelize,
+  modelName: 'moderator_assignment',
+  indexes: [
+    {
+      name: 'unique_assignment_index',
+      fields: ['userId', 'articleId'],
+      unique: true,
+    },
+    {
+      name: 'userId_index',
+      fields: ['userId'],
+    },
+  ],
+});
 
-  ModeratorAssignment.belongsTo(models.Article, {
-    onDelete: 'CASCADE',
-  });
-};
+ModeratorAssignment.belongsTo(User, {
+  onDelete: 'CASCADE',
+});
+
+ModeratorAssignment.belongsTo(Article, {
+  onDelete: 'CASCADE',
+});

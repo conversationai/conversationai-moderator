@@ -20,12 +20,12 @@ import {
   Comment,
   partialUpdateHappened,
 } from '../../models';
-import { IArticleAttributes, IArticleInstance } from '../../models';
+import { Article } from '../../models';
 import {
   denormalizeCommentCountsForCategory,
 } from '../categories';
 
-export async function denormalizeCommentCountsForArticle(article: IArticleInstance | null, isModeratorAction: boolean): Promise<void> {
+export async function denormalizeCommentCountsForArticle(article: Article | null, isModeratorAction: boolean): Promise<void> {
   if (!article) {
     return;
   }
@@ -46,7 +46,7 @@ export async function denormalizeCommentCountsForArticle(article: IArticleInstan
       unresolvedFlagsCount: { [Op.gt]: 0 } } });
   const batchedCount = await Comment.count({ where: { articleId: article.id, isModerated: true, isBatchResolved: true } });
 
-  const update: Partial<IArticleAttributes> = {
+  const update: Partial<Article> = {
     allCount,
     unprocessedCount,
     unmoderatedCount,

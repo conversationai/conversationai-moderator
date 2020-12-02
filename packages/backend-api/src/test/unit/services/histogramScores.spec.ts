@@ -14,15 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { NotFoundError } from '../../../api/jsonapi';
-
 import {
   Article,
   Category,
   Comment,
   CommentSummaryScore,
-  IArticleInstance,
-  ICategoryInstance,
   Tag,
 } from '../../../models';
 
@@ -39,6 +35,7 @@ import {
   getHistogramScoresForAllCategories,
   getHistogramScoresForArticle,
   getHistogramScoresForCategory,
+  NotFoundError,
 } from '../../../api/services/histogramScores/util';
 
 describe('histogramScores Functions', () => {
@@ -100,7 +97,7 @@ describe('histogramScores Functions', () => {
       const category1 = await makeCategory({ label: 'Category 1' });
       const category2 = await makeCategory({ label: 'Category 2' });
 
-      async function createScore(scoreValue: number, category: ICategoryInstance) {
+      async function createScore(scoreValue: number, category: Category) {
         const article = await makeArticle({ categoryId: category.id });
         const comment = await makeComment({ articleId: article.id});
         const score = await makeCommentSummaryScore({ commentId: comment.id, tagId: tag.id, score: scoreValue });
@@ -163,7 +160,7 @@ describe('histogramScores Functions', () => {
       const article1 = await makeArticle();
       const article2 = await makeArticle();
 
-      async function createScore(scoreValue: number, article: IArticleInstance) {
+      async function createScore(scoreValue: number, article: Article) {
         const comment = await makeComment({ articleId: article.id});
         const score = await makeCommentSummaryScore({ commentId: comment.id, tagId: tag.id, score: scoreValue });
 

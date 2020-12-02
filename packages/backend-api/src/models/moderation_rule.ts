@@ -14,9 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import * as Sequelize from 'sequelize';
+import {DataTypes, Model} from 'sequelize';
 
-import { sequelize } from '../sequelize';
+import {sequelize} from '../sequelize';
+
+import {Category} from './category';
 import {
   IAction,
   MODERATION_ACTION_ACCEPT,
@@ -24,8 +26,9 @@ import {
   MODERATION_ACTION_HIGHLIGHT,
   MODERATION_ACTION_REJECT,
 } from './constants';
-import { IBaseAttributes, IBaseInstance } from './constants';
-import { updateHappened } from './last_update';
+import {updateHappened} from './last_update';
+import {Tag} from './tag';
+import {User} from './user';
 
 export const MODERATION_RULE_ACTION_TYPES = [
   MODERATION_ACTION_ACCEPT,
@@ -36,7 +39,8 @@ export const MODERATION_RULE_ACTION_TYPES = [
 
 export const MODERATION_RULE_ACTION_TYPES_SET = new Set(MODERATION_RULE_ACTION_TYPES);
 
-export interface IModerationRuleAttributes extends IBaseAttributes {
+export class ModerationRule extends Model {
+  id: number;
   tagId: number;
   categoryId?: number;
   createdBy?: number;
@@ -45,52 +49,45 @@ export interface IModerationRuleAttributes extends IBaseAttributes {
   action: IAction;
 }
 
-export type IModerationRuleInstance = Sequelize.Instance<IModerationRuleAttributes> &
-  IModerationRuleAttributes & IBaseInstance;
-
-/**
- * ModerationRule model
- */
-export const ModerationRule = sequelize.define<
-  IModerationRuleInstance,
-  IModerationRuleAttributes
->('moderation_rules', {
+ModerationRule.init({
   id: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     primaryKey: true,
     autoIncrement: true,
   },
 
   tagId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
 
   categoryId: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   createdBy: {
-    type: Sequelize.INTEGER.UNSIGNED,
+    type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
   },
 
   lowerThreshold: {
-    type: Sequelize.FLOAT(2).UNSIGNED,
+    type: DataTypes.FLOAT(2).UNSIGNED,
     allowNull: false,
   },
 
   upperThreshold: {
-    type: Sequelize.FLOAT(2).UNSIGNED,
+    type: DataTypes.FLOAT(2).UNSIGNED,
     allowNull: false,
   },
 
   action: {
-    type: Sequelize.ENUM(MODERATION_RULE_ACTION_TYPES),
+    type: DataTypes.ENUM(...MODERATION_RULE_ACTION_TYPES),
     allowNull: false,
   },
 }, {
+  sequelize,
+  modelName: 'moderation_rules',
   hooks: {
     afterCreate: updateHappened,
     afterDestroy: updateHappened,
@@ -101,6 +98,25 @@ export const ModerationRule = sequelize.define<
   },
 });
 
+ModerationRule.belongsTo(Category, {
+  onDelete: 'CASCADE',
+  foreignKey: {
+    allowNull: true,
+  },
+});
+
+ModerationRule.belongsTo(Tag, {
+  onDelete: 'CASCADE',
+  foreignKey: {
+    allowNull: false,
+  },
+});
+
+ModerationRule.belongsTo(User, {
+  foreignKey: 'createdBy',
+  constraints: false,
+});
+
 export function isModerationRule(instance: any) {
   // TODO: instanceof doesn't work under some circumstances that I don't really understand.
   //       Hopefully fixed in later sequelize.
@@ -108,24 +124,3 @@ export function isModerationRule(instance: any) {
   // return instance instanceof ModerationRule.Instance;
   return instance && instance.get && !!instance.action;
 }
-
-ModerationRule.associate = (models) => {
-  ModerationRule.belongsTo(models.Category, {
-    onDelete: 'CASCADE',
-    foreignKey: {
-      allowNull: true,
-    },
-  });
-
-  ModerationRule.belongsTo(models.Tag, {
-    onDelete: 'CASCADE',
-    foreignKey: {
-      allowNull: false,
-    },
-  });
-
-  ModerationRule.belongsTo(models.User, {
-    foreignKey: 'createdBy',
-    constraints: false,
-  });
-};
