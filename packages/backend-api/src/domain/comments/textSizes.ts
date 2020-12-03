@@ -18,8 +18,8 @@ import * as opentype from 'opentype.js';
 import * as path from 'path';
 
 import {
-  CommentSize,
   Comment,
+  CommentSize,
 } from '../../models';
 
 const FONT_FAMILY = 'Georgia';

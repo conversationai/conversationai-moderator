@@ -56,7 +56,7 @@ CommentScoreRequest.init({
     type: DataTypes.DATE,
     allowNull: true,
   },
-},{
+}, {
   sequelize,
   modelName: 'comment_score_request',
 });
