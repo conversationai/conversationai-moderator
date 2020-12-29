@@ -39,7 +39,9 @@ export function createSearchService(): express.Router {
 
   router.get('/', async (req, res, next) => {
     try {
-      const { term, articleId, searchByAuthor } = req.query;
+      const term = req.query.term as string;
+      const articleId = req.query.articleId as string;
+      const searchByAuthor = req.query.searchByAuthor as string;
 
       let ids: Array<number> = [];
       let results;
@@ -95,7 +97,7 @@ export function createSearchService(): express.Router {
 
       ids = results ? results.map((r: any) => r.id) : [];
 
-      const { query: { sort: sortQuery } } = req;
+      const sortQuery = req.query.sort as string;
       const sortOrder = sortQuery ? sortQuery.split(',') : null;
 
       // No sort order is specified, defaults to relevance

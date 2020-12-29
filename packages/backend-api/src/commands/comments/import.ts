@@ -63,7 +63,7 @@ async function processFile(owner: User, fname: string) {
   const category = await createCategory(owner, metadata.category);
   const article = await createArticle(category, metadata.article_title,
     metadata.article_summary, 'https://jigsaw.google.com/');
-  const content = await fsPromises.readFile(path.join(__dirname, `../../../data/${fname}.csv`), 'UTF8');
+  const content = await fsPromises.readFile(path.join(__dirname, `../../../data/${fname}.csv`), 'utf8');
   const records = parse(content, {from_line: 2});
   for await (const record of records) {
     await createComment(article, `${fname} user`, record[0]);
