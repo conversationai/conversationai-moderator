@@ -118,7 +118,7 @@ export async function makeCommentTopScore(score: CommentScore): Promise<void> {
 }
 
 export async function makeCommentSummaryScore(
-  obj: Pick<CommentSummaryScore, 'commentId' | 'tagId' | 'score' | 'isConfirmed'>,
+  obj: Partial<Pick<CommentSummaryScore, 'commentId' | 'tagId' | 'score' | 'isConfirmed'>>,
 ): Promise<CommentSummaryScore> {
   return CommentSummaryScore.create({
     score: 1,
@@ -189,7 +189,7 @@ export async function listenForMessages(
     }, 1000);
   });
 
-  const p = new Promise((resolve, reject) => {
+  const p = new Promise<void>((resolve, reject) => {
     const socket = new WebSocket('ws://localhost:3000/services/updates/summary');
 
     socket.onclose = () => {

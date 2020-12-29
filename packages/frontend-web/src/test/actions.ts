@@ -31,7 +31,7 @@ export async function listenForMessages(
 ): Promise<void> {
   let id: NodeJS.Timer;
 
-  const timeout = new Promise((resolve) => {
+  const timeout = new Promise<void>((resolve) => {
     id = setTimeout(() => {
       console.log('Timed out while waiting for notification');
       resolve();
