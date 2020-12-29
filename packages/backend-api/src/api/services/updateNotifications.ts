@@ -41,8 +41,8 @@ import {
   PRESELECT_FIELDS,
   RULE_FIELDS,
   serialiseObject,
-  TAG_FIELDS,
   TAGGING_SENSITIVITY_FIELDS,
+  TAG_FIELDS,
   USER_FIELDS,
 } from './serializer';
 
@@ -354,7 +354,7 @@ export function createUpdateNotificationService(): express.Router {
       return;
     }
 
-    const userId = req.user.id;
+    const userId = (req.user as User).id;
     let si = socketItems.get(userId);
     if (!si) {
       si = {userId, ws: [], lastPerUserMessage: null};
@@ -378,7 +378,7 @@ export function createUpdateNotificationService(): express.Router {
       removeSocket(si!, ws);
     });
 
-    logger.info(`Websocket opened to ${req.user.email}`);
+    logger.info(`Websocket opened to ${(req.user as User).email}`);
     const updateFlags = await refreshMessages(true);
     maybeSendUpdateToUser(si, updateFlags);
   });

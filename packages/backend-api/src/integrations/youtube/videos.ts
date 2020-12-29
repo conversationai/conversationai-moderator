@@ -36,7 +36,7 @@ async function sync_page_of_videos(
     service.playlistItems.list({
       auth: auth,
       playlistId: playlist,
-      part: 'snippet',
+      part: ['snippet'],
       maxResults: 50,
       pageToken: pageToken,
     }, async (err: any, response: any) => {
@@ -101,8 +101,8 @@ export async function sync_individual_videos(
   return new Promise< Array<number> | null >((resolve, reject) => {
     service.videos.list({
       auth: auth,
-      part: 'snippet',
-      id: videoIds.join(),
+      part: ['snippet'],
+      id: videoIds,
     },  async (err: any, response: any) => {
       if (err) {
         await saveError(owner, err);
