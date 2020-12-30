@@ -16,7 +16,10 @@ limitations under the License.
 
 import { storiesOf } from '@storybook/react';
 import faker from 'faker';
-import { Set } from 'immutable';
+import {Map as IMap, Set} from 'immutable';
+import React from 'react';
+import {Provider} from 'react-redux';
+import {createStore} from 'redux';
 
 import { ModelId } from '../../../models';
 import { fakeUserModel } from '../../../models/fake';
@@ -39,12 +42,17 @@ const users = [
 
 const moderatorIds = Set<ModelId>([users[0].id]);
 
+export const store = createStore(
+  (s, _a) => s,
+  {global: {users: {humans: IMap(users.map((u) => [u.id, u]))}}},
+);
+
 storiesOf('AssignModerators', module)
     .add('DontTest:Default', () => (
-      <AssignModerators
-        users={users}
-        moderatorIds={moderatorIds}
-        isReady
-        label="Add a moderator"
-      />
+      <Provider store={store}>
+        <AssignModerators
+          moderatorIds={moderatorIds}
+          label="Add a moderator"
+        />
+      </Provider>
     ));

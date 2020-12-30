@@ -15,12 +15,14 @@ limitations under the License.
 */
 
 import { Set } from 'immutable';
-import React, { useState } from 'react';
+import React, {useMemo} from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import {useSelector} from 'react-redux';
 
 import { IUserModel, ModelId } from '../../../models';
 import { css, stylesheet } from '../../utilx';
 
+import {getMyUserId, getUsers} from '../../stores/users';
 import {
   GUTTER_DEFAULT_SPACING,
 } from '../../styles';
@@ -112,10 +114,8 @@ function ModeratorList(props: {
 }
 
 export interface IAssignModeratorsProps {
-  users?: Array<IUserModel>;
   moderatorIds?: Set<ModelId>;
   superModeratorIds?: Set<ModelId>;
-  isReady?: boolean;
   label: string;
   onClickDone?(): void;
   onClickClose?(): void;
@@ -124,20 +124,41 @@ export interface IAssignModeratorsProps {
 }
 
 export function AssignModerators(props: IAssignModeratorsProps) {
-  const [users, ] = useState(props.users);
+  const allUsers = useSelector(getUsers);
+  const users = useMemo(() => {
+    const userId = getMyUserId();
+    const currentUser = [];
+    const assignedUsers = [];
+    const unassignedUsers = [];
+
+    for (const u of allUsers.valueSeq().toArray()) {
+      if (u.id === userId) {
+        currentUser.push(u);
+      }
+      else if (props.moderatorIds.has(u.id)) {
+        assignedUsers.push(u);
+      }
+      else if (props.superModeratorIds.has(u.id)) {
+        assignedUsers.push(u);
+      }
+      else {
+        unassignedUsers.push(u);
+      }
+    }
+
+    const assignedUsersSorted = assignedUsers.sort((a, b) => a.name.localeCompare(b.name));
+    const unassignedUsersSorted = unassignedUsers.sort((a, b) => a.name.localeCompare(b.name));
+
+    return [...currentUser, ...assignedUsersSorted, ...unassignedUsersSorted];
+  }, [allUsers]);
 
   const {
     label,
     moderatorIds,
     superModeratorIds,
-    isReady,
     onClickClose,
     onClickDone,
   } = props;
-
-  if (!isReady) {
-    return null;
-  }
 
   function onModeratorStatusChange(userid: string, checked: boolean) {
     if (checked && props.onAddModerator) {

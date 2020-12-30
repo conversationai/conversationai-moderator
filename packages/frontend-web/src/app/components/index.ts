@@ -16,7 +16,7 @@ limitations under the License.
 
 export * from './Arrow';
 export * from './AspectRatio';
-export * from './AssignModerators';
+export * from './AssignModerators/AssignModerators';
 export * from './AssignTagsForm';
 export * from './Avatar';
 export * from './Button';
