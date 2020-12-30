@@ -36,7 +36,7 @@ export function stylesheet<T>(styles: T): T {
   for (const key in sheet) {
     if (sheet.hasOwnProperty(key)) {
       const originalObject = (styles as any)[key];
-      knownStylesheets = knownStylesheets.set(originalObject, sheet[key]);
+      knownStylesheets = knownStylesheets.set(originalObject, (sheet as any)[key]);
     }
   }
 
