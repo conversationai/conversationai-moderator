@@ -143,7 +143,7 @@ User.init({
     requireEmailForHumans() {
       const group = this.group;
       if (group === USER_GROUP_GENERAL || group === USER_GROUP_ADMIN) {
-        const validEmail = Joi.validate(this.email, Joi.string().email().required(), { convert: false });
+        const validEmail = Joi.string().email().required().validate(this.email, { convert: false });
         if (validEmail.error) {
           throw new Error('Email address required for human users');
         }
