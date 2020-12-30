@@ -14,8 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import cryptoRandomString from 'crypto-random-string';
 import {List} from 'immutable';
-import {generate} from 'randomstring';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -228,7 +228,7 @@ export function Settings(_props: {}) {
   }
 
   function connectYouTubeAccount() {
-    const csrf = generate();
+    const csrf = cryptoRandomString({length: 32, type: 'alphanumeric'});
     setCSRF(csrf);
     const token = getToken();
     window.location.href =  `${API_URL}/youtube/connect?&csrf=${csrf}&token=${token}`;

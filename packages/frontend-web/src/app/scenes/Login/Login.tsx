@@ -14,9 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+import cryptoRandomString from 'crypto-random-string';
 import { pick } from 'lodash';
 import qs from 'query-string';
-import { generate } from 'randomstring';
 import React from 'react';
 
 import { Bubbles, SPLASH_STYLES, SplashFrame, SplashRoot } from '../../components';
@@ -58,7 +58,7 @@ export function Login(props: ILoginProps) {
 
   function redirectToLogin() {
     const redirectURI = window.location.origin + window.location.pathname;
-    const csrf = generate();
+    const csrf = cryptoRandomString({length: 32, type: 'alphanumeric'});
     setCSRF(csrf);
     let url = `${API_URL}/auth/login/google?csrf=${csrf}`;
     if (redirectURI) {
