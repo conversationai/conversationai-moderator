@@ -84,7 +84,7 @@ export const MODERATOR_GUIDELINES_URL = getString('MODERATOR_GUIDELINES_URL', (t
 export const SUBMIT_FEEDBACK_URL = getString('SUBMIT_FEEDBACK_URL', (typeof ENV_SUBMIT_FEEDBACK_URL !== 'undefined') ? ENV_SUBMIT_FEEDBACK_URL : '');
 export const DEFAULT_DRAG_HANDLE_POS1 = 0;
 export const DEFAULT_DRAG_HANDLE_POS2 = 0.2;
-export const DATE_FORMAT_LONG = 'MMM. D, YYYY h:mm A';
-export const DATE_FORMAT_MDY = 'MMM. D, YYYY';
-export const DATE_FORMAT_HM = 'h:mm A';
+export const DATE_FORMAT_LONG = 'MMM. d, yyyy h:mm a';
+export const DATE_FORMAT_MDY = 'MMM. d, yyyy';
+export const DATE_FORMAT_HM = 'h:mm a';
 export const COLCOUNT = 100;

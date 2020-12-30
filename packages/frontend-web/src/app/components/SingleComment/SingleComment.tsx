@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import formatDate from 'date-fns/format';
+import {format, parseISO} from 'date-fns';
 import { List } from 'immutable';
 import React, {Fragment} from 'react';
 import { Link } from 'react-router-dom';
@@ -570,7 +570,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       isEditFocused,
     } = this.state;
 
-    const SUBMITTED_AT = formatDate(comment.sourceCreatedAt, DATE_FORMAT_LONG);
+    const SUBMITTED_AT = format(parseISO(comment.sourceCreatedAt), DATE_FORMAT_LONG);
 
     const bodyStyling = css(COMMENT_STYLES.body);
     const className = bodyStyling.className ? bodyStyling.className + ' comment-body' : 'comment-body';
