@@ -56,7 +56,12 @@ export function queueMainAction(action: CommentActions): express.RequestHandler 
     for (const data of dataArray) {
       const { commentId } = data;
       const parsedCommentId = parseInt(commentId, 10);
-      await enqueueCommentAction(action, (user as User).id, parsedCommentId, isBatchAction, body.runImmediately);
+      await enqueueCommentAction(
+        action,
+        (user as User).id,
+        parsedCommentId,
+        isBatchAction,
+        body.runImmediately);
     }
 
     res.json(REPLY_SUCCESS);
@@ -73,7 +78,12 @@ export function queueScoreCommentSummaryAction(action: ScoreActions): express.Re
 
     for (const { commentId } of dataArray) {
       const parsedCommentId = parseInt(commentId, 10);
-      await enqueueScoreAction(action, (user as User).id, parsedCommentId, parsedTagId, body.runImmediately);
+      await enqueueScoreAction(
+        action,
+        (user as User).id,
+        parsedCommentId,
+        parsedTagId,
+        body.runImmediately);
     }
 
     res.json(REPLY_SUCCESS);
@@ -87,7 +97,12 @@ export function queueSingleScoreAction(action: ScoreActions): express.RequestHan
   return async ({ body, params, user }, res) => {
     const parsedCommentId = parseInt(params.commentid, 10);
     const parsedTagId = parseInt(params.tagid, 10);
-    await enqueueScoreAction(action, (user as User).id, parsedCommentId, parsedTagId, body.runImmediately);
+    await enqueueScoreAction(
+      action,
+      (user as User).id,
+      parsedCommentId,
+      parsedTagId,
+      body.runImmediately);
     res.json(REPLY_SUCCESS);
   };
 }
@@ -180,14 +195,20 @@ export function createCommentActionsService(): express.Router {
 
   router.post('/:commentid/scores/:commentscoreid/confirm',
     async ({ body, params, user}, res) => {
-      await enqueueConfirmTagTask((user as User).id, parseInt(params.commentscoreid, 10), body.runImmediately);
+      await enqueueConfirmTagTask(
+        (user as User).id,
+        parseInt(params.commentscoreid, 10),
+        body.runImmediately);
       res.json(REPLY_SUCCESS);
     },
   );
 
   router.post('/:commentid/scores/:commentscoreid/reject',
     async ({ body, params, user}, res) => {
-      await enqueueRejectTagTask((user as User).id, parseInt(params.commentscoreid, 10), body.runImmediately);
+      await enqueueRejectTagTask(
+        (user as User).id,
+        parseInt(params.commentscoreid, 10),
+        body.runImmediately);
       res.json(REPLY_SUCCESS);
     },
   );
