@@ -80,7 +80,7 @@ export function createYouTubeRouter(
         oauthConfig.id,
         oauthConfig.secret,
         `${config.get('api_url')}/youtube/callback`, );
-      const tokenRsp = await oauth2Client.getToken(req.query.code);
+      const tokenRsp = await oauth2Client.getToken(req.query.code as string);
       const token = tokenRsp.tokens;
       oauth2Client.setCredentials(token);
       const service = google.oauth2('v2');

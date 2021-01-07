@@ -40,7 +40,7 @@ export function createKnownTasksRouter(): express.Router {
     '/',
     async ({ body, params: { taskName }}, res, next) => {
       try {
-        const status = Joi.validate(body, schema, { convert: false });
+        const status = schema.validate(body, { convert: false });
 
         if (status.error) {
           res.status(422).json({ status: 'error', errors: status.error.details });

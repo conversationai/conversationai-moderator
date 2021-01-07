@@ -45,7 +45,7 @@ async function sync_page_of_comments(
     service.commentThreads.list({
       auth: auth,
       allThreadsRelatedToChannelId: channelId,
-      part: 'snippet,replies',
+      part: ['snippet', 'replies'],
       textFormat: 'plainText',
       maxResults: maxResults,
       pageToken: pageToken,
@@ -134,7 +134,7 @@ export async function implement_moderation_decision(
   logger.info(  `Syncing comment ${comment.id}:${sourceId} to ${moderationStatus} (${decision.id})`);
   service.comments.setModerationStatus({
       auth: auth,
-      id: sourceId,
+      id: [sourceId],
       moderationStatus: moderationStatus,
     },
     (err) => {

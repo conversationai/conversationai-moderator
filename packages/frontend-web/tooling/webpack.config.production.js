@@ -57,7 +57,9 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js"],
     alias: {
       'aphrodite': 'aphrodite/no-important',
-      'ws': 'slugify', // Not a real alias.  But stops webpack from including ws library in bundle
+      'ws': 'slugify', // Not a real alias.  But stops webpack from including ws library in bundle,
+      'crypto': require.resolve("crypto-browserify"),
+      'stream': require.resolve("stream-browserify"),
     }
   },
   plugins: [
@@ -73,5 +75,6 @@ module.exports = {
       ENV_MODERATOR_GUIDELINES_URL: "'" + (process.env['MODERATOR_GUIDELINES_URL'] || '') + "'",
       ENV_SUBMIT_FEEDBACK_URL: "'" + (process.env['SUBMIT_FEEDBACK_URL'] || '') + "'",
     }),
+    new webpack.ProvidePlugin({ process: 'process/browser', }),
   ]
 };

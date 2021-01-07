@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import formatDate from 'date-fns/format';
+import {format, parseISO} from 'date-fns';
 import React from 'react';
 import {useSelector} from 'react-redux';
 
@@ -46,11 +46,14 @@ export function SortColumn(props: ISortColumnProps) {
   const tags = useSelector(getTags);
 
   if (['newest', 'oldest', 'updated'].includes(selectedSort)) {
-    const date = selectedSort === 'updated' ? comment.updatedAt : comment.sourceCreatedAt;
+    const dateStr = selectedSort === 'updated' ? comment.updatedAt : comment.sourceCreatedAt;
+    const date = dateStr ? parseISO(dateStr) : null;
+    const mdy = date ? format(date, DATE_FORMAT_MDY) : '--';
+    const hm = date ? format(date, DATE_FORMAT_HM) : '--';
     return (
       <div {...css(style)}>
-        <p key="date" {...css({margin: '0px'})}>{formatDate(date, DATE_FORMAT_MDY)}</p>
-        <p key="time" {...css({margin: '0px'})}>{formatDate(date, DATE_FORMAT_HM)}</p>
+        <p key="date" {...css({margin: '0px'})}>{mdy}</p>
+        <p key="time" {...css({margin: '0px'})}>{hm}</p>
       </div>
     );
   }

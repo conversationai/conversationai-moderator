@@ -43,7 +43,7 @@ export async function generateServerCSRF(req: express.Request, res: express.Resp
 
 export async function getClientCSRF(req: express.Request):
   Promise<{clientCSRF: string|undefined, referrer: string|null|undefined, errorMessage: string|undefined}> {
-  const serverCSRF = req.query.state;
+  const serverCSRF = req.query.state as string;
   if (!serverCSRF) {
     return {clientCSRF: undefined, referrer: undefined, errorMessage: 'CSRF missing.'};
   }

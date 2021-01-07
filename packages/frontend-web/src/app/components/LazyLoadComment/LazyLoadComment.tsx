@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { autobind } from 'core-decorators';
-import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
+import {formatDistanceToNow, parseISO} from 'date-fns';
 import { List, Set } from 'immutable';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -163,7 +163,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
         topScore = getTopScoreForTag(comment, selectedTag.id);
         break;
     }
-
+    const dateStr = comment.sourceCreatedAt ? formatDistanceToNow(parseISO(comment.sourceCreatedAt)) : '--';
     return(
       <div
         onMouseEnter={this.mouseEnter}
@@ -197,7 +197,7 @@ export class BasicBody extends React.PureComponent<IBasicBodyProps, IBasicBodySt
             {comment.author?.location && (
               <span>from {comment.author.location}&nbsp;</span>
             )}
-            <span {...css({textDecoration: 'none'})}> &bull; {distanceInWordsToNow(new Date(comment.sourceCreatedAt))} ago&nbsp;</span>
+            <span {...css({textDecoration: 'none'})}> &bull; {dateStr} ago&nbsp;</span>
             <FlagsSummary comment={comment}/>
             {actionsAreVisible && (
               <Link

@@ -67,6 +67,10 @@ module.exports = {
     alias: {
       'aphrodite': 'aphrodite/no-important',
       'ws': 'slugify', // Not a real alias.  But stops webpack from including ws library in bundle
+    },
+    fallback: {
+      'crypto': require.resolve("crypto-browserify"),
+      'stream': require.resolve("stream-browserify"),
     }
   },
 
@@ -86,11 +90,13 @@ module.exports = {
     }),
     new CircularDependencyPlugin({
       exclude: /node_modules/,
-    })
+    }),
+    new webpack.ProvidePlugin({ process: 'process/browser', }),
   ],
 
   devServer: {
     contentBase: path.join(__dirname, "..", "public"),
+    host: '0.0.0.0',
     port: port,
     historyApiFallback: true,
   },

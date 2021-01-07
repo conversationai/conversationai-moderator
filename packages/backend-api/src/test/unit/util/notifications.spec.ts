@@ -55,7 +55,7 @@ async function awaitNotification(action: () => Promise<void>): Promise<Array<boo
     }, 1000);
   });
 
-  const notification = new Promise((resolve, _) => {
+  const notification = new Promise<void>((resolve, _) => {
     registerInterest({
       updateHappened: async () => {
         notifyHappened = true;

@@ -25,10 +25,10 @@ import { mapChannelToCategory, saveError, setChannelActive } from './objectmap';
 const service = google.youtube('v3');
 
 async function sync_page_of_channels(owner: User, auth: OAuth2Client, pageToken?: string) {
-  return new Promise<string | undefined>((resolve, reject) => {
+  return new Promise<string | null | undefined>((resolve, reject) => {
     service.channels.list({
       auth: auth,
-      part: 'snippet,brandingSettings',
+      part: ['snippet', 'brandingSettings'],
       mine: true,
       maxResults: 50,
       pageToken: pageToken,
@@ -77,8 +77,8 @@ export async function activate_channel(
   return new Promise<void>((resolve, reject) => {
     service.channels.list({
       auth: auth,
-      id: channelId,
-      part: 'brandingSettings',
+      id: [channelId],
+      part: ['brandingSettings'],
     }, async (err: any, response: any) => {
       if (err) {
         await saveError(owner, err);
@@ -98,7 +98,7 @@ export async function activate_channel(
 
       service.channels.update({
         auth: auth,
-        part: 'brandingSettings',
+        part: ['brandingSettings'],
         requestBody: {
           id: channelId,
           brandingSettings: data,
@@ -121,8 +121,8 @@ export async function get_playlist_for_channel(owner: User, auth: OAuth2Client, 
   return new Promise<string>((resolve, reject) => {
     service.channels.list({
       auth: auth,
-      id: channelId,
-      part: 'contentDetails',
+      id: [channelId],
+      part: ['contentDetails'],
     }, async (err: any, response: any) => {
       if (err) {
         await saveError(owner, err);

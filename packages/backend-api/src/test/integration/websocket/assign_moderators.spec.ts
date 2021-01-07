@@ -36,7 +36,7 @@ import {
   sleep,
 } from '../../fixture';
 
-const chaiHttp = require('chai-http');
+import chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 describe('websocket tests: assign moderators', () => {

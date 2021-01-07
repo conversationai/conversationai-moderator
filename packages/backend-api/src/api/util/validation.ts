@@ -33,7 +33,7 @@ export function dataSchema(type: any) {
 export function validateRequest(schema: Joi.Schema) {
   return (req: express.Request, res: express.Response, next: express.NextFunction) => {
     const data = req.body;
-    const status = Joi.validate(data, schema, { convert: false });
+    const status = schema.validate(data, { convert: false });
 
     if (status.error) {
       // console.error(status.error.details);
@@ -48,7 +48,7 @@ export function validateRequest(schema: Joi.Schema) {
 
 export function validateAndSendResponse<T>(schema: Joi.Schema) {
   return (data: T, res: express.Response, next: express.NextFunction) => {
-    const status = Joi.validate(data, schema, { convert: false });
+    const status = schema.validate(data, { convert: false });
 
     if (status.error) {
       // console.error(status.error.details);

@@ -44,7 +44,8 @@ export function createTextSizesService(): express.Router {
 
   router.post('/',
     validateTextSizesRequest,
-    async ({ body: { data }, query: { width } }, res, next) => {
+    async ({ body: { data }, query }, res, next) => {
+      const width = query.width as string;
       try {
         const widthNum = parseInt(width, 10);
 

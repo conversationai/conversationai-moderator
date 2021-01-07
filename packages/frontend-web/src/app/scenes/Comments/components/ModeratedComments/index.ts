@@ -90,7 +90,7 @@ function mapDispatchToProps(dispatch: IAppDispatch): IModeratedCommentsDispatchP
 }
 
 // Add Redux data.
-export const ModeratedComments: React.ComponentClass = compose(
+export const ModeratedComments = compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,

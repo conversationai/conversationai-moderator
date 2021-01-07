@@ -83,9 +83,9 @@ async function scoresToChart(
 
     const { query: { width, height, columnCount, showAll } } = req;
 
-    const parsedWidth = width ? parseInt(width, 10) : undefined;
-    const parsedHeight = height ? parseInt(height, 10) : undefined;
-    const parsedColumnCount = columnCount ? parseInt(columnCount, 10) : undefined;
+    const parsedWidth = width ? parseInt(width as string, 10) : undefined;
+    const parsedHeight = height ? parseInt(height as string, 10) : undefined;
+    const parsedColumnCount = columnCount ? parseInt(columnCount as string, 10) : undefined;
     const parsedShowAll = showAll ? (showAll === 'true') : false;
 
     res.setHeader('Content-Type', 'image/png');
@@ -117,7 +117,7 @@ export function createHistogramScoresService(): express.Router {
     try {
       const categoryId = id === 'all' ? id : parseInt(id, 10);
       const data = await getHistogramScoresForCategoryByDate(categoryId);
-      const sortedData = await sortComments(data, sort);
+      const sortedData = await sortComments(data, sort as string);
 
       validateDatedCommentsAndSendResponse(stringifyIds(sortedData), res, next);
     } catch (e) {
@@ -143,7 +143,7 @@ export function createHistogramScoresService(): express.Router {
       const categoryId = id === 'all' ? id : parseInt(id, 10);
       const tagIdNumber = parseInt(tagId, 10);
       const data = await getHistogramScoresForCategory(categoryId, tagIdNumber);
-      const sortedData = await sortComments(data, sort);
+      const sortedData = await sortComments(data, sort as string);
 
       validateScoredCommentsAndSendResponse(stringifyIds(sortedData), res, next);
     } catch (e) {
@@ -160,7 +160,7 @@ export function createHistogramScoresService(): express.Router {
     try {
       const categoryId = id === 'all' ? id : parseInt(id, 10);
       const data = await getMaxSummaryScoreForCategory(categoryId);
-      const sortedData = await sortComments(data, sort);
+      const sortedData = await sortComments(data, sort as string);
 
       validateScoredCommentsAndSendResponse(stringifyIds(sortedData), res, next);
     } catch (e) {
@@ -190,7 +190,7 @@ export function createHistogramScoresService(): express.Router {
   router.get('/articles/:id/byDate', async ({ params: { id }, query: { sort }}, res, next) => {
     try {
       const data = await getHistogramScoresForArticleByDate(parseInt(id, 10));
-      const sortedData = await sortComments(data, sort);
+      const sortedData = await sortComments(data, sort as string);
 
       validateDatedCommentsAndSendResponse(stringifyIds(sortedData), res, next);
     } catch (e) {
@@ -211,7 +211,9 @@ export function createHistogramScoresService(): express.Router {
     }, req, res, next);
   });
 
-  router.get('/articles/:id/tags/:tagId', async ({ params: { id, tagId }, query: { sort }}, res, next) => {
+  router.get('/articles/:id/tags/:tagId', async ({ params, query}, res, next) => {
+    const { id, tagId } = params;
+    const sort = query.sort as string;
     const tagIdNumber = parseInt(tagId, 10);
 
     try {
@@ -246,8 +248,10 @@ export function createHistogramScoresService(): express.Router {
     }, req, res, next);
   });
 
-  router.get('/articles/:id/summaryScore', async ({ params: { id }, query: { sort }}, res, next) => {
+  router.get('/articles/:id/summaryScore', async ({ params, query}, res, next) => {
     try {
+      const { id } = params;
+      const sort = query.sort as string;
       const data = await getMaxSummaryScoreForArticle(parseInt(id, 10));
       const sortedData = await sortComments(data, sort);
 
