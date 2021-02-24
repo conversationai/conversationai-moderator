@@ -17,7 +17,7 @@ limitations under the License.
 import * as WebSocket from 'ws';
 
 import { User } from '../../../models';
-import { clearInterested } from '../../../models';
+import { clearInterested } from '../../../notification_router';
 
 import { destroyUpdateNotificationService } from '../../../api/services/updateNotifications';
 import { makeServer } from '../../../api/util/server';

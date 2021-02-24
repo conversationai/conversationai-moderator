@@ -40,67 +40,25 @@ LastUpdate.init({
   modelName: 'last_updates',
 });
 
-interface IInterestListener {
-  updateHappened(): Promise<void>;
-  partialUpdateHappened(articleId: number): Promise<void>;
+export let lastUpdateLocal = 0;
+
+export function testLocalUpdate(value: number) {
+  const updated = lastUpdateLocal !== value;
+  lastUpdateLocal = value;
+  return updated;
 }
 
-let lastUpdateLocal = 0;
-let interested: Array<IInterestListener> = [];
-let intervalHandle: NodeJS.Timer|null = null;
-
-async function getInstance() {
+export async function getInstance() {
   const instance = await LastUpdate.findOne({where: {id: 1}});
   if (instance) {
     return instance;
   }
-  return await LastUpdate.create({id: 1, lastUpdate: 1});
+  return LastUpdate.create({id: 1, lastUpdate: 1});
 }
 
-async function updateLastUpdate() {
+export async function updateLastUpdate() {
   const instance = await getInstance();
-  lastUpdateLocal = instance.lastUpdate + 1;
-  instance.lastUpdate = lastUpdateLocal;
+  instance.lastUpdate = instance.lastUpdate + 1;
+  testLocalUpdate(instance.lastUpdate);
   await instance.save();
-}
-export async function partialUpdateHappened(articleId: number) {
-  await updateLastUpdate();
-  for (const i of interested) {
-    await i.partialUpdateHappened(articleId);
-  }
-}
-
-export async function updateHappened() {
-  await updateLastUpdate();
-  for (const i of interested) {
-    i.updateHappened();
-  }
-}
-
-export function registerInterest(interestListener: IInterestListener, testing = false) {
-  if (!testing && !intervalHandle) {
-    // Poll every minute
-    intervalHandle = setInterval(maybeNotifyInterested, 60000);
-  }
-
-  interested.push(interestListener);
-}
-
-// Exporting for test purposes, but should really be unexported
-export async function maybeNotifyInterested() {
-  const instance = await getInstance();
-  const lastUpdate = instance.lastUpdate;
-  if (lastUpdate !== lastUpdateLocal) {
-    lastUpdateLocal = lastUpdate;
-    for (const i of interested) {
-      i.updateHappened();
-    }
-  }
-}
-
-export async function clearInterested() {
-  interested = [];
-  if (intervalHandle) {
-    clearInterval(intervalHandle);
-  }
 }

@@ -33,7 +33,7 @@ import {
   TaggingSensitivity,
   User,
 } from '../../models';
-import { registerInterest } from '../../models';
+import { registerInterest } from '../../notification_router';
 import { countAssignments } from './assignments';
 import {
   ARTICLE_FIELDS,

@@ -31,8 +31,8 @@ import {
   CommentFlag,
   CommentScore,
   CommentSummaryScore,
-  MODERATION_RULE_ACTION_TYPES_SET,
   ModerationRule,
+  MODERATION_RULE_ACTION_TYPES_SET,
   Preselect,
   Tag,
   TaggingSensitivity,
@@ -42,10 +42,7 @@ import {
   USER_GROUP_SERVICE,
   USER_GROUP_YOUTUBE,
 } from '../../models';
-import {
-  partialUpdateHappened,
-  updateHappened,
-} from '../../models';
+import { partialUpdateHappened, updateHappened } from '../../notification_router';
 import { sequelize } from '../../sequelize';
 import { REPLY_SUCCESS } from '../constants';
 import {

@@ -20,7 +20,8 @@ import { Op } from 'sequelize';
 import * as yargs from 'yargs';
 
 import { logger } from '../../logger';
-import { Article, Category, updateHappened } from '../../models';
+import {Article, Category} from '../../models';
+import {updateHappened} from '../../notification_router';
 import {createArticle, createCategory, createComment, createOwner} from './data_helpers';
 
 const PREEXISTING_CATEGORIES = 5;

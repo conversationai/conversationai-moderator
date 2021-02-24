@@ -20,12 +20,11 @@ import { Op } from 'sequelize';
 import {
   Article,
   ModeratorAssignment,
-  partialUpdateHappened,
-  updateHappened,
   User,
   UserCategoryAssignment,
 } from '../../models';
-import { REPLY_SUCCESS } from '../constants';
+import {partialUpdateHappened, updateHappened} from '../../notification_router';
+import {REPLY_SUCCESS} from '../constants';
 
 export async function countAssignments(user: User) {
   const articles: Array<Article> = await user.getAssignedArticles();

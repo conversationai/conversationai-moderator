@@ -18,11 +18,16 @@ import { pick } from 'lodash';
 import { Op } from 'sequelize';
 
 import { logger } from '../../logger';
-import {Article, Category, Comment, IIntegrationExtra, RESET_COUNTS, updateHappened} from '../../models';
 import {
+  Article,
+  Category,
+  Comment,
   IAuthorAttributes,
+  IIntegrationExtra,
+  RESET_COUNTS,
   User,
 } from '../../models';
+import {updateHappened } from '../../notification_router';
 import { postProcessComment, sendForScoring } from '../../pipeline';
 
 let testOnly = false;

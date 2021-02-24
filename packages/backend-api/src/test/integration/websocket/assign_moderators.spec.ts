@@ -17,7 +17,7 @@ limitations under the License.
 import * as chai from 'chai';
 
 import { Article, Category, User } from '../../../models';
-import { clearInterested } from '../../../models';
+import { clearInterested } from '../../../notification_router';
 
 import { REPLY_SUCCESS_VALUE } from '../../../api/constants';
 import { destroyUpdateNotificationService } from '../../../api/services/updateNotifications';
