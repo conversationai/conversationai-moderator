@@ -16,10 +16,10 @@ limitations under the License.
 
 import {BelongsToManyGetAssociationsMixin, DataTypes, Model} from 'sequelize';
 
+import {updateHappened} from '../notification_router';
 import {sequelize} from '../sequelize';
 import {Category} from './category';
 import {Comment} from './comment';
-import {updateHappened} from './last_update';
 import {User} from './user';
 
 export class Article extends Model {

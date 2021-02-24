@@ -16,9 +16,9 @@ limitations under the License.
 
 import {DataTypes, Model} from 'sequelize';
 
+import {updateHappened} from '../notification_router';
 import {sequelize} from '../sequelize';
 import {Category} from './category';
-import {updateHappened} from './last_update';
 import {Tag} from './tag';
 import {User} from './user';
 

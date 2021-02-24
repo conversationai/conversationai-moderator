@@ -17,9 +17,9 @@ limitations under the License.
 import * as Joi from 'joi';
 import {BelongsToManyGetAssociationsMixin, DataTypes, Model} from 'sequelize';
 
+import {updateHappened} from '../notification_router';
 import {sequelize} from '../sequelize';
 import {Article} from './article';
-import {updateHappened} from './last_update';
 
 export const USER_GROUP_GENERAL = 'general';
 export const USER_GROUP_ADMIN = 'admin';

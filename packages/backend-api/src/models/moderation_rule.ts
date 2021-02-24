@@ -16,6 +16,7 @@ limitations under the License.
 
 import {DataTypes, Model} from 'sequelize';
 
+import {updateHappened} from '../notification_router';
 import {sequelize} from '../sequelize';
 
 import {Category} from './category';
@@ -26,7 +27,6 @@ import {
   MODERATION_ACTION_HIGHLIGHT,
   MODERATION_ACTION_REJECT,
 } from './constants';
-import {updateHappened} from './last_update';
 import {Tag} from './tag';
 import {User} from './user';
 

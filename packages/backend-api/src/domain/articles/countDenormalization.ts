@@ -16,11 +16,11 @@ limitations under the License.
 import { Op } from 'sequelize';
 
 import {
+  Article,
   Category,
   Comment,
-  partialUpdateHappened,
 } from '../../models';
-import { Article } from '../../models';
+import { partialUpdateHappened } from '../../notification_router';
 import {
   denormalizeCommentCountsForCategory,
 } from '../categories';

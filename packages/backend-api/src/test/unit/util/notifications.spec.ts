@@ -31,7 +31,7 @@ import {
   partialUpdateHappened,
   registerInterest,
   updateHappened,
-} from '../../../models';
+} from '../../../notification_router';
 import {
   makeArticle,
   makeCategory,
