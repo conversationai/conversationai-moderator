@@ -16,14 +16,13 @@ limitations under the License.
 
 import {DataTypes, Model} from 'sequelize';
 
-import {updateHappened} from '../notification_router';
 import {sequelize} from '../sequelize';
 import {Category} from './category';
 import {Tag} from './tag';
 import {User} from './user';
 
 export class Preselect extends Model {
-  id?: number;
+  id: number;
   tagId?: number;
   categoryId?: number;
   createdBy?: number;
@@ -65,14 +64,6 @@ Preselect.init({
 }, {
   sequelize,
   modelName: 'preselect',
-  hooks: {
-    afterCreate: updateHappened,
-    afterDestroy: updateHappened,
-    afterUpdate: updateHappened,
-    afterBulkCreate: updateHappened,
-    afterBulkUpdate: updateHappened,
-    afterBulkDestroy: updateHappened,
-  },
 });
 
 Preselect.belongsTo(Category, {

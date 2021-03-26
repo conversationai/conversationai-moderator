@@ -16,15 +16,26 @@ limitations under the License.
 
 import * as chai from 'chai';
 
+import {updateArticleAssignments, updateCategoryAssignments} from '../../../actions/assignment_updaters';
+import {
+  createRangeObject,
+  createTagObject,
+  deleteRangeObject,
+  modifyRangeObject,
+  modifyTagObject,
+} from '../../../actions/object_updaters';
 import { denormalizeCommentCountsForArticle } from '../../../domain';
 import {
   Article,
   Category,
   ModerationRule,
+  MODERATION_ACTION_ACCEPT,
+  ModeratorAssignment,
   Preselect,
   Tag,
   TaggingSensitivity,
   User,
+  UserCategoryAssignment,
 } from '../../../models';
 import {
   clearInterested,
@@ -35,10 +46,7 @@ import {
 import {
   makeArticle,
   makeCategory,
-  makePreselect,
-  makeRule,
   makeTag,
-  makeTaggingSensitivity,
   makeUser,
 } from '../../fixture';
 
@@ -88,6 +96,8 @@ describe('Notification tests', () => {
     await TaggingSensitivity.destroy({where: {}});
     await ModerationRule.destroy({where: {}});
     await Preselect.destroy({where: {}});
+    await UserCategoryAssignment.destroy({where: {}});
+    await ModeratorAssignment.destroy({where: {}});
   });
 
   afterEach(clearInterested);
@@ -131,6 +141,32 @@ describe('Notification tests', () => {
     assert.isTrue(res[1]);
   });
 
+  it('Test category assignment', async () => {
+    const category = await makeCategory();
+    await makeArticle({categoryId: category.id} );
+    const user = await makeUser();
+
+    const res = await awaitNotification(async () => {
+      await updateCategoryAssignments(category.id, [user.id]);
+    });
+
+    assert.isTrue(res[0]);
+    assert.isFalse(res[1]);
+  });
+
+  it('Test article assignment', async () => {
+    const category = await makeCategory();
+    const article = await makeArticle({categoryId: category.id} );
+    const user = await makeUser();
+
+    const res = await awaitNotification(async () => {
+      await updateArticleAssignments(article.id, new Set([user.id]));
+    });
+
+    assert.isFalse(res[0]);
+    assert.isTrue(res[1]);
+  });
+
   it('Test notifies when user updated', async () => {
     let user: User;
 
@@ -156,16 +192,21 @@ describe('Notification tests', () => {
   });
 
   it('Test notifies when tag updated', async () => {
-    let tag: Tag;
 
     const res = await awaitNotification(async () => {
-      tag = await makeTag();
+      await createTagObject({
+        key: 'test',
+        label: 'Test',
+        color: '#FFFFFF',
+      });
     });
     assert.isTrue(res[0]);
     assert.isFalse(res[1]);
 
+    const tag = await Tag.findOne();
+
     const res2 = await awaitNotification(async () => {
-      tag.update({
+      await modifyTagObject(tag!.id, {
         label: 'newname',
       });
     });
@@ -173,23 +214,26 @@ describe('Notification tests', () => {
     assert.isFalse(res2[1]);
 
     const res3 = await awaitNotification(async () => {
-      tag.destroy();
+      await deleteRangeObject('tag', tag!.id);
     });
     assert.isTrue(res3[0]);
     assert.isFalse(res3[1]);
   });
 
   it('Test notifies when taggingSensitivity updated', async () => {
-    let ts: TaggingSensitivity;
-
     const res = await awaitNotification(async () => {
-      ts = await makeTaggingSensitivity();
+      await createRangeObject('tagging_sensitivity', {
+        lowerThreshold: 0,
+        upperThreshold: 1,
+      });
     });
     assert.isTrue(res[0]);
     assert.isFalse(res[1]);
 
+    const ts = await TaggingSensitivity.findOne();
+
     const res2 = await awaitNotification(async () => {
-      ts.update({
+      await modifyRangeObject('tagging_sensitivity', ts!.id, {
         lowerThreshold: 0.5,
       });
     });
@@ -197,24 +241,30 @@ describe('Notification tests', () => {
     assert.isFalse(res2[1]);
 
     const res3 = await awaitNotification(async () => {
-      ts.destroy();
+      await deleteRangeObject('tagging_sensitivity', ts!.id);
     });
     assert.isTrue(res3[0]);
     assert.isFalse(res3[1]);
   });
 
   it('Test notifies when rule updated', async () => {
-    let mr: ModerationRule;
     const t = await makeTag();
 
     const res = await awaitNotification(async () => {
-      mr = await makeRule(t);
+      await createRangeObject('moderation_rule', {
+        tagId: t.id,
+        action: MODERATION_ACTION_ACCEPT,
+        lowerThreshold: 0,
+        upperThreshold: 1,
+      });
     });
     assert.isTrue(res[0]);
     assert.isFalse(res[1]);
 
+    const mr = await ModerationRule.findOne();
+
     const res2 = await awaitNotification(async () => {
-      mr.update({
+      await modifyRangeObject('moderation_rule', mr!.id, {
         lowerThreshold: 0.5,
       });
     });
@@ -222,23 +272,26 @@ describe('Notification tests', () => {
     assert.isFalse(res2[1]);
 
     const res3 = await awaitNotification(async () => {
-      mr.destroy();
+      await deleteRangeObject('moderation_rule', mr!.id);
     });
     assert.isTrue(res3[0]);
     assert.isFalse(res3[1]);
   });
 
   it('Test notifies when preselect updated', async () => {
-    let ps: Preselect;
-
     const res = await awaitNotification(async () => {
-      ps = await makePreselect();
+      await createRangeObject('preselect', {
+        lowerThreshold: 0,
+        upperThreshold: 1,
+      });
     });
     assert.isTrue(res[0]);
     assert.isFalse(res[1]);
 
+    const ps = await Preselect.findOne();
+
     const res2 = await awaitNotification(async () => {
-      ps.update({
+      await modifyRangeObject('preselect', ps!.id, {
         lowerThreshold: 0.5,
       });
     });
@@ -246,7 +299,7 @@ describe('Notification tests', () => {
     assert.isFalse(res2[1]);
 
     const res3 = await awaitNotification(async () => {
-      ps.destroy();
+      await deleteRangeObject('preselect', ps!.id);
     });
     assert.isTrue(res3[0]);
     assert.isFalse(res3[1]);

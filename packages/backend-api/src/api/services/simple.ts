@@ -23,6 +23,14 @@ import * as express from 'express';
 import { pick } from 'lodash';
 import { Op, QueryTypes } from 'sequelize';
 
+import {
+  checkModelType,
+  createRangeObject,
+  createTagObject,
+  deleteRangeObject,
+  modifyRangeObject,
+  modifyTagObject,
+} from '../../actions/object_updaters';
 import { createToken } from '../../auth/tokens';
 import { clearError } from '../../integrations';
 import {
@@ -31,11 +39,6 @@ import {
   CommentFlag,
   CommentScore,
   CommentSummaryScore,
-  ModerationRule,
-  MODERATION_RULE_ACTION_TYPES_SET,
-  Preselect,
-  Tag,
-  TaggingSensitivity,
   User,
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
@@ -276,191 +279,64 @@ export function createSimpleRESTService(): express.Router {
   });
 
   router.post('/tag', async (req, res) => {
-    for (const k of ['color', 'key', 'label']) {
-      if (typeof req.body[k] !== 'string') {
-        res.status(400).send(`Tag creation error: Missing/invalid attribute ${k}.`);
-        return;
-      }
+    const msg = await createTagObject(req.body);
+    if (msg) {
+      res.status(400).send(msg);
+      return;
     }
-
-    const {color, description, key, label, isInBatchView, inSummaryScore, isTaggable} = req.body;
-
-    await Tag.create({
-      color, description, key, label,
-      isInBatchView: !!isInBatchView,
-      inSummaryScore: !!inSummaryScore,
-      isTaggable: !!isTaggable,
-    });
-
-    updateHappened();
     res.json(REPLY_SUCCESS);
   });
 
   router.patch('/tag/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
-    const tag = await Tag.findByPk(id);
-    if (!tag) {
-      res.status(404).send('Not found');
+    const msg = await modifyTagObject(id, req.body);
+    if (msg) {
+      res.status(400).send(msg);
       return;
     }
 
-    for (const k of ['color', 'key', 'label', 'description']) {
-      if (k in req.body) {
-        if (typeof req.body[k] !== 'string' && (k !== 'description' || req.body[k] !== null)) {
-          res.status(400).send(`Tag modification error: Invalid attribute ${k}.`);
-          return;
-        }
-        tag.set(k as 'color' | 'key' | 'label' | 'description', req.body[k]);
-      }
-    }
-
-    for (const k of ['isInBatchView', 'inSummaryScore', 'isTaggable']) {
-      if (k in req.body) {
-        tag.set(k as 'isInBatchView' | 'inSummaryScore' | 'isTaggable', !!req.body[k]);
-      }
-    }
-
-    await tag.save();
-    updateHappened();
     res.json(REPLY_SUCCESS);
   });
 
-  async function processRangeData(
-    req: express.Request,
-    res: express.Response,
-    setValue: (key: string, value: string | number | boolean | null) => void,
-  ) {
-    for (const k of ['tagId', 'categoryId']) {
-      if (k in req.body) {
-        let val: number | null;
-        if (req.body[k] === null) {
-          if (k === 'tagId' && req.params.model === 'moderation_rule') {
-            res.status(400).send(`tagId must be set.`);
-            return false;
-          }
-          val = null;
-        } else {
-          val = parseInt(req.body[k], 10);
-          if (isNaN(val)) {
-            res.status(400).send(`Invalid value ${req.body[k]} for field ${k}.`);
-            return false;
-          }
-        }
-        setValue(k, val);
-      }
-    }
-    for (const k of ['lowerThreshold', 'upperThreshold']) {
-      if (k in req.body) {
-        const val = parseFloat(req.body[k]);
-        if (isNaN(val) || val < 0 || val > 1) {
-          res.status(400).send(`Range error: ${k} is not a valid number: ${req.body[k]}.`);
-          return false;
-        }
-        setValue(k, val);
-      }
-    }
-    if (req.params.model === 'moderation_rule') {
-      if ('action' in req.body) {
-        const action = req.body.action;
-        if (!MODERATION_RULE_ACTION_TYPES_SET.has(action)) {
-          res.status(400).send(`Unknown action: ${action}.`);
-          return false;
-        }
-
-        setValue('action', action);
-      }
-    }
-
-    return true;
-  }
-
   router.post('/:model', async (req, res) => {
-    const data: {[key: string]: string | number | boolean | null } = {};
-    if (!await processRangeData(req, res, (key, value) => data[key] = value)) {
+    if (!checkModelType(req.params.model)) {
+      res.status(400).send('Bad object type');
       return;
     }
 
-    let mandatory_attributes = ['lowerThreshold', 'upperThreshold'];
-    if (req.params.model === 'moderation_rule') {
-      mandatory_attributes = [...mandatory_attributes, 'tagId', 'action'];
+    const msg = await createRangeObject(req.params.model, req.body);
+    if (msg) {
+      res.status(400).send(msg);
+      return;
     }
 
-    for (const k of mandatory_attributes) {
-      if (!(k in data)) {
-        res.status(400).send(`Missing mandatory attribute: ${k}.`);
-        return;
-      }
-    }
-
-    switch (req.params.model) {
-      case 'moderation_rule':
-        await ModerationRule.create(data as any);
-        break;
-      case 'preselect':
-        await Preselect.create(data as any);
-        break;
-      case 'tagging_sensitivity':
-        await TaggingSensitivity.create(data as any);
-        break;
-      default:
-        res.status(404);
-        return;
-    }
-
-    updateHappened();
     res.json(REPLY_SUCCESS);
   });
 
   router.patch('/:model/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
-    let object: ModerationRule | Preselect | TaggingSensitivity | null;
-    switch (req.params.model) {
-      case 'moderation_rule':
-        object = await ModerationRule.findByPk(id);
-        break;
-      case 'preselect':
-        object = await Preselect.findByPk(id);
-        break;
-      case 'tagging_sensitivity':
-        object = await TaggingSensitivity.findByPk(id);
-        break;
-      default:
-        res.status(404);
-        return;
-    }
 
-    if (!object) {
-      res.status(404).send('Not found');
+    if (!checkModelType(req.params.model)) {
+      res.status(400).send('Bad object type');
       return;
     }
 
-    if (await processRangeData(req, res, (key, value) => object!.set(key as any, value as any))) {
-      await object.save();
-      updateHappened();
-      res.json(REPLY_SUCCESS);
+    const msg = await modifyRangeObject(req.params.model, id, req.body);
+    if (msg) {
+      res.status(400).send(msg);
+      return;
     }
+    res.json(REPLY_SUCCESS);
   });
 
   router.delete('/:model/:id', async (req, res) => {
     const objectId = parseInt(req.params.id, 10);
-    switch (req.params.model) {
-      case 'moderation_rule':
-        await ModerationRule.destroy({where: {id: objectId}});
-        break;
-      case 'preselect':
-        await Preselect.destroy({where: {id: objectId}});
-        break;
-      case 'tagging_sensitivity':
-        await TaggingSensitivity.destroy({where: {id: objectId}});
-        break;
-      case 'tag':
-        await Tag.destroy({where: {id: objectId}});
-        break;
-      default:
-        res.status(404);
-        return;
+    if (!checkModelType(req.params.model) && req.params.model !== 'tag') {
+      res.status(400).send('Bad object type');
+      return;
     }
-    updateHappened();
+
+    await deleteRangeObject(req.params.model, objectId);
     res.json(REPLY_SUCCESS);
   });
   return router;
