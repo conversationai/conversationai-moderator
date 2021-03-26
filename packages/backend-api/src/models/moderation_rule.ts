@@ -16,7 +16,6 @@ limitations under the License.
 
 import {DataTypes, Model} from 'sequelize';
 
-import {updateHappened} from '../notification_router';
 import {sequelize} from '../sequelize';
 
 import {Category} from './category';
@@ -88,14 +87,6 @@ ModerationRule.init({
 }, {
   sequelize,
   modelName: 'moderation_rules',
-  hooks: {
-    afterCreate: updateHappened,
-    afterDestroy: updateHappened,
-    afterUpdate: updateHappened,
-    afterBulkCreate: updateHappened,
-    afterBulkUpdate: updateHappened,
-    afterBulkDestroy: updateHappened,
-  },
 });
 
 ModerationRule.belongsTo(Category, {

@@ -16,7 +16,6 @@ limitations under the License.
 
 import {DataTypes, Model} from 'sequelize';
 
-import {updateHappened} from '../notification_router';
 import {sequelize} from '../sequelize';
 import {Category} from './category';
 import {Tag} from './tag';
@@ -65,14 +64,6 @@ TaggingSensitivity.init({
 }, {
   sequelize,
   modelName: 'tagging_sensitivity',
-  hooks: {
-    afterCreate: updateHappened,
-    afterDestroy: updateHappened,
-    afterUpdate: updateHappened,
-    afterBulkCreate: updateHappened,
-    afterBulkUpdate: updateHappened,
-    afterBulkDestroy: updateHappened,
-  },
 });
 
 TaggingSensitivity.belongsTo(Category, {
