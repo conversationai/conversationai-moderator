@@ -16,7 +16,7 @@ limitations under the License.
 import {Op} from 'sequelize';
 
 import {Article, ModeratorAssignment, UserCategoryAssignment} from '../models';
-import {partialUpdateHappened, updateHappened} from '../notification_router';
+import {sendNotification} from '../notification_router';
 
 function getUserCategoryAssignment(userIds: Array<number>, categoryId: number) {
   return userIds.map((id) => {
@@ -98,7 +98,10 @@ export async function updateCategoryAssignments(categoryId: number, userIds: Arr
     });
   }
   await UserCategoryAssignment.bulkCreate(getUserCategoryAssignment(newUserIds, categoryId));
-  updateHappened();
+  await sendNotification('category', 'modify', categoryId);
+  for (const articleId of articleIdsInCategory) {
+    await sendNotification('article', 'modify', articleId);
+  }
 }
 
 export async function updateArticleAssignments(articleId: number, userIds: Set<number>) {
@@ -121,6 +124,5 @@ export async function updateArticleAssignments(articleId: number, userIds: Set<n
 
   await ModeratorAssignment.bulkCreate(getArticleAssignmentArray(Array.from(userIds), [articleId]));
   await ModeratorAssignment.destroy({where: {id: {[Op.in]: toRemove }}});
-
-  partialUpdateHappened(articleId);
+  await sendNotification('article', 'modify', articleId);
 }

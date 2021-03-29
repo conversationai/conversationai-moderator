@@ -21,7 +21,7 @@ import * as yargs from 'yargs';
 
 import { logger } from '../../logger';
 import {Article, Category} from '../../models';
-import {updateHappened} from '../../notification_router';
+import {sendNotification} from '../../notification_router';
 import {createArticle, createCategory, createComment, createOwner} from './data_helpers';
 
 const PREEXISTING_CATEGORIES = 5;
@@ -194,6 +194,6 @@ export async function handler(argv: any) {
 
   if (argv.comments === 0) {
     logger.info(`Not generating comments, but trigger update anyway.`);
-    await updateHappened();
+    await sendNotification('global');
   }
 }

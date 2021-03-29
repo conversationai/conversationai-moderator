@@ -39,9 +39,9 @@ import {
 } from '../../../models';
 import {
   clearInterested,
-  partialUpdateHappened,
+  createSendNotificationHook,
   registerInterest,
-  updateHappened,
+  sendNotification,
 } from '../../../notification_router';
 import {
   makeArticle,
@@ -73,7 +73,7 @@ async function awaitNotification(action: () => Promise<void>): Promise<Array<boo
         notifyPartialHappened = true;
         resolve();
       },
-    });
+    }, true);
   });
 
   await action();
@@ -104,7 +104,7 @@ describe('Notification tests', () => {
 
   it('Test notifier directly', async () => {
     const res = await awaitNotification(async () => {
-      await updateHappened();
+      sendNotification('global');
     });
     assert.isTrue(res[0]);
     assert.isFalse(res[1]);
@@ -112,14 +112,31 @@ describe('Notification tests', () => {
 
   it('Test partial notifier directly', async () => {
     const res = await awaitNotification(async () => {
-      await partialUpdateHappened(0);
+      sendNotification('article', 'modify', 1);
     });
     assert.isFalse(res[0]);
     assert.isTrue(res[1]);
   });
 
+  it('Test notifier hook', async () => {
+    const res = await awaitNotification(async () => {
+      const notifier = createSendNotificationHook<string>('article', 'modify', (_) => 1);
+      notifier( '1');
+    });
+    assert.isFalse(res[0]);
+    assert.isTrue(res[1]);
+
+    const res2 = await awaitNotification(async () => {
+      await makeArticle();
+    });
+    assert.isFalse(res2[0]);
+    assert.isTrue(res2[1]);
+  });
+
   it('Test notifier when denormalisation happens', async () => {
     const article = await makeArticle();
+    article.allCount = 5;
+    await article.save();
 
     const res = await awaitNotification(async () => {
       await denormalizeCommentCountsForArticle(article, false);
@@ -131,13 +148,17 @@ describe('Notification tests', () => {
 
   it('Test notifier when denormalisation happens (this time with a category)', async () => {
     const category = await makeCategory();
+    category.allCount = 5;
+    await category.save();
     const article = await makeArticle({categoryId: category.id} );
+    article.allCount = 5;
+    await article.save();
 
     const res = await awaitNotification(async () => {
       await denormalizeCommentCountsForArticle(article, false);
     });
 
-    assert.isFalse(res[0]);
+    assert.isTrue(res[0]);
     assert.isTrue(res[1]);
   });
 
@@ -151,7 +172,7 @@ describe('Notification tests', () => {
     });
 
     assert.isTrue(res[0]);
-    assert.isFalse(res[1]);
+    assert.isTrue(res[1]);
   });
 
   it('Test article assignment', async () => {
@@ -183,12 +204,6 @@ describe('Notification tests', () => {
     });
     assert.isTrue(res2[0]);
     assert.isFalse(res2[1]);
-
-    const res3 = await awaitNotification(async () => {
-      user.destroy();
-    });
-    assert.isTrue(res3[0]);
-    assert.isFalse(res3[1]);
   });
 
   it('Test notifies when tag updated', async () => {

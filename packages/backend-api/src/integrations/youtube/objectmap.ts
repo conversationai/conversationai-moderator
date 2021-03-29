@@ -27,7 +27,6 @@ import {
   RESET_COUNTS,
   User,
 } from '../../models';
-import {updateHappened } from '../../notification_router';
 import { postProcessComment, sendForScoring } from '../../pipeline';
 
 let testOnly = false;
@@ -138,8 +137,11 @@ export async function setChannelActive(owner: User, channelId: string, brandingS
     testCallback('setChannelActive', brandingSettings);
     return 0;
   }
-  await Category.update({isActive} as any, {where: {ownerId: owner.id, sourceId: channelId}});
-  await updateHappened();
+  const category = await Category.findOne({where: {ownerId: owner.id, sourceId: channelId}});
+  if (category) {
+    category.isActive = isActive;
+    category.save();
+  }
 }
 
 export async function foreachActiveChannel(owner: User, callback: (channelId: string, articleIdMap: Map<string, number>) => Promise<void>) {

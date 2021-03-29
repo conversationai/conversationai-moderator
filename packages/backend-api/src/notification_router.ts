@@ -24,17 +24,43 @@ interface IInterestListener {
 let interested: Array<IInterestListener> = [];
 let intervalHandle: NodeJS.Timer|null = null;
 
-export async function partialUpdateHappened(articleId: number) {
+async function partialUpdateHappened(articleId: number) {
   await updateLastUpdate();
   for (const i of interested) {
     await i.partialUpdateHappened(articleId);
   }
 }
 
-export async function updateHappened() {
+async function updateHappened() {
   await updateLastUpdate();
   for (const i of interested) {
-    i.updateHappened();
+    await i.updateHappened();
+  }
+}
+
+export type NotificationObjectType = 'global' | 'category' | 'article' | 'user' | 'comment';
+export type NotificationAction = 'create' | 'modify' | 'delete';
+
+export function createSendNotificationHook<T>(
+  objectType: NotificationObjectType,
+  action: NotificationAction,
+  selector: (items: T) => number,
+) {
+  return async (items: T) => {
+    const id = selector(items);
+    await sendNotification(objectType, action, id);
+  };
+}
+
+export async function sendNotification(
+  objectType: NotificationObjectType,
+  _action?: NotificationAction,
+  id?: number | undefined,
+) {
+  if (objectType === 'article') {
+    await partialUpdateHappened(id!);
+  } else {
+    await updateHappened();
   }
 }
 
@@ -47,7 +73,6 @@ export function registerInterest(interestListener: IInterestListener, testing = 
   interested.push(interestListener);
 }
 
-// Exporting for test purposes, but should really be unexported
 export async function maybeNotifyInterested() {
   const instance = await getInstance();
   const lastUpdate = instance.lastUpdate;
