@@ -24,7 +24,7 @@ import { destroyUpdateNotificationService } from '../../../api/services/updateNo
 import { makeServer } from '../../../api/util/server';
 import { mountAPI} from '../../../index';
 import {
-  assertAllArticlesMessage,
+  assertGlobalMessage,
   assertArticleUpdateMessage,
   assertSystemMessage,
   assertUserMessage,
@@ -94,7 +94,7 @@ describe('websocket tests: update_notifications', () => {
       },
       [
         (m: any) => { assertSystemMessage(m); },
-        (m: any) => { assertAllArticlesMessage(m); },
+        (m: any) => { assertGlobalMessage(m); },
         (m: any) => { assertUserMessage(m); },
         (m: any) => {
           assertArticleUpdateMessage(m);

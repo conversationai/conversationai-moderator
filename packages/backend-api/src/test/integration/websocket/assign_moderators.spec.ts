@@ -24,7 +24,7 @@ import { destroyUpdateNotificationService } from '../../../api/services/updateNo
 import { makeServer } from '../../../api/util/server';
 import { mountAPI } from '../../../index';
 import {
-  assertAllArticlesMessage,
+  assertGlobalMessage,
   assertArticleUpdateMessage,
   assertSystemMessage,
   assertUserMessage,
@@ -37,6 +37,7 @@ import {
 } from '../../fixture';
 
 import chaiHttp = require('chai-http');
+import {cleanDatabase} from '../../test_helper';
 chai.use(chaiHttp);
 
 describe('websocket tests: assign moderators', () => {
@@ -48,6 +49,7 @@ describe('websocket tests: assign moderators', () => {
   let article: Article;
 
   before(async () => {
+    await cleanDatabase();
     await Article.destroy({where: {}});
     await Category.destroy({where: {}});
     await User.destroy({where: {}});
@@ -89,10 +91,10 @@ describe('websocket tests: assign moderators', () => {
     },
     [
       (m: any) => { assertSystemMessage(m); },
-      (m: any) => { assertAllArticlesMessage(m); },
+      (m: any) => { assertGlobalMessage(m); },
       (m: any) => { assertUserMessage(m); },
       (m: any) => {
-        assertAllArticlesMessage(m);
+        assertGlobalMessage(m);
         expect(m.data.categories.length).eq(1);
         expect(m.data.categories[0].assignedModerators.length).eq(1);
         expect(m.data.categories[0].assignedModerators[0]).eq(user.id.toString());
@@ -102,7 +104,7 @@ describe('websocket tests: assign moderators', () => {
       },
       (m: any) => { assertArticleUpdateMessage(m); },
       (m: any) => {
-        assertAllArticlesMessage(m);
+        assertGlobalMessage(m);
         expect(m.data.categories.length).eq(1);
         expect(m.data.categories[0].assignedModerators.length).eq(0);
         expect(m.data.articles.length).eq(1);
@@ -126,7 +128,7 @@ describe('websocket tests: assign moderators', () => {
     },
     [
       (m: any) => { assertSystemMessage(m); },
-      (m: any) => { assertAllArticlesMessage(m); },
+      (m: any) => { assertGlobalMessage(m); },
       (m: any) => { assertUserMessage(m); },
       (m: any) => {
         assertArticleUpdateMessage(m);

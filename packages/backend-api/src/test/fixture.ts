@@ -167,7 +167,7 @@ export async function sleep(ms: number) {
 export function assertSystemMessage(body: any) {
   expect(body.type).eq('system');
 }
-export function assertAllArticlesMessage(body: any) {
+export function assertGlobalMessage(body: any) {
   expect(body.type).eq('global');
 }
 export function assertArticleUpdateMessage(body: any) {
