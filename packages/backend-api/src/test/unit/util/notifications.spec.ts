@@ -65,15 +65,15 @@ async function awaitNotification(action: () => Promise<void>): Promise<Array<boo
 
   const notification = new Promise<void>((resolve, _) => {
     registerInterest({
-      updateHappened: async () => {
-        notifyHappened = true;
+      processNotification: async (data) => {
+        if (data.objectType === 'article') {
+          notifyPartialHappened = true;
+        } else {
+          notifyHappened = true;
+        }
         resolve();
       },
-      partialUpdateHappened: async (_articleId: number) => {
-        notifyPartialHappened = true;
-        resolve();
-      },
-    }, true);
+    });
   });
 
   await action();

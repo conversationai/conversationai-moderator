@@ -91,7 +91,6 @@ export * from './configuration';
 export * from './constants';
 export * from './csrf';
 export * from './decision';
-export * from './last_update';
 export * from './moderation_rule';
 export * from './moderator_assignment';
 export * from './preselect';

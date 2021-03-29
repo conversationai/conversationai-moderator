@@ -14,28 +14,30 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import {getInstance, testLocalUpdate, updateLastUpdate} from './models';
+import {createClient, RedisClient} from 'redis';
+import {promisify} from 'util';
+
+import {config} from './config';
+import {logger} from './logger';
+import {publish} from './redis';
+
+const REDIS_NOTIFICATION_CHANNEL = 'update-notification';
+
+export interface INotificationData {
+  objectType: NotificationObjectType;
+  action?: NotificationAction;
+  id?: number;
+}
 
 interface IInterestListener {
-  updateHappened(): Promise<void>;
-  partialUpdateHappened(articleId: number): Promise<void>;
+  processNotification(data: INotificationData): void;
 }
 
 let interested: Array<IInterestListener> = [];
-let intervalHandle: NodeJS.Timer|null = null;
+let sendDirect = false;
 
-async function partialUpdateHappened(articleId: number) {
-  await updateLastUpdate();
-  for (const i of interested) {
-    await i.partialUpdateHappened(articleId);
-  }
-}
-
-async function updateHappened() {
-  await updateLastUpdate();
-  for (const i of interested) {
-    await i.updateHappened();
-  }
+export function setTestMode() {
+  sendDirect = true;
 }
 
 export type NotificationObjectType = 'global' | 'category' | 'article' | 'user' | 'comment';
@@ -52,40 +54,49 @@ export function createSendNotificationHook<T>(
   };
 }
 
+export function processNotification(data: INotificationData) {
+  for (const i of interested) {
+    i.processNotification(data);
+  }
+}
+
 export async function sendNotification(
   objectType: NotificationObjectType,
-  _action?: NotificationAction,
-  id?: number | undefined,
+  action?: NotificationAction,
+  id?: number,
 ) {
-  if (objectType === 'article') {
-    await partialUpdateHappened(id!);
+  const data: INotificationData = {objectType, action, id};
+  if (sendDirect) {
+    processNotification(data);
   } else {
-    await updateHappened();
+    logger.info(`send notification: ${data.objectType} ${data.action || ''} ${data.id || ''}`);
+    await publish(REDIS_NOTIFICATION_CHANNEL, JSON.stringify(data));
   }
 }
 
-export function registerInterest(interestListener: IInterestListener, testing = false) {
-  if (!testing && !intervalHandle) {
-    // Poll every minute
-    intervalHandle = setInterval(maybeNotifyInterested, 60000);
+let listening = false;
+export async function receiveNotifications() {
+  if (listening) {
+    return;
   }
+  const subscribeClient: RedisClient = createClient(config.get('redis_url'));
+  const subscribe = promisify(subscribeClient.subscribe).bind(subscribeClient);
+  subscribeClient.on('message', (_channel, message) => {
+    const data = JSON.parse(message) as INotificationData;
+    logger.info(`processing notification: ${data.objectType} ${data.action || ''} ${data.id || ''}`);
+    processNotification(data);
+  });
+  listening = true;
+  await subscribe(REDIS_NOTIFICATION_CHANNEL);
+}
 
+export function registerInterest(interestListener: IInterestListener) {
   interested.push(interestListener);
-}
-
-export async function maybeNotifyInterested() {
-  const instance = await getInstance();
-  const lastUpdate = instance.lastUpdate;
-  if (testLocalUpdate(lastUpdate)) {
-    for (const i of interested) {
-      i.updateHappened();
-    }
+  if (!sendDirect) {
+    receiveNotifications();
   }
 }
 
 export async function clearInterested() {
   interested = [];
-  if (intervalHandle) {
-    clearInterval(intervalHandle);
-  }
 }

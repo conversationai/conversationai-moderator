@@ -17,6 +17,7 @@ limitations under the License.
 import * as winston from 'winston';
 
 import { logger } from '../logger';
+import { setTestMode } from '../notification_router';
 import { quit } from '../redis';
 import { sequelize } from '../sequelize';
 
@@ -41,6 +42,7 @@ export async function cleanDatabase() {
   }
 
   await sequelize.sync({ force: true });
+  setTestMode();
 }
 
 export async function dropDatabase() {

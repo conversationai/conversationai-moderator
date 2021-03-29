@@ -33,7 +33,7 @@ import {
   TaggingSensitivity,
   User,
 } from '../../models';
-import { registerInterest } from '../../notification_router';
+import {INotificationData, registerInterest} from '../../notification_router';
 import { countAssignments } from './assignments';
 import {
   ARTICLE_FIELDS,
@@ -276,7 +276,6 @@ async function maybeSendUpdates() {
 }
 
 async function sendPartialUpdate(articleId: number) {
-  lastAllArticlesMessage = await getAllArticlesData();
   const update = await getArticleUpdate(articleId);
   for (const si of socketItems.values()) {
     if (!si.sentInitialMessages) {
@@ -345,6 +344,26 @@ function sendTestUpdatePackets(si: ISocketItem) {
   }, 1000);
 }
 
+// Introduce a simple task queue to ensure messages are processed in the order in which they arrive
+const taskQueue: Array<() => Promise<void>> = [];
+let taskQueueProcessing = false;
+async function processNotification(data: INotificationData) {
+  if (data.objectType === 'article' && data.id) {
+    taskQueue.unshift(() => sendPartialUpdate(data.id!));
+  } else {
+    taskQueue.unshift(maybeSendUpdates);
+  }
+  if (taskQueueProcessing) {
+    return;
+  }
+  taskQueueProcessing = true;
+  while (taskQueue.length > 0) {
+    const task = taskQueue.pop();
+    await task!();
+  }
+  taskQueueProcessing = false;
+}
+
 export function createUpdateNotificationService(): express.Router {
   const router = express.Router({
     caseSensitive: true,
@@ -373,9 +392,7 @@ export function createUpdateNotificationService(): express.Router {
 
     if (lastAllArticlesMessage === null) {
       logger.info(`Setting up notifications`);
-      registerInterest({
-        updateHappened: maybeSendUpdates,
-        partialUpdateHappened: sendPartialUpdate});
+      registerInterest({ processNotification });
     }
 
     ws.on('close', () => {
