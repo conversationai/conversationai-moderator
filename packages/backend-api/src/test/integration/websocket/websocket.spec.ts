@@ -17,7 +17,6 @@ limitations under the License.
 import * as WebSocket from 'ws';
 
 import { User } from '../../../models';
-import { clearInterested } from '../../../notification_router';
 
 import { destroyUpdateNotificationService } from '../../../api/services/updateNotifications';
 import { makeServer } from '../../../api/util/server';
@@ -31,8 +30,12 @@ import {
   makeUser,
   sleep,
 } from '../../fixture';
+import {cleanDatabase} from '../../test_helper';
 
 describe('websocket tests', () => {
+  before(async () => {
+    await cleanDatabase();
+  });
   beforeEach(async () => {
     await User.destroy({where: {}});
   });
@@ -84,13 +87,12 @@ describe('websocket tests', () => {
         },
         [
           (m: any) => { assertSystemMessage(m); },
-          (m: any) => { assertGlobalMessage(m); },
           (m: any) => { assertUserMessage(m); },
+          (m: any) => { assertGlobalMessage(m); },
         ]);
     }
     finally {
       server.close();
-      await clearInterested();
       destroyUpdateNotificationService();
     }
   });

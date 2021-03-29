@@ -17,15 +17,14 @@ limitations under the License.
 import * as chai from 'chai';
 
 import { Article, Category, User } from '../../../models';
-import { clearInterested } from '../../../notification_router';
 
 import { REPLY_SUCCESS_VALUE } from '../../../api/constants';
 import { destroyUpdateNotificationService } from '../../../api/services/updateNotifications';
 import { makeServer } from '../../../api/util/server';
 import { mountAPI } from '../../../index';
 import {
-  assertGlobalMessage,
   assertArticleUpdateMessage,
+  assertGlobalMessage,
   assertSystemMessage,
   assertUserMessage,
   expect,
@@ -72,7 +71,6 @@ describe('websocket tests: assign moderators', () => {
 
   after(async () => {
     await server.close();
-    await clearInterested();
     destroyUpdateNotificationService();
   });
 
@@ -91,10 +89,17 @@ describe('websocket tests: assign moderators', () => {
     },
     [
       (m: any) => { assertSystemMessage(m); },
-      (m: any) => { assertGlobalMessage(m); },
       (m: any) => { assertUserMessage(m); },
+      (m: any) => { assertGlobalMessage(m); },
       (m: any) => {
-        assertGlobalMessage(m);
+        assertArticleUpdateMessage(m);
+        expect(m.data.categories.length).eq(1);
+        expect(m.data.categories[0].assignedModerators.length).eq(1);
+        expect(m.data.categories[0].assignedModerators[0]).eq(user.id.toString());
+        expect(m.data.articles.length).eq(0);
+      },
+      (m: any) => {
+        assertArticleUpdateMessage(m);
         expect(m.data.categories.length).eq(1);
         expect(m.data.categories[0].assignedModerators.length).eq(1);
         expect(m.data.categories[0].assignedModerators[0]).eq(user.id.toString());
@@ -102,15 +107,20 @@ describe('websocket tests: assign moderators', () => {
         expect(m.data.articles[0].assignedModerators.length).eq(1);
         expect(m.data.articles[0].assignedModerators[0]).eq(user.id.toString());
       },
-      (m: any) => { assertArticleUpdateMessage(m); },
       (m: any) => {
-        assertGlobalMessage(m);
+        assertArticleUpdateMessage(m);
+        expect(m.data.categories.length).eq(1);
+        expect(m.data.categories[0].assignedModerators.length).eq(0);
+        expect(m.data.articles.length).eq(0);
+
+      },
+      (m: any) => {
+        assertArticleUpdateMessage(m);
         expect(m.data.categories.length).eq(1);
         expect(m.data.categories[0].assignedModerators.length).eq(0);
         expect(m.data.articles.length).eq(1);
         expect(m.data.articles[0].assignedModerators.length).eq(0);
       },
-      (m: any) => { assertArticleUpdateMessage(m); },
     ]);
   });
 
@@ -128,8 +138,8 @@ describe('websocket tests: assign moderators', () => {
     },
     [
       (m: any) => { assertSystemMessage(m); },
-      (m: any) => { assertGlobalMessage(m); },
       (m: any) => { assertUserMessage(m); },
+      (m: any) => { assertGlobalMessage(m); },
       (m: any) => {
         assertArticleUpdateMessage(m);
         expect(m.data.categories[0].assignedModerators.length).eq(0);

@@ -90,6 +90,8 @@ export async function receiveNotifications() {
   await subscribe(REDIS_NOTIFICATION_CHANNEL);
 }
 
+// TODO: Need to add an ID so clear can clear correct item.
+//     But we only ever have one listener at the moment...
 export function registerInterest(interestListener: IInterestListener) {
   interested.push(interestListener);
   if (!sendDirect) {
@@ -97,6 +99,6 @@ export function registerInterest(interestListener: IInterestListener) {
   }
 }
 
-export async function clearInterested() {
+export function clearInterested() {
   interested = [];
 }
