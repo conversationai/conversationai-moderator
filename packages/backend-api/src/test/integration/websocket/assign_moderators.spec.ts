@@ -100,6 +100,7 @@ describe('websocket tests: assign moderators', () => {
         expect(m.data.articles[0].assignedModerators.length).eq(1);
         expect(m.data.articles[0].assignedModerators[0]).eq(user.id.toString());
       },
+      (m: any) => { assertArticleUpdateMessage(m); },
       (m: any) => {
         assertAllArticlesMessage(m);
         expect(m.data.categories.length).eq(1);
@@ -107,11 +108,11 @@ describe('websocket tests: assign moderators', () => {
         expect(m.data.articles.length).eq(1);
         expect(m.data.articles[0].assignedModerators.length).eq(0);
       },
+      (m: any) => { assertArticleUpdateMessage(m); },
     ]);
   });
 
   it('Test we get notifications when moderators assigned to articles', async () => {
-    if (true) { return; }
     async function assignArticleModerator(data: Array<number>) {
       const apiClient = chai.request(app);
       const {status} = await apiClient.post(`/services/assignments/article/${article.id}`).send({data});

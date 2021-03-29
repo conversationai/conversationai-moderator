@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import {ModerationRule, MODERATION_RULE_ACTION_TYPES_SET, Preselect, Tag, TaggingSensitivity} from '../models';
-import {updateHappened} from '../notification_router';
+import {sendNotification} from '../notification_router';
 
 export type ModelType = 'moderation_rule' | 'preselect' | 'tagging_sensitivity';
 
@@ -108,7 +108,7 @@ export async function createRangeObject(
       break;
   }
 
-  updateHappened();
+  sendNotification('global');
   return null;
 }
 
@@ -140,7 +140,7 @@ export async function modifyRangeObject(
   }
 
   await object.save();
-  updateHappened();
+  sendNotification('global');
   return null;
 }
 
@@ -159,7 +159,7 @@ export async function deleteRangeObject(type: ModelType | 'tag', objectId: numbe
       await Tag.destroy({where: {id: objectId}});
       break;
   }
-  updateHappened();
+  sendNotification('global');
 }
 
 export async function createTagObject(
@@ -180,7 +180,7 @@ export async function createTagObject(
     isTaggable: !!isTaggable,
   });
 
-  updateHappened();
+  sendNotification('global');
   return null;
 }
 
@@ -209,6 +209,6 @@ export async function modifyTagObject(
   }
 
   await tag.save();
-  updateHappened();
+  sendNotification('global');
   return null;
 }

@@ -45,7 +45,6 @@ import {
   USER_GROUP_SERVICE,
   USER_GROUP_YOUTUBE,
 } from '../../models';
-import { partialUpdateHappened, updateHappened } from '../../notification_router';
 import { sequelize } from '../../sequelize';
 import { REPLY_SUCCESS } from '../constants';
 import {
@@ -111,7 +110,6 @@ export function createSimpleRESTService(): express.Router {
 
     await User.create({name, email, group, isActive});
 
-    updateHappened();
     res.json(REPLY_SUCCESS);
   });
 
@@ -153,7 +151,6 @@ export function createSimpleRESTService(): express.Router {
     }
 
     res.json(REPLY_SUCCESS);
-    updateHappened();
   });
 
   router.post('/article/update/:id', async (req, res) => {
@@ -174,7 +171,6 @@ export function createSimpleRESTService(): express.Router {
     await article.save();
 
     res.json(REPLY_SUCCESS);
-    partialUpdateHappened(articleId);
   });
 
   router.post('/article/get', async (req, res) => {

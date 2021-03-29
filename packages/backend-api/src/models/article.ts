@@ -16,7 +16,7 @@ limitations under the License.
 
 import {BelongsToManyGetAssociationsMixin, DataTypes, Model} from 'sequelize';
 
-import {updateHappened} from '../notification_router';
+import {createSendNotificationHook} from '../notification_router';
 import {sequelize} from '../sequelize';
 import {Category} from './category';
 import {Comment} from './comment';
@@ -188,8 +188,8 @@ Article.init({
   ],
 
   hooks: {
-    afterCreate: updateHappened,
-    afterBulkCreate: updateHappened,
+    afterCreate: createSendNotificationHook<Article>('article', 'create', (a) => a.id),
+    afterUpdate: createSendNotificationHook<Article>('article', 'modify', (a) => a.id),
   },
 });
 

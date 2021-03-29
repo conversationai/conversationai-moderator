@@ -17,7 +17,7 @@ limitations under the License.
 import * as Joi from 'joi';
 import {BelongsToManyGetAssociationsMixin, DataTypes, Model} from 'sequelize';
 
-import {updateHappened} from '../notification_router';
+import {createSendNotificationHook} from '../notification_router';
 import {sequelize} from '../sequelize';
 import {Article} from './article';
 
@@ -152,12 +152,8 @@ User.init({
   },
 
   hooks: {
-    afterCreate: updateHappened,
-    afterDestroy: updateHappened,
-    afterUpdate: updateHappened,
-    afterBulkCreate: updateHappened,
-    afterBulkUpdate: updateHappened,
-    afterBulkDestroy: updateHappened,
+    afterCreate: createSendNotificationHook<User>('user', 'create', (a) => a.id),
+    afterUpdate: createSendNotificationHook<User>('user', 'modify', (a) => a.id),
   },
 });
 

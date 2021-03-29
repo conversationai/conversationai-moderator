@@ -182,6 +182,7 @@ interface ISocketItem {
   userId: number;
   ws: Array<WebSocket>;
   lastPerUserMessage: IPerUserData | null;
+  sentInitialMessages: boolean;
 }
 
 let lastSystemMessage: IMessage | null = null;
@@ -278,6 +279,9 @@ async function sendPartialUpdate(articleId: number) {
   lastAllArticlesMessage = await getAllArticlesData();
   const update = await getArticleUpdate(articleId);
   for (const si of socketItems.values()) {
+    if (!si.sentInitialMessages) {
+      continue;
+    }
     for (const ws of si.ws) {
       logger.info(`Sending article update to user ${si.userId}`);
       await ws.send(JSON.stringify(update));
@@ -357,7 +361,7 @@ export function createUpdateNotificationService(): express.Router {
     const userId = (req.user as User).id;
     let si = socketItems.get(userId);
     if (!si) {
-      si = {userId, ws: [], lastPerUserMessage: null};
+      si = {userId, ws: [], lastPerUserMessage: null, sentInitialMessages: false};
       socketItems.set(userId, si);
 
       if (SEND_TEST_UPDATE_PACKETS) {
@@ -381,6 +385,7 @@ export function createUpdateNotificationService(): express.Router {
     logger.info(`Websocket opened to ${(req.user as User).email}`);
     const updateFlags = await refreshMessages(true);
     maybeSendUpdateToUser(si, updateFlags);
+    si.sentInitialMessages = true;
   });
 
   return router;

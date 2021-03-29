@@ -35,7 +35,7 @@ logger.configure({
   ],
 });
 
-async function cleanDatabase() {
+export async function cleanDatabase() {
   if (!isTestEnv()) {
     throw new Error('Refusing to destroy database if NODE_ENV is not `test`.');
   }
@@ -43,7 +43,7 @@ async function cleanDatabase() {
   await sequelize.sync({ force: true });
 }
 
-async function dropDatabase() {
+export async function dropDatabase() {
   if (!isTestEnv()) {
     throw new Error('Refusing to destroy database if NODE_ENV is not `test`.');
   }

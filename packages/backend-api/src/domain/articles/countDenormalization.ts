@@ -20,7 +20,6 @@ import {
   Category,
   Comment,
 } from '../../models';
-import { partialUpdateHappened } from '../../notification_router';
 import {
   denormalizeCommentCountsForCategory,
 } from '../categories';
@@ -69,6 +68,4 @@ export async function denormalizeCommentCountsForArticle(article: Article | null
     const category = (await Category.findByPk(article.categoryId))!;
     await denormalizeCommentCountsForCategory(category);
   }
-
-  partialUpdateHappened(article.id);
 }

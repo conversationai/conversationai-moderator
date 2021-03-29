@@ -21,6 +21,7 @@ import {
   Model,
 } from 'sequelize';
 
+import {createSendNotificationHook} from '../notification_router';
 import {sequelize} from '../sequelize';
 import {Article} from './article';
 import {User} from './user';
@@ -259,6 +260,11 @@ Comment.init({
       fields: ['text'],
     },
   ],
+  hooks: {
+    afterCreate: createSendNotificationHook<Comment>('comment', 'create', (a) => a.id),
+    afterUpdate: createSendNotificationHook<Comment>('comment', 'modify', (a) => a.id),
+  },
+
 });
 
 Comment.belongsTo(User, {as: 'owner'});

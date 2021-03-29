@@ -227,6 +227,7 @@ export async function processMachineScore(
     },
   });
   await CommentScore.bulkCreate(commentScoresData);
+  // TODO send update notification that comment has been updated
 
   const commentSummaryScoresData = compileSummaryScoresData(
     scoreData.summaryScores,

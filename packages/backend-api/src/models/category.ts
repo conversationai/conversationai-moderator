@@ -16,6 +16,7 @@ limitations under the License.
 
 import {BelongsToGetAssociationMixin, BelongsToManyGetAssociationsMixin, DataTypes, Model} from 'sequelize';
 
+import {createSendNotificationHook} from '../notification_router';
 import {sequelize} from '../sequelize';
 import {User} from './user';
 
@@ -145,6 +146,10 @@ Category.init({
       unique: true,
     },
   ],
+  hooks: {
+    afterCreate: createSendNotificationHook<Category>('category', 'create', (a) => a.id),
+    afterUpdate: createSendNotificationHook<Category>('category', 'modify', (a) => a.id),
+  },
 });
 
 Category.belongsTo(User, {as: 'owner'});
