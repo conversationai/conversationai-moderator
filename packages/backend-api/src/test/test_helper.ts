@@ -36,12 +36,19 @@ logger.configure({
   ],
 });
 
-export async function cleanDatabase() {
+let ignoreOthers = false;
+
+export async function cleanDatabase(isRoot?: boolean) {
   if (!isTestEnv()) {
     throw new Error('Refusing to destroy database if NODE_ENV is not `test`.');
   }
 
+  if (ignoreOthers && !isRoot) {
+    return;
+  }
+
   await sequelize.sync({ force: true });
+  ignoreOthers = true;
   setTestMode();
 }
 
@@ -54,5 +61,5 @@ export async function dropDatabase() {
   await quit();
 }
 
-before('Clean database before', cleanDatabase);
+before('Clean database before', () => cleanDatabase(true));
 after(dropDatabase);

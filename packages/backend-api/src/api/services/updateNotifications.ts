@@ -33,7 +33,7 @@ import {
   TaggingSensitivity,
   User,
 } from '../../models';
-import {INotificationData, registerInterest} from '../../notification_router';
+import {clearInterested, INotificationData, registerInterest} from '../../notification_router';
 import { countAssignments } from './assignments';
 import {
   ARTICLE_FIELDS,
@@ -113,7 +113,7 @@ async function getSystemData() {
   } as IMessage;
 }
 
-async function getAllArticlesData() {
+async function getGlobalData() {
   const categories = await Category.findAll({
     include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
   });
@@ -136,6 +136,23 @@ async function getAllArticlesData() {
     data: {
       categories: categorydata,
       articles: articledata,
+    },
+  } as IMessage;
+}
+
+async function getCategoryUpdate(categoryId: number) {
+  const category = await Category.findByPk(
+    categoryId,
+    {include: [{ model: User, as: 'assignedModerators', attributes: ['id']}]},
+  );
+
+  const cData = category  ? serialiseObject(category, CATEGORY_FIELDS) : undefined;
+
+  return {
+    type: 'article-update',
+    data: {
+      categories: [cData],
+      articles: [],
     },
   } as IMessage;
 }
@@ -186,7 +203,6 @@ interface ISocketItem {
 }
 
 let lastSystemMessage: IMessage | null = null;
-let lastAllArticlesMessage: IMessage | null = null;
 const socketItems = new Map<number, ISocketItem>();
 
 async function refreshSystemMessage(): Promise<boolean> {
@@ -204,21 +220,6 @@ async function refreshSystemMessage(): Promise<boolean> {
   return send;
 }
 
-async function refreshAllArticlesMessage(): Promise<boolean> {
-  const newMessage = await getAllArticlesData();
-  if (!lastAllArticlesMessage) {
-    lastAllArticlesMessage = newMessage;
-    return true;
-  }
-
-  const send = !isEqual(newMessage.data, lastAllArticlesMessage.data);
-  if (send) {
-    lastAllArticlesMessage = newMessage;
-  }
-
-  return send;
-}
-
 function removeSocket(si: ISocketItem, ws: WebSocket) {
   const index = si.ws.indexOf(ws);
   if (index >= 0) {
@@ -231,13 +232,12 @@ function removeSocket(si: ISocketItem, ws: WebSocket) {
 
 async function refreshMessages(alwaysSend: boolean) {
   const sendSystem = (await refreshSystemMessage() || alwaysSend);
-  const sendAllArticles = (await refreshAllArticlesMessage() || alwaysSend);
-  return {sendSystem, sendAllArticles, sendUser: alwaysSend};
+  return {sendSystem, sendUser: alwaysSend};
 }
 
 async function maybeSendUpdateToUser(si: ISocketItem,
-                                     {sendSystem, sendAllArticles, sendUser}:
-                                       {sendSystem: boolean, sendAllArticles: boolean, sendUser: boolean}) {
+                                     {sendSystem, sendUser}:
+                                       {sendSystem: boolean, sendUser: boolean}) {
   const userSummaryMessage = await getPerUserData(si.userId);
   sendUser = sendUser || !si.lastPerUserMessage || !isEqual(userSummaryMessage.data, si.lastPerUserMessage);
 
@@ -246,11 +246,6 @@ async function maybeSendUpdateToUser(si: ISocketItem,
       if (sendSystem) {
         logger.info(`Sending system data to user ${si.userId}`);
         await ws.send(JSON.stringify(lastSystemMessage));
-      }
-
-      if (sendAllArticles) {
-        logger.info(`Sending all articles data to user ${si.userId}`);
-        await ws.send(JSON.stringify(lastAllArticlesMessage));
       }
 
       if (sendUser) {
@@ -275,17 +270,31 @@ async function maybeSendUpdates() {
   }
 }
 
-async function sendPartialUpdate(articleId: number) {
-  const update = await getArticleUpdate(articleId);
+async function sendUpdate(type: string, update: string) {
   for (const si of socketItems.values()) {
     if (!si.sentInitialMessages) {
       continue;
     }
     for (const ws of si.ws) {
-      logger.info(`Sending article update to user ${si.userId}`);
-      await ws.send(JSON.stringify(update));
+      logger.info(`Sending ${type} to user ${si.userId}`);
+      await ws.send(update);
     }
   }
+}
+
+async function sendGlobal() {
+  const update = await getGlobalData();
+  await sendUpdate('global', JSON.stringify(update));
+}
+
+async function sendCategoryUpdate(categoryId: number) {
+  const update = await getCategoryUpdate(categoryId);
+  await sendUpdate('category update', JSON.stringify(update));
+}
+
+async function sendArticleUpdate(articleId: number) {
+  const update = await getArticleUpdate(articleId);
+  await sendUpdate('article update', JSON.stringify(update));
 }
 
 function sendTestUpdatePackets(si: ISocketItem) {
@@ -348,8 +357,10 @@ function sendTestUpdatePackets(si: ISocketItem) {
 const taskQueue: Array<() => Promise<void>> = [];
 let taskQueueProcessing = false;
 async function processNotification(data: INotificationData) {
-  if (data.objectType === 'article' && data.id) {
-    taskQueue.unshift(() => sendPartialUpdate(data.id!));
+  if (data.objectType === 'category' && data.id) {
+    taskQueue.unshift(() => sendCategoryUpdate(data.id!));
+  } else if (data.objectType === 'article' && data.id) {
+    taskQueue.unshift(() => sendArticleUpdate(data.id!));
   } else {
     taskQueue.unshift(maybeSendUpdates);
   }
@@ -363,6 +374,8 @@ async function processNotification(data: INotificationData) {
   }
   taskQueueProcessing = false;
 }
+
+let registered = false;
 
 export function createUpdateNotificationService(): express.Router {
   const router = express.Router({
@@ -390,9 +403,10 @@ export function createUpdateNotificationService(): express.Router {
 
     si.ws.push(ws);
 
-    if (lastAllArticlesMessage === null) {
+    if (!registered) {
       logger.info(`Setting up notifications`);
       registerInterest({ processNotification });
+      registered = true;
     }
 
     ws.on('close', () => {
@@ -401,15 +415,17 @@ export function createUpdateNotificationService(): express.Router {
 
     logger.info(`Websocket opened to ${(req.user as User).email}`);
     const updateFlags = await refreshMessages(true);
-    maybeSendUpdateToUser(si, updateFlags);
+    await maybeSendUpdateToUser(si, updateFlags);
     si.sentInitialMessages = true;
+    await sendGlobal();
   });
 
   return router;
 }
 
 export function destroyUpdateNotificationService() {
-  lastAllArticlesMessage = null;
+  registered = false;
+  clearInterested();
   for (const si of socketItems.values()) {
     for (const ws of si.ws) {
       ws.close();

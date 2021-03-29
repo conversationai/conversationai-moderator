@@ -17,15 +17,14 @@ limitations under the License.
 import * as chai from 'chai';
 
 import { Article, Category, User } from '../../../models';
-import { clearInterested } from '../../../notification_router';
 
 import { REPLY_SUCCESS_VALUE } from '../../../api/constants';
 import { destroyUpdateNotificationService } from '../../../api/services/updateNotifications';
 import { makeServer } from '../../../api/util/server';
 import { mountAPI} from '../../../index';
 import {
-  assertGlobalMessage,
   assertArticleUpdateMessage,
+  assertGlobalMessage,
   assertSystemMessage,
   assertUserMessage,
   expect,
@@ -70,7 +69,6 @@ describe('websocket tests: update_notifications', () => {
 
   after(async () => {
     await server.close();
-    await clearInterested();
     destroyUpdateNotificationService();
   });
 
@@ -94,8 +92,8 @@ describe('websocket tests: update_notifications', () => {
       },
       [
         (m: any) => { assertSystemMessage(m); },
-        (m: any) => { assertGlobalMessage(m); },
         (m: any) => { assertUserMessage(m); },
+        (m: any) => { assertGlobalMessage(m); },
         (m: any) => {
           assertArticleUpdateMessage(m);
           expect(m.data.articles[0].id).eq(article.id.toString());
