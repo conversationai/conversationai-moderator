@@ -14,10 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
+import { applyMiddleware, combineReducers, compose, createStore, Store } from 'redux';
 import thunk from 'redux-thunk';
 
-// Add the reducer to your store on the `routing` key
 import { reducer as scenesReducer } from './scenes/store';
 import { reducer as globalReducer } from './stores';
 
@@ -33,4 +32,4 @@ export const store = createStore(
     // TODO: Make this toggle based on environment
     // (window as any)['devToolsExtension'] ? (window as any)['devToolsExtension']() : (f: any) => f,
   ),
-);
+) as Store;
