@@ -269,8 +269,6 @@ export async function updateMaxSummaryScore(comment: Comment): Promise<void> {
 
   const maxSummaryScores = maxBy(summaryScores, (score) => score.score);
   await comment.update({
-    // TODO(ldixon): investigate typing to avoid `maxSummaryScores` being
-    // undefined and needing the type hack here.
     maxSummaryScore: maxSummaryScores!.score,
     maxSummaryScoreTagId: maxSummaryScores!.tagId,
   });

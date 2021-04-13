@@ -21,4 +21,5 @@ const { sequelize } = require('../dist/sequelize-sync');
 (async () => {
   await sequelize.sync({ force: true });
   await sequelize.close();
+  process.exit();
 })();
