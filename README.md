@@ -75,7 +75,8 @@ npx sequelize db:migrate
 cd -
 
 # Add a service user that can talk to the Perspective API:
-bin/osmod users:create --group moderator --name "PerspectiveAPI" --moderator-type "perspective-api"
+bin/osmod users:create --group moderator --name "PerspectiveAPI" \
+  --moderator-type "perspective-api" --api-key $YOUR_PERSPECTIVE_API_KEY
 
 # Run the server
 bin/watch
@@ -94,7 +95,8 @@ sudo systemctl stop mysql.service redis_6379.service redis-server.service
 docker-compose -f deployments/local/docker-compose.yml up -d
 ```
 
-The docker-compose scripts will initialise the database and create an API service user, so you don't need to do those steps manually.
+The docker-compose scripts will initialise the database and create an API service user,
+so you don't need to do those steps manually.
 
 To shut down the service and delete all your containers:
 

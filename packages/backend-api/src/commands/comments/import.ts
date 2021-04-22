@@ -59,6 +59,7 @@ const METADATA = {
 } as {[key: string]: {category: string, article_title: string, article_summary: string}};
 
 async function processFile(owner: User, fname: string) {
+  console.log(`process file: ${fname}`);
   const metadata = METADATA[fname];
   const category = await createCategory(owner, metadata.category);
   const article = await createArticle(category, metadata.article_title,
@@ -71,6 +72,7 @@ async function processFile(owner: User, fname: string) {
 }
 
 export async function handler(argv: any) {
+  console.log('Ensure service user');
   const owner = await createOwner('csv service user');
 
   if (argv.source === 'all') {

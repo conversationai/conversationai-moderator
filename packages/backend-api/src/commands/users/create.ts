@@ -130,10 +130,8 @@ export async function handler(argv: any) {
   }
 
   try {
-    const user = await User.create(data);
-
+    await User.create(data);
     logger.info('User successfully created');
-    logger.info(user.toJSON());
     process.exit(0);
   } catch (err) {
     logger.error('User creation error: ', err.name, err.message);
