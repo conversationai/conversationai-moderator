@@ -19,13 +19,13 @@ import * as yargs from 'yargs';
 import { logger } from '../../logger';
 import {
   ENDPOINT_TYPE_API,
-  ENDPOINT_TYPE_PROXY, IScorerExtra,
+  IScorerExtra,
   User,
+  USER_GROUPS,
   USER_GROUP_ADMIN,
   USER_GROUP_GENERAL,
   USER_GROUP_MODERATOR,
   USER_GROUP_SERVICE,
-  USER_GROUPS,
 } from '../../models';
 
 export const command = 'users:create';
@@ -47,8 +47,6 @@ export function builder(args: yargs.Argv) {
     .describe('name', 'The user\'s name')
     .string('email')
     .describe('email', `The user's email address.  Mandatory for all '${USER_GROUP_ADMIN}' and '${USER_GROUP_GENERAL}' users.`)
-    .string('moderator-type')
-    .describe('moderator-type', `Specify the moderator type: one of '${ENDPOINT_TYPE_API}' or '${ENDPOINT_TYPE_PROXY}'.`)
     .string('api-key')
     .describe('api-key', `For moderator users: the API key used to access the moderation service.`)
     .string('endpoint')
@@ -69,15 +67,7 @@ export async function handler(argv: any) {
   };
 
   if (data.group === USER_GROUP_MODERATOR) {
-    const extra: Partial<IScorerExtra> = {
-      endpointType: argv.moderatorType,
-    };
-
-    if (extra.endpointType !== ENDPOINT_TYPE_API && extra.endpointType !== ENDPOINT_TYPE_PROXY) {
-      console.log(`User creation error: unknown moderator-type: ${extra.endpointType}\n`);
-      yargs.showHelp();
-      return;
-    }
+    const extra: Partial<IScorerExtra> = {endpointType: ENDPOINT_TYPE_API};
 
     extra.apiKey = argv.apiKey;
     if (!extra.apiKey) {
@@ -90,10 +80,7 @@ export async function handler(argv: any) {
       extra.endpoint = argv.endpoint;
     }
     else {
-      extra.endpoint = (extra.endpointType === ENDPOINT_TYPE_API) ?
-        'https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1' :
-        'https://osmod-assistant.appspot.com/api/score-comment';
-
+      extra.endpoint = 'https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1';
       logger.info(`API endpoint: Defaulting URL to ${extra.endpoint}`);
     }
 
@@ -124,11 +111,6 @@ export async function handler(argv: any) {
     data.extra = extra;
   }
   else {
-    if (argv.moderatorType) {
-      console.log('User creation error: Non-moderator users can\'t have a moderator type.\n');
-      yargs.showHelp();
-      return;
-    }
     if (argv.apiKey) {
       console.log('User creation error: Non-moderator users don\'t need an API key.\n');
       yargs.showHelp();

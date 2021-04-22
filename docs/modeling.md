@@ -67,7 +67,7 @@ For the latter, the required configuration is stored in the extra field in a JSO
 ```json
 {
   serviceType: 'moderator',
-  endpointType: 'perspective-proxy' || 'perspective-api',
+  endpointType: 'perspective-api',
   endpoint: <URL of endpoint>,
   extra: <Any extra configuration required by this endpoint.>
 }

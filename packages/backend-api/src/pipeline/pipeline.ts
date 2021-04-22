@@ -28,7 +28,6 @@ import {
   CommentSummaryScore,
   Decision,
   ENDPOINT_TYPE_API,
-  ENDPOINT_TYPE_PROXY,
   IResolution, IScorerExtra,
   isModerationRule,
   isUser,
@@ -52,7 +51,6 @@ import {getIsDoneScoring} from './state';
 
 import {createShim as createApiShim} from './apiShim';
 import {commentModeratedHook} from './hooks';
-import {createShim as createProxyShim} from './proxyShim';
 
 const shims = new Map<number, IShim>();
 
@@ -77,9 +75,6 @@ export async function sendToScorer(comment: Comment, scorer: User) {
 
       if (extra.endpointType === ENDPOINT_TYPE_API) {
         shim = await createApiShim(scorer, processMachineScore);
-      }
-      else if (extra.endpointType === ENDPOINT_TYPE_PROXY) {
-        shim = await createProxyShim(scorer, processMachineScore);
       }
       else {
         logger.error(`Unknown moderator endpoint type: ${extra.endpoint} for scorer ${scorer.id}`);

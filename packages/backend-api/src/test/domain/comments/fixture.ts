@@ -32,7 +32,7 @@ import {
   User,
 } from '../../../models';
 import {
-  ENDPOINT_TYPE_PROXY,
+  ENDPOINT_TYPE_API,
   MODERATION_RULE_ACTION_TYPES,
   SCORE_SOURCE_TYPES,
   USER_GROUP_MODERATOR,
@@ -133,7 +133,7 @@ export async function createModeratorUser(data: IAttributes = {}): Promise<User>
     name: faker.name.firstName(),
     isActive: true,
     extra: {
-      endpointType: ENDPOINT_TYPE_PROXY,
+      endpointType: ENDPOINT_TYPE_API,
       endpoint: 'http://www.google.com',
       apiKey: 'sdf',
     },
