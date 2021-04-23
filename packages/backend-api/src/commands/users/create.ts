@@ -94,16 +94,25 @@ export async function handler(argv: any) {
       }
       else {
         extra.attributes = {
+          // Attributes taken from https://developers.perspectiveapi.com/s/about-the-api-attributes-and-languages
+          // Google attributes
+          TOXICITY: {},
+          SEVERE_TOXICITY: {},
+          IDENTITY_ATTACK: {},
+          INSULT: {},
+          PROFANITY: {},
+          THREAT: {},
+          SEXUALLY_EXPLICIT: {},
+          FLIRTATION: {},
+          // NYT attributes
           ATTACK_ON_AUTHOR: {},
           ATTACK_ON_COMMENTER: {},
           INCOHERENT: {},
           INFLAMMATORY: {},
+          LIKELY_TO_REJECT: {},
           OBSCENE: {},
-          OFF_TOPIC: {},
           SPAM: {} ,
           UNSUBSTANTIAL: {},
-          LIKELY_TO_REJECT: {},
-          TOXICITY: {},
         };
       }
     }
