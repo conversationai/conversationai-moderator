@@ -17,6 +17,7 @@ limitations under the License.
 import * as express from 'express';
 import * as Joi from 'joi';
 
+import {SUMMARY_SCORE_TAG} from '../../../models';
 import { validateAndSendResponse } from '../../util/validation';
 import {
   getHistogramScoresForArticle,
@@ -177,7 +178,7 @@ export function createHistogramScoresService(): express.Router {
     return scoresToChart('score', () => {
       const { params: { id, tagId }} = req;
       const categoryId = id === 'all' ? id : parseInt(id, 10);
-      if (tagId === 'SUMMARY_SCORE') {
+      if (tagId === SUMMARY_SCORE_TAG) {
         return getMaxSummaryScoreForCategory(categoryId);
       }
 
@@ -235,7 +236,7 @@ export function createHistogramScoresService(): express.Router {
     return scoresToChart('score', () => {
       const { params: { id, tagId } } = req;
       const articleId = parseInt(id, 10);
-      if (tagId === 'SUMMARY_SCORE') {
+      if (tagId === SUMMARY_SCORE_TAG) {
         return getMaxSummaryScoreForArticle(articleId);
       }
 

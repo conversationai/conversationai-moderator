@@ -30,3 +30,7 @@ function intToRGB(i: number) {
 export function randomDarkColor(seed: string) {
   return intToRGB(hashCode(seed) & 0x007F7F7F);
 }
+
+export function randomLightColor(seed: string) {
+  return intToRGB(~(hashCode(seed) & 0x007F7F7F));
+}

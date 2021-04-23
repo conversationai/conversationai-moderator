@@ -22,14 +22,13 @@ import {
   PALE_COLOR,
 } from '../../../../styles';
 import { css, stylesheet } from '../../../../utilx';
-const SMALLER_SCREEN = window.innerWidth < 1200;
 
 const STYLES = stylesheet({
   colorBoxContainer: {
     position: 'relative',
     boxShadow:  INPUT_DROP_SHADOW,
     marginRight: '42px',
-    width: SMALLER_SCREEN ? '120px' : '125px',
+    width: '200px',
   },
   selectBox: {
     height: '42px',
@@ -79,7 +78,7 @@ export class ColorSelect extends React.Component<IColorSelectProps> {
           {...css(STYLES.selectBox)}
           id={tag}
           name={tag}
-          value={color.toUpperCase()}
+          value={color}
           onChange={this.onChange}
         />
         <span {...css(STYLES.colorBox, { backgroundColor: color })}/>

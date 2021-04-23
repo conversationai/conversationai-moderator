@@ -18,3 +18,4 @@ export * from './server';
 export * from './app/util/groupByColumn';
 export * from './app/util/DotChartRenderer';
 export * from './app/util/measureText';
+export * from './app/util/color';

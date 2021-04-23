@@ -19,13 +19,14 @@ import * as passport from 'passport';
 import * as qs from 'qs';
 
 import { config } from '../config';
-import { User } from '../models';
+import { findOrCreateTagByKey, SUMMARY_SCORE_TAG, User } from '../models';
 import { restartService } from '../server-management';
 import {
   getOAuthConfiguration,
   IGoogleOAuthConfiguration,
   isOAuthGood,
-  setOAuthConfiguration, setOAuthGood,
+  setOAuthConfiguration,
+  setOAuthGood,
 } from './config';
 import { createToken } from './tokens';
 import { isFirstUserInitialised } from './users';
@@ -112,6 +113,8 @@ export function createAuthConfigRouter(): express.Router {
       res.send('ok');
       next();
       await setOAuthGood(false);
+      // Take this opportunity to create some database records that we'll need
+      await findOrCreateTagByKey(SUMMARY_SCORE_TAG);
       restartService();
     },
   );

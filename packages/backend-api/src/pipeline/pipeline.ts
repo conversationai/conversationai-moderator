@@ -18,7 +18,6 @@ import * as Bluebird from 'bluebird';
 import { groupBy, maxBy } from 'lodash';
 import * as moment from 'moment';
 import { fn, Op } from 'sequelize';
-import { humanize, titleize, trim } from 'underscore.string';
 
 import {
   Article,
@@ -28,7 +27,9 @@ import {
   CommentSummaryScore,
   Decision,
   ENDPOINT_TYPE_API,
-  IResolution, IScorerExtra,
+  findOrCreateTagByKey,
+  IResolution,
+  IScorerExtra,
   isModerationRule,
   isUser,
   ModerationRule,
@@ -174,7 +175,7 @@ export async function resendForScoring(comment: Comment): Promise<void> {
 
 /**
  * Receive a single score. Data object should have: commentId, serviceUserId, sourceType,
- * score, and optionally annotationStart and annotationEnde
+ * score, and optionally annotationStart and annotationEnd
  */
 export async function processMachineScore(
   commentId: number,
@@ -351,17 +352,7 @@ export async function findOrCreateTagsByKey(
   keys: Array<string>,
 ): Promise<Array<Tag>> {
   return Bluebird.mapSeries(keys, async (key) => {
-    const cleanKey = trim(key);
-    const label = titleize(humanize(cleanKey));
-
-    const [instance] = await Tag.findOrCreate({
-      where: {key: cleanKey},
-      defaults: {
-        key: cleanKey,
-        label,
-      }});
-
-    return instance;
+    return await findOrCreateTagByKey(key);
   });
 }
 
