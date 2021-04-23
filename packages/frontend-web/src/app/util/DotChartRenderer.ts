@@ -39,15 +39,15 @@ export class DotChartRenderer {
   // Technically either an HTMLCanvas Element or Canvas instance
   private canvas: any = null;
 
-  private commentsByColumn: ICommentsByColumn = null;
-  private selectedRangeStart: number = null;
-  private selectedRangeEnd: number = null;
-  private width: number = null;
-  private height: number = null;
+  private commentsByColumn: ICommentsByColumn;
+  private selectedRangeStart: number;
+  private selectedRangeEnd: number;
+  private width: number;
+  private height: number;
   private isNode: boolean = typeof window === 'undefined';
   private showAll = true;
-  private backgroundColor: string | null = null;
-  private makeCanvas: (width: number, height: number) => any = null;
+  private backgroundColor: string;
+  private makeCanvas: (width: number, height: number) => any;
   private isDirty = false;
 
   constructor(makeCanvas: (width: number, height: number) => any) {

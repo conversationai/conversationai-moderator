@@ -22,7 +22,7 @@ export interface IArticleAttributes {
   updatedAt: string;
   title: string;
   text: string;
-  url: string;
+  url?: string;
   categoryId: ModelId;
   allCount: number;
   unprocessedCount: number;
@@ -43,12 +43,12 @@ export interface IArticleAttributes {
 
 export type IArticleModel = Readonly<IArticleAttributes>;
 
-export function ArticleModel(articleData?: IArticleAttributes): IArticleModel {
+export function ArticleModel(articleData: IArticleAttributes): IArticleModel {
   // Sanitize URLs for security.
   if (articleData.url) {
     const url = articleData.url;
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      articleData.url = null;
+      delete articleData.url;
     }
   }
   return articleData as IArticleModel;

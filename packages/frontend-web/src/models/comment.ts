@@ -99,8 +99,8 @@ export interface ICommentAttributes {
 
 export type ICommentModel = Readonly<ICommentAttributes>;
 
-export function CommentModel(keyValuePairs?: ICommentAttributes): ICommentModel {
-  const author: any = (keyValuePairs as ICommentAttributes).author;
+export function CommentModel(commentData: ICommentAttributes): ICommentModel {
+  const author: any = commentData.author;
 
   if (author) {
     if (author.user_name) {
@@ -112,25 +112,25 @@ export function CommentModel(keyValuePairs?: ICommentAttributes): ICommentModel 
     }
   }
 
-  const fsd = keyValuePairs.flagsSummary;
+  const fsd = commentData.flagsSummary;
   const flagsSummary = fsd ? new Map(Object.entries(fsd)) : new Map();
 
-  return {...keyValuePairs, author, flagsSummary} as ICommentModel;
+  return {...commentData, author, flagsSummary} as ICommentModel;
 }
 
 export function getTopScore(comment: ICommentModel) {
   return getTopScoreForTag(comment, comment.maxSummaryScoreTagId);
 }
 
-export function getSummaryForTag(comment: ICommentModel, tagId: ModelId): ICommentSummaryScoreModel | null {
+export function getSummaryForTag(comment: ICommentModel, tagId: ModelId): ICommentSummaryScoreModel | undefined {
   if (!comment.summaryScores) {
-    return null;
+    return undefined;
   }
   return comment.summaryScores.find((s) => s.tagId === tagId);
 }
 
-export function getTopScoreForTag(comment: ICommentModel, tagId: ModelId) {
-  if (!comment.summaryScores) {
+export function getTopScoreForTag(comment: ICommentModel, tagId?: ModelId) {
+  if (!comment.summaryScores || !tagId) {
     return null;
   }
   for (const summary of comment.summaryScores) {
