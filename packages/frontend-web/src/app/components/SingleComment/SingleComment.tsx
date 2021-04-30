@@ -570,7 +570,7 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
       isEditFocused,
     } = this.state;
 
-    const SUBMITTED_AT = format(parseISO(comment.sourceCreatedAt), DATE_FORMAT_LONG);
+    const created_at = comment.sourceCreatedAt ? format(parseISO(comment.sourceCreatedAt), DATE_FORMAT_LONG) : '';
 
     const bodyStyling = css(COMMENT_STYLES.body);
     const className = bodyStyling.className ? bodyStyling.className + ' comment-body' : 'comment-body';
@@ -627,9 +627,9 @@ export class SingleComment extends React.PureComponent<ISingleCommentProps, ISin
           >
             <div {...css(COMMENT_STYLES.metaType)}>
               {url ? (
-                <Link key="submittedAt" to={url} {...css(COMMENT_STYLES.link)}>{SUBMITTED_AT} </Link>
+                <Link key="submittedAt" to={url} {...css(COMMENT_STYLES.link)}>{created_at} </Link>
               ) : (
-                <span key="submittedAt">{SUBMITTED_AT} </span>
+                <span key="submittedAt">{created_at} </span>
               )}
               <FlagsSummary comment={comment} full/>
             </div>

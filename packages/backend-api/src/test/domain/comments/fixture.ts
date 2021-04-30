@@ -32,7 +32,7 @@ import {
   User,
 } from '../../../models';
 import {
-  ENDPOINT_TYPE_PROXY,
+  ENDPOINT_TYPE_API,
   MODERATION_RULE_ACTION_TYPES,
   SCORE_SOURCE_TYPES,
   USER_GROUP_MODERATOR,
@@ -59,7 +59,7 @@ export async function createCategory(obj: Partial<IAttributes> = {}): Promise<Ca
 // Articles
 export function getArticleData(data: Partial<IAttributes> = {}): IAttributes {
   return {
-    sourceId: faker.random.uuid(),
+    sourceId: faker.datatype.uuid(),
     title: faker.lorem.words(20),
     text: faker.lorem.words(20),
     url: faker.internet.url(),
@@ -77,8 +77,8 @@ export async function createArticle(obj: Partial<IAttributes> = {}): Promise<Art
 
 export function getCommentData(data: Partial<IAttributes> = {}): IAttributes {
   return {
-    sourceId: faker.random.uuid(),
-    authorSourceId: faker.random.uuid(),
+    sourceId: faker.datatype.uuid(),
+    authorSourceId: faker.datatype.uuid(),
     text: faker.lorem.words(20),
     author: {},
     sourceCreatedAt: fn('now'),
@@ -94,8 +94,8 @@ export async function createComment(data?: any): Promise<Comment> {
 
 export function getCommentScoreRequestData(data: Partial<IAttributes> = {}): IAttributes {
   return {
-    commentId: faker.random.number(),
-    userId: faker.random.number(),
+    commentId: faker.datatype.number(),
+    userId: faker.datatype.number(),
     sentAt: fn('now'),
 
     ...data,
@@ -133,7 +133,7 @@ export async function createModeratorUser(data: IAttributes = {}): Promise<User>
     name: faker.name.firstName(),
     isActive: true,
     extra: {
-      endpointType: ENDPOINT_TYPE_PROXY,
+      endpointType: ENDPOINT_TYPE_API,
       endpoint: 'http://www.google.com',
       apiKey: 'sdf',
     },
@@ -145,8 +145,8 @@ export async function createModeratorUser(data: IAttributes = {}): Promise<User>
 
 export function getCommentScoreData(data: IAttributes = {}): IAttributes {
   return {
-    commentId: faker.random.number(),
-    tagId: faker.random.number(),
+    commentId: faker.datatype.number(),
+    tagId: faker.datatype.number(),
     sourceType: sample(SCORE_SOURCE_TYPES),
     score: (random(0, 100) / 100),
     ...data,
@@ -162,8 +162,8 @@ export async function createCommentScore(data?: object): Promise<CommentScore> {
 
 export function getCommentSummaryScoreData(data: IAttributes = {}): IAttributes {
   return {
-    commentId: faker.random.number(),
-    tagId: faker.random.number(),
+    commentId: faker.datatype.number(),
+    tagId: faker.datatype.number(),
     score: (random(0, 100) / 100),
     ...data,
   };
@@ -180,7 +180,7 @@ export function getModerationRuleData(data: IAttributes = {}): IAttributes {
   const upperThreshold = (random(lowerThreshold * 100, 100) / 100);
 
   return {
-    tagId: faker.random.number(),
+    tagId: faker.datatype.number(),
     action: sample(MODERATION_RULE_ACTION_TYPES),
     lowerThreshold,
     upperThreshold,

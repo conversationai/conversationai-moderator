@@ -63,19 +63,20 @@ Install all node dependencies and run initial typescript compile.
 Setup local MySQL:
 
 ```bash
-mysql -u root -p << EOF
+sudo mysql << EOF
 CREATE DATABASE $DATABASE_NAME;
-CREATE USER '$DATABASE_USER' IDENTIFIED BY '$DATABASE_PASSWORD';
+CREATE USER IF NOT EXISTS '$DATABASE_USER' IDENTIFIED BY '$DATABASE_PASSWORD';
 GRANT ALL on $DATABASE_NAME.* to $DATABASE_USER;
 EOF
 
-mysql -u root -p $DATABASE_NAME < seed/initial-database.sql
+sudo mysql $DATABASE_NAME < seed/initial-database.sql
 cd packages/backend-api
 npx sequelize db:migrate
 cd -
 
 # Add a service user that can talk to the Perspective API:
-bin/osmod users:create --group moderator --name "PerspectiveAPI" --moderator-type "perspective-api"
+bin/osmod users:create --group moderator --name "PerspectiveAPI" \
+  --moderator-type "perspective-api" --api-key $YOUR_PERSPECTIVE_API_KEY
 
 # Run the server
 bin/watch
@@ -94,7 +95,8 @@ sudo systemctl stop mysql.service redis_6379.service redis-server.service
 docker-compose -f deployments/local/docker-compose.yml up -d
 ```
 
-The docker-compose scripts will initialise the database and create an API service user, so you don't need to do those steps manually.
+The docker-compose scripts will initialise the database and create an API service user,
+so you don't need to do those steps manually.
 
 To shut down the service and delete all your containers:
 
@@ -249,51 +251,4 @@ A MySQL database that holds all of the applications state (See
 *  Some number of assistant services responsible for automating tasks.
    Typically this is just calling ML services like
    [the Perspective API](https://perspectiveapi.com/)
-
-
-## The Perspective API proxy
-
-OSMod can communicate to the Perspective API via a proxy server: the
-[Perspective API proxy](https://github.com/conversationai/perspectiveapi-proxy).
-
-There is a preconfigured proxy server set up for general use.
-The URL of this proxy is [https://osmod-assistant.appspot.com/].  To access it,
-you'll need to get a suitable authentication token from
-[the Perspective API team](https://www.perspectiveapi.com/#/).  In this case you
-need to set your service user's proxy URL to
-`https://osmod-assistant.appspot.com/api/score-comment`.
-
-Alternatively, if you have been given direct access to the Perspecitve API, you
-can create a Perspective API key in a Google Cloud project and then run
-a local instance of the proxy as described in the
-[Perspective API proxy documentation](https://github.com/conversationai/perspectiveapi-proxy/blob/master/README.md).
-E.g.:
-
-```bash
-export GOOGLE_CLOUD_API_KEY=<API Key>
-export AUTH_WHITELIST=$GOOGLE_SCORE_AUTH
-export ATTRIBUTE_REQUESTS
-read -r -d '' ATTRIBUTE_REQUESTS << EOM
-{
-  "ATTACK_ON_AUTHOR": {},
-  "ATTACK_ON_COMMENTER": {},
-  "INCOHERENT": {},
-  "INFLAMMATORY": {},
-  "OBSCENE": {},
-  "OFF_TOPIC": {},
-  "SPAM": {} ,
-  "UNSUBSTANTIAL": {},
-  "LIKELY_TO_REJECT": {},
-  "TOXICITY": {}
-}
-EOM
-
-cd $PERSPECTIVEAPI_PROXY_LOCATION
-yarn install
-PORT=8081 yarn run watch
-```
-
-Then use `http://localhost:8081/api/score-comment` as the proxy URL when creating
-your service user.
-
-TODO: Move GOOGLE_SCORE_AUTH and other configuration into the proxy service user's config and document here
+   

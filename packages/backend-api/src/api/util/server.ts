@@ -67,7 +67,10 @@ export function getExpressAppWithPreprocessors(testMode?: boolean) {
     app.use(cors());
     app.options('*', cors());
 
-    app.use(helmet());
+    app.use(helmet({
+      // TODO: Implement a proper content security policy
+      contentSecurityPolicy: false,
+    }));
     app.use(requestLogger);
   }
 

@@ -33,8 +33,6 @@ export const CONFIGURATION_GOOGLE_OAUTH = 'google-oauth';
 
 class Configuration extends Model {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
   data: object;
 }
 

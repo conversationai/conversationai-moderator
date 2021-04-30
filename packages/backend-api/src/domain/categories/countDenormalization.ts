@@ -46,7 +46,7 @@ export async function denormalizeCommentCountsForCategory(category: Category) {
     Article.sum('batchedCount', query),
   ]);
 
-  const c =  category.update({
+  return category.update({
     allCount,
     unprocessedCount,
     unmoderatedCount,
@@ -58,5 +58,4 @@ export async function denormalizeCommentCountsForCategory(category: Category) {
     flaggedCount,
     batchedCount,
   });
-  return c;
 }

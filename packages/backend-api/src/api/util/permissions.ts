@@ -21,7 +21,6 @@ import {User} from '../../models';
 export function onlyAdmin(req: express.Request, res: express.Response, next: express.NextFunction) {
   if ((req as any).testMode) {
     next();
-
     return;
   }
 

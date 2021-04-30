@@ -18,7 +18,6 @@ import * as Bluebird from 'bluebird';
 import { groupBy, maxBy } from 'lodash';
 import * as moment from 'moment';
 import { fn, Op } from 'sequelize';
-import { humanize, titleize, trim } from 'underscore.string';
 
 import {
   Article,
@@ -28,8 +27,9 @@ import {
   CommentSummaryScore,
   Decision,
   ENDPOINT_TYPE_API,
-  ENDPOINT_TYPE_PROXY,
-  IResolution, IScorerExtra,
+  findOrCreateTagByKey,
+  IResolution,
+  IScorerExtra,
   isModerationRule,
   isUser,
   ModerationRule,
@@ -52,7 +52,6 @@ import {getIsDoneScoring} from './state';
 
 import {createShim as createApiShim} from './apiShim';
 import {commentModeratedHook} from './hooks';
-import {createShim as createProxyShim} from './proxyShim';
 
 const shims = new Map<number, IShim>();
 
@@ -77,9 +76,6 @@ export async function sendToScorer(comment: Comment, scorer: User) {
 
       if (extra.endpointType === ENDPOINT_TYPE_API) {
         shim = await createApiShim(scorer, processMachineScore);
-      }
-      else if (extra.endpointType === ENDPOINT_TYPE_PROXY) {
-        shim = await createProxyShim(scorer, processMachineScore);
       }
       else {
         logger.error(`Unknown moderator endpoint type: ${extra.endpoint} for scorer ${scorer.id}`);
@@ -179,7 +175,7 @@ export async function resendForScoring(comment: Comment): Promise<void> {
 
 /**
  * Receive a single score. Data object should have: commentId, serviceUserId, sourceType,
- * score, and optionally annotationStart and annotationEnde
+ * score, and optionally annotationStart and annotationEnd
  */
 export async function processMachineScore(
   commentId: number,
@@ -269,8 +265,6 @@ export async function updateMaxSummaryScore(comment: Comment): Promise<void> {
 
   const maxSummaryScores = maxBy(summaryScores, (score) => score.score);
   await comment.update({
-    // TODO(ldixon): investigate typing to avoid `maxSummaryScores` being
-    // undefined and needing the type hack here.
     maxSummaryScore: maxSummaryScores!.score,
     maxSummaryScoreTagId: maxSummaryScores!.tagId,
   });
@@ -358,17 +352,7 @@ export async function findOrCreateTagsByKey(
   keys: Array<string>,
 ): Promise<Array<Tag>> {
   return Bluebird.mapSeries(keys, async (key) => {
-    const cleanKey = trim(key);
-    const label = titleize(humanize(cleanKey));
-
-    const [instance] = await Tag.findOrCreate({
-      where: {key: cleanKey},
-      defaults: {
-        key: cleanKey,
-        label,
-      }});
-
-    return instance;
+    return await findOrCreateTagByKey(key);
   });
 }
 

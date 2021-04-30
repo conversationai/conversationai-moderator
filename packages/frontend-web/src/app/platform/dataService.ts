@@ -181,7 +181,7 @@ export async function listHistogramScoresByCategoryByDate(
 export async function getComments(
   commentIds: Array<ModelId>,
 ): Promise<Array<ICommentModel>> {
-  const url = serviceURL('simple', `/comment/get`);
+  const url = serviceURL('simple', `/comments`);
   const response = await axios.post(url, commentIds);
   return response.data.map((a: any) => (CommentModel(a)));
 }
@@ -213,17 +213,15 @@ export async function editAndRescoreCommentRequest(
   authorLocation: string,
 ): Promise<void> {
   await axios.patch(
-    serviceURL(
-      'editComment',
-      null,
-    ), {
-    data: {
-      commentId,
-      text,
-      authorName,
-      authorLocation,
-    },
-  });
+    serviceURL('editComment', null),
+    {
+      data: {
+        commentId,
+        text,
+        authorName,
+        authorLocation,
+      },
+    });
 }
 
 export async function updateCategoryModerators(categoryId: ModelId, moderatorIds: Array<ModelId>): Promise<void> {
@@ -270,7 +268,7 @@ export async function getModeratedCommentIdsForCategory(
 }
 
 export async function getArticles(ids: Array<ModelId>): Promise<Array<IArticleModel>> {
-  const url = serviceURL('simple', `/article/get`);
+  const url = serviceURL('simple', `/articles`);
   const response = await axios.post(url, ids);
   return response.data.map((a: any) => (ArticleModel(a)));
 }
@@ -282,7 +280,7 @@ export async function getArticleText(id: ModelId) {
 }
 
 export async function updateArticle(id: string, isCommentingEnabled: boolean, isAutoModerated: boolean) {
-  const url = serviceURL('simple', `/article/update/${id}`);
+  const url = serviceURL('simple', `/article/${id}`);
   await axios.post(url, {isCommentingEnabled, isAutoModerated});
 }
 
@@ -340,7 +338,7 @@ export async function createSensitivity(sensitivity: ITaggingSensitivityModel) {
 }
 
 export async function updateUser(user: IUserModel) {
-  const url = serviceURL('simple', `/user/update/${user.id}`);
+  const url = serviceURL('simple', `/user/${user.id}`);
   const attributes = pick(user, ['name', 'email', 'group', 'isActive']);
   await axios.post(url, attributes);
 }

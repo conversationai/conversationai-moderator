@@ -15,8 +15,13 @@ limitations under the License.
 */
 
 import {DataTypes, Model} from 'sequelize';
+import {humanize, titleize, trim} from 'underscore.string';
+
+import {randomDarkColor} from '@conversationai/moderator-frontend-web';
 
 import {sequelize} from '../sequelize';
+
+export const SUMMARY_SCORE_TAG = 'SUMMARY_SCORE';
 
 /**
  * Tag model
@@ -91,3 +96,22 @@ Tag.init({
     },
   ],
 });
+
+export async function findOrCreateTagByKey(key: string) {
+  const cleanKey = trim(key);
+  const label = titleize(humanize(cleanKey));
+  const color = key === SUMMARY_SCORE_TAG ? '#cccccc' : randomDarkColor(cleanKey);
+
+  const [instance, _] = await Tag.findOrCreate({
+    where: {key: cleanKey},
+    defaults: {
+      key: cleanKey,
+      label,
+      color,
+      isInBatchView: true,
+      isTaggable: false,
+      inSummaryScore: key !== SUMMARY_SCORE_TAG,
+    }});
+
+  return instance;
+}

@@ -42,7 +42,7 @@ const LOCAL_STYLES: any = stylesheet({
     marginRight: `${GUTTER_DEFAULT_SPACING}px`,
   },
   colorTitle: {
-    width: '125px',
+    width: '200px',
     marginRight: `24px`,
   },
   summaryTitle: {

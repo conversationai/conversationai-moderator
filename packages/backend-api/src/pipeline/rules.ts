@@ -24,10 +24,11 @@ import {
 import {
   Comment,
   CommentSummaryScore,
+  ModerationRule,
   MODERATION_ACTION_ACCEPT,
   MODERATION_ACTION_DEFER,
   MODERATION_ACTION_REJECT,
-  ModerationRule,
+  SUMMARY_SCORE_TAG,
   Tag,
 } from '../models';
 import {
@@ -71,9 +72,9 @@ export async function resolveComment(
   scores: Array<CommentSummaryScore>,
   rules?: Array<ModerationRule>,
 ): Promise<IDecision | null> {
-  // Add a fake score for SUMMARY_SCORE so that rules can be written against it.
+  // Add a fake score for the summary score so that rules can be written against it.
   const summaryScoreTag = await Tag.findOne({
-    where: { key: 'SUMMARY_SCORE' },
+    where: { key: SUMMARY_SCORE_TAG },
   });
 
   let compiledScores: ICompiledScores;

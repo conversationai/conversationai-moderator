@@ -44,7 +44,7 @@ export function createEditCommentTextService(): express.Router {
   router.patch(
     '/',
     validateEditCommentRequest,
-    async ({ body }, res, next) => {
+    async ({ body }, res) => {
       try {
         const { commentId, text, authorName, authorLocation } = body.data;
         const parsedCommentId = parseInt(commentId, 10);
@@ -52,13 +52,14 @@ export function createEditCommentTextService(): express.Router {
 
         if (!comment) {
           res.status(404).json({ status: 'error', errors: 'comment not found' });
-
           return;
         }
 
-        const author = comment.author;
-        author.name =  authorName ? authorName : author.name;
-        author.location = authorLocation ? authorLocation : author.location;
+        const author = {
+          ...comment.author,
+          name: authorName ? authorName : comment.author.name,
+          location: authorLocation ? authorLocation : comment.author.location,
+        };
 
         // update text and author fields of a comment
         await comment.update({
@@ -67,11 +68,8 @@ export function createEditCommentTextService(): express.Router {
         });
 
         enqueueSendCommentForScoringTask(commentId);
-
       } catch (err) {
         logger.error('Edit Comment error: ', err.name, err.message);
-        next(err);
-
         return;
       }
 

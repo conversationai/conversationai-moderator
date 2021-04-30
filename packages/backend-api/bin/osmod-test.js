@@ -18,16 +18,20 @@ limitations under the License.
 
 'use strict';
 
+const path = require('path');
 const yargs = require('yargs');
-const youtube = require('../dist/commands/tests/youtube');
-const generate = require('../dist/commands/comments/generate');
-const imprt = require('../dist/commands/comments/import')
+
+const youtube = require(path.join(__dirname, '..', 'dist', 'commands', 'tests', 'youtube'));
+const generate = require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'generate'));
+const imprt = require(path.join(__dirname, '..', 'dist', 'commands', 'comments', 'import'));
 
 yargs
-  .usage('Usage: $0 <command> [options]')
   .command(youtube)
   .command(generate)
   .command(imprt)
   .demand(1)
+  .demandCommand(1, 'no command specified')
+  .usage('Usage: $0 <command> [options]')
   .help()
+  .onFinishCommand(() => {process.exit()})
   .argv;

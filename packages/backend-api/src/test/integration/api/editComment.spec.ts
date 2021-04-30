@@ -24,6 +24,7 @@ import {
   makeComment,
 } from '../../fixture';
 
+import {cleanDatabase} from '../../test_helper';
 import {
   app,
 } from './test_helper';
@@ -31,6 +32,10 @@ import {
 const URL = `/services/editComment`;
 
 describe(URL, () => {
+    before(async () => {
+        await cleanDatabase(false);
+    });
+
     it('should return 404', async () => {
         try {
             const apiClient = chai.request(app);
@@ -71,13 +76,13 @@ describe(URL, () => {
     });
 
     it('should return 200', async () => {
-        try {
-            const apiClient = chai.request(app);
-            const comment = await makeComment();
-            const updatedText = 'I’m living everyday like a hustle, another drug to juggle. Another day, another struggle.';
-            const updatedAuthorName = 'Biggie';
-            const updatedAuthorLocation = 'LA';
+        const apiClient = chai.request(app);
+        const comment = await makeComment();
+        const updatedText = 'I’m living everyday like a hustle, another drug to juggle. Another day, another struggle.';
+        const updatedAuthorName = 'Biggie';
+        const updatedAuthorLocation = 'LA';
 
+        try {
             const { status } = await apiClient.patch(URL).send({
                 data: {
                     commentId: comment.id.toString(),
@@ -87,16 +92,16 @@ describe(URL, () => {
                 },
             });
 
-            const updatedComment = await Comment.findOne({ where: { id: comment.id }});
-            const { name, location } = updatedComment!.author;
-
             expect(status).to.be.equal(200);
-            expect(updatedComment!.text).to.be.equal(updatedText);
-            expect(name).to.be.equal(updatedAuthorName);
-            expect(location).to.be.equal(updatedAuthorLocation);
-
         } catch (err) {
             expect(err.response.status).to.be.equal(200);
         }
+
+        const updatedComment = await Comment.findOne({ where: { id: comment.id }});
+        const { name, location } = updatedComment!.author;
+
+        expect(updatedComment!.text).to.be.equal(updatedText);
+        expect(name).to.be.equal(updatedAuthorName);
+        expect(location).to.be.equal(updatedAuthorLocation);
     });
 });

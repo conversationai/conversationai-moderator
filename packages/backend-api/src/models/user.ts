@@ -36,7 +36,6 @@ export const USER_GROUPS = [
 ];
 
 // Configuration constants for moderator service users
-export const ENDPOINT_TYPE_PROXY = 'perspective-proxy';
 export const ENDPOINT_TYPE_API = 'perspective-api';
 
 export interface IRequestedAttributes {

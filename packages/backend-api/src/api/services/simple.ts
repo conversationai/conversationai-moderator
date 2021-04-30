@@ -113,7 +113,7 @@ export function createSimpleRESTService(): express.Router {
     res.json(REPLY_SUCCESS);
   });
 
-  router.post('/user/update/:id', async (req, res) => {
+  router.post('/user/:id', async (req, res) => {
     const userId = parseInt(req.params.id, 10);
     const user = await User.findByPk(userId);
     if (!user) {
@@ -153,7 +153,7 @@ export function createSimpleRESTService(): express.Router {
     res.json(REPLY_SUCCESS);
   });
 
-  router.post('/article/update/:id', async (req, res) => {
+  router.post('/article/:id', async (req, res) => {
     const articleId = parseInt(req.params.id, 10);
     const article = await Article.findByPk(articleId);
     if (!article) {
@@ -173,7 +173,7 @@ export function createSimpleRESTService(): express.Router {
     res.json(REPLY_SUCCESS);
   });
 
-  router.post('/article/get', async (req, res) => {
+  router.post('/articles', async (req, res) => {
     const articles = await Article.findAll({
       where: {id: {[Op.in]: req.body}},
       include: [{ model: User, as: 'assignedModerators', attributes: ['id']}],
@@ -182,7 +182,7 @@ export function createSimpleRESTService(): express.Router {
     res.json(articleData);
   });
 
-  router.post('/comment/get', async (req, res) => {
+  router.post('/comments', async (req, res) => {
     const comments = await Comment.findAll({
       where: {id: {[Op.in]: req.body}},
       include: [

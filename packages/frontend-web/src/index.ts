@@ -14,10 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './models';
-export * from './models/fake';
 export * from './server';
-export * from './types';
 export * from './app/util/groupByColumn';
 export * from './app/util/DotChartRenderer';
 export * from './app/util/measureText';
+export * from './app/util/color';
