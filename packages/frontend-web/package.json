@@ -92,7 +92,7 @@
     "@types/react-window": "^1.8.2",
     "@types/redux-actions": "^2.6.1",
     "aphrodite": "^2.4.0",
-    "axios": "^0.21.1",
+    "axios": "^1.6.0",
     "check-types": "^11.1.2",
     "copy-to-clipboard": "^3.3.1",
     "core-decorators": "^0.20.0",
