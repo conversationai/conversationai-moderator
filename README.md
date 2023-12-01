@@ -237,7 +237,7 @@ While there can be many ways to setup a service, in general a deployment will
 typically be a single VM instance running these services:
 
 A MySQL database that holds all of the applications state (See
-[the data model doc](docs/modelling.md)).
+[the data model doc](docs/modeling.md)).
 
 *  Frontend-Webserver service hosting the static ReactJS site. This sends
    messages to the Backend API service.
