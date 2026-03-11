@@ -10,7 +10,7 @@
     "npm": ">=6.12.1"
   },
   "dependencies": {
-    "lerna": "7.1.1",
+    "lerna": "9.0.6",
     "lerna-audit": "1.3.3",
     "tslib": "2.2.0",
     "tslint": "6.1.3",
