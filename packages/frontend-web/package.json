@@ -41,7 +41,7 @@
     "@babel/register": "^7.12.10",
     "@storybook/addon-actions": "^6.1.11",
     "@storybook/addon-storyshots": "^6.1.11",
-    "@storybook/cli": "^6.1.11",
+    "@storybook/cli": "^10.2.19",
     "@storybook/react": "^6.1.11",
     "@types/chai": "^4.2.14",
     "@types/expect": "^24.3.0",
