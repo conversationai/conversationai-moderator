@@ -67,7 +67,7 @@
     "ts-jest": "^26.4.4",
     "webpack": "^5.11.1",
     "webpack-cli": "^4.3.0",
-    "webpack-dev-server": "^3.11.2",
+    "webpack-dev-server": "^5.2.4",
     "webpack-hot-middleware": "^2.25.0"
   },
   "dependencies": {
